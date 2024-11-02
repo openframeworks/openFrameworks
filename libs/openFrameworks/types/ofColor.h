@@ -2,7 +2,6 @@
 
 #define GLM_FORCE_CTOR_INIT
 #define GLM_ENABLE_EXPERIMENTAL
-//#include <glm/gtx/wrap.hpp>
 #include <glm/ext/scalar_common.hpp>
 #include <glm/vec3.hpp>
 #include <iostream>

@@ -6,7 +6,11 @@
 #include "ofFileUtils.h"
 #include "ofGLProgrammableRenderer.h"
 #include "ofGLRenderer.h"
+<<<<<<< HEAD
 //#include "ofVectorMath.h"
+=======
+// #include "ofVectorMath.h"
+>>>>>>> master
 #include <assert.h>
 // x11
 #include <X11/Xutil.h>

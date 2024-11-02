@@ -11,13 +11,13 @@ public:
 
 	/// \return the name of the selected file or directory, if set
 	/// currently returns only 1 file, this may change in the future
-	of::filesystem::path getName();
+	std::string getName();
 
 	/// \return the full path of the selected file or directory, if set
-	of::filesystem::path getPath();
+	std::string getPath();
 
-	of::filesystem::path filePath { "" }; ///< full path to selected file or directory
-	of::filesystem::path fileName { "" }; ///< selected file or directory name
+	std::string filePath = ""; ///< full path to selected file or directory
+	std::string fileName = ""; ///< selected file or directory name
 	bool bSuccess = false; ///< true if the dialog action was successful, aka file select not cancel
 };
 
@@ -29,7 +29,7 @@ void ofSystemAlertDialog(std::string errorMessage);
 /// \param bFolderSelection set to true to allow folder selection
 /// \param defaultPath optional default directory path to start the dialog in, ie. ofFilePath::getUserHomeDir()
 /// \return dialog result with selection (if any)
-ofFileDialogResult ofSystemLoadDialog(std::string windowTitle="", bool bFolderSelection = false, of::filesystem::path defaultPath="");
+ofFileDialogResult ofSystemLoadDialog(std::string windowTitle="", bool bFolderSelection = false, std::string defaultPath="");
 
 /// \brief show a file save dialog box
 /// \param defaultName suggested filename to start dialog, ie "screenshot.png"

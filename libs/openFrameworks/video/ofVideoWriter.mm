@@ -104,7 +104,8 @@ void ofVideoWriter::begin() {
 	
 	if (!useCustomName) {
 		std::string uniqueName {
-			ofPathToString(ofFilePath::getCurrentExePath().filename()) +
+//			ofPathToString(ofFilePath::getCurrentExePath().filename()) +
+			ofPathToString(ofFilePath::getCurrentExePathFS().filename()) +
 			"_" +
 			ofToString(ofGetYear()) +
 			ofToString(ofGetMonth(), 2, '0') +

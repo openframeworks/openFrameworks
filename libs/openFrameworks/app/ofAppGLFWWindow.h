@@ -23,6 +23,7 @@ typedef ofPixels_<unsigned char> ofPixels;
 [[deprecated ("In This Branch ~ use ofWindowSettings instead")]]
 typedef ofWindowSettings ofGLFWWindowSettings;
 
+
 class ofAppGLFWWindow : public ofAppBaseWindow {
 public:
 	ofAppGLFWWindow();
@@ -76,6 +77,7 @@ public:
 
 	void setFullscreen(bool fullscreen);
 	void toggleFullscreen();
+    void setWindowMousePassThrough(bool allowPassThrough);
 
 	void enableSetupScreen();
 	void disableSetupScreen();
@@ -149,6 +151,7 @@ private:
 	static void refresh_cb(GLFWwindow * windowP_);
 	static void monitor_cb(GLFWmonitor * monitor, int event);
 	
+
 	void close();
 
 #if defined(TARGET_LINUX) && !defined(TARGET_RASPBERRY_PI_LEGACY)

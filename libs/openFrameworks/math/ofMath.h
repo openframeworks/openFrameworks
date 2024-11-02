@@ -10,6 +10,7 @@ namespace glm {
 
 #include <cstdlib>
 #include <algorithm>
+#include <cmath> //std::cos
 
 /// \file
 /// ofMath provides a collection of mathematical utilities and functions.

@@ -42,7 +42,7 @@ ofMainLoop::ofMainLoop() : bShouldClose(false), status(0), allowMultiWindow(true
 }
 
 ofMainLoop::~ofMainLoop() {
-	exit();
+
 }
 
 std::shared_ptr<ofAppBaseWindow> ofMainLoop::createWindow(const ofWindowSettings & settings){
@@ -121,6 +121,7 @@ int ofMainLoop::loop(){
 	}else{
 		windowLoop();
 	}
+	exit();	
 	return status;
 }
 

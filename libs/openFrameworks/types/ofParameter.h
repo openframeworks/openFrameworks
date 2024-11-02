@@ -12,6 +12,10 @@
 #include "ofRectangle.h"
 #include "ofUtils.h" // ofToString
 
+#ifdef TARGET_WIN32
+#include <iso646.h>
+#endif
+
 template <typename ParameterType>
 class ofParameter;
 

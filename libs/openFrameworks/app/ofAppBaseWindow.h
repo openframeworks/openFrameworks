@@ -66,6 +66,7 @@ public:
 
 	virtual void setFullscreen(bool fullscreen){}
 	virtual void toggleFullscreen(){}
+	virtual void setWindowMousePassthrough(bool allowPassthrough){}
 
 	virtual void enableSetupScreen(){}
 	virtual void disableSetupScreen(){}

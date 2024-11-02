@@ -149,14 +149,27 @@ void ofAppGLFWWindow::setup(const ofWindowSettings & _settings) {
 	}
 	if (settings.glVersionMajor >= 3) {
 		glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-	#if (GLFW_VERSION_MAJOR >= 3 && GLFW_VERSION_MINOR > 2) || (GLFW_VERSION_MAJOR > 3)
+#if (GLFW_VERSION_MAJOR >= 3 && GLFW_VERSION_MINOR > 2) || (GLFW_VERSION_MAJOR > 3)
 		glfwWindowHint(GLFW_TRANSPARENT_FRAMEBUFFER, settings.transparent);
-	#endif
+#endif
+#if (GLFW_VERSION_MAJOR >= 3 && GLFW_VERSION_MINOR >= 4)
+			if( settings.mousePassThrough && settings.transparent && settings.decorated) {
+				ofLogError("ofAppGLFWWindow") << "window is decorated and has transparent input pass through. use floating...";
+			}
+			glfwWindowHint(GLFW_MOUSE_PASSTHROUGH, settings.mousePassThrough);
+			glfwWindowHint(GLFW_FLOATING, settings.floating);
+#endif
 		currentRenderer = std::make_shared<ofGLProgrammableRenderer>(this);
 	} else {
 		currentRenderer = std::make_shared<ofGLRenderer>(this);
 	}
 #endif
+
+
+
+
+
+
 
 	GLFWwindow * sharedContext = nullptr;
 	if (settings.shareContextWith) {
@@ -257,6 +270,7 @@ void ofAppGLFWWindow::setup(const ofWindowSettings & _settings) {
 
 	// MARK: -
 	if (settings.windowMode != OF_GAME_MODE) {
+
 
 #ifdef TARGET_LINUX
 //		if (!iconSet) {
@@ -825,7 +839,6 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen) {
 	setFSTarget(targetWindowMode);
 
 #endif
-
 	settings.windowMode = targetWindowMode;
 }
 
@@ -838,6 +851,15 @@ void ofAppGLFWWindow::toggleFullscreen() {
 	} else {
 		setFullscreen(false);
 	}
+}
+
+//------------------------------------------------------------
+void ofAppGLFWWindow::setWindowMousePassThrough(bool allowPassThrough) {
+	if(settings.mousePassThrough == allowPassThrough) return;
+	settings.mousePassThrough = allowPassThrough;
+#if (GLFW_VERSION_MAJOR >= 3 && GLFW_VERSION_MINOR >= 4)
+	glfwSetWindowAttrib(getGLFWWindow(), GLFW_MOUSE_PASSTHROUGH, settings.mousePassThrough);
+#endif
 }
 
 //------------------------------------------------------------
@@ -893,24 +915,27 @@ ofAppGLFWWindow * ofAppGLFWWindow::getWindow(GLFWwindow * windowP) {
 }
 
 namespace {
-int glfwtToOFModifiers(int mods) {
-	int modifiers = 0;
-	if (mods & GLFW_MOD_SHIFT) {
-		modifiers |= OF_KEY_SHIFT;
+	int glfwtToOFModifiers(int mods) {
+		int modifiers = 0;
+		if (mods & GLFW_MOD_SHIFT) {
+			modifiers |= OF_KEY_SHIFT;
+		}
+		if (mods & GLFW_MOD_ALT) {
+			modifiers |= OF_KEY_ALT;
+		}
+		if (mods & GLFW_MOD_CONTROL) {
+			modifiers |= OF_KEY_CONTROL;
+		}
+		if (mods & GLFW_MOD_SUPER) {
+			modifiers |= OF_KEY_SUPER;
+		}
+		return modifiers;
 	}
-	if (mods & GLFW_MOD_ALT) {
-		modifiers |= OF_KEY_ALT;
-	}
-	if (mods & GLFW_MOD_CONTROL) {
-		modifiers |= OF_KEY_CONTROL;
-	}
-	if (mods & GLFW_MOD_SUPER) {
-		modifiers |= OF_KEY_SUPER;
-	}
-	return modifiers;
-}
 
 unsigned long keycodeToUnicode(ofAppGLFWWindow * window, int scancode, int modifier) {
+
+
+
 #ifdef TARGET_LINUX
 	XkbStateRec xkb_state = {};
 	XkbGetState(window->getX11Display(), XkbUseCoreKbd, &xkb_state);
