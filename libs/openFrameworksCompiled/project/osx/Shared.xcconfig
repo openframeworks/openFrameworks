@@ -5,6 +5,8 @@ OF_PATH = ../../../..
 // All headers and libs for OF Core
 #include "CoreOF.xcconfig"
 
+ENABLE_USER_SCRIPT_SANDBOXING=YES
+
 OTHER_CFLAGS = $(OF_CORE_CFLAGS)
 OTHER_LDFLAGS = $(OF_CORE_LIBS)
 HEADER_SEARCH_PATHS = $(OF_CORE_HEADERS)

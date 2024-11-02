@@ -7,6 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		03EF24312CD5CE4D005A5E4D /* ofRandomEngine.h in Headers */ = {isa = PBXBuildFile; fileRef = 03EF242F2CD5CE4D005A5E4D /* ofRandomEngine.h */; };
+		03EF24322CD5CE4D005A5E4D /* ofSingleton.h in Headers */ = {isa = PBXBuildFile; fileRef = 03EF24302CD5CE4D005A5E4D /* ofSingleton.h */; };
+		03EF24332CD5CE4D005A5E4D /* ofRandomDistributions.h in Headers */ = {isa = PBXBuildFile; fileRef = 03EF242E2CD5CE4D005A5E4D /* ofRandomDistributions.h */; };
+		03EF24342CD5CE4D005A5E4D /* ofRandomEngine.h in Headers */ = {isa = PBXBuildFile; fileRef = 03EF242F2CD5CE4D005A5E4D /* ofRandomEngine.h */; };
+		03EF24352CD5CE4D005A5E4D /* ofSingleton.h in Headers */ = {isa = PBXBuildFile; fileRef = 03EF24302CD5CE4D005A5E4D /* ofSingleton.h */; };
+		03EF24362CD5CE4D005A5E4D /* ofRandomDistributions.h in Headers */ = {isa = PBXBuildFile; fileRef = 03EF242E2CD5CE4D005A5E4D /* ofRandomDistributions.h */; };
 		19662F2E2834A44400B622ED /* ofGraphicsCairo.h in Headers */ = {isa = PBXBuildFile; fileRef = 19662F2C2834A44400B622ED /* ofGraphicsCairo.h */; };
 		19662F2F2834A44400B622ED /* ofGraphicsCairo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 19662F2D2834A44400B622ED /* ofGraphicsCairo.cpp */; };
 		22246D93176C9987008A8AF4 /* ofGLProgrammableRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 22246D91176C9987008A8AF4 /* ofGLProgrammableRenderer.cpp */; };
@@ -347,24 +353,15 @@
 		BF6277D92BADCF7C008864C1 /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23BDBC2BAC7DD0000E2E0E /* GLKit.framework */; platformFilters = (ios, tvos, ); };
 		BF6277DA2BADCF7C008864C1 /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23C01D2BAC8A1C000E2E0E /* CoreMedia.framework */; };
 		BF6277DB2BADCF7C008864C1 /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23BDB12BAC7A6F000E2E0E /* CoreAudio.framework */; };
-		BF6277DC2BADCF7C008864C1 /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23BDC72BAC7DD0000E2E0E /* CoreMedia.framework */; };
 		BF6277DD2BADCF7C008864C1 /* CoreMotion.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23C0212BAC8A1C000E2E0E /* CoreMotion.framework */; platformFilters = (ios, maccatalyst, macos, watchos, xros, ); settings = {ATTRIBUTES = (Weak, ); }; };
 		BF6277DE2BADCF7C008864C1 /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23BDC82BAC7DD0000E2E0E /* CoreVideo.framework */; };
-		BF6277DF2BADCF7C008864C1 /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23C01B2BAC8A1C000E2E0E /* CoreAudio.framework */; };
-		BF6277E02BADCF7C008864C1 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23BDBE2BAC7DD0000E2E0E /* QuartzCore.framework */; platformFilters = (ios, maccatalyst, macos, tvos, xros, ); };
 		BF6277E12BADCF7C008864C1 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23C0172BAC8A1C000E2E0E /* CoreLocation.framework */; };
 		BF6277E22BADCF7C008864C1 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23BDC12BAC7DD0000E2E0E /* Foundation.framework */; };
-		BF6277E32BADCF7C008864C1 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23BDC22BAC7DD0000E2E0E /* CoreGraphics.framework */; };
 		BF6277E42BADCF7C008864C1 /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23BDB92BAC7DD0000E2E0E /* Metal.framework */; platformFilters = (ios, maccatalyst, macos, tvos, xros, ); };
-		BF6277E52BADCF7C008864C1 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23BDC42BAC7DD0000E2E0E /* CoreLocation.framework */; };
-		BF6277E62BADCF7C008864C1 /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23C0032BAC8A1C000E2E0E /* GameController.framework */; };
-		BF6277E72BADCF7C008864C1 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23C0092BAC8A1C000E2E0E /* AudioToolbox.framework */; };
-		BF6277E82BADCF7C008864C1 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23C0192BAC8A1C000E2E0E /* AVFoundation.framework */; };
 		BF6277E92BADCF7C008864C1 /* OpenAL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23BDC32BAC7DD0000E2E0E /* OpenAL.framework */; platformFilters = (ios, maccatalyst, macos, tvos, ); };
 		BF6277F22BADD5A9008864C1 /* AVFAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF6277F12BADD5A9008864C1 /* AVFAudio.framework */; };
 		BF6279EE2BB075A6008864C1 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF6279ED2BB075A6008864C1 /* Security.framework */; platformFilters = (maccatalyst, macos, watchos, xros, ); };
 		BF6279F02BB075DB008864C1 /* ApplicationServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF6279EF2BB075DB008864C1 /* ApplicationServices.framework */; platformFilters = (maccatalyst, macos, ); };
-		BF6279F22BB07B37008864C1 /* pugixml.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF6279F12BB07B37008864C1 /* pugixml.xcframework */; };
 		BF6609E52BA1DB6F005FA2B1 /* FreeImage.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF6609E42BA1DB6F005FA2B1 /* FreeImage.xcframework */; };
 		BF6609E72BA1DC13005FA2B1 /* cairo.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF6609E62BA1DC13005FA2B1 /* cairo.xcframework */; };
 		BF6609E92BA1DC4B005FA2B1 /* freetype.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF6609E82BA1DC4B005FA2B1 /* freetype.xcframework */; };
@@ -481,6 +478,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		03EF242E2CD5CE4D005A5E4D /* ofRandomDistributions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ofRandomDistributions.h; sourceTree = "<group>"; };
+		03EF242F2CD5CE4D005A5E4D /* ofRandomEngine.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ofRandomEngine.h; sourceTree = "<group>"; };
+		03EF24302CD5CE4D005A5E4D /* ofSingleton.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ofSingleton.h; sourceTree = "<group>"; };
 		19662F2C2834A44400B622ED /* ofGraphicsCairo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofGraphicsCairo.h; sourceTree = "<group>"; };
 		19662F2D2834A44400B622ED /* ofGraphicsCairo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofGraphicsCairo.cpp; sourceTree = "<group>"; };
 		22246D91176C9987008A8AF4 /* ofGLProgrammableRenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofGLProgrammableRenderer.cpp; path = gl/ofGLProgrammableRenderer.cpp; sourceTree = "<group>"; };
@@ -818,7 +818,6 @@
 				BF6277BF2BADCF7C008864C1 /* FreeImage.xcframework in Frameworks */,
 				BF6277C02BADCF7C008864C1 /* tess2.xcframework in Frameworks */,
 				BF6277C12BADCF7C008864C1 /* pugixml.xcframework in Frameworks */,
-				BF6279F22BB07B37008864C1 /* pugixml.xcframework in Frameworks */,
 				BF6277C22BADCF7C008864C1 /* glew.xcframework in Frameworks */,
 				BF6277C32BADCF7C008864C1 /* glfw.xcframework in Frameworks */,
 				BF6277C42BADCF7C008864C1 /* rtAudio.xcframework in Frameworks */,
@@ -844,19 +843,11 @@
 				BF6277D92BADCF7C008864C1 /* GLKit.framework in Frameworks */,
 				BF6277DA2BADCF7C008864C1 /* CoreMedia.framework in Frameworks */,
 				BF6277DB2BADCF7C008864C1 /* CoreAudio.framework in Frameworks */,
-				BF6277DC2BADCF7C008864C1 /* CoreMedia.framework in Frameworks */,
 				BF6277DD2BADCF7C008864C1 /* CoreMotion.framework in Frameworks */,
 				BF6277DE2BADCF7C008864C1 /* CoreVideo.framework in Frameworks */,
-				BF6277DF2BADCF7C008864C1 /* CoreAudio.framework in Frameworks */,
-				BF6277E02BADCF7C008864C1 /* QuartzCore.framework in Frameworks */,
 				BF6277E12BADCF7C008864C1 /* CoreLocation.framework in Frameworks */,
 				BF6277E22BADCF7C008864C1 /* Foundation.framework in Frameworks */,
-				BF6277E32BADCF7C008864C1 /* CoreGraphics.framework in Frameworks */,
 				BF6277E42BADCF7C008864C1 /* Metal.framework in Frameworks */,
-				BF6277E52BADCF7C008864C1 /* CoreLocation.framework in Frameworks */,
-				BF6277E62BADCF7C008864C1 /* GameController.framework in Frameworks */,
-				BF6277E72BADCF7C008864C1 /* AudioToolbox.framework in Frameworks */,
-				BF6277E82BADCF7C008864C1 /* AVFoundation.framework in Frameworks */,
 				BF6277E92BADCF7C008864C1 /* OpenAL.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1402,6 +1393,9 @@
 				E4F3BAE612F4C745002D19BB /* ofLog.cpp */,
 				E4F3BAE712F4C745002D19BB /* ofLog.h */,
 				E4F3BAE812F4C745002D19BB /* ofNoise.h */,
+				03EF242E2CD5CE4D005A5E4D /* ofRandomDistributions.h */,
+				03EF242F2CD5CE4D005A5E4D /* ofRandomEngine.h */,
+				03EF24302CD5CE4D005A5E4D /* ofSingleton.h */,
 				E4F3BAE912F4C745002D19BB /* ofSystemUtils.cpp */,
 				E4F3BAEA12F4C745002D19BB /* ofSystemUtils.h */,
 				E4F3BAEB12F4C745002D19BB /* ofThread.cpp */,
@@ -1505,6 +1499,9 @@
 				BF6276E82BADCF7C008864C1 /* ofxiOSCoreMotion.h in Headers */,
 				BF6276E92BADCF7C008864C1 /* ofxiOSMapKitListener.h in Headers */,
 				BF6276EA2BADCF7C008864C1 /* ofxiOSCoreHaptics.h in Headers */,
+				03EF24342CD5CE4D005A5E4D /* ofRandomEngine.h in Headers */,
+				03EF24352CD5CE4D005A5E4D /* ofSingleton.h in Headers */,
+				03EF24362CD5CE4D005A5E4D /* ofRandomDistributions.h in Headers */,
 				BF6276EB2BADCF7C008864C1 /* ofxiOSExternalDisplay.h in Headers */,
 				BF6276EC2BADCF7C008864C1 /* ofxiOSAlerts.h in Headers */,
 			);
@@ -1559,6 +1556,9 @@
 				E4F3BB1D12F4C752002D19BB /* ofGraphics.h in Headers */,
 				E4F3BB1F12F4C752002D19BB /* ofImage.h in Headers */,
 				E4F3BB2112F4C752002D19BB /* ofPixels.h in Headers */,
+				03EF24312CD5CE4D005A5E4D /* ofRandomEngine.h in Headers */,
+				03EF24322CD5CE4D005A5E4D /* ofSingleton.h in Headers */,
+				03EF24332CD5CE4D005A5E4D /* ofRandomDistributions.h in Headers */,
 				E4F3BB2B12F4C752002D19BB /* ofTessellator.h in Headers */,
 				2E498916292C96340096EC56 /* ofCubeMap.h in Headers */,
 				E4F3BB2F12F4C752002D19BB /* ofTrueTypeFont.h in Headers */,
@@ -1643,7 +1643,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
 				LastSwiftUpdateCheck = 1530;
-				LastUpgradeCheck = 1530;
+				LastUpgradeCheck = 1610;
 			};
 			buildConfigurationList = E4B69B4D0A3A1720003C02F2 /* Build configuration list for PBXProject "openFrameworksLib" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -2204,6 +2204,7 @@
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_8)",
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_9)",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
 				OBJROOT = "$(SRCROOT)/../../lib/macos/build/debug/";
 				PRODUCT_NAME = openFrameworksDebug;
 				SDKROOT = macosx;
@@ -2229,6 +2230,7 @@
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_8)",
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_9)",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
 				OBJROOT = "$(SRCROOT)/../../lib/macos/build/release/";
 				PRODUCT_NAME = openFrameworks;
 				SDKROOT = macosx;
