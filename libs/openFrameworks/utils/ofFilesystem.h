@@ -125,6 +125,11 @@ public:
 		return *this;
 	}
 	
+	path& remove_filename() {
+		path_.remove_filename();
+		return *this;
+	}
+	
 	template <typename LHS>
 	const friend of::filesystem::path operator/(const LHS& lhs, const path& rhs) {
 		return path(lhs / rhs.path_);
@@ -148,9 +153,7 @@ public:
 	const friend of::filesystem::path operator+(const path& lhs, const RHS& rhs) {
 		return path(lhs.path_.string() + rhs);
 	}
-	
-	path remove_filename() { return path_.remove_filename(); }
-	
+		
 	path root_path() const { return path(path_.root_path()); }
 	path parent_path() const { return path(path_.parent_path()); }
 	path filename() const { return path(path_.filename()); }
