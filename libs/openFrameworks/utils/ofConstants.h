@@ -22,6 +22,10 @@
 	#define OF_USE_LEGACY_VECTOR_MATH 0
 #endif
 
+//#if defined(__aarch64__)
+//	#define GLM_FORCE_NEON
+//#endif
+
 // This enables glm's old behavior of initializing with non garbage values
 #define GLM_FORCE_CTOR_INIT
 
