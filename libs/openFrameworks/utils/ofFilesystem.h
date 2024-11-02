@@ -96,23 +96,23 @@ public:
 		return path(std::filesystem::canonical(path_, std::forward<Args>(args)...));
 	}
 	
-	std::filesystem::perms get_permissions() const {
-		return status(path_).permissions(); // Use status() to get permissions
+	std::filesystem::perms get_permissions() const { return status(path_).permissions(); }
+	
+	template <typename T> bool operator==(T&& other) const noexcept { return path_ == std::forward<T>(other); }
+	template <typename T> bool operator!=(T&& other) const noexcept { return path_ != std::forward<T>(other); }
+	template <typename T> bool operator<(T&& other) const noexcept { return path_ < std::forward<T>(other); }
+	template <typename T> bool operator<=(T&& other) const noexcept { return path_ <= std::forward<T>(other); }
+	template <typename T> bool operator>(T&& other) const noexcept { return path_ > std::forward<T>(other); }
+	template <typename T> bool operator>=(T&& other) const noexcept { return path_ >= std::forward<T>(other); }
+
+	path& operator/=(const path& p) {
+		path_ /= p.path_;
+		return *this;
 	}
 	
-	bool operator==(const path& other) const noexcept { return path_ == other.path_; }
-	bool operator==(const std::filesystem::path::value_type* other) const noexcept { return path_ == other; }
-	
-	bool operator!=(const path& other) const noexcept { return path_ != other.path_; }
-	bool operator!=(const std::filesystem::path::value_type* other) const noexcept { return path_ != other; }
-
-	bool operator<(const path& other) const noexcept { return path_ < other.path_; }
-	bool operator<=(const path& other) const noexcept { return path_ <= other.path_; }
-	bool operator>(const path& other) const noexcept { return path_ > other.path_; }
-	bool operator>=(const path& other) const noexcept { return path_ >= other.path_; }
-	
-	of::filesystem::path& operator/=(const path& p) {
-		path_ /= p.path_;
+	template <typename T>
+	of::filesystem::path& operator+=(const T& rhs) {
+		path_ += rhs;
 		return *this;
 	}
 	
@@ -133,12 +133,6 @@ public:
 	
 	const friend of::filesystem::path operator/(const path& lhs, const path& rhs) {
 		return path(lhs.path_ / rhs.path_);
-	}
-	
-	template <typename T>
-	of::filesystem::path& operator+=(const T& rhs) {
-		path_ += rhs;
-		return *this;
 	}
 	
 	template <typename LHS>
