@@ -14,6 +14,7 @@ private:
 	std::filesystem::path path_; // simple composition
 	
 #if defined(TARGET_WIN32)
+	// TODO better (ideal) impl this just copy-pasted for proof of concept
 	mutable std::string cached_narrow_str_;
 	const char* to_narrow_cstr() const {
 		std::mbstate_t state = std::mbstate_t();
@@ -51,6 +52,7 @@ public:
 	explicit operator const std::filesystem::path::string_type() const { return path_.string(); } 
 #endif
 	
+	// string conversions
 	auto wstring() const { return path_.wstring(); }
 	auto generic_string() const { return path_.generic_string(); }
 	auto string() const { return path_.string(); }
@@ -67,8 +69,9 @@ public:
 	bool empty() const noexcept { return path_.empty(); }
 	bool is_absolute() const { return path_.is_absolute(); }
 	bool is_relative() const { return path_.is_relative(); }
-	bool exists() const { return std::filesystem::exists(path_); }
 	
+	// std::filesystem forwards
+	bool exists() const { return std::filesystem::exists(path_); }
 	bool is_directory() const { return std::filesystem::is_directory(path_); }
 	bool is_regular_file() const { return std::filesystem::is_regular_file(path_); }
 	bool is_symlink() const { return std::filesystem::is_symlink(path_); }
@@ -104,7 +107,9 @@ public:
 	template <typename T> bool operator<=(T&& other) const noexcept { return path_ <= std::forward<T>(other); }
 	template <typename T> bool operator>(T&& other) const noexcept { return path_ > std::forward<T>(other); }
 	template <typename T> bool operator>=(T&& other) const noexcept { return path_ >= std::forward<T>(other); }
+	bool operator!() const noexcept { return empty(); }
 
+	// path transformation (return *this)
 	path& replace_extension(const path & ext = std::filesystem::path()) {  path_.replace_extension(ext);
 		return *this;
 	}
@@ -115,7 +120,7 @@ public:
 	}
 	
 	template <typename T>
-	of::filesystem::path& operator+=(const T& rhs) {
+	path& operator+=(const T& rhs) {
 		path_ += rhs;
 		return *this;
 	}
@@ -161,7 +166,7 @@ public:
 	auto extension() const { return path(path_.extension()); }
 	bool has_extension() const { return path_.has_extension(); }
 	bool has_filename() const { return path_.has_filename(); }
-	bool operator!() const noexcept { return empty(); }
+
 	
 	friend std::ostream& operator<<(std::ostream& os, const path& p) {
 		return os << p.string();
