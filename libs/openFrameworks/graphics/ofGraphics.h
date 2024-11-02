@@ -3,9 +3,16 @@
 #include "ofConstants.h"
 #include "ofGraphicsBaseTypes.h"
 
-#define GLM_FORCE_CTOR_INIT
-#define GLM_ENABLE_EXPERIMENTAL
-#include <glm/fwd.hpp>
+//#define GLM_FORCE_CTOR_INIT
+//#define GLM_ENABLE_EXPERIMENTAL
+//#include <glm/fwd.hpp> // vec3, vec2
+
+#include <glm/detail/qualifier.hpp>
+namespace glm {
+	typedef vec<2, float, defaultp>		vec2;
+	typedef vec<3, float, defaultp>		vec3;
+//	typedef vec<4, float, defaultp>		vec4;
+}
 
 class ofVec3f;
 class ofVec2f;

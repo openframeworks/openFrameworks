@@ -1,12 +1,20 @@
 #pragma once
 
-#define GLM_FORCE_CTOR_INIT
-#define GLM_ENABLE_EXPERIMENTAL
-#include <glm/fwd.hpp>
+//#define GLM_FORCE_CTOR_INIT
+//#define GLM_ENABLE_EXPERIMENTAL
+//#include <glm/fwd.hpp>
 #include <glm/gtc/constants.hpp>
 
+#include <glm/detail/qualifier.hpp>
+namespace glm {
+	typedef vec<2, float, defaultp>		vec2;
+	typedef vec<3, float, defaultp>		vec3;
+	typedef vec<4, float, defaultp>		vec4;
+}
+
+
 #include <cstdlib>
-#include <cmath>
+//#include <cmath>
 #include <algorithm>
 
 /// \file

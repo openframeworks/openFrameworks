@@ -4,7 +4,6 @@
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/wrap.hpp>
 #include <iostream>
-#include <limits>
 
 /// \class ofColor_
 ///

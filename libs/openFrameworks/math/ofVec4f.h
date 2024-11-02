@@ -1,11 +1,16 @@
 #pragma once
 
-#define GLM_FORCE_CTOR_INIT
-#define GLM_ENABLE_EXPERIMENTAL
+//#include <glm/detail/qualifier.hpp>
+//namespace glm {
+//	typedef vec<4, float, defaultp>		vec4;
+//}
+
+
 #include <glm/vec4.hpp>
-#include <glm/fwd.hpp>
+
+//#include <glm/fwd.hpp>
 #include <iostream>
-#include <cmath>
+//#include <cmath>
 
 class ofVec2f;
 class ofVec3f;
