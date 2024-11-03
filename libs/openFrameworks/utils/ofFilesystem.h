@@ -121,11 +121,13 @@ public:
 	auto compare(Args&&... args) const { return path_.compare(std::forward<Args>(args)...); }
 	
 	// MARK: path transformation (return *this)
-	path& replace_extension(const path & ext = std::filesystem::path()) {  path_.replace_extension(ext);
+	path& replace_extension(const path & ext = std::filesystem::path()) {  
+		path_.replace_extension(ext);
 		return *this;
 	}
-	
-	path& replace_filename(const path & ext = std::filesystem::path()) {  path_.replace_filename(ext);
+
+	path& replace_filename(const path & ext = std::filesystem::path()) {  
+		path_.replace_filename(ext);
 		return *this;
 	}
 
