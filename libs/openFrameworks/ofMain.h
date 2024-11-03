@@ -23,14 +23,16 @@
 #include "ofColor.h"
 #include "ofGraphicsBaseTypes.h"
 #include "ofParameter.h"
-//#include "ofPoint.h"
+#ifdef OF_USE_LEGACY_MATH
+#include "ofPoint.h"
+#endif
 #include "ofRectangle.h"
 #include "ofTypes.h"
 
 //--------------------------
 // math
 #include "ofMath.h"
-//#include "ofVectorMath.h"
+#include "ofVectorMath.h"
 
 //--------------------------
 // communication

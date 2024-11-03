@@ -141,10 +141,8 @@ void ofAppGLFWWindow::setup(const ofGLESWindowSettings & settings) {
 #endif
         const ofGLFWWindowSettings * glSettings = dynamic_cast<const ofGLFWWindowSettings *>(&settings);
         if (glSettings) {
-			std::cout << "FEIO 1" << std::endl;
             setup(*glSettings);
         } else {
-			std::cout << "FEIO 2" << std::endl;
             setup(ofGLFWWindowSettings(settings));
         }
     }

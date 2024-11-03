@@ -80,9 +80,11 @@ const ofParameter<std::string> & ofParameterGroup::getString(const std::string &
 	return get<std::string>(name);
 }
 
-//const ofParameter<ofPoint> & ofParameterGroup::getPoint(const std::string & name) const {
-//	return get<ofPoint>(name);
-//}
+#ifdef OF_USE_LEGACY_MATH
+const ofParameter<ofPoint> & ofParameterGroup::getPoint(const std::string & name) const {
+	return get<ofPoint>(name);
+}
+#endif
 
 const ofParameter<ofDefaultVec2> & ofParameterGroup::getVec2f(const std::string & name) const {
 	return get<ofDefaultVec2>(name);

@@ -1,5 +1,4 @@
 #include "ofxButton.h"
-#include "ofVectorMath.h" // interop vec2 vec3
 
 ofxButton::ofxButton(){
 	value.setSerializable(false);

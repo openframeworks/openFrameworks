@@ -198,7 +198,7 @@ namespace glm {
 
 
 
-#ifdef OF_LEGACY_MATH_WOW
+#ifdef OF_USE_LEGACY_MATH
 
 class ofMatrix3x3;
 #include "ofMatrix4x4.h"
