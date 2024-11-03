@@ -771,10 +771,11 @@ public:
 		return myFile;
 	}
 
+#if defined(OF_ENABLE_TOLERANT_NARROW_PATH_CONVERSION)
 	operator of::filesystem::path() {
 		return myFile;
 	}
-	//
+#endif
 	operator of::filesystem::path() const {
 		return myFile;
 	}
@@ -1153,9 +1154,11 @@ public:
 		return myDir;
 	}
 
+#if defined(OF_ENABLE_TOLERANT_NARROW_PATH_CONVERSION)
 	operator of::filesystem::path() {
 		return myDir;
 	}
+#endif
 
 	operator of::filesystem::path() const {
 		return myDir;
