@@ -74,20 +74,20 @@ size_t ofxVecSlider_<glm::vec4>::dim(){
 	return 4;
 }
 
-template<>
-size_t ofxVecSlider_<ofVec2f>::dim(){
-	return 2;
-}
+// template<>
+// size_t ofxVecSlider_<ofVec2f>::dim(){
+// 	return 2;
+// }
 
-template<>
-size_t ofxVecSlider_<ofVec3f>::dim(){
-	return 3;
-}
+// template<>
+// size_t ofxVecSlider_<ofVec3f>::dim(){
+// 	return 3;
+// }
 
-template<>
-size_t ofxVecSlider_<ofVec4f>::dim(){
-	return 4;
-}
+// template<>
+// size_t ofxVecSlider_<ofVec4f>::dim(){
+// 	return 4;
+// }
 
 template<class VecType>
 ofAbstractParameter & ofxVecSlider_<VecType>::getParameter(){
@@ -110,9 +110,9 @@ const VecType * ofxVecSlider_<VecType>::operator->(){
 	return &value.get();
 }
 
-template class ofxVecSlider_<ofVec2f>;
-template class ofxVecSlider_<ofVec3f>;
-template class ofxVecSlider_<ofVec4f>;
+// template class ofxVecSlider_<ofVec2f>;
+// template class ofxVecSlider_<ofVec3f>;
+// template class ofxVecSlider_<ofVec4f>;
 template class ofxVecSlider_<glm::vec2>;
 template class ofxVecSlider_<glm::vec3>;
 template class ofxVecSlider_<glm::vec4>;

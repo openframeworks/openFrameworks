@@ -32,9 +32,9 @@ public:
 		ownedCollection.emplace_back(std::make_unique<ofxLabel>(parameter));
 		add(ownedCollection.back().get());
 	}
-	void add(ofParameter<ofVec2f> & parameter);
-	void add(ofParameter<ofVec3f> & parameter);
-	void add(ofParameter<ofVec4f> & parameter);
+	// void add(ofParameter<ofVec2f> & parameter);
+	// void add(ofParameter<ofVec3f> & parameter);
+	// void add(ofParameter<ofVec4f> & parameter);
 	void add(ofParameter<glm::vec2> & parameter);
 	void add(ofParameter<glm::vec3> & parameter);
 	void add(ofParameter<glm::vec4> & parameter);
