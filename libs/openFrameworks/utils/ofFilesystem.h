@@ -135,6 +135,9 @@ public:
 		return *this;
 	}
 	
+	path& replace_filename(const path & ext = std::filesystem::path()) {  path_.replace_filename(ext);
+		return *this;
+	}
 	path& operator/=(path&& p) noexcept {
 		path_ /= std::move(p.path_);
 		return *this;
