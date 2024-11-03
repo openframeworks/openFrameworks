@@ -138,6 +138,12 @@ public:
 	path& replace_filename(const path & ext = std::filesystem::path()) {  path_.replace_filename(ext);
 		return *this;
 	}
+
+	template <typename T>
+	path& assign(T&& p) {
+		path_.assign(std::move(std::forward<T>(p)));
+		return *this;
+	}
 	path& operator/=(path&& p) noexcept {
 		path_ /= std::move(p.path_);
 		return *this;
