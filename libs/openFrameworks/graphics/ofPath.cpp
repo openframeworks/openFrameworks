@@ -833,7 +833,7 @@ void ofPath::rotateDeg(float degrees, const glm::vec3& axis ){
     }else{
         for(int i=0;i<(int)polylines.size();i++){
             for(int j=0;j<(int)polylines[i].size();j++){
-                polylines[i][j] = glm::rotate(toGlm(polylines[i][j]), radians, axis);
+                polylines[i][j] = glm::rotate(polylines[i][j], radians, axis);
             }
         }
     }
