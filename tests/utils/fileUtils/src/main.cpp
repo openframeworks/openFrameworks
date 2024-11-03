@@ -185,10 +185,9 @@ class ofApp: public ofxUnitTestsApp{
 
 		ofxTest(std::filesystem::exists(ofFile("test.txt")), "ofFile cast to filesystem::path");
 		ofxTest(std::filesystem::exists(ofDirectory("d1")), "ofDirectory cast to filesystem::path");
-
-
-
-
+		
+		std::string narrow = ofToDataPath("");
+		ofxTest(std::filesystem::exists(narrow), "narrow paths on windows");
 
 		//========================================================================
         ofLogNotice() << "";
