@@ -212,6 +212,11 @@ public:
 	auto extension() const { return path(path_.extension()); }
 	bool has_extension() const { return path_.has_extension(); }
 	bool has_filename() const { return path_.has_filename(); }
+	bool has_root_path() const { return path_.has_root_path(); }
+	bool has_root_name() const { return path_.has_root_name(); }
+	bool has_root_directory() const { return path_.has_root_directory(); }
+	bool has_relative_path() const { return path_.has_relative_path(); }
+	bool has_stem() const { return path_.has_stem(); }
 
 	friend std::ostream& operator<<(std::ostream& os, const path& p) {
 		return os << p.string();
