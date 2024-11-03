@@ -40,7 +40,7 @@ public:
 	path(path&& other) noexcept = default;
 	path& operator=(path&& other) noexcept = default;
 	
-	void clear() {
+	void clear() noexcept {
 		path_.clear();
 	}
 	
@@ -66,11 +66,11 @@ public:
 	auto generic_u16string() const { return path_.generic_u16string(); }
 	auto generic_u32string() const { return path_.generic_u32string(); }
 	auto string() const { return path_.string(); }
-	auto native() const { return path_.native(); }
+	auto native() const noexcept { return path_.native(); }
 	auto u8string() const { return path_.u8string(); }
 	auto u16string() const { return path_.u16string(); }
 	auto u32string() const { return path_.u32string(); }
-	const auto c_str() const { return path_.c_str(); }
+	const auto c_str() const noexcept { return path_.c_str(); }
 
 	const std::filesystem::path& native_path() const { return path_; }
 	
@@ -115,6 +115,7 @@ public:
 	template <typename T> bool operator<=(T&& other) const noexcept { return path_ <= std::forward<T>(other); }
 	template <typename T> bool operator>(T&& other) const noexcept { return path_ > std::forward<T>(other); }
 	template <typename T> bool operator>=(T&& other) const noexcept { return path_ >= std::forward<T>(other); }
+	
 	bool operator!() const noexcept { return empty(); }
 
 	template <typename... Args>
@@ -132,7 +133,7 @@ public:
 	}
 
 	template <typename T>
-	path& assign(T&& p) {
+	path& assign(T&& p) noexcept {
 		path_.assign(std::move(std::forward<T>(p)));
 		return *this;
 	}
