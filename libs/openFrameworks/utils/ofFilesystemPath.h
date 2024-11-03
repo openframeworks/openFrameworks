@@ -6,14 +6,17 @@
 #include <iostream>
 #include <utility>  
 
-// general approach to return type:
-//  - use `path` and path &` to wrap std:: return values
-//  - use bool when bool (for self-documenting API)
-//  - use (const) auto (inheriting from std:: implementation) for others
-
 namespace of::filesystem {
 
 class path {
+	
+	// as per https://github.com/cplusplus/draft/releases/tag/n4917
+
+	// general approach to return type:
+	//  - use `path` and path &` to wrap std:: return values
+	//  - use bool when bool (for self-documenting API)
+	//  - use (const) auto (inheriting from std:: implementation) for others
+
 private:
 	std::filesystem::path path_; // simple composition
 	
