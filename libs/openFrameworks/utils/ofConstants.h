@@ -369,7 +369,7 @@ typedef TESSindex ofIndexType;
 #endif
 
 #if defined(OF_ENABLE_TOLERANT_NARROW_PATH_CONVERSION)
-	#include "ofFilesystem.h"
+	#include "ofFilesystemPath.h"
 #else
 	namespace of::filesystem { using path = std::filesystem::path; }
 #endif
