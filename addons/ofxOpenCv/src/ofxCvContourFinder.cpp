@@ -130,7 +130,7 @@ int ofxCvContourFinder::findContours( ofxCvGrayscaleImage&  input,
 
     	for( int j=0; j < cvSeqBlobs[i]->total; j++ ) {
 			CV_READ_SEQ_ELEM( pt, reader );
-            blobs[i].pts.push_back( ofPoint((float)pt.x, (float)pt.y) );
+            blobs[i].pts.push_back( glm::vec2((float)pt.x, (float)pt.y) );
 		}
 		blobs[i].nPts = blobs[i].pts.size();
 
