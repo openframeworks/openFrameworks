@@ -1121,18 +1121,18 @@ void ofVertices(const vector<glm::vec2> & polyPoints) {
 }
 
 //----------------------------------------------------------
-void ofVertices(const vector<ofVec3f> & polyPoints) {
-	for (const auto & p : polyPoints) {
-		ofGetCurrentRenderer()->getPath().lineTo(p);
-	}
-}
+//void ofVertices(const vector<ofVec3f> & polyPoints) {
+//	for (const auto & p : polyPoints) {
+//		ofGetCurrentRenderer()->getPath().lineTo(p);
+//	}
+//}
 
 //----------------------------------------------------------
-void ofVertices(const vector<ofVec2f> & polyPoints) {
-	for (const auto & p : polyPoints) {
-		ofGetCurrentRenderer()->getPath().lineTo(p);
-	}
-}
+//void ofVertices(const vector<ofVec2f> & polyPoints) {
+//	for (const auto & p : polyPoints) {
+//		ofGetCurrentRenderer()->getPath().lineTo(p);
+//	}
+//}
 
 //---------------------------------------------------
 void ofCurveVertex(float x, float y) {
@@ -1159,18 +1159,18 @@ void ofCurveVertices(const vector<glm::vec2> & curvePoints) {
 }
 
 //----------------------------------------------------------
-void ofCurveVertices(const vector<ofVec3f> & curvePoints) {
-	for (const auto & p : curvePoints) {
-		ofGetCurrentRenderer()->getPath().curveTo(p);
-	}
-}
+//void ofCurveVertices(const vector<ofVec3f> & curvePoints) {
+//	for (const auto & p : curvePoints) {
+//		ofGetCurrentRenderer()->getPath().curveTo(p);
+//	}
+//}
 
 //----------------------------------------------------------
-void ofCurveVertices(const vector<ofVec2f> & curvePoints) {
-	for (const auto & p : curvePoints) {
-		ofGetCurrentRenderer()->getPath().curveTo(p);
-	}
-}
+//void ofCurveVertices(const vector<ofVec2f> & curvePoints) {
+//	for (const auto & p : curvePoints) {
+//		ofGetCurrentRenderer()->getPath().curveTo(p);
+//	}
+//}
 
 //---------------------------------------------------
 void ofCurveVertex(const glm::vec3 & p) {

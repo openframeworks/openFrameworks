@@ -1252,7 +1252,7 @@ void ofMaterial::updateLights(const ofShader & shader,ofGLProgrammableRenderer &
 //			lights[idx].right = glm::normalize(toGlm(right));
 //			lights[idx].up = glm::normalize(up));
 
-			shader.setUniform3f("lights["+idx+"].right", glm::normalize(toGlm(right)));
+			shader.setUniform3f("lights["+idx+"].right", glm::normalize(right));
 			shader.setUniform3f("lights["+idx+"].up", glm::normalize(up));
 		}
 	}

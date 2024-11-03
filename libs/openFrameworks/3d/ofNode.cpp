@@ -1,10 +1,13 @@
+#define GLM_FORCE_CTOR_INIT
+#define GLM_ENABLE_EXPERIMENTAL
+#define GLM_SWIZZLE
+//#define GLM_SWIZZLE_XYZW
 
 #include "ofNode.h"
 #include "of3dGraphics.h"
 
-#define GLM_FORCE_CTOR_INIT
-#define GLM_ENABLE_EXPERIMENTAL
 #include <glm/mat4x4.hpp>
+//#include <glm/vec4.hpp>
 
 //----------------------------------------
 ofNode::ofNode()
@@ -135,9 +138,11 @@ void ofNode::setParent(ofNode& parent, bool bMaintainGlobalTransform) {
 		clearParent(bMaintainGlobalTransform);
 	}
 	if(bMaintainGlobalTransform) {
-		auto postParentPosition = position - parent.getGlobalPosition();
+		glm::vec3 pos { position };
+		glm::vec3 scl { scale };
+		auto postParentPosition = pos - parent.getGlobalPosition();
 		auto postParentOrientation = orientation.get() * glm::inverse(parent.getGlobalOrientation());
-		auto postParentScale = scale / parent.getGlobalScale();
+		auto postParentScale = scl / parent.getGlobalScale();
 		parent.addListener(*this);
 		setOrientation(postParentOrientation);
 		setPosition(postParentPosition);
@@ -632,8 +637,8 @@ void ofNode::orbitDeg(float longitude, float latitude, float radius, const glm::
 	
 	p = q * p;							   // rotate p on unit sphere based on quaternion
 	p = p * radius;						   // scale p by radius from its position on unit sphere
-
-	setGlobalPosition(centerPoint + p);
+	
+	setGlobalPosition(centerPoint + p.xyz());
 	setOrientation(q);
 
 	onOrientationChanged();
@@ -656,7 +661,7 @@ void ofNode::orbitRad(float longitude, float latitude, float radius, const glm::
 	p = q * p;							   // rotate p on unit sphere based on quaternion
 	p = p * radius;						   // scale p by radius from its position on unit sphere
 
-	setGlobalPosition(centerPoint + p);
+	setGlobalPosition(centerPoint + p.xyz());
 	setOrientation(q);
 
 	onOrientationChanged();
@@ -708,9 +713,12 @@ void ofNode::restoreTransformGL(ofBaseRenderer * renderer) const {
 
 //----------------------------------------
 void ofNode::createMatrix() {
-	localTransformMatrix = glm::translate(glm::mat4(1.0), toGlm(position));
+	glm::vec3 pos = position;
+	glm::vec3 scl = scale;
+
+	localTransformMatrix = glm::translate(glm::mat4(1.0), pos);
 	localTransformMatrix = localTransformMatrix * glm::toMat4((const glm::quat&)orientation);
-	localTransformMatrix = glm::scale(localTransformMatrix, toGlm(scale));
+	localTransformMatrix = glm::scale(localTransformMatrix, scl);
 
 	updateAxis();
 }
