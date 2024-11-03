@@ -203,7 +203,10 @@ public:
 	}
 		
 	// MARK: other sub paths
+	path root_name() const { return path(path_.root_name()); }
+	path root_directory() const { return path(path_.root_directory()); }
 	path root_path() const { return path(path_.root_path()); }
+	path relative_path() const { return path(path_.relative_path()); }
 	path parent_path() const { return path(path_.parent_path()); }
 	path filename() const { return path(path_.filename()); }
 	path stem() const { return path(path_.stem()); }
