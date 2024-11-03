@@ -112,9 +112,9 @@ ofShader::ofShader(const ofShader & mom)
     , shaders(mom.shaders)
     , uniformsCache(mom.uniformsCache)
     , attributesBindingsCache(mom.attributesBindingsCache)
-//#ifndef TARGET_OPENGLES
+#ifndef TARGET_OPENGLES
     , uniformBlocksCache(mom.uniformBlocksCache)
-//#endif
+#endif
 {
     if (mom.bLoaded) {
         retainProgram(program);
@@ -713,9 +713,9 @@ bool ofShader::linkProgram() {
             }
         }
 
-//#ifndef TARGET_OPENGLES
+#ifndef TARGET_OPENGLES
     #ifdef GLEW_ARB_uniform_buffer_object
-       if (GLEW_ARB_uniform_buffer_object) {
+        if (GLEW_ARB_uniform_buffer_object) {
             // Pre-cache all active uniforms blocks
             GLint numUniformBlocks = 0;
             glGetProgramiv(program, GL_ACTIVE_UNIFORM_BLOCKS, &numUniformBlocks);
@@ -726,13 +726,11 @@ bool ofShader::linkProgram() {
             for (GLint i = 0; i < numUniformBlocks; i++) {
                 glGetActiveUniformBlockName(program, i, uniformMaxLength, &length, uniformBlockName.data());
                 string name(uniformBlockName.begin(), uniformBlockName.begin() + length);
-//				std::cout << "WOW name " << name << std::endl;
-				bufferObjectsCache[name] = std::make_unique<ofBufferObject>();
                 uniformBlocksCache[name] = glGetUniformBlockIndex(program, name.c_str());
             }
-       }
+        }
     #endif
-//#endif
+#endif
 
 #ifdef TARGET_ANDROID
         ofAddListener(ofxAndroidEvents().unloadGL, this, &ofShader::unloadGL);
@@ -768,11 +766,11 @@ void ofShader::reloadGL() {
     auto bindings = attributesBindingsCache;
     shaders.clear();
     uniformsCache.clear();
-    //#ifndef TARGET_OPENGLES
+    #ifndef TARGET_OPENGLES
         #ifdef GLEW_ARB_uniform_buffer_object // Core in OpenGL 3.1
     uniformBlocksCache.clear();
         #endif
-    //#endif
+    #endif
     attributesBindingsCache.clear();
     for (auto & shader : source) {
         auto source = shader.second.source;
@@ -823,11 +821,11 @@ void ofShader::unload() {
 
         shaders.clear();
         uniformsCache.clear();
-//#ifndef TARGET_OPENGLES
+#ifndef TARGET_OPENGLES
     #ifdef GLEW_ARB_uniform_buffer_object // Core in OpenGL 3.1
         uniformBlocksCache.clear();
     #endif
-//#endif
+#endif
         attributesBindingsCache.clear();
 #ifdef TARGET_ANDROID
         ofRemoveListener(ofxAndroidEvents().reloadGL, this, &ofShader::reloadGL);
@@ -1021,23 +1019,6 @@ void ofShader::setUniform4i(const string & name, int v1, int v2, int v3, int v4)
 }
 
 //--------------------------------------------------------------
-void ofShader::setUniformBufferObject(const std::string & name, const void * data, GLsizeiptr dataSize) const {
-	if (bufferObjectsCache.find(name) != bufferObjectsCache.end()) {
-		if (!bufferObjectsCache.at(name)->isAllocated()) {
-			bufferObjectsCache.at(name)->allocate(dataSize, GL_STATIC_DRAW);
-		}
-		bufferObjectsCache.at(name)->updateData(dataSize, data);
-		bufferObjectsCache.at(name)->bindBase(GL_UNIFORM_BUFFER, getUniformBlockIndex(name));
-	} else {
-//		bufferObjectsCache.at(name) = std::make_unique<ofBufferObject>();
-//		for (const auto & b : bufferObjectsCache) {
-//			std::cout << b.first << std::endl;
-//		}
-//		std::cout << "setUniformBufferObject don't exist " << name << std::endl;
-	}
-}
-	
-//--------------------------------------------------------------
 void ofShader::setUniform1f(const string & name, float v1) const {
     if (bLoaded) {
         int loc = getUniformLocation(name);
@@ -1170,11 +1151,9 @@ void ofShader::setUniforms(const ofParameterGroup & parameters) const {
             setUniform2f(parameters[i].getEscapedName(), parameters[i].cast<glm::vec2>());
         } else if (parameters[i].type() == typeid(ofParameter<ofVec3f>).name()) {
             setUniform3f(parameters[i].getEscapedName(), parameters[i].cast<glm::vec3>());
-        }
-//		else if (parameters[i].type() == typeid(ofParameter<ofVec4f>).name()) {
-//            setUniform4f(parameters[i].getEscapedName(), parameters[i].cast<glm::vec4>());
-//        }
-		else if (parameters[i].type() == typeid(ofParameterGroup).name()) {
+        } else if (parameters[i].type() == typeid(ofParameter<ofVec4f>).name()) {
+            setUniform4f(parameters[i].getEscapedName(), parameters[i].cast<glm::vec4>());
+        } else if (parameters[i].type() == typeid(ofParameterGroup).name()) {
             setUniforms((ofParameterGroup &)parameters[i]);
         }
     }
@@ -1332,52 +1311,45 @@ GLint ofShader::getUniformLocation(const string & name) const {
     }
 }
 
-//#ifndef TARGET_OPENGLES
-//    #ifdef GLEW_ARB_uniform_buffer_object
+#ifndef TARGET_OPENGLES
+    #ifdef GLEW_ARB_uniform_buffer_object
 //--------------------------------------------------------------
 GLint ofShader::getUniformBlockIndex(const string & name) const {
     if (!bLoaded) return -1;
 
-//    if (GLEW_ARB_uniform_buffer_object) {
-#ifdef GLEW_ARB_uniform_buffer_object
+    if (GLEW_ARB_uniform_buffer_object) {
         auto it = uniformBlocksCache.find(name);
         if (it == uniformBlocksCache.end()) {
             return -1;
         } else {
             return it->second;
         }
-#else
-		//    } else {
+    } else {
         ofLogError("ofShader::getUniformBlockIndex") << "Sorry, it looks like you can't run 'ARB_uniform_buffer_object'";
         return -1;
-//    }
-#endif
+    }
 }
 
 //--------------------------------------------------------------
 GLint ofShader::getUniformBlockBinding(const string & name) const {
     if (!bLoaded) return -1;
 
-#ifdef GLEW_ARB_uniform_buffer_object
-//    if (GLEW_ARB_uniform_buffer_object) {
+    if (GLEW_ARB_uniform_buffer_object) {
         GLint index = getUniformBlockIndex(name);
         if (index == -1) return -1;
 
         GLint blockBinding;
         glGetActiveUniformBlockiv(program, index, GL_UNIFORM_BLOCK_BINDING, &blockBinding);
         return blockBinding;
-#else
-//} else {
+    } else {
         ofLogError("ofShader::getUniformBlockBinding") << "Sorry, it looks like you can't run 'ARB_uniform_buffer_object'";
         return -1;
-//    }
-#endif
+    }
 }
 
 //--------------------------------------------------------------
 void ofShader::printActiveUniformBlocks() const {
-#ifdef GLEW_ARB_uniform_buffer_object
-//    if (GLEW_ARB_uniform_buffer_object) {
+    if (GLEW_ARB_uniform_buffer_object) {
         GLint numUniformBlocks = 0;
         glGetProgramiv(program, GL_ACTIVE_UNIFORM_BLOCKS, &numUniformBlocks);
         ofLogNotice("ofShader") << numUniformBlocks << " uniform blocks";
@@ -1404,32 +1376,25 @@ void ofShader::printActiveUniformBlocks() const {
             line.str("");
         }
         delete[] uniformBlockName;
-#else
-//} else {
+    } else {
         ofLogError("ofShader::printActiveUniformBlocks") << "Sorry, it looks like you can't run 'ARB_uniform_buffer_object'";
-#endif
-//}
+    }
 }
 
 void ofShader::bindUniformBlock(GLuint binding, const string & name) const {
-	if (!bLoaded) return;
-
-
-#ifdef GLEW_ARB_uniform_buffer_object
-//        if (GLEW_ARB_uniform_buffer_object) {
+    if (bLoaded) {
+        if (GLEW_ARB_uniform_buffer_object) {
             GLint index = getUniformBlockIndex(name);
             if (index != -1) {
                 glUniformBlockBinding(program, index, binding);
             }
-#else
-//	} else {
+        } else {
             ofLogError("ofShader::bindUniformBlock") << "Sorry, it looks like you can't run 'ARB_uniform_buffer_object'";
-//    }
-#endif
-	
+        }
+    }
 }
-//    #endif
-//#endif
+    #endif
+#endif
 
 //--------------------------------------------------------------
 void ofShader::printActiveUniforms() const {
