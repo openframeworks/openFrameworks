@@ -122,6 +122,9 @@ public:
 	template <typename T> bool operator>=(T&& other) const noexcept { return path_ >= std::forward<T>(other); }
 	bool operator!() const noexcept { return empty(); }
 
+	template <typename... Args>
+	auto compare(Args&&... args) const { return path_.compare(std::forward<Args>(args)...); }
+	
 	// MARK: path transformation (return *this)
 	path& replace_extension(const path & ext = std::filesystem::path()) {  path_.replace_extension(ext);
 		return *this;
