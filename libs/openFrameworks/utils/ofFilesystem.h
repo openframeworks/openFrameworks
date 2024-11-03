@@ -40,6 +40,10 @@ public:
 	path(path&& other) noexcept = default;
 	path& operator=(path&& other) noexcept = default;
 	
+	void clear() {
+		path_.clear();
+	}
+	
 	operator std::filesystem::path() const { return path_; }
 	explicit operator const std::filesystem::path::value_type*() const { return path_.c_str(); }
 	
