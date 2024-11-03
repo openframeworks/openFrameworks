@@ -126,8 +126,8 @@ public:
 	/// calculates the coordinate in the world for the depth point (perspective calculation)
 	///
 	/// center of image is (0.0)
-	ofVec3f getWorldCoordinateAt(int cx, int cy) const;
-	ofVec3f getWorldCoordinateAt(float cx, float cy, float wz) const;
+	glm::vec3 getWorldCoordinateAt(int cx, int cy) const;
+	glm::vec3 getWorldCoordinateAt(float cx, float cy, float wz) const;
 
 /// \section Intrinsic IR Sensor Parameters
 
