@@ -88,8 +88,8 @@ public:
 	bool is_block_file() const { return std::filesystem::is_block_file(path_); }
 	bool is_character_file() const { return std::filesystem::is_character_file(path_); }
 	bool is_empty() const { return std::filesystem::is_empty(path_); }
-	std::uintmax_t file_size() const { return std::filesystem::file_size(path_); }
-	std::filesystem::file_time_type last_write_time() const { return std::filesystem::last_write_time(path_); }
+	auto file_size() const { return std::filesystem::file_size(path_); }
+	auto last_write_time() const { return std::filesystem::last_write_time(path_); }
 	auto get_permissions() const { return std::filesystem::status(path_).permissions(); }
 
 	// MARK: path type
@@ -200,9 +200,9 @@ public:
 	path parent_path() const { return path(path_.parent_path()); }
 	path filename() const { return path(path_.filename()); }
 	path stem() const { return path(path_.stem()); }
+	path extension() const { return path(path_.extension()); }
 
 	// MARK: file info
-	auto extension() const { return path(path_.extension()); }
 	bool has_extension() const { return path_.has_extension(); }
 	bool has_filename() const { return path_.has_filename(); }
 	bool has_root_path() const { return path_.has_root_path(); }
