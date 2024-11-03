@@ -45,9 +45,6 @@ class ofxCvBlob {
             for (const auto & p : pts) {
                 ofVertex(p);
             }
-            // for (int i = 0; i < nPts; i++){
-            //        ofVertex(pts[i].x, y pts[i].y);
-            // }
             ofEndShape(true);
             ofSetHexColor(0xff0099);
             ofDrawRectangle(boundingRect);
