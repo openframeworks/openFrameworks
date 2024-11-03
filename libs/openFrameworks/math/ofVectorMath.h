@@ -378,3 +378,9 @@ inline glm::vec2 & operator/=(glm::vec2 & v1, const ofVec2f & v2){
 inline glm::vec3 operator+(const glm::vec3 & v1, const glm::vec4 & v2){
 	return v1 + glm::vec3(v2.x, v2.y, v2.z);
 }
+
+// addons/ofxGui/src/ofxButton.cpp:58:65
+//--------------------------------------------------------------
+inline glm::vec2 operator+(const glm::vec2 & v1, const glm::vec3 & v2){
+	return v1 + glm::vec2(v2.x, v2.y);
+}

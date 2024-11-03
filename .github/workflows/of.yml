@@ -168,7 +168,7 @@ jobs:
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
   build-ios-tvos:
-    runs-on: macos-14
+    runs-on: macos-15
     strategy:
         matrix:
           cfg:
@@ -191,7 +191,7 @@ jobs:
       run: ./scripts/ci/$TARGET/build.sh;
 
       env:
-        DEVELOPER_DIR: "/Applications/Xcode_15.4.app/Contents/Developer"
+        DEVELOPER_DIR: "/Applications/Xcode_16.1.app/Contents/Developer"
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -276,7 +276,7 @@ jobs:
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   build-macos:
-    runs-on: macos-14
+    runs-on: macos-15
     strategy:
         matrix:
           cfg:
@@ -301,8 +301,8 @@ jobs:
           scripts/ci/${{ matrix.cfg.target }}/run_tests.sh;
         fi
       env:
-        DEVELOPER_DIR: "/Applications/Xcode_15.4.app/Contents/Developer"
-        SDKROOT: "/Applications/Xcode_15.4.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk"
+        DEVELOPER_DIR: "/Applications/Xcode_16.1.app/Contents/Developer"
+        SDKROOT: "/Applications/Xcode_16.1.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk"
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
