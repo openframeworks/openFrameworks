@@ -144,6 +144,12 @@ public:
 		path_.assign(std::move(std::forward<T>(p)));
 		return *this;
 	}
+
+	path& append(path&& p) noexcept {
+		path_ /= std::move(p.path_);
+		return *this;
+	}
+
 	path& operator/=(path&& p) noexcept {
 		path_ /= std::move(p.path_);
 		return *this;
