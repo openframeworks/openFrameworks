@@ -9,6 +9,11 @@
 namespace of {
 namespace filesystem {
 
+// general approach to return type:
+//  - use `path` and path &` to wrap std:: return values
+//  - use bool when bool (for self-documenting API)
+//  - use (const) auto (inheriting from std:: implementation) for others
+
 class path {
 private:
 	std::filesystem::path path_; // simple composition
