@@ -1,8 +1,9 @@
 #pragma once
 
-#define GLM_FORCE_CTOR_INIT
-#define GLM_ENABLE_EXPERIMENTAL
-#include <glm/vec3.hpp>
+#include <glm/detail/qualifier.hpp>
+namespace glm {
+	typedef vec<3, float, defaultp>		vec3;
+}
 
 /// \brief Draws x,y,z axes representing the current reference frame.
 ///
