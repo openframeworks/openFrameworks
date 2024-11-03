@@ -1,13 +1,11 @@
-#define GLM_FORCE_CTOR_INIT
-#define GLM_ENABLE_EXPERIMENTAL
-#define GLM_SWIZZLE
-//#define GLM_SWIZZLE_XYZW
 
 #include "ofNode.h"
 #include "of3dGraphics.h"
+#include "ofVectorMath.h"
 
+#define GLM_FORCE_CTOR_INIT
+#define GLM_ENABLE_EXPERIMENTAL
 #include <glm/mat4x4.hpp>
-//#include <glm/vec4.hpp>
 
 //----------------------------------------
 ofNode::ofNode()
@@ -638,7 +636,8 @@ void ofNode::orbitDeg(float longitude, float latitude, float radius, const glm::
 	p = q * p;							   // rotate p on unit sphere based on quaternion
 	p = p * radius;						   // scale p by radius from its position on unit sphere
 	
-	setGlobalPosition(centerPoint + p.xyz());
+//	setGlobalPosition(centerPoint + p.xyz());
+	setGlobalPosition(centerPoint + p); // inline operator+
 	setOrientation(q);
 
 	onOrientationChanged();
@@ -661,7 +660,8 @@ void ofNode::orbitRad(float longitude, float latitude, float radius, const glm::
 	p = q * p;							   // rotate p on unit sphere based on quaternion
 	p = p * radius;						   // scale p by radius from its position on unit sphere
 
-	setGlobalPosition(centerPoint + p.xyz());
+//	setGlobalPosition(centerPoint + p.xyz());
+	setGlobalPosition(centerPoint + p); // inline operator+
 	setOrientation(q);
 
 	onOrientationChanged();

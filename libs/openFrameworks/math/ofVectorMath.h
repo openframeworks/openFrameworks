@@ -26,6 +26,7 @@
 #include <iomanip>
 
 
+
 namespace glm {
 	//--------------------------------------------------------------
 	template <typename T, precision P>
@@ -372,3 +373,9 @@ inline glm::vec2 & operator/=(glm::vec2 & v1, const ofVec2f & v2){
 
 
 #endif
+
+
+//--------------------------------------------------------------
+inline glm::vec3 operator+(const glm::vec3 & v1, const glm::vec4 & v2){
+	return v1 + glm::vec3(v2.x, v2.y, v2.z);
+}
