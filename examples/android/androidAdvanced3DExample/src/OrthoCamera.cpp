@@ -54,9 +54,11 @@ void OrthoCamera::begin(ofRectangle rect)
 	glOrtho(-scalex, scalex, -scaley, scaley, -20 * scale, 20 * scale);
 #else
 	// note that bottom and top are switched compared to glOrtho
-	ofMatrix4x4 ortho = ofMatrix4x4::newOrthoMatrix(-scalex, scalex, scaley, -scaley,
-			-20 * scale, 20 * scale);
-	glMultMatrixf(ortho.getPtr());
+	// ofMatrix4x4 ortho = ofMatrix4x4::newOrthoMatrix(-scalex, scalex, scaley, -scaley,
+	// 		-20 * scale, 20 * scale);
+	// glMultMatrixf(ortho.getPtr());
+	glm::mat4 ortho = glm::ortho(-scalex, scalex, scaley, -scaley, -20 * scale, 20 * scale);
+	glMultMatrixf(glm::value_ptr(ortho.getPtr()));
 #endif
 	glMatrixMode(GL_MODELVIEW);
 	//
