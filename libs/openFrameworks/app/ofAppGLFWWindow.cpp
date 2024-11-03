@@ -141,8 +141,10 @@ void ofAppGLFWWindow::setup(const ofGLESWindowSettings & settings) {
 #endif
         const ofGLFWWindowSettings * glSettings = dynamic_cast<const ofGLFWWindowSettings *>(&settings);
         if (glSettings) {
+			std::cout << "FEIO 1" << std::endl;
             setup(*glSettings);
         } else {
+			std::cout << "FEIO 2" << std::endl;
             setup(ofGLFWWindowSettings(settings));
         }
     }
@@ -936,7 +938,7 @@ void ofAppGLFWWindow::setup(const ofGLESWindowSettings & settings) {
             // make sure to save current pos if not specified in settings
             if (settings.isPositionSet()) {
                 auto pos = getWindowPosition();
-                settings.setPosition(ofVec2f(pos.x, pos.y));
+                settings.setPosition(pos);
             }
             
             //make sure the window is getting the mouse/key events

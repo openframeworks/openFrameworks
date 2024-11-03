@@ -12,16 +12,12 @@ template<typename T>
 class ofColor_;
 typedef ofColor_<float> ofFloatColor;
 
-//class ofVec2f;
-//class ofVec3f;
-
 template<class V, class N, class C, class T>
 class ofMesh_;
 using ofMesh = ofMesh_<ofDefaultVertexType, ofDefaultNormalType, ofDefaultColorType, ofDefaultTexCoordType>;
 
 class ofVbo {
 public:
-	
 	ofVbo();
 	ofVbo(const ofVbo & mom);
 	ofVbo & operator=(const ofVbo& mom);

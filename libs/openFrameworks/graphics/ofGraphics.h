@@ -9,9 +9,6 @@ namespace glm {
 	typedef vec<3, float, defaultp>		vec3;
 }
 
-class ofVec3f;
-class ofVec2f;
-
 
 template <typename T>
 std::string ofToString(const T &);
@@ -602,8 +599,8 @@ void ofVertex(const glm::vec3 & p);
 void ofVertex(const glm::vec2 & p);
 void ofVertices(const std::vector<glm::vec3> & polyPoints);
 void ofVertices(const std::vector<glm::vec2> & polyPoints);
-void ofVertices(const std::vector<ofVec3f> & polyPoints);
-void ofVertices(const std::vector<ofVec2f> & polyPoints);
+//void ofVertices(const std::vector<ofVec3f> & polyPoints);
+//void ofVertices(const std::vector<ofVec2f> & polyPoints);
 
 /// \brief Specifies a single point of a shape. The difference from ofVertex is that
 /// the line describing the edge of the shape between two points will be a
@@ -620,8 +617,8 @@ void ofCurveVertex(const glm::vec2 & p);
 /// ofPoints. Should be called between ofBeginShape() and ofEndShape().
 void ofCurveVertices(const std::vector<glm::vec3> & curvePoints);
 void ofCurveVertices(const std::vector<glm::vec2> & curvePoints);
-void ofCurveVertices(const std::vector<ofVec3f> & curvePoints);
-void ofCurveVertices(const std::vector<ofVec2f> & curvePoints);
+//void ofCurveVertices(const std::vector<ofVec3f> & curvePoints);
+//void ofCurveVertices(const std::vector<ofVec2f> & curvePoints);
 
 /// \brief Describes a bezier curve through three points of a shape. To be called
 /// between ofBeginShape() and ofEndShape().

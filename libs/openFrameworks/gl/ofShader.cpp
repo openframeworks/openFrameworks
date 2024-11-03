@@ -1147,13 +1147,15 @@ void ofShader::setUniforms(const ofParameterGroup & parameters) const {
             setUniform3f(parameters[i].getEscapedName(), parameters[i].cast<glm::vec3>());
         } else if (parameters[i].type() == typeid(ofParameter<glm::vec4>).name()) {
             setUniform4f(parameters[i].getEscapedName(), parameters[i].cast<glm::vec4>());
-        } else if (parameters[i].type() == typeid(ofParameter<ofVec2f>).name()) {
-            setUniform2f(parameters[i].getEscapedName(), parameters[i].cast<glm::vec2>());
-        } else if (parameters[i].type() == typeid(ofParameter<ofVec3f>).name()) {
-            setUniform3f(parameters[i].getEscapedName(), parameters[i].cast<glm::vec3>());
-        } else if (parameters[i].type() == typeid(ofParameter<ofVec4f>).name()) {
-            setUniform4f(parameters[i].getEscapedName(), parameters[i].cast<glm::vec4>());
-        } else if (parameters[i].type() == typeid(ofParameterGroup).name()) {
+        } 
+        // else if (parameters[i].type() == typeid(ofParameter<ofVec2f>).name()) {
+        //     setUniform2f(parameters[i].getEscapedName(), parameters[i].cast<glm::vec2>());
+        // } else if (parameters[i].type() == typeid(ofParameter<ofVec3f>).name()) {
+        //     setUniform3f(parameters[i].getEscapedName(), parameters[i].cast<glm::vec3>());
+        // } else if (parameters[i].type() == typeid(ofParameter<ofVec4f>).name()) {
+        //     setUniform4f(parameters[i].getEscapedName(), parameters[i].cast<glm::vec4>());
+        // } 
+        else if (parameters[i].type() == typeid(ofParameterGroup).name()) {
             setUniforms((ofParameterGroup &)parameters[i]);
         }
     }
