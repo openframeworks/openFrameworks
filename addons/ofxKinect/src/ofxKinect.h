@@ -121,7 +121,7 @@ public:
 
 	/// get the calulated distance for a depth point
 	float getDistanceAt(int x, int y) const;
-	float getDistanceAt(const ofPoint & p) const;
+	float getDistanceAt(const glm::vec2 & p) const;
 
 	/// calculates the coordinate in the world for the depth point (perspective calculation)
 	///
@@ -154,7 +154,7 @@ public:
 	///
 	/// see setRegistration() for calibrated depth->RGB points
 	ofColor getColorAt(int x, int y) const;
-	ofColor getColorAt(const ofPoint & p) const;
+	ofColor getColorAt(const glm::vec2 & p) const;
 
 /// \section Pixel Data
 
@@ -226,7 +226,7 @@ public:
 	/// ... yes, the kinect has an accelerometer
 	
 	/// raw axis values
-	ofPoint getRawAccel() const;
+	glm::vec3 getRawAccel() const;
 	
 	/// axis-based gravity adjusted accelerometer values
 	///
@@ -236,7 +236,7 @@ public:
 	///
 	/// http://www.kionix.com/Product%20Sheets/KXSD9%20Product%20Brief.pdf
 	///
-	ofPoint getMksAccel() const;
+	glm::vec3 getMksAccel() const;
 
     /// get the current pitch (x axis) & roll (z axis) of the kinect in degrees
     ///
@@ -282,13 +282,13 @@ public:
 	/// draw the video texture
 	void draw(float x, float y, float w, float h) const;
 	void draw(float x, float y) const;
-	void draw(const ofPoint& point) const;
+	void draw(const glm::vec2& point) const;
 	void draw(const ofRectangle& rect) const;
 
 	/// draw the grayscale depth texture
 	void drawDepth(float x, float y, float w, float h) const;
 	void drawDepth(float x, float y) const;
-	void drawDepth(const ofPoint& point) const;
+	void drawDepth(const glm::vec2& point) const;
 	void drawDepth(const ofRectangle& rect) const;
 
 /// \section Util
@@ -354,8 +354,8 @@ protected:
 	ofShortPixels depthPixelsRaw;
 	ofFloatPixels distancePixels;
 
-	ofPoint rawAccel;
-	ofPoint mksAccel;
+	glm::vec3 rawAccel;
+	glm::vec3 mksAccel;
 
 	float targetTiltAngleDeg;
 	float currentTiltAngleDeg;
