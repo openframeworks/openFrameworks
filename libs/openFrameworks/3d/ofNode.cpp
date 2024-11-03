@@ -1,6 +1,6 @@
 #define GLM_FORCE_CTOR_INIT
 #define GLM_ENABLE_EXPERIMENTAL
-#define GLM_SWIZZLE
+//#define GLM_SWIZZLE
 //#define GLM_SWIZZLE_XYZW
 
 #include "ofNode.h"
@@ -638,7 +638,8 @@ void ofNode::orbitDeg(float longitude, float latitude, float radius, const glm::
 	p = q * p;							   // rotate p on unit sphere based on quaternion
 	p = p * radius;						   // scale p by radius from its position on unit sphere
 	
-	setGlobalPosition(centerPoint + p.xyz());
+//	setGlobalPosition(centerPoint + p.xyz());
+	setGlobalPosition(centerPoint + p);
 	setOrientation(q);
 
 	onOrientationChanged();
@@ -661,7 +662,8 @@ void ofNode::orbitRad(float longitude, float latitude, float radius, const glm::
 	p = q * p;							   // rotate p on unit sphere based on quaternion
 	p = p * radius;						   // scale p by radius from its position on unit sphere
 
-	setGlobalPosition(centerPoint + p.xyz());
+//	setGlobalPosition(centerPoint + p.xyz());
+	setGlobalPosition(centerPoint + p);
 	setOrientation(q);
 
 	onOrientationChanged();
