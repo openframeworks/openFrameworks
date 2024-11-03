@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		031A7A512CD5F33100797180 /* brotli.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF7C462D2C097CCE00461163 /* brotli.xcframework */; };
 		031A7A542CD5F33300797180 /* cairo.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF5BF8492B737E260049DEF6 /* cairo.xcframework */; };
 		031A7A562CD5F33400797180 /* curl.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF6276A32BAD6639008864C1 /* curl.xcframework */; };
 		031A7A582CD5F33600797180 /* FreeImage.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF5BF84B2B737E320049DEF6 /* FreeImage.xcframework */; };
@@ -22,6 +21,7 @@
 		031A7A6A2CD5F34500797180 /* tess2.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF5BF8432B737C7C0049DEF6 /* tess2.xcframework */; };
 		031A7A6C2CD5F34A00797180 /* uriparser.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF5BF8412B737C700049DEF6 /* uriparser.xcframework */; };
 		031A7A6E2CD5F34A00797180 /* zlib.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF5BF83F2B737C0A0049DEF6 /* zlib.xcframework */; };
+		037A65F92CD72C1000CF8AC1 /* brotli.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF7C462D2C097CCE00461163 /* brotli.xcframework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -68,8 +68,15 @@
 				math/ofVec4f.cpp,
 				math/ofVec4f.h,
 				math/ofVectorMath.h,
+				sound/ofFmodSoundPlayer.cpp,
+				sound/ofFmodSoundPlayer.h,
 				sound/ofMediaFoundationSoundPlayer.cpp,
 				sound/ofMediaFoundationSoundPlayer.h,
+				sound/ofOpenALSoundPlayer.cpp,
+				sound/ofOpenALSoundPlayer.h,
+				sound/ofRtAudioSoundStream.cpp,
+				sound/ofRtAudioSoundStream.h,
+				types/ofPoint.h,
 				video/ofDirectShowGrabber.cpp,
 				video/ofDirectShowGrabber.h,
 				video/ofDirectShowPlayer.cpp,
@@ -97,8 +104,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				031A7A6E2CD5F34A00797180 /* zlib.xcframework in Frameworks */,
+				037A65F92CD72C1000CF8AC1 /* brotli.xcframework in Frameworks */,
 				031A7A6A2CD5F34500797180 /* tess2.xcframework in Frameworks */,
-				031A7A512CD5F33100797180 /* brotli.xcframework in Frameworks */,
 				031A7A622CD5F33F00797180 /* openssl.xcframework in Frameworks */,
 				031A7A542CD5F33300797180 /* cairo.xcframework in Frameworks */,
 				031A7A5C2CD5F33B00797180 /* glew.xcframework in Frameworks */,
