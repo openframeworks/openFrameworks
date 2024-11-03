@@ -103,6 +103,11 @@ public:
 	}
 	
 	template <typename... Args>
+	path lexically_proximate(Args&&... args) const {
+		return path(path_.lexically_proximate(std::forward<Args>(args)...));
+	}
+	
+	template <typename... Args>
 	path absolute(Args&&... args) const {
 		return path(std::filesystem::absolute(path_, std::forward<Args>(args)...));
 	}
