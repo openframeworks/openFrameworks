@@ -172,26 +172,26 @@ public:
 	
 	// MARK: other operators
 	template <typename LHS>
-	const friend of::filesystem::path operator/(const LHS& lhs, const path& rhs) {
+	const friend path operator/(const LHS& lhs, const path& rhs) {
 		return path(lhs / rhs.path_);
 	}
 	
 	template <typename RHS>
-	const friend of::filesystem::path operator/(const path& lhs, const RHS& rhs) {
+	const friend path operator/(const path& lhs, const RHS& rhs) {
 		return path(lhs.path_ / rhs);
 	}
 	
-	const friend of::filesystem::path operator/(const path& lhs, const path& rhs) {
+	const friend path operator/(const path& lhs, const path& rhs) {
 		return path(lhs.path_ / rhs.path_);
 	}
 	
 	template <typename LHS>
-	const friend of::filesystem::path operator+(const LHS& lhs, const path& rhs) {
+	const friend path operator+(const LHS& lhs, const path& rhs) {
 		return path(lhs + rhs.path_.string());
 	}
 	
 	template <typename RHS>
-	const friend of::filesystem::path operator+(const path& lhs, const RHS& rhs) {
+	const friend path operator+(const path& lhs, const RHS& rhs) {
 		return path(lhs.path_.string() + rhs);
 	}
 		
