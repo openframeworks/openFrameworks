@@ -61,6 +61,10 @@ public:
 	
 	auto wstring() const { return path_.wstring(); }
 	auto generic_string() const { return path_.generic_string(); }
+	auto generic_wstring() const { return path_.generic_wstring(); }
+	auto generic_u8string() const { return path_.generic_u8string(); }
+	auto generic_u16string() const { return path_.generic_u16string(); }
+	auto generic_u32string() const { return path_.generic_u32string(); }
 	auto string() const { return path_.string(); }
 	auto native() const { return path_.native(); }
 	auto u8string() const { return path_.u8string(); }
