@@ -24,6 +24,8 @@ void ofQuaternion::get(ofMatrix4x4& matrix) const {
 
 /// Set the elements of the Quat to represent a rotation of angle
 /// (degrees) around the axis (x,y,z)
+///
+
 void ofQuaternion::makeRotate( float angle, float x, float y, float z ) {
 	angle = glm::radians(angle);
 	
@@ -37,7 +39,9 @@ void ofQuaternion::makeRotate( float angle, float x, float y, float z ) {
 		return;
 	}
 
-	float inversenorm  = 1.0f / length;
+	
+//	float inversenorm  	= 1.0f / length;
+	float inversenorm = 1.0f;
 	float coshalfangle = cosf( 0.5f * angle );
 	float sinhalfangle = sinf( 0.5f * angle );
 

@@ -1,6 +1,7 @@
 #include "ofMain.h"
 #include "ofxUnitTests.h"
 #include "ofAppNoWindow.h"
+#include "ofQuaternion.h"
 
 
 bool aprox_eq(const glm::vec3 & v1, const glm::vec3 & v2){
@@ -87,7 +88,7 @@ public:
 
 			mNode1.dolly(100);
 
-			glm::quat rot = glm::angleAxis(glm::radians(angle), glm::vec3(0.f, 1.f, 0.f));
+			glm::quat rot = glm::angleAxis(glm::radians(angle), glm::normalize(glm::vec3(0.f, 1.f, 0.f)));
 
 			mNode1.rotateAround(rot, mNode.getGlobalPosition());
 
@@ -106,7 +107,7 @@ public:
 			ofNode n1;
 			ofNode n2;
 			n1.setGlobalPosition({ 100.f,0.f,0.f });
-			glm::quat rot = glm::angleAxis(glm::radians(-90.0f), glm::vec3(0.f, -1.f, 1.f));
+			glm::quat rot = glm::angleAxis(glm::radians(-90.0f), glm::normalize(glm::vec3(0.f, -1.f, 1.f)));
 
 			// n1.setGlobalOrientation(ofQuaternion(-90, { 0.f,-1.f,1.f }));
 			n1.setGlobalOrientation(rot);
