@@ -121,6 +121,9 @@ public:
 	template <typename... Args>
 	auto compare(Args&&... args) const { return path_.compare(std::forward<Args>(args)...); }
 	
+	void swap(path & other) noexcept { path_.swap(other.path_); }
+
+	
 	// MARK: path transformation (return *this)
 	path& replace_extension(const path & ext = std::filesystem::path()) {  
 		path_.replace_extension(ext);
