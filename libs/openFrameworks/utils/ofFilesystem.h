@@ -146,6 +146,12 @@ public:
 		return *this;
 	}
 	
+	template <typename T>
+	path& concat(const T& rhs) {
+		path_ += rhs;
+		return *this;
+	}
+	
 	path& make_preferred() {
 		path_.make_preferred();
 		return *this;
