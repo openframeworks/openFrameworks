@@ -413,11 +413,13 @@ struct TypeInfo<glm::vec3> {
 	static glm::vec3 max() { return glm::vec3(1); }
 };
 
-//template <>
-//struct TypeInfo<ofVec4f> {
-//	static ofVec4f min() { return ofVec4f(0); }
-//	static ofVec4f max() { return ofVec4f(1); }
-//};
+#ifdef OF_USE_LEGACY_MATH
+template <>
+struct TypeInfo<ofVec4f> {
+	static ofVec4f min() { return ofVec4f(0); }
+	static ofVec4f max() { return ofVec4f(1); }
+};
+#endif
 
 template <>
 struct TypeInfo<glm::vec4> {
