@@ -866,11 +866,11 @@ void ofxKinect::threadedFunction(){
 		freenect_raw_tilt_state * tilt = freenect_get_tilt_state(kinectDevice);
 		currentTiltAngleDeg = freenect_get_tilt_degs(tilt);
 
-		rawAccel.set(tilt->accelerometer_x, tilt->accelerometer_y, tilt->accelerometer_z);
+		rawAccel = {tilt->accelerometer_x, tilt->accelerometer_y, tilt->accelerometer_z};
 
 		double dx,dy,dz;
 		freenect_get_mks_accel(tilt, &dx, &dy, &dz);
-		mksAccel.set(dx, dy, dz);
+		mksAccel = {dx, dy, dz};
 	}
     
 	// finish up a tilt on exit

@@ -130,7 +130,7 @@ int ofxCvContourFinder::findContours( ofxCvGrayscaleImage&  input,
 
     	for( int j=0; j < cvSeqBlobs[i]->total; j++ ) {
 			CV_READ_SEQ_ELEM( pt, reader );
-            blobs[i].pts.push_back( glm::vec2((float)pt.x, (float)pt.y) );
+            blobs[i].pts.push_back( glm::vec3{(float)pt.x, (float)pt.y, 0.0f} );
 		}
 		blobs[i].nPts = blobs[i].pts.size();
 
@@ -219,7 +219,7 @@ void ofxCvContourFinder::setAnchorPoint( float x, float y ){
 
 //--------------------------------------------------------------------------------
 void ofxCvContourFinder::resetAnchor(){
-    anchor.set(0,0);
+    anchor = { 0, 0 };
     bAnchorIsPct = false;
 }
 

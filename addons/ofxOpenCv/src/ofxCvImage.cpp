@@ -485,7 +485,7 @@ void ofxCvImage::resetAnchor(){
     if( bUseTexture ) {
     	tex.resetAnchor();
     }else{
-        anchor.set(0,0);
+        anchor = { 0, 0 };
         bAnchorIsPct = false;
     }
 }

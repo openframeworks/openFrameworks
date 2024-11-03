@@ -56,14 +56,14 @@ void ofxButton::generateDraw(){
 	fg.setFilled(false);
 	fg.setStrokeWidth(1);
 	fg.setStrokeColor(thisFillColor);
-	fg.rectRounded(b.getPosition()+checkboxRect.getTopLeft()+glm::vec2{1,1},checkboxRect.width-2,checkboxRect.height-2, 5);
+	fg.rectRounded(b.getPosition()+checkboxRect.getTopLeft()+glm::vec3{1,1,0},checkboxRect.width-2,checkboxRect.height-2, 5);
 
 	cross.clear();
 	cross.setStrokeColor(thisTextColor);
 	cross.setFillColor(thisFillColor);
 	cross.setStrokeWidth(2);
 	cross.setFilled(true);
-	cross.rectRounded(b.getPosition()+checkboxRect.getTopLeft()+glm::vec2{1,1},checkboxRect.width-2,checkboxRect.height-2, 5);
+	cross.rectRounded(b.getPosition()+checkboxRect.getTopLeft()+glm::vec3{1,1,0},checkboxRect.width-2,checkboxRect.height-2, 5);
 
 	std::string name;
 	auto textX = b.x + textPadding + checkboxRect.width;

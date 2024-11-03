@@ -13,7 +13,6 @@
 
 #include "ofxCvConstants.h"
 
-
 class ofxCvBlob {
 
     public:
@@ -21,10 +20,10 @@ class ofxCvBlob {
         float               area;
         float               length;
         ofRectangle         boundingRect;
-        ofDefaultVec3       centroid;
+        ofDefaultVec2       centroid;
         bool                hole;
 
-        std::vector<ofDefaultVec3> pts;    // the contour of the blob
+        std::vector<ofDefaultVec2> pts;    // the contour of the blob
         int                        nPts;   // number of pts;
 
         //----------------------------------------
@@ -40,13 +39,19 @@ class ofxCvBlob {
             ofPushStyle();
             ofNoFill();
             ofSetHexColor(0x00FFFF);
+            ofPushMatrix();
+            ofTranslate(x, y);
             ofBeginShape();
-            for (int i = 0; i < nPts; i++){
-                   ofVertex(x + pts[i].x, y + pts[i].y);
+            for (const auto & p : pts) {
+                ofVertex(p);
             }
+            // for (int i = 0; i < nPts; i++){
+            //        ofVertex(pts[i].x, y pts[i].y);
+            // }
             ofEndShape(true);
             ofSetHexColor(0xff0099);
-            ofDrawRectangle(x + boundingRect.x, y + boundingRect.y, boundingRect.width, boundingRect.height);
+            ofDrawRectangle(boundingRect);
+            ofPopMatrix();
             ofPopStyle();
         }
 };
