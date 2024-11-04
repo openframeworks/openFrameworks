@@ -5,12 +5,9 @@
 	"objects": {
 		"E4B69E1C0A3A1BDC003C02F2": {
 			"path": "src",
-			"isa": "PBXGroup",
-			"children": [
-				"E4B69E1D0A3A1BDC003C02F2",
-				"E4B69E1E0A3A1BDC003C02F2",
-				"E4B69E1F0A3A1BDC003C02F2"
-			],
+			"isa": "PBXFileReference",
+			"lastKnownFileType": "folder",
+			"explicitFileTypes" : [],
 			"sourceTree": "SOURCE_ROOT"
 		},
 		"E4EB6923138AFD0F00A09F29": {
@@ -99,22 +96,6 @@
 			"projectRoot": "",
 			"mainGroup": "E4B69B4A0A3A1720003C02F2"
 		},
-		"E4B69E1E0A3A1BDC003C02F2": {
-			"path": "src/ofApp.cpp",
-			"isa": "PBXFileReference",
-			"fileEncoding": "4",
-			"name": "ofApp.cpp",
-			"sourceTree": "SOURCE_ROOT",
-			"explicitFileType": "sourcecode.cpp.cpp"
-		},
-		"E4B69E1D0A3A1BDC003C02F2": {
-			"path": "src/main.cpp",
-			"isa": "PBXFileReference",
-			"lastKnownFileType": "sourcecode.cpp.cpp",
-			"name": "main.cpp",
-			"sourceTree": "SOURCE_ROOT",
-			"fileEncoding": "4"
-		},
 		"19B789C429E5AB4A0082E9B8": {
 			"buildActionMask": "2147483647",
 			"runOnlyForDeploymentPostprocessing": "0",
@@ -177,6 +158,7 @@
 			"isa": "PBXGroup",
 			"sourceTree": "<group>",
 			"children": [
+				"035ADD3E2CD9886200F9E324",
 				"191CD6FA2847E21E0085CBB6",
 				"E4B6FCAD0C3E899E008CF71C",
 				"E4EB6923138AFD0F00A09F29",
@@ -190,8 +172,7 @@
 			"isa": "PBXSourcesBuildPhase",
 			"buildActionMask": "2147483647",
 			"files": [
-				"E4B69E200A3A1BDC003C02F2",
-				"E4B69E210A3A1BDC003C02F2"
+				"E4B69E200A3A1BDC003C02F2"
 			],
 			"runOnlyForDeploymentPostprocessing": "0"
 		},
@@ -250,11 +231,7 @@
 		},
 		"E4B69E200A3A1BDC003C02F2": {
 			"isa": "PBXBuildFile",
-			"fileRef": "E4B69E1D0A3A1BDC003C02F2"
-		},
-		"E4B69E210A3A1BDC003C02F2": {
-			"isa": "PBXBuildFile",
-			"fileRef": "E4B69E1E0A3A1BDC003C02F2"
+			"fileRef": "E4B69E1C0A3A1BDC003C02F2"
 		},
 		"E4B69B5A0A3A1756003C02F2": {
 			"buildConfigurationList": "E4B69B5F0A3A1757003C02F2",
