@@ -3,15 +3,12 @@
 //  Created by Dimitre Lima / Dmtr.org on 31/10/24.
 //	Copyright Dmtr.org 2024
 //
+#pragma once
 
 #import <glm/vec2.hpp>
 #import "ofFbo.h"
 
 #import <Foundation/Foundation.h>
-#import "AVFoundation/AVAssetWriter.h"
-#import "AVFoundation/AVAssetWriterInput.h"
-#import "AVFoundation/AVMediaFormat.h"
-#import "AVFoundation/AVVideoSettings.h"
 
 @interface ofVideoWriterAVFoundation : NSObject
 
