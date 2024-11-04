@@ -23,7 +23,7 @@
 #include "ofColor.h"
 #include "ofGraphicsBaseTypes.h"
 #include "ofParameter.h"
-//#include "ofPoint.h"
+#include "ofPoint.h"
 #include "ofRectangle.h"
 #include "ofTypes.h"
 
