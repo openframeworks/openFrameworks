@@ -195,12 +195,12 @@ void ofGLProgrammableRenderer::draw(const ofMesh & vertexData, ofPolyRenderMode 
 			drawMode = GL_POINTS;
 		}
 	}
-	
+
 	bool bConfigureForLinesShader = areLinesShadersEnabled() && (drawMode == GL_LINES || drawMode == GL_LINE_STRIP || drawMode == GL_LINE_LOOP);
 	if( usingCustomShader || usingCustomShader || currentMaterial) {
 		bConfigureForLinesShader = false;
 	}
-	
+
 	if( bConfigureForLinesShader ) {
 		mDrawMode = drawMode;
 		tGoingToRenderLines = true;
@@ -234,12 +234,12 @@ void ofGLProgrammableRenderer::draw(const ofMesh & vertexData, ofPolyRenderMode 
 		drawMode = ofGetGLPrimitiveMode(vertexData.getMode());
 		break;
 	}
-	
+
 	bool bConfigureForLinesShader = areLinesShadersEnabled() && (drawMode == GL_LINES || drawMode == GL_LINE_STRIP || drawMode == GL_LINE_LOOP);
 	if( usingCustomShader || usingCustomShader || currentMaterial) {
 		bConfigureForLinesShader = false;
 	}
-	
+
 	if(bConfigureForLinesShader) {
 		mDrawMode = drawMode;
 		tGoingToRenderLines = true;
@@ -257,7 +257,7 @@ void ofGLProgrammableRenderer::draw(const ofMesh & vertexData, ofPolyRenderMode 
 	}
 	
 	#endif
-	
+
 	if( vboToRender != nullptr ) {
 		if( tGoingToRenderLines ) {
 			// Setting a bool here so that the setAttributes function does not try to switch the shaders because
@@ -268,13 +268,13 @@ void ofGLProgrammableRenderer::draw(const ofMesh & vertexData, ofPolyRenderMode 
 				drawMode = GL_TRIANGLES;
 			}
 		}
-		
+
 		if (vboToRender->getUsingIndices()) {
 			drawElements(*vboToRender, drawMode, vboToRender->getNumIndices());
 		} else {
 			draw(*vboToRender, drawMode, 0, vboToRender->getNumVertices());
 		}
-		
+
 		if( tGoingToRenderLines ) {
 			mBRenderingLines = false;
 		}
@@ -344,7 +344,7 @@ void ofGLProgrammableRenderer::drawInstanced(const ofVboMesh & mesh, ofPolyRende
 	#if defined(TARGET_EMSCRIPTEN)
 	} // close the if for checking for wireframe
 	#endif
-	
+
 	// tig: note further that we could glGet() and store the current polygon mode, but don't, since that would
 	// infer a massive performance hit. instead, we revert the glPolygonMode to mirror the current ofFill state
 	// after we're finished drawing, following the principle of least surprise.
@@ -412,11 +412,11 @@ void ofGLProgrammableRenderer::draw(const ofPolyline & poly) const {
 	glDrawArrays(drawMode, 0, poly.size());
 
 #else
-	
+
 //	polylineMesh.clear();
 //	polylineMesh.addVertices(poly.getVertices());
-	
-	
+
+
 	polylineMesh.getVertices() = poly.getVertices();
 	// check if it is closed and the last point is the same as the first
 	if( poly.isClosed() ) {
@@ -424,7 +424,7 @@ void ofGLProgrammableRenderer::draw(const ofPolyline & poly) const {
 			polylineMesh.getVertices().pop_back();
 		}
 	}
-	
+
 	if( currentTextureTarget != OF_NO_TEXTURE ) {
 		// TODO: Should we be able to set tex coords on polylines somehow??
 		polylineMesh.getTexCoords().resize( polylineMesh.getNumVertices(), glm::vec2(0.f, 0.f));
@@ -440,12 +440,12 @@ void ofGLProgrammableRenderer::draw(const ofPolyline & poly) const {
 	} else {
 		polylineMesh.disableTextures();
 	}
-	
+
 	polylineMesh.setMode( poly.isClosed() ? OF_PRIMITIVE_LINE_LOOP : OF_PRIMITIVE_LINE_STRIP );
 //	draw(const ofMesh & vertexData, ofPolyRenderMode renderType, bool useColors, bool useTextures, bool useNormals) const;
 	draw(polylineMesh, OF_MESH_FILL, false, false, false);
-	
-	
+
+
 //	meshVbo.setVertexData(&poly.getVertices()[0], poly.size(), GL_DYNAMIC_DRAW);
 //	meshVbo.draw(poly.isClosed() ? GL_LINE_LOOP : GL_LINE_STRIP, 0, poly.size());
 //	meshPolylineVbo.setVertexData(&poly.getVertices()[0], poly.size(), GL_DYNAMIC_DRAW);
@@ -555,7 +555,7 @@ void ofGLProgrammableRenderer::draw(const ofBaseVideoDraws & video, float x, flo
 
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::draw(const ofVbo & vbo, GLuint drawMode, int first, int total) const {
-	if (vbo.getUsingVerts()) {	
+	if (vbo.getUsingVerts()) {
 		vbo.bind();
 		const_cast<ofGLProgrammableRenderer *>(this)->setAttributes(vbo.getUsingVerts(), vbo.getUsingColors(), vbo.getUsingTexCoords(), vbo.getUsingNormals(), drawMode);
 		glDrawArrays(drawMode, first, total);
@@ -728,9 +728,17 @@ void ofGLProgrammableRenderer::setupScreenPerspective(float width, float height,
 
 		viewW = currentViewport.width;
 		viewH = currentViewport.height;
-	} else {
+
+	}else{
+
 		viewW = width;
 		viewH = height;
+
+		#if defined(TARGET_IOS)
+		viewW = 1920; // temp debbug
+        viewH = 1080;
+        fov = 60;
+        #endif
 	}
 
 	float eyeX = viewW / 2;
@@ -799,7 +807,7 @@ void ofGLProgrammableRenderer::setCircleResolution(int res) {
 		circlePolyline.arc(0, 0, 0, 1, 1, 0, 360, res);
 		circleMesh.getVertices() = circlePolyline.getVertices();
 		path.setCircleResolution(res);
-		
+
 		// for the outline polyline, we need a closed loop
 		// so we make another line that is closed, excluding the same start and end points
 		circleOutlinePolyline.clear();
@@ -808,10 +816,10 @@ void ofGLProgrammableRenderer::setCircleResolution(int res) {
 			circleOutlinePolyline.addVertex(glm::vec3(cosf(ta),sinf(ta), 0.0f));
 		}
 //		circleOutlinePolyline.setClosed(true);
-		
+
 		circleOutlineMesh.getVertices() = circleOutlinePolyline.getVertices();
-		
-		
+
+
 	}
 	currentStyle.circleResolution = res;
 }
@@ -1365,7 +1373,7 @@ void ofGLProgrammableRenderer::setStyle(const ofStyle & style) {
 
 	//line width - finally!
 	setLineWidth(style.lineWidth);
-	
+
 	setPointSize(style.pointSize);
 
 	//ofSetDepthTest(style.depthTest); removed since it'll break old projects setting depth test through glEnable
@@ -1410,14 +1418,14 @@ void ofGLProgrammableRenderer::setAttributes(bool vertices, bool color, bool tex
 	texCoordsEnabled = tex;
 	colorsEnabled = color;
 	normalsEnabled = normals;
-		
+
 	// nh: we set a variable (mBRenderingLines) before calling set attributes() to disable
 	// the setting of the draw mode. When rendering lines, the requested mode may be GL_LINES
 	// but we use a shader with GL_TRIANGLES to create a mesh to render the lines of varying widths.
 	if( !mBRenderingLines ) {
 		mDrawMode = drawMode;
 	}
-	
+
 	if( mDrawMode == GL_LINE_LOOP ) {
 		// this uses the same line resources as GL_LINE_STRIP
 		mDrawMode = GL_LINE_STRIP;
@@ -1427,7 +1435,7 @@ void ofGLProgrammableRenderer::setAttributes(bool vertices, bool color, bool tex
 	if( !areLinesShadersEnabled() ) {
 		mDrawMode = GL_TRIANGLES;
 	}
-	
+
 	// prevent a shader switch if we don't need it.
 	if( mDrawMode != GL_TRIANGLES && mDrawMode != GL_POINTS && mDrawMode != GL_LINES && mDrawMode != GL_LINE_STRIP ) {
 		mDrawMode = GL_TRIANGLES;
@@ -1445,7 +1453,7 @@ void ofGLProgrammableRenderer::setAttributes(bool vertices, bool color, bool tex
 		if (currentShader) currentShader->setUniform1f(USE_COLORS_UNIFORM, color);
 	}
 
-	// if we switch the draw mode, lets set the textures 
+	// if we switch the draw mode, lets set the textures
 	if( prevDrawMode != mDrawMode ) {
 		if (currentTextureTarget != OF_NO_TEXTURE && currentShader ) {
 			// set all of the texture uniforms
@@ -1468,7 +1476,7 @@ void ofGLProgrammableRenderer::setAttributes(bool vertices, bool color, bool tex
 			}
 		}
 	}
-	
+
 	if (!usingCustomShader && currentShader && !uniqueShader && !currentMaterial) {
 		if (mDrawMode == GL_POINTS && pointSpritesEnabled) {
 			currentShader->setUniform1f("pointSize", currentStyle.pointSize );
@@ -1882,7 +1890,7 @@ void ofGLProgrammableRenderer::beginDefaultShader() {
 
 		} else if (colorsEnabled && bUseTexture) {
 			auto &shaderCollection = getShaderCollectionForMode(mDrawMode);
-			
+
 			switch (currentTextureTarget)
 			{
 #ifndef TARGET_OPENGLES
@@ -2022,7 +2030,7 @@ void ofGLProgrammableRenderer::drawCircle(float x, float y, float z, float radiu
 	ofGLProgrammableRenderer * mutThis = const_cast<ofGLProgrammableRenderer *>(this);
 	// use smoothness, if requested:
 	if (currentStyle.smoothing && !currentStyle.bFill) mutThis->startSmoothing();
-		
+
 	if( !currentStyle.bFill ) {
 		// nh: We use the circleOutlineMesh to render a closed polyline
 		// since the lines mesh creation and shader depends on it.
@@ -2060,7 +2068,7 @@ void ofGLProgrammableRenderer::drawEllipse(float x, float y, float z, float widt
 
 	// use smoothness, if requested:
 	if (currentStyle.smoothing && !currentStyle.bFill) mutThis->startSmoothing();
-	
+
 	if( !currentStyle.bFill ) {
 		// nh: We use the circleOutlineMesh to render a closed polyline
 		// since the lines mesh creation and shader depends on it.
@@ -2319,16 +2327,16 @@ STRINGIFY(
 		  uniform mat4 modelViewMatrix;
 		  uniform mat4 textureMatrix;
 		  uniform mat4 modelViewProjectionMatrix;
-		  
+
 		  uniform float pointSize;
-		  
+
 		  IN vec4  position;
 		  IN vec2  texcoord;
 		  IN vec4  color;
 		  IN vec3  normal;
-		  
+
 		  OUT vec4 colorVarying;
-		  
+
 		  void main()
 		  {
 			  gl_PointSize = pointSize;
@@ -2344,29 +2352,29 @@ STRINGIFY(
 		  uniform mat4 modelViewMatrix;\n
 		  uniform mat4 textureMatrix;\n
 		  uniform mat4 modelViewProjectionMatrix;\n
-		  
+
 		  uniform vec4 viewRect;\n
 		  uniform float uLineWidth;\n
 		  uniform float uUsePerspective;\n
-		  
+
 		  IN vec4 position;
 		  IN vec2 texcoord;
 		  IN vec4 color;
 		  IN vec3 normal;
 		  IN vec4 nextVertex;
-		  
+
 		  OUT vec4 colorVarying;
 		  OUT vec2 texCoordVarying;
-		  
+
 		  void main() {
 			  colorVarying = color;
 			  float pushDir = nextVertex.w;
 			  texCoordVarying = (textureMatrix*vec4(texcoord.x,texcoord.y, 0.0,1.0)).xy;
-			  
+
 			  // clip space
 			  vec4 cClipPos = modelViewProjectionMatrix * vec4(position.xyz, 1.0);
 			  vec4 nClipPos = modelViewProjectionMatrix * vec4(nextVertex.xyz, 1.0);
-			  
+
 			  vec2 cNdcPos = (cClipPos.xy / cClipPos.w);
 			  vec2 nNdcPos = (nClipPos.xy / nClipPos.w);
 			  /*
@@ -2375,26 +2383,26 @@ STRINGIFY(
 			   */
 			  cNdcPos = (cNdcPos + 1.0) * (0.5 * viewRect.zw);
 			  nNdcPos = (nNdcPos + 1.0) * (0.5 * viewRect.zw);
-			  
+
 			  float thickness = uLineWidth * 0.5;
-			 
-			  
+
+
 			  vec2 dir = normalize(cNdcPos - nNdcPos);
 			  dir = vec2(-dir.y, dir.x);
 			  dir = dir * thickness * pushDir;
-			  
+
 			  vec4 posScreen = cClipPos;
 			  posScreen.xy = cNdcPos;
 			  posScreen.xy += dir;
 			  posScreen.xy = posScreen.xy / viewRect.zw * 2.0 - 1.0;
 			  posScreen.xy *= posScreen.w;
-			  
+
 			  // perspective
 			  float vaspect = viewRect.w / viewRect.z;
 			  dir.x *= vaspect;
 			  vec4 posPersp = cClipPos;
 			  posPersp.xy += dir;
-			  
+
 			  gl_Position = mix( posScreen, posPersp, uUsePerspective );
 		  }
 );
@@ -2406,21 +2414,21 @@ STRINGIFY(
 		  uniform mat4 modelViewMatrix;\n
 		  uniform mat4 textureMatrix;
 		  uniform mat4 modelViewProjectionMatrix;
-		  
+
 		  uniform vec4 viewRect;
 		  uniform float uLineWidth;
 		  uniform float uUsePerspective;
-		  
+
 		  IN vec4 position;
 		  IN vec2 texcoord;
 		  IN vec4 color;
 		  IN vec3 normal;
 		  IN vec4 prevVertex;
 		  IN vec4 nextVertex;
-		  
+
 		  OUT vec4 colorVarying;
 		  OUT vec2 texCoordVarying;
-		  
+
 		  float mapClamp( float value, float inMin, float inMax, float outMin, float outMax ) {
 			  float outVal = ( (value - inMin ) / ( inMax - inMin ) * ( outMax - outMin ) ) + outMin;
 			  if(outMax < outMin){
@@ -2432,29 +2440,29 @@ STRINGIFY(
 			  }
 			  return outVal;
 		  }
-		  
+
 		  void main() {
 			  colorVarying = color;
 			  texCoordVarying = (textureMatrix*vec4(texcoord.x, texcoord.y, 0.0,1.0)).xy;
-			  
+
 			  float thickness = uLineWidth;// * 0.5;
 			  float pushDir = nextVertex.w;
 			  float pushDirY = -prevVertex.w;
-			  
+
 			  // 	// clip space
 			  vec4 pClipPos = modelViewProjectionMatrix * vec4(prevVertex.xyz, 1.0);
 			  vec4 cClipPos = modelViewProjectionMatrix * vec4(position.xyz, 1.0);
 			  vec4 nClipPos = modelViewProjectionMatrix * vec4(nextVertex.xyz, 1.0);
-			  
+
 			  vec2 pNdcPos = (pClipPos.xy / pClipPos.w);
 			  vec2 cNdcPos = (cClipPos.xy / cClipPos.w);
 			  vec2 nNdcPos = (nClipPos.xy / nClipPos.w);
-			  
+
 			  // // convert to screen space
 			  pNdcPos = (pNdcPos + 1.0) * (0.5 * viewRect.zw);
 			  cNdcPos = (cNdcPos + 1.0) * (0.5 * viewRect.zw);
 			  nNdcPos = (nNdcPos + 1.0) * (0.5 * viewRect.zw);
-			  
+
 			  vec2 dir = vec2(1.0, 0.0);
 			  if( position.xyz == nextVertex.xyz ) {
 				  // this is the last point ( on a non-closed line )
@@ -2470,44 +2478,44 @@ STRINGIFY(
 				  vec2 pdir = normalize( cNdcPos-pNdcPos );
 				  vec2 ndir = normalize( nNdcPos-cNdcPos );
 				  vec2 tangent = normalize(pdir+ndir);
-				  
+
 				  // Miter code based on
 				  // https://blog.scottlogic.com/2019/11/18/drawing-lines-with-webgl.html
 				  // by Matt Stobbs
-				  
+
 				  vec2 miter = vec2(-tangent.y, tangent.x);
 				  vec2 normalA = vec2(-pdir.y, pdir.x);
 				  dir = miter;
 				  float miterLength = 1.0 / clamp(abs(dot(miter, normalA)), 0.01, 2.0);
 				  thickness = miterLength * thickness;
-				  
+
 				  vec2 point = normalize(pdir-ndir);
 				  float dmp = dot(miter, point);
-				  
+
 //				  float miterTooLongMix = clamp(step( 2.0, miterLength) * sign(pushDir * dmp), 0.0, 1.0);
 				  float miterTooLongMix = clamp(step( 2.0, miterLength), 0.0, 1.0);
 				  float pstr = mapClamp( miterLength, 2.0, 3.0, 0.0, 1.0 );
 				  float thicknessL = mix( miterLength * uLineWidth, uLineWidth, pstr );
-				  
+
 				  dir = mix( dir * pushDir, (pushDir * pushDirY) * normalA, pstr * miterTooLongMix );
 				  thickness = mix( clamp(miterLength, 0.0, 3.0) * uLineWidth, thicknessL, miterTooLongMix );
 			  }
-			  			  
+
 			  dir = dir * (thickness * 0.5 );
-			  			  
+
 			  // we calculate both the screen pos and perspective to avoid an if statement
 			  vec4 posScreen = cClipPos;
 			  posScreen.xy = cNdcPos;
 			  posScreen.xy += dir;// * 0.5;
 			  posScreen.xy = posScreen.xy / viewRect.zw * 2.0 - 1.0;
 			  posScreen.xy *= posScreen.w;
-			  
+
 			  // perspective
 			  vec4 posPersp = cClipPos;
 			  float vaspect = viewRect.w / viewRect.z;
 			  dir.x *= vaspect;
 			  posPersp.xy += (dir);
-			  
+
 			  gl_Position = mix( posScreen, posPersp, uUsePerspective );
 		  }
 		  );
@@ -2534,7 +2542,7 @@ R"(
 		  uniform vec4 globalColor;
 		  uniform float usingTexture;
 			uniform float usingColors;
-		  
+
 			IN vec4 colorVarying;
 		  void main(){
 
@@ -2542,7 +2550,7 @@ R"(
 			float dist_sq = dot( centerPt, centerPt );
 
 			vec2 st = gl_PointCoord;
-			
+
 			#if defined(OF_USING_TEXTURE_RECT)
 				st.x = gl_PointCoord.x * src_tex_unit0_dims.x;
 				st.y = gl_PointCoord.y * src_tex_unit0_dims.y;
@@ -2721,16 +2729,16 @@ static const string defaultFragmentShaderTex2DNoColor = fragment_shader_header +
 // ----------------------------------------------------------------------
 
 static const string defaultFragmentShaderOESTexNoColor = fragment_shader_header + STRINGIFY(
-	
+
 	uniform samplerExternalOES src_tex_unit0;
 	uniform float usingTexture;
 	uniform float usingColors;
 	uniform vec4 globalColor;
-	
+
 	IN float depth;
 	IN vec4 colorVarying;
 	IN vec2 texCoordVarying;
-	
+
 	void main(){
 		FRAG_COLOR = TEXTURE(src_tex_unit0, texCoordVarying) * globalColor;
 	}
@@ -2835,7 +2843,7 @@ static const string bitmapStringFragmentShader = fragment_shader_header + STRING
 // in desktop openGL these are not used but we declare it to avoid more ifdefs
 
 static const string uniqueVertexShader = vertex_shader_header + STRINGIFY(
-		
+
 	uniform mat4 modelViewMatrix;
 	uniform mat4 projectionMatrix;
 	uniform mat4 textureMatrix;
@@ -2862,7 +2870,7 @@ static const string uniqueVertexShader = vertex_shader_header + STRINGIFY(
 
 // ----------------------------------------------------------------------
 static const string uniqueFragmentShader = fragment_shader_header + STRINGIFY(
-		
+
 	uniform sampler2D src_tex_unit0;
 	uniform float usingTexture;
 	uniform float bitmapText;
@@ -3141,7 +3149,7 @@ void ofGLProgrammableRenderer::LinesBundle::setMeshDataToVbo() {
 	if( mesh.getNumVertices() > 0 ) {
 		// void setMesh(const ofMesh & mesh, int usage, bool useColors, bool useTextures, bool useNormals);
 		vbo.setMesh( mesh, GL_DYNAMIC_DRAW, mesh.hasColors() && mesh.usingColors(), mesh.hasTexCoords() && mesh.usingTextures(), mesh.hasNormals() && mesh.usingNormals() );
-		
+
 		if( lineMeshPrevVerts.size() > 0 ) {
 			vbo.setAttributeData(vertAttribPrev, &lineMeshPrevVerts[0].x, 4, mesh.getNumVertices(), GL_DYNAMIC_DRAW);
 		}
@@ -3174,7 +3182,7 @@ void ofGLProgrammableRenderer::setup(int _major, int _minor) {
 	uniqueShader = false;
 #endif
 	mDefaultShadersMap.clear();
-	
+
 	mLinesBundleMap.clear();
 	if( mLinesBundleMap.count(GL_LINES) < 1 ) {
 		mLinesBundleMap[GL_LINES] = LinesBundle();
@@ -3196,15 +3204,15 @@ void ofGLProgrammableRenderer::setup(int _major, int _minor) {
 		defaultUniqueShader.linkProgram();
 		beginDefaultShader();
 	} else {
-		
+
 		mDefaultShadersMap[GL_TRIANGLES] = std::make_shared<ShaderCollection>();
 		mDefaultShadersMap[GL_POINTS] = std::make_shared<ShaderCollection>();
 		mDefaultShadersMap[GL_LINES] = std::make_shared<ShaderCollection>();
 		mDefaultShadersMap[GL_LINE_STRIP] = std::make_shared<ShaderCollection>();
-		
-		
+
+
 		mDefaultShadersMap[GL_TRIANGLES]->setupAllVertexShaders(shaderSource(defaultVertexShader, major, minor));
-		
+
 #ifndef TARGET_OPENGLES
 //		defaultTexRectColor.setupShaderFromSource(GL_VERTEX_SHADER, shaderSource(defaultVertexShader, major, minor));
 //		defaultTexRectNoColor.setupShaderFromSource(GL_VERTEX_SHADER, shaderSource(defaultVertexShader, major, minor));
@@ -3246,7 +3254,7 @@ void ofGLProgrammableRenderer::setup(int _major, int _minor) {
 //		defaultTex2DNoColor.bindDefaults();
 //		defaultNoTexNoColor.bindDefaults();
 		alphaMask2DShader.bindDefaults();
-		
+
 		mDefaultShadersMap[GL_TRIANGLES]->bindDefaults();
 		mDefaultShadersMap[GL_TRIANGLES]->linkPrograms();
 
@@ -3276,19 +3284,19 @@ void ofGLProgrammableRenderer::setup(int _major, int _minor) {
 		defaultOESTexColor.linkProgram();
 		defaultOESTexNoColor.linkProgram();
 #endif
-		
-		
+
+
 		// now lets start setting up the points shaders
 		mDefaultShadersMap[GL_POINTS]->setupAllVertexShaders(shaderSource(defaultPointsVertexShader, major, minor));
-		
+
 		// ok, now lets setup the lines shaders //
 		mDefaultShadersMap[GL_LINES]->setupAllVertexShaders(shaderSource(defaultLinesVertexShader, major, minor));
-		
+
 		// ok, now lets setup the line strip shaders //
 		mDefaultShadersMap[GL_LINE_STRIP]->setupAllVertexShaders(shaderSource(defaultLineStripVertexShader, major, minor));
-		
+
 		// defaultFragmentShaderLines
-		
+
 		string alt_frag_header = fragment_shader_header;
 		string defines = "#define OF_USING_TEXTURE_RECT 1\n#define OF_USING_VERTEX_COLORS 1\n";
 		std::string header_w_defines = alt_frag_header + defines;
@@ -3299,7 +3307,7 @@ void ofGLProgrammableRenderer::setup(int _major, int _minor) {
 																		  shaderSource(header_w_defines + defaultFragmentShaderLines, major, minor));
 		mDefaultShadersMap[GL_LINE_STRIP]->texRectColor.setupShaderFromSource(GL_FRAGMENT_SHADER,
 																		  shaderSource(header_w_defines + defaultFragmentShaderLines, major, minor));
-		
+
 		defines = "#define OF_USING_TEXTURE_RECT 1\n";
 		header_w_defines = alt_frag_header + defines;
 		mDefaultShadersMap[GL_POINTS]->texRectNoColor.setupShaderFromSource(GL_FRAGMENT_SHADER,
@@ -3309,7 +3317,7 @@ void ofGLProgrammableRenderer::setup(int _major, int _minor) {
 		mDefaultShadersMap[GL_LINE_STRIP]->texRectNoColor.setupShaderFromSource(GL_FRAGMENT_SHADER,
 																		   shaderSource(header_w_defines + defaultFragmentShaderLines, major, minor));
 #endif
-		
+
 		defines = "#define OF_USING_TEXTURE_2D 1\n#define OF_USING_VERTEX_COLORS 1\n";
 		header_w_defines = alt_frag_header + defines;
 		mDefaultShadersMap[GL_POINTS]->tex2DColor.setupShaderFromSource(GL_FRAGMENT_SHADER,
@@ -3318,7 +3326,7 @@ void ofGLProgrammableRenderer::setup(int _major, int _minor) {
 																		shaderSource(header_w_defines + defaultFragmentShaderLines, major, minor));
 		mDefaultShadersMap[GL_LINE_STRIP]->tex2DColor.setupShaderFromSource(GL_FRAGMENT_SHADER,
 																	   shaderSource(header_w_defines + defaultFragmentShaderLines, major, minor));
-		
+
 		defines = "#define OF_USING_TEXTURE_2D 1\n";
 		header_w_defines = alt_frag_header + defines;
 		mDefaultShadersMap[GL_POINTS]->tex2DNoColor.setupShaderFromSource(GL_FRAGMENT_SHADER,
@@ -3345,28 +3353,28 @@ void ofGLProgrammableRenderer::setup(int _major, int _minor) {
 																		  shaderSource(header_w_defines + defaultFragmentShaderLines, major, minor));
 		mDefaultShadersMap[GL_LINE_STRIP]->noTexNoColor.setupShaderFromSource(GL_FRAGMENT_SHADER,
 																		  shaderSource(header_w_defines + defaultFragmentShaderLines, major, minor));
-		
+
 		mDefaultShadersMap[GL_POINTS]->bindDefaults();
 		mDefaultShadersMap[GL_POINTS]->linkPrograms();
-		
-		
+
+
 		mDefaultShadersMap[GL_LINES]->bindDefaults();
 		// now lets bind the vertex attribute for the next vertex
 		mDefaultShadersMap[GL_LINES]->bindAttribute( mLinesBundleMap[GL_LINES].vertAttribNext, "nextVertex" );
 		mDefaultShadersMap[GL_LINES]->linkPrograms();
-		
-		
+
+
 		mDefaultShadersMap[GL_LINE_STRIP]->bindDefaults();
 		// now lets bind the vertex attribute for the previous and next vertex
 		mDefaultShadersMap[GL_LINE_STRIP]->bindAttribute( mLinesBundleMap[GL_LINE_STRIP].vertAttribPrev, "prevVertex" );
 		mDefaultShadersMap[GL_LINE_STRIP]->bindAttribute( mLinesBundleMap[GL_LINE_STRIP].vertAttribNext, "nextVertex" );
 		mDefaultShadersMap[GL_LINE_STRIP]->linkPrograms();
-		
+
 //		defaultPointsTex2DColor.bindDefaults();
 //		defaultPointsTex2DNoColor.bindDefaults();
 //		defaultPointsNoTexColor.bindDefaults();
 //		defaultPointsNoTexNoColor.bindDefaults();
-//		
+//
 //		defaultPointsTex2DColor.linkProgram();
 //		defaultPointsTex2DNoColor.linkProgram();
 //		defaultPointsNoTexColor.linkProgram();
@@ -3375,7 +3383,7 @@ void ofGLProgrammableRenderer::setup(int _major, int _minor) {
 
 	setupGraphicDefaults();
 	viewport();
-	setupScreenPerspective();
+	setupScreenPerspective(1920, 1080);
 }
 
 const ofShader * ofGLProgrammableRenderer::getVideoShader(const ofBaseVideoDraws & video) const {
@@ -3644,16 +3652,16 @@ void ofGLProgrammableRenderer::configureMeshToMatchWithNewVertsAndIndices(const 
 	bool bUseColors     = aSrcMesh.hasColors() && aSrcMesh.usingColors() && (aSrcMesh.getNumColors() == aSrcMesh.getNumVertices());
 	bool bUseNormals    = aSrcMesh.hasNormals() && aSrcMesh.usingNormals() && (aSrcMesh.getNumNormals() == aSrcMesh.getNumVertices());
 	bool bUseTexCoords  = aSrcMesh.hasTexCoords() && aSrcMesh.usingTextures() && (aSrcMesh.getNumTexCoords() == aSrcMesh.getNumVertices());
-	
+
 	if (aDstMesh.getNumVertices() != aTargetNumVertices) {
 		aDstMesh.getVertices().assign(aTargetNumVertices, glm::vec3(0.f, 0.f, 0.f));
 	}
-	
+
 	if( aDstMesh.getNumIndices() != aTargetNumIndices ) {
 		aDstMesh.getIndices().assign(aTargetNumIndices, 0);
 	}
 	aDstMesh.enableIndices();
-	
+
 	if (bUseColors) {
 		if (aDstMesh.getNumColors() != aTargetNumVertices) {
 			aDstMesh.getColors().assign(aTargetNumVertices, ofFloatColor(1.f));
@@ -3685,26 +3693,26 @@ void ofGLProgrammableRenderer::configureLinesBundleFromMesh(LinesBundle& aLinesB
 	auto& polyMesh = aLinesBundle.mesh;
 	auto& nextVerts = aLinesBundle.lineMeshNextVerts;
 	auto& prevVerts = aLinesBundle.lineMeshPrevVerts;
-	
+
 	bool bClosed = (drawMode == GL_LINE_LOOP) && amesh.getNumVertices() > 2;
 	bool srcHasIndices = amesh.getNumIndices() > 0 && amesh.usingIndices();
 	std::size_t srcNumVs = srcHasIndices ? amesh.getNumIndices() : amesh.getNumVertices();
-	
+
 	std::size_t targetNumPs = (bClosed ? srcNumVs + 1 : srcNumVs);
 	std::size_t numIndicesA = (targetNumPs - 1) * 6 + (targetNumPs) * 6;
-	
+
 	std::size_t numVertsPer = 4;
-	
+
 	if( drawMode == GL_LINES ) {
 		numVertsPer = 2;
 		std::size_t targetNumLines = srcNumVs / 2;
 		numIndicesA = targetNumLines * 6;
 	}
 	std::size_t targetNumVs = targetNumPs * numVertsPer;
-	
-	
+
+
 	configureMeshToMatchWithNewVertsAndIndices(amesh, polyMesh, targetNumVs, numIndicesA );
-	
+
 	if( drawMode != GL_LINES ) {
 		if( prevVerts.size() != targetNumVs ) {
 			prevVerts.assign(targetNumVs, glm::vec4(0.0f, 0.0f, 0.0f, 0.0f));
@@ -3713,61 +3721,61 @@ void ofGLProgrammableRenderer::configureLinesBundleFromMesh(LinesBundle& aLinesB
 	if (nextVerts.size() != targetNumVs ) {
 		nextVerts.assign(targetNumVs, glm::vec4(0.0f, 0.0f, 0.0f, 0.0f));
 	}
-	
+
 	bool bUseColors = amesh.hasColors() && amesh.usingColors() && (amesh.getNumColors() == amesh.getNumVertices());
 	bool bUseNormals = amesh.hasNormals() && amesh.usingNormals() && (amesh.getNumNormals() == amesh.getNumVertices());
 	bool bUseTexCoords = amesh.hasTexCoords() && amesh.usingTextures() && (amesh.getNumTexCoords() == amesh.getNumVertices());
-	
-	
+
+
 	const auto *srcVerts = amesh.getVerticesPointer();
 	const auto *srcIndices = amesh.getIndexPointer();
 	const auto *srcColors = amesh.getColorsPointer();
 	const auto *srcNormals = amesh.getNormalsPointer();
 	const auto *srcTexCoords = amesh.getTexCoordsPointer();
 	std::size_t numPs = srcHasIndices ? amesh.getNumIndices() : amesh.getNumVertices();
-	
+
 	auto &pmVerts = polyMesh.getVertices();
 	auto &pmIndices = polyMesh.getIndices();
 	auto *pmColors = polyMesh.getColorsPointer();
 	auto *pmNormals = polyMesh.getNormalsPointer();
 	auto *pmTexCoords = polyMesh.getTexCoordsPointer();
-	
+
 	float texU = 1.0;
 	if( currentTextureTarget != OF_NO_TEXTURE ) {
 		if( mUniformsTex.size() > 0 ) {
 			texU = mUniformsTex[0].texData.tex_u;
 		}
 	}
-	
-	
+
+
 	glm::vec3 EPSILON_VEC3 = glm::vec3(0.00005f);
-	
-	
+
+
 	if( drawMode == GL_LINES ) {
 		std::size_t cindex1 = 0;
 		std::size_t cindex2 = 0;
 		std::size_t lineIndex = 0;
-		
+
 		std::size_t pmIndex = 0;
 		std::size_t kindex = 0;
 		std::size_t newIndex = 0;
-		
+
 		std::size_t k = 0;
-		
+
 		for (size_t i = 0; i < targetNumPs; i += 2) {
 			cindex1 = (i % numPs);
 			cindex2 = (i + 1) % numPs;
-			
+
 			lineIndex = i / 2;
-			
+
 			if (srcHasIndices) {
 				// get the verts from the indices
 				cindex1 = srcIndices[cindex1];
 				cindex2 = srcIndices[cindex2];
 			}
-			
+
 			pmIndex = i * 2;
-			
+
 			// duplicate the vertices //
 			for(k = 0; k < 4; k++ ) {
 				kindex = cindex2;
@@ -3775,7 +3783,7 @@ void ofGLProgrammableRenderer::configureLinesBundleFromMesh(LinesBundle& aLinesB
 					kindex = cindex1;
 				}
 				pmVerts[pmIndex + k] = srcVerts[kindex];
-				
+
 				if (bUseColors) {
 					pmColors[pmIndex + k] = srcColors[kindex];
 				}
@@ -3792,23 +3800,23 @@ void ofGLProgrammableRenderer::configureLinesBundleFromMesh(LinesBundle& aLinesB
 					}
 				}
 			}
-			
+
 			nextVerts[pmIndex + 0] = glm::vec4(srcVerts[cindex2], -1.0f);
 			nextVerts[pmIndex + 1] = glm::vec4(srcVerts[cindex2], 1.0f);
-			
+
 			nextVerts[pmIndex + 2] = glm::vec4(srcVerts[cindex1], 1.0f);
 			nextVerts[pmIndex + 3] = glm::vec4(srcVerts[cindex1], -1.0f);
-			
+
 			newIndex = lineIndex * 6;
 			pmIndices[newIndex + 0] = pmIndex + 0;
 			pmIndices[newIndex + 1] = pmIndex + 2;
 			pmIndices[newIndex + 2] = pmIndex + 1;
-			
+
 			pmIndices[newIndex + 3] = pmIndex + 1;
 			pmIndices[newIndex + 4] = pmIndex + 2;
 			pmIndices[newIndex + 5] = pmIndex + 3;
 		}
-		
+
 		aLinesBundle.setMeshDataToVbo();
 	} else {
 		std::size_t nindex, pindex, cindex;
@@ -3819,18 +3827,18 @@ void ofGLProgrammableRenderer::configureLinesBundleFromMesh(LinesBundle& aLinesB
 		std::size_t k = 0;
 		std::size_t newIndex = 0;
 		std::size_t nextIndex = 0;
-		
+
 		// if we have vertices lying on top of each other,
 		// lets create some way to store valid ones
 		// might not be the best approach, but easier / faster than removing the vertices from the src mesh
 		glm::vec3 cachedPrevVert = {0.f, 0.f, 0.f};
 		glm::vec3 cachedNextVert = {0.f, 0.f, 0.f};
-		
+
 		for (size_t i = 0; i < targetNumPs; i++) {
 			cindex = (i % numPs);
 			nindex = (i + 1) % numPs;
 			pindex = (i - 1) % numPs;
-			
+
 			if (i == 0) {
 				if (bClosed) {
 					cindex = 0;
@@ -3844,26 +3852,26 @@ void ofGLProgrammableRenderer::configureLinesBundleFromMesh(LinesBundle& aLinesB
 					nindex = numPs - 1;
 				}
 			}
-			
+
 			if (srcHasIndices) {
 				// get the verts from the indices
 				cindex = srcIndices[cindex];
 				nindex = srcIndices[nindex];
 				pindex = srcIndices[pindex];
 			}
-			
+
 			if( i == 0 ) {
 				// just in case, lets init the cached verts to use
 				cachedPrevVert = srcVerts[cindex];
 				cachedNextVert = srcVerts[cindex];
 			}
-			
+
 			// duplicate the vertices //
 			pmIndex = i * numVertsPer;
-			
+
 			pvert = glm::vec4(srcVerts[pindex], 1.0f);
 			nvert = glm::vec4(srcVerts[nindex], 1.0f);
-			
+
 			if( glm::all(glm::lessThan(glm::abs(srcVerts[cindex]-srcVerts[pindex]), EPSILON_VEC3 ))) {
 				if( i != 0 || (i == 0 && bClosed )) {
 					// loop through and find a good next vert //
@@ -3883,9 +3891,9 @@ void ofGLProgrammableRenderer::configureLinesBundleFromMesh(LinesBundle& aLinesB
 			} else {
 				cachedPrevVert = srcVerts[pindex];
 			}
-			
-			
-			
+
+
+
 			if(glm::all(glm::lessThan(glm::abs(srcVerts[cindex]-srcVerts[nindex]), EPSILON_VEC3 )) ) {
 //				nvert = glm::vec4(cachedNextVert, 1.f);
 				if( i != targetNumPs - 1 || (i == targetNumPs - 1 && bClosed) ) {
@@ -3906,7 +3914,7 @@ void ofGLProgrammableRenderer::configureLinesBundleFromMesh(LinesBundle& aLinesB
 			} else {
 				cachedNextVert = srcVerts[nindex];
 			}
-			
+
 			for(k = 0; k < numVertsPer; k++) {
 				pmVerts[pmIndex + k] = srcVerts[cindex];
 				nextVerts[pmIndex + k] = nvert;
@@ -3921,7 +3929,7 @@ void ofGLProgrammableRenderer::configureLinesBundleFromMesh(LinesBundle& aLinesB
 				if (k < 2) {
 					prevVerts[pmIndex + k].w = -1.0;
 				}
-				
+
 				if (bUseColors) {
 					pmColors[pmIndex + k] = srcColors[kindex];
 				}
@@ -3933,39 +3941,39 @@ void ofGLProgrammableRenderer::configureLinesBundleFromMesh(LinesBundle& aLinesB
 						// should be in relation to the top of the image
 						pmTexCoords[pmIndex + k] = srcTexCoords[kindex];
 					} else {
-						// lets go down to the bottom of the texture 
+						// lets go down to the bottom of the texture
 						pmTexCoords[pmIndex + k] = glm::vec2(srcTexCoords[kindex].x, texU);
 					}
 //					pmTexCoords[pmIndex + k] = srcTexCoords[kindex];
 				}
 			}
-			
+
 			newIndex = i * 2 * 6;
 			pmIndices[newIndex + 0] = pmIndex + 0;
 			pmIndices[newIndex + 1] = pmIndex + 2;
 			pmIndices[newIndex + 2] = pmIndex + 1;
-			
+
 			pmIndices[newIndex + 3] = pmIndex + 1;
 			pmIndices[newIndex + 4] = pmIndex + 2;
 			pmIndices[newIndex + 5] = pmIndex + 3;
-			
+
 			nextIndex = (i+1);
 			if( bClosed && i > targetNumPs -1 ) {
 				nextIndex = 0;
 			}
-			
+
 			if( nextIndex < targetNumPs) {
 				std::size_t nextPmIndex = (nextIndex) * numVertsPer;
 				pmIndices[newIndex + 6] = pmIndex + 2;
 				pmIndices[newIndex + 7] = nextPmIndex + 0;
 				pmIndices[newIndex + 8] = pmIndex + 3;
-				
+
 				pmIndices[newIndex + 9] = pmIndex + 3;
 				pmIndices[newIndex + 10] = nextPmIndex + 0;
 				pmIndices[newIndex + 11] = nextPmIndex + 1;
 			}
 		}
-		
+
 		aLinesBundle.setMeshDataToVbo();
 	}
 }

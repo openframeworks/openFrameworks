@@ -434,7 +434,7 @@ static const NSString * ItemStatusContext;
         dispatch_async(dispatch_get_main_queue(), ^{
             bReady = true;
             [self update]; // update as soon is ready so pixels are loaded.
-            [self setVolume:volume]; // set volume for current video.
+            [self setVolume:self->volume]; // set volume for current video.
             if([self.delegate respondsToSelector:@selector(playerReady)]) {
                 [self.delegate playerReady];
             }
@@ -633,12 +633,13 @@ static const NSString * ItemStatusContext;
     
 	double interval = 1.0 / (double)timeObserverFps;
 	
-//    __block typeof(self) weak_self = self;
-//	timeObserver = [_player addPeriodicTimeObserverForInterval:CMTimeMakeWithSeconds(interval, NSEC_PER_SEC)
-//                                                         queue:dispatch_get_main_queue() usingBlock:
-//                     ^(CMTime time) {
-//                         [weak_self update];
-//                     }];
+    __block typeof(self) weak_self = self;
+	timeObserver = [_player addPeriodicTimeObserverForInterval:CMTimeMakeWithSeconds(interval, NSEC_PER_SEC)
+                                                         queue:dispatch_get_main_queue() usingBlock:
+                     ^(CMTime time) {
+                         [weak_self update];
+                     }];
+
 }
 
 - (void)removeTimeObserverFromPlayer {
@@ -717,7 +718,7 @@ static const NSString * ItemStatusContext;
          toleranceAfter:tolerance
       completionHandler:^(BOOL finished) {
           
-          bSeeking = NO;
+        self->bSeeking = NO;
           
           if([self.delegate respondsToSelector:@selector(playerDidFinishSeeking)]) {
               [self.delegate playerDidFinishSeeking];
