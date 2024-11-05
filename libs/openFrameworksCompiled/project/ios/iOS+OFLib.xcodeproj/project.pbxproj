@@ -46,7 +46,7 @@
 		15594FCB15C56D1E00727FF2 /* ofxiOSMapKitDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 15594FBC15C56D1E00727FF2 /* ofxiOSMapKitDelegate.h */; };
 		15594FCC15C56D1E00727FF2 /* ofxiOSMapKitListener.h in Headers */ = {isa = PBXBuildFile; fileRef = 15594FBD15C56D1E00727FF2 /* ofxiOSMapKitListener.h */; };
 		1594366415CF5F420087B684 /* ofxiOSVideoGrabber.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1594366015CF5F420087B684 /* ofxiOSVideoGrabber.mm */; };
-		1594366515CF5F420087B684 /* ofxiOSVideoPlayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1594366115CF5F420087B684 /* ofxiOSVideoPlayer.mm */; };
+		1594366515CF5F420087B684 /* ofxiOSVideoPlayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1594366115CF5F420087B684 /* ofxiOSVideoPlayer.mm */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		1594366615CF5F420087B684 /* ofxiOSVideoGrabber.h in Headers */ = {isa = PBXBuildFile; fileRef = 1594366215CF5F420087B684 /* ofxiOSVideoGrabber.h */; };
 		1594366715CF5F420087B684 /* ofxiOSVideoPlayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 1594366315CF5F420087B684 /* ofxiOSVideoPlayer.h */; };
 		2E49891A292C98000096EC56 /* ofCubeMapShaders.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E498917292C98000096EC56 /* ofCubeMapShaders.h */; };
