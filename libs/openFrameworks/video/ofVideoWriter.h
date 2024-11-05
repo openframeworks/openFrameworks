@@ -40,6 +40,7 @@ private:
 	bool useCustomName = false;
 	int32_t fps = 30;
 	
+	VW writer;
 #ifdef __OBJC__
 	ofVideoWriterAVFoundation * videoWriter;
 #else

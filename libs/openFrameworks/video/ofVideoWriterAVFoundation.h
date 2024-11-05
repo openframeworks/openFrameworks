@@ -5,21 +5,26 @@
 //
 #pragma once
 
-#import <glm/vec2.hpp>
 #import "ofFbo.h"
 
 #import <Foundation/Foundation.h>
-
 @interface ofVideoWriterAVFoundation : NSObject
-
-@property (nonatomic, assign) NSString* path;
 @property (nonatomic, assign) int fps;
+@property (nonatomic, assign) NSString* path;
 @property (nonatomic, assign) ofFbo * _fbo;
-
 - (void)initPath:(NSString*)path;
 - (BOOL)addFrame;
 - (void)finishWithCompletionHandler:(void (^)(void))handler;
 - (void)stopRecording;
-
 @end
 
+class VW {
+public:
+	VW();
+	void initPath(const std::string & fileName);
+	void addFrame();
+	void stop();
+#ifdef __OBJC__
+	ofVideoWriterAVFoundation * videoWriter;
+#endif
+};

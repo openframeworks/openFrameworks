@@ -5,7 +5,6 @@
 //
 
 /*
- 
  FIXME: better color depth / ofPixels_<float> pixels / kCVPixelFormatType_64BGRA
  FIXME: mudar stopRecording para finishWithCompletionHandler
  FIXME: Color profiles, ex: AVCaptureColorSpace.HLG_BT2020
@@ -29,7 +28,7 @@
 
 @interface ofVideoWriterAVFoundation () {
 	CMTime frameTime;
-	AVAssetWriter *_writer;
+	AVAssetWriter * _writer;
 	ofPixels pixels;
 	
 	BOOL _isWaitingForInputReady;
@@ -180,3 +179,21 @@
 
 
 @end
+
+
+
+VW::VW() {
+	videoWriter = [[ofVideoWriterAVFoundation alloc] init];
+}
+
+void VW::initPath(const std::string & fileName) {
+	[videoWriter initPath:[NSString stringWithUTF8String:fileName.c_str()]];
+}
+
+void VW::addFrame() {
+	[videoWriter addFrame];
+}
+
+void VW::stop() {
+	[videoWriter stopRecording];
+}
