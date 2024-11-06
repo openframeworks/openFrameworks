@@ -446,6 +446,20 @@ public:
 	static of::filesystem::path getCurrentExeDirFS();
 	static std::string getCurrentExeDir();
 
+	/// Get the App name of the running binary
+	///
+	/// \param strip_debug removes a trailing "Debug" if present
+	/// \returns the App name as native string
+	static auto getAppName(bool strip_debug = true) {
+		auto name = ofFilePath::getCurrentExePathFS().filename().native();
+		if (strip_debug) {
+			if (name.size() > 5 && name.compare(name.size() - 5, 5, "Debug") == 0) {
+				name.erase(name.size() - 5);
+			}
+		}
+		return name;
+	}
+
 	/// Get the absolute path to the user's home directory.
 	///
 	/// Mac OSX: /Users/<username>
