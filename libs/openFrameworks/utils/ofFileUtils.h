@@ -452,7 +452,11 @@ public:
 	/// \returns the App name as native string
 	static const auto getAppName(bool strip_debug = true) {
 		auto name = ofFilePath::getCurrentExePathFS().filename().native();
+#if defined(TARGET_OSX)
 		auto debug_suffix = std::filesystem::path("Debug").native();
+#else
+		auto debug_suffix = std::filesystem::path("_debug").native();
+#endif
 		auto dbsize = debug_suffix.size();
 		if (strip_debug) {
 			if (name.size() > dbsize && name.compare(name.size() -dbsize , dbsize, debug_suffix) == 0) {
