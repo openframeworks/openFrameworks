@@ -302,6 +302,9 @@ void ofApp::perform() {
 		ofLogNotice("ofRandomBoundNormal<glm::vec4>(10, 20)") << ofRandomBoundNormal<glm::vec4>(10, 20);
 		ofLogNotice("ofRandomBoundNormal<glm::vec4>({100 ,200, 300, 400},{110, 210, 310, 410})") << ofRandomBoundNormal<glm::vec4>({100 ,200, 300, 400},{110, 210, 310, 410});
 
+		ofLogNotice("ofRandomBoundNormal<glm::vec2>(10, 20, 1)") << ofRandomBoundNormal<glm::vec2>(10, 20, 1);
+		ofLogNotice("ofRandomBoundNormal<glm::vec4>(10, 20, 1)") << ofRandomBoundNormal<glm::vec2>({10, 10}, {20,20}, {1,1});
+
 		ofLogNotice("======= alternate engines test =====");
 		std::random_device rd {};
 		std::seed_seq seq { rd(), rd(), rd(), rd() };
