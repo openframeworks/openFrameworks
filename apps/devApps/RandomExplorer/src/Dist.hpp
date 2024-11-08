@@ -6,7 +6,7 @@
 
 struct Dist {
 
-	inline static std::string base_url_ { "https://en.cppreference.com/w/cpp/numeric/random/" };
+	inline static const std::string base_url_ { "https://en.cppreference.com/w/cpp/numeric/random/" };
 	std::optional<std::string> url_;
 	ofParameterGroup parameters_;
 	ofColor color_ { 128, 128, 128 };
@@ -102,9 +102,6 @@ struct ConcreteDist : public Dist {
 			ofSetColor(color_);
 			ofDrawRectangle(0, 0, w, h);
 
-			ofSetColor(ofColor::darkRed);
-			if (underflow_) ofDrawBitmapString("undershoot: " + ofToString(underflow_), w + 5, 58);
-			if (overflow_) ofDrawBitmapString("overshoot: " + ofToString(overflow_), w + 5, 74);
 
 			ofSetColor(192, 192, 192, 255);
 			ofDrawBitmapString(info_, w + 5, 35);
@@ -144,13 +141,20 @@ struct ConcreteDist : public Dist {
 			} else if constexpr (std::is_same_v<T, glm::vec2>) {
 
 				ofSetColor(255, 255, 255, 96);
-				for (const auto & d : data_)
-					ofDrawCircle(d, .5);
+				for (const auto & d : data_) {
+					if (d.x > w || d.y > h) underflow_++;
+					if (d.x < 0 || d.y < 0) overflow_++;
+					ofDrawCircle(d, 0.5);
+				}
 
 			} else if constexpr (std::is_same_v<T, glm::vec3>) {
 
 				ofSetColor(255, 255, 255, 32);
 				of3dPrimitive prim;
+				for (const auto & d : data_) {
+					if (d.x > w || d.y > h) underflow_++;
+					if (d.x < 0 || d.y < 0) overflow_++;
+				}
 				prim.getMesh().getVertices() = data_;
 				prim.getMesh().setMode(OF_PRIMITIVE_POINTS);
 				prim.rotateDeg(70, { 0.2, 0.3, 0.5 }); // just some perspective
@@ -165,6 +169,10 @@ struct ConcreteDist : public Dist {
 			} else {
 				ofDrawBitmapString("unsupported visualisation", 10, 10);
 			}
+			ofSetColor(ofColor::deepPink);
+			if (underflow_) ofDrawBitmapString("undershoot: " + ofToString(underflow_), w + 5, 70);
+			if (overflow_) ofDrawBitmapString("overshoot: " + ofToString(overflow_), w + 5, 86);
+
 		}
 		ofPopMatrix();
 		ofPopStyle();
