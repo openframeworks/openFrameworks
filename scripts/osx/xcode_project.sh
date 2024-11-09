@@ -22,8 +22,9 @@ copy_resources() {
 		# echo rsync -aved --delete --exclude='.DS_Store' "$ICON_FILE" "$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/Resources/"
 		rsync -aved --delete --exclude='.DS_Store' "$ICON_FILE" "$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/Resources/"
 	fi
+
 	# Copy libfmod and change install directory for fmod to run
-	if [ -z "$OF_NO_FMOD" ] ; then
+	if [ -n "$USE_FMOD" ] ; then
 		msg "Copying Resources - Fmod"
 		echo rsync -aved --delete --ignore-existing "$OF_PATH/libs/fmod/lib/macos/libfmod.dylib" "$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/Frameworks/";
 		rsync -aved --delete --ignore-existing "$OF_PATH/libs/fmod/lib/macos/libfmod.dylib" "$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/Frameworks/";
