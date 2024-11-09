@@ -308,7 +308,7 @@ typedef TESSindex ofIndexType;
 
 
 #if (defined(_M_ARM64) || defined(_M_ARM64EC)) && defined(TARGET_WIN32)
-	#undef USE_FMOD // No FMOD lib for ARM64 yet
+	// #undef USE_FMOD // No FMOD lib for ARM64 yet
 	#include <arm64_neon.h> // intrinsics SIMD on https://learn.microsoft.com/en-us/cpp/intrinsics/arm64-intrinsics?view=msvc-170
 #endif
 
@@ -323,7 +323,7 @@ typedef TESSindex ofIndexType;
 	#else
 		#if defined(TARGET_OF_IOS) || defined(TARGET_OSX)
 			#define OF_SOUND_PLAYER_AV_ENGINE
-//		#ifdef TARGET_OF_IOS
+//		#elif defined(TARGET_OF_IOS)
 //			#define OF_SOUND_PLAYER_IPHONE
 		#elif defined(TARGET_LINUX) || defined(TARGET_MINGW)
 			#define OF_SOUND_PLAYER_OPENAL

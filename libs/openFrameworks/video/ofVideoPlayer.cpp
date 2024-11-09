@@ -6,7 +6,12 @@
 
 //------------------------------------------------  video player
 // check if any video player system is already defined from the compiler
-#if !defined(OF_VIDEO_PLAYER_GSTREAMER) && !defined(OF_VIDEO_PLAYER_IOS) && !defined(OF_VIDEO_PLAYER_DIRECTSHOW) && !defined(OF_VIDEO_PLAYER_MEDIA_FOUNDATION) && !defined(OF_VIDEO_PLAYER_AVFOUNDATION) && !defined(OF_VIDEO_PLAYER_EMSCRIPTEN)
+#if !defined(OF_VIDEO_PLAYER_GSTREAMER) && \
+	!defined(OF_VIDEO_PLAYER_IOS) && \
+	!defined(OF_VIDEO_PLAYER_DIRECTSHOW) && \
+	!defined(OF_VIDEO_PLAYER_MEDIA_FOUNDATION) && \
+	!defined(OF_VIDEO_PLAYER_AVFOUNDATION) && \
+	!defined(OF_VIDEO_PLAYER_EMSCRIPTEN)
 	#ifdef TARGET_LINUX
 		#define OF_VIDEO_PLAYER_GSTREAMER
 	#elif defined(TARGET_ANDROID)
@@ -14,11 +19,11 @@
 	#elif defined(TARGET_OF_IOS)
 		#define OF_VIDEO_PLAYER_IOS
 	#elif defined(TARGET_WIN32)
-			#ifdef _MSC_VER //use MF Foundation player for VS as mingw doesn't have needed symbols
+		#ifdef _MSC_VER //use MF Foundation player for VS as mingw doesn't have needed symbols
 			#define OF_VIDEO_PLAYER_MEDIA_FOUNDATION
-			#else
+		#else
 			#define OF_VIDEO_PLAYER_DIRECTSHOW
-			#endif
+		#endif
 	#elif defined(TARGET_OSX)
 		#define OF_VIDEO_PLAYER_AVFOUNDATION
 	#elif defined(TARGET_EMSCRIPTEN)

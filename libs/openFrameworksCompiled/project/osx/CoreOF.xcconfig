@@ -50,6 +50,9 @@ OF_CORE_HEADERS = $(HEADER_OF) $(HEADER_FREETYPE) $(HEADER_FREETYPE2) $(HEADER_G
 
 OF_CORE_FRAMEWORKS = -framework Accelerate -framework AGL -framework AppKit -framework ApplicationServices -framework AudioToolbox -framework AVFoundation -framework Cocoa -framework CoreAudio -framework CoreFoundation -framework CoreMedia -framework CoreServices -framework CoreVideo -framework Foundation -framework IOKit -framework OpenGL -framework QuartzCore -framework Security -framework SystemConfiguration -framework Metal
 
+OF_CORE_HEADERS = $(inherited) $(OF_PATH)/libs/fmod/include
+OF_CORE_LIBS = $(inherited) $(OF_PATH)/libs/fmod/lib/macos/libfmod.dylib
+
 
 // BOOST can be enabled in OF Core by uncommenting this block
 //HEADER_BOOST = "$(OF_PATH)/libs/boost/include"

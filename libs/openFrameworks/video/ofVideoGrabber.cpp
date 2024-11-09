@@ -7,7 +7,10 @@
 
 // ------------------------------------------------ capture
 // check if any video capture system is already defined from the compiler
-#if !defined(OF_VIDEO_CAPTURE_GSTREAMER) && !defined(OF_VIDEO_CAPTURE_DIRECTSHOW) && !defined(OF_VIDEO_CAPTURE_ANDROID) && !defined(OF_VIDEO_CAPTURE_IOS)
+#if !defined(OF_VIDEO_CAPTURE_GSTREAMER) && \
+	!defined(OF_VIDEO_CAPTURE_DIRECTSHOW) && \
+	!defined(OF_VIDEO_CAPTURE_ANDROID) && \
+	!defined(OF_VIDEO_CAPTURE_IOS)
 	#ifdef TARGET_LINUX
 		#define OF_VIDEO_CAPTURE_GSTREAMER
 
@@ -16,27 +19,19 @@
 
 	#elif defined (TARGET_WIN32)
 		#define OF_SWITCH_TO_DSHOW_FOR_WIN_VIDCAP
-
-		#ifdef OF_SWITCH_TO_DSHOW_FOR_WIN_VIDCAP
-			#define OF_VIDEO_CAPTURE_DIRECTSHOW
-		#endif
+		#define OF_VIDEO_CAPTURE_DIRECTSHOW
 
 	#elif defined(TARGET_ANDROID)
-
 		#define OF_VIDEO_CAPTURE_ANDROID
 
 	#elif defined(TARGET_EMSCRIPTEN)
-
 		#define OF_VIDEO_CAPTURE_EMSCRIPTEN
 
 	#elif defined(TARGET_OF_IOS)
-
 		#define OF_VIDEO_CAPTURE_IOS
 
 	#endif
 #endif
-
-
 
 #ifdef TARGET_OF_OSX
 #include <ApplicationServices/ApplicationServices.h>

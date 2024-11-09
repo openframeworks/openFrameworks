@@ -126,7 +126,6 @@ void ofFmodSetBuffersize(unsigned int bs){
 // now, the individual sound player:
 //------------------------------------------------------------
 ofFmodSoundPlayer::ofFmodSoundPlayer(){
-	std::cout << "ofFmodSoundPlayer YES" << std::endl;
 	bLoop 			= false;
 	bLoadedOk 		= false;
 	pan 			= 0.0; // range for oF is -1 to 1

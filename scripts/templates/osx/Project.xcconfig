@@ -50,13 +50,19 @@ ICON_FILE = $(OF_PATH)/libs/openFrameworksCompiled/project/osx/$(ICON_NAME)
 //ICON_NAME[config=Debug] = icon-debug.icns
 //ICON_FILE = bin/data/$(ICON_NAME)
 
-// APPSTORE, uncomment next lines to bundle data folder and code sign
+// App Store, uncomment next lines to bundle data folder and code sign
 //OF_CODESIGN = 1
 //OF_BUNDLE_DATA_FOLDER = 1
 //OF_BUNDLE_DYLIBS = 1
 
 // Retina resolution
 HIGH_RESOLUTION_CAPABLE = NO
+
+// Uncomment to enable deprecated FMOD
+//USE_FMOD=1
+//USER_PREPROCESSOR_DEFINITIONS=USE_FMOD=1 $(inherited)
+//OF_CORE_HEADERS = $(OF_PATH)/libs/fmod/include $(inherited)
+//OF_CORE_LIBS = $(OF_PATH)/libs/fmod/lib/macos/libfmod.dylib $(inherited)
 
 // Optional include to keep any permanent settings as CODE_SIGN_IDENTITY. 
 #include? "App.xcconfig"
