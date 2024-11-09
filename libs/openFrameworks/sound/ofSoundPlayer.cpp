@@ -4,8 +4,6 @@
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/ext/scalar_common.hpp>
 
-
-
 #ifdef OF_SOUND_PLAYER_AV_ENGINE
 #include "ofAVEngineSoundPlayer.h"
 #define OF_SOUND_PLAYER_TYPE ofAVEngineSoundPlayer

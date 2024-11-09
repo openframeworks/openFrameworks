@@ -269,8 +269,11 @@ PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/app/ofAppEGLWindow.cp
 # third party
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/boost/%
 
+
+ifeq ($(USE_FMOD),0)
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/fmod/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/sound/ofFmodSoundPlayer.cpp
+endif
 
 ##########################################################################################
 # PLATFORM HEADER SEARCH PATHS
@@ -427,10 +430,10 @@ afterplatform: $(TARGET_NAME)
 	@echo TARGET=$(TARGET)
 	@mv $(TARGET) bin/$(BIN_NAME).app/Contents/MacOS
 
-# ifneq ($(USE_FMOD),0)
-# 	@mkdir -p bin/$(BIN_NAME).app/Contents/Frameworks
-# 	@cp $(OF_LIBS_PATH)/*/lib/$(PLATFORM_LIB_SUBPATH)/*.$(SHARED_LIB_EXTENSION) bin/$(BIN_NAME).app/Contents/Frameworks/;
-# endif
+ifneq ($(USE_FMOD),0)
+	@mkdir -p bin/$(BIN_NAME).app/Contents/Frameworks
+	@cp $(OF_LIBS_PATH)/*/lib/$(PLATFORM_LIB_SUBPATH)/*.$(SHARED_LIB_EXTENSION) bin/$(BIN_NAME).app/Contents/Frameworks/;
+endif
 
 
 	@echo
