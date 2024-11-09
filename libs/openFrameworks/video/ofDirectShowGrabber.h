@@ -6,17 +6,11 @@
 #include "ofVideoBaseTypes.h"
 #include "ofPixels.h" // MARK: ofPixels pixels
 
-// comment out this following line, if you'd like to use the
-// quicktime capture interface on windows
-// if not, we default to videoInput library for
-// direct show capture...
 
 #define OF_SWITCH_TO_DSHOW_FOR_WIN_VIDCAP
 
 #ifdef OF_SWITCH_TO_DSHOW_FOR_WIN_VIDCAP
 	#define OF_VIDEO_CAPTURE_DIRECTSHOW
-#else
-	#define OF_VIDEO_CAPTURE_QUICKTIME
 #endif
 
 

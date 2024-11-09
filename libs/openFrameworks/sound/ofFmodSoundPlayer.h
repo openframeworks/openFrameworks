@@ -36,7 +36,6 @@ void ofFmodSetBuffersize(unsigned int bs);
 
 // --------------------- player functions:
 class ofFmodSoundPlayer : public ofBaseSoundPlayer {
-
 	public:
 		ofFmodSoundPlayer();
 		virtual ~ofFmodSoundPlayer();

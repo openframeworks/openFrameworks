@@ -6,7 +6,7 @@
 
 //------------------------------------------------  video player
 // check if any video player system is already defined from the compiler
-#if !defined(OF_VIDEO_PLAYER_GSTREAMER) && !defined(OF_VIDEO_PLAYER_IOS) && !defined(OF_VIDEO_PLAYER_DIRECTSHOW) && !defined(OF_VIDEO_PLAYER_MEDIA_FOUNDATION) && !defined(OF_VIDEO_PLAYER_QUICKTIME) && !defined(OF_VIDEO_PLAYER_AVFOUNDATION) && !defined(OF_VIDEO_PLAYER_EMSCRIPTEN)
+#if !defined(OF_VIDEO_PLAYER_GSTREAMER) && !defined(OF_VIDEO_PLAYER_IOS) && !defined(OF_VIDEO_PLAYER_DIRECTSHOW) && !defined(OF_VIDEO_PLAYER_MEDIA_FOUNDATION) && !defined(OF_VIDEO_PLAYER_AVFOUNDATION) && !defined(OF_VIDEO_PLAYER_EMSCRIPTEN)
 	#ifdef TARGET_LINUX
 		#define OF_VIDEO_PLAYER_GSTREAMER
 	#elif defined(TARGET_ANDROID)
@@ -20,36 +20,16 @@
 			#define OF_VIDEO_PLAYER_DIRECTSHOW
 			#endif
 	#elif defined(TARGET_OSX)
-		//for 10.8 and 10.9 users we use AVFoundation, for 10.7 we use QTKit, for 10.6 users we use QuickTime
-		#ifndef MAC_OS_X_VERSION_10_7
-			#define OF_VIDEO_PLAYER_QUICKTIME
-		#elif !defined(MAC_OS_X_VERSION_10_8)
-			#define OF_VIDEO_PLAYER_QTKIT
-		#else
-			#define OF_VIDEO_PLAYER_AVFOUNDATION
-		#endif
+		#define OF_VIDEO_PLAYER_AVFOUNDATION
 	#elif defined(TARGET_EMSCRIPTEN)
 		#define OF_VIDEO_PLAYER_EMSCRIPTEN
-	#else
-		#define OF_VIDEO_PLAYER_QUICKTIME
 	#endif
 #endif
-
 
 #ifdef OF_VIDEO_PLAYER_GSTREAMER
 	#include "ofGstVideoPlayer.h"
 	#define OF_VID_PLAYER_TYPE ofGstVideoPlayer
 #endif
-
-//#ifdef OF_VIDEO_PLAYER_QUICKTIME
-//	#include "ofQuickTimePlayer.h"
-//	#define OF_VID_PLAYER_TYPE ofQuickTimePlayer
-//#endif
-//
-//#ifdef OF_VIDEO_PLAYER_QTKIT
-//	#include "ofQTKitPlayer.h"
-//	#define OF_VID_PLAYER_TYPE ofQTKitPlayer
-//#endif
 
 #ifdef OF_VIDEO_PLAYER_AVFOUNDATION
 	#include "ofAVFoundationPlayer.h"
