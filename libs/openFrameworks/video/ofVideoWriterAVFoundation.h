@@ -7,6 +7,7 @@
 
 #import "ofFbo.h"
 
+#ifdef __OBJC__
 #import <Foundation/Foundation.h>
 @interface ofVideoWriterAVFoundation : NSObject
 @property (nonatomic, assign) int fps;
@@ -17,6 +18,7 @@
 - (void)finishWithCompletionHandler:(void (^)(void))handler;
 - (void)stopRecording;
 @end
+#endif
 
 class VW {
 public:

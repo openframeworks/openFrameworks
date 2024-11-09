@@ -107,7 +107,7 @@
 }
 
 
-- (BOOL) addFrame {
+- (BOOL)addFrame {
 	@autoreleasepool {
 		_fbo->getTexture().readToPixels(pixels);
 		CVPixelBufferRef pixelBuffer;
@@ -128,6 +128,7 @@
 		}
 
 		if ( !_writerInput.isReadyForMoreMediaData ) {
+			NSLog(@"_writerInput not ready");
 			return NO;
 	//		_isWaitingForInputReady = YES;
 	//		dispatch_semaphore_wait(_writeSemaphore, DISPATCH_TIME_FOREVER);
@@ -176,7 +177,6 @@
 	
 	[_writer finishWritingWithCompletionHandler: handler];
 }
-
 
 @end
 

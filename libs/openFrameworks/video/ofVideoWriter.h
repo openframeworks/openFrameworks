@@ -10,9 +10,9 @@
 #include "ofFbo.h"
 #include "ofShader.h"
 #include "ofConstants.h"
-#ifdef __OBJC__
+//#ifdef __OBJC__
 	#include "ofVideoWriterAVFoundation.h"
-#endif
+//#endif
 
 //---------------------------------------------
 class ofVideoWriter {
@@ -41,9 +41,9 @@ private:
 	int32_t fps = 30;
 	
 	VW writer;
-#ifdef __OBJC__
-	ofVideoWriterAVFoundation * videoWriter;
-#else
-	void * videoWriter;
-#endif
+//#ifdef __OBJC__
+//	ofVideoWriterAVFoundation * videoWriter;
+//#else
+//	void * videoWriter;
+//#endif
 };

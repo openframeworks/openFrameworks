@@ -13,7 +13,8 @@ using std::endl;
 //---------------------------------------------------------------------------
 ofVideoWriter::ofVideoWriter() {
 	
-	videoWriter = [[ofVideoWriterAVFoundation alloc] init];
+//	videoWriter = [[ofVideoWriterAVFoundation alloc] init];
+	
 	
 	std::string vert;
 	std::string frag;
@@ -93,8 +94,8 @@ void ofVideoWriter::begin() {
 	if (_fbo == nullptr) {
 		return;
 	}
-//	writer.videoWriter.fps = fps;
-	videoWriter.fps = fps;
+	writer.videoWriter.fps = fps;
+//	videoWriter.fps = fps;
 
 //	fboShader.allocate(_fbo->getWidth(), _fbo->getHeight(), GL_RGBA16F);
 	fboShader.allocate(_fbo->getWidth() * scale, _fbo->getHeight() * scale, GL_RGBA16F);
@@ -123,10 +124,10 @@ void ofVideoWriter::begin() {
 	
 //	cout << "ofVideoWriter::begin " << fileName<< endl;
 	
-	videoWriter._fbo = &fboShader;
-//	writer.videoWriter._fbo = &fboShader;
-//	writer.initPath(ofPathToString(fileName));
-	[videoWriter initPath:[NSString stringWithUTF8String:fileName.c_str()]];
+//	videoWriter._fbo = &fboShader;
+	writer.videoWriter._fbo = &fboShader;
+	writer.initPath(ofPathToString(fileName));
+//	[videoWriter initPath:[NSString stringWithUTF8String:fileName.c_str()]];
 	isRecording = true;
 }
 
@@ -139,16 +140,16 @@ void ofVideoWriter::addFrame() {
 		_fbo->draw(0, 0, fboShader.getWidth(), fboShader.getHeight());
 		shader.end();
 		fboShader.end();
-//		writer.addFrame();
-		[videoWriter addFrame];
+		writer.addFrame();
+//		[videoWriter addFrame];
 	}
 }
 
 //---------------------------------------------------------------------------
 void ofVideoWriter::end() {
 	if (isRecording) {
-		[videoWriter stopRecording];
-//		writer.stopRecording();
+//		[videoWriter stopRecording];
+		writer.stop();
 	} else {
 		cout << "ofVideoWriter::end() : not recording " << endl;
 	}
