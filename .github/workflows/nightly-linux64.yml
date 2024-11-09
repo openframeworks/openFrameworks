@@ -36,7 +36,7 @@ env:
 jobs:
   build-nightly:
     runs-on: ubuntu-24.04
-    if: github.repository == 'openframeworks/openFrameworks' && github.ref == 'refs/heads/master'
+    if: github.repository == 'openframeworks/openframeworks' && github.event_name == 'push' && (startsWith(github.ref, 'refs/tags/') || github.ref == 'refs/heads/master' || github.ref == 'refs/heads/bleeding')
     strategy:
         matrix:
           cfg:
@@ -44,6 +44,23 @@ jobs:
     env:
      TARGET: ${{matrix.cfg.target}}
     steps:
+    - name: Determine Release
+        id: vars
+        shell: bash
+        run: |
+          if [[ "${{ github.ref }}" == refs/tags/* ]]; then
+            echo "RELEASE=${{ github.ref_name }}" >> $GITHUB_ENV
+            echo "PRERELEASE=false" >> $GITHUB_ENV
+          elif [[ "${{ github.ref }}" == "refs/heads/master" ]]; then
+            echo "RELEASE=nightly" >> $GITHUB_ENV
+            echo "PRERELEASE=false" >> $GITHUB_ENV
+          elif [[ "${{ github.ref }}" == "refs/heads/bleeding" ]]; then
+            echo "RELEASE=latest" >> $GITHUB_ENV
+            echo "PRERELEASE=true" >> $GITHUB_ENV
+          else
+            echo "RELEASE=latest" >> $GITHUB_ENV
+            echo "PRERELEASE=true" >> $GITHUB_ENV
+          fi
     - name: Install libunwind
       run:  sudo apt-get install libunwind-dev    
     - name: Cache Packages
@@ -69,12 +86,10 @@ jobs:
       id: createpackage
     - name: List output directory
       run: ls -lah out/
-    - name: Update Release
-      uses: IsaacShelton/update-existing-release@v1.3.4
-      with:
-       token: ${{ secrets.GITHUB_TOKEN }}
-       tag: nightly
-       release: nightly
-       prerelease: false
-       replace: true
-       files: ${{ steps.createpackage.outputs.FILES_OUT }}
+    - name: Update Release arm64
+        if: github.repository == 'openframeworks/openframeworks' && github.event_name == 'push' && (startsWith(github.ref, 'refs/tags/') || github.ref == 'refs/heads/master' || github.ref == 'refs/heads/bleeding')
+        uses: softprops/action-gh-release@v2.0.8
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          tag_name: ${{ env.RELEASE }}
+          files: ${{ steps.createpackage.outputs.FILES_OUT }}
