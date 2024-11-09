@@ -312,28 +312,27 @@ typedef TESSindex ofIndexType;
 	#include <arm64_neon.h> // intrinsics SIMD on https://learn.microsoft.com/en-us/cpp/intrinsics/arm64-intrinsics?view=msvc-170
 #endif
 
-//------------------------------------------------ soundplayer
-#if defined(TARGET_OF_IOS) || defined(TARGET_OSX)
-	#define OF_SOUND_PLAYER_AV_ENGINE
-#elif defined(TARGET_WIN32)
-	#define OF_SOUND_PLAYER_MEDIA_FOUNDATION
-#endif
+
 
 // check if any soundplayer api is defined from the compiler
 
+//------------------------------------------------ soundplayer
 #if !defined(TARGET_NO_SOUND)
-#if !defined(OF_SOUND_PLAYER_QUICKTIME) && !defined(OF_SOUND_PLAYER_FMOD) && !defined(OF_SOUND_PLAYER_OPENAL) && !defined(OF_SOUND_PLAYER_EMSCRIPTEN) && !defined(OF_SOUND_PLAYER_AV_ENGINE) && !defined(OF_SOUND_PLAYER_MEDIA_FOUNDATION)
-  #ifdef TARGET_OF_IOS
-  	#define OF_SOUND_PLAYER_IPHONE
-  #elif defined(TARGET_LINUX) || defined(TARGET_MINGW)
-  	#define OF_SOUND_PLAYER_OPENAL
-  #elif defined(TARGET_EMSCRIPTEN)
-	#define OF_SOUND_PLAYER_EMSCRIPTEN
-  #elif !defined(TARGET_ANDROID) && (!defined(USE_FMOD) || USE_FMOD)
-  	#define OF_SOUND_PLAYER_FMOD
-  #endif
-#endif
-
+	#if defined(USE_FMOD)
+		#define OF_SOUND_PLAYER_FMOD
+	#else
+		#if defined(TARGET_OF_IOS) || defined(TARGET_OSX)
+			#define OF_SOUND_PLAYER_AV_ENGINE
+//		#ifdef TARGET_OF_IOS
+//			#define OF_SOUND_PLAYER_IPHONE
+		#elif defined(TARGET_LINUX) || defined(TARGET_MINGW)
+			#define OF_SOUND_PLAYER_OPENAL
+		#elif defined(TARGET_EMSCRIPTEN)
+			#define OF_SOUND_PLAYER_EMSCRIPTEN
+		#elif defined(TARGET_WIN32)
+			#define OF_SOUND_PLAYER_MEDIA_FOUNDATION
+		#endif
+	#endif
 #endif
 
 //------------------------------------------------ thread local storage
