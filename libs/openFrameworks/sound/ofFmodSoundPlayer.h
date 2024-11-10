@@ -4,6 +4,7 @@
 #include "ofConstants.h"
 
 #ifdef OF_SOUND_PLAYER_FMOD
+
 #include "ofSoundBaseTypes.h"
 
 
