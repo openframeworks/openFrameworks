@@ -80,9 +80,11 @@ const ofParameter<std::string> & ofParameterGroup::getString(const std::string &
 	return get<std::string>(name);
 }
 
-//const ofParameter<ofPoint> & ofParameterGroup::getPoint(const std::string & name) const {
-//	return get<ofPoint>(name);
-//}
+#ifdef OF_USE_LEGACY_MATH
+const ofParameter<ofPoint> & ofParameterGroup::getPoint(const std::string & name) const {
+	return get<ofPoint>(name);
+}
+#endif
 
 const ofParameter<ofDefaultVec2> & ofParameterGroup::getVec2f(const std::string & name) const {
 	return get<ofDefaultVec2>(name);
@@ -140,9 +142,11 @@ const ofParameter<std::string> & ofParameterGroup::getString(std::size_t pos) co
 	return get<std::string>(pos);
 }
 
-//const ofParameter<ofPoint> & ofParameterGroup::getPoint(std::size_t pos) const {
-//	return get<ofPoint>(pos);
-//}
+#ifdef OF_USE_LEGACY_MATH
+const ofParameter<ofPoint> & ofParameterGroup::getPoint(std::size_t pos) const {
+	return get<ofPoint>(pos);
+}
+#endif
 
 const ofParameter<ofDefaultVec2> & ofParameterGroup::getVec2f(std::size_t pos) const {
 	return get<ofDefaultVec2>(pos);
@@ -208,9 +212,11 @@ ofParameter<std::string> & ofParameterGroup::getString(const std::string & name)
 	return get<std::string>(name);
 }
 
-//ofParameter<ofPoint> & ofParameterGroup::getPoint(const std::string & name) {
-//	return get<ofPoint>(name);
-//}
+#ifdef OF_USE_LEGACY_MATH
+ofParameter<ofPoint> & ofParameterGroup::getPoint(const std::string & name) {
+	return get<ofPoint>(name);
+}
+#endif 
 
 ofParameter<ofDefaultVec2> & ofParameterGroup::getVec2f(const std::string & name) {
 	return get<ofDefaultVec2>(name);
@@ -267,9 +273,11 @@ ofParameter<std::string> & ofParameterGroup::getString(std::size_t pos) {
 	return get<std::string>(pos);
 }
 
-//ofParameter<ofPoint> & ofParameterGroup::getPoint(std::size_t pos) {
-//	return get<ofPoint>(pos);
-//}
+#ifdef OF_USE_LEGACY_MATH
+ofParameter<ofPoint> & ofParameterGroup::getPoint(std::size_t pos) {
+	return get<ofPoint>(pos);
+}
+#endif
 
 ofParameter<ofDefaultVec2> & ofParameterGroup::getVec2f(std::size_t pos) {
 	return get<ofDefaultVec2>(pos);

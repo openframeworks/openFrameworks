@@ -107,10 +107,10 @@ class ofxCvShortImage : public ofxCvImage {
     //                          float focalX, float focalY,
     //                          float centerX, float centerY );                //in base class
     // virtual void  remap( IplImage* mapX, IplImage* mapY );                  //in base class
-    // virtual void  warpPerspective( ofPoint& A, ofPoint& B,
-    //                                ofPoint& C, ofPoint& D );                //in base class
+    // virtual void  warpPerspective( glm::vec2& A, glm::vec2& B,
+    //                                glm::vec2& C, glm::vec2& D );                //in base class
     // virtual void  warpIntoMe( ofxCvImage& mom,
-    //                           ofPoint src[4], ofPoint dst[4] );             //in base class
+    //                           glm::vec2 src[4], glm::vec2 dst[4] );             //in base class
                              
 
     // Other Image Operations

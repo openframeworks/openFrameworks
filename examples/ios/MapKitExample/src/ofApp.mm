@@ -70,8 +70,8 @@ void ofApp::draw() {
 		// draw a line between pos1 and pos2
 		ofSetColor(255, 0, 0);
 		ofSetLineWidth(5);
-		ofPoint pos1 = mapKit.getScreenCoordinatesForLocation(POS1_LATITUDE, POS1_LONGITUDE);
-		ofPoint pos2 = mapKit.getScreenCoordinatesForLocation(POS2_LATITUDE, POS2_LONGITUDE);
+		glm::vec2 pos1 = mapKit.getScreenCoordinatesForLocation(POS1_LATITUDE, POS1_LONGITUDE);
+		glm::vec2 pos2 = mapKit.getScreenCoordinatesForLocation(POS2_LATITUDE, POS2_LONGITUDE);
 		ofDrawLine(pos1.x, pos1.y, pos2.x, pos2.y);
 		
 		

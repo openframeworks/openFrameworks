@@ -81,7 +81,7 @@ void ofApp::setup(){
 					//which tag out of multiple tags you are refering to.
 					int x = XML.getValue("PT:X", 0, i);
 					int y = XML.getValue("PT:Y", 0, i);
-					dragPts[i].set(x, y);
+					dragPts[i] = { x, y };
 					pointCount++;
 				}
 			}
@@ -223,7 +223,7 @@ void ofApp::touchMoved(ofTouchEventArgs & touch){
 		//------------
 		//we also record the x y points into an array - so we can draw it
 		if(pointCount < NUM_PTS -1){
-			dragPts[pointCount].set(touch.x, touch.y);
+			dragPts[pointCount] = { touch.x, touch.y };
 			pointCount++;
 		}
 	

@@ -7,8 +7,6 @@
 #include "ofConstants.h"
 
 
-
-
 //--------------------------------------------------------------------------------
 ofxCvImage::ofxCvImage() {
     width			= 0;
@@ -487,7 +485,7 @@ void ofxCvImage::resetAnchor(){
     if( bUseTexture ) {
     	tex.resetAnchor();
     }else{
-        anchor.set(0,0);
+        anchor = { 0, 0 };
         bAnchorIsPct = false;
     }
 }
@@ -688,7 +686,7 @@ void ofxCvImage::remap( IplImage* mapX, IplImage* mapY ) {
 */
 
 //--------------------------------------------------------------------------------
-void ofxCvImage::warpPerspective( const ofPoint& A, const ofPoint& B, const ofPoint& C, const ofPoint& D ) {
+void ofxCvImage::warpPerspective( const glm::vec2 & A, const glm::vec2 & B, const glm::vec2 & C, const glm::vec2 & D ) {
 	if( !bAllocated ){
 		ofLogError("ofxCvImage") << "warpPerspective(): image not allocated";
 		return;		
@@ -727,7 +725,7 @@ void ofxCvImage::warpPerspective( const ofPoint& A, const ofPoint& B, const ofPo
 
 
 //--------------------------------------------------------------------------------
-void ofxCvImage::warpIntoMe( ofxCvImage& mom, const ofPoint src[4], const ofPoint dst[4] ){
+void ofxCvImage::warpIntoMe( ofxCvImage& mom, const glm::vec2  src[4], const glm::vec2  dst[4] ){
     
 	if( !bAllocated ){
 		ofLogError("ofxCvImage") << "warpIntoMe(): image not allocated";

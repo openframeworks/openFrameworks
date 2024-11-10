@@ -24,7 +24,7 @@ class ofApp : public ofxiOSApp{
 		ofShader shader;
 		bool bUseShader;
 		ofTrueTypeFont font;
-		ofPoint mousePoint;
+		glm::vec2 mousePoint;
 		ofColor randomColor;
 };
 

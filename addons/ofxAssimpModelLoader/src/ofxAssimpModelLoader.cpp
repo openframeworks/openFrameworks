@@ -5,7 +5,6 @@
 #include "ofPixels.h"
 #include "ofGraphics.h"
 #include "ofConstants.h"
-//#include "ofMatrix4x4.h"
 #include "ofUtils.h" // ofGetElapsedTimef
 
 #include <assimp/cimport.h>
@@ -587,17 +586,12 @@ void ofxAssimpModelLoader::updateMeshes(aiNode * node, glm::mat4 parentMatrix) {
 
 	aiMatrix4x4 m = node->mTransformation;
 	m.Transpose();
-	// FIXME: - mat4
 	glm::mat4 matrix(
 		m.a1, m.a2, m.a3, m.a4,
 		m.b1, m.b2, m.b3, m.b4,
 		m.c1, m.c2, m.c3, m.c4,
 		m.d1, m.d2, m.d3, m.d4
 	);
-//	ofMatrix4x4 matrix(m.a1, m.a2, m.a3, m.a4,
-//					   m.b1, m.b2, m.b3, m.b4,
-//					   m.c1, m.c2, m.c3, m.c4,
-//					   m.d1, m.d2, m.d3, m.d4);
 	matrix *= parentMatrix;
 
 	for(unsigned int i = 0; i < node->mNumMeshes; i++) {

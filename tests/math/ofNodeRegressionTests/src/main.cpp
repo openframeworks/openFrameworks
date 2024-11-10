@@ -86,7 +86,10 @@ public:
 			mNode2.orbitDeg(angle, 0, 100, mNode);
 
 			mNode1.dolly(100);
-			mNode1.rotateAround(ofQuaternion(angle, { 0.f,1.f,0.f }), mNode.getGlobalPosition());
+
+			glm::quat rot = glm::angleAxis(glm::radians(angle), glm::normalize(glm::vec3(0.f, 1.f, 0.f)));
+
+			mNode1.rotateAround(rot, mNode.getGlobalPosition());
 
 			auto pos1 = mNode1.getGlobalPosition();
 			auto pos2 = mNode2.getGlobalPosition();
@@ -103,7 +106,9 @@ public:
 			ofNode n1;
 			ofNode n2;
 			n1.setGlobalPosition({ 100.f,0.f,0.f });
-			n1.setGlobalOrientation(ofQuaternion(-90, { 0.f,-1.f,1.f }));
+			glm::quat rot = glm::angleAxis(glm::radians(-90.0f), glm::normalize(glm::vec3(0.f, -1.f, 1.f)));
+
+			n1.setGlobalOrientation(rot);
 			n2.setParent(n1);
 			n2.truck(50.f);
 			auto pos = n2.getGlobalPosition();

@@ -31,8 +31,8 @@ class ofApp : public ofxiOSApp{
 		ofTrueTypeFont franklinBook14A;
 		ofTrueTypeFont verdana14A;
 	
-		ofPoint touchPt;
-		ofPoint drag;
+		glm::vec2 touchPt;
+		glm::vec2 drag;
 		bool bDragging;
 	
 };

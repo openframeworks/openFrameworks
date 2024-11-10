@@ -8,16 +8,16 @@
 class Ball{
 
 	public:
-		ofPoint pos;
-		ofPoint vel;
+		glm::vec2 pos;
+		glm::vec2 vel;
 		ofColor col;
 		ofColor touchCol;
 		bool bDragged;
 	
 		//----------------------------------------------------------------	
 		void init(int id) {
-			pos.set(ofRandomWidth(), ofRandomHeight(), 0);
-			vel.set(ofRandomf(), ofRandomf(), 0);
+			pos = { ofRandomWidth(), ofRandomHeight(), 0 };
+			vel = { ofRandomf(), ofRandomf(), 0 };
 		
 			float val = ofRandom( 30, 100 );
 			col.set( val, val, val, 120 );
@@ -72,7 +72,7 @@ class Ball{
 	
 		//----------------------------------------------------------------	
 		void moveTo(int x, int y) {
-			pos.set(x, y, 0);
-			vel.set(0, 0, 0);
+			pos = { x, y, 0 };
+			vel = { 0, 0, 0 };
 		}
 };

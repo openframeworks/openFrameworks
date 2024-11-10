@@ -71,7 +71,7 @@ void ofApp::draw() {
 		ofMesh mesh;
 		mesh.setMode(OF_PRIMITIVE_POINTS);
 		for (unsigned int i=0; i<points.size(); i++) {
-			mesh.addVertex(ofVec3f(points[i].x, points[i].y, 0));
+			mesh.addVertex(glm::vec3(points[i].x, points[i].y, 0));
 		}
 		mesh.draw();
 	}

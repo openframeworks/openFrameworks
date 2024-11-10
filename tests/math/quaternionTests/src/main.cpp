@@ -2,7 +2,7 @@
 #include "ofxUnitTests.h"
 #include "ofAppNoWindow.h"
 
-bool aprox_eq(const ofVec3f & v1, const ofVec3f & v2){
+bool aprox_eq(const glm::vec3 & v1, const glm::vec3 & v2){
     bool eq = abs(v1.x - v2.x) < 0.0001 &&
            abs(v1.y - v2.y) < 0.0001 &&
            abs(v1.z - v2.z) < 0.0001;
@@ -16,10 +16,10 @@ bool aprox_eq(const ofVec3f & v1, const ofVec3f & v2){
 class ofApp: public ofxUnitTestsApp{
 public:
     void run(){
-        ofQuaternion q1(30,ofVec3f(1,0,0));
-        ofQuaternion q2(30,ofVec3f(0,0,1));
-        ofQuaternion q3(30,ofVec3f(0,1,0));
-        ofVec3f v(100,100,100);
+        glm::quat q1 = glm::angleAxis(glm::radians(30.0f),glm::normalize(glm::vec3(1,0,0)));
+        glm::quat q2 = glm::angleAxis(glm::radians(30.0f),glm::normalize(glm::vec3(0,0,1)));
+        glm::quat q3 = glm::angleAxis(glm::radians(30.0f),glm::normalize(glm::vec3(0,1,0)));
+        glm::vec3 v(100,100,100);
         auto q12 = q1 * q2;
         auto q13 = q1 * q3;
         auto q23 = q2 * q3;
