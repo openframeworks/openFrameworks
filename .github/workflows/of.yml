@@ -191,7 +191,7 @@ jobs:
       run: ./scripts/ci/$TARGET/build.sh;
 
       env:
-        DEVELOPER_DIR: "/Applications/Xcode_15.4.app/Contents/Developer"
+        DEVELOPER_DIR: "/Applications/Xcode.app/Contents/Developer"
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -301,8 +301,8 @@ jobs:
           scripts/ci/${{ matrix.cfg.target }}/run_tests.sh;
         fi
       env:
-        DEVELOPER_DIR: "/Applications/Xcode_15.4.app/Contents/Developer"
-        SDKROOT: "/Applications/Xcode_15.4.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk"
+        DEVELOPER_DIR: "/Applications/Xcode.app/Contents/Developer"
+        SDKROOT: "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk"
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
