@@ -14,8 +14,8 @@
 #include <cstring>
 #include <iostream>
 #include <vector>
-#include <memory>
-#include <functional>
+//#include <memory>
+//#include <functional>
 
 // Set to 1 for compatibility with old projects using ofVec instead of glm
 #ifndef OF_USE_LEGACY_VECTOR_MATH

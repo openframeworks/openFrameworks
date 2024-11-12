@@ -7,6 +7,7 @@
 #include <mutex>
 #include <thread>
 #include <string>
+#include <functional>
 
 /// \class ofThread
 /// \brief A threaded base class with a built in mutex for convenience.
