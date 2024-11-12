@@ -16,12 +16,17 @@ mkdir -p projectGenerator
 cd projectGenerator
 
 if [[ "$RELEASE" == "nightly" ]] || [[ "$RELEASE" == "latest" ]]; then
-  echo "Downloading nightly projectGenerator from Github Bleeding"
+  echo "Downloading nightly projectGenerator from Github Latest"
   URL="https://github.com/openframeworks/projectGenerator/releases/download/nightly/projectGenerator-vs.zip"
 else
   echo "Downloading projectGenerator for release $RELEASE from Github"
   URL="https://github.com/openframeworks/projectGenerator/releases/download/$RELEASE/projectGenerator-vs.zip"
 fi
+
+echo "Downloading projectGenerator from Github Nightly"
+downloader $URL 2> /dev/null
+unzip projectGenerator-vs.zip 2> /dev/null
+rm projectGenerator-vs.zip
 
 cd "${OF_ROOT}"
 
