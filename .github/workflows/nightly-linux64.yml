@@ -85,6 +85,15 @@ jobs:
       id: createpackage
     - name: List output directory
       run: ls -lah out/
+    - name: Upload GitHub Artefact zip
+      run: |
+        tar -cjf out/manual-mega_artefact.tar.bz2 -C out $(echo ${{ steps.createpackage.outputs.FILES_OUT }} | tr ' ' '\n' | sed 's|^out/||')
+    - name: Upload binaries as Artefact
+      uses: actions/upload-artifact@v4
+      with:
+        name: openFrameworks-all-artefact-${{ env.TARGET }}-${{ env.RELEASE }}
+        path: out/nightly-mega_artefact.tar.bz2
+        retention-days: 7
     - name: Update Release arm64
         if: github.repository == 'openframeworks/openframeworks' && github.event_name == 'push' && (startsWith(github.ref, 'refs/tags/') || github.ref == 'refs/heads/master' || github.ref == 'refs/heads/bleeding')
         uses: softprops/action-gh-release@v2.1.0
