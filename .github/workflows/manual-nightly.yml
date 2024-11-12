@@ -1,19 +1,19 @@
 name: manual-nightly
 
-on: 
-  workflow_dispatch:
-    inputs:
-          release:
-            description: 'release'     
-            required: true
-            default: 'nightly'
-# on:
-#   push:
-#     paths-ignore:
-#       - '**/README.md'
-#   pull_request:
-#     paths-ignore:
-#       - '**/README.md'
+# on: 
+#   workflow_dispatch:
+#     inputs:
+#           release:
+#             description: 'release'     
+#             required: true
+#             default: 'nightly'
+on:
+  push:
+    paths-ignore:
+      - '**/README.md'
+  pull_request:
+    paths-ignore:
+      - '**/README.md'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -25,29 +25,29 @@ env:
 jobs:
   manual-nightly:
     runs-on: ubuntu-24.04
-    if: github.repository == 'openframeworks/openframeworks' && github.event_name == 'push' && (startsWith(github.ref, 'refs/tags/') || github.ref == 'refs/heads/master' || github.ref == 'refs/heads/bleeding')
+    # if: github.repository == 'openframeworks/openframeworks' && github.event_name == 'push' && (startsWith(github.ref, 'refs/tags/') || github.ref == 'refs/heads/master' || github.ref == 'refs/heads/bleeding')
     strategy:
         matrix:
           cfg:
           - {target: linux64, libs: 64gcc6}
     steps:
     - name: Determine Release
-        id: vars
-        shell: bash
-        run: |
-          if [[ "${{ github.ref }}" == refs/tags/* ]]; then
-            echo "RELEASE=${{ github.ref_name }}" >> $GITHUB_ENV
-            echo "PRERELEASE=false" >> $GITHUB_ENV
-          elif [[ "${{ github.ref }}" == "refs/heads/master" ]]; then
-            echo "RELEASE=nightly" >> $GITHUB_ENV
-            echo "PRERELEASE=false" >> $GITHUB_ENV
-          elif [[ "${{ github.ref }}" == "refs/heads/bleeding" ]]; then
-            echo "RELEASE=latest" >> $GITHUB_ENV
-            echo "PRERELEASE=true" >> $GITHUB_ENV
-          else
-            echo "RELEASE=latest" >> $GITHUB_ENV
-            echo "PRERELEASE=true" >> $GITHUB_ENV
-          fi
+      id: vars
+      shell: bash
+      run: |
+        if [[ "${{ github.ref }}" == refs/tags/* ]]; then
+          echo "RELEASE=${{ github.ref_name }}" >> $GITHUB_ENV
+          echo "PRERELEASE=false" >> $GITHUB_ENV
+        elif [[ "${{ github.ref }}" == "refs/heads/master" ]]; then
+          echo "RELEASE=nightly" >> $GITHUB_ENV
+          echo "PRERELEASE=false" >> $GITHUB_ENV
+        elif [[ "${{ github.ref }}" == "refs/heads/bleeding" ]]; then
+          echo "RELEASE=latest" >> $GITHUB_ENV
+          echo "PRERELEASE=true" >> $GITHUB_ENV
+        else
+          echo "RELEASE=latest" >> $GITHUB_ENV
+          echo "PRERELEASE=true" >> $GITHUB_ENV
+        fi
     - name: Install libunwind
       run:  sudo apt-get install libunwind-dev    
     - name: Cache Packages
@@ -73,19 +73,19 @@ jobs:
       id: createpackage
     - name: List output directory
       run: ls -lah out/
-    # - name: Test Artefact zip
-    #   run: |
-    #     tar -cjf out/manual-mega_artefact.tar.bz2 -C out $(echo ${{ steps.createpackage.outputs.FILES_OUT }} | tr ' ' '\n' | sed 's|^out/||')
-    # - name: Upload binaries as Artefact
-    #   uses: actions/upload-artifact@v4
-    #   with:
-    #     name: openFrameworks-all-artefact-${{ env.TARGET }}-${{ matrix.bundle }}
-    #     path: out/manual-mega_artefact.tar.bz2
-    #     retention-days: 1
-    - name: Update Release arm64
-        if: github.repository == 'openframeworks/openframeworks' && github.event_name == 'push' && (startsWith(github.ref, 'refs/tags/') || github.ref == 'refs/heads/master' || github.ref == 'refs/heads/bleeding')
-        uses: softprops/action-gh-release@v2.0.8
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          tag_name: ${{ env.RELEASE }}
-          files: ${{ steps.createpackage.outputs.FILES_OUT }}
+    - name: Test Artefact zip
+      run: |
+        tar -cjf out/manual-mega_artefact.tar.bz2 -C out $(echo ${{ steps.createpackage.outputs.FILES_OUT }} | tr ' ' '\n' | sed 's|^out/||')
+    - name: Upload binaries as Artefact
+      uses: actions/upload-artifact@v4
+      with:
+        name: openFrameworks-all-artefact-${{ env.TARGET }}-${{ matrix.bundle }}
+        path: out/manual-mega_artefact.tar.bz2
+        retention-days: 1
+    # - name: Update Release arm64
+    #     if: github.repository == 'openframeworks/openframeworks' && github.event_name == 'push' && (startsWith(github.ref, 'refs/tags/') || github.ref == 'refs/heads/master' || github.ref == 'refs/heads/bleeding')
+    #     uses: softprops/action-gh-release@v2.1.0
+    #     with:
+    #       token: ${{ secrets.GITHUB_TOKEN }}
+    #       tag_name: ${{ env.RELEASE }}
+    #       files: ${{ steps.createpackage.outputs.FILES_OUT }}
