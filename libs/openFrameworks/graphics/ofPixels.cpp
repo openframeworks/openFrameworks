@@ -1,6 +1,7 @@
 #include "ofGraphicsConstants.h"
 #include "ofPixels.h"
 #include "ofColor.h"
+#include <string> // memcpy
 
 static ofImageType getImageTypeFromChannels(size_t channels){
 	switch(channels){
