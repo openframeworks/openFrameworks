@@ -2,7 +2,7 @@
 #include "ofAppRunner.h"
 #include "ofGLUtils.h"
 #include "ofPixels.h"
-#include <algorithm>
+//#include <algorithm>
 
 //------------------------------------------------  video player
 // check if any video player system is already defined from the compiler

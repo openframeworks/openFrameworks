@@ -37,7 +37,7 @@
 //--------------------------
 // communication
 #if !defined(TARGET_OF_IOS) & !defined(TARGET_ANDROID) & !defined(TARGET_EMSCRIPTEN)
-    #include "ofSerial.h"
+//    #include "ofSerial.h"
 //    #include "ofArduino.h"
 #endif
 

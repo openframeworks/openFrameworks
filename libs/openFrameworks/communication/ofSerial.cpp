@@ -4,7 +4,7 @@
 #include <fcntl.h>
 #include <errno.h>
 #include <ctype.h>
-#include <algorithm>
+//#include <algorithm>
 #include <cstring>
 
 #ifndef TARGET_WIN32

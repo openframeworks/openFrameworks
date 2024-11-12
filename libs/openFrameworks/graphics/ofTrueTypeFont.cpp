@@ -4,7 +4,7 @@
 #include "ofPath.h"
 
 #include <ft2build.h>
-#include <algorithm>
+//#include <algorithm>
 #include <numeric>
 
 #ifdef TARGET_LINUX

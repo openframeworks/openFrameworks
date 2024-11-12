@@ -14,7 +14,7 @@
 
 #include <glib-object.h>
 #include <glib.h>
-#include <algorithm>
+//#include <algorithm>
 #include "ofVideoPlayer.h"
 
 #ifdef OF_USE_GST_GL
