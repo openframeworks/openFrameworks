@@ -2,7 +2,7 @@ OF_ROOT=$PWD
 
 SCRIPT_DIR="${BASH_SOURCE%/*}"
 
-RELEASE="${RELEASE:-latest}"
+RELEASE="${RELEASE:-nightly}"
 
 if [[ ! -d "$SCRIPT_DIR" ]]; then SCRIPT_DIR="$PWD"; fi
 . "$SCRIPT_DIR/../../dev/downloader.sh"
@@ -15,7 +15,7 @@ rm -rf projectGenerator
 mkdir -p projectGenerator
 cd projectGenerator
 
-if [[ "$RELEASE" == "nightly" ]]; then
+if [[ "$RELEASE" == "nightly" ]] || [[ "$RELEASE" == "latest" ]]; then
   echo "Downloading nightly projectGenerator from Github Bleeding"
   URL="https://github.com/openframeworks/projectGenerator/releases/download/nightly/projectGenerator-vs.zip"
 else

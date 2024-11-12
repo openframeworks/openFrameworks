@@ -46,7 +46,7 @@ jobs:
           echo "RELEASE=latest" >> $GITHUB_ENV
         fi
     - name: Download libs
-      run: ./scripts/$TARGET/download_libs.sh -t $RELEASE
+      run: ./scripts/$TARGET/download_libs.sh
     - name: Install dependencies
       run: ./scripts/ci/$TARGET/install.sh
     - name: Build
