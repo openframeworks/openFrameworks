@@ -7,13 +7,13 @@
 #define OF_VERSION_PRE_RELEASE "master"
 
 // core: ---------------------------
-#include <stdint.h>
-#include <cstdio>
-#include <cstdlib>
-#include <string>
-#include <cstring>
-#include <iostream>
-#include <vector>
+//#include <stdint.h>
+//#include <cstdio>
+//#include <cstdlib>
+//#include <string>
+//#include <cstring>
+//#include <iostream>
+//#include <vector>
 //#include <memory>
 //#include <functional>
 
