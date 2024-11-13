@@ -210,7 +210,7 @@ jobs:
             sudo apt-get remove libunwind-14 -y;
            fi
     - name: Fix apt broken
-      run: apt --fix-broken install
+      run: sudo apt --fix-broken install
     - name: Cache Packages
       uses: awalsh128/cache-apt-pkgs-action@latest
       with:
