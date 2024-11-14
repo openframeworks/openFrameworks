@@ -7,7 +7,8 @@ OVERWRITE=1
 SILENT_ARGS=""
 NO_SSL=""
 BLEEDING_EDGE=0
-DL_VERSION=2.5.0
+DL_VERSION=2.6.1
+TAG=""
 
 printHelp(){
 cat << EOF
@@ -28,6 +29,7 @@ cat << EOF
     -s, --silent                Silent download progress
     -h, --help                  Shows this message
     -k, --no-ssl                Allow no SSL validation
+    -t, --tag                   tag release for libraries
 EOF
 }
 
@@ -43,7 +45,11 @@ download(){
     COMMAND=" "
     REPO="nightly"
     if [[ $BLEEDING_EDGE = 1 ]] ; then
-        REPO="bleeding"
+        REPO="latest"
+    fi
+
+    if [[ $TAG != "" ]] ; then
+        REPO="$TAG"
     fi
 
     for PKG in $1; do
@@ -106,6 +112,10 @@ while [[ $# -gt 0 ]]; do
         ;;
         -m|--msystem)
         MSYSTEM="$2"
+        shift # past argument
+        ;;
+        -t|--tag)
+        TAG="$2"
         shift # past argument
         ;;
         -h|--help)
@@ -193,7 +203,13 @@ SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd "$SCRIPT_DIR"
 
 if [[ $BLEEDING_EDGE = 1 ]] ; then
-    VER=bleeding
+    VER=latest
+else
+    VER=master
+fi
+
+if [[ $TAG != "" ]] && [[ $TAG != "nightly" ]] ; then
+    VER="$TAG"
 fi
 
 if [ "$PLATFORM" == "linux" ] && [ "$ARCH" == "64" ]; then
