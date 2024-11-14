@@ -29,21 +29,15 @@
  *
  * ***********************************************************************/
 
-<<<<<<< HEAD
 #include "ofxiOSConstants.h"
 #if defined(OF_UI_KIT) && TARGET_OS_IOS || (TARGET_OS_IPHONE && !TARGET_OS_TV)
 #import "ofxiOSAppDelegate.h"
 #import "ofxiOSViewController.h"
 #import "ofxiOSGLKViewController.h"
-=======
-#import "ofxiOSAppDelegate.h"
-
-#if TARGET_OS_IOS || (TARGET_OS_IPHONE && !TARGET_OS_TV)
 
 #import "ofxiOSViewController.h"
 #import "ofxiOSGLKViewController.h"
 #import "ofxiOSMLKViewController.h"
->>>>>>> 92bb06eeccee8bc5a09198f3706d62c5e4f4272c
 #import "ofxiOSExternalDisplay.h"
 #include "ofxiOSExtras.h"
 #include "ofxiOSAlerts.h"
