@@ -98,6 +98,10 @@ enum ofTargetPlatform{
 		#define TARGET_MINGW
 	#endif
 #elif defined( __APPLE_CC__)
+	#define GL_SILENCE_DEPRECATION
+	#define GLES_SILENCE_DEPRECATION
+	#define COREVIDEO_SILENCE_GL_DEPRECATION
+
     #define __ASSERT_MACROS_DEFINE_VERSIONS_WITHOUT_UNDERSCORES 0
     #include <TargetConditionals.h>
 	#if (TARGET_OS_IPHONE || TARGET_OS_IOS || TARGET_OS_SIMULATOR || TARGET_IPHONE_SIMULATOR) && !TARGET_OS_TV && !TARGET_OS_WATCH && !TARGET_OS_MACCATALYST && !TARGET_OS_VISION
@@ -144,7 +148,7 @@ enum ofTargetPlatform{
 
 
 // then the the platform specific includes:
-#ifdef TARGET_WIN32
+#if defined(TARGET_WIN32)
 	#define GLEW_STATIC
 	#define GLEW_NO_GLU
     #define TARGET_GLFW_WINDOW
@@ -196,13 +200,9 @@ enum ofTargetPlatform{
 	// problems)
 	// info: http://www.geisswerks.com/ryan/FAQS/timing.html
 
-#endif
 
-#if defined(TARGET_OS_OSX) && !defined(TARGET_OF_IOS)
-	#ifndef __MACOSX_CORE__
-		#define __MACOSX_CORE__
-	#endif
-    #define TARGET_GLFW_WINDOW
+#elif defined(TARGET_OSX)
+	#define TARGET_GLFW_WINDOW
     #define OF_CAIRO
     #define OF_RTAUDIO
     
@@ -210,9 +210,8 @@ enum ofTargetPlatform{
 		#define OF_NO_FMOD
 	#endif
 
-    
-	#include "GL/glew.h"
-    #include "OpenGL/OpenGL.h"
+	#include <GL/glew.h>
+    #include <OpenGL/OpenGL.h>
 
 	#if defined(__LITTLE_ENDIAN__)
 		#define TARGET_LITTLE_ENDIAN		// intel cpu
@@ -221,10 +220,24 @@ enum ofTargetPlatform{
 	#if defined(__OBJC__) && !__has_feature(objc_arc)
 		#warning "Please enable ARC (Automatic Reference Counting) at the project level"
 	#endif
-#endif
 
-#ifdef TARGET_LINUX
 
+#elif defined (TARGET_OF_IOS)
+	#import <OpenGLES/ES1/gl.h>
+	#import <OpenGLES/ES1/glext.h>
+	#import <OpenGLES/ES2/gl.h>
+	#import <OpenGLES/ES2/glext.h>
+	#import <OpenGLES/ES3/gl.h>
+	#import <OpenGLES/ES3/glext.h>
+	#define TARGET_LITTLE_ENDIAN    // arm cpu
+	#if defined(__OBJC__) && !__has_feature(objc_arc)
+		#warning "ARC (Automatic Reference Counting) is not enabled."
+		#warning "Enable ARC at the project level, or if using Objective-C/C++ with manual memory management,"
+		#warning "add '-fno-objc-arc' in Build Phases -> Compile Sources -> Compiler Flags."
+	#endif
+
+
+#elif defined (TARGET_LINUX)
 	#ifdef TARGET_LINUX_ARM
 		#ifdef TARGET_RASPBERRY_PI
 			#include <bcm_host.h>
@@ -258,25 +271,8 @@ enum ofTargetPlatform{
 	#define B14400	14400
 	#define B28800	28800
 
-#endif
 
-
-#ifdef TARGET_OF_IOS
-    #import <OpenGLES/ES1/gl.h>
-    #import <OpenGLES/ES1/glext.h>
-    #import <OpenGLES/ES2/gl.h>
-    #import <OpenGLES/ES2/glext.h>
-	#import <OpenGLES/ES3/gl.h>
-	#import <OpenGLES/ES3/glext.h>
-    #define TARGET_LITTLE_ENDIAN    // arm cpu
-    #if defined(__OBJC__) && !__has_feature(objc_arc)
-        #warning "ARC (Automatic Reference Counting) is not enabled."
-        #warning "Enable ARC at the project level, or if using Objective-C/C++ with manual memory management,"
-        #warning "add '-fno-objc-arc' in Build Phases -> Compile Sources -> Compiler Flags."
-    #endif
-#endif
-
-#ifdef TARGET_ANDROID
+#elif defined (TARGET_ANDROID)
 	#include <typeinfo>
 	#include <GLES/gl.h>
 	#define GL_GLEXT_PROTOTYPES
@@ -286,9 +282,9 @@ enum ofTargetPlatform{
 	#include <GLES2/gl2ext.h>
 
 	#define TARGET_LITTLE_ENDIAN
-#endif
 
-#ifdef TARGET_EMSCRIPTEN
+
+#elif defined (TARGET_EMSCRIPTEN)
 	#define GL_GLEXT_PROTOTYPES
 	#include <GLES/gl.h>
 	#include <GLES/glext.h>
