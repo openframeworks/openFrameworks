@@ -7,7 +7,7 @@ OVERWRITE=1
 SILENT_ARGS=""
 NO_SSL=""
 BLEEDING_EDGE=0
-DL_VERSION=2.6.0
+DL_VERSION=2.6.1
 TAG=""
 
 printHelp(){
@@ -204,9 +204,11 @@ cd "$SCRIPT_DIR"
 
 if [[ $BLEEDING_EDGE = 1 ]] ; then
     VER=latest
+else
+    VER=master
 fi
 
-if [[ $TAG != "" ]] ; then
+if [[ $TAG != "" ]] && [[ $TAG != "nightly" ]] ; then
     VER="$TAG"
 fi
 
