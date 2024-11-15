@@ -1180,7 +1180,8 @@ static const void *PlayerRateContext = &ItemStatusContext;
 }
 
 - (void)seekToTime:(CMTime)time {
-	[self seekToTime:time withTolerance:kCMTimePositiveInfinity];
+	[self seekToTime:time
+	   withTolerance:kCMTimeZero];
 }
 
 - (void)seekToTime:(CMTime)time
@@ -1213,6 +1214,7 @@ static const void *PlayerRateContext = &ItemStatusContext;
 		//[self createAssetReaderWithTimeRange:CMTimeRangeMake(time, duration)];
 // 	}
 	
+//	toleranceBefore:kCMTimeZero toleranceAfter:kCMTimeZero
 	// set reader to real requested time
 	[_player seekToTime:time
 		toleranceBefore:tolerance

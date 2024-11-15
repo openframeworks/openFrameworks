@@ -216,9 +216,10 @@ enum ofTargetPlatform{
 		#define OF_NO_FMOD
 	#endif
 
+	#define GL_SILENCE_DEPRECATION
     
-	#include "GL/glew.h"
-    #include "OpenGL/OpenGL.h"
+	#include <GL/glew.h>
+    #include <OpenGL/OpenGL.h>
 
 	#if defined(__LITTLE_ENDIAN__)
 		#define TARGET_LITTLE_ENDIAN		// intel cpu
