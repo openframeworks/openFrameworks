@@ -7,7 +7,7 @@ OVERWRITE=1
 SILENT_ARGS=""
 NO_SSL=""
 BLEEDING_EDGE=0
-DL_VERSION=2.6.1
+DL_VERSION=2.6.2
 TAG=""
 
 printHelp(){
@@ -43,10 +43,13 @@ download(){
     # downloader ci.openframeworks.cc/libs/$1 $SILENT_ARGS
 
     COMMAND=" "
-    REPO="nightly"
+    
     if [[ $BLEEDING_EDGE = 1 ]] ; then
         REPO="latest"
+    else
+        REPO="nightly"
     fi
+
 
     if [[ $TAG != "" ]] ; then
         REPO="$TAG"
