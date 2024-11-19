@@ -426,8 +426,8 @@ function createPackage {
 	mkdir -p $HOME/.tmp
 	export TMPDIR=$HOME/.tmp
     if [ "$pkg_platform" = "vs" ] || [ "$pkg_platform" = "msys2" ]; then
+        # -t $RELEASE
 		
-        -t $RELEASE
   		# use prepackaged gui
         downloader https://github.com/openframeworks/projectGenerator/releases/download/$RELEASE/projectGenerator-vs-gui.zip 2> /dev/null
         mkdir -p projectGenerator
