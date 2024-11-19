@@ -223,7 +223,8 @@ if [ "$PLATFORM" == "linux" ] && [ "$ARCH" == "64" ]; then
     fi
 fi
 
-echo " openFrameworks download_libs.sh v$DL_VERSION"
+# echo " openFrameworks download_libs.sh v$DL_VERSION"
+echo " openFrameworks download_libs.sh v$DL_VERSION args=$@"
 
 if [ "$PLATFORM" == "msys2" ]; then
     if [[ $BLEEDING_EDGE = 1 ]] ; then
