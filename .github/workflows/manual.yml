@@ -14,6 +14,7 @@ concurrency:
 
 env:
   ccache: ccache
+  RELEASE: ${{ github.event.inputs.release }}
 
 jobs:
   manual-nightly:
