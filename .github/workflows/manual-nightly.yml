@@ -1,19 +1,19 @@
 name: manual-nightly
 
-on: 
-  workflow_dispatch:
-    inputs:
-          release:
-            description: 'release'     
-            required: true
-            default: 'nightly'
-# on:
-#   push:
-#     paths-ignore:
-#       - '**/README.md'
-#   pull_request:
-#     paths-ignore:
-#       - '**/README.md'
+# on: 
+#   workflow_dispatch:
+#     inputs:
+#           release:
+#             description: 'release'     
+#             required: true
+#             default: 'nightly'
+on:
+  push:
+    paths-ignore:
+      - '**/README.md'
+  pull_request:
+    paths-ignore:
+      - '**/README.md'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
