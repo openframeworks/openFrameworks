@@ -80,8 +80,8 @@ jobs:
         path: out/manual-mega_artefact.tar.bz2
         retention-days: 1
     - name: Update Release arm64
-        uses: softprops/action-gh-release@v2.1.0
-        with:
+      uses: softprops/action-gh-release@v2.1.0
+      with:
           token: ${{ secrets.GITHUB_TOKEN }}
           tag_name: ${{ env.RELEASE }}
           files: ${{ steps.createpackage.outputs.FILES_OUT }}
