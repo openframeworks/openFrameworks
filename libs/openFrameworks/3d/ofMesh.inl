@@ -2986,11 +2986,11 @@ template<class V, class N, class C, class T>
 void ofMeshFace_<V,N,C,T>::calculateFaceNormal() const{
 	glm::vec3 u, v;
 
-	u = toGlm(vertices[1]-vertices[0]);
-	v = toGlm(vertices[2]-vertices[0]);
+	u = (vertices[1]-vertices[0]);
+	v = (vertices[2]-vertices[0]);
 
 	faceNormal = glm::cross(u, v);
-	faceNormal = glm::normalize(toGlm(faceNormal));
+	faceNormal = glm::normalize((faceNormal));
 	bFaceNormalDirty = false;
 }
 
