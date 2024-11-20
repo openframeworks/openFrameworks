@@ -7,7 +7,7 @@ OVERWRITE=1
 SILENT_ARGS=""
 NO_SSL=""
 BLEEDING_EDGE=0
-DL_VERSION=2.6.0
+DL_VERSION=2.6.2
 TAG=""
 
 printHelp(){
@@ -43,10 +43,13 @@ download(){
     # downloader ci.openframeworks.cc/libs/$1 $SILENT_ARGS
 
     COMMAND=" "
-    REPO="nightly"
+    
     if [[ $BLEEDING_EDGE = 1 ]] ; then
         REPO="latest"
+    else
+        REPO="nightly"
     fi
+
 
     if [[ $TAG != "" ]] ; then
         REPO="$TAG"
@@ -204,9 +207,11 @@ cd "$SCRIPT_DIR"
 
 if [[ $BLEEDING_EDGE = 1 ]] ; then
     VER=latest
+else
+    VER=master
 fi
 
-if [[ $TAG != "" ]] ; then
+if [[ $TAG != "" ]] && [[ $TAG != "nightly" ]] ; then
     VER="$TAG"
 fi
 
@@ -218,7 +223,8 @@ if [ "$PLATFORM" == "linux" ] && [ "$ARCH" == "64" ]; then
     fi
 fi
 
-echo " openFrameworks download_libs.sh v$DL_VERSION"
+# echo " openFrameworks download_libs.sh v$DL_VERSION"
+echo " openFrameworks download_libs.sh v$DL_VERSION args=$@"
 
 if [ "$PLATFORM" == "msys2" ]; then
     if [[ $BLEEDING_EDGE = 1 ]] ; then

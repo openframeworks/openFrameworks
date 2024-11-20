@@ -31,6 +31,8 @@ ls
 OUTPUT_FOLDER=$ROOT/out
 mkdir -p $OUTPUT_FOLDER
 
+RELEASE="${RELEASE:-latest}"
+
 lastversion=$(date +%Y%m%d)
 if [ -n "$1" ] && [ "$1" != "nightly" ]; then
 	lastversion=$1
