@@ -429,7 +429,7 @@ function createPackage {
     # FIXME: Temporary fix for latest projectGenerator
     # there is no "latest" release so we use nightly. feel free to remove this when PG/Apothecary releases are in sync
     if [ "$RELEASE" = "latest" ]; then
-        $RELEASE = "nightly"
+        RELEASE="nightly"
     fi
 
  
