@@ -1262,7 +1262,7 @@ glm::vec2 ofTrueTypeFont::getFirstGlyphPosForTexture(const string & str, bool vf
 			}else{
 				int width = 0;
 				int lineWidth = 0;
-				iterateString(str, 0, 0, vflip, [&](uint32_t c, ofVec2f){
+				iterateString(str, 0, 0, vflip, [&](uint32_t c, glm::vec2){
 					try{
 						if (c != '\n') {
 							auto g = loadGlyph(c);
@@ -1296,7 +1296,7 @@ ofTexture ofTrueTypeFont::getStringTexture(const string& str, bool vflip) const{
 	float height = 0;
 	float width = 0;
 	float lineWidth = 0;
-	iterateString(str, 0, 0, vflip, [&](uint32_t c, ofVec2f pos){
+	iterateString(str, 0, 0, vflip, [&](uint32_t c, glm::vec2 pos){
 		try{
 			if (c != '\n') {
 				auto g = loadGlyph(c);

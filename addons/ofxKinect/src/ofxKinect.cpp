@@ -423,20 +423,20 @@ float ofxKinect::getDistanceAt(int x, int y)  const{
 }
 
 //------------------------------------
-float ofxKinect::getDistanceAt(const ofPoint & p)  const{
+float ofxKinect::getDistanceAt(const glm::vec2 & p)  const{
 	return getDistanceAt(p.x, p.y);
 }
 
 //------------------------------------
-ofVec3f ofxKinect::getWorldCoordinateAt(int x, int y)  const{
+glm::vec3 ofxKinect::getWorldCoordinateAt(int x, int y)  const{
 	return getWorldCoordinateAt(x, y, getDistanceAt(x, y));
 }
 
 //------------------------------------
-ofVec3f ofxKinect::getWorldCoordinateAt(float cx, float cy, float wz)  const{
+glm::vec3 ofxKinect::getWorldCoordinateAt(float cx, float cy, float wz)  const{
 	double wx, wy;
 	freenect_camera_to_world(kinectDevice, cx, cy, wz, &wx, &wy);
-	return ofVec3f(wx, wy, wz);
+	return glm::vec3(wx, wy, wz);
 }
 
 //------------------------------------
@@ -472,7 +472,7 @@ ofColor ofxKinect::getColorAt(int x, int y)  const{
 }
 
 //------------------------------------
-ofColor ofxKinect::getColorAt(const ofPoint & p)  const{
+ofColor ofxKinect::getColorAt(const glm::vec2 & p)  const{
 	return getColorAt(p.x, p.y);
 }
 
@@ -602,12 +602,12 @@ bool ofxKinect::hasLedControl() const{
 }
 
 //---------------------------------------------------------------------------
-ofPoint ofxKinect::getRawAccel() const{
+glm::vec3 ofxKinect::getRawAccel() const{
 	return rawAccel;
 }
 
 //---------------------------------------------------------------------------
-ofPoint ofxKinect::getMksAccel() const{
+glm::vec3 ofxKinect::getMksAccel() const{
 	return mksAccel;
 }
 
@@ -677,7 +677,7 @@ void ofxKinect::draw(float _x, float _y) const{
 }
 
 //----------------------------------------------------------
-void ofxKinect::draw(const ofPoint & point) const{
+void ofxKinect::draw(const glm::vec2 & point) const{
 	draw(point.x, point.y);
 }
 
@@ -699,7 +699,7 @@ void ofxKinect::drawDepth(float _x, float _y) const{
 }
 
 //----------------------------------------------------------
-void ofxKinect::drawDepth(const ofPoint & point) const{
+void ofxKinect::drawDepth(const glm::vec2 & point) const{
 	drawDepth(point.x, point.y);
 }
 
@@ -866,11 +866,11 @@ void ofxKinect::threadedFunction(){
 		freenect_raw_tilt_state * tilt = freenect_get_tilt_state(kinectDevice);
 		currentTiltAngleDeg = freenect_get_tilt_degs(tilt);
 
-		rawAccel.set(tilt->accelerometer_x, tilt->accelerometer_y, tilt->accelerometer_z);
+		rawAccel = {tilt->accelerometer_x, tilt->accelerometer_y, tilt->accelerometer_z};
 
 		double dx,dy,dz;
 		freenect_get_mks_accel(tilt, &dx, &dy, &dz);
-		mksAccel.set(dx, dy, dz);
+		mksAccel = {dx, dy, dz};
 	}
     
 	// finish up a tilt on exit

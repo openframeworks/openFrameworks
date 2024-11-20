@@ -10,7 +10,7 @@ In this example, pay attention to the following code:
 
 * [Trig functions](https://en.wikipedia.org/wiki/Trigonometric_functions) that use angles and return values between -1 and 1,  ```cos(angle)```, ```sin(angle)```, ```tan(angle)```
 * Trig functions are based on the unit circle that has a radius of one; therefore, the circumference is 2 * radius * PI = 2 * 1 * PI = 2 * PI. openFrameworks has a variable for 2 * PI, ```TWO_PI```
-* ```ofPoint point``` is used to store the center point of the blue ball; the x and y value of point is changed using ```cos(angle)``` &  ```sin(angle)``` 
+* ```glm::vec2 point``` is used to store the center point of the blue ball; the x and y value of point is changed using ```cos(angle)``` &  ```sin(angle)``` 
 
 
 ### Expected Behavior

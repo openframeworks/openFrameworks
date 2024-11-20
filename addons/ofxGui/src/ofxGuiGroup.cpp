@@ -83,6 +83,8 @@ ofxGuiGroup * ofxGuiGroup::setup(const ofParameterGroup & _parameters, const str
 		}else if(type == typeid(ofParameter <void> ).name()){
 			auto p = _parameters.getVoid(i);
 			add(p);
+#ifdef OF_USE_LEGACY_MATH
+
 		}else if(type == typeid(ofParameter <ofVec2f> ).name()){
 			auto p = _parameters.get<ofVec2f>(i);
 			add(p);
@@ -92,6 +94,8 @@ ofxGuiGroup * ofxGuiGroup::setup(const ofParameterGroup & _parameters, const str
 		}else if(type == typeid(ofParameter <ofVec4f> ).name()){
 			auto p = _parameters.get<ofVec4f>(i);
 			add(p);
+
+#endif
 		}else if(type == typeid(ofParameter <glm::vec2> ).name()){
 			auto p = _parameters.get<glm::vec2>(i);
 			add(p);
@@ -173,6 +177,7 @@ void ofxGuiGroup::add(ofParameter <string> & parameter){
 	add(createGuiElement<ofxInputField<string> >(parameter));
 }
 
+#ifdef OF_USE_LEGACY_MATH
 void ofxGuiGroup::add(ofParameter <ofVec2f> & parameter){
 	add(createGuiElement<ofxVecSlider_ <ofVec2f> >(parameter));
 }
@@ -184,6 +189,7 @@ void ofxGuiGroup::add(ofParameter <ofVec3f> & parameter){
 void ofxGuiGroup::add(ofParameter <ofVec4f> & parameter){
 	add(createGuiElement<ofxVecSlider_ <ofVec4f> >(parameter));
 }
+#endif
 
 void ofxGuiGroup::add(ofParameter <glm::vec2> & parameter){
 	add(createGuiElement<ofxVecSlider_ <glm::vec2> >(parameter));
@@ -279,7 +285,7 @@ bool ofxGuiGroup::mouseReleased(ofMouseEventArgs & args){
 				return true;
 			}
 		}
-		if(b.inside(ofPoint(args.x, args.y))){
+		if(b.inside({args.x, args.y})){
 			return true;
 		}else{
 			return false;
