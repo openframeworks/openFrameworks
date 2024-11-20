@@ -362,11 +362,7 @@ for PKG in $PKGS; do
         # FIXME: this if can be removed after this is fixed properly on apothecary, see:
         # https://github.com/openframeworks/openFrameworks/issues/8206
         
-        if [ "$PLATFORM" == "linux" && (
-            [ "$ARCH" == "aarch64" ] || 
-            [ "$ARCH" == "armv7l" ] || 
-            [ "$ARCH" == "armv6l" ]
-            ) ]; then
+        if [ "$PLATFORM" == "linux" && [ [ "$ARCH" == "aarch64" ] || [ "$ARCH" == "armv7l" ] || [ "$ARCH" == "armv6l" ] ] ]; then
             echo "tar xjfv download/$PKG  --strip-components=1"
             tar xjf download/$PKG --strip-components=1
         else
