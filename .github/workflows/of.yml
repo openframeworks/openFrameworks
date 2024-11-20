@@ -18,16 +18,17 @@ concurrency:
 
 env:
   ccache: ccache
+  RELEASE: latest
 
 jobs:
   build-emscripten:
     runs-on: ubuntu-24.04
     strategy:
-        matrix:
-          cfg:
-          - {target: emscripten}
+      matrix:
+        cfg:
+        - {target: emscripten}
     env:
-     TARGET: ${{matrix.cfg.target}}
+      TARGET: ${{matrix.cfg.target}}
     steps:
     - uses: actions/checkout@v4
     - name: Docker Step
@@ -166,9 +167,9 @@ jobs:
           - { libs: armv7l, multistrap_arch: armhf, suffix: arm-linux-gnueabihf, alladdons: 1 }
           - { libs: aarch64,  multistrap_arch: arm64, suffix: aarch64-linux-gnu, alladdons: 1 }
     env:
-     ARCH: ${{matrix.cfg.libs}}
-     MULTISTRAP_ARCH: ${{matrix.cfg.multistrap_arch}}
-     ALLADDONSEXAMPLE: ${{matrix.cfg.alladdons}}
+      ARCH: ${{matrix.cfg.libs}}
+      MULTISTRAP_ARCH: ${{matrix.cfg.multistrap_arch}}
+      ALLADDONSEXAMPLE: ${{matrix.cfg.alladdons}}
     steps:
     - name: Cache Packages
       uses: awalsh128/cache-apt-pkgs-action@latest
@@ -204,14 +205,14 @@ jobs:
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
   build-ios-tvos:
-    runs-on: macos-14
+    runs-on: macos-15
     strategy:
         matrix:
           cfg:
           - {target: ios, libs: macos}
           - {target: tvos, libs: macos}
     env:
-     TARGET: ${{matrix.cfg.target}}
+      TARGET: ${{matrix.cfg.target}}
     steps:
     - uses: actions/checkout@v4
     - name: ccache
@@ -251,7 +252,7 @@ jobs:
           cfg:
           - {target: linux64, libs: 64gcc6}
     env:
-     TARGET: ${{matrix.cfg.target}}
+      TARGET: ${{matrix.cfg.target}}
     steps:
     - name: Remove Old lib-unwind
       run: if [ "$TARGET" = "linux64" ]; then
@@ -303,7 +304,7 @@ jobs:
   #         cfg:
   #         - {target: linux64, libs: 64gcc6}
   #   env:
-  #    TARGET: ${{matrix.cfg.target}}
+  #     TARGET: ${{matrix.cfg.target}}
   #   steps:
   #   - name: Remove Old lib-unwind
   #     run: if [ "$TARGET" = "linux64" ]; then
@@ -336,7 +337,7 @@ jobs:
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   build-macos:
-    runs-on: macos-14
+    runs-on: macos-15
     strategy:
         matrix:
           cfg:
