@@ -108,6 +108,7 @@ define parse_addon
 	$(eval ADDON_PKG_CONFIG_LIBRARIES= ) \
 	$(eval ADDON_FRAMEWORKS= ) \
 	$(eval ADDON_LIBS_EXCLUDE= ) \
+	$(eval ADDON_DEFINES= ) \
 	$(eval ADDON_SOURCES_EXCLUDE= ) \
 	$(call parse_addons_includes, $(addon)) \
 	$(eval ADDON_INCLUDES=$(PARSED_ADDONS_INCLUDES)) \
@@ -159,6 +160,7 @@ define parse_addon
 	$(eval TMP_PROJECT_ADDONS_LDFLAGS += $(ADDON_LDFLAGS)) \
 	$(eval TMP_PROJECT_ADDONS_PKG_CONFIG_LIBRARIES += $(ADDON_PKG_CONFIG_LIBRARIES)) \
 	$(eval TMP_PROJECT_ADDONS_FRAMEWORKS += $(ADDON_FRAMEWORKS)) \
+	$(eval TMP_PROJECT_ADDONS_DEFINES += $(ADDON_DEFINES)) \
 	$(eval PROJECT_AFTER += $(ADDON_AFTER)) \
 	$(if $(strip $(ADDON_SOURCES)), \
 		$(info ADDON_SOURCES_EXCLUDE: $(ADDON_SOURCES_EXCLUDE)) \
@@ -227,7 +229,7 @@ define parse_addon
 			$(eval PROJECT_ADDONS += $(addon_dep)) \
 			$(call parse_addon,$(addon_dep)) \
 		) \
-	)
+	)	
 endef
 
 
@@ -254,6 +256,7 @@ PROJECT_ADDONS_FRAMEWORKS = $(call uniq,$(TMP_PROJECT_ADDONS_FRAMEWORKS))
 PROJECT_ADDONS_SOURCE_FILES = $(call uniq,$(TMP_PROJECT_ADDONS_SOURCE_FILES))
 PROJECT_ADDONS_OBJ_FILES = $(call uniq,$(TMP_PROJECT_ADDONS_OBJ_FILES))
 PROJECT_ADDONS_DATA = $(call uniq,$(TMP_PROJECT_ADDONS_DATA))
+PROJECT_ADDONS_DEFINES = $(call uniq,$(TMP_PROJECT_ADDONS_DEFINES))
 VPATH += $(call uniq, $(ADDON_PATHS))
 
 

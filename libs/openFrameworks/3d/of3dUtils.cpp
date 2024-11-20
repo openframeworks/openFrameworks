@@ -2,6 +2,10 @@
 #include "ofAppRunner.h"
 #include "ofGraphicsBaseTypes.h"
 
+#define GLM_FORCE_CTOR_INIT
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/vec3.hpp>
+
 //--------------------------------------------------------------
 void ofDrawAxis(float size) {
 	ofGetCurrentRenderer()->drawAxis(size);
