@@ -2,6 +2,7 @@
 #include "ofPixels.h"
 #include "ofColor.h"
 #include <string.h> // memcpy
+#include <bits/stdc++.h> // std::function
 
 static ofImageType getImageTypeFromChannels(size_t channels){
 	switch(channels){
