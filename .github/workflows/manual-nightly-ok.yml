@@ -6,7 +6,7 @@ on:
           release:
             description: 'release'     
             required: true
-            default: 'nightly'
+            default: 'latest'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
