@@ -1,12 +1,14 @@
+# This one was created to make it work whil
+
 name: manual-nightly-ok
 
 on: 
   workflow_dispatch:
     inputs:
-          release:
-            description: 'release'     
-            required: true
-            default: 'latest'
+      release:
+        description: 'release'     
+        required: true
+        default: 'latest'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
