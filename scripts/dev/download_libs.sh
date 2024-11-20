@@ -358,7 +358,16 @@ for PKG in $PKGS; do
         unzip -qo download/$PKG
         # rm -r download/$PKG
     else
-        tar xjf download/$PKG
+
+        # FIXME: this if can be removed after this is fixed properly on apothecary, see:
+        # https://github.com/openframeworks/openFrameworks/issues/8206
+        
+        if [ "$PLATFORM" == "linux" && [ [ "$ARCH" == "aarch64" ] || [ "$ARCH" == "armv7l" ] || [ "$ARCH" == "armv6l" ] ] ]; then
+            echo "tar xjfv download/$PKG  --strip-components=1"
+            tar xjf download/$PKG --strip-components=1
+        else
+            tar xjfv download/$PKG
+        fi
         # rm -r download/$PKG
     fi
     echo " Deployed libraries from [download/$PKG] to [/libs]"

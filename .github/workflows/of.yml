@@ -101,6 +101,10 @@ jobs:
     - name: Install dependencies
       run: ./scripts/ci/msys2/install.sh --msystem=${{ matrix.msystem }}
 
+    - name: LS
+      shell: bash
+      run: ls -alfR
+
     - name: Build
       run: ./scripts/ci/msys2/build.sh
 
