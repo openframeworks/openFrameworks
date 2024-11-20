@@ -4,6 +4,7 @@
 #include "ofRandomEngine.h"
 #include "ofColor.h"
 #include <iostream>
+#include <optional>
 
 #ifdef TARGET_WIN32
 #include <iso646.h>
