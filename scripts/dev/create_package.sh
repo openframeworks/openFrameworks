@@ -425,6 +425,14 @@ function createPackage {
 	echo "Creating projectGenerator"
 	mkdir -p $HOME/.tmp
 	export TMPDIR=$HOME/.tmp
+
+    # FIXME: Temporary fix for latest projectGenerator
+    # there is no "latest" release so we use nightly. feel free to remove this when PG/Apothecary releases are in sync
+    if [ "$RELEASE" = "latest" ]; then
+        $RELEASE = "nightly"
+    fi
+
+ 
     if [ "$pkg_platform" = "vs" ] || [ "$pkg_platform" = "msys2" ]; then
         # -t $RELEASE
 		
