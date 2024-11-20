@@ -1,5 +1,5 @@
 #!/bin/bash
-VERSION=4.3.2
+VERSION=4.3.3
 printDownloaderHelp(){
 cat << EOF
     
@@ -225,7 +225,7 @@ downloader() {
             if validate_url "$1"; then
                 URLS+=("$1")
             else
-                if [ $1 != "0" ]; then 
+                if [ $1 != "0" ] && [ $1 != "1" ]; then 
                     echoError "  [downloader] Invalid URL: [$1]"
                 fi
             fi
