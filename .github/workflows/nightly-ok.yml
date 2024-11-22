@@ -2,24 +2,25 @@ name: nightly-linux64
 
 on:
  schedule:
-   - cron: "0 6 * * *"
+  - cron: "0 6 * * *"
  workflow_dispatch:
     inputs:
-          release:
-            description: 'release'     
-            required: true
-            default: 'latest'
+      release:
+        description: 'release'     
+        required: true
+        default: 'latest'
 env:
   ccache: ccache
+  RELEASE: latest
 
 jobs:
   build-nightly-ok:
     runs-on: ubuntu-24.04
     if: github.repository == 'openframeworks/openFrameworks' && github.ref == 'refs/heads/master'
     strategy:
-        matrix:
-          cfg:
-          - {target: linux64, libs: 64gcc6}
+      matrix:
+        cfg:
+        - {target: linux64, libs: 64gcc6}
     env:
      TARGET: ${{matrix.cfg.target}}
     steps:
@@ -51,9 +52,9 @@ jobs:
     - name: Update Release
       uses: IsaacShelton/update-existing-release@v1.3.4
       with:
-       token: ${{ secrets.GITHUB_TOKEN }}
-       tag: nightly
-       release: nightly
-       prerelease: false
-       replace: true
-       files: ${{ steps.createpackage.outputs.FILES_OUT }}
+        token: ${{ secrets.GITHUB_TOKEN }}
+        tag: nightly
+        release: nightly
+        prerelease: false
+        replace: true
+        files: ${{ steps.createpackage.outputs.FILES_OUT }}
