@@ -45,7 +45,7 @@ jobs:
     - name: Download libs
       run: ./scripts/linux/download_libs.sh -a ${{matrix.cfg.libs}};
     - name: Create Package
-      run: scripts/ci/package_builds.sh ${{ github.event.inputs.release }};
+      run: ./scripts/ci/package_builds.sh ${{ github.event.inputs.release }};
       id: createpackage
     - name: List output directory
       run: ls -lah out/
