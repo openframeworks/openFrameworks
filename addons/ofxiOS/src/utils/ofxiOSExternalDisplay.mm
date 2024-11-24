@@ -7,6 +7,7 @@
 
 #include "ofxiOSExternalDisplay.h"
 #include <TargetConditionals.h>
+#include <vector>
 
 using std::vector;
 
