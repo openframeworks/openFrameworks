@@ -310,8 +310,10 @@ public:
 		prepare();
 	}
 
-	urn(urn<T> && other) noexcept
-		: urn(std::exchange(other.values_, nullptr)) {
+	urn(urn<T> && other) noexcept {
+		std::scoped_lock lock(other.mutex_);
+		values_ = std::move(other.values_);
+		other.values_.clear();
 		prepare();
 	}
 
