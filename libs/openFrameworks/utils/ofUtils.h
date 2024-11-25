@@ -273,7 +273,8 @@ class urn {
 
 	Container values_;
 	typename Container::const_iterator phase_;
-
+	std::mutex mutex_;
+	
 	auto prepare() {
 		if (valid()) {
 			if (auto_configure_edge_repeat_) {
@@ -313,6 +314,7 @@ public:
 	/// \param other the other Urn
 	/// \return a new Urn
 	auto & operator=(urn<T> && other) noexcept {
+		std::scoped_lock lock(mutex_);
 		std::swap(values_, other.values_);
 		prepare();
 		return *this;
@@ -323,6 +325,7 @@ public:
 	/// \return a new Urn
 	auto & operator=(urn<T> & other) {
 		if (this == &other) return *this;
+		std::scoped_lock lock(mutex_);
 		values_ = other.get_values();
 		prepare();
 		return *this;
@@ -332,6 +335,7 @@ public:
 	/// \param Container the container of values
 	/// \return void
 	auto & operator=(Container & values) {
+		std::scoped_lock lock(mutex_);
 		values_ = values;
 		prepare();
 		return *this;
@@ -351,6 +355,7 @@ public:
 	/// \return void
 	template <typename... Args>
 	auto operator=(Args &&... args) {
+		std::scoped_lock lock(mutex_);
 		set(std::forward<Args>(args)...);
 	}
 
@@ -358,6 +363,7 @@ public:
 	/// \param Container the container of values
 	/// \return void
 	auto set(Container & values) {
+		std::scoped_lock lock(mutex_);
 		values_ = values;
 		prepare();
 	}
@@ -366,6 +372,7 @@ public:
 	/// \param urn the other urn
 	/// \return void
 	auto set(urn<T> & urn) {
+		std::scoped_lock lock(mutex_);
 		values_ = urn.get_values();
 		prepare();
 	}
@@ -375,6 +382,7 @@ public:
 	/// \return void
 	template <typename... Args>
 	auto set(Args &&... args) {
+		std::scoped_lock lock(mutex_);
 		values_.clear();
 		values_.reserve(sizeof...(Args));
 		std::cout << ("preparing for") << sizeof...(Args) << std::endl;
@@ -406,6 +414,7 @@ public:
 	/// \return void
 	auto refill() {
 		if (valid()) {
+			// cannot be scoped_lock should be behind another private call
 			auto last = *values_.end();
 			ofShuffle(values_);
 			if (!allow_edge_repeat_) {
@@ -424,6 +433,7 @@ public:
 	/// \return a T from the urn (could be garbage if Urn is invalid)
 	auto pull() {
 		if (valid()) {
+			std::scoped_lock lock(mutex_);
 			if (depleted()) refill();
 			return *phase_++;
 		} else {
@@ -437,6 +447,7 @@ public:
 	/// \return an optional<T> from the urn, nullopt if empty or invalid
 	auto pull_or_empty() {
 		if (valid()) {
+			std::scoped_lock lock(mutex_);
 			if (depleted()) return std::optional<T> {};
 			return std::optional<T>(*phase_++);
 		} else {
