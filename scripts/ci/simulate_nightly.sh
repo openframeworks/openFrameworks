@@ -59,7 +59,7 @@ $OF_ROOT/scripts/dev/init_submodules.sh
 
 # Download libraries
 echo "Downloading libraries..."
-$OF_ROOT/scripts/linux/download_libs.sh -a $LIBS
+$OF_ROOT/scripts/linux/download_libs.sh -a $LIBS -t $RELEASE
 
 # Create package
 echo "Creating package..."
