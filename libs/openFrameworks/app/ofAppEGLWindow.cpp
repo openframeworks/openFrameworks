@@ -10,7 +10,6 @@
 #include <assert.h>
 // x11
 #include <X11/Xutil.h>
-#include <EGL/egl.h>
 
 // include includes for both native and X11 possibilities
 #include <libudev.h>
