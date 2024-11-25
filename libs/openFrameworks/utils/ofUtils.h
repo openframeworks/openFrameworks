@@ -288,6 +288,7 @@ class urn {
 			return refill();
 		} else {
 			// ofLogError("ofUrn::prepare()") << "called on unitialized Urn";
+			phase_ = values_.cend();
 			return false;
 		}
 	}
@@ -300,7 +301,7 @@ public:
 	bool auto_configure_edge_repeat_ { true };
 
 	/// \brief Construct an unitialized urn
-	urn() = default;
+	urn(): phase_(values_.cend()) {};
 
 	/// \brief Copy-Construct an urn with contents of other urn
 	/// \param other the other Urn
@@ -429,6 +430,7 @@ public:
 			return true;
 		} else {
 			// ofLogError("of::urn::refill()") << "called on unitialized Urn";
+			phase_ = values_.cend(); // Mark as depleted
 			return false;
 		}
 	}
