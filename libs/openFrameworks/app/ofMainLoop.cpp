@@ -19,10 +19,13 @@
 	#include "ofAppAndroidWindow.h"
 	#include "ofxAndroidUtils.h"
 	#include "ofxAndroidApp.h"
-#elif defined(TARGET_RASPBERRY_PI) && defined(TARGET_GLFW_WINDOW)
-	#include "ofAppGLFWWindow.h"
+//#elif defined(TARGET_RASPBERRY_PI) && defined(TARGET_GLFW_WINDOW)
+//	#include "ofAppGLFWWindow.h"
+//#elif defined(TARGET_RASPBERRY_PI)
+//	#include "ofAppEGLWindow.h"
 #elif defined(TARGET_RASPBERRY_PI)
-	#include "ofAppEGLWindow.h"
+	#include "ofAppGLFWWindow.h"
+
 #elif defined(TARGET_EMSCRIPTEN)
 	#include "ofxAppEmscriptenWindow.h"
 #else
