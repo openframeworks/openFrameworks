@@ -278,8 +278,12 @@ class urn {
 	auto prepare() {
 		if (valid()) {
 			if (auto_configure_edge_repeat_) {
-				std::sort(values_.begin(), values_.end()); // perhaps costly for large sets
-				allow_edge_repeat_ = std::adjacent_find(values_.begin(), values_.end()) != values_.end();
+				if (values_.size()>1) {
+					std::sort(values_.begin(), values_.end()); // perhaps costly for large sets
+					allow_edge_repeat_ = std::adjacent_find(values_.begin(), values_.end()) != values_.end();
+				} else {
+					allow_edge_repeat_ = true; // set of 1 cannot not repeat
+				}
 			}
 			return refill();
 		} else {
