@@ -33,7 +33,7 @@ struct udev* udev;
 struct udev_monitor* mon;
 static int udev_fd = -1;
 
-typedef map<string, int> device;
+typedef std::map<std::string, int> device;
 static device inputDevices;
 
 // minimal map
@@ -76,8 +76,8 @@ typedef struct {
 	int mouseButtonState;
 } MouseState;
 
-typedef map<int, int> TouchState;
-typedef map<int, ofVec2f> TouchPosition;
+typedef std::map<int, int> TouchState;
+typedef std::map<int, ofVec2f> TouchPosition;
 
 // TODO, make this match the upcoming additions to ofWindow
 #define MOUSE_BUTTON_LEFT_MASK		1
@@ -150,7 +150,7 @@ static const struct {
 #define CASE_STR(x,y) case x: str = y; break
 
 static const char* eglErrorString(EGLint err) {
-	string str;
+	std::string str;
 	switch (err) {
 	CASE_STR(EGL_SUCCESS, "no error");
 	CASE_STR(EGL_NOT_INITIALIZED, "EGL not, or could not be, initialized");
@@ -1083,7 +1083,7 @@ void ofAppEGLWindow::showCursor(){
 }
 
 //------------------------------------------------------------
-void ofAppEGLWindow::setWindowTitle(string title) {
+void ofAppEGLWindow::setWindowTitle(std::string title) {
 	ofLogNotice("ofAppEGLWindow") << "setWindowTitle(): not implemented";
 }
 
