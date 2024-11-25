@@ -411,7 +411,7 @@ void ofAppEGLWindow::setup(const ofAppEGLWindowSettings & _settings) {
 	// pDisplay = ofGetEnv("DISPLAY");
 	// bool bIsX11Available = (pDisplay != NULL);
 
-	bool bIsX11Available = ofGetEnv("DISPLAY") != NULL;
+	bool bIsX11Available = !empty(ofGetEnv("DISPLAY"));
 
 	if(settings.eglWindowPreference == OF_APP_WINDOW_AUTO) {
 		if(bIsX11Available) {
