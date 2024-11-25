@@ -1033,7 +1033,7 @@ void ofAppEGLWindow::pollEvents(){
 			}
 		}
 	} else {
-		queue<ofMouseEventArgs> mouseEventsCopy;
+		std::queue<ofMouseEventArgs> mouseEventsCopy;
 		instance->lock();
 		mouseEventsCopy = instance->mouseEvents;
 		while(!instance->mouseEvents.empty()){
@@ -1046,7 +1046,7 @@ void ofAppEGLWindow::pollEvents(){
 		}
 
 		// KEYBOARD EVENTS
-		queue<ofKeyEventArgs> keyEventsCopy;
+		std::queue<ofKeyEventArgs> keyEventsCopy;
 		instance->lock();
 		keyEventsCopy = instance->keyEvents;
 		while(!instance->keyEvents.empty()){
@@ -1058,7 +1058,7 @@ void ofAppEGLWindow::pollEvents(){
 			keyEventsCopy.pop();
 		}
 
-		queue<ofTouchEventArgs> touchEventsCopy;
+		std::queue<ofTouchEventArgs> touchEventsCopy;
 		instance->lock();
 		touchEventsCopy = instance->touchEvents;
 		while(!instance->touchEvents.empty()){
