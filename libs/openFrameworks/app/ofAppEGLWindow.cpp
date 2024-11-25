@@ -899,7 +899,7 @@ ofCoreEvents & ofAppEGLWindow::events(){
 }
 
 //------------------------------------------------------------
-shared_ptr<ofBaseRenderer> & ofAppEGLWindow::renderer(){
+std::shared_ptr<ofBaseRenderer> & ofAppEGLWindow::renderer(){
 	return currentRenderer;
 }
 
@@ -1528,7 +1528,7 @@ void ofAppEGLWindow::processInput(int fd, const char * node){
 	while(nBytesRead >= 0){
 		if(ev.type == EV_KEY){
 			if(ev.code == BTN_LEFT){
-				ofLogNotice("ofAppEGLWindow") << "BTN_LEFT" << endl;
+				ofLogNotice("ofAppEGLWindow") << "BTN_LEFT" << std::endl;
 				if(ev.value == 0){ // release
 					mouseEvent.button = OF_MOUSE_BUTTON_LEFT;
 					mouseEvent.type = ofMouseEventArgs::Released;
@@ -1541,7 +1541,7 @@ void ofAppEGLWindow::processInput(int fd, const char * node){
 					pushMouseEvent = true;
 				}
 			}else if(ev.code == BTN_MIDDLE){
-				ofLogNotice("ofAppEGLWindow") << "BTN_MIDDLE" << endl;
+				ofLogNotice("ofAppEGLWindow") << "BTN_MIDDLE" << std::endl;
 				if(ev.value == 0){ // release
 					mouseEvent.button = OF_MOUSE_BUTTON_MIDDLE;
 					mouseEvent.type = ofMouseEventArgs::Released;
@@ -1554,7 +1554,7 @@ void ofAppEGLWindow::processInput(int fd, const char * node){
 					pushMouseEvent = true;
 				}
 			}else if(ev.code == BTN_RIGHT){
-				ofLogNotice("ofAppEGLWindow") << "BTN_RIGHT" << endl;
+				ofLogNotice("ofAppEGLWindow") << "BTN_RIGHT" << std::endl;
 				if(ev.value == 0){ // release
 					mouseEvent.button = OF_MOUSE_BUTTON_RIGHT;
 					mouseEvent.type = ofMouseEventArgs::Released;
@@ -1749,7 +1749,7 @@ void ofAppEGLWindow::processInput(int fd, const char * node){
 				axisValuePending = true;
 				break;
 			default:
-				ofLogNotice("ofAppEGLWindow") << "readMouseEvents(): unknown mouse axis (perhaps it's the scroll wheel?): axis " << axis << " amount " << amount << endl;
+				ofLogNotice("ofAppEGLWindow") << "readMouseEvents(): unknown mouse axis (perhaps it's the scroll wheel?): axis " << axis << " amount " << amount << std::endl;
 				break;
 			}
 		}else if (ev.type == EV_ABS){
@@ -1807,7 +1807,7 @@ void ofAppEGLWindow::processInput(int fd, const char * node){
 					touchAxisValuePending = true;
 					break;
 				default:
-					ofLogNotice("ofAppEGLWindow") << "EV_ABS unknown axis: axis " << axis << " amount " << amount << endl;
+					ofLogNotice("ofAppEGLWindow") << "EV_ABS unknown axis: axis " << axis << " amount " << amount << std::endl;
 					break;
 			}
 		}else if(ev.type == EV_MSC){
@@ -2265,7 +2265,7 @@ void ofAppEGLWindow::handleX11Event(const XEvent& event){
 		instance->coreEvents.notifyMouseEvent(mouseEvent);
 		break;
 	case MotionNotify:
-		//cout << "motion notify" << endl;
+		//cout << "motion notify" << std::endl;
 		mouseEvent.x = static_cast<float>(event.xmotion.x);
 		mouseEvent.y = static_cast<float>(event.xmotion.y);
 		mouseEvent.button = event.xbutton.button;
