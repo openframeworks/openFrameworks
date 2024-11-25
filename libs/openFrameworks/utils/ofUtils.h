@@ -420,7 +420,7 @@ public:
 	auto refill() {
 		if (valid()) {
 			// cannot be scoped_lock should be behind another private call
-			auto last = *values_.end();
+			auto last = *std::prev(values_.end());
 			ofShuffle(values_);
 			if (!allow_edge_repeat_) {
 				while (last == *values_.begin())
