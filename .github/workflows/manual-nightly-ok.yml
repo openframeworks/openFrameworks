@@ -1,19 +1,14 @@
-name: manual-nightly
+# This one was created to make it work whil
+
+name: manual-nightly-ok
 
 on: 
   workflow_dispatch:
     inputs:
-          release:
-            description: 'release'     
-            required: true
-            default: 'nightly'
-# on:
-#   push:
-#     paths-ignore:
-#       - '**/README.md'
-#   pull_request:
-#     paths-ignore:
-#       - '**/README.md'
+      release:
+        description: 'release'     
+        required: true
+        default: 'latest'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -21,6 +16,7 @@ concurrency:
 
 env:
   ccache: ccache
+  RELEASE: ${{ github.event.inputs.release }}
 
 jobs:
   manual-nightly:
