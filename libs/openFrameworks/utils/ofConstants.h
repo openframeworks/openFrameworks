@@ -210,7 +210,7 @@ enum ofTargetPlatform{
 #elif defined(TARGET_OSX)
 	#define TARGET_GLFW_WINDOW
     #define OF_CAIRO
-    #define OF_RTAUDIO
+//    #define OF_RTAUDIO
     
 	#ifndef OF_NO_FMOD
 		#define OF_NO_FMOD
