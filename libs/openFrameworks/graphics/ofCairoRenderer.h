@@ -196,7 +196,7 @@ private:
 	std::stack<glm::mat4> projectionStack;
 	std::stack<glm::mat4> modelViewStack;
 	std::stack<ofRectangle> viewportStack;
-	
+
 	ofMatrixMode currentMatrixMode;
 
 	std::vector<glm::vec3> sphereVerts;

@@ -3,11 +3,7 @@
 // MARK: TARGET_MINGW test
 #include "ofConstants.h"
 
-#if !defined(TARGET_MINGW)
-	#include <utf8.h>
-#else
-	#include <utf8cpp/utf8.h> // MSYS2 : use of system-installed include
-#endif
+#include <utf8cpp/utf8.h> // MSYS2 : use of system-installed include
 
 #include <algorithm>
 #include <bitset> // For ofToBinary.
@@ -336,7 +332,7 @@ public:
 		prepare();
 		return *this;
 	}
-	
+
 	/// \brief Construct an urn initialized with contents
 	/// \param Args the values
 	template <typename... Args>

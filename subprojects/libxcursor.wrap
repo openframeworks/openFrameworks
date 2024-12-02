@@ -1,0 +1,12 @@
+[wrap-file]
+directory = libXcursor-1.2.1
+source_url = https://xorg.freedesktop.org/releases/individual/lib/libXcursor-1.2.1.tar.xz
+source_filename = libXrandr-1.2.1.tar.xz
+source_hash = 46c143731610bafd2070159a844571b287ac26192537d047a39df06155492104
+patch_filename = libxcursor_1.2.1-1_patch.zip
+patch_url = https://wrapdb.mesonbuild.com/v2/libxcursor_1.2.1-1/get_patch
+patch_hash = ca8df86b74b8b4065e69ca7620a539c034deb08f9e1dbe58a444984da0e8c2fb
+wrapdb_version = 1.2.1-1
+
+[provide]
+xcursor = xcursor_dep

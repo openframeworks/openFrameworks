@@ -1,3 +1,5 @@
+#ifdef __unix__
+
 #pragma once
 
 #include "ofAppBaseWindow.h"
@@ -10,6 +12,8 @@
 
 #include <queue>
 #include <map>
+
+#include <EGL/eglplatform.h>
 #include <X11/Xlib.h>
 
 enum ofAppEGLWindowType {
@@ -268,7 +272,7 @@ protected:
 	void readNativeUDevEvents();
 	void readNativeInputEvents();
 
-	void processInput(int fd, const char * node);	
+	void processInput(int fd, const char * node);
 	void addInput(const char * node, bool isMouse);
 	void removeInput(const char * node);
 	void printInput();
@@ -285,3 +289,5 @@ private:
 	std::shared_ptr<ofBaseRenderer> currentRenderer;
 	static ofAppEGLWindow * instance;
 };
+
+#endif

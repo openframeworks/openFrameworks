@@ -1,0 +1,13 @@
+[wrap-file]
+directory = curl-8.10.0
+source_url = https://github.com/curl/curl/releases/download/curl-8_10_0/curl-8.10.0.tar.xz
+source_fallback_url = https://github.com/mesonbuild/wrapdb/releases/download/curl_8.10.0-1/curl-8.10.0.tar.xz
+source_filename = curl-8.10.0.tar.xz
+source_hash = e6b142f0e85e954759d37e26a3627e2278137595be80e3a860c4353e4335e5a0
+patch_filename = curl_8.10.0-1_patch.zip
+patch_url = https://wrapdb.mesonbuild.com/v2/curl_8.10.0-1/get_patch
+patch_hash = 82ff0ee3f852cc8221ee52c2f2b7624098452a219f64f45bb8d5d1b6bf921f0f
+wrapdb_version = 8.10.0-1
+
+[provide]
+dependency_names = libcurl
