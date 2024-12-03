@@ -3,6 +3,7 @@
 // MARK: ofConstants targets
 //#include "ofConstants.h"
 #include <string>
+#include <vector>
 
 class ofBuffer;
 
