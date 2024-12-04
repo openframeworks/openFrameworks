@@ -1,0 +1,74 @@
+# This one was created to make it work whil
+
+name: manual-nightly-ok
+
+on:
+  workflow_dispatch:
+    inputs:
+      release:
+        description: "release"
+        required: true
+        default: "latest"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  ccache: ccache
+  RELEASE: ${{ github.event.inputs.release }}
+
+jobs:
+  manual-nightly:
+    runs-on: ubuntu-24.04
+    if: github.repository == 'openframeworks/openFrameworks' && github.ref == 'refs/heads/master'
+    strategy:
+      matrix:
+        cfg:
+          - { target: linux64, libs: 64gcc6 }
+    steps:
+      - name: Install libunwind
+        run: sudo apt-get install libunwind-dev
+      - name: Cache Packages
+        uses: awalsh128/cache-apt-pkgs-action@latest
+        with:
+          packages: aptitude aptitude-common libboost-iostreams1.83.0 libcwidget4 libsigc++-2.0-0v5 libxapian30 fonts-wine{a} libasound2-plugins{a} libcapi20-3t64{a} libosmesa6{a} libpcsclite1{a} libspeexdsp1{a} libwine{a} libxkbregistry0{a} libz-mingw-w64{a} wine{a} wine64 make curl libjack-jackd2-0 libjack-jackd2-dev freeglut3-dev libasound2-dev libxmu-dev libxxf86vm-dev g++ libgl1-mesa-dev libglu1-mesa-dev libraw1394-dev libudev-dev libdrm-dev libglew-dev libopenal-dev libsndfile1-dev libfreeimage-dev libcairo2-dev libfreetype6-dev libssl-dev libpulse-dev libusb-1.0-0-dev libgtk2.0-dev libopencv-dev libassimp-dev librtaudio-dev gdb libglfw3-dev liburiparser-dev libcurl4-openssl-dev libpugixml-dev libgconf-2-4 libgtk2.0-0 libpoco-dev libxcursor-dev libxi-dev libxinerama-dev libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev gstreamer1.0-libav gstreamer1.0-pulseaudio gstreamer1.0-x gstreamer1.0-plugins-bad gstreamer1.0-alsa gstreamer1.0-plugins-base gstreamer1.0-plugins-good
+          # libunwind-dev wget2
+          version: 1.0
+
+      - uses: actions/checkout@v4
+      - name: ccache
+        uses: hendrikmuhs/ccache-action@v1.2.14
+        with:
+          key: ${{ matrix.cfg.target }}
+      - name: update submodules
+        run: ./scripts/dev/init_submodules.sh
+      - name: Install dependencies
+        run: ./scripts/ci/${{matrix.cfg.target}}/install.sh;
+      - name: Download libs
+        run: ./scripts/linux/download_libs.sh -a ${{matrix.cfg.libs}};
+      - name: Create Package
+        run: scripts/ci/package_builds.sh ${{ github.event.inputs.release }};
+        id: createpackage
+      - name: List output directory
+        run: ls -lah out/
+      # - name: Test Artefact zip
+      #   run: |
+      #     tar -cjf out/manual-mega_artefact.tar.bz2 -C out $(echo ${{ steps.createpackage.outputs.FILES_OUT }} | tr ' ' '\n' | sed 's|^out/||')
+      # - name: Upload binaries as Artefact
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: openFrameworks-all-artefact-${{ env.TARGET }}-${{ matrix.bundle }}
+      #     path: out/manual-mega_artefact.tar.bz2
+      #     retention-days: 1
+      - name: Update Release
+        uses: IsaacShelton/update-existing-release@v1.3.4
+        if: github.repository == 'openframeworks/openFrameworks' && github.ref == 'refs/heads/master'
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          tag: ${{ github.event.inputs.release }}
+          # release: ${{ github.event.inputs.release }}
+          release: nightly
+          prerelease: false
+          replace: true
+          files: ${{ steps.createpackage.outputs.FILES_OUT }}
