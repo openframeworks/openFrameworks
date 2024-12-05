@@ -44,14 +44,21 @@ PLATFORM_CXXVER = -std=c++17
 
 PLATFORM_CFLAGS += -marm
 
-# PLATFORM_CFLAGS += -march=armv6
-# PLATFORM_CFLAGS += -march=armv7
-# PLATFORM_CFLAGS += -mtune=cortex-a8
-PLATFORM_CFLAGS += -march=native
-PLATFORM_CFLAGS += -mcpu=native
-PLATFORM_CFLAGS += -mtune=native
+# pi1: -mfpu=vfp -march=armv6zk -mtune=arm1176jzf-s
+# pi2: -mfpu=neon-vfpv4 -march=armv7-a -mtune=cortex-a7
+# pi3: -mfpu=crypto-neon-fp-armv8 -march=armv8-a+crc -mcpu=cortex-a53
+# pi4: -mfpu=crypto-neon-fp-armv8 -march=armv8-a+crc -mcpu=cortex-a72
 
-PLATFORM_CFLAGS += -mfpu=neon
+
+# PLATFORM_CFLAGS += -march=armv6
+PLATFORM_CFLAGS += -march=armv7-a
+PLATFORM_CFLAGS += -mtune=cortex-a7
+# PLATFORM_CFLAGS += -march=native
+# PLATFORM_CFLAGS += -mcpu=native
+# PLATFORM_CFLAGS += -mtune=native
+
+# PLATFORM_CFLAGS += -mfpu=neon
+PLATFORM_CFLAGS += -mfpu=neon-vfpv4
 PLATFORM_CFLAGS += -mfloat-abi=hard
 PLATFORM_CFLAGS += -fPIC
 PLATFORM_CFLAGS += -ftree-vectorize
