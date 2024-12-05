@@ -158,7 +158,7 @@ PLATFORM_CFLAGS += -pipe
 #
 #   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
- 
+
 ifdef USE_GLFW_WINDOW
 	PLATFORM_PKG_CONFIG_LIBRARIES += gl
 	PLATFORM_PKG_CONFIG_LIBRARIES += glu
@@ -293,3 +293,5 @@ endif
 	PKG_CONFIG_LIBDIR += /usr/lib/pkgconfig:/usr/lib/$(GCC_PREFIX)/pkgconfig:/usr/share/pkgconfig
 
 endif
+
+PLATFORM_DEFINES += TARGET_RASPBERRY_PI
