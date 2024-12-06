@@ -9,6 +9,7 @@ class ofBuffer;
 
 #if defined( __WIN32__ ) || defined( _WIN32 )
 	#define TARGET_WIN32
+	#include <winbase.h>
 #endif
 
 #ifndef TARGET_WIN32

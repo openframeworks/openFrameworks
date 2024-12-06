@@ -28,7 +28,6 @@
 //	#include <termios.h>
 //#else
 #ifdef TARGET_WIN32
-	#include <winbase.h>
 	#include <tchar.h>
 	#include <iostream>
 	#include <string.h>
