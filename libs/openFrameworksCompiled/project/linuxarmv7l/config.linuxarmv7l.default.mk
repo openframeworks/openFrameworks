@@ -98,19 +98,11 @@ ifdef USE_GLFW_WINDOW
 endif
 
 # raspberry pi specific
-ifeq ($(USE_PI_LEGACY), 0)
+# ifeq ($(USE_PI_LEGACY), 0)
 	PLATFORM_LIBRARIES += GLESv2
 	PLATFORM_LIBRARIES += GLESv1_CM
 	PLATFORM_LIBRARIES += EGL
 # FIXME: update to what is possible now.
-else ifneq (,$(wildcard $(RPI_ROOT)/opt/vc/lib/libGLESv2.so))
-	PLATFORM_LIBRARIES += GLESv2
-	PLATFORM_LIBRARIES += GLESv1_CM
-	PLATFORM_LIBRARIES += EGL
-else
-	PLATFORM_LIBRARIES += brcmGLESv2
-	PLATFORM_LIBRARIES += brcmEGL
-endif
 
 # PLATFORM_LIBRARIES += openmaxil
 # PLATFORM_LIBRARIES += bcm_host
