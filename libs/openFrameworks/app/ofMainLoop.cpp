@@ -23,8 +23,6 @@
 	#include "ofAppGLFWWindow.h"
 #elif defined(TARGET_RASPBERRY_PI)
 	#include "ofAppEGLWindow.h"
-	#include "ofAppGLFWWindow.h"
-
 #elif defined(TARGET_EMSCRIPTEN)
 	#include "ofxAppEmscriptenWindow.h"
 #else
