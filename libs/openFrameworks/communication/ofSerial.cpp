@@ -1,10 +1,8 @@
-#if defined( __WIN32__ ) || defined( _WIN32 )
-	#define TARGET_WIN32
-#endif
-
 #include "ofSerial.h"
 #include "ofUtils.h"
 #include "ofLog.h"
+#include "ofConstants.h"
+
 #include <fcntl.h>
 #include <errno.h>
 #include <ctype.h>
