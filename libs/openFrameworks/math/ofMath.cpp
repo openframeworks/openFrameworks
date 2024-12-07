@@ -3,6 +3,10 @@
 #include "ofPolyline.h"
 #include "ofRandomDistributions.h"
 
+//#define GLM_FORCE_CTOR_INIT
+//#define GLM_ENABLE_EXPERIMENTAL
+//#include <glm/fwd.hpp>
+
 #include <float.h>
 
 #ifndef TARGET_WIN32

@@ -9,12 +9,13 @@
 	#include <utf8cpp/utf8.h> // MSYS2 : use of system-installed include
 #endif
 
-#include <algorithm>
+//#include <algorithm>
 #include <bitset> // For ofToBinary.
 #include <chrono>
 #include <iomanip> //for setprecision
 #include <optional>
 #include <sstream>
+#include <algorithm>
 
 #include "ofRandomDistributions.h"
 #include "ofRandomEngine.h"

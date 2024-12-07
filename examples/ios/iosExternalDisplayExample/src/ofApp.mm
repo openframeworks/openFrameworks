@@ -39,13 +39,13 @@ void ofApp::draw(){
 	ofDisableSmoothing();
 	ofSetLineWidth(2);
 
-	ofPoint p1;
-	ofPoint p2;
+	glm::vec2 p1;
+	glm::vec2 p2;
 
 	//-- draw width arrow.
 
-	p1.set(15, ofGetHeight()-10);
-	p2.set(ofGetWidth()-15, ofGetHeight()-10);
+	p1 = { 15, ofGetHeight()-10 };
+	p2 = { ofGetWidth()-15, ofGetHeight()-10 };
 
 	ofSetColor(ofColor::magenta);
 	ofPushMatrix();
@@ -71,8 +71,8 @@ void ofApp::draw(){
 
 	//-- draw height arrow.
 
-	p1.set(ofGetWidth()-10, 15);
-	p2.set(ofGetWidth()-10, ofGetHeight()-15);
+	p1 = { ofGetWidth()-10, 15 };
+	p2 = { ofGetWidth()-10, ofGetHeight()-15 };
 
 	ofSetColor(ofColor::green);
 	ofPushMatrix();

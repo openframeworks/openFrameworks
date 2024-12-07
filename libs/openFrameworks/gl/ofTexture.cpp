@@ -1140,8 +1140,8 @@ ofMesh ofTexture::getMeshForSubsection(float x, float y, float z, float w, float
 	// to constantly add a 2 pixel border on all uploaded images
 	// is insane..
 
-	GLfloat offsetw = 0.0f;
-	GLfloat offseth = 0.0f;
+	GLfloat offsetw { 0.0f };
+	GLfloat offseth { 0.0f };
 
 	if (!ofGLSupportsNPOTTextures() && bTexHackEnabled) {
 		offsetw = 1.0f / (texData.tex_w);
@@ -1149,13 +1149,13 @@ ofMesh ofTexture::getMeshForSubsection(float x, float y, float z, float w, float
 	}
 	// -------------------------------------------------
 
-	auto topLeft = getCoordFromPoint(sx, sy);
-	auto bottomRight = getCoordFromPoint(sx + sw, sy + sh);
+	auto topLeft { getCoordFromPoint(sx, sy) };
+	auto bottomRight { getCoordFromPoint(sx + sw, sy + sh) };
 
-	GLfloat tx0 = topLeft.x + offsetw;
-	GLfloat ty0 = topLeft.y + offseth;
-	GLfloat tx1 = bottomRight.x - offsetw;
-	GLfloat ty1 = bottomRight.y - offseth;
+	GLfloat tx0 { topLeft.x + offsetw };
+	GLfloat ty0 { topLeft.y + offseth };
+	GLfloat tx1 { bottomRight.x - offsetw };
+	GLfloat ty1 { bottomRight.y - offseth };
 
 	quad.setMode(OF_PRIMITIVE_TRIANGLE_FAN);
 	quad.getVertices().resize(4);

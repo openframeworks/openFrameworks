@@ -5,9 +5,12 @@
 
 #pragma once
 
-#define GLM_FORCE_CTOR_INIT
-#define GLM_ENABLE_EXPERIMENTAL
 #include <glm/mat3x3.hpp>
+//#include <glm/detail/qualifier.hpp>
+//namespace glm {
+//	typedef float					f32;
+//	typedef mat<3, 3, f32, defaultp>	mat3;
+//}
 
 #include <iostream>
 

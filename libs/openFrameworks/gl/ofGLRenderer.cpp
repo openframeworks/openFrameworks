@@ -1,9 +1,10 @@
+#include "ofGLRenderer.h"
+#include "ofGLUtils.h"
+
 #include "of3dPrimitives.h"
 #include "ofBitmapFont.h"
 #include "ofCamera.h"
 #include "ofFbo.h"
-#include "ofGLRenderer.h"
-#include "ofGLUtils.h"
 #include "ofImage.h"
 #include "ofLight.h"
 #include "ofMaterial.h"

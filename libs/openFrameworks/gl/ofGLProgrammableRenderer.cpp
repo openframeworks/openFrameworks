@@ -946,25 +946,47 @@ glm::vec3 ofGLProgrammableRenderer::getCurrentEyePosition() const {
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::uploadCurrentMatrix() {
 	if (!currentShader) return;
+
+	using std::cout;
+	using std::endl;
+	
 	// uploads the current matrix to the current shader.
 	switch (matrixStack.getCurrentMatrixMode()) {
 	case OF_MATRIX_MODELVIEW:
-		currentShader->setUniformMatrix4f(MODEL_MATRIX_UNIFORM, matrixStack.getModelMatrix());
-		currentShader->setUniformMatrix4f(VIEW_MATRIX_UNIFORM, matrixStack.getViewMatrix());
-		currentShader->setUniformMatrix4f(MODELVIEW_MATRIX_UNIFORM, matrixStack.getModelViewMatrix());
-		currentShader->setUniformMatrix4f(MODELVIEW_PROJECTION_MATRIX_UNIFORM, matrixStack.getModelViewProjectionMatrix());
+//			std::cout << "here " << std::endl;
+
+			currentShader->setUniformMatrix4f(MODEL_MATRIX_UNIFORM, matrixStack.getModelMatrix());
+			currentShader->setUniformMatrix4f(VIEW_MATRIX_UNIFORM, matrixStack.getViewMatrix());
+			currentShader->setUniformMatrix4f(MODELVIEW_MATRIX_UNIFORM, matrixStack.getModelViewMatrix());
+			currentShader->setUniformMatrix4f(MODELVIEW_PROJECTION_MATRIX_UNIFORM, matrixStack.getModelViewProjectionMatrix());
+
+			
 		if (currentMaterial) {
 			currentMaterial->uploadMatrices(*currentShader, *this);
 		}
 		break;
 	case OF_MATRIX_PROJECTION:
+//			cout << "owww OF_MATRIX_PROJECTION" << endl;
 		currentShader->setUniformMatrix4f(PROJECTION_MATRIX_UNIFORM, matrixStack.getProjectionMatrix());
 		currentShader->setUniformMatrix4f(MODELVIEW_PROJECTION_MATRIX_UNIFORM, matrixStack.getModelViewProjectionMatrix());
 		break;
 	case OF_MATRIX_TEXTURE:
+//			cout << "owww OF_MATRIX_PROJECTION" << endl;
 		currentShader->setUniformMatrix4f(TEXTURE_MATRIX_UNIFORM, matrixStack.getTextureMatrix());
 		break;
 	}
+	
+	
+//	matrices = {
+//		matrixStack.getModelMatrix(),
+//		matrixStack.getViewMatrix(),
+//		matrixStack.getModelViewMatrix(),
+//		matrixStack.getModelViewProjectionMatrix(),
+//		matrixStack.getProjectionMatrix(),
+//		matrixStack.getTextureMatrix(),
+//	};
+//	
+//	currentShader->setUniformBufferObject("matrices", &matrices, sizeof(matrices));
 }
 
 //----------------------------------------------------------
@@ -1819,12 +1841,26 @@ void ofGLProgrammableRenderer::unbind(const ofCamera & camera) {
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::uploadMatrices() {
 	if (!currentShader) return;
+	
+//	matrices = {
+//		matrixStack.getModelMatrix(),
+//		matrixStack.getViewMatrix(),
+//		matrixStack.getModelViewMatrix(),
+//		matrixStack.getModelViewProjectionMatrix(),
+//		matrixStack.getProjectionMatrix(),
+//		matrixStack.getTextureMatrix(),
+//	};
+//	currentShader->setUniformBufferObject("matrices", &matrices, sizeof(matrices));
+	
+	
 	currentShader->setUniformMatrix4f(MODEL_MATRIX_UNIFORM, matrixStack.getModelMatrix());
 	currentShader->setUniformMatrix4f(VIEW_MATRIX_UNIFORM, matrixStack.getViewMatrix());
 	currentShader->setUniformMatrix4f(MODELVIEW_MATRIX_UNIFORM, matrixStack.getModelViewMatrix());
+	currentShader->setUniformMatrix4f(MODELVIEW_PROJECTION_MATRIX_UNIFORM, matrixStack.getModelViewProjectionMatrix());
 	currentShader->setUniformMatrix4f(PROJECTION_MATRIX_UNIFORM, matrixStack.getProjectionMatrix());
 	currentShader->setUniformMatrix4f(TEXTURE_MATRIX_UNIFORM, matrixStack.getTextureMatrix());
-	currentShader->setUniformMatrix4f(MODELVIEW_PROJECTION_MATRIX_UNIFORM, matrixStack.getModelViewProjectionMatrix());
+	
+	
 	if (currentMaterial) {
 		currentMaterial->uploadMatrices(*currentShader, *this);
 	}
@@ -1854,6 +1890,14 @@ void ofGLProgrammableRenderer::setDefaultUniforms() {
 
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::beginDefaultShader() {
+	// piece of code to avoid begin multiple times the same shader
+//	std::cout << "2 " << std::endl;
+//	if (ofGetFrameNum() == beginDefaultShaderFrame) {
+//		return;
+//	}
+//	beginDefaultShaderFrame = ofGetFrameNum();
+//	
+//	std::cout << "ofGLProgrammableRenderer::beginDefaultShader() " << ofGetFrameNum() << std::endl;
 	if (usingCustomShader && !currentMaterial && !currentShadow) return;
 	if (currentShadow && bCustomShadowShader) return;
 
@@ -2293,6 +2337,18 @@ static const string defaultVertexShader = vertex_shader_header + STRINGIFY(
 	uniform mat4 modelViewMatrix;
 	uniform mat4 textureMatrix;
 	uniform mat4 modelViewProjectionMatrix;
+																		   
+	layout(std140) uniform testeDimitrao {
+	   mat4 testando;
+	};
+//   layout(std140) uniform matrices {
+//	   mat4 modelMatrix;
+//	   mat4 viewMatrix;
+//	   mat4 modelViewMatrix;
+//	   mat4 modelViewProjectionMatrix;
+//	   mat4 projectionMatrix;
+//	   mat4 textureMatrix;
+//   };
 
 	IN vec4  position;
 	IN vec2  texcoord;
