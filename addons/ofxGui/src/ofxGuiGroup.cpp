@@ -19,18 +19,18 @@ ofxGuiGroup::ofxGuiGroup(){
 	bGuiActive = false;
 }
 
-ofxGuiGroup::ofxGuiGroup(const ofParameterGroup & parameters, const string& filename, float x, float y){
+ofxGuiGroup::ofxGuiGroup(const ofParameterGroup & parameters, const of::filesystem::path & filename, float x, float y){
 	minimized = false;
 	parent = nullptr;
 	setup(parameters, filename, x, y);
 }
 
-ofxGuiGroup * ofxGuiGroup::setup(const string& collectionName, const string& filename, float x, float y){
+ofxGuiGroup * ofxGuiGroup::setup(const string& collectionName, const of::filesystem::path & filename, float x, float y){
 	ofParameterGroup parameters(collectionName);
 	return setup(parameters, filename, x, y);
 }
 
-ofxGuiGroup * ofxGuiGroup::setup(const ofParameterGroup & _parameters, const string& _filename, float x, float y){
+ofxGuiGroup * ofxGuiGroup::setup(const ofParameterGroup & _parameters, const of::filesystem::path & _filename, float x, float y){
 	b.x = x;
 	b.y = y;
 	headerRect.height = defaultHeight;
@@ -243,7 +243,7 @@ bool ofxGuiGroup::mouseMoved(ofMouseEventArgs & args){
 
 bool ofxGuiGroup::mousePressed(ofMouseEventArgs & args){
 	if(!isGuiDrawing())return false;
-	
+
 	if(setValue(args.x, args.y, true)){
 		return true;
 	}
@@ -323,10 +323,10 @@ void ofxGuiGroup::generateDraw(){
 		headerBg.setFilled(true);
 		headerBg.rectangle(headerRect);
 		auto y = getTextVCenteredInRect(headerRect);
-		
+
 		textMesh = getTextMesh(getName(), textPadding + b.x, y);
-		
-		
+
+
 		minimizeRect = getTextBoundingBox("+",0,0);
 		minimizeRect.x = b.width - textPadding - minimizeRect.width + b.x;
 
@@ -354,7 +354,7 @@ void ofxGuiGroup::render(){
 	ofColor c = ofGetStyle().color;
 	if(bHeaderEnabled){
 		ofSetColor(thisTextColor);
-		
+
 		bindFontTexture();
 		textMesh.draw();
 		unbindFontTexture();
@@ -508,11 +508,11 @@ void ofxGuiGroup::updateChildrenPositions(bool bUpdateWidth){
 		b.height += groupSpacing;
 	}
 	if(!minimized){
-			
+
 		float y = b.getMaxY();
 		float x = b.x;
 		float w = b.width;
-		
+
 		if(parent){//if the group has no parent dont indent the children. it just looks better
 			x += childrenLeftIndent;
 			w -= childrenLeftIndent + childrenRightIndent;
@@ -572,4 +572,3 @@ void ofxGuiGroup::disableHeader(){
 bool ofxGuiGroup::isHeaderEnabled(){
 	return bHeaderEnabled;
 }
-
