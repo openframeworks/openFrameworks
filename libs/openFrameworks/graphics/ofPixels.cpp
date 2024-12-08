@@ -532,7 +532,7 @@ void ofPixels_<PixelType>::allocate(size_t w, size_t h, ofPixelFormat format){
 
 	pixelsSize = newSize;
 
-	pixels = new PixelType[pixelsSize];
+	pixels = new PixelType[pixelsSize * getNumChannels()];
 	bAllocated = true;
 	pixelsOwner = true;
 }
