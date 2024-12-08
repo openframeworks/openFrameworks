@@ -1,8 +1,6 @@
 #include "ofSerial.h"
 #include "ofUtils.h"
 #include "ofLog.h"
-#include "ofConstants.h"
-
 #include <fcntl.h>
 #include <errno.h>
 #include <ctype.h>
@@ -28,6 +26,7 @@
 //	#include <termios.h>
 //#else
 #ifdef TARGET_WIN32
+	#include <winbase.h>
 	#include <tchar.h>
 	#include <iostream>
 	#include <string.h>
