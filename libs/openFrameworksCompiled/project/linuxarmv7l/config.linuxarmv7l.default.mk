@@ -38,27 +38,9 @@ include $(OF_SHARED_MAKEFILES_PATH)/config.linux.common.mk
 #   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
 
-PLATFORM_CFLAGS += -std=c++17
-PLATFORM_LDFLAGS += -lstdc++fs
-PLATFORM_CXXVER = -std=c++17
-
-PLATFORM_CFLAGS += -marm
-
-# pi1: -mfpu=vfp -march=armv6zk -mtune=arm1176jzf-s
-# pi2: -mfpu=neon-vfpv4 -march=armv7-a -mtune=cortex-a7
-# pi3: -mfpu=crypto-neon-fp-armv8 -march=armv8-a+crc -mcpu=cortex-a53
-# pi4: -mfpu=crypto-neon-fp-armv8 -march=armv8-a+crc -mcpu=cortex-a72
-
-
-# PLATFORM_CFLAGS += -march=armv6
-PLATFORM_CFLAGS += -march=armv7-a
-PLATFORM_CFLAGS += -mtune=cortex-a7
-# PLATFORM_CFLAGS += -march=native
-# PLATFORM_CFLAGS += -mcpu=native
-# PLATFORM_CFLAGS += -mtune=native
-
-# PLATFORM_CFLAGS += -mfpu=neon
-PLATFORM_CFLAGS += -mfpu=neon-vfpv4
+PLATFORM_CFLAGS += -march=armv7
+PLATFORM_CFLAGS += -mtune=cortex-a8
+PLATFORM_CFLAGS += -mfpu=neon
 PLATFORM_CFLAGS += -mfloat-abi=hard
 PLATFORM_CFLAGS += -fPIC
 PLATFORM_CFLAGS += -ftree-vectorize
@@ -84,40 +66,9 @@ PLATFORM_CFLAGS += -pipe
 # Note: Leave a leading space when adding list items with the += operator
 ################################################################################
 
-# PLATFORM_PKG_CONFIG_LIBRARIES += glesv1_cm
-# PLATFORM_PKG_CONFIG_LIBRARIES += glesv2
-# PLATFORM_PKG_CONFIG_LIBRARIES += egl
-
-
-
-ifdef USE_GLFW_WINDOW
-	PLATFORM_PKG_CONFIG_LIBRARIES += gl
-	PLATFORM_PKG_CONFIG_LIBRARIES += glu
-	PLATFORM_PKG_CONFIG_LIBRARIES += glew
-	PLATFORM_LIBRARIES += glfw
-endif
-
-# raspberry pi specific
-# ifeq ($(USE_PI_LEGACY), 0)
-	PLATFORM_LIBRARIES += GLESv2
-	PLATFORM_LIBRARIES += GLESv1_CM
-	PLATFORM_LIBRARIES += EGL
-# FIXME: update to what is possible now.
-
-# PLATFORM_LIBRARIES += openmaxil
-# PLATFORM_LIBRARIES += bcm_host
-# PLATFORM_LIBRARIES += vcos
-# PLATFORM_LIBRARIES += vchiq_arm
-PLATFORM_LIBRARIES += pcre
-PLATFORM_LIBRARIES += rt
-PLATFORM_LIBRARIES += X11
-PLATFORM_LIBRARIES += dl
-
-PLATFORM_LDFLAGS += -pthread
-
-ifdef USE_ATOMIC
-	PLATFORM_LDFLAGS += -latomic
-endif
+PLATFORM_PKG_CONFIG_LIBRARIES += glesv1_cm
+PLATFORM_PKG_CONFIG_LIBRARIES += glesv2
+PLATFORM_PKG_CONFIG_LIBRARIES += egl
 
 
 ################################################################################
@@ -137,11 +88,6 @@ endif
 ################################################################################
 
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/sound/ofFmodSoundPlayer.cpp
-ifndef USE_GLFW_WINDOW
-	PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/app/ofAppGLFWWindow.cpp
-else
-	PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/app/ofAppEGLWindow.cpp
-endif
 
 ifeq ($(CROSS_COMPILING),1)
 
@@ -165,7 +111,7 @@ ifeq ($(CROSS_COMPILING),1)
 	SYSROOT=$(RPI_ROOT)
 
 	PLATFORM_CFLAGS += --sysroot=$(SYSROOT)
-
+	
 	#c++ 17 support - comment out two lines below to use c++11
 	PLATFORM_CFLAGS += -std=c++17
 	PLATFORM_LDFLAGS += -lstdc++fs
@@ -181,5 +127,3 @@ ifeq ($(CROSS_COMPILING),1)
 	PKG_CONFIG_LIBDIR=$(SYSROOT)/usr/lib/pkgconfig:$(SYSROOT)/usr/lib/arm-linux-gnueabihf/pkgconfig:$(SYSROOT)/usr/share/pkgconfig
 
 endif
-
-PLATFORM_DEFINES += TARGET_RASPBERRY_PI

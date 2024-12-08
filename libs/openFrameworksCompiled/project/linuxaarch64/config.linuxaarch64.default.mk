@@ -129,5 +129,3 @@ endif
 	PKG_CONFIG_LIBDIR += /usr/lib/pkgconfig:/usr/lib/$(GCC_PREFIX)/pkgconfig:/usr/share/pkgconfig
 
 endif
-
-PLATFORM_DEFINES += TARGET_RASPBERRY_PI

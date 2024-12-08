@@ -158,7 +158,7 @@ PLATFORM_CFLAGS += -pipe
 #
 #   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
-
+ 
 ifdef USE_GLFW_WINDOW
 	PLATFORM_PKG_CONFIG_LIBRARIES += gl
 	PLATFORM_PKG_CONFIG_LIBRARIES += glu
@@ -245,12 +245,12 @@ PLATFORM_LIBRARY_SEARCH_PATHS += $(RPI_ROOT)/opt/vc/lib
 #   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
 
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/sound/ofFmodSoundPlayer.cpp
 ifndef USE_GLFW_WINDOW
 	PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/app/ofAppGLFWWindow.cpp
 else
 	PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/app/ofAppEGLWindow.cpp
 endif
+PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/sound/ofFmodSoundPlayer.cpp
 
 ifeq ($(CROSS_COMPILING),1)
 ifdef MAKEFILE_DEBUG
@@ -293,5 +293,3 @@ endif
 	PKG_CONFIG_LIBDIR += /usr/lib/pkgconfig:/usr/lib/$(GCC_PREFIX)/pkgconfig:/usr/share/pkgconfig
 
 endif
-
-PLATFORM_DEFINES += TARGET_RASPBERRY_PI
