@@ -679,8 +679,8 @@ private:
 	void copyFrom( const ofPixels_<SrcType>& mom );
 
 	PixelType * pixels = nullptr;
-	size_t 	width = 0;
-	size_t 	height = 0;
+	size_t width = 0;
+	size_t height = 0;
 
 	//int 	channels; // 1, 3, 4 channels per pixel (grayscale, rgb, rgba)
 	size_t 	pixelsSize = 0;

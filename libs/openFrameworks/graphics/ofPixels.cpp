@@ -393,10 +393,10 @@ template<typename PixelType>
 void ofPixels_<PixelType>::setFromExternalPixels(PixelType * newPixels, size_t w, size_t h, ofPixelFormat _pixelFormat){
 	clear();
 	pixelFormat = _pixelFormat;
-	width= w;
+	width = w;
 	height = h;
 
-	pixelsSize = bytesFromPixelFormat(w,h,_pixelFormat);
+	pixelsSize = w * h;
 
 	pixels = newPixels;
 	pixelsOwner = false;
@@ -513,8 +513,8 @@ void ofPixels_<PixelType>::allocate(size_t w, size_t h, ofPixelFormat format){
 		return;
 	}
 
-	size_t newSize = bytesFromPixelFormat(w,h,format);
-	size_t oldSize = getTotalBytes();
+	size_t newSize = w * h * pixelBitsFromPixelFormat(format);
+	size_t oldSize = size() * pixelBitsFromPixelFormat(pixelFormat);
 	//we check if we are already allocated at the right size
 	if(bAllocated && newSize==oldSize){
 		pixelFormat = format;
@@ -530,9 +530,12 @@ void ofPixels_<PixelType>::allocate(size_t w, size_t h, ofPixelFormat format){
 	width 		= w;
 	height 		= h;
 
-	pixelsSize = newSize;
+	pixelsSize = w * h;
 
-	pixels = new PixelType[pixelsSize];
+	// we have some incongruence here, if we use PixelType
+	// we are not able to use RGB565 format
+	pixels = new PixelType[pixelsSize * getNumChannels()];
+//	pixels = new uint8_t[newSize];
 	bAllocated = true;
 	pixelsOwner = true;
 }
@@ -583,11 +586,11 @@ void ofPixels_<PixelType>::clear(){
 		pixels = nullptr;
 	}
 
-	width			= 0;
-	height			= 0;
-	pixelFormat		= OF_PIXELS_UNKNOWN;
-	pixelsSize		= 0;
-	bAllocated		= false;
+	width = 0;
+	height = 0;
+	pixelFormat = OF_PIXELS_UNKNOWN;
+	pixelsSize = 0;
+	bAllocated = false;
 }
 
 template<typename PixelType>
