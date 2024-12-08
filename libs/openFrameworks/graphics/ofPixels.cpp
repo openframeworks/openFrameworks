@@ -513,8 +513,8 @@ void ofPixels_<PixelType>::allocate(size_t w, size_t h, ofPixelFormat format){
 		return;
 	}
 
-	size_t newSize = w * h;
-	size_t oldSize = size();
+	size_t newSize = w * h * pixelBitsFromPixelFormat(format);
+	size_t oldSize = size() * pixelBitsFromPixelFormat(pixelFormat);
 	//we check if we are already allocated at the right size
 	if(bAllocated && newSize==oldSize){
 		pixelFormat = format;
@@ -530,9 +530,12 @@ void ofPixels_<PixelType>::allocate(size_t w, size_t h, ofPixelFormat format){
 	width 		= w;
 	height 		= h;
 
-	pixelsSize = newSize;
+	pixelsSize = w * h;
 
+	// we have some incongruence here, if we use PixelType
+	// we are not able to use RGB565 format
 	pixels = new PixelType[pixelsSize * getNumChannels()];
+//	pixels = new uint8_t[newSize];
 	bAllocated = true;
 	pixelsOwner = true;
 }
