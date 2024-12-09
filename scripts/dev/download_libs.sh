@@ -9,6 +9,7 @@ NO_SSL=""
 BLEEDING_EDGE=0
 DL_VERSION=2.6.2
 TAG=""
+PTHREADS=0
 
 printHelp(){
 cat << EOF
@@ -43,7 +44,7 @@ download(){
     # downloader ci.openframeworks.cc/libs/$1 $SILENT_ARGS
 
     COMMAND=" "
-    
+
     if [[ $BLEEDING_EDGE = 1 ]] ; then
         REPO="latest"
     else
@@ -111,6 +112,10 @@ while [[ $# -gt 0 ]]; do
         ;;
         -s|--silent)
         SILENT_ARGS=1
+        ;;
+
+        -t|--pthreads)
+        PTHREADS=1
         ;;
 
         -k|--no-ssl)
@@ -226,8 +231,18 @@ if [ "$PLATFORM" == "linux" ] && [ "$ARCH" == "64" ]; then
     fi
 fi
 
-# echo " openFrameworks download_libs.sh v$DL_VERSION"
 echo " openFrameworks download_libs.sh v$DL_VERSION args=$@"
+
+if [ "$PLATFORM" == "emscripten" ]; then
+    if [[ $BLEEDING_EDGE = 1 ]] ; then
+        if [[ $ARCH = "64" ]] ; then
+            ARCH="_memory64"
+        fi
+        if [[ $PTHREADS = 1 ]] ; then
+            ARCH="${ARCH}_pthreads"
+        fi
+    fi
+fi
 
 if [ "$PLATFORM" == "msys2" ]; then
     if [[ $BLEEDING_EDGE = 1 ]] ; then
@@ -281,6 +296,12 @@ elif [ "$ARCH" == "" ] && [ "$PLATFORM" == "android" ]; then
           openFrameworksLibs_${VER}_${PLATFORM}arm64.tar.bz2 \
           openFrameworksLibs_${VER}_${PLATFORM}x86.tar.bz2"
     fi
+elif [ "$PLATFORM" == "emscripten" ]; then
+    if [[ $BLEEDING_EDGE = 1 ]] ; then
+        PKGS="openFrameworksLibs_${VER}_${PLATFORM}${ARCH}.tar.bz2"
+    else
+        PKGS="openFrameworksLibs_${VER}_${PLATFORM}${ARCH}.tar.bz2"
+    fi
 else # Linux
     if [[ $BLEEDING_EDGE = 1 ]] ; then
         PKGS="openFrameworksLibs_${VER}_${PLATFORM}${ARCH}.tar.bz2"
@@ -331,7 +352,7 @@ if [ $OVERWRITE -eq 1 ]; then
             echo "  Removing: [${libs[i]}/include]"
             rm -rf "${libs[i]}/include"
         fi
-        
+
     done
 fi
 
@@ -364,7 +385,7 @@ for PKG in $PKGS; do
 
         # FIXME: this if can be removed after this is fixed properly on apothecary, see:
         # https://github.com/openframeworks/openFrameworks/issues/8206
-        
+
         if [ "$PLATFORM" == "linux" ] && { [ "$ARCH" == "aarch64" ] || [ "$ARCH" == "armv7l" ] || [ "$ARCH" == "armv6l" ]; }; then
             echo "tar xjfv download/$PKG  --strip-components=1"
             tar xjf download/$PKG --strip-components=1
@@ -419,7 +440,7 @@ fi
 
 echo "   ------ "
 if [ "$PLATFORM" == "osx" ]; then
-    if [ $OVERWRITE -eq 1 ]; then 
+    if [ $OVERWRITE -eq 1 ]; then
         echo " Overwrite - addon xCFramework: [${addons[i]} - ${addonslibs[i]}]"
         xcframework_path="../addons/${addons[i]}/libs/${addonslibs[i]}/lib/macos/${addonslibs[i]}.xcframework/macos-arm64_x86_64"
         if [ -e "$xcframework_path" ]; then
