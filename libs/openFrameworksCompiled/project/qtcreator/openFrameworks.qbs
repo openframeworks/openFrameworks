@@ -61,10 +61,6 @@ Product{
                 "video/ofDirectShowGrabber\\..*",
                 "video/ofAVFoundationVideoPlayer\\..*",
                 "video/ofAVFoundationVideoGrabber\\..*",
-                "video/ofQuickTimePlayer\\..*",
-                "video/ofQuickTimeGrabber\\..*",
-                "video/ofQtUtils\\..*",
-                "video/ofQTKit\\..*",
                 "app/ofAppEGLWindow\\..*",
             ];
         }else if(qbs.targetOS.indexOf("windows")>-1){
@@ -75,10 +71,6 @@ Product{
                 "video/ofGstUtils\\..*",
                 "video/ofAVFoundationVideoPlayer\\..*",
                 "video/ofAVFoundationVideoGrabber\\..*",
-                "video/ofQuickTimePlayer\\..*",
-                "video/ofQuickTimeGrabber\\..*",
-                "video/ofQtUtils\\..*",
-                "video/ofQTKit\\..*",
                 "app/ofAppEGLWindow\\..*",
             ];
         }else if(qbs.targetOS.indexOf("osx")>-1){
@@ -89,10 +81,6 @@ Product{
                 "video/ofGstUtils\\..*",
                 "video/ofDirectShowPlayer\\..*",
                 "video/ofDirectShowGrabber\\..*",
-                "video/ofQuickTimePlayer\\..*",
-                "video/ofQuickTimeGrabber\\..*",
-                "video/ofQtUtils\\..*",
-                "video/ofQTKit\\..*",
                 "app/ofAppEGLWindow\\..*",
             ];
         }
