@@ -74,6 +74,7 @@ size_t ofxVecSlider_<glm::vec4>::dim(){
 	return 4;
 }
 
+#ifdef OF_USE_LEGACY_MATH
 template<>
 size_t ofxVecSlider_<ofVec2f>::dim(){
 	return 2;
@@ -88,6 +89,7 @@ template<>
 size_t ofxVecSlider_<ofVec4f>::dim(){
 	return 4;
 }
+#endif
 
 template<class VecType>
 ofAbstractParameter & ofxVecSlider_<VecType>::getParameter(){
@@ -110,9 +112,12 @@ const VecType * ofxVecSlider_<VecType>::operator->(){
 	return &value.get();
 }
 
+#ifdef OF_USE_LEGACY_MATH
 template class ofxVecSlider_<ofVec2f>;
 template class ofxVecSlider_<ofVec3f>;
 template class ofxVecSlider_<ofVec4f>;
+#endif
+
 template class ofxVecSlider_<glm::vec2>;
 template class ofxVecSlider_<glm::vec3>;
 template class ofxVecSlider_<glm::vec4>;

@@ -237,10 +237,10 @@ int ofxCvHaarFinder::findHaarObjects(const ofxCvGrayscaleImage& input,
 			blob.boundingRect.height = r->height;
 			blob.centroid.x = centerx;
 			blob.centroid.y = centery;
-			blob.pts.push_back(ofPoint(r->x, r->y));
-			blob.pts.push_back(ofPoint(r->x + r->width, r->y));
-			blob.pts.push_back(ofPoint(r->x + r->width, r->y + r->height));
-			blob.pts.push_back(ofPoint(r->x, r->y + r->height));
+			blob.pts.push_back(glm::vec2(r->x, r->y));
+			blob.pts.push_back(glm::vec2(r->x + r->width, r->y));
+			blob.pts.push_back(glm::vec2(r->x + r->width, r->y + r->height));
+			blob.pts.push_back(glm::vec2(r->x, r->y + r->height));
 
 			blobs.push_back(blob);
 		}
@@ -322,10 +322,10 @@ int ofxCvHaarFinder::findHaarObjects(const ofxCvGrayscaleImage& input,
 			blob.boundingRect.height = r.height;
 			blob.centroid.x = centerx;
 			blob.centroid.y = centery;
-			blob.pts.push_back(ofPoint(r.x, r.y));
-			blob.pts.push_back(ofPoint(r.x + r.width, r.y));
-			blob.pts.push_back(ofPoint(r.x + r.width, r.y + r.height));
-			blob.pts.push_back(ofPoint(r.x, r.y + r.height));
+			blob.pts.push_back(glm::vec2(r.x, r.y));
+			blob.pts.push_back(glm::vec2(r.x + r.width, r.y));
+			blob.pts.push_back(glm::vec2(r.x + r.width, r.y + r.height));
+			blob.pts.push_back(glm::vec2(r.x, r.y + r.height));
 
 			blobs.push_back(blob);
 		}
