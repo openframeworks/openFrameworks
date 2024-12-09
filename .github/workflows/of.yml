@@ -32,7 +32,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Docker Step
-        run: "docker run -di --name emscripten -v $PWD:/src emscripten/emsdk:3.1.21 bash"
+        run: "docker run -di --name emscripten -v $PWD:/src emscripten/emsdk:3.1.73 bash"
       # - name: Determine Release
       #   id: vars
       #   shell: bash
@@ -103,9 +103,9 @@ jobs:
       - name: Install dependencies
         run: ./scripts/ci/msys2/install.sh --msystem=${{ matrix.msystem }}
 
-      - name: LS
+      - name: List Directories
         shell: bash
-        run: ls -alfR
+        run: find . -type d
 
       - name: Build
         run: ./scripts/ci/msys2/build.sh
