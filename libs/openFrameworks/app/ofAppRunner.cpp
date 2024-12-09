@@ -466,6 +466,11 @@ void ofToggleFullscreen(){
 }
 
 //--------------------------------------
+void ofSetWindowMousePassThrough(bool allowPassThrough){
+	mainLoop()->getCurrentWindow()->setWindowMousePassthrough(allowPassThrough);
+}
+
+//--------------------------------------
 void ofSetFullscreen(bool fullscreen){
 	mainLoop()->getCurrentWindow()->setFullscreen(fullscreen);
 }

@@ -7,7 +7,8 @@ OVERWRITE=1
 SILENT_ARGS=""
 NO_SSL=""
 BLEEDING_EDGE=0
-DL_VERSION=2.5.0
+DL_VERSION=2.6.2
+TAG=""
 
 printHelp(){
 cat << EOF
@@ -28,6 +29,7 @@ cat << EOF
     -s, --silent                Silent download progress
     -h, --help                  Shows this message
     -k, --no-ssl                Allow no SSL validation
+    -t, --tag                   tag release for libraries
 EOF
 }
 
@@ -41,9 +43,19 @@ download(){
     # downloader ci.openframeworks.cc/libs/$1 $SILENT_ARGS
 
     COMMAND=" "
-    REPO="nightly"
+    
     if [[ $BLEEDING_EDGE = 1 ]] ; then
-        REPO="bleeding"
+        REPO="latest"
+    else
+        REPO="nightly"
+    fi
+
+    #FIXME: remove later, now forcing "latest"
+    REPO="latest"
+
+
+    if [[ $TAG != "" ]] ; then
+        REPO="$TAG"
     fi
 
     for PKG in $1; do
@@ -106,6 +118,10 @@ while [[ $# -gt 0 ]]; do
         ;;
         -m|--msystem)
         MSYSTEM="$2"
+        shift # past argument
+        ;;
+        -t|--tag)
+        TAG="$2"
         shift # past argument
         ;;
         -h|--help)
@@ -193,7 +209,13 @@ SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd "$SCRIPT_DIR"
 
 if [[ $BLEEDING_EDGE = 1 ]] ; then
-    VER=bleeding
+    VER=latest
+else
+    VER=master
+fi
+
+if [[ $TAG != "" ]] && [[ $TAG != "nightly" ]] ; then
+    VER="$TAG"
 fi
 
 if [ "$PLATFORM" == "linux" ] && [ "$ARCH" == "64" ]; then
@@ -204,7 +226,8 @@ if [ "$PLATFORM" == "linux" ] && [ "$ARCH" == "64" ]; then
     fi
 fi
 
-echo " openFrameworks download_libs.sh v$DL_VERSION"
+# echo " openFrameworks download_libs.sh v$DL_VERSION"
+echo " openFrameworks download_libs.sh v$DL_VERSION args=$@"
 
 if [ "$PLATFORM" == "msys2" ]; then
     if [[ $BLEEDING_EDGE = 1 ]] ; then
@@ -338,7 +361,16 @@ for PKG in $PKGS; do
         unzip -qo download/$PKG
         # rm -r download/$PKG
     else
-        tar xjf download/$PKG
+
+        # FIXME: this if can be removed after this is fixed properly on apothecary, see:
+        # https://github.com/openframeworks/openFrameworks/issues/8206
+        
+        if [ "$PLATFORM" == "linux" ] && { [ "$ARCH" == "aarch64" ] || [ "$ARCH" == "armv7l" ] || [ "$ARCH" == "armv6l" ]; }; then
+            echo "tar xjfv download/$PKG  --strip-components=1"
+            tar xjf download/$PKG --strip-components=1
+        else
+            tar xjfv download/$PKG
+        fi
         # rm -r download/$PKG
     fi
     echo " Deployed libraries from [download/$PKG] to [/libs]"

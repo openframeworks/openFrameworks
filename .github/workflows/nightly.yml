@@ -1,46 +1,26 @@
 name: nightly-linux64
-# on:
-#   push:
-#     paths-ignore:
-#       - '**/README.md'
-#   pull_request:
-#     paths-ignore:
-#       - '**/README.md'
-#  on: 
-#   workflow_dispatch:
-#      inputs:
-#           release:
-#              description: 'release'     
-#              required: true
-#              default: 'nightly'
-# concurrency:
-#   group: ${{ github.workflow }}-${{ github.ref }}
-#   cancel-in-progress: true
-
-# on:
-#  schedule:
-#   - cron: "0 6 * * *"
 
 on:
  schedule:
-   - cron: "0 6 * * *"
+  - cron: "0 6 * * *"
  workflow_dispatch:
     inputs:
-          release:
-            description: 'release'     
-            required: true
-            default: 'nightly'
+      release:
+        description: 'release'     
+        required: true
+        default: 'latest'
 env:
   ccache: ccache
+  RELEASE: latest
 
 jobs:
-  build-nightly:
+  build-nightly-ok:
     runs-on: ubuntu-24.04
     if: github.repository == 'openframeworks/openFrameworks' && github.ref == 'refs/heads/master'
     strategy:
-        matrix:
-          cfg:
-          - {target: linux64, libs: 64gcc6}
+      matrix:
+        cfg:
+        - {target: linux64, libs: 64gcc6}
     env:
      TARGET: ${{matrix.cfg.target}}
     steps:
@@ -65,16 +45,16 @@ jobs:
     - name: Download libs
       run: ./scripts/linux/download_libs.sh -a ${{matrix.cfg.libs}};
     - name: Create Package
-      run: scripts/ci/package_builds.sh ${{ github.event.inputs.release }};
+      run: ./scripts/ci/package_builds.sh ${{ github.event.inputs.release }};
       id: createpackage
     - name: List output directory
       run: ls -lah out/
     - name: Update Release
       uses: IsaacShelton/update-existing-release@v1.3.4
       with:
-       token: ${{ secrets.GITHUB_TOKEN }}
-       tag: nightly
-       release: nightly
-       prerelease: false
-       replace: true
-       files: ${{ steps.createpackage.outputs.FILES_OUT }}
+        token: ${{ secrets.GITHUB_TOKEN }}
+        tag: nightly
+        release: nightly
+        prerelease: false
+        replace: true
+        files: ${{ steps.createpackage.outputs.FILES_OUT }}

@@ -12,6 +12,10 @@
 #include "ofRectangle.h"
 #include "ofUtils.h" // ofToString
 
+#ifdef TARGET_WIN32
+#include <iso646.h>
+#endif
+
 template <typename ParameterType>
 class ofParameter;
 
@@ -507,11 +511,6 @@ public:
 	/// \tparam ParameterType the type of the value held by the ofParameter
 	/// \param v the ofParameter to link to it's value
 	ofParameter(const ofParameter<ParameterType> & v);
-
-	/// \brief constructs an ofParameter of type ParameterType initialized to value of same-type v
-	/// \tparam ParameterType the type of the value held by the ofParameter
-	/// \param v the value to initialize to
-	ofParameter(const ParameterType & v);
 	
 	/// \brief constructs an ofParameter of type ParameterType initialized to value of v
 	/// where v is convertible to ParameterType, with an exception for bool which can cause

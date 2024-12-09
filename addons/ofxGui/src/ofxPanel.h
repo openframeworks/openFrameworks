@@ -14,11 +14,11 @@ class ofxGuiGroup;
 class ofxPanel : public ofxGuiGroup {
 public:
 	ofxPanel();
-	ofxPanel(const ofParameterGroup & parameters, const std::string& filename=ofxPanelDefaultFilename, float x = 10, float y = 10);
+	ofxPanel(const ofParameterGroup & parameters, const of::filesystem::path & filename=ofxPanelDefaultFilename, float x = 10, float y = 10);
 	~ofxPanel();
 
-	ofxPanel * setup(const std::string& collectionName="", const std::string& filename=ofxPanelDefaultFilename, float x = 10, float y = 10);
-	ofxPanel * setup(const ofParameterGroup & parameters, const std::string& filename=ofxPanelDefaultFilename, float x = 10, float y = 10);
+	ofxPanel * setup(const std::string& collectionName="", const of::filesystem::path & filename=ofxPanelDefaultFilename, float x = 10, float y = 10);
+	ofxPanel * setup(const ofParameterGroup & parameters, const of::filesystem::path & filename=ofxPanelDefaultFilename, float x = 10, float y = 10);
 
 	bool mousePressed(ofMouseEventArgs & args);
 	bool mouseReleased(ofMouseEventArgs & args);
@@ -33,7 +33,7 @@ protected:
 private:
 	ofRectangle loadBox, saveBox;
 	ofImage loadIcon, saveIcon;
-    
+
     glm::vec3 grabPt;
 	bool bGrabbed;
 };

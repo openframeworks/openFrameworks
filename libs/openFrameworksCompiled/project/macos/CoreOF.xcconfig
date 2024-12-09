@@ -10,7 +10,7 @@ MISC_FLAGS = "-ObjC"
 HEADER_OF = "$(OF_PATH)/libs/openFrameworks/**"
 HEADER_FREETYPE = "$(OF_PATH)/libs/freetype/include"
 HEADER_FREETYPE2 = "$(OF_PATH)/libs/freetype/include/freetype"
-HEADER_FMOD = "$(OF_PATH)/libs/fmod/include"
+//HEADER_FMOD = "$(OF_PATH)/libs/fmod/include"
 HEADER_GLEW = "$(OF_PATH)/libs/glew/include"
 HEADER_FREEIMAGE = "$(OF_PATH)/libs/FreeImage/include"
 HEADER_TESS2 = "$(OF_PATH)/libs/tess2/include"
@@ -46,7 +46,7 @@ LIB_OF_DEBUG = "$(OF_PATH)/libs/openFrameworksCompiled/lib/macos/openFrameworksD
 OF_CORE_LIBS = $(MISC_FLAGS)
 //$(LIB_FMOD)
 
-OF_CORE_HEADERS = $(HEADER_OF) $(HEADER_FREEIMAGE)  $(HEADER_UTF8) $(HEADER_JSON) $(HEADER_GLM) $(HEADER_FMOD)
+OF_CORE_HEADERS = $(HEADER_OF) $(HEADER_FREEIMAGE)  $(HEADER_UTF8) $(HEADER_JSON) $(HEADER_GLM)
 //$(HEADER_TESS2) $(HEADER_CAIRO) $(HEADER_RTAUDIO) $(HEADER_GLFW) $(HEADER_FREETYPE) $(HEADER_FREETYPE2) $(HEADER_CURL) $(HEADER_URIPARSER) $(HEADER_PUGIXML) $(HEADER_GLEW)
 
 OF_CORE_FRAMEWORKS = -framework Accelerate -framework AGL -framework AppKit -framework ApplicationServices -framework AudioToolbox -framework AVFoundation -framework Cocoa -framework CoreAudio -framework CoreFoundation -framework CoreMedia -framework CoreServices -framework CoreVideo -framework IOKit -framework OpenGL -framework QuartzCore -framework Security

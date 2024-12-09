@@ -212,7 +212,7 @@ public:
 	/// \brief Legacy approach for loading videos for older inherited classes
 	/// \param name The name of the video resource to load.
 	/// \return True if the video was loaded successfully.
-	virtual bool load(const std::string & fileName);
+	virtual bool load(std::string fileName);
 
 	/// \brief Asynchronously load a video resource by name.
 	///
@@ -228,7 +228,7 @@ public:
 	
 	/// \brief Legacy approach for Asynchronously load a video resource by name.
 	/// \param name The name of the video resource to load.
-	virtual void loadAsync(const std::string & fileName);
+	virtual void loadAsync(std::string fileName);
 
 	/// \brief Play the video from the current playhead position.
 	///
