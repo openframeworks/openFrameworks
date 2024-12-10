@@ -286,7 +286,7 @@ void ofRectangle::scaleTo(const ofRectangle& targetRect,
 
     if(aspectRatioMode == OF_ASPECT_RATIO_KEEP_BY_EXPANDING ||
        aspectRatioMode == OF_ASPECT_RATIO_KEEP) {
-        if(std::abs(sw) >= std::numeric_limits<float>::epsilon() || std::abs(sh) >= FLT_EPSILON) {
+        if(std::abs(sw) >= std::numeric_limits<float>::epsilon() || std::abs(sh) >= std::numeric_limits<float>::epsilon()) {
             float wRatio = std::abs(tw) / std::abs(sw);
             float hRatio = std::abs(th) / std::abs(sh);
             if(aspectRatioMode == OF_ASPECT_RATIO_KEEP_BY_EXPANDING) {
