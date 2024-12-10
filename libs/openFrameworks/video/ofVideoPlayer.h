@@ -11,6 +11,7 @@ public:
 
 	bool load(const of::filesystem::path & fileName);
 	void loadAsync(const of::filesystem::path & fileName);
+
 	[[deprecated("Use load")]]
 	bool loadMovie(const of::filesystem::path & fileName);
 
