@@ -560,7 +560,7 @@ inline T getClosestPointUtil(const T& p1, const T& p2, const T& p3, float* norma
 	float u = (p3.x - p1.x) * (p2.x - p1.x);
 	u += (p3.y - p1.y) * (p2.y - p1.y);
 	// perfect place for fast inverse sqrt...
-	float len = glm::length(toGlm(p2 - p1));
+	float len = glm::length(p2 - p1);
 	u /= (len * len);
 	
 	// clamp u
@@ -572,7 +572,7 @@ inline T getClosestPointUtil(const T& p1, const T& p2, const T& p3, float* norma
 	if(normalizedPosition != nullptr) {
 		*normalizedPosition = u;
 	}
-	return glm::mix(toGlm(p1), toGlm(p2), u);
+	return glm::mix(p1, p2, u);
 }
 
 //----------------------------------------------------------
@@ -605,7 +605,7 @@ T ofPolyline_<T>::getClosestPoint(const T& target, unsigned int* nearestIndex) c
 		
 		float curNormalizedPosition = 0;
 		auto curNearestPoint = getClosestPointUtil(cur, next, target, &curNormalizedPosition);
-		float curDistance = glm::distance(toGlm(curNearestPoint), toGlm(target));
+		float curDistance = glm::distance(curNearestPoint, target);
 		if(i == 0 || curDistance < distance) {
 			distance = curDistance;
 			nearest = i;
@@ -710,7 +710,7 @@ namespace of{
 			float   tol2	= tol * tol;  // tolerance squared
 			Segment<T> S	= {v[j], v[k]};  // segment from v[j] to v[k]
 			auto u			= S.P1 - S.P0;   // segment direction vector
-			double  cu		= glm::dot(toGlm(u), toGlm(u));     // segment length squared
+			double  cu		= glm::dot(u, u);     // segment length squared
 
 			// test each vertex v[i] for max distance from S
 			// compute using the Feb 2001 Algorithm's dist_ofPoint_to_Segment()
@@ -722,13 +722,13 @@ namespace of{
 			for (int i=j+1; i<k; i++){
 				// compute distance squared
 				w = v[i] - S.P0;
-				cw = glm::dot(toGlm(w), toGlm(u));
-				if ( cw <= 0 ) dv2 = glm::length2(toGlm(v[i]) - toGlm(S.P0));
-				else if ( cu <= cw ) dv2 = glm::length2(toGlm(v[i]) - toGlm(S.P1));
+				cw = glm::dot(w, u);
+				if ( cw <= 0 ) dv2 = glm::length2(v[i] - S.P0);
+				else if ( cu <= cw ) dv2 = glm::length2(v[i] - S.P1);
 				else {
 					b = (float)(cw / cu);
 					Pb = S.P0 + u*b;
-					dv2 = glm::length2(toGlm(v[i]) - toGlm(Pb));
+					dv2 = glm::length2(v[i] - Pb);
 				}
 				// test with current max distance squared
 				if (dv2 <= maxd2) continue;
@@ -825,7 +825,7 @@ void ofPolyline_<T>::rotateDeg(float degrees, const glm::vec3& axis){
 template<class T>
 void ofPolyline_<T>::rotateRad(float radians, const glm::vec3& axis){
     for(auto & point : points){
-        point = glm::rotate(toGlm(point), radians, axis);
+        point = glm::rotate(point, radians, axis);
     }
     flagHasChanged();
 }
@@ -970,7 +970,7 @@ T ofPolyline_<T>::getPointAtIndexInterpolated(float findex) const {
     getInterpolationParams(findex, i1, i2, t);
 	T leftPoint(points[i1]);
 	T rightPoint(points[i2]);
-	return glm::mix(toGlm(leftPoint), toGlm(rightPoint), t);
+	return glm::mix(leftPoint, rightPoint, t);
 }
 
 
@@ -1039,7 +1039,7 @@ T ofPolyline_<T>::getRotationAtIndexInterpolated(float findex) const {
     int i1, i2;
     float t;
     getInterpolationParams(findex, i1, i2, t);
-	return glm::mix(toGlm(getRotationAtIndex(i1)), toGlm(getRotationAtIndex(i2)), t);
+	return glm::mix(getRotationAtIndex(i1), getRotationAtIndex(i2), t);
 }
 
 //--------------------------------------------------
@@ -1057,7 +1057,7 @@ T ofPolyline_<T>::getTangentAtIndexInterpolated(float findex) const {
     int i1, i2;
     float t;
     getInterpolationParams(findex, i1, i2, t);
-	return glm::mix(toGlm(getTangentAtIndex(i1)), toGlm(getTangentAtIndex(i2)), t);
+	return glm::mix(getTangentAtIndex(i1), getTangentAtIndex(i2), t);
 }
 
 //--------------------------------------------------
@@ -1075,7 +1075,7 @@ T ofPolyline_<T>::getNormalAtIndexInterpolated(float findex) const {
     int i1, i2;
     float t;
     getInterpolationParams(findex, i1, i2, t);
-	return glm::mix(toGlm(getNormalAtIndex(i1)), toGlm(getNormalAtIndex(i2)), t);
+	return glm::mix(getNormalAtIndex(i1), getNormalAtIndex(i2), t);
 }
 
 
@@ -1086,9 +1086,9 @@ void ofPolyline_<T>::calcData(int index, T &tangent, float &angle, T &rotation, 
 	int i2 = getWrappedIndex( index     );
 	int i3 = getWrappedIndex( index + 1 );
 
-	const auto &p1 = toGlm(points[i1]);
-	const auto &p2 = toGlm(points[i2]);
-	const auto &p3 = toGlm(points[i3]);
+	const auto &p1 = points[i1];
+	const auto &p2 = points[i2];
+	const auto &p3 = points[i3];
 
 	auto v1(p1 - p2); // vector to previous point
 	auto v2(p3 - p2); // vector to next point
@@ -1103,9 +1103,9 @@ void ofPolyline_<T>::calcData(int index, T &tangent, float &angle, T &rotation, 
 	bool noSegmentHasZeroLength = (v1 == v1 && v2 == v2);
 
 	if ( noSegmentHasZeroLength ){
-		tangent  = toOf( glm::length2(v2 - v1) > 0 ? glm::normalize(v2 - v1) : -v1 );
-		normal   = toOf( glm::normalize( glm::cross( toGlm( rightVector ), toGlm( tangent ) ) ) );
-		rotation = toOf( glm::cross( v1, v2 ) );
+		tangent  = ( glm::length2(v2 - v1) > 0 ? glm::normalize(v2 - v1) : -v1 );
+		normal   = ( glm::normalize( glm::cross(  rightVector , tangent ) ) );
+		rotation = ( glm::cross( v1, v2 ) );
 		angle    = glm::pi<float>() - acosf( ofClamp( glm::dot( v1, v2 ), -1.f, 1.f ) );
 	} else{
 		rotation = tangent = normal = T( 0.f );
@@ -1194,7 +1194,7 @@ void ofPolyline_<T>::updateCache(bool bForceUpdate) const {
             rotations[i] = rotation;
             normals[i] = normal;
             
-			length += glm::distance(toGlm(points[i]), toGlm(points[getWrappedIndex(i + 1)]));
+			length += glm::distance(points[i], points[getWrappedIndex(i + 1)]);
         }
         
         if(isClosed()) lengths.push_back(length);

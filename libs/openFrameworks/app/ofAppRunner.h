@@ -71,14 +71,16 @@ ofOrientation ofGetOrientation();
 void ofHideCursor();
 void ofShowCursor();
 //-------------------------- window / screen
+glm::ivec2 ofGetWindowPosition();
 int ofGetWindowPositionX();
 int ofGetWindowPositionY();
 int ofGetScreenWidth();
 int ofGetScreenHeight();
+glm::ivec2 ofGetScreenSize();
 int ofGetWindowMode();
-int ofGetWidth(); // ofGetWidth is correct for orientation
+int ofGetWidth();
 int ofGetHeight();
-int ofGetWindowWidth(); // ofGetWindowWidth is correct for actual window coordinates - so doesn't change with orientation.
+int ofGetWindowWidth();
 int ofGetWindowHeight();
 
 std::string ofGetClipboardString();
@@ -90,13 +92,14 @@ float ofRandomWidth();
 /// \returns a random number between 0 and the height of the window.
 float ofRandomHeight();
 bool ofDoesHWOrientation();
-glm::vec2 ofGetWindowSize();
+glm::ivec2 ofGetWindowSize();
 ofRectangle ofGetWindowRect();
 ofAppBaseWindow * ofGetWindowPtr();
 std::shared_ptr<ofAppBaseWindow> ofGetCurrentWindow();
 
 void ofSetWindowPosition(int x, int y);
 void ofSetWindowShape(int width, int height);
+void ofSetWindowRect(const ofRectangle & rect);
 void ofSetWindowTitle(std::string title);
 void ofEnableSetupScreen();
 void ofDisableSetupScreen();

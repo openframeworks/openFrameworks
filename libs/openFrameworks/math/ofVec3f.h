@@ -5,7 +5,18 @@
 
 #define GLM_FORCE_CTOR_INIT
 #define GLM_ENABLE_EXPERIMENTAL
+#include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
+#include <glm/vec4.hpp>
+
+//#include <glm/detail/qualifier.hpp>
+//namespace glm {
+//	typedef vec<2, float, defaultp>		vec2;
+//	typedef vec<3, float, defaultp>		vec3;
+//	typedef vec<4, float, defaultp>		vec4;
+//}
+//
+
 
 /// \brief  ofVec3f is a class for storing a three dimensional vector.
 /// 

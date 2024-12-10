@@ -16,7 +16,7 @@
 #include <emscripten/html5.h>
 #include <webgl/webgl1.h> // For Emscripten WebGL API headers (see also webgl/webgl1_ext.h and webgl/webgl2.h)
 
-class ofxAppEmscriptenWindow: public ofAppBaseGLESWindow {
+class ofxAppEmscriptenWindow: public ofAppBaseWindow {
 public:
 	ofxAppEmscriptenWindow();
 	~ofxAppEmscriptenWindow();
@@ -28,7 +28,7 @@ public:
 	static void loop();
 
 
-	void setup(const ofGLESWindowSettings & settings);
+	void setup(const ofWindowSettings & settings);
 
 	void hideCursor();
 	// void showCursor();
@@ -36,9 +36,9 @@ public:
 	// void	setWindowPosition(int x, int y);
 	void	setWindowShape(int w, int h);
 
-	glm::vec2	getWindowPosition();
-	glm::vec2	getWindowSize();
-	glm::vec2	getScreenSize();
+	glm::ivec2 getWindowPosition();
+	glm::ivec2 getWindowSize();
+	glm::ivec2 getScreenSize();
 
 	
 	ofOrientation	getOrientation();

@@ -2207,9 +2207,9 @@ ofMesh_<V,N,C,T> ofMesh_<V,N,C,T>::icosphere(float radius, std::size_t iteration
 			auto v3 = vertices[i3];
 			//make 1 vertice at the center of each edge and project it onto the sphere
 			vertices.insert(vertices.end(), {
-				glm::normalize(toGlm(v1+v2)),
-				glm::normalize(toGlm(v2+v3)),
-				glm::normalize(toGlm(v1+v3)),
+				glm::normalize(v1+v2),
+				glm::normalize(v2+v3),
+				glm::normalize(v1+v3),
 			});
 			//now recreate indices
 			newFaces.insert(newFaces.end(), {
@@ -2438,7 +2438,7 @@ ofMesh_<V,N,C,T> ofMesh_<V,N,C,T>::cylinder( float radius, float height, int rad
 			mesh.addVertex( vert );
 			mesh.addNormal( normal );
 
-			normal = glm::rotate(toGlm(normal), -angleIncRadius, up);
+			normal = glm::rotate(normal, -angleIncRadius, up);
 
 		}
 	}
@@ -2585,10 +2585,10 @@ ofMesh_<V,N,C,T> ofMesh_<V,N,C,T>::cone( float radius, float height, int radiusS
 				vert.z = std::sin((float)ix*angleIncRadius) * newRad;
 			}
 
-			auto diff = toGlm(vert - startVec);
-			auto crossed = glm::cross(up, toGlm(vert));
+			auto diff = vert - startVec;
+			auto crossed = glm::cross(up, vert);
 			normal = glm::cross(crossed, diff);
-			mesh.addNormal( glm::normalize(toGlm(normal)) );
+			mesh.addNormal( glm::normalize(normal) );
 
 		}
 	}
@@ -2986,11 +2986,11 @@ template<class V, class N, class C, class T>
 void ofMeshFace_<V,N,C,T>::calculateFaceNormal() const{
 	glm::vec3 u, v;
 
-	u = toGlm(vertices[1]-vertices[0]);
-	v = toGlm(vertices[2]-vertices[0]);
+	u = (vertices[1]-vertices[0]);
+	v = (vertices[2]-vertices[0]);
 
 	faceNormal = glm::cross(u, v);
-	faceNormal = glm::normalize(toGlm(faceNormal));
+	faceNormal = glm::normalize((faceNormal));
 	bFaceNormalDirty = false;
 }
 

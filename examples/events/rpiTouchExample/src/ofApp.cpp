@@ -73,7 +73,7 @@ void ofApp::mouseExited(int x, int y){
 
 //--------------------------------------------------------------
 void ofApp::touchDown(int x, int y, int id){
-	touches[id] = ofVec2f(x, y);
+	touches[id] = glm::vec2(x, y);
 }
 
 //--------------------------------------------------------------

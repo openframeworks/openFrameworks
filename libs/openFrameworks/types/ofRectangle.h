@@ -104,6 +104,8 @@ public:
 	/// \param h The height of the rectangle.
 	ofRectangle(float px, float py, float w, float h);
 
+	// ofRectangle(int px, int py, int w, int h);
+
 	/// \brief Construct a rectangle from a point and dimensions.
 	///
 	/// To produce consistent results, users are encouraged to initialize

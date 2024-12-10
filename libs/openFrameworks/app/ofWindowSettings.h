@@ -1,10 +1,14 @@
 #pragma once
 
+class ofAppBaseWindow;
+
 #define GLM_FORCE_CTOR_INIT
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/vec2.hpp>
 
 #include <string>
+#include <memory>
+#include <vector>
 
 /// \brief Used to represent the available windowing modes for the application.
 enum ofWindowMode{
@@ -13,7 +17,9 @@ enum ofWindowMode{
 	/// \brief A fullscreen application window.
 	OF_FULLSCREEN 	= 1,
 	/// \brief A fullscreen application window with a custom width and height.
-	OF_GAME_MODE	= 2
+	OF_GAME_MODE	= 2,
+	
+	OF_WINDOWMODE_UNDEFINED	= 3
 };
 
 
@@ -37,22 +43,21 @@ enum ofOrientation: short{
 	OF_ORIENTATION_UNKNOWN = 5
 };
 
-class ofWindowSettings{
+class ofWindowSettings {
 public:
-	ofWindowSettings()
-	:windowMode(OF_WINDOW)
-	,width(1024)
-	,height(768)
-	,sizeSet(false)
-	,position(0,0)
-	,positionSet(false){}
-
+	ofWindowSettings(){}
 	virtual ~ofWindowSettings(){};
-
+	
 	std::string title;
-	ofWindowMode windowMode;
+	std::string windowName { "main" };
+	ofWindowMode windowMode = OF_WINDOW;
 
-	void setPosition(const glm::vec2 & position) {
+//	void setRect(const ofRectangle & rect) {
+//		setPosition(rect.getPosition());
+//		setSize(rect.width, rect.height);
+//	}
+	
+	void setPosition(const glm::ivec2 & position) {
 		this->position = position;
 		this->positionSet = true;
 	}
@@ -75,7 +80,7 @@ public:
 		return height;
 	}
 
-	const glm::vec2 & getPosition() const {
+	const glm::ivec2 & getPosition() const {
 		return position;
 	}
 
@@ -83,60 +88,59 @@ public:
 		return positionSet;
 	}
 
-protected:
-	int width;
-	int height;
-	bool sizeSet;
-	glm::vec2 position;
-	bool positionSet;
-};
-
-class ofGLWindowSettings: public ofWindowSettings{
-public:
-	ofGLWindowSettings()
-	:glVersionMajor(2)
-	,glVersionMinor(1){}
-
-	ofGLWindowSettings(const ofWindowSettings & settings)
-	:ofWindowSettings(settings)
-	,glVersionMajor(2)
-	,glVersionMinor(1){
-        const ofGLWindowSettings * glSettings = dynamic_cast<const ofGLWindowSettings*>(&settings);
-        if(glSettings){
-            glVersionMajor = glSettings->glVersionMajor;
-            glVersionMinor = glSettings->glVersionMinor;
-        }
-    }
-
-	virtual ~ofGLWindowSettings(){};
-
-	void setGLVersion(int major, int minor){
+	void setGLVersion(int major, int minor) {
 		glVersionMajor = major;
 		glVersionMinor = minor;
 	}
-
-	int glVersionMajor;
-	int glVersionMinor;
-};
-
-class ofGLESWindowSettings: public ofWindowSettings{
-public:
-	ofGLESWindowSettings()
-	:glesVersion(1){}
-
-	ofGLESWindowSettings(const ofWindowSettings & settings)
-	:ofWindowSettings(settings), glesVersion(1) {
-        const ofGLESWindowSettings * glesSettings = dynamic_cast<const ofGLESWindowSettings*>(&settings);
-        if(glesSettings){
-            glesVersion = glesSettings->glesVersion;
-        }
-    }
-
-	virtual ~ofGLESWindowSettings(){};
-
+	
 	void setGLESVersion(int version){
 		glesVersion = version;
 	}
 
-	int glesVersion;
+	int glVersionMajor = 2;
+	int glVersionMinor = 1;
+	
+	int glesVersion = 1;
+	
+	
+	// GLFW specific ones
+#ifdef TARGET_RASPBERRY_PI
+	int numSamples = 0;
+#else
+	int numSamples = 4;
+#endif
+
+	bool doubleBuffering = true;
+	int redBits = 8;
+	int greenBits = 8;
+	int blueBits = 8;
+	int alphaBits = 8;
+	int depthBits = 24;
+	int stencilBits = 0;
+	bool stereo = false;
+	bool visible = true;
+	bool iconified = false;
+	bool decorated = true;
+	bool floating = false;
+	bool resizable = true;
+	bool transparent = false;
+	bool mousePassThrough = false;
+	bool maximized = false;
+	int monitor = 0;
+	bool multiMonitorFullScreen = false;
+	std::shared_ptr<ofAppBaseWindow> shareContextWith;
+	std::vector <int> fullscreenDisplays;
+	// FIXME: Define proper variable name
+	bool showOnlyInSelectedMonitor = false;
+	float opacity { 1.0 }; 
+
+protected:
+	bool sizeSet { false };
+	bool positionSet { false };
+	int width { 1024 };
+	int height { 768 };
+	glm::ivec2 position { 0, 0 };
 };
+
+typedef ofWindowSettings ofGLWindowSettings;
+typedef ofWindowSettings ofGLESWindowSettings;
