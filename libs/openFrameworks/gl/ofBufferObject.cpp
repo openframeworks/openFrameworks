@@ -15,16 +15,16 @@ ofBufferObject::Data::Data()
 #endif
 
 {
-	
-	// tig: glGenBuffers does not actually create a buffer, it just 
-	//      returns the next available name, and only a subsequent 
+
+	// tig: glGenBuffers does not actually create a buffer, it just
+	//      returns the next available name, and only a subsequent
 	//      call to bind() will actualy initialize the buffer in
-	//      memory. 
+	//      memory.
 	//
 	//      This is why, for direct state access, we need to call
 	//      glCreateBuffers(), so that the buffer is initialized
 	//      when we pin data to it using setData()
-	// 
+	//
 	//      see also: https://www.opengl.org/registry/specs/ARB/direct_state_access.txt
 #ifdef GLEW_VERSION_4_5
 	if(isDSA) {

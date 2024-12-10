@@ -2,6 +2,7 @@
 
 // MARK: Targets plus GL/ headers
 #include "ofConstants.h"
+#include <vector>
 
 template<typename T>
 class ofPixels_;
