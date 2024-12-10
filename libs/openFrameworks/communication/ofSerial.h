@@ -2,7 +2,7 @@
 
 // MARK: ofConstants targets
 #include "ofConstants.h"
-#include <vector.h>
+#include <vector>
 
 class ofBuffer;
 
