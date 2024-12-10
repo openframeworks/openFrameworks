@@ -16,6 +16,8 @@
 
 PLATFORM_PROJECT_RELEASE_TARGET = bin/em/$(BIN_NAME)/index.html
 PLATFORM_PROJECT_DEBUG_TARGET = bin/em/$(BIN_NAME)/index.html
+OUTPUT_DIR_RELEASE = $(dir $(PLATFORM_PROJECT_RELEASE_TARGET))
+OUTPUT_DIR_DEBUG = $(dir $(PLATFORM_PROJECT_DEBUG_TARGET))
 BYTECODECORE=1
 PLATFORM_CORELIB_DEBUG_TARGET = $(OF_CORE_LIB_PATH)/libopenFrameworksDebug.o
 PLATFORM_CORELIB_RELEASE_TARGET = $(OF_CORE_LIB_PATH)/libopenFrameworks.o
@@ -65,13 +67,15 @@ PLATFORM_REQUIRED_ADDONS = ofxEmscripten
 
 ifdef EMSCRIPTEN_PTHREADS
 	PLATFORM_PTHREAD = -s USE_PTHREADS=1
+	CFLAG_PLATFORM_PTHREAD = -pthread -matomics -mbulk-memory
 else
 	PLATFORM_PTHREAD = -s USE_PTHREADS=0
+	CFLAG_PLATFORM_PTHREAD = -matomics -mbulk-memory
 endif
 
 # Code Generation Option Flags (http://gcc.gnu.org/onlinedocs/gcc/Code-Gen-Options.html)
-PLATFORM_CFLAGS = -std=c17 -fPIC $(PLATFORM_PTHREAD)
-PLATFORM_CXXFLAGS = -Wall -std=c++17 -fPIC -Wno-warn-absolute-paths $(PLATFORM_PTHREAD) 
+PLATFORM_CFLAGS = -std=c17 -fPIC $(CFLAG_PLATFORM_PTHREAD)
+PLATFORM_CXXFLAGS = -Wall -std=c++17 -fPIC -Wno-warn-absolute-paths $(CFLAG_PLATFORM_PTHREAD)
 
 ################################################################################
 # PLATFORM LDFLAGS
@@ -99,25 +103,41 @@ ifdef USE_CCACHE
 	endif
 endif
 
-PLATFORM_LDFLAGS = --preload-file bin/data@data --emrun --bind --profiling-funcs -s USE_WEBGPU=1 -s NO_EXIT_RUNTIME=1
-PLATFORM_LDFLAGS += -s ALLOW_MEMORY_GROWTH=1 -s MAX_WEBGL_VERSION=2 -s WEBGL2_BACKWARDS_COMPATIBILITY_EMULATION=1 -s FULL_ES2 -s FULL_ES3=1 
-PLATFORM_LDFLAGS += -s AUTO_NATIVE_LIBRARIES=1 -s AUTO_JS_LIBRARIES=1 -s EVAL_CTORS=1 -s ERROR_ON_UNDEFINED_SYMBOLS=0
+PLATFORM_LDFLAGS += -s EMBIND_AOT=1
+PLATFORM_LDFLAGS = --preload-file bin/data@data --emrun --bind --profiling-funcs
+PLATFORM_LDFLAGS += -s USE_WEBGPU=1 -s NO_EXIT_RUNTIME=1
+PLATFORM_LDFLAGS += -s ALLOW_MEMORY_GROWTH=1 -s MAX_WEBGL_VERSION=2 -s WEBGL2_BACKWARDS_COMPATIBILITY_EMULATION=1 -s FULL_ES2
+PLATFORM_LDFLAGS += -s AUTO_NATIVE_LIBRARIES=1 -s AUTO_JS_LIBRARIES=1
+PLATFORM_LDFLAGS += -s EVAL_CTORS=1 -s ERROR_ON_UNDEFINED_SYMBOLS=0
 PLATFORM_LDFLAGS +=  $(PLATFORM_PTHREAD)
-PLATFORM_LDFLAGS += -lGL -lhtml5
+PLATFORM_LDFLAGS += -lGL
+PLATFORM_LDFLAGS += -lhtml5
+PLATFORM_LDFLAGS += -s MINIFY_HTML=0
+PLATFORM_LDFLAGS += -s DYNAMIC_EXECUTION=0 -s NO_DYNAMIC_EXECUTION=1
+# PLATFORM_LDFLAGS += -s SINGLE_FILE=1
+PLATFORM_LDFLAGS += -s MODULARIZE=1
+
 # PLATFORM_LDFLAGS += -s WASM_WORKERS=1 -s ENVIRONMENT="web,worker"
 # PLATFORM_LDFLAGS += -s USE_GLFW=3 -lglfw
-PLATFORM_LDFLAGS += --js-library $(OF_ADDONS_PATH)/ofxEmscripten/libs/html5video/lib/emscripten/library_html5video.js
-PLATFORM_LDFLAGS += --js-library $(OF_ADDONS_PATH)/ofxEmscripten/libs/html5audio/lib/emscripten/library_html5audio.js
+# PLATFORM_LDFLAGS += --js-library $(OF_ADDONS_PATH)/ofxEmscripten/libs/html5video/lib/emscripten/library_html5video.js
+# PLATFORM_LDFLAGS += --js-library $(OF_ADDONS_PATH)/ofxEmscripten/libs/html5audio/lib/emscripten/library_html5audio.js
 
 ifdef PROJECT_EMSCRIPTEN_TEMPLATE
-	PLATFORM_LDFLAGS += --shell-file $(PROJECT_EMSCRIPTEN_TEMPLATE)
-# else
-# 	PLATFORM_LDFLAGS += --shell-file $(OF_LIBS_PATH)/openFrameworksCompiled/project/emscripten/template.html
+ 	PLATFORM_LDFLAGS += --shell-file $(PROJECT_EMSCRIPTEN_TEMPLATE)
+else
+	PLATFORM_LDFLAGS += --shell-file $(OF_LIBS_PATH)/openFrameworksCompiled/project/emscripten/template.html
 endif
 
-PLATFORM_OPTIMIZATION_LDFLAGS_RELEASE = -O3 -s TOTAL_MEMORY=$(PLATFORM_EMSCRIPTEN_TOTAL_MEMORY) -s WASM=1 -fPIC
+EMSCRIPTEN_JS = $(OF_LIBS_PATH)/openFrameworksCompiled/project/emscripten/app.js
+EMSCRIPTEN_CSS = $(OF_LIBS_PATH)/openFrameworksCompiled/project/emscripten/style.css
+OUTPUT_DIR = output
 
-PLATFORM_OPTIMIZATION_LDFLAGS_DEBUG = -O1 -g -s ALLOW_MEMORY_GROWTH=1 -s TOTAL_MEMORY=134217728 -s WASM=1 -fPIC -s VERBOSE=1 -s GL_ASSERTIONS=1
+
+
+
+PLATFORM_OPTIMIZATION_LDFLAGS_RELEASE = -O3 -s TOTAL_MEMORY=$(PLATFORM_EMSCRIPTEN_TOTAL_MEMORY) -s WASM=1 -fPIC -gsource-map
+
+PLATFORM_OPTIMIZATION_LDFLAGS_DEBUG = -O1 -g -s ALLOW_MEMORY_GROWTH=1 -s TOTAL_MEMORY=134217728 -s WASM=1 -fPIC -s VERBOSE=1 -s GL_ASSERTIONS=1 -gsource-map
 
 ################################################################################
 # PLATFORM OPTIMIZATION CFLAGS
@@ -296,8 +316,23 @@ PLATFORM_LIBRARY_SEARCH_PATHS =
 ################################################################################
 #PLATFORM_CXX=
 
+BUILD_TYPE ?= release
+
 afterplatform: $(TARGET_NAME)
 	@echo
+	@echo "Copying assets based on build type ($(BUILD_TYPE))..."
+	@if [ "$(BUILD_TYPE)" = "debug" ]; then \
+		echo "Copying app.js and style.css to debug directory..."; \
+		mkdir -p bin/em/$(BIN_NAME)/debug; \
+		cp $(EMSCRIPTEN_JS) $(OUTPUT_DIR_DEBUG) || echo "Failed to copy app.js"; \
+		cp $(EMSCRIPTEN_CSS) $(OUTPUT_DIR_DEBUG) || echo "Failed to copy style.css"; \
+	else \
+		echo "Copying app.js and style.css to release directory..."; \
+		mkdir -p bin/em/$(BIN_NAME)/release; \
+		cp $(EMSCRIPTEN_JS) $(OUTPUT_DIR_RELEASE) || echo "Failed to copy app.js"; \
+		cp $(EMSCRIPTEN_CSS) $(OUTPUT_DIR_RELEASE) || echo "Failed to copy style.css"; \
+	fi
+	@echo "Assets copied successfully."
 	@echo "     compiling done"
 	@echo "     to launch the application on the default browser, run:"
 	@echo
