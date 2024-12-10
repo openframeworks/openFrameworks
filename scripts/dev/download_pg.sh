@@ -6,6 +6,8 @@ ARCH=""
 OVERWRITE=1
 SILENT_ARGS=""
 BLEEDING_EDGE=0
+DL_VERSION=2.6.0
+TAG=""
 
 printHelp(){
 cat << EOF
@@ -18,6 +20,7 @@ cat << EOF
                                 If not specified tries to autodetect the platform
     -s, --silent                Silent download progress
     -h, --help                  Shows this message
+    -t, --tag                   tag release for libraries
 EOF
 }
 
@@ -27,14 +30,18 @@ if [[ ! -d "$SCRIPT_DIR" ]]; then SCRIPT_DIR="$PWD"; fi
 
 download(){
     echo "Downloading $1"
-    
+
+    REPO="nightly"
     if [[ $BLEEDING_EDGE = 1 ]] ; then
-        echo downloader https://github.com/openframeworks/projectGenerator/releases/download/bleeding/$1 $SILENT_ARGS
-        downloader https://github.com/openframeworks/projectGenerator/releases/download/bleeding/$1 $SILENT_ARGS
-    else
-        echo downloader https://github.com/openframeworks/projectGenerator/releases/download/nightly/$1
-        downloader https://github.com/openframeworks/projectGenerator/releases/download/nightly/$1 
+        REPO="latest"
     fi
+    if [[ $TAG != "" ]] ; then
+        REPO="$TAG"
+    fi
+
+    echo downloader https://github.com/openframeworks/projectGenerator/releases/download/$REPO/$1
+    downloader https://github.com/openframeworks/projectGenerator/releases/download/$REPO/$1
+
 }
 
 # trap any script errors and exit
@@ -87,6 +94,10 @@ while [[ $# -gt 0 ]]; do
         -h|--help)
         printHelp
         exit 0
+        ;;
+        -t|--tag)
+        TAG="$2"
+        shift # past argument
         ;;
         *)
         echo "Error: invalid argument: $key"
@@ -151,7 +162,11 @@ cd "$SCRIPT_DIR"
 OUTDIR=../../
 
 if [[ $BLEEDING_EDGE = 1 ]] ; then
-    VER=bleeding
+    VER=latest
+fi
+
+if [[ $TAG != "" ]] ; then
+    VER="$TAG"
 fi
 
 if [ "$PLATFORM" == "vs" ]; then
@@ -190,7 +205,7 @@ else
     mkdir -p "${OUTDIR}${OUTPUT}"
     tar xjf "$PKG" -C "${OUTDIR}${OUTPUT}"
     mv "${OUTDIR}/${OUTPUT}/projectGenerator-osx/projectGenerator$EXT" "${OUTDIR}/${OUTPUT}/projectGenerator$EXT"
-    #rm $PKG
+    rm -rf "${OUTDIR}/${OUTPUT}/projectGenerator-osx/"
 fi
 
 if [ "$PLATFORM" == "msys2" ] || [ "$PLATFORM" == "vs" ]; then

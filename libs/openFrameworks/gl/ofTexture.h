@@ -7,7 +7,7 @@
 #define GLM_FORCE_CTOR_INIT
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/mat4x4.hpp>
-
+#include "ofGLUtils.h"
 
 class ofRectangle;
 
@@ -176,8 +176,12 @@ public:
 #ifndef TARGET_OPENGLES
 		glInternalFormat = GL_RGB8;
 		textureTarget = GL_TEXTURE_RECTANGLE_ARB;
-#else
+#elif defined(TARGET_OPENGLES)
+	#if defined(GL_RGB16F)
+		glInternalFormat = GL_RGB16F;
+	#else
 		glInternalFormat = GL_RGB;
+	#endif
 		textureTarget = GL_TEXTURE_2D;
 #endif
 

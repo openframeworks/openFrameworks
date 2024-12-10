@@ -12,11 +12,13 @@ class ofHttpResponse;
 class ofHttpRequest {
 public:
 	ofHttpRequest();
-	ofHttpRequest(const std::string & url, const std::string & name, bool saveTo = false);
+	ofHttpRequest(const std::string & url, const std::string & name, bool saveTo = false, bool autoClose=true, bool verbose=false);
 
 	std::string url; ///< request url
 	std::string name; ///< optional name key for sorting
 	bool saveTo; ///< save to a file once the request is finished?
+	bool close; // auto close connection at each request - default true 
+	bool verbose; // verbose packet logs
 	std::map<std::string, std::string> headers; ///< HTTP header keys & values
 	std::string body; ///< POST body data
 	std::string contentType; ///< POST data mime type
@@ -29,9 +31,10 @@ public:
 	int getID();
 
 	/// HTTP request type
-	enum Method {
-		GET, ///< request data from a specified resource (via url)
-		POST ///< submit data to be processed to a specified resource (via url)
+	enum Method{
+		GET, //< request data from a specified resource (via url)
+		POST, //< submit data to be processed to a specified resource (via url)
+		PUT
 	} method;
 
 private:

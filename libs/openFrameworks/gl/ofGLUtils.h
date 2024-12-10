@@ -94,6 +94,7 @@ int ofGetGlFormat(const ofPixels_<T> & pixels) {
 	return ofGetGLFormatFromPixelFormat(pixels.getPixelFormat());
 }
 
+
 template<class T>
 int ofGetGLFormat(const ofPixels_<T> & pixels) {
     return ofGetGLFormatFromPixelFormat(pixels.getPixelFormat());
@@ -102,6 +103,9 @@ int ofGetGLFormat(const ofPixels_<T> & pixels) {
 std::string ofGLSLVersionFromGL(int major, int minor);
 std::string ofGLSLVersionFromGL();
 std::string ofGLSLGetDefaultHeader();
+#ifdef TARGET_OPENGLES
+int ofGLESVersionFromGL();
+#endif
 
 #ifndef TARGET_OPENGLES
 void ofEnableGLDebugLog();

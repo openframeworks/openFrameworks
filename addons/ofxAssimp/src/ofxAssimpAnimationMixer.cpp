@@ -5,6 +5,7 @@
 
 #include "ofxAssimpAnimationMixer.h"
 #include "ofLog.h"
+#include "ofUtils.h"
 
 using namespace ofx::assimp;
 
@@ -14,7 +15,7 @@ bool AnimationClip::shouldRemove( const AnimationClip& ac ) {
 }
 
 //--------------------------------------------------------------
-size_t AnimationMixer::getNumAnimationClips() {
+std::size_t AnimationMixer::getNumAnimationClips() {
 	return mAnimationClips.size();
 }
 

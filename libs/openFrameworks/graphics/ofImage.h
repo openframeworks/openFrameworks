@@ -3,6 +3,7 @@
 // ofTexCompression, ofTexture
 #include "ofTexture.h"
 #include "ofGLBaseTypes.h"
+<<<<<<< HEAD
 //#include "ofGraphicsConstants.h"
 //#include "ofGLUtils.h"
 
@@ -11,6 +12,11 @@ class ofPixels_;
 typedef ofPixels_<unsigned char> ofPixels;
 typedef ofPixels_<float> ofFloatPixels;
 typedef ofPixels_<unsigned short> ofShortPixels;
+=======
+#include "ofGraphicsConstants.h"
+#include "ofGLUtils.h"
+#include "ofPixels.h"
+>>>>>>> master
 
 class ofFile;
 class ofBuffer;
@@ -233,7 +239,7 @@ public:
 	bool load(const ofBuffer & buffer, const ofImageLoadSettings &settings = ofImageLoadSettings());
 
     [[deprecated("Use load")]]
-	bool loadImage(const std::string& fileName);
+	bool loadImage(const of::filesystem::path  & fileName);
     [[deprecated("Use load")]]
 	bool loadImage(const ofBuffer & buffer);
     [[deprecated("Use load")]]
@@ -622,7 +628,7 @@ public:
 	bool save(ofBuffer & buffer, ofImageFormat imageFormat = OF_IMAGE_FORMAT_PNG, ofImageQualityType compressionLevel = OF_IMAGE_QUALITY_BEST) const;
 
     [[deprecated("Use save")]]
-	void saveImage(const std::string& fileName, ofImageQualityType compressionLevel = OF_IMAGE_QUALITY_BEST) const;
+	void saveImage(const of::filesystem::path & fileName, ofImageQualityType compressionLevel = OF_IMAGE_QUALITY_BEST) const;
     [[deprecated("Use save")]]
 	void saveImage(ofBuffer & buffer, ofImageQualityType compressionLevel = OF_IMAGE_QUALITY_BEST) const;
     [[deprecated("Use save")]]
