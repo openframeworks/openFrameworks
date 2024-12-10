@@ -9,6 +9,7 @@
 
 // MARK: ofConstants Targets
 #include "ofConstants.h"
+#include <vector>
 
 #include <glm/detail/qualifier.hpp>
 namespace glm {
@@ -165,10 +166,10 @@ public:
 	void setUniform3i(const std::string & name, int v1, int v2, int v3) const;
 	void setUniform4i(const std::string & name, int v1, int v2, int v3, int v4) const;
 
-	
+
 	// Dmtr testing
 	void setUniformBufferObject(const std::string & name, const void * data, GLsizeiptr dataSize) const;
-	
+
 	void setUniform1f(const std::string & name, float v1) const;
 	void setUniform2f(const std::string & name, float v1, float v2) const;
 	void setUniform3f(const std::string & name, float v1, float v2, float v3) const;
@@ -294,7 +295,7 @@ private:
 //		return bufferObjectsCache;
 //	}
 	std::unordered_map<std::string, std::unique_ptr<ofBufferObject>> bufferObjectsCache;
-	
+
 	std::unordered_map<std::string, GLint> uniformsCache;
 	mutable std::unordered_map<std::string, GLint> attributesBindingsCache;
 
@@ -311,7 +312,7 @@ private:
 	void setDefineConstantTemp(const std::string & name, T value);
 	template<typename T>
 	void setConstantTemp(const std::string & name, const std::string & type, T value);
-	
+
 	static std::string nameForType(GLenum type);
 
 	/// @brief			Mimics the #include behaviour of the c preprocessor
@@ -329,4 +330,3 @@ private:
 	void reloadGL();
 #endif
 };
-
