@@ -1,7 +1,7 @@
 #pragma once
 
 // MARK: OF_VIDEO_CAPTURE_DIRECTSHOW
-#include "ofConstants.h"
+//#include "ofConstants.h"
 #include "ofTexture.h"
 #include "ofVideoBaseTypes.h"
 #include "ofPixels.h" // MARK: ofPixels pixels

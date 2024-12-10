@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "ofConstants.h"
+//#include "ofConstants.h"
 
 #include "ofVideoBaseTypes.h"
 #include "ofTexture.h"

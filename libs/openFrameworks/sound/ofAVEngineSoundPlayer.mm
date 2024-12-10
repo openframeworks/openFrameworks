@@ -12,6 +12,7 @@
 #include "ofUtils.h"
 #include "ofMath.h"
 #include "ofLog.h"
+// #include "ofConstants.h"
 #include "ofEvents.h"
 
 //#ifdef __OBJC__

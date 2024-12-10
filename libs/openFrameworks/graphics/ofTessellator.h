@@ -1,6 +1,11 @@
 #pragma once
 
 #include "ofGraphicsBaseTypes.h"
+//#include "ofConstants.h"
+#include <tesselator.h>
+#include <vector>
+
+//typedef TESSindex ofIndexType;
 
 typedef struct TESStesselator TESStesselator;
 typedef struct TESSalloc TESSalloc;
