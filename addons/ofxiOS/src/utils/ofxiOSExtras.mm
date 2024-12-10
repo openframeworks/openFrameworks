@@ -35,6 +35,10 @@
 #include "ofPixels.h"
 #include <TargetConditionals.h>
 #if TARGET_OS_IOS || (TARGET_OS_IPHONE && !TARGET_OS_TV)
+<<<<<<< HEAD
+=======
+
+>>>>>>> 92bb06eeccee8bc5a09198f3706d62c5e4f4272c
 #import "ofxiOSAppDelegate.h"
 #import "ofxiOSViewController.h"
 #import "ofxiOSGLKViewController.h"
@@ -154,6 +158,12 @@ ofxiOSEAGLView * ofxiOSGetGLView() {
 //--------------------------------------------------------------
 ofxiOSGLKView * ofxiOSGetGLKView() {
     return [ofxiOSGLKView getInstance];
+}
+
+bool isUsingGLKView() {
+    if([[ofxiOSGetAppDelegate() uiViewController] isKindOfClass:[ofxiOSGLKViewController class]] == YES) return true;
+    else
+        return false;
 }
 
 //--------------------------------------------------------------

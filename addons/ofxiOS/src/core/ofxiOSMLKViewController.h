@@ -1,37 +1,41 @@
 //
-//  ofxiOSGLKViewController.h
+//  ofxiOSMLKViewController.h
 //  iOS+OFLib
 //
-//  Created by Dan R on 7/3/18.
+//  Created by Dan Rosser on 11/5/22.
 //
 
-#ifndef ofxiOSGLKViewController_h
-#define ofxiOSGLKViewController_h
+#ifndef ofxiOSMLKViewController_h
+#define ofxiOSMLKViewController_h
 
 #pragma once
 
 #include <TargetConditionals.h>
-#include "ofxiOSConstants.h"
-#if defined(OF_UI_KIT) && defined(OF_GL_KIT)
 #if TARGET_OS_IOS || (TARGET_OS_IPHONE && !TARGET_OS_TV)
 
 #import <UIKit/UIKit.h>
 #import <GLKit/GLKit.h>
 
-#if defined(METALKIT)
+
 #import <MetalANGLE/MGLKViewController.h>
-#endif
+#import <MetalANGLE/MGLKit.h>
+#import "EAMLKView.h"
+#import "ofxiOSMLKView.h"
 
 class ofxiOSApp;
-@class ofxiOSGLKView;
-
-@interface ofxiOSGLKViewController : GLKViewController
+//@class ofxiOSMLKView;
 
 
-@property (nonatomic, strong) ofxiOSGLKView * glView;
+@interface ofxiOSMLKViewController : MGLKViewController
+
+
+@property (nonatomic, strong) MGLKView * glView; // no subclass
+@property (nonatomic, strong) ofxiOSMLKView * ofView;
 
 - (instancetype)initWithFrame:(CGRect)frame app:(ofxiOSApp *)app;
-- (instancetype)initWithFrame:(CGRect)frame app:(ofxiOSApp *)app sharegroup:(EAGLSharegroup *)sharegroup;
+- (void)setupApp:(ofxiOSApp *)appPtr;
+
+- (void)mglkView:(MGLKView *)view drawInRect:(CGRect)rect;
 
 - (UIInterfaceOrientation)currentInterfaceOrientation;
 - (void)setCurrentInterfaceOrientation:(UIInterfaceOrientation) orient;
@@ -40,12 +44,10 @@ class ofxiOSApp;
 - (BOOL)isReadyToRotate;
 - (void)setPreferredFPS:(int)fps;
 - (void)setMSAA:(bool)value;
-- (EAGLSharegroup *)getSharegroup;
 
 @end
 
 #endif
 
 
-#endif /* ofxiOSGLKViewController_h */
-#endif
+#endif /* ofxiOSMLKViewController_h */

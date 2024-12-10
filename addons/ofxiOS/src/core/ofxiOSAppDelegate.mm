@@ -29,11 +29,21 @@
  *
  * ***********************************************************************/
 
+<<<<<<< HEAD
 #include "ofxiOSConstants.h"
 #if defined(OF_UI_KIT) && TARGET_OS_IOS || (TARGET_OS_IPHONE && !TARGET_OS_TV)
 #import "ofxiOSAppDelegate.h"
 #import "ofxiOSViewController.h"
 #import "ofxiOSGLKViewController.h"
+=======
+#import "ofxiOSAppDelegate.h"
+
+#if TARGET_OS_IOS || (TARGET_OS_IPHONE && !TARGET_OS_TV)
+
+#import "ofxiOSViewController.h"
+#import "ofxiOSGLKViewController.h"
+#import "ofxiOSMLKViewController.h"
+>>>>>>> 92bb06eeccee8bc5a09198f3706d62c5e4f4272c
 #import "ofxiOSExternalDisplay.h"
 #include "ofxiOSExtras.h"
 #include "ofxiOSAlerts.h"
@@ -138,7 +148,15 @@
 		
 		switch(ofxiOSGetOFWindow()->getWindowControllerType()) {
 			case METAL_KIT:
-				NSLog(@"No MetalKit yet supported for openFrameworks: Falling back to GLKit");
+				NSLog(@"Metal ANGLE openFrameworks");
+//                self.uiViewController = (UIViewController *)[[ofxiOSMLKViewController alloc] initWithFrame:frame app:(ofxiOSApp *)ofGetAppPtr()];
+                
+//                UIStoryboard * storyboard = [UIStoryboard storyboardWithName:@"Storyboard" bundle:nil];
+//                ofxiOSAppDelegate *del = (ofxiOSAppDelegate *)[UIApplication sharedApplication].delegate;
+//                MGLKViewController * game = [storyboard instantiateViewControllerWithIdentifier:@"iOSAppMGLKViewController"];
+//                                [del.navigationController pushViewController:game animated:YES];
+                
+                
 			case GL_KIT:
 				self.uiViewController = (UIViewController *)[[ofxiOSGLKViewController alloc] initWithFrame:frame app:(ofxiOSApp *)ofGetAppPtr() sharegroup:nil];
 				break;
@@ -252,6 +270,14 @@
                 if([controller isReadyToRotate]) {
                     ofxiOSAlerts.deviceOrientationChanged( deviceOrientation );
                 }
+<<<<<<< HEAD
+=======
+            } else if([self.uiViewController isKindOfClass:ofxiOSMLKViewController.class]) {
+                ofxiOSMLKViewController *controller = (ofxiOSMLKViewController *)self.uiViewController;
+                if([controller isReadyToRotate]) {
+                    ofxiOSAlerts.deviceOrientationChanged( deviceOrientation );
+                }
+>>>>>>> 92bb06eeccee8bc5a09198f3706d62c5e4f4272c
             }
 		}
 	}else {

@@ -30,8 +30,6 @@
  * ***********************************************************************/
 
 #pragma once
-#include "ofxiOSConstants.h"
-#if defined(TARGET_OF_IOS)
 #include <TargetConditionals.h>
 #include "ofAppBaseWindow.h"
 #include "ofxiOSConstants.h"
@@ -39,130 +37,131 @@
 
 class ofiOSWindowSettings: public ofGLESWindowSettings{
 public:
-	ofiOSWindowSettings()
-	:enableRetina(true)
-	,retinaScale(0)
-	,enableDepth(false)
-	,enableAntiAliasing(false)
-	,numOfAntiAliasingSamples(0)
-	,enableHardwareOrientation(false)
-	,enableHardwareOrientationAnimation(false)
-	,enableSetupScreen(true)
-	,windowControllerType(ofxiOSWindowControllerType::CORE_ANIMATION)
-	,colorType(ofxiOSRendererColorFormat::RGBA8888)
-	,depthType(ofxiOSRendererDepthFormat::DEPTH_NONE)
-	,stencilType(ofxiOSRendererStencilFormat::STENCIL_NONE)
-	,enableMultiTouch(false) {
-		windowMode = OF_FULLSCREEN;
-		setupOrientation = OF_ORIENTATION_DEFAULT;
-		glesVersion = 2;
-	}
-	
-	ofiOSWindowSettings(const ofWindowSettings & settings)
-	:ofGLESWindowSettings(settings)
-	,enableRetina(true)
-	,retinaScale(0)
-	,enableDepth(false)
-	,enableAntiAliasing(false)
-	,numOfAntiAliasingSamples(0)
-	,enableHardwareOrientation(false)
-	,enableHardwareOrientationAnimation(false)
-	,enableSetupScreen(true)
-	,windowControllerType(ofxiOSWindowControllerType::CORE_ANIMATION)
-	,colorType(ofxiOSRendererColorFormat::RGBA8888)
-	,depthType(ofxiOSRendererDepthFormat::DEPTH_NONE)
-	,stencilType(ofxiOSRendererStencilFormat::STENCIL_NONE)
-	,enableMultiTouch(false) {
-		const ofGLESWindowSettings * glesSettings = dynamic_cast<const ofGLESWindowSettings*>(&settings);
-		if(glesSettings){
-			glesVersion = glesSettings->glesVersion;
-		} else {
-			glesVersion = 2;
-		}
-		const ofiOSWindowSettings * iosSettings = dynamic_cast<const ofiOSWindowSettings*>(&settings);
-		if(iosSettings){
-			enableRetina = iosSettings->enableRetina;
-			retinaScale = iosSettings->retinaScale;
-			enableDepth = iosSettings->enableDepth;
-			enableAntiAliasing = iosSettings->enableAntiAliasing;
-			numOfAntiAliasingSamples = iosSettings->numOfAntiAliasingSamples;
-			enableHardwareOrientation = iosSettings->enableHardwareOrientation;
-			enableHardwareOrientationAnimation = iosSettings->enableHardwareOrientationAnimation;
-			enableSetupScreen = iosSettings->enableSetupScreen;
-			setupOrientation = iosSettings->setupOrientation;
-			windowControllerType = iosSettings->windowControllerType;
-			colorType = iosSettings->colorType;
-			depthType = iosSettings->depthType;
-			stencilType = iosSettings->stencilType;
-			enableMultiTouch = iosSettings->enableMultiTouch;
-		} else {
-			enableRetina = true;
-			retinaScale = 0;
-			enableDepth = false;
-			enableAntiAliasing = false;
-			numOfAntiAliasingSamples = 0;
-			enableHardwareOrientation = false;
-			enableHardwareOrientationAnimation = false;
-			enableSetupScreen = true;
-			setupOrientation = OF_ORIENTATION_DEFAULT;
-			colorType = ofxiOSRendererColorFormat::RGBA8888;
-			depthType = ofxiOSRendererDepthFormat::DEPTH_NONE;
-			stencilType = ofxiOSRendererStencilFormat::STENCIL_NONE;
-			enableMultiTouch = false;
-		}
-	}
+    ofiOSWindowSettings()
+    :enableRetina(true)
+    ,retinaScale(0)
+    ,enableDepth(false)
+    ,enableAntiAliasing(false)
+    ,numOfAntiAliasingSamples(0)
+    ,enableHardwareOrientation(false)
+    ,enableHardwareOrientationAnimation(false)
+    ,enableSetupScreen(true)
+    ,windowControllerType(ofxiOSWindowControllerType::CORE_ANIMATION)
+    ,colorType(ofxiOSRendererColorFormat::RGBA8888)
+    ,depthType(ofxiOSRendererDepthFormat::DEPTH_NONE)
+    ,stencilType(ofxiOSRendererStencilFormat::STENCIL_NONE)
+    ,enableMultiTouch(false) {
+        windowMode = OF_FULLSCREEN;
+        setupOrientation = OF_ORIENTATION_DEFAULT;
+        glesVersion = 2;
+    }
+    
+    ofiOSWindowSettings(const ofWindowSettings & settings)
+    :ofGLESWindowSettings(settings)
+    ,enableRetina(true)
+    ,retinaScale(0)
+    ,enableDepth(false)
+    ,enableAntiAliasing(false)
+    ,numOfAntiAliasingSamples(0)
+    ,enableHardwareOrientation(false)
+    ,enableHardwareOrientationAnimation(false)
+    ,enableSetupScreen(true)
+    ,windowControllerType(ofxiOSWindowControllerType::CORE_ANIMATION)
+    ,colorType(ofxiOSRendererColorFormat::RGBA8888)
+    ,depthType(ofxiOSRendererDepthFormat::DEPTH_NONE)
+    ,stencilType(ofxiOSRendererStencilFormat::STENCIL_NONE)
+    ,enableMultiTouch(false) {
+        const ofGLESWindowSettings * glesSettings = dynamic_cast<const ofGLESWindowSettings*>(&settings);
+        if(glesSettings){
+            glesVersion = glesSettings->glesVersion;
+        } else {
+            glesVersion = 2;
+        }
+        const ofiOSWindowSettings * iosSettings = dynamic_cast<const ofiOSWindowSettings*>(&settings);
+        if(iosSettings){
+            enableRetina = iosSettings->enableRetina;
+            retinaScale = iosSettings->retinaScale;
+            enableDepth = iosSettings->enableDepth;
+            enableAntiAliasing = iosSettings->enableAntiAliasing;
+            numOfAntiAliasingSamples = iosSettings->numOfAntiAliasingSamples;
+            enableHardwareOrientation = iosSettings->enableHardwareOrientation;
+            enableHardwareOrientationAnimation = iosSettings->enableHardwareOrientationAnimation;
+            enableSetupScreen = iosSettings->enableSetupScreen;
+            setupOrientation = iosSettings->setupOrientation;
+            windowControllerType = iosSettings->windowControllerType;
+            colorType = iosSettings->colorType;
+            depthType = iosSettings->depthType;
+            stencilType = iosSettings->stencilType;
+            enableMultiTouch = iosSettings->enableMultiTouch;
+        } else {
+            enableRetina = true;
+            retinaScale = 0;
+            enableDepth = false;
+            enableAntiAliasing = false;
+            numOfAntiAliasingSamples = 0;
+            enableHardwareOrientation = false;
+            enableHardwareOrientationAnimation = false;
+            enableSetupScreen = true;
+            setupOrientation = OF_ORIENTATION_DEFAULT;
+//            windowControllerType = windowControllerType;
+            colorType = ofxiOSRendererColorFormat::RGBA8888;
+            depthType = ofxiOSRendererDepthFormat::DEPTH_NONE;
+            stencilType = ofxiOSRendererStencilFormat::STENCIL_NONE;
+            enableMultiTouch = false;
+        }
+    }
 
-	ofiOSWindowSettings(const ofGLESWindowSettings & settings)
-	:ofGLESWindowSettings(settings)
-	,enableRetina(true)
-	,retinaScale(0)
-	,enableDepth(false)
-	,enableAntiAliasing(false)
-	,numOfAntiAliasingSamples(0)
-	,enableHardwareOrientation(false)
-	,enableHardwareOrientationAnimation(false)
-	,enableSetupScreen(true)
-	,windowControllerType(ofxiOSWindowControllerType::CORE_ANIMATION)
-	,colorType(ofxiOSRendererColorFormat::RGBA8888)
-	,depthType(ofxiOSRendererDepthFormat::DEPTH_NONE)
-	,stencilType(ofxiOSRendererStencilFormat::STENCIL_NONE)
-	,enableMultiTouch(false){
-		const ofiOSWindowSettings * iosSettings = dynamic_cast<const ofiOSWindowSettings*>(&settings);
-		if(iosSettings){
-			enableRetina = iosSettings->enableRetina;
-			retinaScale = iosSettings->retinaScale;
-			enableDepth = iosSettings->enableDepth;
-			enableAntiAliasing = iosSettings->enableAntiAliasing;
-			numOfAntiAliasingSamples = iosSettings->numOfAntiAliasingSamples;
-			enableHardwareOrientation = iosSettings->enableHardwareOrientation;
-			enableHardwareOrientationAnimation = iosSettings->enableHardwareOrientationAnimation;
-			enableSetupScreen = iosSettings->enableSetupScreen;
-			setupOrientation = iosSettings->setupOrientation;
-			windowControllerType = iosSettings->windowControllerType;
-			colorType = iosSettings->colorType;
-			depthType = iosSettings->depthType;
-			stencilType = iosSettings->stencilType;
-			enableMultiTouch = iosSettings->enableMultiTouch;
-		}
-	}
+    ofiOSWindowSettings(const ofGLESWindowSettings & settings)
+    :ofGLESWindowSettings(settings)
+    ,enableRetina(true)
+    ,retinaScale(0)
+    ,enableDepth(false)
+    ,enableAntiAliasing(false)
+    ,numOfAntiAliasingSamples(0)
+    ,enableHardwareOrientation(false)
+    ,enableHardwareOrientationAnimation(false)
+    ,enableSetupScreen(true)
+    ,windowControllerType(ofxiOSWindowControllerType::CORE_ANIMATION)
+    ,colorType(ofxiOSRendererColorFormat::RGBA8888)
+    ,depthType(ofxiOSRendererDepthFormat::DEPTH_NONE)
+    ,stencilType(ofxiOSRendererStencilFormat::STENCIL_NONE)
+    ,enableMultiTouch(false){
+        const ofiOSWindowSettings * iosSettings = dynamic_cast<const ofiOSWindowSettings*>(&settings);
+        if(iosSettings){
+            enableRetina = iosSettings->enableRetina;
+            retinaScale = iosSettings->retinaScale;
+            enableDepth = iosSettings->enableDepth;
+            enableAntiAliasing = iosSettings->enableAntiAliasing;
+            numOfAntiAliasingSamples = iosSettings->numOfAntiAliasingSamples;
+            enableHardwareOrientation = iosSettings->enableHardwareOrientation;
+            enableHardwareOrientationAnimation = iosSettings->enableHardwareOrientationAnimation;
+            enableSetupScreen = iosSettings->enableSetupScreen;
+            setupOrientation = iosSettings->setupOrientation;
+            windowControllerType = iosSettings->windowControllerType;
+            colorType = iosSettings->colorType;
+            depthType = iosSettings->depthType;
+            stencilType = iosSettings->stencilType;
+            enableMultiTouch = iosSettings->enableMultiTouch;
+        }
+    }
 
-	virtual ~ofiOSWindowSettings(){};
-	
-	bool enableRetina;
-	float retinaScale;
-	bool enableDepth;
-	bool enableAntiAliasing;
-	int numOfAntiAliasingSamples;
-	bool enableHardwareOrientation;
-	bool enableHardwareOrientationAnimation;
-	bool enableSetupScreen;
-	bool enableMultiTouch;
-	ofxiOSWindowControllerType windowControllerType;
-	ofxiOSRendererColorFormat colorType;
-	ofxiOSRendererDepthFormat depthType;
-	ofxiOSRendererStencilFormat stencilType;
-	ofOrientation setupOrientation;
-	
+    virtual ~ofiOSWindowSettings(){};
+    
+    bool enableRetina;
+    float retinaScale;
+    bool enableDepth;
+    bool enableAntiAliasing;
+    int numOfAntiAliasingSamples;
+    bool enableHardwareOrientation;
+    bool enableHardwareOrientationAnimation;
+    bool enableSetupScreen;
+    bool enableMultiTouch;
+    ofxiOSWindowControllerType windowControllerType;
+    ofxiOSRendererColorFormat colorType;
+    ofxiOSRendererDepthFormat depthType;
+    ofxiOSRendererStencilFormat stencilType;
+    ofOrientation setupOrientation;
+    
 };
 
 
@@ -286,5 +285,5 @@ protected:
 [[deprecated("use ofAppiOSWindow")]]
 typedef ofAppiOSWindow ofAppiPhoneWindow;
 
-#endif
+
 
