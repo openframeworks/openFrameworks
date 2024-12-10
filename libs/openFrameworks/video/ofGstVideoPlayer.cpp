@@ -218,7 +218,7 @@ bool ofGstVideoPlayer::load(const of::filesystem::path & fileName){
 		internalPixelFormat = OF_PIXELS_NATIVE;
 		bIsAllocated = false;
 		videoUtils.reallocateOnNextFrame();
-		g_object_set(G_OBJECT(videoUtils.getPipeline()), "uri", fileName.c_str(), (void*)NULL);
+		g_object_set(G_OBJECT(videoUtils.getPipeline()), "uri", name.c_str(), (void*)NULL);
 		gst_element_set_state (videoUtils.getPipeline(), GST_STATE_PAUSED);
 		if(!bIsStream){
 			gst_element_get_state (videoUtils.getPipeline(), NULL, NULL, -1);
@@ -228,7 +228,7 @@ bool ofGstVideoPlayer::load(const of::filesystem::path & fileName){
 		}
 	}else{
 		ofGstUtils::startGstMainLoop();
-		return createPipeline(fileName) &&
+		return createPipeline(name) &&
 				videoUtils.startPipeline() &&
 				(bIsStream || allocate());
 	}

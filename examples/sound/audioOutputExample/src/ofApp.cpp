@@ -41,7 +41,7 @@ void ofApp::setup(){
 	//		settings.setOutDevice(devices[0]);
 	//	}
 
-#ifdef TARGET_LINUX
+
 	// Latest linux versions default to the HDMI output
 	// this usually fixes that. Also check the list of available
 	// devices if sound doesn't work
@@ -49,7 +49,7 @@ void ofApp::setup(){
 	if(!devices.empty()){
 		settings.setOutDevice(devices[0]);
 	}
-#endif
+
 
 	settings.setOutListener(this);
 	settings.sampleRate = sampleRate;
