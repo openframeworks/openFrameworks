@@ -36,7 +36,7 @@ class ofLight : public ofNode {
 public:
 	ofLight();
 	
-    void setup();
+	void setup();
 	void enable();
 	void disable();
 	bool getIsEnabled() const;
@@ -47,19 +47,19 @@ public:
 	void setSpotlight( float spotCutOff=45.f, float exponent=0.f );
 	bool getIsSpotlight() const;
 	void setSpotlightCutOff( float spotCutOff );
-    float getSpotlightCutOff() const;
+	float getSpotlightCutOff() const;
 	void setSpotConcentration( float exponent );
-    float getSpotConcentration() const;
+	float getSpotConcentration() const;
 	
 	void setPointLight();
 	bool getIsPointLight() const;
 	void setAttenuation( float constant=1.f, float linear=0.f, float quadratic=0.f );
-    float getAttenuationConstant() const;
-    float getAttenuationLinear() const;
-    float getAttenuationQuadratic() const;
-
-    void setAreaLight(float width, float height);
-    bool getIsAreaLight() const;
+	float getAttenuationConstant() const;
+	float getAttenuationLinear() const;
+	float getAttenuationQuadratic() const;
+	
+	void setAreaLight(float width, float height);
+	bool getIsAreaLight() const;
 	
 	int getType() const;
 	
@@ -81,31 +81,31 @@ public:
 	bool endShadowDepthPass( GLenum aPassIndex );
 	
 	ofShadow & getShadow() { return shadow; }
-
+	
 	class Data{
 	public:
 		Data();
 		~Data();
-
+		
 		ofFloatColor ambientColor;
 		ofFloatColor diffuseColor;
 		ofFloatColor specularColor;
-
-	    float attenuation_constant;
-	    float attenuation_linear;
-	    float attenuation_quadratic;
-
+		
+		float attenuation_constant;
+		float attenuation_linear;
+		float attenuation_quadratic;
+		
 		ofLightType lightType;
-
+		
 		int glIndex;
 		int isEnabled;
-	    float spotCutOff;
-	    float exponent;
+		float spotCutOff;
+		float exponent;
 		glm::vec4 position;
 		glm::vec3 direction;
-
-	    float width;
-	    float height;
+		
+		float width;
+		float height;
 		glm::vec3 up;
 		glm::vec3 right;
 		/// weak link back to renderer for which this light was created/setup
@@ -118,10 +118,11 @@ protected:
 private:
 	void customDraw(const ofBaseRenderer * renderer) const;
 	std::shared_ptr<Data> data;
-	// update opengl light 
+	// update opengl light
 	// this method overrides ofNode to catch the changes and update glLightv(GL_POSITION)
 	virtual void onPositionChanged();
 	virtual void onOrientationChanged();
+	
 };
 
 

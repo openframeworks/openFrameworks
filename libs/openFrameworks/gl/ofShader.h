@@ -9,6 +9,7 @@
 
 // MARK: ofConstants Targets
 #include "ofConstants.h"
+#include <vector>
 
 #include <glm/detail/qualifier.hpp>
 namespace glm {
@@ -25,7 +26,6 @@ namespace glm {
 
 class ofTexture;
 class ofTextureData;
-class ofMatrix3x3;
 class ofParameterGroup;
 class ofBufferObject;
 class ofBaseHasTexture;
@@ -166,6 +166,10 @@ public:
 	void setUniform3i(const std::string & name, int v1, int v2, int v3) const;
 	void setUniform4i(const std::string & name, int v1, int v2, int v3, int v4) const;
 
+
+	// Dmtr testing
+	void setUniformBufferObject(const std::string & name, const void * data, GLsizeiptr dataSize) const;
+
 	void setUniform1f(const std::string & name, float v1) const;
 	void setUniform2f(const std::string & name, float v1, float v2) const;
 	void setUniform3f(const std::string & name, float v1, float v2, float v3) const;
@@ -198,14 +202,14 @@ public:
 	// set attributes that vary per vertex (look up the location before glBegin)
 	GLint getAttributeLocation(const std::string & name) const;
 
-#ifndef TARGET_OPENGLES
-#ifdef GLEW_ARB_uniform_buffer_object
+//#ifndef TARGET_OPENGLES
+//#ifdef GLEW_ARB_uniform_buffer_object
 	GLint getUniformBlockIndex(const std::string & name) const;
 	GLint getUniformBlockBinding(const std::string & name) const;
 	void bindUniformBlock(GLuint bindind, const std::string & name) const;
 	void printActiveUniformBlocks() const;
-#endif
-#endif
+//#endif
+//#endif
 
 #ifndef TARGET_OPENGLES
 	void setAttribute1s(GLint location, short v1) const;
@@ -285,12 +289,19 @@ private:
 	};
 
 	std::unordered_map<GLenum, Shader> shaders;
+
+//	std::unordered_map<std::string, ofBufferObject> bufferObjectsCache;
+//	const std::unordered_map<std::string, ofBufferObject> & getBufferObjectsCache() const {
+//		return bufferObjectsCache;
+//	}
+	std::unordered_map<std::string, std::unique_ptr<ofBufferObject>> bufferObjectsCache;
+
 	std::unordered_map<std::string, GLint> uniformsCache;
 	mutable std::unordered_map<std::string, GLint> attributesBindingsCache;
 
-#ifndef TARGET_OPENGLES
+//#ifndef TARGET_OPENGLES
 	std::unordered_map<std::string, GLint> uniformBlocksCache;
-#endif
+//#endif
 
 	bool setupShaderFromSource(Source && source);
 	ofShader::Source sourceFromFile(GLenum type, const of::filesystem::path& filename);
@@ -301,7 +312,7 @@ private:
 	void setDefineConstantTemp(const std::string & name, T value);
 	template<typename T>
 	void setConstantTemp(const std::string & name, const std::string & type, T value);
-	
+
 	static std::string nameForType(GLenum type);
 
 	/// @brief			Mimics the #include behaviour of the c preprocessor
@@ -319,4 +330,3 @@ private:
 	void reloadGL();
 #endif
 };
-

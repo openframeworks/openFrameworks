@@ -483,25 +483,25 @@ void ofxAppEmscriptenWindow::setWindowShape(int w, int h){
 }
 
 //------------------------------------------------------------
-glm::vec2 ofxAppEmscriptenWindow::getWindowPosition(){
-	return glm::vec2(0,0);
+glm::ivec2 ofxAppEmscriptenWindow::getWindowPosition(){
+	return { 0, 0 };
 }
 
 //------------------------------------------------------------
-glm::vec2 ofxAppEmscriptenWindow::getWindowSize(){
+glm::ivec2 ofxAppEmscriptenWindow::getWindowSize(){
 	if(mCurrentWindowMode == OF_GAME_MODE) {
 		double twidth, theight;
 		emscripten_get_element_css_size("canvas", &twidth, &theight);
-		return glm::vec2((int)twidth,(int)theight);
+		return { (int)twidth, (int)theight };
 	}
 	int width;
 	int height;
 	emscripten_get_canvas_element_size("canvas", &width, &height);
-	return glm::vec2(width,height);
+	return { width, height };
 }
 
 //------------------------------------------------------------
-glm::vec2 ofxAppEmscriptenWindow::getScreenSize(){
+glm::ivec2 ofxAppEmscriptenWindow::getScreenSize(){
 	return getWindowSize();
 }
 

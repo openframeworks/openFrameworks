@@ -3,6 +3,7 @@
 // MARK: ofConstants FS
 #include "ofConstants.h"
 #include <fstream>
+#include <vector>
 
 //----------------------------------------------------------
 // ofBuffer
@@ -371,7 +372,7 @@ public:
 	// FIXME: Deprecate / Remove this. Find instances in OF Core to remove
 	[[deprecated("use getFileName(const of::filesystem::path & filePath) or of::filesystem::path .filename()")]]
 	static std::string getFileName(const of::filesystem::path & filePath, bool bRelativeToData);
-	
+
 	static std::string getFileName(const of::filesystem::path & filePath);
 
 	/// Get a file name without its extension,

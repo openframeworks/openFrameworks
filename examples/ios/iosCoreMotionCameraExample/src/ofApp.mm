@@ -20,8 +20,9 @@ void ofApp::update(){
 	coreMotion.update();
 	
 	// attitude- quaternion
-	ofQuaternion quat = coreMotion.getQuaternion();
-	ofQuaternion landscapeFix(-quat.y(), quat.x(), quat.z(), quat.w());
+	glm::quat quat = coreMotion.getQuaternion();
+	
+	glm::quat landscapeFix(-quat.y, quat.x, quat.z, quat.w);
 	camera.setOrientation(landscapeFix);
 }
 

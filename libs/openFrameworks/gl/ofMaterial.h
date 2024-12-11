@@ -388,6 +388,36 @@ public:
 	const std::string getDefinesString() const;
 
 	void setCustomShader(std::shared_ptr<ofShader> aCustomShader);
+	
+	
+	struct PbrLightData {
+		float enabled;
+		// 0 = pointlight 1 = directionlight, 2 = spotlight, 3 = area light
+		float type;
+		// where are we in world space
+		glm::vec4 position;
+		glm::vec4 direction;
+		// light color, intensity is stored in .w
+		glm::vec4 diffuse;
+		float radius;// = 0.0;
+		// attenuation
+		float constantAttenuation;
+		float linearAttenuation;
+		float quadraticAttenuation;
+		//	// only for spot
+		float spotCutoff;
+		float spotCosCutoff;
+		float spotExponent;
+		//	// only for area
+		float width;
+		float height;
+		glm::vec4 right;
+		glm::vec4 up;
+	};
+
+	PbrLightData lights[100];
+
+	
 
 protected:
 	/// \brief unbind the material, override the default so we can set current shader to nullptr
@@ -473,4 +503,6 @@ private:
 	mutable const ofShader * currentRenderShader = nullptr;
 	bool bPrintedPBRRenderWarning = false;
 	bool mBHasDepthShader = false;
+	
+	
 };

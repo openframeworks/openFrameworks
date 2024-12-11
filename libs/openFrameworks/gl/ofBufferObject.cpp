@@ -15,16 +15,16 @@ ofBufferObject::Data::Data()
 #endif
 
 {
-	
-	// tig: glGenBuffers does not actually create a buffer, it just 
-	//      returns the next available name, and only a subsequent 
+
+	// tig: glGenBuffers does not actually create a buffer, it just
+	//      returns the next available name, and only a subsequent
 	//      call to bind() will actualy initialize the buffer in
-	//      memory. 
+	//      memory.
 	//
 	//      This is why, for direct state access, we need to call
 	//      glCreateBuffers(), so that the buffer is initialized
 	//      when we pin data to it using setData()
-	// 
+	//
 	//      see also: https://www.opengl.org/registry/specs/ARB/direct_state_access.txt
 #ifdef GLEW_VERSION_4_5
 	if(isDSA) {
@@ -81,7 +81,7 @@ void ofBufferObject::unbind(GLenum target) const{
 	}
 }
 
-#if !defined(TARGET_OPENGLES) || defined(TARGET_EMSCRIPTEN)
+//#if !defined(TARGET_OPENGLES) || defined(TARGET_EMSCRIPTEN)
 void ofBufferObject::bindBase(GLenum target,GLuint index) const{
 	if(data){
 		glBindBufferBase(target,index,data->id);
@@ -108,7 +108,7 @@ void ofBufferObject::bindRange(GLenum target,GLuint index, GLintptr offset, GLsi
 void ofBufferObject::unbindRange(GLenum target,GLuint index) const{
 	glBindBufferBase(target,index,0);
 }
-#endif
+//#endif
 
 GLuint ofBufferObject::getId() const{
 	if(data) return data->id;

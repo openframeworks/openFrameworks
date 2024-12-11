@@ -23,20 +23,22 @@
 #include "ofColor.h"
 #include "ofGraphicsBaseTypes.h"
 #include "ofParameter.h"
+#ifdef OF_USE_LEGACY_MATH
 #include "ofPoint.h"
+#endif
 #include "ofRectangle.h"
 #include "ofTypes.h"
 
 //--------------------------
 // math
 #include "ofMath.h"
-#include "ofVectorMath.h"
+//#include "ofVectorMath.h"
 
 //--------------------------
 // communication
 #if !defined(TARGET_OF_IOS) & !defined(TARGET_ANDROID) & !defined(TARGET_EMSCRIPTEN)
-    #include "ofSerial.h"
-    #include "ofArduino.h"
+//    #include "ofSerial.h"
+//    #include "ofArduino.h"
 #endif
 
 //--------------------------

@@ -58,7 +58,7 @@ public:
 		CvMoments*              myMoments;
 		std::vector<CvSeq*>     cvSeqBlobs;  //these will become blobs
 		
-		ofPoint anchor;
+		glm::vec2 anchor;
 		bool  bAnchorIsPct;      
 
 		virtual void reset();
