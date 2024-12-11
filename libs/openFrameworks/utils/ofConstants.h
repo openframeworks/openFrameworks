@@ -150,11 +150,13 @@ enum ofTargetPlatform{
 	#define GLEW_NO_GLU
     #define TARGET_GLFW_WINDOW
     #define OF_CAIRO
-    #define OF_RTAUDIO
 	#include "GL/glew.h"
 	#include "GL/wglew.h"
+	#define OF_RTAUDIO
 	#define __WINDOWS_DS__
-	#define __WINDOWS_MM__
+	#define __WINDOWS_WASAPI__
+	#define __WINDOWS_ASIO__
+	#define __WINDOWS_MM__ // rtMidi?
 	#if (_MSC_VER)       // microsoft visual studio
 		//TODO: Fix this in the code instead of disabling the warnings
 		#define _CRT_SECURE_NO_WARNINGS
@@ -200,18 +202,15 @@ enum ofTargetPlatform{
 #endif
 
 #if defined(TARGET_OS_OSX) && !defined(TARGET_OF_IOS)
-	#ifndef __MACOSX_CORE__
-		#define __MACOSX_CORE__
-	#endif
     #define TARGET_GLFW_WINDOW
     #define OF_CAIRO
     #define OF_RTAUDIO
-    
+	#ifndef __MACOSX_CORE__
+		#define __MACOSX_CORE__ // rtAudio
+	#endif
 	#ifndef OF_NO_FMOD
 		#define OF_NO_FMOD
 	#endif
-
-    
 	#include "GL/glew.h"
     #include "OpenGL/OpenGL.h"
 
@@ -245,6 +244,9 @@ enum ofTargetPlatform{
 	#else // desktop linux
         #define TARGET_GLFW_WINDOW
         #define OF_RTAUDIO
+		#define __LINUX_PULSE__
+		#define __LINUX_ALSA__
+		#define __LINUX_OSS__
 		#include <GL/glew.h>
 	#endif
 
