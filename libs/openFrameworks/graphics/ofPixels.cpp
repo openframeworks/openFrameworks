@@ -2,6 +2,7 @@
 #include "ofPixels.h"
 #include "ofColor.h"
 #include <functional>
+#include <cstring> //memcpy
 
 static ofImageType getImageTypeFromChannels(size_t channels){
 	switch(channels){
@@ -369,7 +370,7 @@ void ofPixels_<PixelType>::set(size_t channel,PixelType val){
 template<typename PixelType>
 void ofPixels_<PixelType>::setFromPixels(const PixelType * newPixels, size_t w, size_t h, size_t channels){
 	allocate(w, h, channels);
-	memcpy(pixels, newPixels, getTotalBytes());
+	std::memcpy(pixels, newPixels, getTotalBytes());
 }
 
 template<typename PixelType>
@@ -381,7 +382,7 @@ void ofPixels_<PixelType>::setFromPixels(const PixelType * newPixels, size_t w, 
 template<typename PixelType>
 void ofPixels_<PixelType>::setFromPixels(const PixelType * newPixels, size_t w, size_t h, ofPixelFormat format){
 	allocate(w,h,format);
-	memcpy(pixels, newPixels, getTotalBytes());
+	std::memcpy(pixels, newPixels, getTotalBytes());
 }
 
 
@@ -423,7 +424,7 @@ void ofPixels_<PixelType>::setFromAlignedPixels(const PixelType * newPixels, siz
 	const unsigned char* src = (unsigned char*) newPixels;
 	unsigned char* dst =  (unsigned char*) pixels;
 	for(size_t i = 0; i < height; i++) {
-		memcpy(dst, src, dstStride);
+		std::memcpy(dst, src, dstStride);
 		src += stride;
 		dst += dstStride;
 	}
@@ -452,19 +453,19 @@ void ofPixels_<PixelType>::setFromAlignedPixels(const PixelType * newPixels, siz
 		unsigned char* dst =  (unsigned char*) pixels;
 		// Y Plane
 		for(size_t i = 0; i < height; i++) {
-		memcpy(dst, src, width);
+		std::memcpy(dst, src, width);
 		src += strides[0];
 		dst += width;
 		}
 		// U Plane
 		for(size_t i = 0; i < height /2; i++){
-		memcpy(dst,src,width/2);
+		std::memcpy(dst,src,width/2);
 		src += strides[1];
 		dst += width/2;
 		}
 		// V Plane
 		for(size_t i = 0; i < height /2; i++){
-		memcpy(dst,src,width/2);
+		std::memcpy(dst,src,width/2);
 		src += strides[2];
 		dst += width/2;
 		}
@@ -1230,7 +1231,7 @@ void ofPixels_<PixelType>::mirrorTo(ofPixels_<PixelType> & dst, bool vertically,
 		auto stride = line.getStride();
 
 		for(; line>=dstLines.begin(); --line, ++lineSrc){
-			memcpy(line.begin(), lineSrc.begin(), stride);
+			std::memcpy(line.begin(), lineSrc.begin(), stride);
 		}
 	}else if (!vertically && horizontal){
 		size_t wToDo = width/2;
@@ -1451,7 +1452,7 @@ bool ofPixels_<PixelType>::pasteInto(ofPixels_<PixelType> &dst, size_t xTo, size
 	size_t dstStride = dst.getWidth()*dst.getBytesPerPixel();
 
 	for(size_t y=0;y<columnsToCopy; y++){
-		memcpy(dstPix,srcPix,bytesToCopyPerRow);
+		std::memcpy(dstPix,srcPix,bytesToCopyPerRow);
 		dstPix += dstStride;
 		srcPix += srcStride;
 	}
