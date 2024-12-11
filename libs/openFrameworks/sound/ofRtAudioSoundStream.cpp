@@ -140,13 +140,16 @@ bool ofRtAudioSoundStream::setup(const ofSoundStreamSettings & settings_)
 
 	try {
 		if (settings.getApi() != ofSoundDevice::Api::UNSPECIFIED) {
+			ofLog() << "Initialing RtAudio Requested API: " << settings.getApi();
 			audio = std::make_shared<RtAudio>(toRtAudio(settings.getApi()));
 		}else{
+			ofLog() << "Initialing RtAudio with UNSPECIFIED API";
 			audio = std::make_shared<RtAudio>();
 		}
+		ofLog() << "Initialized RtAudio with API: " << RtAudio::getApiName(audio->getCurrentApi());
 	}
 	catch (std::exception &error) {
-		ofLogError() << error.what();
+		ofLogError() << "Failed to initialize RtAudio: " << error.what();
 		return false;
 	}
 

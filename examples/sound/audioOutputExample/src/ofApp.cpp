@@ -45,10 +45,17 @@ void ofApp::setup(){
 	// Latest linux versions default to the HDMI output
 	// this usually fixes that. Also check the list of available
 	// devices if sound doesn't work
+
+	//settings.setApi(ofSoundDevice::MS_ASIO);
+	//settings.setApi(ofSoundDevice::MS_WASAPI);
+	//settings.setApi(ofSoundDevice::MS_DS);
+
 	auto devices = soundStream.getMatchingDevices("default");
 	if(!devices.empty()){
 		settings.setOutDevice(devices[0]);
 	}
+
+
 
 
 	settings.setOutListener(this);
