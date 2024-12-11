@@ -140,13 +140,13 @@ bool ofRtAudioSoundStream::setup(const ofSoundStreamSettings & settings_)
 
 	try {
 		if (settings.getApi() != ofSoundDevice::Api::UNSPECIFIED) {
-			ofLog() << "Initialing RtAudio Requested API: " << settings.getApi();
+			ofLogNotice() << "Initialing RtAudio Requested API: " << settings.getApi();
 			audio = std::make_shared<RtAudio>(toRtAudio(settings.getApi()));
 		}else{
-			ofLog() << "Initialing RtAudio with UNSPECIFIED API";
+			ofLogNotice() << "Initialing RtAudio with UNSPECIFIED API";
 			audio = std::make_shared<RtAudio>();
 		}
-		ofLog() << "Initialized RtAudio with API: " << RtAudio::getApiName(audio->getCurrentApi());
+		ofLogNotice() << "Initialized RtAudio with API: " << RtAudio::getApiName(audio->getCurrentApi());
 	}
 	catch (std::exception &error) {
 		ofLogError() << "Failed to initialize RtAudio: " << error.what();
@@ -158,6 +158,7 @@ bool ofRtAudioSoundStream::setup(const ofSoundStreamSettings & settings_)
 	if (settings.numInputChannels > 0) {
 		if (!settings.getInDevice()) {
 			ofSoundDevice device;
+			device.api = settings.getApi();
 			device.deviceID = audio->getDefaultInputDevice();
 			settings.setInDevice(device);
 		}
@@ -168,6 +169,7 @@ bool ofRtAudioSoundStream::setup(const ofSoundStreamSettings & settings_)
 	if (settings.numOutputChannels > 0) {
 		if (!settings.getOutDevice()) {
 			ofSoundDevice device;
+			device.api = settings.getApi();
 			device.deviceID = audio->getDefaultOutputDevice();
 			settings.setOutDevice(device);
 		}
