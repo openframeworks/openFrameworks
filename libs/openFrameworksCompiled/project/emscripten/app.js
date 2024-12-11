@@ -1,5 +1,6 @@
 
 document.addEventListener('DOMContentLoaded', () => {
+  console.log('DOM fully loaded and parsed');
   const canvas = document.getElementById('canvas');
   if (!canvas) {
     console.error("Canvas element not found!");
@@ -55,7 +56,6 @@ document.addEventListener('DOMContentLoaded', () => {
     })(),
     canvas: (() => {
       var canvas = document.getElementById("canvas");
-
       canvas.addEventListener(
         "webglcontextlost",
         (e) => {
@@ -64,7 +64,6 @@ document.addEventListener('DOMContentLoaded', () => {
         },
         false
       );
-
       return canvas;
     })(),
     setStatus: (text) => {
@@ -102,12 +101,34 @@ document.addEventListener('DOMContentLoaded', () => {
 
   Module.setStatus("Downloading...");
   window.onerror = () => {
+    const total = Module.totalDependencies || 1; // Default to avoid division by zero
+    const left = text.match(/(\d+)\/(\d+)/);
+    if (!left) {
+      console.warn("Progress information missing or invalid.");
+      Module.setStatus("Error: Progress information missing or invalid, see JavaScript console");
+      return;
+    }
     Module.setStatus("Exception thrown, see JavaScript console");
     spinnerElement.style.display = "none";
     Module.setStatus = (text) => {
       if (text) console.error(`[post-exception status] ${text}`);
     };
   };
+
+  const fullscreenButton = document.getElementById('fullscreenButton');
+
+  // Attach the event listener to handle fullscreen functionality
+  fullscreenButton.addEventListener('click', () => {
+    const pointerLock = document.getElementById('pointerLock').checked;
+    const resize = document.getElementById('resize').checked;
+
+    // Ensure `Module.requestFullscreen` is available before calling it
+    if (typeof Module.requestFullscreen === 'function') {
+      Module.requestFullscreen(pointerLock, resize);
+    } else {
+      console.error('Module.requestFullscreen is not defined.');
+    }
+  });
 });
 
 

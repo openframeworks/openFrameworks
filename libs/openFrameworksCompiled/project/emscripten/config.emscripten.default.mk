@@ -130,6 +130,7 @@ endif
 
 EMSCRIPTEN_JS = $(OF_LIBS_PATH)/openFrameworksCompiled/project/emscripten/app.js
 EMSCRIPTEN_CSS = $(OF_LIBS_PATH)/openFrameworksCompiled/project/emscripten/style.css
+EMSCRIPTEN_HTACCESS = $(OF_LIBS_PATH)/openFrameworksCompiled/project/emscripten/.htaccess
 OUTPUT_DIR = output
 
 
@@ -322,15 +323,17 @@ afterplatform: $(TARGET_NAME)
 	@echo
 	@echo "Copying assets based on build type ($(BUILD_TYPE))..."
 	@if [ "$(BUILD_TYPE)" = "debug" ]; then \
+		mkdir -p $(OUTPUT_DIR_DEBUG); \
 		echo "Copying app.js and style.css to debug directory..."; \
-		mkdir -p bin/em/$(BIN_NAME)/debug; \
 		cp $(EMSCRIPTEN_JS) $(OUTPUT_DIR_DEBUG) || echo "Failed to copy app.js"; \
 		cp $(EMSCRIPTEN_CSS) $(OUTPUT_DIR_DEBUG) || echo "Failed to copy style.css"; \
+		cp $(EMSCRIPTEN_HTACCESS) $(OUTPUT_DIR_DEBUG) || echo "Failed to copy .htaccess"; \
 	else \
+		mkdir -p $(OUTPUT_DIR_RELEASE); \
 		echo "Copying app.js and style.css to release directory..."; \
-		mkdir -p bin/em/$(BIN_NAME)/release; \
 		cp $(EMSCRIPTEN_JS) $(OUTPUT_DIR_RELEASE) || echo "Failed to copy app.js"; \
 		cp $(EMSCRIPTEN_CSS) $(OUTPUT_DIR_RELEASE) || echo "Failed to copy style.css"; \
+		cp $(EMSCRIPTEN_HTACCESS) $(OUTPUT_DIR_RELEASE) || echo "Failed to copy .htaccess"; \
 	fi
 	@echo "Assets copied successfully."
 	@echo "     compiling done"
