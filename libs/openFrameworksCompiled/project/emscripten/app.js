@@ -36,6 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
       document.getElementById("output").style.display = "none";
     }
   }
+});
 
   var statusElement = document.getElementById("status");
   var progressElement = document.getElementById("progress");
@@ -129,7 +130,7 @@ document.addEventListener('DOMContentLoaded', () => {
       console.error('Module.requestFullscreen is not defined.');
     }
   });
-});
+// });
 
 
 

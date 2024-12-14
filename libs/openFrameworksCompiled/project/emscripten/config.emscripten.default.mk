@@ -74,8 +74,8 @@ else
 endif
 
 # Code Generation Option Flags (http://gcc.gnu.org/onlinedocs/gcc/Code-Gen-Options.html)
-PLATFORM_CFLAGS = -std=c17 -fPIC $(CFLAG_PLATFORM_PTHREAD)
-PLATFORM_CXXFLAGS = -Wall -std=c++17 -fPIC -Wno-warn-absolute-paths $(CFLAG_PLATFORM_PTHREAD)
+PLATFORM_CFLAGS = -std=c17 -fPIC $(CFLAG_PLATFORM_PTHREAD) -s ASSERTIONS=2
+PLATFORM_CXXFLAGS = -Wall -std=c++17 -fPIC -Wno-warn-absolute-paths $(CFLAG_PLATFORM_PTHREAD) -s ASSERTIONS=2
 
 ################################################################################
 # PLATFORM LDFLAGS
@@ -108,7 +108,11 @@ PLATFORM_LDFLAGS = --preload-file bin/data@data --emrun --bind --profiling-funcs
 PLATFORM_LDFLAGS += -s USE_WEBGPU=1 -s NO_EXIT_RUNTIME=1
 PLATFORM_LDFLAGS += -s ALLOW_MEMORY_GROWTH=1 -s MAX_WEBGL_VERSION=2 -s WEBGL2_BACKWARDS_COMPATIBILITY_EMULATION=1 -s FULL_ES2
 PLATFORM_LDFLAGS += -s AUTO_NATIVE_LIBRARIES=1 -s AUTO_JS_LIBRARIES=1
-PLATFORM_LDFLAGS += -s EVAL_CTORS=1 -s ERROR_ON_UNDEFINED_SYMBOLS=0
+PLATFORM_LDFLAGS += -s EVAL_CTORS=1 -s ERROR_ON_UNDEFINED_SYMBOLS=1
+PLATFORM_LDFLAGS += -s ASSERTIONS=2
+PLATFORM_LDFLAGS += -s GL_ASSERTIONS=1
+PLATFORM_LDFLAGS += -s VERBOSE=1
+PLATFORM_LDFLAGS += -sEXPORTED_FUNCTIONS='["_main", "_malloc", "_free"]'
 PLATFORM_LDFLAGS +=  $(PLATFORM_PTHREAD)
 PLATFORM_LDFLAGS += -lGL
 PLATFORM_LDFLAGS += -lhtml5
@@ -119,8 +123,8 @@ PLATFORM_LDFLAGS += -s MODULARIZE=1
 
 # PLATFORM_LDFLAGS += -s WASM_WORKERS=1 -s ENVIRONMENT="web,worker"
 # PLATFORM_LDFLAGS += -s USE_GLFW=3 -lglfw
-# PLATFORM_LDFLAGS += --js-library $(OF_ADDONS_PATH)/ofxEmscripten/libs/html5video/lib/emscripten/library_html5video.js
-# PLATFORM_LDFLAGS += --js-library $(OF_ADDONS_PATH)/ofxEmscripten/libs/html5audio/lib/emscripten/library_html5audio.js
+PLATFORM_LDFLAGS += --js-library $(OF_ADDONS_PATH)/ofxEmscripten/libs/html5video/lib/emscripten/library_html5video.js
+PLATFORM_LDFLAGS += --js-library $(OF_ADDONS_PATH)/ofxEmscripten/libs/html5audio/lib/emscripten/library_html5audio.js
 
 ifdef PROJECT_EMSCRIPTEN_TEMPLATE
  	PLATFORM_LDFLAGS += --shell-file $(PROJECT_EMSCRIPTEN_TEMPLATE)
