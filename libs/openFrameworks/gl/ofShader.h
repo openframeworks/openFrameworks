@@ -9,6 +9,7 @@
 
 // MARK: ofConstants Targets
 #include "ofConstants.h"
+#include <vector>
 
 #include <glm/detail/qualifier.hpp>
 namespace glm {

@@ -3,6 +3,7 @@
 // Only private ofFile file;
 #include "ofFileUtils.h"
 #include <sstream>
+#include <vector>
 
 
 
