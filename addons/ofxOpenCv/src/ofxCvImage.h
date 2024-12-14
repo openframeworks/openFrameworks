@@ -140,10 +140,10 @@ public:
 
 	virtual void  remap( IplImage* mapX, IplImage* mapY );
 
-	virtual void  warpPerspective( const ofPoint& A, const ofPoint& B,
-								   const ofPoint& C, const ofPoint& D );
+	virtual void  warpPerspective( const glm::vec2 & A, const glm::vec2 & B,
+								   const glm::vec2 & C, const glm::vec2 & D );
 	virtual void  warpIntoMe( ofxCvImage& mom,
-							  const ofPoint src[4], const ofPoint dst[4] );
+							  const glm::vec2  src[4], const glm::vec2  dst[4] );
 
 
 
@@ -188,7 +188,7 @@ public:
 	mutable bool bTextureDirty;       // texture needs to be reloaded before drawing
 	bool bUseTexture;
 	
-	ofPoint  anchor;
+	glm::vec2  anchor;
 	bool  bAnchorIsPct;    
 
 };

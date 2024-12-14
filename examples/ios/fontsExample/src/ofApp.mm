@@ -163,7 +163,7 @@ void ofApp::touchDown(ofTouchEventArgs & touch){
 //--------------------------------------------------------------
 void ofApp::touchMoved(ofTouchEventArgs & touch){
 	if( touch.id == 0 ){
-		ofPoint pt( touch.x, touch.y );
+		glm::vec2 pt( touch.x, touch.y );
 		drag += pt - touchPt;
 		
 		touchPt = pt;
