@@ -23,6 +23,7 @@
 #include "ofColor.h"
 #include "ofGraphicsBaseTypes.h"
 #include "ofParameter.h"
+
 #ifdef OF_USE_LEGACY_MATH
 #include "ofPoint.h"
 #endif

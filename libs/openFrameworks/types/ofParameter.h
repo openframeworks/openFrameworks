@@ -6,6 +6,11 @@
 #include "ofMathConstants.h"
 #include "ofRectangle.h"
 #include "ofUtils.h" // ofToString
+
+#ifdef OF_USE_LEGACY_MATH
+#include "ofPoint.h" // ofToString
+#endif
+
 #include <map>
 
 #ifdef TARGET_WIN32

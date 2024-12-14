@@ -12,6 +12,10 @@
 #include "ofMesh.h"
 #include "ofGLBaseTypes.h"
 
+#ifdef OF_USE_LEGACY_MATH
+#include "ofVec3f.h" // ofToString
+#endif
+
 #ifdef TARGET_ANDROID
 #include "ofAppAndroidWindow.h"
 #endif
