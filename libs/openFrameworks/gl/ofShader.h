@@ -7,7 +7,7 @@
  make sure to catch and report that error.
  */
 
-// MARK: ofConstants Targets
+// MARK: ofConstants Targets GLuint
 #include "ofConstants.h"
 
 #include <glm/detail/qualifier.hpp>

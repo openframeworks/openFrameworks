@@ -2,11 +2,13 @@
 
 #include "ofWindowSettings.h"
 // MARK: Target
+// FIXME: I've tried to remove this one and errored in pollEvents();
 #include "ofConstants.h"
 
 class ofBaseApp;
 class ofBaseRenderer;
 class ofCoreEvents;
+#include <memory>
 
 #if defined(TARGET_LINUX) && !defined(TARGET_OPENGLES)
 struct __GLXcontextRec;

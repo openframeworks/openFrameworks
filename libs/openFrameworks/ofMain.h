@@ -2,8 +2,9 @@
 
 //--------------------------
 // utils
-#include "ofConstants.h"
 #include "ofFileUtils.h"
+
+#include "ofConstants.h"
 #include "ofLog.h"
 #include "ofSystemUtils.h"
 

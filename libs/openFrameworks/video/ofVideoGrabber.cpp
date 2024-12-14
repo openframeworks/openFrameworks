@@ -3,7 +3,7 @@
 #include "ofGLUtils.h"
 #include "ofAppRunner.h"
 #include "ofPixels.h"
-#include "ofConstants.h"
+//#include "ofConstants.h"
 
 // ------------------------------------------------ capture
 // check if any video capture system is already defined from the compiler

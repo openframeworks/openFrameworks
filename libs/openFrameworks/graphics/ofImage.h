@@ -1,10 +1,22 @@
 #pragma once
 
+// ofTexCompression, ofTexture
 #include "ofTexture.h"
 #include "ofGLBaseTypes.h"
+<<<<<<< HEAD
+//#include "ofGraphicsConstants.h"
+//#include "ofGLUtils.h"
+
+template<typename T>
+class ofPixels_;
+typedef ofPixels_<unsigned char> ofPixels;
+typedef ofPixels_<float> ofFloatPixels;
+typedef ofPixels_<unsigned short> ofShortPixels;
+=======
 #include "ofGraphicsConstants.h"
 #include "ofGLUtils.h"
 #include "ofPixels.h"
+>>>>>>> master
 
 class ofFile;
 class ofBuffer;

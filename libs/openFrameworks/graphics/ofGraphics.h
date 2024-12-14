@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ofConstants.h"
+//#include "ofConstants.h"
 #include "ofGraphicsBaseTypes.h"
 
 #include <glm/detail/qualifier.hpp>

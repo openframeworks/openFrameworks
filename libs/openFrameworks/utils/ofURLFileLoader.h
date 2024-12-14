@@ -1,8 +1,8 @@
 #pragma once
 
-#include "ofEvents.h"
-// ofBuffer only
+// FIXME: ofBuffer only
 #include "ofFileUtils.h"
+#include "ofEvents.h"
 #include <map>
 
 class ofHttpResponse;
