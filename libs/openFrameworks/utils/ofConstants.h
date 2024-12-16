@@ -412,12 +412,6 @@ typedef TESSindex ofIndexType;
 #endif
 
 
-#include <filesystem>
-namespace of {
-	namespace filesystem = std::filesystem;
-}
-
-
 // #if defined(OF_USING_STD_FS)
 //     #if defined(OF_USE_EXPERIMENTAL_FS)
 //         // C++17 experimental fs support
@@ -452,3 +446,10 @@ namespace of {
 // 	}
 
 // #endif
+
+
+
+#include <filesystem>
+namespace of {
+	namespace filesystem = std::filesystem;
+}
