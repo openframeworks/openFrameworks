@@ -119,21 +119,21 @@ using namespace std;
 #else
 
 // this will eventually be disabled by default
-#define OF_USE_MINIMAL_STD
+    #define OF_USE_MINIMAL_STD
     #ifdef OF_USE_MINIMAL_STD
-using std::cout;
-using std::deque;
-using std::endl;
-using std::make_shared;
-using std::map;
-using std::max;
-using std::pair;
-using std::shared_ptr;
-using std::string;
-using std::stringstream;
-using std::swap;
-using std::to_string;
-using std::vector;
-using std::weak_ptr;
+    using std::cout;
+    using std::deque;
+    using std::endl;
+    using std::make_shared;
+    using std::map;
+    using std::max;
+    using std::pair;
+    using std::shared_ptr;
+    using std::string;
+    using std::stringstream;
+    using std::swap;
+    using std::to_string;
+    using std::vector;
+    using std::weak_ptr;
     #endif
 #endif

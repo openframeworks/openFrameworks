@@ -64,30 +64,9 @@ enum ofTargetPlatform{
 #endif
 
 
-// FIXME: not used anymore in OF Core. Only kept for addons compatibility - 20231206
-// Cross-platform deprecation warning
-#ifdef __GNUC__
-	// clang also has this defined. deprecated(message) is only for gcc>=4.5
-	#if ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 5)) || __GNUC__ > 4
-        #define OF_DEPRECATED_MSG(message, ...) __VA_ARGS__ __attribute__ ((deprecated(message)))
-    #else
-        #define OF_DEPRECATED_MSG(message, ...) __VA_ARGS__ __attribute__ ((deprecated))
-    #endif
-	#define OF_DEPRECATED(...) __VA_ARGS__ __attribute__ ((deprecated))
-	#define OF_INTERNAL_DEPRECATED(...) __VA_ARGS__ __attribute__ ((deprecated("OF core deprecated")))
-#elif defined(_MSC_VER)
-	#define OF_DEPRECATED_MSG(message, ...) __declspec(deprecated(message)) __VA_ARGS__
-	#define OF_DEPRECATED(...) __declspec(deprecated) __VA_ARGS__
-	#define OF_INTERNAL_DEPRECATED(...) __declspec(deprecated("OF core deprecated")) __VA_ARGS__
-#else
-	#pragma message("WARNING: You need to implement DEPRECATED for this compiler")
-	#define OF_DEPRECATED_MSG(message, ...) __VA_ARGS__
-	#define OF_DEPRECATED(...) __VA_ARGS__
-#endif
-
-//-------------------------------
+// -------------------------------
 //  find the system type --------
-//-------------------------------
+// -------------------------------
 
 // 		helpful:
 // 		http://www.ogre3d.org/docs/api/html/OgrePlatform_8h-source.html
@@ -212,7 +191,7 @@ enum ofTargetPlatform{
 	#define TARGET_GLFW_WINDOW
     #define OF_CAIRO
 //    #define OF_RTAUDIO
-    
+
 	#ifndef OF_NO_FMOD
 		#define OF_NO_FMOD
 	#endif
@@ -392,6 +371,7 @@ typedef TESSindex ofIndexType;
 // Some projects will specify OF_USING_STD_FS even if the compiler isn't newer than 201703L
 // This may be okay but we need to test for the way C++17 is including the filesystem
 
+
 #if defined(OF_USING_STD_FS) && !defined(OF_USE_EXPERIMENTAL_FS)
     #if defined(__cpp_lib_filesystem)
 		// #pragma message ( "ok __cpp_lib_filesystem" )
@@ -405,11 +385,11 @@ typedef TESSindex ofIndexType;
     #elif __has_include(<filesystem>)
         // If we're compiling on Visual Studio and are not compiling with C++17, we need to use experimental
         #ifdef _MSC_VER
-        
+
             // Check and include header that defines "_HAS_CXX17"
             #if __has_include(<yvals_core.h>)
                 #include <yvals_core.h>
-                
+
                 // Check for enabled C++17 support
                 #if defined(_HAS_CXX17) && _HAS_CXX17
                 // We're using C++17, so let's use the normal version
@@ -432,37 +412,43 @@ typedef TESSindex ofIndexType;
 #endif
 
 
-#if defined(OF_USING_STD_FS)
-    #if defined(OF_USE_EXPERIMENTAL_FS)
-        // C++17 experimental fs support
-        #include <experimental/filesystem>
-		namespace std {
-			namespace experimental{
-				namespace filesystem {
-					using path = v1::path;
-				}
-			}
-		}
+#include <filesystem>
+namespace of {
+	namespace filesystem = std::filesystem;
+}
 
-		namespace of {
-			namespace filesystem = std::experimental::filesystem;
-		}
-    #else
-		#include <filesystem>
-		namespace of {
-			namespace filesystem = std::filesystem;
-		}
-    #endif
-#else //not OF_USING_STD_FS
-    // No experimental or c++17 filesytem support use boost
-    #if !_MSC_VER
-        #define BOOST_NO_CXX11_SCOPED_ENUMS
-        #define BOOST_NO_SCOPED_ENUMS
-    #endif
 
-    #include <boost/filesystem.hpp>
-	namespace of {
-		namespace filesystem = boost::filesystem;
-	}
+// #if defined(OF_USING_STD_FS)
+//     #if defined(OF_USE_EXPERIMENTAL_FS)
+//         // C++17 experimental fs support
+//         #include <experimental/filesystem>
+// 		namespace std {
+// 			namespace experimental{
+// 				namespace filesystem {
+// 					using path = v1::path;
+// 				}
+// 			}
+// 		}
 
-#endif
+// 		namespace of {
+// 			namespace filesystem = std::experimental::filesystem;
+// 		}
+//     #else
+// 		#include <filesystem>
+// 		namespace of {
+// 			namespace filesystem = std::filesystem;
+// 		}
+//     #endif
+// #else //not OF_USING_STD_FS
+//     // No experimental or c++17 filesytem support use boost
+//     #if !_MSC_VER
+//         #define BOOST_NO_CXX11_SCOPED_ENUMS
+//         #define BOOST_NO_SCOPED_ENUMS
+//     #endif
+
+//     #include <boost/filesystem.hpp>
+// 	namespace of {
+// 		namespace filesystem = boost::filesystem;
+// 	}
+
+// #endif
