@@ -1,0 +1,37 @@
+[
+  {
+    "label": "Build and Run Release",
+    "command": "make -j && make RunRelease",
+    "use_new_terminal": false,
+    "allow_concurrent_runs": false,
+    "reveal": "always",
+    "hide": "never",
+    "shell": "system",
+    "show_summary": true,
+    "show_output": true
+  },
+  {
+    "label": "Build Release",
+    "command": "make",
+    "args": ["-j", "-s"],
+    "use_new_terminal": false,
+    "allow_concurrent_runs": false,
+    "reveal": "always",
+    "hide": "never",
+    "shell": "system",
+    "show_summary": true,
+    "show_output": true
+  },
+  {
+    "label": "Run Release",
+    "command": "make",
+    "args": ["RunRelease"],
+    "use_new_terminal": false,
+    "allow_concurrent_runs": false,
+    "reveal": "always",
+    "hide": "never",
+    "shell": "system",
+    "show_summary": true,
+    "show_output": true
+  }
+]
