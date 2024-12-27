@@ -7,13 +7,16 @@ void ofTimerFps::reset() {
    wakeTime = steady_clock::now();
 }
 
-ofTimerFps::ofTimerFps(){
+ofTimerFps::ofTimerFps()
+	: currentFPS(60),
+	interval(duration_cast<microseconds>(1s) / currentFPS) {
 	reset();
 };
 
 void ofTimerFps::setFps(int fps) {
 //	interval = std::ratio<1s, fps>;
-   interval = duration_cast<microseconds>(1s) / fps;
+	currentFPS = fps;
+	interval = duration_cast<microseconds>(1s) / fps;
 }
 
 void ofTimerFps::waitNext() {

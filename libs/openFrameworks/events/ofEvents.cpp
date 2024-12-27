@@ -123,7 +123,8 @@ int ofGetPreviousMouseY() {
 }
 
 ofCoreEvents::ofCoreEvents()
-	: targetRate(0)
+	: targetRate(60.0f)
+	, fixedRateTimeNanos(std::chrono::nanoseconds(ofGetFixedStepForFps(60)))
 	, bFrameRateSet(false)
 	, fps(60)
 	, currentMouseX(0)
@@ -301,13 +302,6 @@ bool ofCoreEvents::notifyUpdate() {
 
 //------------------------------------------
 bool ofCoreEvents::notifyDraw() {
-	auto attended = ofNotifyEvent(draw, voidEventArgs);
-
-	if (bFrameRateSet) {
-//		timer.waitNext();
-		timerFps.waitNext();
-	}
-
 	if (fps.getNumFrames() == 0) {
 		if (bFrameRateSet) fps = ofFpsCounter(targetRate);
 	} else {
@@ -318,7 +312,12 @@ bool ofCoreEvents::notifyDraw() {
 			lastFrameTime = intervals*1000000/rate;
 		}*/
 	}
+	if (bFrameRateSet) {
+//		timer.waitNext();
+		timerFps.waitNext();
+	}
 	fps.newFrame();
+	auto attended = ofNotifyEvent(draw, voidEventArgs);
 	return attended;
 }
 

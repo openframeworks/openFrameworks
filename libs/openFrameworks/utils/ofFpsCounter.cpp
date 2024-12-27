@@ -1,9 +1,26 @@
 #include "ofFpsCounter.h"
+#include <ofUtils.h>
 using namespace std::chrono;
 
-ofFpsCounter::ofFpsCounter() {}
+ofFpsCounter::ofFpsCounter()
+	: fps(60)
+	, targetFPS(60)
+	, lastFrameTime(0)
+	, diff(0)
+	, nFrameCount(0)
+	, then(std::chrono::steady_clock::now())
+	, filteredTime(0)
+	, filterAlpha(0.9) { }
 
-ofFpsCounter::ofFpsCounter(double targetFPS) : fps(targetFPS) {}
+ofFpsCounter::ofFpsCounter(double targetFPS)
+	: fps(targetFPS)
+	, targetFPS(targetFPS)
+	, lastFrameTime(0)
+	, diff(0)
+	, nFrameCount(0)
+	, then(std::chrono::steady_clock::now())
+	, filteredTime(0)
+	, filterAlpha(0.9) { }
 
 void ofFpsCounter::newFrame(){
 	now = steady_clock::now();
