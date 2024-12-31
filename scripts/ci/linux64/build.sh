@@ -5,7 +5,7 @@ ROOT=${TRAVIS_BUILD_DIR:-"$( cd "$(dirname "$0")/../../.." ; pwd -P )"}
 # see https://gcc.gnu.org/bugzilla/show_bug.cgi?id=56746#c7
 # the "proper" way does not work currently:
 #export CXXFLAGS="$(CXXFLAGS) --param ftrack-macro-expansion=0"
-CUSTOMFLAGS="-ftrack-macro-expansion=0 -fpic" #-fsanitize=undefined,float-divide-by-zero -fno-omit-frame-pointer
+CUSTOMFLAGS="-ftrack-macro-expansion=0 -fpic"
 
 if [ "$OPT" == "qbs" ]; then
     echo "building with qbs"

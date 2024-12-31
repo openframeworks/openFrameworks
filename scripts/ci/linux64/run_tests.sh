@@ -16,9 +16,9 @@ for group in *; do
 				cd $test
 				cp ../../../scripts/templates/linux/Makefile .
 				cp ../../../scripts/templates/linux/config.make .
-				sleep 1 
+				sleep 0.3 
 				make -j2 Debug
-				sleep 1 
+				sleep 0.3 
 				cd bin
 				binname=$(basename ${test})
 				
