@@ -123,7 +123,7 @@ int ofGetPreviousMouseY() {
 }
 
 ofCoreEvents::ofCoreEvents()
-	: targetRate(60.0f)
+	: targetRate(60.0)
 	, fixedRateTimeNanos(std::chrono::nanoseconds(ofGetFixedStepForFps(60.0)))
 	, bFrameRateSet(false)
 	, fps(60.0)
@@ -214,15 +214,15 @@ void ofCoreEvents::setFrameRate(int _targetRate) {
 		bFrameRateSet = false;
 	} else {
 		bFrameRateSet = true;
-		targetRate = _targetRate;
+		targetRate = static_cast<float>(_targetRate);
 		
 //		uint64_t nanosPerFrame = 1000000000.0 / (double)targetRate;
 //		timer.setPeriodicEvent(nanosPerFrame);
 		
-		timerFps.setFps(static_cast<int>(targetRate));
-		fps.setTargetFPS(static_cast<double>(targetRate));
+		timerFps.setFps(_targetRate);
+		fps.setTargetFPS(targetRate);
 		if (timeMode == FixedRate) {
-			ofSetTimeModeFixedRate(ofGetFixedStepForFps(static_cast<double>(_targetRate)));
+			ofSetTimeModeFixedRate(ofGetFixedStepForFps(targetRate));
 		}
 	}
 	
@@ -311,7 +311,7 @@ bool ofCoreEvents::notifyUpdate() {
 //------------------------------------------
 bool ofCoreEvents::notifyDraw() {
 	if (fps.getNumFrames() == 0) {
-		if (bFrameRateSet) fps = ofFpsCounter(static_cast<double>(targetRate), timeMode);
+		if (bFrameRateSet) fps = ofFpsCounter(targetRate, timeMode);
 	} else {
 		/*if(ofIsVerticalSyncEnabled()){
 			float rate = ofGetRefreshRate();

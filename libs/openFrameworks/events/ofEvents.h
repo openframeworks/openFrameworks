@@ -406,7 +406,7 @@ public:
 	bool notifyDragEvent(ofDragInfo info);
 
 private:
-	float targetRate;
+	float targetRate = 60.0f;
 	bool bFrameRateSet;
 	ofTimerFps timerFps;
 //	ofTimer timer;
