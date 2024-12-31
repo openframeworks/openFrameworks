@@ -7,9 +7,8 @@ void ofTimerFps::reset() {
    wakeTime = steady_clock::now();
 }
 
-ofTimerFps::ofTimerFps()
-	: currentFPS(60),
-	interval(duration_cast<microseconds>(1s) / currentFPS) {
+ofTimerFps::ofTimerFps() :
+	interval(duration_cast<microseconds>(1s) / currentFPS){
 	reset();
 };
 
