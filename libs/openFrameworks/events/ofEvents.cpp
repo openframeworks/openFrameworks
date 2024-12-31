@@ -48,7 +48,7 @@ double ofGetLastFrameTime() {
 	if (window) {
 		return window->events().getLastFrameTime();
 	} else {
-		return 0.l;
+		return 0.0;
 	}
 }
 
