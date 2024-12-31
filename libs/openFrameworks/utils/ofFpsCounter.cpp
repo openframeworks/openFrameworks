@@ -29,7 +29,7 @@ void ofFpsCounter::newFrame(){
 	// std::lerp from c++20 on
 	if (timeMode == 2) { // Filtered
 		filterAlpha = std::clamp(filterAlpha, 0.0, 1.0);
-		filteredTime = filteredTime * filterAlpha + getLastFrameSecs() * (1.0l - filterAlpha);
+		filteredTime = filteredTime * filterAlpha + getLastFrameSecs() * (1.0 - filterAlpha);
 		filteredTime = std::clamp(filteredTime, 0.0, 1.0 / targetFPS);
 	}
 	then = now;
@@ -50,7 +50,7 @@ void ofFpsCounter::update(time_point<steady_clock> now){
 		return;
 	}
 	diff = now - timestamps.front();		
-	if (std::chrono::duration<double>(diff).count() > 0.0) {
+	if (diff > std::chrono::duration<double>(0)) {
 		fps = static_cast<double>(timestamps.size()) / std::chrono::duration<double>(diff).count();
 	} else {
 		fps = timestamps.size();

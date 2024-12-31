@@ -124,9 +124,9 @@ int ofGetPreviousMouseY() {
 
 ofCoreEvents::ofCoreEvents()
 	: targetRate(60.0f)
-	, fixedRateTimeNanos(std::chrono::nanoseconds(ofGetFixedStepForFps(60.0l)))
+	, fixedRateTimeNanos(std::chrono::nanoseconds(ofGetFixedStepForFps(60.0)))
 	, bFrameRateSet(false)
-	, fps(60.0l)
+	, fps(60.0)
 	, currentMouseX(0)
 	, currentMouseY(0)
 	, previousMouseX(0)
