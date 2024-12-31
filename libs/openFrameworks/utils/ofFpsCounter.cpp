@@ -50,7 +50,7 @@ void ofFpsCounter::update(time_point<steady_clock> now){
 		return;
 	}
 	diff = now - timestamps.front();		
-	if (diff > 0.0s) {
+	if (std::chrono::duration<double>(diff).count() > 0.0) {
 		fps = static_cast<double>(timestamps.size()) / std::chrono::duration<double>(diff).count();
 	} else {
 		fps = timestamps.size();
