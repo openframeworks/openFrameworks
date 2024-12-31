@@ -219,10 +219,10 @@ void ofCoreEvents::setFrameRate(int _targetRate) {
 //		uint64_t nanosPerFrame = 1000000000.0 / (double)targetRate;
 //		timer.setPeriodicEvent(nanosPerFrame);
 		
-		timerFps.setFps(targetRate);
-		fps.setTargetFPS(targetRate);
+		timerFps.setFps(static_cast<int>(targetRate));
+		fps.setTargetFPS(static_cast<double>(targetRate));
 		if (timeMode == FixedRate) {
-			ofSetTimeModeFixedRate(ofGetFixedStepForFps(_targetRate));
+			ofSetTimeModeFixedRate(ofGetFixedStepForFps(static_cast<double>(_targetRate)));
 		}
 	}
 	
@@ -311,7 +311,7 @@ bool ofCoreEvents::notifyUpdate() {
 //------------------------------------------
 bool ofCoreEvents::notifyDraw() {
 	if (fps.getNumFrames() == 0) {
-		if (bFrameRateSet) fps = ofFpsCounter(targetRate, timeMode);
+		if (bFrameRateSet) fps = ofFpsCounter(static_cast<double>(targetRate), timeMode);
 	} else {
 		/*if(ofIsVerticalSyncEnabled()){
 			float rate = ofGetRefreshRate();
