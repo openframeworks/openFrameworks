@@ -25,7 +25,6 @@ namespace glm {
 
 class ofTexture;
 class ofTextureData;
-class ofMatrix3x3;
 class ofParameterGroup;
 class ofBufferObject;
 class ofBaseHasTexture;
