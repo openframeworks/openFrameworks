@@ -420,7 +420,7 @@ private:
 	int modifiers = 0;
 
 	enum TimeMode {
-		System,
+		System = 0,
 		FixedRate,
 		Filtered,
 	} timeMode

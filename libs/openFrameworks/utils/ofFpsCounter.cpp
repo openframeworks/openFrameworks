@@ -3,33 +3,45 @@
 using namespace std::chrono;
 
 ofFpsCounter::ofFpsCounter()
-	: fps(60)
+	: fps(0)
 	, targetFPS(60)
-	, lastFrameTime(0)
-	, diff(0)
+	, lastFrameTime(std::chrono::duration<long long, std::nano>(0))
+	, diff(std::chrono::duration<long long, std::nano>(0))
 	, nFrameCount(0)
 	, then(std::chrono::steady_clock::now())
-	, filteredTime(0)
-	, filterAlpha(0.9) { }
+	, filteredTime(0.0l)
+	, filterAlpha(0.9l)
+	, timeMode(0) {
+	timestamps.clear();
+	timestamps.resize(fps);
 
-ofFpsCounter::ofFpsCounter(double targetFPS)
-	: fps(targetFPS)
+	}
+
+ofFpsCounter::ofFpsCounter(double targetFPS, int mode)
+	: fps(0)
 	, targetFPS(targetFPS)
-	, lastFrameTime(0)
-	, diff(0)
+	, lastFrameTime(std::chrono::duration<long long, std::nano>(0))
+	, diff(std::chrono::duration<long long, std::nano>(0))
 	, nFrameCount(0)
 	, then(std::chrono::steady_clock::now())
-	, filteredTime(0)
-	, filterAlpha(0.9) { }
+	, filteredTime(0.0l)
+	, filterAlpha(0.9l)
+	, timeMode(mode) {
+		timestamps.clear();
+		timestamps.resize(fps);
+	}
 
 void ofFpsCounter::newFrame(){
 	now = steady_clock::now();
-	update(now);
-	timestamps.push(now);
+	timestamps.push_back(now);
 	lastFrameTime = now - then;
-
+	update(now);	
 	// std::lerp from c++20 on
-	filteredTime = filteredTime * filterAlpha + getLastFrameSecs() * (1-filterAlpha);
+	if (timeMode == 2) { // Filtered
+		filterAlpha = std::clamp(filterAlpha, 0.0, 1.0);
+		filteredTime = filteredTime * filterAlpha + getLastFrameSecs() * (1.0l - filterAlpha);
+		filteredTime = std::clamp(filteredTime, 0.0, 1.0 / targetFPS);
+	}
 	then = now;
 	nFrameCount++;
 }
@@ -41,18 +53,19 @@ void ofFpsCounter::update(){
 
 void ofFpsCounter::update(time_point<steady_clock> now){
 	while(!timestamps.empty() && timestamps.front() + 2s < now){
-		timestamps.pop();
+		timestamps.pop_front();
 	}
-
-	space diff;
-	if(!timestamps.empty() && timestamps.front() + 0.5s < now){
-		diff = now - timestamps.front();
+	if (timestamps.size() < 2) {
+		fps = targetFPS; // if no sample size then set fps to target until can sample
+		return;
 	}
-	if(diff > 0.0s){
-		fps = (double)timestamps.size() / std::chrono::duration<double>(diff).count();
-	}else{
+	diff = now - timestamps.front();		
+	if (diff > 0.0s) {
+		fps = static_cast<double>(timestamps.size()) / std::chrono::duration<double>(diff).count();
+	} else {
 		fps = timestamps.size();
 	}
+	
 }
 
 double ofFpsCounter::getFps() const{
@@ -68,7 +81,7 @@ uint64_t ofFpsCounter::getLastFrameNanos() const{
 }
 
 double ofFpsCounter::getLastFrameSecs() const{
-	return duration_cast<seconds>(lastFrameTime).count();
+	return std::chrono::duration<double>(lastFrameTime).count();
 }
 
 uint64_t ofFpsCounter::getLastFrameFilteredNanos() const{
@@ -76,9 +89,20 @@ uint64_t ofFpsCounter::getLastFrameFilteredNanos() const{
 }
 
 double ofFpsCounter::getLastFrameFilteredSecs() const{
-	return filteredTime;
+	return std::chrono::duration<double>(filteredTime).count();
 }
 
 void ofFpsCounter::setFilterAlpha(float alpha){
 	filterAlpha = alpha;
+}
+
+void ofFpsCounter::setTimeMode(int mode) {
+	timeMode = mode;
+}
+
+void ofFpsCounter::setTargetFPS(double fps) {
+	targetFPS = fps;
+	if (fps > timestamps.max_size()) {
+		timestamps.resize(fps);
+	}
 }
