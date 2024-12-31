@@ -220,11 +220,12 @@ void ofCoreEvents::setFrameRate(int _targetRate) {
 //		timer.setPeriodicEvent(nanosPerFrame);
 		
 		timerFps.setFps(targetRate);
+		fps.setTargetFPS(targetRate);
+		if (timeMode == FixedRate) {
+			ofSetTimeModeFixedRate(ofGetFixedStepForFps(_targetRate));
+		}
 	}
-	fps.setTargetFPS(targetRate);
-	if (timeMode == FixedRate) {
-		ofSetTimeModeFixedRate(ofGetFixedStepForFps(_targetRate));
-	}
+	
 }
 
 bool ofCoreEvents::getTargetFrameRateEnabled() const {

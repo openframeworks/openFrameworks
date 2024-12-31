@@ -28,7 +28,7 @@ public:
 private:
 	void update(std::chrono::time_point<std::chrono::steady_clock> now);
 	uint64_t nFrameCount = 0;
-	double fps = 60;
+	double fps = 0;
 	double targetFPS = 60;
 
 	using space = std::chrono::duration<long long, std::nano>;
@@ -36,8 +36,8 @@ private:
 	std::chrono::time_point<std::chrono::steady_clock> then = std::chrono::steady_clock::now();
 	space lastFrameTime;
 	space diff;
-	double filteredTime = 0;
-	double filterAlpha = 0.9;
+	double filteredTime = 0.0l;
+	double filterAlpha = 0.9l;
 	std::deque<std::chrono::time_point<std::chrono::steady_clock>> timestamps;
-	int timeMode;
+	int timeMode = 0;
 };

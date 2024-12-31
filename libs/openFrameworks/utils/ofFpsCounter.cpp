@@ -3,32 +3,22 @@
 using namespace std::chrono;
 
 ofFpsCounter::ofFpsCounter()
-	: fps(0)
-	, targetFPS(60)
-	, lastFrameTime(std::chrono::duration<long long, std::nano>(0))
+	: lastFrameTime(std::chrono::duration<long long, std::nano>(0))
 	, diff(std::chrono::duration<long long, std::nano>(0))
-	, nFrameCount(0)
 	, then(std::chrono::steady_clock::now())
-	, filteredTime(0.0l)
-	, filterAlpha(0.9l)
 	, timeMode(0) {
-	timestamps.clear();
-	timestamps.resize(fps);
-
+		timestamps.clear();
+		timestamps.resize(targetFPS + 7);
 	}
 
 ofFpsCounter::ofFpsCounter(double targetFPS, int mode)
-	: fps(0)
-	, targetFPS(targetFPS)
+	: targetFPS(targetFPS)
 	, lastFrameTime(std::chrono::duration<long long, std::nano>(0))
 	, diff(std::chrono::duration<long long, std::nano>(0))
-	, nFrameCount(0)
 	, then(std::chrono::steady_clock::now())
-	, filteredTime(0.0l)
-	, filterAlpha(0.9l)
 	, timeMode(mode) {
 		timestamps.clear();
-		timestamps.resize(fps);
+		timestamps.resize(targetFPS + 7);
 	}
 
 void ofFpsCounter::newFrame(){
