@@ -244,8 +244,12 @@ enum ofTargetPlatform{
 	#else // desktop linux
         #define TARGET_GLFW_WINDOW
         #define OF_RTAUDIO
-		#define __LINUX_PULSE__
-		#define __LINUX_ALSA__
+		#ifndef __LINUX_PULSE__
+			#define __LINUX_PULSE__
+		#endif
+		#ifndef __LINUX_ALSA__
+			#define __LINUX_ALSA__
+		#endif
 		#define __LINUX_OSS__
 		#include <GL/glew.h>
 	#endif
