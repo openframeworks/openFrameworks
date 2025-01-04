@@ -32,7 +32,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Docker Step
-        run: "docker run -di --name emscripten -v $PWD:/src emscripten/emsdk:3.1.73 bash"
+        run: "docker run -di --name emscripten -v $PWD:/src emscripten/emsdk:3.1.74 bash"
       # - name: Determine Release
       #   id: vars
       #   shell: bash
@@ -167,12 +167,12 @@ jobs:
     strategy:
       matrix:
         cfg:
-          # - {
-          #     libs: armv6l,
-          #     multistrap_arch: armhf,
-          #     suffix: arm-linux-gnueabihf,
-          #     alladdons: 1,
-          #   }
+          - {
+              libs: armv6l,
+              multistrap_arch: armhf,
+              suffix: arm-linux-gnueabihf,
+              alladdons: 1,
+            }
           # - {
           #     libs: armv7l,
           #     multistrap_arch: armhf,

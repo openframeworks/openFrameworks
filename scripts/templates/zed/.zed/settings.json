@@ -1,0 +1,30 @@
+// Folder-specific settings
+//
+// For a full list of overridable settings, and general information on folder-specific settings,
+// see the documentation: https://zed.dev/docs/configuring-zed#settings-files
+//
+
+{
+  "languages": {
+    "c++": {
+      "hard_tabs": true,
+      "tab_size": 4,
+      "indent_size": 4,
+      "indent_style": "tabs",
+      "formatter": "language_server",
+      "format_on_save": "on",
+
+      "enable_language_server": true,
+      "use_autoclose": true,
+      "extend_comment_on_newline": true,
+      "remove_trailing_whitespace_on_save": true,
+      "code_actions_on_format": {
+        "clangd": true
+      },
+      "always_treat_brackets_as_autoclosed": true,
+      "ensure_final_newline_on_save": true
+      // ,
+      // "show_copilot_suggestions": true
+    }
+  }
+}
