@@ -33,5 +33,18 @@
     "shell": "system",
     "show_summary": true,
     "show_output": true
+  },
+
+  {
+    "label": "Clean",
+    "command": "make",
+    "args": ["clean"],
+    "use_new_terminal": false,
+    "allow_concurrent_runs": false,
+    "reveal": "always",
+    "hide": "never",
+    "shell": "system",
+    "show_summary": true,
+    "show_output": true
   }
 ]

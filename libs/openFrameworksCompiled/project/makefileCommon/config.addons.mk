@@ -4,7 +4,7 @@
 
 ifeq ($(PLATFORM_OS),Darwin)
     PLATFORM_ALTERNATIVE := osx
-else 
+else
 	PLATFORM_ALTERNATIVE := void
 endif
 
@@ -229,7 +229,7 @@ define parse_addon
 			$(eval PROJECT_ADDONS += $(addon_dep)) \
 			$(call parse_addon,$(addon_dep)) \
 		) \
-	)	
+	)
 endef
 
 
@@ -267,6 +267,7 @@ OF_PROJECT_ADDONS_DEPS = $(patsubst %.o,%.d,$(PROJECT_ADDONS_OBJ_FILES))
 #  DEBUGGING
 ########################################################################
 # print debug information if so instructed
+MAKEFILE_DEBUG=1
 ifdef MAKEFILE_DEBUG
     $(info ---PROJECT_ADDONS_PATHS---)
     $(foreach v, $(PROJECT_ADDONS_PATHS),$(info $(v)))

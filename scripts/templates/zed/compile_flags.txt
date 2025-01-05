@@ -34,7 +34,7 @@ objective-c++
 -I../../../libs/curl/include
 -I../../../libs/freetype/include
 -I../../../libs/glew/include
--I../../../libs/glfw/include/GLFW
+-I../../../libs/glfw/include
 -I../../../libs/glm/include
 -I../../../libs/json/include
 -I../../../libs/pugixml/include
