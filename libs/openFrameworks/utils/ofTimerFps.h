@@ -3,6 +3,9 @@
 #pragma once
 
 #include <chrono>
+#include <ctime>
+#include <iostream>
+#include <thread>
 
 class ofTimerFps {
 public:
@@ -15,4 +18,6 @@ public:
 	space interval;
 	std::chrono::time_point<std::chrono::steady_clock> wakeTime;
 	std::chrono::time_point<std::chrono::steady_clock> lastWakeTime;
+	int currentFPS = 60;
+	
 };
