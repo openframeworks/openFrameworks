@@ -1180,8 +1180,7 @@ static const void *PlayerRateContext = &ItemStatusContext;
 }
 
 - (void)seekToTime:(CMTime)time {
-	[self seekToTime:time
-	   withTolerance:kCMTimeZero];
+	[self seekToTime:time withTolerance:kCMTimeZero];
 }
 
 - (void)seekToTime:(CMTime)time
