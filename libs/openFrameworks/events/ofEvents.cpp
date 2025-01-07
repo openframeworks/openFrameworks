@@ -48,7 +48,7 @@ double ofGetLastFrameTime() {
 	if (window) {
 		return window->events().getLastFrameTime();
 	} else {
-		return 0.f;
+		return 0.0;
 	}
 }
 
@@ -123,9 +123,10 @@ int ofGetPreviousMouseY() {
 }
 
 ofCoreEvents::ofCoreEvents()
-	: targetRate(0)
+	: targetRate(60.0)
+	, fixedRateTimeNanos(std::chrono::nanoseconds(ofGetFixedStepForFps(60.0)))
 	, bFrameRateSet(false)
-	, fps(60)
+	, fps(60.0)
 	, currentMouseX(0)
 	, currentMouseY(0)
 	, previousMouseX(0)
@@ -183,6 +184,7 @@ void ofCoreEvents::enable() {
 
 void ofCoreEvents::setTimeModeSystem() {
 	timeMode = System;
+	fps.setTimeMode(timeMode);
 }
 
 ofTimeMode ofCoreEvents::getTimeMode() const {
@@ -192,11 +194,13 @@ ofTimeMode ofCoreEvents::getTimeMode() const {
 void ofCoreEvents::setTimeModeFixedRate(uint64_t nanosecsPerFrame) {
 	timeMode = FixedRate;
 	fixedRateTimeNanos = std::chrono::nanoseconds(nanosecsPerFrame);
+	fps.setTimeMode(timeMode);
 }
 
 void ofCoreEvents::setTimeModeFiltered(float alpha) {
 	timeMode = Filtered;
 	fps.setFilterAlpha(alpha);
+	fps.setTimeMode(timeMode);
 }
 
 //--------------------------------------
@@ -210,13 +214,18 @@ void ofCoreEvents::setFrameRate(int _targetRate) {
 		bFrameRateSet = false;
 	} else {
 		bFrameRateSet = true;
-		targetRate = _targetRate;
+		targetRate = static_cast<float>(_targetRate);
 		
 //		uint64_t nanosPerFrame = 1000000000.0 / (double)targetRate;
 //		timer.setPeriodicEvent(nanosPerFrame);
 		
-		timerFps.setFps(targetRate);
+		timerFps.setFps(_targetRate);
+		fps.setTargetFPS(targetRate);
+		if (timeMode == FixedRate) {
+			ofSetTimeModeFixedRate(ofGetFixedStepForFps(targetRate));
+		}
 	}
+	
 }
 
 bool ofCoreEvents::getTargetFrameRateEnabled() const {
@@ -301,15 +310,8 @@ bool ofCoreEvents::notifyUpdate() {
 
 //------------------------------------------
 bool ofCoreEvents::notifyDraw() {
-	auto attended = ofNotifyEvent(draw, voidEventArgs);
-
-	if (bFrameRateSet) {
-//		timer.waitNext();
-		timerFps.waitNext();
-	}
-
 	if (fps.getNumFrames() == 0) {
-		if (bFrameRateSet) fps = ofFpsCounter(targetRate);
+		if (bFrameRateSet) fps = ofFpsCounter(targetRate, timeMode);
 	} else {
 		/*if(ofIsVerticalSyncEnabled()){
 			float rate = ofGetRefreshRate();
@@ -318,7 +320,12 @@ bool ofCoreEvents::notifyDraw() {
 			lastFrameTime = intervals*1000000/rate;
 		}*/
 	}
+	if (bFrameRateSet) {
+//		timer.waitNext();
+		timerFps.waitNext();
+	}
 	fps.newFrame();
+	auto attended = ofNotifyEvent(draw, voidEventArgs);
 	return attended;
 }
 
