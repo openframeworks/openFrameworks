@@ -38,33 +38,29 @@
 - (BOOL)initCapture:(int)framerate capWidth:(int)w capHeight:(int)h{
 	NSArray * devices;
 	if (@available(macOS 10.15, *)) {
-        if (@available(macOS 14.0, *)) {
-            AVCaptureDeviceDiscoverySession *session = [AVCaptureDeviceDiscoverySession discoverySessionWithDeviceTypes:@[
-                AVCaptureDeviceTypeBuiltInWideAngleCamera,
-                AVCaptureDeviceTypeExternal
-            ] mediaType:AVMediaTypeVideo position:AVCaptureDevicePositionUnspecified];
-            devices = [session devices];
-        } else {
-            AVCaptureDeviceDiscoverySession *session = [AVCaptureDeviceDiscoverySession
-                discoverySessionWithDeviceTypes:@[AVCaptureDeviceTypeBuiltInWideAngleCamera]
-                mediaType:AVMediaTypeVideo
-                position:AVCaptureDevicePositionUnspecified];
-            devices = [session devices];
-        }
+		NSMutableArray *deviceTypes = [NSMutableArray arrayWithObject:AVCaptureDeviceTypeBuiltInWideAngleCamera];
+#if __MAC_OS_X_VERSION_MAX_ALLOWED >= 140000
+		if (@available(macOS 14.0, *)) {
+			if (&AVCaptureDeviceTypeExternal != nil) {
+				[deviceTypes addObject:AVCaptureDeviceTypeExternal];
+				[deviceTypes addObject:AVCaptureDeviceTypeContinuityCamera];
+			}
+		}
+#endif
+		AVCaptureDeviceDiscoverySession *session = [AVCaptureDeviceDiscoverySession
+			discoverySessionWithDeviceTypes:deviceTypes
+			mediaType:AVMediaTypeVideo
+			position:AVCaptureDevicePositionUnspecified];
+		devices = [session devices];
 	} else {
-        AVCaptureDeviceDiscoverySession *session = [AVCaptureDeviceDiscoverySession
-            discoverySessionWithDeviceTypes:@[AVCaptureDeviceTypeBuiltInWideAngleCamera]
-            mediaType:AVMediaTypeVideo
-            position:AVCaptureDevicePositionUnspecified];
-        devices = [session devices];
-
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+		devices = [AVCaptureDevice devicesWithMediaType:AVMediaTypeVideo];
+#pragma clang diagnostic pop
 	}
-	
 	if([devices count] > 0) {
 		if(deviceID>[devices count]-1)
 			deviceID = [devices count]-1;
-
-
 		// We set the device
 		device = [devices objectAtIndex:deviceID];
 
@@ -267,24 +263,25 @@
     std::vector <std::string> deviceNames;
 	NSArray * devices;
 	if (@available(macOS 10.15, *)) {
-        if (@available(macOS 14.0, *)) {
-            AVCaptureDeviceDiscoverySession *session = [AVCaptureDeviceDiscoverySession discoverySessionWithDeviceTypes:@[
-                AVCaptureDeviceTypeBuiltInWideAngleCamera,
-                AVCaptureDeviceTypeExternal
-            ] mediaType:AVMediaTypeVideo position:AVCaptureDevicePositionUnspecified];
-            devices = [session devices];
-        } else {
-            AVCaptureDeviceDiscoverySession *session = [AVCaptureDeviceDiscoverySession discoverySessionWithDeviceTypes:@[
-                AVCaptureDeviceTypeBuiltInWideAngleCamera
-            ] mediaType:AVMediaTypeVideo position:AVCaptureDevicePositionUnspecified];
-            devices = [session devices];
-        }
+		NSMutableArray *deviceTypes = [NSMutableArray arrayWithObject:AVCaptureDeviceTypeBuiltInWideAngleCamera];
+#if __MAC_OS_X_VERSION_MAX_ALLOWED >= 140000
+		if (@available(macOS 14.0, *)) {
+			if (&AVCaptureDeviceTypeExternal != nil) {
+				[deviceTypes addObject:AVCaptureDeviceTypeExternal];
+				[deviceTypes addObject:AVCaptureDeviceTypeContinuityCamera];
+			}
+		}
+#endif
+		AVCaptureDeviceDiscoverySession *session = [AVCaptureDeviceDiscoverySession
+			discoverySessionWithDeviceTypes:deviceTypes
+			mediaType:AVMediaTypeVideo
+			position:AVCaptureDevicePositionUnspecified];
+		devices = [session devices];
 	} else {
-        AVCaptureDeviceDiscoverySession *session = [AVCaptureDeviceDiscoverySession
-            discoverySessionWithDeviceTypes:@[AVCaptureDeviceTypeBuiltInWideAngleCamera]
-            mediaType:AVMediaTypeVideo
-            position:AVCaptureDevicePositionUnspecified];
-        devices = [session devices];
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+		devices = [AVCaptureDevice devicesWithMediaType:AVMediaTypeVideo];
+#pragma clang diagnostic pop
 	}
 
 	int i=0;
