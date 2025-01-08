@@ -1214,7 +1214,7 @@ void ofMaterial::updateLights(const ofShader & shader,ofGLProgrammableRenderer &
 				right = right - glm::vec3(lightEyePosition);
 				up = glm::cross(right, direction);
 			}
-			shader.setUniform3f("lights["+idx+"].right", glm::normalize(toGlm(right)));
+			shader.setUniform3f("lights["+idx+"].right", glm::normalize(right));
 			shader.setUniform3f("lights["+idx+"].up", glm::normalize(up));
 		}
 	}

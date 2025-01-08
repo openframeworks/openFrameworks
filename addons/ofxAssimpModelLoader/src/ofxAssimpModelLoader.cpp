@@ -5,7 +5,6 @@
 #include "ofPixels.h"
 #include "ofGraphics.h"
 #include "ofConstants.h"
-#include "ofMatrix4x4.h"
 #include "ofUtils.h" // ofGetElapsedTimef
 
 #include <assimp/cimport.h>
@@ -587,10 +586,12 @@ void ofxAssimpModelLoader::updateMeshes(aiNode * node, glm::mat4 parentMatrix) {
 
 	aiMatrix4x4 m = node->mTransformation;
 	m.Transpose();
-	ofMatrix4x4 matrix(m.a1, m.a2, m.a3, m.a4,
-					   m.b1, m.b2, m.b3, m.b4,
-					   m.c1, m.c2, m.c3, m.c4,
-					   m.d1, m.d2, m.d3, m.d4);
+	glm::mat4 matrix(
+		m.a1, m.a2, m.a3, m.a4,
+		m.b1, m.b2, m.b3, m.b4,
+		m.c1, m.c2, m.c3, m.c4,
+		m.d1, m.d2, m.d3, m.d4
+	);
 	matrix *= parentMatrix;
 
 	for(unsigned int i = 0; i < node->mNumMeshes; i++) {
@@ -685,7 +686,7 @@ void ofxAssimpModelLoader::updateGLResources(){
 
 void ofxAssimpModelLoader::updateModelMatrix() {
 	modelMatrix = glm::identity<glm::mat4>();
-	modelMatrix = glm::translate(modelMatrix, toGlm(pos));
+	modelMatrix = glm::translate(modelMatrix, pos);
 	modelMatrix = glm::rotate(modelMatrix, ofDegToRad(180), glm::vec3(0,0,1));
 
 	if(normalizeScale) {
@@ -696,7 +697,7 @@ void ofxAssimpModelLoader::updateModelMatrix() {
 		modelMatrix = glm::rotate(modelMatrix, ofDegToRad(rotAngle[i]), glm::vec3(rotAxis[i].x, rotAxis[i].y, rotAxis[i].z));
 	}
 
-	modelMatrix = glm::scale(modelMatrix, toGlm(scale));
+	modelMatrix = glm::scale(modelMatrix, scale);
 }
 
 //------------------------------------------- animations.

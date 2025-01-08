@@ -3,7 +3,6 @@
  */
 
 #include "ofAVFoundationGrabber.h"
-//#include "ofVectorMath.h"
 #include "ofRectangle.h"
 #include "ofGLUtils.h"
 #include <TargetConditionals.h>
