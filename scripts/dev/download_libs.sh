@@ -114,7 +114,7 @@ while [[ $# -gt 0 ]]; do
         -s|--silent)
         SILENT_ARGS=1
         ;;
-        -t|--pthreads)
+        -u|--pthreads)
         PTHREADS=1
         ;;
         -k|--no-ssl)
@@ -138,7 +138,7 @@ while [[ $# -gt 0 ]]; do
         *)
         echo "Error: invalid argument: $key"
         printHelp
-        exit 1
+        # exit 1
         ;;
     esac
     shift # past argument or value
