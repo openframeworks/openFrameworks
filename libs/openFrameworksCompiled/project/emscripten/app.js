@@ -102,6 +102,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   Module.setStatus("Downloading...");
   window.onerror = (text) => {
+    console.log("onerror text:", text);
     const total = Module.totalDependencies || 1; // Default to avoid division by zero
     const left = text.match(/(\d+)\/(\d+)/);
     if (!left) {
