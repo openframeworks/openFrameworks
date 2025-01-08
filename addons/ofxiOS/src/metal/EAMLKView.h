@@ -8,10 +8,11 @@
 //
 #pragma once
 //
-
+#if defined(OF_METAL)
 #import <MetalANGLE/GLES2/gl2.h>
 #import <MetalANGLE/GLES2/gl2ext.h>
 #import <MetalANGLE/MGLKit.h>
+#endif
 #import <UIKit/UIKit.h>
 
 ////#import <MetalANGLE/MGLKViewDelegate.h>
@@ -77,3 +78,5 @@
 - (void)notifyResized;
 
 @end
+
+//#endif

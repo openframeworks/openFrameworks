@@ -8,7 +8,7 @@
 #include <TargetConditionals.h>
 
 #import "EAMLKView.h"
-#import <MetalANGLE/MGLKit.h>
+#import <MGLKit.h>
 
 #import "ES2Renderer.h"
 
@@ -133,6 +133,7 @@
     
     // Setup the view port in Pixels
     glViewport(0, 0, backingWidth, backingHeight);
+	return true;
     
 }
 

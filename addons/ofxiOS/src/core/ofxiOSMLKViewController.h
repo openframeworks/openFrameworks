@@ -16,6 +16,7 @@
 #import <UIKit/UIKit.h>
 #import <GLKit/GLKit.h>
 
+#if defined(OF_METAL)
 
 #import <MetalANGLE/MGLKViewController.h>
 #import <MetalANGLE/MGLKit.h>
@@ -49,5 +50,6 @@ class ofxiOSApp;
 
 #endif
 
+#endif /* OF_METAL_KIT */
 
 #endif /* ofxiOSMLKViewController_h */

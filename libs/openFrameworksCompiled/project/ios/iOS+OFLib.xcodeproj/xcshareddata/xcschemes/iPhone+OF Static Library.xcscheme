@@ -16,7 +16,7 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "BB24DE5C10DA7A3F00E9C588"
                BuildableName = "libofxiOS_iphoneos_Debug.a"
-               BlueprintName = "iPhone+OF Static Library"
+               BlueprintName = "iOS+OF Static Library"
                ReferencedContainer = "container:iOS+OFLib.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -52,7 +52,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "BB24DE5C10DA7A3F00E9C588"
             BuildableName = "libofxiOS_iphoneos_Debug.a"
-            BlueprintName = "iPhone+OF Static Library"
+            BlueprintName = "iOS+OF Static Library"
             ReferencedContainer = "container:iOS+OFLib.xcodeproj">
          </BuildableReference>
       </MacroExpansion>

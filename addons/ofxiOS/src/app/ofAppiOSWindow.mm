@@ -44,7 +44,7 @@
     const std::string appDelegateName = "ofxtvOSAppDelegate";
 #endif
 #include "ofxiOSGLKView.h"
-#include "ofxiOSMLKView.h"
+#include "MGLKView.h"
 #include "ofxiOSEAGLView.h"
 
 //----------------------------------------------------------------------------------- instance.
@@ -170,7 +170,7 @@ void ofAppiOSWindow::setWindowShape(int w, int h) {
 
 glm::vec2	ofAppiOSWindow::getWindowPosition() {
 	if(settings.windowControllerType == METAL_KIT) {
-        return *[[ofxiOSMLKView getInstance] getWindowPosition];
+        return *[[MGLKView getInstance] getWindowPosition];
     }else if(settings.windowControllerType == GL_KIT)
 		return *[[ofxiOSGLKView getInstance] getWindowPosition];
 	else
@@ -179,7 +179,7 @@ glm::vec2	ofAppiOSWindow::getWindowPosition() {
 
 glm::vec2	ofAppiOSWindow::getWindowSize() {
 	if(settings.windowControllerType == METAL_KIT) {
-        return *[[ofxiOSMLKView getInstance] getWindowSize];
+        return *[[MGLKView getInstance] getWindowSize];
     }else if(settings.windowControllerType == GL_KIT)
 		return *[[ofxiOSGLKView getInstance] getWindowSize];
 	else
@@ -188,7 +188,7 @@ glm::vec2	ofAppiOSWindow::getWindowSize() {
 
 glm::vec2	ofAppiOSWindow::getScreenSize() {
     if(settings.windowControllerType == METAL_KIT) {
-        return *[[ofxiOSMLKView getInstance] getScreenSize];
+        return *[[MGLKView getInstance] getScreenSize];
     } else if(settings.windowControllerType == GL_KIT)
 		return *[[ofxiOSGLKView getInstance] getScreenSize];
 	else
@@ -440,8 +440,8 @@ void ofAppiOSWindow::enableMultiTouch(bool isOn) {
 	settings.enableMultiTouch = isOn;
 #if TARGET_OS_IOS || (TARGET_OS_IPHONE && !TARGET_OS_TV)
     if(settings.windowControllerType == METAL_KIT) {
-        if([ofxiOSMLKView getInstance]) {
-            [[ofxiOSGLKView getInstance] setMultipleTouchEnabled:isOn];
+        if([MGLKView getInstance]) {
+            [[MGLKView getInstance] setMultipleTouchEnabled:isOn];
         }
     } else if(settings.windowControllerType == GL_KIT) {
 		if([ofxiOSGLKView getInstance]) {

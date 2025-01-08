@@ -264,14 +264,13 @@
                 if([controller isReadyToRotate]) {
                     ofxiOSAlerts.deviceOrientationChanged( deviceOrientation );
                 }
-<<<<<<< HEAD
-=======
+#if defined(OF_METAL)
             } else if([self.uiViewController isKindOfClass:ofxiOSMLKViewController.class]) {
                 ofxiOSMLKViewController *controller = (ofxiOSMLKViewController *)self.uiViewController;
                 if([controller isReadyToRotate]) {
                     ofxiOSAlerts.deviceOrientationChanged( deviceOrientation );
                 }
->>>>>>> 92bb06eeccee8bc5a09198f3706d62c5e4f4272c
+#endif /* OF_METAL_KIT */
             }
 		}
 	}else {

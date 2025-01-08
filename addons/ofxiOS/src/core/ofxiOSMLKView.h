@@ -9,6 +9,7 @@
 #pragma once
 #include <TargetConditionals.h>
 #import <UIKit/UIKit.h>
+#if defined(OF_METAL)
 #import "EAMLKView.h"
 #import <MetalANGLE/MGLKViewController.h>
 #import <MetalANGLE/MGLKit.h>
@@ -67,3 +68,4 @@ class ofAppiOSWindow;
 
 
 @end
+#endif
