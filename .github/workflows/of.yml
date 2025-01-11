@@ -183,6 +183,10 @@ jobs:
         uses: microsoft/setup-msbuild@v2
         with:
           vs-version: '16.11'
+          msbuild-architecture: x64
+
+      - name: Verify MSBuild Version
+        run: msbuild -version
 
       - name: Download libs
         run: ./scripts/vs/download_libs_2019_x64.sh -t $RELEASE
