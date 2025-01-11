@@ -6,7 +6,7 @@ ARCH=""
 OVERWRITE=1
 SILENT_ARGS=""
 BLEEDING_EDGE=0
-DL_VERSION=2.6.0
+DL_VERSION=2.7.0
 TAG=""
 
 printHelp(){
@@ -216,7 +216,7 @@ if [ "$PLATFORM" == "msys2" ] || [ "$PLATFORM" == "vs" ]; then
     fi
     if command -v chmod &> /dev/null; then
         chmod +x "${OUTDIR}/${OUTPUT}/projectGeneratorCmd.exe"
-        chmod +x "${OUTDIR}/${OUTPUT}/resources/app/projectGenerator.exe"
+        chmod +x "${OUTDIR}/${OUTPUT}/resources/app/app/projectGenerator.exe"
     else
         echo "Warning: chmod command not found, skipping permission adjustment."
     fi
