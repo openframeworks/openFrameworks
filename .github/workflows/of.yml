@@ -149,6 +149,7 @@ jobs:
         run: ./scripts/ci/vs/install.sh
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v2
+
       - name: Build DEBUG and RELEASE emptyExample
         working-directory: ${{env.GITHUB_WORKSPACE}}
         run: |
@@ -178,10 +179,10 @@ jobs:
             git
             unzip
 
-      - name: Setup MSBuild
+      - name: Setup MSBuild (VS2019 - 16.11)
         uses: microsoft/setup-msbuild@v2
         with:
-          vs-version: 2019
+          vs-version: '16.11'
 
       - name: Download libs
         run: ./scripts/vs/download_libs_2019_x64.sh -t $RELEASE
