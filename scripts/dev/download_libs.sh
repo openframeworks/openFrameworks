@@ -258,8 +258,13 @@ elif [ "$ARCH" == "" ] && [ "$PLATFORM" == "vs" ]; then
       fi
 elif [ "$PLATFORM" == "vs" ]; then
     if [[ $BLEEDING_EDGE = 1 ]] ; then
-        PKGS="openFrameworksLibs_${VER}_${PLATFORM}_${ARCH}_1.zip \
-              openFrameworksLibs_${VER}_${PLATFORM}_${ARCH}_2.zip"
+        if [[ $LEGACY == 1 ]]; then
+            PKGS="openFrameworksLibs_${VER}_${PLATFORM}_2019_64_1.zip \
+                  openFrameworksLibs_${VER}_${PLATFORM}_2019_64_2.zip"
+        else
+            PKGS="openFrameworksLibs_${VER}_${PLATFORM}_${ARCH}_1.zip \
+                  openFrameworksLibs_${VER}_${PLATFORM}_${ARCH}_2.zip"
+        fi
     else       
         PKGS="openFrameworksLibs_${VER}_${PLATFORM}_${ARCH}_1.zip \
               openFrameworksLibs_${VER}_${PLATFORM}_${ARCH}_2.zip \
