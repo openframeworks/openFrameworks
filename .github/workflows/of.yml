@@ -192,10 +192,11 @@ jobs:
         run: ./scripts/vs/download_libs_2019_x64.sh -t $RELEASE
 
       - name: Download projectGenerator
+        shell: bash
         run: ./scripts/vs/download_projectGenerator.sh
 
       - name: run projectGenerator on examples
-        shell: msys2 {0}
+        shell: bash
         run: ./scripts/ci/vs/pg_projects.sh
 
       - name: Build DEBUG and RELEASE emptyExample
