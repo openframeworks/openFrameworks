@@ -8,7 +8,7 @@ LEGACY=0
 SILENT_ARGS=""
 NO_SSL=""
 BLEEDING_EDGE=0
-DL_VERSION=2.6.2
+DL_VERSION=2.6.3
 TAG=""
 
 printHelp(){
@@ -122,6 +122,7 @@ while [[ $# -gt 0 ]]; do
         ;;
         -t|--tag)
         TAG="$2"
+        shift # past argument
         ;;
         -l|--legacy)
         LEGACY=1
