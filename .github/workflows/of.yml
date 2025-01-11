@@ -195,6 +195,12 @@ jobs:
         shell: bash
         run: ./scripts/vs/download_projectGenerator.sh
 
+      - name: Debug projectGenerator Directory
+        shell: bash
+        run: |
+          echo "Checking projectGenerator directory:"
+          ls -la projectGenerator/
+
       - name: run projectGenerator on examples
         shell: bash
         run: ./scripts/ci/vs/pg_projects.sh
