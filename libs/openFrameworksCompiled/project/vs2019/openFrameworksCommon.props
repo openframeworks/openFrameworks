@@ -15,7 +15,6 @@
     </ClCompile>
     <ClCompile>
       <CompileAs>CompileAsCpp</CompileAs>
-      
     </ClCompile>
     <ClCompile>
       <AdditionalOptions>/Zc:__cplusplus %(AdditionalOptions)</AdditionalOptions>
