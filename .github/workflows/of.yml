@@ -194,6 +194,10 @@ jobs:
       - name: Download projectGenerator
         run: ./scripts/vs/download_projectGenerator.sh
 
+      - name: run projectGenerator on examples
+        shell: msys2 {0}
+        run: ./scripts/ci/vs/pg_projects.sh
+
       - name: Build DEBUG and RELEASE emptyExample
         working-directory: ${{env.GITHUB_WORKSPACE}}
         run: |
