@@ -184,7 +184,7 @@ jobs:
           vs-version: 2019
 
       - name: Download libs
-        run: ./scripts/vs/download_libs.sh --legacy -t $RELEASE -a ${{matrix.cfg.libs}}
+        run: ./scripts/vs/download_libs_2019_x64.sh -t $RELEASE
 
       - name: Download projectGenerator
         run: ./scripts/vs/download_projectGenerator.sh
