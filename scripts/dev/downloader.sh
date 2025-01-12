@@ -148,7 +148,6 @@ check_remote_vs_local() {
 finalurl() {
     local input_url="$1"
     local trimmed_url=$(echo "$input_url" | sed 's/[[:space:]]*$//')
-    echo "Processing URL: $trimmed_url"
     local resolved_url=$(curl -L -I --retry "${RETRY_MAX:-5}" --max-redirs "${MAX_REDIRECTS:-5}" \
         --retry-connrefused --write-out '%{url_effective}' --silent --output /dev/null "$trimmed_url")
     if [[ -z "$resolved_url" ]]; then
