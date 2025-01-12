@@ -11,6 +11,8 @@
 *.vcxproj* text eol=crlf
 .appveyor.yml text eol=crlf
 *.bat text eol=crlf
+*.props text eol=crlf
+*.filters text eol=crlf
 
 # Files with LF line endings for Unix-like systems
 *.sh text eol=lf
