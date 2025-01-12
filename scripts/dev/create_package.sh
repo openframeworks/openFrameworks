@@ -366,7 +366,7 @@ function createPackage {
         scripts/emscripten/download_libs.sh -n -t $RELEASE
     elif [ "$pkg_platform" = "vs" ]; then
         if [ "$libs_abi" = "" ]; then
-            download_libs_2019_x64.sh -t $RELEASE
+            scripts/vs/download_libs_2019_x64.sh -t $RELEASE
         else
             scripts/vs/download_libs.sh -a $libs_abi -t $RELEASE
         fi
