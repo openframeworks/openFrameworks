@@ -73,9 +73,21 @@ PLATFORM_REQUIRED_ADDONS = ofxEmscripten
 # 	CFLAG_PLATFORM_PTHREAD = -matomics -mbulk-memory
 # endif
 
+ifdef VCPKG_ROOT
+	TRIPPLET=wasm32-emscripten
+	LIB_PATH="$(VCPKG_ROOT)/installed/$(TRIPPLET)/lib"
+	INCLUDE_PATH="$(VCPKG_ROOT/)installed/$(TRIPPLET)/include"
+endif
+
 # Code Generation Option Flags (http://gcc.gnu.org/onlinedocs/gcc/Code-Gen-Options.html)
-PLATFORM_CFLAGS = -std=c17 -fPIC $(CFLAG_PLATFORM_PTHREAD) -s ASSERTIONS=2 #-sMEMORY64=1
-PLATFORM_CXXFLAGS = -Wall -std=c++17 -fPIC -Wno-warn-absolute-paths $(CFLAG_PLATFORM_PTHREAD) -s ASSERTIONS=2 #-sMEMORY64=1
+PLATFORM_CFLAGS = -std=c17 -fPIC $(CFLAG_PLATFORM_PTHREAD) -s ASSERTIONS=2
+PLATFORM_CXXFLAGS = -Wall -std=c++17 -fPIC -Wno-warn-absolute-paths $(CFLAG_PLATFORM_PTHREAD) -s ASSERTIONS=2
+
+ifdef EMSCRIPTEN_MEMORY64
+	PLATFORM_CFLAGS += -s MEMORY64=1
+	PLATFORM_CXXFLAGS += -s MEMORY64=1
+	PLATFORM_LDFLAGS += -s MEMORY64=1 -mwasm64
+endif
 
 ################################################################################
 # PLATFORM LDFLAGS
@@ -108,16 +120,18 @@ PLATFORM_LDFLAGS = --preload-file bin/data@data --emrun --bind --profiling-funcs
 PLATFORM_LDFLAGS += -s USE_WEBGPU=1
 PLATFORM_LDFLAGS += -s MAX_WEBGL_VERSION=2 -s WEBGL2_BACKWARDS_COMPATIBILITY_EMULATION=1 -s FULL_ES2
 PLATFORM_LDFLAGS += -s AUTO_NATIVE_LIBRARIES=1 -s AUTO_JS_LIBRARIES=1
-#PLATFORM_LDFLAGS += -s EVAL_CTORS=1 -s ERROR_ON_UNDEFINED_SYMBOLS=1
+
 PLATFORM_LDFLAGS += -s ASSERTIONS=2
 PLATFORM_LDFLAGS += -s GL_ASSERTIONS=1
 PLATFORM_LDFLAGS += -s VERBOSE=1
-#PLATFORM_LDFLAGS += -sEXPORTED_FUNCTIONS='["_main", "_malloc", "_free"]'
-# PLATFORM_LDFLAGS += -sEXPORTED_FUNCTIONS=all
+
+
 PLATFORM_LDFLAGS +=  $(PLATFORM_PTHREAD)
 # PLATFORM_LDFLAGS += -lGL
 # PLATFORM_LDFLAGS += -lhtml5
-PLATFORM_LDFLAGS += -lopenal
+# PLATFORM_LDFLAGS += -lopenal
+PLATFORM_LDFLAGS += --js-library $(OF_ADDONS_PATH)/ofxEmscripten/libs/html5video/lib/emscripten/library_html5video.js
+PLATFORM_LDFLAGS += --js-library $(OF_ADDONS_PATH)/ofxEmscripten/libs/html5audio/lib/emscripten/library_html5audio.js
 PLATFORM_LDFLAGS += -s MINIFY_HTML=0
 PLATFORM_LDFLAGS += -s MAIN_MODULE=1 \
   -s ASSERTIONS=2 \
@@ -129,11 +143,12 @@ PLATFORM_LDFLAGS += -sLOAD_SOURCE_MAP=1 -sABORT_ON_WASM_EXCEPTIONS=1
 PLATFORM_LDFLAGS += -s DYNAMIC_EXECUTION=0 -s EMBIND_AOT=1
 # PLATFORM_LDFLAGS += -s SINGLE_FILE=1
 #PLATFORM_LDFLAGS += -s MODULARIZE=1
-
+#PLATFORM_LDFLAGS += -s EVAL_CTORS=1 -s ERROR_ON_UNDEFINED_SYMBOLS=1
 # PLATFORM_LDFLAGS += -s WASM_WORKERS=1 -s ENVIRONMENT="web,worker"
 # PLATFORM_LDFLAGS += -s USE_GLFW=3 -lglfw
-PLATFORM_LDFLAGS += --js-library $(OF_ADDONS_PATH)/ofxEmscripten/libs/html5video/lib/emscripten/library_html5video.js
-PLATFORM_LDFLAGS += --js-library $(OF_ADDONS_PATH)/ofxEmscripten/libs/html5audio/lib/emscripten/library_html5audio.js
+# PLATFORM_LDFLAGS += -sEXPORTED_FUNCTIONS=all
+#PLATFORM_LDFLAGS += -sEXPORTED_FUNCTIONS='["_main", "_malloc", "_free"]'
+PLATFORM_LDFLAGS += -sERROR_ON_UNDEFINED_SYMBOLS=0
 
 ifdef PROJECT_EMSCRIPTEN_TEMPLATE
  	PLATFORM_LDFLAGS += --shell-file $(PROJECT_EMSCRIPTEN_TEMPLATE)
@@ -173,12 +188,6 @@ PLATFORM_OPTIMIZATION_CFLAGS_RELEASE = -O3
 
 # DEBUG Debugging options (http://gcc.gnu.org/onlinedocs/gcc/Debugging-Options.html)
 PLATFORM_OPTIMIZATION_CFLAGS_DEBUG = -O1 -g 
-
-# ifdef EMSCRIPTEN_MEMORY64
-# 	PLATFORM_CFLAGS += -s MEMORY64
-# 	PLATFORM_CXXFLAGS += -s MEMORY64
-# 	PLATFORM_LDFLAGS += -s MEMORY64 -mwasm64
-# endif
 
 
 ################################################################################
