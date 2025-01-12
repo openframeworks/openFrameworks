@@ -1,53 +1,44 @@
-name: Cleanup Caches by Branch
-on:
-  pull_request:
-    types:
-      - closed
+name: Cleanup Caches by Cron
 
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+on:
+  schedule:
+    - cron: '0 3 * * *' # Runs daily at 03:00 UTC
+  workflow_dispatch: # Allows manual triggering if needed
+
+permissions:
+  contents: write
+
 
 jobs:
   cleanup:
     runs-on: ubuntu-latest
     steps:
-      - name: Check out code
-        uses: actions/checkout@v4
-      - name: Setup GitHub CLI
+      - name: Set Up GitHub CLI
         run: |
-          # Ensure the latest version of GitHub CLI is installed
           sudo apt-get update && sudo apt-get install -y gh
-          # Install the actions-cache extension
           gh extension install actions/gh-actions-cache || echo "Extension already installed"
 
-      - name: Check Token Permissions
-        run: gh auth status
+      - name: Cleanup Caches
         env:
           GH_TOKEN: ${{ secrets.PAT_TOKEN || secrets.GITHUB_TOKEN }}
-          
-      - name: Cleanup Caches
         run: |
           REPO=${{ github.repository }}
-          # Adjust branch reference if necessary
-          BRANCH="refs/pull/${{ github.event.pull_request.number }}/merge"
+          BRANCH="master" # Only focus on the master branch
 
           echo "Fetching list of cache keys for branch: $BRANCH"
-          cacheKeysForPR=$(gh actions-cache list -R $REPO -B $BRANCH --json key | jq -r '.[].key')
+          cacheKeysForMaster=$(gh actions-cache list -R $REPO -B $BRANCH --json key | jq -r '.[].key')
 
-          if [ -z "$cacheKeysForPR" ]; then
+          if [ -z "$cacheKeysForMaster" ]; then
             echo "No caches found for branch: $BRANCH"
             exit 0
           fi
 
           echo "Deleting caches..."
-          for cacheKey in $cacheKeysForPR; do
+          for cacheKey in $cacheKeysForMaster; do
             echo "Deleting cache: $cacheKey"
             gh actions-cache delete $cacheKey -R $REPO -B $BRANCH --confirm
           done
           echo "Cleanup completed."
-        env:
-          GH_TOKEN: ${{ secrets.PAT_TOKEN || secrets.GITHUB_TOKEN }}
 
       - name: Verify Remaining Caches
         run: |
