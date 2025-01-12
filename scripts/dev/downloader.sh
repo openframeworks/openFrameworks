@@ -1,5 +1,5 @@
 #!/bin/bash
-VERSION=4.3.3
+VERSION=4.4.0
 printDownloaderHelp(){
 cat << EOF
     
@@ -146,9 +146,14 @@ check_remote_vs_local() {
 }
 
 finalurl() {
-    F_URL=$(echo "$@" | sed 's/[[:space:]]*$//')
-    # echo "finalurl: [$@] - F_URL:[$F_URL]"
-    curl  -L -I --retry ${RETRY_MAX} --max-redirs ${MAX_REDIRECTS} --retry-connrefused --silent --location --head --output /dev/null --write-out '%{url_effective}' -- "$F_URL"
+    local input_url="$1"
+    local trimmed_url=$(echo "$input_url" | sed 's/[[:space:]]*$//')
+    local resolved_url=$(curl -L -I --retry "${RETRY_MAX:-5}" --max-redirs "${MAX_REDIRECTS:-5}" \
+        --retry-connrefused --write-out '%{url_effective}' --silent --output /dev/null "$trimmed_url")
+    if [[ -z "$resolved_url" ]]; then
+        echoError "Failed to resolve URL: $trimmed_url"
+        return 1
+    fi
 }
 
 downloader() { 
