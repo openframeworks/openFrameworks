@@ -6,6 +6,7 @@
 //
 
 #include <TargetConditionals.h>
+#if defined(OF_METAL)
 #if TARGET_OS_IOS || (TARGET_OS_IPHONE && !TARGET_OS_TV)
 
 #import "ofxiOSMLKViewController.h"
@@ -645,4 +646,5 @@
 
 
 
+#endif
 #endif

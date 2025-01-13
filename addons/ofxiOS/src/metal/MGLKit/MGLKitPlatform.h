@@ -3,7 +3,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
-
+#if defined(OF_METAL)
 #ifndef MGLKitPlatform_h
 #define MGLKitPlatform_h
 
@@ -31,3 +31,4 @@
 #endif
 
 #endif /* MGLKitPlatform_h */
+#endif

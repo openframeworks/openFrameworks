@@ -4,6 +4,7 @@
 // found in the LICENSE file.
 //
 
+#if defined(OF_METAL)
 #import "MGLKView.h"
 
 NS_ASSUME_NONNULL_BEGIN
@@ -40,3 +41,4 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 NS_ASSUME_NONNULL_END
+#endif

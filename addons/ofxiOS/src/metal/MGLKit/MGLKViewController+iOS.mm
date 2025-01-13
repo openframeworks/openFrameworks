@@ -3,7 +3,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
-
+#if defined(OF_METAL)
 - (void)initImpl {}
 - (void)deallocImpl {}
 - (void)viewDidMoveToWindow {}
@@ -88,3 +88,5 @@
 
     _paused = NO;
 }
+
+#endif

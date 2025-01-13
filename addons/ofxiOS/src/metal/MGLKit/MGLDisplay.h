@@ -3,7 +3,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
-
+#if defined(OF_METAL)
 #ifndef MGLKitCommon_h
 #define MGLKitCommon_h
 
@@ -23,3 +23,4 @@
 @end
 
 #endif /* MGLKitCommon_h */
+#endif

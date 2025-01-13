@@ -6,6 +6,8 @@
 
 #import "MGLLayer.h"
 
+#if defined(OF_METAL)
+
 #include "EGL/egl.h"
 
 NS_ASSUME_NONNULL_BEGIN
@@ -50,5 +52,6 @@ typedef enum MGLRenderingAPI : int
 + (BOOL)setCurrentContext:(MGLContext *_Nullable)context forLayer:(MGLLayer *_Nullable)layer;
 
 @end
-
 NS_ASSUME_NONNULL_END
+#endif
+

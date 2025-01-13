@@ -4,6 +4,7 @@
 //
 //  Created by Dan Rosser on 7/3/18.
 //
+#if defined(OF_METAL)
 
 #include "ofxiOSMLKView.h"
 #include "ofxiOSApp.h"
@@ -613,3 +614,5 @@ static ofxiOSMLKView * _instanceRef = nil;
 
 
 @end
+
+#endif

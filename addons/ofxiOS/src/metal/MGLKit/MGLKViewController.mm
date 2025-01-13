@@ -3,7 +3,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
-
+#if defined(OF_METAL)
 #import "MGLKViewController+Private.h"
 
 #include <EGL/egl.h>
@@ -145,97 +145,98 @@
 // viewDidDisappear callback
 #if TARGET_OS_OSX
 - (void)viewDidDisappear
-{
-    [super viewDidDisappear];
+	{
+		[super viewDidDisappear];
 #else   // TARGET_OS_OSX
-- (void)viewDidDisappear:(BOOL)animated
-{
-    [super viewDidDisappear:animated];
+		- (void)viewDidDisappear:(BOOL)animated
+		{
+			[super viewDidDisappear:animated];
 #endif  // TARGET_OS_OSX
-    NSLog(@"MGLKViewController viewDidDisappear");
-    _appWasInBackground = YES;
-
-    // Implementation dependent
-    [self pause];
-
-    // Unregister callbacks that are called when app enters/exits background
-    [[NSNotificationCenter defaultCenter] removeObserver:self
-                                                    name:MGLKApplicationWillResignActiveNotification
-                                                  object:nil];
-
-    [[NSNotificationCenter defaultCenter] removeObserver:self
-                                                    name:MGLKApplicationDidBecomeActiveNotification
-                                                  object:nil];
-}
-
-- (void)appWillPause:(NSNotification *)note
-{
-    NSLog(@"MGLKViewController appWillPause:");
-    if (_pauseOnWillResignActive) {
-        _appWasInBackground = YES;
-        self.paused = YES;
-    }
-}
-
-- (void)appDidBecomeActive:(NSNotification *)note
-{
-    NSLog(@"MGLKViewController appDidBecomeActive:");
-    if (_resumeOnDidBecomeActive) {
-        self.paused = NO;
-    }
-}
-
-- (void)handleAppWasInBackground
-{
-    if (!_appWasInBackground)
-    {
-        return;
-    }
-    // To avoid time jump when the app goes to background
-    // for a long period of time.
-    _lastUpdateTime = CACurrentMediaTime();
-
-    _appWasInBackground = NO;
-}
-
-- (void)frameStep
-{
-    [self handleAppWasInBackground];
-
-    CFTimeInterval now   = CACurrentMediaTime();
-    _timeSinceLastUpdate = now - _lastUpdateTime;
-
-    [self update];
-    [_glView display];
-
-    if (_needDisableVsync)
-    {
-        eglSwapInterval([MGLDisplay defaultDisplay].eglDisplay, 0);
-        _needDisableVsync = NO;
-    }
-    else if (_needEnableVsync)
-    {
-        eglSwapInterval([MGLDisplay defaultDisplay].eglDisplay, 1);
-        _needEnableVsync = NO;
-    }
-
-    _framesDisplayed++;
-    _lastUpdateTime = now;
-
+			NSLog(@"MGLKViewController viewDidDisappear");
+			_appWasInBackground = YES;
+			
+			// Implementation dependent
+			[self pause];
+			
+			// Unregister callbacks that are called when app enters/exits background
+			[[NSNotificationCenter defaultCenter] removeObserver:self
+															name:MGLKApplicationWillResignActiveNotification
+														  object:nil];
+			
+			[[NSNotificationCenter defaultCenter] removeObserver:self
+															name:MGLKApplicationDidBecomeActiveNotification
+														  object:nil];
+		}
+		
+		- (void)appWillPause:(NSNotification *)note
+		{
+			NSLog(@"MGLKViewController appWillPause:");
+			if (_pauseOnWillResignActive) {
+				_appWasInBackground = YES;
+				self.paused = YES;
+			}
+		}
+		
+		- (void)appDidBecomeActive:(NSNotification *)note
+		{
+			NSLog(@"MGLKViewController appDidBecomeActive:");
+			if (_resumeOnDidBecomeActive) {
+				self.paused = NO;
+			}
+		}
+		
+		- (void)handleAppWasInBackground
+		{
+			if (!_appWasInBackground)
+			{
+				return;
+			}
+			// To avoid time jump when the app goes to background
+			// for a long period of time.
+			_lastUpdateTime = CACurrentMediaTime();
+			
+			_appWasInBackground = NO;
+		}
+		
+		- (void)frameStep
+		{
+			[self handleAppWasInBackground];
+			
+			CFTimeInterval now   = CACurrentMediaTime();
+			_timeSinceLastUpdate = now - _lastUpdateTime;
+			
+			[self update];
+			[_glView display];
+			
+			if (_needDisableVsync)
+			{
+				eglSwapInterval([MGLDisplay defaultDisplay].eglDisplay, 0);
+				_needDisableVsync = NO;
+			}
+			else if (_needEnableVsync)
+			{
+				eglSwapInterval([MGLDisplay defaultDisplay].eglDisplay, 1);
+				_needEnableVsync = NO;
+			}
+			
+			_framesDisplayed++;
+			_lastUpdateTime = now;
+			
 #if 0
-    if (_timeSinceLastUpdate > 2 * _displayLink.duration)
-    {
-        NSLog(@"frame was jump by %fs", _timeSinceLastUpdate);
-    }
+			if (_timeSinceLastUpdate > 2 * _displayLink.duration)
+			{
+				NSLog(@"frame was jump by %fs", _timeSinceLastUpdate);
+			}
 #endif
-}
-
-- (void)update
-{
-    if (_delegate)
-    {
-        [_delegate mglkViewControllerUpdate:self];
-    }
-}
-
-@end
+		}
+		
+		- (void)update
+		{
+			if (_delegate)
+			{
+				[_delegate mglkViewControllerUpdate:self];
+			}
+		}
+		
+		@end
+#endif

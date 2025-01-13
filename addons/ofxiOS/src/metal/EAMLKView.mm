@@ -6,7 +6,7 @@
 //
 
 #include <TargetConditionals.h>
-
+#if defined(OF_METAL)
 #import "EAMLKView.h"
 #import <MGLKit.h>
 
@@ -318,3 +318,5 @@
 
 
 @end
+
+#endif

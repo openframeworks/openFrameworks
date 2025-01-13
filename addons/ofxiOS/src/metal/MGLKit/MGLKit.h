@@ -3,7 +3,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
-
+#if defined(OF_METAL)
 #ifndef MGLKit_h
 #define MGLKit_h
 
@@ -12,3 +12,4 @@
 #import "MGLKViewController.h"
 
 #endif /* MGLKit_h */
+#endif

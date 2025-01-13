@@ -9,6 +9,8 @@
 #import "MGLContext.h"
 #import "MGLContext+Private.h"
 
+#if defined(OF_METAL)
+
 #include <pthread.h>
 #include <vector>
 
@@ -314,3 +316,5 @@ EGLContext CreateEGLContext(EGLDisplay display, MGLRenderingAPI api, EGLContext 
 }
 
 @end
+
+#endif
