@@ -62,7 +62,7 @@ fi
 ./create_package.sh msys2 $lastversion master ucrt64
 ./create_package.sh vs $lastversion master
 ./create_package.sh vs $lastversion master 64
-./create_package.sh vs2019 $lastversion master 64
+# ./create_package.sh vs2019 $lastversion master 64
 ./create_package.sh ios $lastversion master
 ./create_package.sh osx $lastversion master
 # ./create_package.sh macos $lastversion master
