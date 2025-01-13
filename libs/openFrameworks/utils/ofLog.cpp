@@ -1,6 +1,8 @@
 #include "ofLog.h"
 #include <ofUtils.h>
 #include <map>
+#include <functional> // std::function
+
 #ifdef TARGET_ANDROID
 	#include "ofxAndroidLogChannel.h"
 #endif
@@ -82,7 +84,7 @@ ofLog::ofLog(){
 	module = "";
 	bPrinted = false;
 }
-		
+
 //--------------------------------------------------
 ofLog::ofLog(ofLogLevel _level){
 	level = _level;
@@ -231,7 +233,7 @@ string ofGetLogLevelName(ofLogLevel level, bool pad){
 
 //--------------------------------------------------
 void ofConsoleLoggerChannel::log(ofLogLevel level, const string & module, const string & message){
-	// print to cerr for OF_LOG_ERROR and OF_LOG_FATAL_ERROR, everything else to cout 
+	// print to cerr for OF_LOG_ERROR and OF_LOG_FATAL_ERROR, everything else to cout
 	std::ostream& out = level < OF_LOG_ERROR ? std::cout : std::cerr;
 	out << "[" << ofGetLogLevelName(level, true)  << "] ";
 	// only print the module name if it's not ""
@@ -245,7 +247,7 @@ void ofConsoleLoggerChannel::log(ofLogLevel level, const string & module, const 
 #ifdef TARGET_WIN32
 #include <array>
 void ofDebugViewLoggerChannel::log(ofLogLevel level, const string & module, const string & message) {
-	// print to cerr for OF_LOG_ERROR and OF_LOG_FATAL_ERROR, everything else to cout 
+	// print to cerr for OF_LOG_ERROR and OF_LOG_FATAL_ERROR, everything else to cout
 	std::stringstream out;
 	out << "[" << ofGetLogLevelName(level, true) << "] ";
 	// only print the module name if it's not ""
@@ -287,4 +289,3 @@ void ofFileLoggerChannel::log(ofLogLevel level, const string & module, const str
 	}
 	file << message << std::endl;
 }
-

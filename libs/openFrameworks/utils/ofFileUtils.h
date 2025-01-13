@@ -3,6 +3,7 @@
 // MARK: ofConstants FS
 #include "ofConstants.h"
 #include <fstream>
+#include <vector>
 
 //----------------------------------------------------------
 // ofBuffer
