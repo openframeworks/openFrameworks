@@ -81,7 +81,7 @@ endif
 
 # Code Generation Option Flags (http://gcc.gnu.org/onlinedocs/gcc/Code-Gen-Options.html)
 PLATFORM_CFLAGS = -std=c17 -fPIC $(CFLAG_PLATFORM_PTHREAD) -s ASSERTIONS=2
-PLATFORM_CXXFLAGS = -Wall -std=c++17 -fPIC -Wno-warn-absolute-paths $(CFLAG_PLATFORM_PTHREAD) -s ASSERTIONS=2
+PLATFORM_CXXFLAGS = -Wall -std=c++23 -fPIC -Wno-warn-absolute-paths $(CFLAG_PLATFORM_PTHREAD) -s ASSERTIONS=2
 
 ifdef EMSCRIPTEN_MEMORY64
 	PLATFORM_CFLAGS += -s MEMORY64=1
@@ -131,15 +131,14 @@ PLATFORM_LDFLAGS +=  $(PLATFORM_PTHREAD)
 # PLATFORM_LDFLAGS += -lhtml5
 # PLATFORM_LDFLAGS += -lopenal
 PLATFORM_LDFLAGS += --js-library $(OF_ADDONS_PATH)/ofxEmscripten/libs/html5video/lib/emscripten/library_html5video.js
-PLATFORM_LDFLAGS += --js-library $(OF_ADDONS_PATH)/ofxEmscripten/libs/html5audio/lib/emscripten/library_html5audio.js
+# PLATFORM_LDFLAGS += --js-library $(OF_ADDONS_PATH)/ofxEmscripten/libs/html5audio/lib/emscripten/library_html5audio.js
 PLATFORM_LDFLAGS += -s MINIFY_HTML=0
 PLATFORM_LDFLAGS += -s MAIN_MODULE=1 \
   -s ASSERTIONS=2 \
   -s EXPORT_ALL=1 \
-  -s MODULARIZE=1 \
   -s NO_DYNAMIC_EXECUTION=1
 PLATFORM_LDFLAGS += -s ALLOW_MEMORY_GROWTH=1
-PLATFORM_LDFLAGS += -sLOAD_SOURCE_MAP=1 -sABORT_ON_WASM_EXCEPTIONS=1
+PLATFORM_LDFLAGS += -sLOAD_SOURCE_MAP=1 -sABORT_ON_WASM_EXCEPTIONS=0
 PLATFORM_LDFLAGS += -s DYNAMIC_EXECUTION=0 -s EMBIND_AOT=1
 # PLATFORM_LDFLAGS += -s SINGLE_FILE=1
 #PLATFORM_LDFLAGS += -s MODULARIZE=1
