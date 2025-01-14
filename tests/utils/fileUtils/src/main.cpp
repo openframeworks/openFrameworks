@@ -183,12 +183,11 @@ class ofApp: public ofxUnitTestsApp{
 		ofxTestEq(ofFilePath::join("d1","d2"),"d1/d2","ofFilePath::join",ofFilePath::join("d1","d2"));
 #endif
 
-		ofxTest(of::filesystem::exists(ofFile("test.txt")), "ofFile cast to filesystem::path");
-		ofxTest(of::filesystem::exists(ofDirectory("d1")), "ofDirectory cast to filesystem::path");
-
-
-
-
+		ofxTest(std::filesystem::exists(ofFile("test.txt")), "ofFile cast to filesystem::path");
+		ofxTest(std::filesystem::exists(ofDirectory("d1")), "ofDirectory cast to filesystem::path");
+		
+		std::string narrow = ofToDataPath("");
+		ofxTest(std::filesystem::exists(narrow), "narrow paths on windows");
 
 		//========================================================================
         ofLogNotice() << "";
@@ -268,12 +267,12 @@ class ofApp: public ofxUnitTestsApp{
 			ofDirectory currentVideoDirectory(ofToDataPath("..\\..\\..\\video", true));
 			auto path = currentVideoDirectory.path();
 			std::string pathEnd("data\\..\\..\\..\\video\\");
-			ofxTestEq(path.substr(path.size()-pathEnd.size()), pathEnd, "#4564");
+			ofxTestEq(path.native().substr(path.native().size()-pathEnd.size()), pathEnd, "#4564");
 		}else{
 			ofDirectory currentVideoDirectory(ofToDataPath("../../../video", true));
 			auto path = currentVideoDirectory.path();
 			std::string pathEnd("data/../../../video/");
-			ofxTestEq(path.substr(path.size()-pathEnd.size()), pathEnd, "#4564");
+			ofxTestEq(path.native().substr(path.native().size()-pathEnd.size()), pathEnd, "#4564");
 		}
 	}
 };
@@ -283,7 +282,7 @@ class ofApp: public ofxUnitTestsApp{
 #include "ofAppRunner.h"
 //========================================================================
 int main( ){
-    initial_cwd = of::filesystem::current_path();
+    initial_cwd = std::filesystem::current_path();
 	ofInit();
 	auto window = std::make_shared<ofAppNoWindow>();
 	auto app = std::make_shared<ofApp>();
