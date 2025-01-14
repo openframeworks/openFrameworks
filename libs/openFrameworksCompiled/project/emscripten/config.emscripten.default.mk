@@ -81,7 +81,7 @@ endif
 
 # Code Generation Option Flags (http://gcc.gnu.org/onlinedocs/gcc/Code-Gen-Options.html)
 PLATFORM_CFLAGS = -std=c17 -fPIC $(CFLAG_PLATFORM_PTHREAD) -s ASSERTIONS=2
-PLATFORM_CXXFLAGS = -Wall -std=c++17 -fPIC -Wno-warn-absolute-paths $(CFLAG_PLATFORM_PTHREAD) -s ASSERTIONS=2
+PLATFORM_CXXFLAGS = -Wall -std=c++23 -fPIC -Wno-warn-absolute-paths $(CFLAG_PLATFORM_PTHREAD) -s ASSERTIONS=2
 
 ifdef EMSCRIPTEN_MEMORY64
 	PLATFORM_CFLAGS += -s MEMORY64=1

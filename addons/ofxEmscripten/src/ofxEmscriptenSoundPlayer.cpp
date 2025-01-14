@@ -117,7 +117,8 @@ int ofxEmscriptenSoundPlayer::getPositionMS() const{
 }
 
 bool ofxEmscriptenSoundPlayer::isPlaying() const{
-	return playing && !//html5audio_sound_done(player_id);
+	return false;
+	//return playing && !//html5audio_sound_done(player_id);
 }
 
 float ofxEmscriptenSoundPlayer::getSpeed() const{
@@ -129,7 +130,7 @@ float ofxEmscriptenSoundPlayer::getPan() const{
 }
 
 bool ofxEmscriptenSoundPlayer::isLoaded() const{
-	return 0;//html5audio_sound_is_loaded(player_id);
+	return false;//html5audio_sound_is_loaded(player_id);
 }
 
 float ofxEmscriptenSoundPlayer::getVolume() const{
