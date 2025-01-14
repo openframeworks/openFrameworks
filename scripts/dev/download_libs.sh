@@ -8,9 +8,8 @@ LEGACY=0
 SILENT_ARGS=""
 NO_SSL=""
 BLEEDING_EDGE=0
-DL_VERSION=2.6.3
+DL_VERSION=2.6.4
 TAG=""
-PTHREADS=0
 
 printHelp(){
 cat << EOF
@@ -113,9 +112,6 @@ while [[ $# -gt 0 ]]; do
         ;;
         -s|--silent)
         SILENT_ARGS=1
-        ;;
-        -u|--pthreads)
-        PTHREADS=1
         ;;
         -k|--no-ssl)
         NO_SSL=1
@@ -239,9 +235,6 @@ if [ "$PLATFORM" == "emscripten" ]; then
     if [[ $BLEEDING_EDGE = 1 ]] ; then
         if [[ $ARCH = "64" ]] ; then
             ARCH="_memory64"
-        fi
-        if [[ $PTHREADS = 1 ]] ; then
-            ARCH="${ARCH}_pthreads"
         fi
     fi
 fi
