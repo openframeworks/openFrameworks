@@ -84,18 +84,23 @@ ifndef PLATFORM_LIB_SUBPATH
 	# determine from the arch
 	ifeq ($(PLATFORM_OS),Linux)
 		ifeq ($(PLATFORM_ARCH),x86_64)
-			PLATFORM_LIB_SUBPATH=linux64
+			PLATFORM_LIB_SUBPATH=linux/lib/64
 		else ifeq ($(PLATFORM_ARCH),armv6l)
-			PLATFORM_LIB_SUBPATH=linuxarmv6l
+			PLATFORM_LIB_SUBPATH=linux/lib/armv6l
 		else ifeq ($(PLATFORM_ARCH),armv7l)
-			PLATFORM_LIB_SUBPATH=linuxarmv7l
+			PLATFORM_LIB_SUBPATH=linux/lib/armv7l
+		else ifeq ($(PLATFORM_ARCH),armv8l)
+			PLATFORM_LIB_SUBPATH=linux/lib/armv8l
+		else ifeq ($(PLATFORM_ARCH),arm64)
+			PLATFORM_LIB_SUBPATH=linux/lib/arm64
+		else ifeq ($(PLATFORM_ARCH),aarch64)
+			PLATFORM_LIB_SUBPATH=linux/lib/aarch64
+		else ifeq ($(PLATFORM_ARCH),jetson)
+			PLATFORM_LIB_SUBPATH=linux/lib/jetson
 		else ifeq ($(PLATFORM_ARCH),i386)
 			PLATFORM_LIB_SUBPATH=linux
 		else ifeq ($(PLATFORM_ARCH),i686)
 			PLATFORM_LIB_SUBPATH=linux
-		else ifeq ($(PLATFORM_ARCH),aarch64)
-			PLATFORM_LIB_SUBPATH=linuxaarch64
-		else
 			$(error This makefile does not support your architecture $(PLATFORM_ARCH))
 		endif
 		SHARED_LIB_EXTENSION=so
