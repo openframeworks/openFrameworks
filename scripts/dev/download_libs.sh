@@ -316,13 +316,15 @@ if [ "$PLATFORM" == "linux" ]; then
     elif [ "$ARCH" == "arm64" ]; then
 		OPT="_${GCC_VERSION}"
 	elif [ "$ARCH" == "aarch64" ]; then
-		OPT=bookworm
+		OPT=""
+	elif [ "$ARCH" == "armv8l" ]; then
+	    OPT=""
 	elif [ "$ARCH" == "armv7l" ]; then
-	    OPT=bookworm
+	    OPT=""
 	elif [ "$ARCH" == "armv6l" ]; then
-		OPT=bookworm
+		OPT=""
 	elif [ "$ARCH" == "jetson" ]; then
-		OPT=jetson
+		OPT=""
 	fi
 fi
 
