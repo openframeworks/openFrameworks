@@ -85,6 +85,8 @@ ifndef PLATFORM_LIB_SUBPATH
 	ifeq ($(PLATFORM_OS),Linux)
 		ifeq ($(PLATFORM_ARCH),x86_64)
 			PLATFORM_LIB_SUBPATH=linux/lib/64
+		else ifeq ($(PLATFORM_ARCH),64)
+			PLATFORM_LIB_SUBPATH=linux/lib/64
 		else ifeq ($(PLATFORM_ARCH),armv6l)
 			PLATFORM_LIB_SUBPATH=linux/lib/armv6l
 		else ifeq ($(PLATFORM_ARCH),armv7l)
@@ -99,7 +101,7 @@ ifndef PLATFORM_LIB_SUBPATH
 			PLATFORM_LIB_SUBPATH=linux/lib/jetson
 		else ifeq ($(PLATFORM_ARCH),i386)
 			PLATFORM_LIB_SUBPATH=linux
-		else ifeq ($(PLATFORM_ARCH),i686)
+		else
 			PLATFORM_LIB_SUBPATH=linux
 			$(error This makefile does not support your architecture $(PLATFORM_ARCH))
 		endif
@@ -221,8 +223,11 @@ ifdef MAKEFILE_DEBUG
 endif
 
 
+$(info PLATFORM_LIB_SUBPATH=$(PLATFORM_LIB_SUBPATH))
+$(info OF_LIBS_OF_COMPILED_PROJECT_PATH=$(OF_LIBS_OF_COMPILED_PROJECT_PATH))
+
 ifeq ($(wildcard $(OF_LIBS_OF_COMPILED_PROJECT_PATH)/$(PLATFORM_LIB_SUBPATH)),)
-$(error This package doesn't support your platform, $(OF_LIBS_OF_COMPILED_PROJECT_PATH) probably you downloaded the wrong package?)
+$(error This package doesn't support your platform, $(OF_LIBS_OF_COMPILED_PROJECT_PATH)/$(PLATFORM_LIB_SUBPATH) probably you downloaded the wrong package?)
 endif
 
 # generate a list of valid core platform variants from the files in the platform makefiles directory
