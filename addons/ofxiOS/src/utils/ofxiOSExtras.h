@@ -104,6 +104,8 @@ ofxiOSEAGLView * ofxiOSGetGLView();
 
 ofxiOSGLKView * ofxiOSGetGLKView();
 
+bool isUsingGLKView();
+
 // return opengl parent view
 UIView * ofxiOSGetGLParentView();
 
