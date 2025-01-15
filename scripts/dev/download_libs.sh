@@ -8,7 +8,7 @@ LEGACY=0
 SILENT_ARGS=""
 NO_SSL=""
 BLEEDING_EDGE=0
-DL_VERSION=2.7.5
+DL_VERSION=2.8.0
 GCC_VERSION=0
 TAG=""
 
@@ -354,7 +354,19 @@ cd download
 download "${PKGS[@]}"
 
 cd ../ # back to libs
+VALID=true
+for PKG in $PKGS; do
+    echo " Validate libraries [${PLATFORM}] from [$PKG]"
+    if [ ! -f "download/$PKG" ]; then
+    	echo "Error: File 'download/$PKG' does not exist!" >&2
+    	VALID=false
+	fi
+done
+if [ $VALID -eq false ]; then
+	exit 71
+fi
 libs=("cairo" "curl" "FreeImage" "brotli" "fmod" "freetype" "glew" "glfw" "json" "libpng" "openssl" "pixman" "poco" "rtAudio" "tess2" "uriparser" "utf8" "videoInput" "zlib" "opencv" "ippicv" "assimp" "libxml2" "svgtiny" "fmt")
+
 if [ $OVERWRITE -eq 1 ]; then
     echo " "
     echo " Overwrite - Removing prior libraries for [$PLATFORM]"
