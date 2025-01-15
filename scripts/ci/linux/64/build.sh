@@ -1,6 +1,6 @@
 #!/bin/bash
 set -ev
-ROOT=${TRAVIS_BUILD_DIR:-"$( cd "$(dirname "$0")/../../.." ; pwd -P )"}
+ROOT=${TRAVIS_BUILD_DIR:-"$( cd "$(dirname "$0")/../../../.." ; pwd -P )"}
 # Add compiler flag to reduce memory usage to enable builds to complete
 # see https://gcc.gnu.org/bugzilla/show_bug.cgi?id=56746#c7
 # the "proper" way does not work currently:
