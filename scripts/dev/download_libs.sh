@@ -8,7 +8,7 @@ LEGACY=0
 SILENT_ARGS=""
 NO_SSL=""
 BLEEDING_EDGE=0
-DL_VERSION=2.7.2
+DL_VERSION=2.7.3
 GCC_VERSION=0
 TAG=""
 
@@ -212,7 +212,7 @@ if [ "$PLATFORM" == "linux" ]; then
 	fi
 	echo "GCC_VERSION: [$GCC_VERSION]"
 	GCC_VERSION="gcc${GCC_VERSION}"
-	if [ "$ARCH" == "x86_64" ] || [ "$ARCH" == "64" ] then
+	if [ "$ARCH" == "x86_64" ] || [ "$ARCH" == "64" ]; then
        	OPT="_${GCC_VERSION}"
     elif [ "$ARCH" == "arm64" ]; then
 		OPT="_${GCC_VERSION}"
