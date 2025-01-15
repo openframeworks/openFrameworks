@@ -8,7 +8,7 @@ LEGACY=0
 SILENT_ARGS=""
 NO_SSL=""
 BLEEDING_EDGE=0
-DL_VERSION=2.7.4
+DL_VERSION=2.7.5
 GCC_VERSION=0
 TAG=""
 
@@ -171,6 +171,8 @@ if [ "$ARCH" == "" ]; then
         	ARCH=64
         elif [ "$ARCH" == "arm64" ]; then
         	ARCH=64 # for now
+       	elif [ "$ARCH" == "aarch64" ]; then
+       		ARCH=64 # for now
         elif [ "$ARCH" == "i686" ] || [ "$ARCH" == "i386" ]; then
             echo "32bit linux is not officially supported anymore but compiling the libraries using the build script in apothecary/scripts should compile all the dependencies without problem"
             exit 1
