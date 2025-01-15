@@ -1,6 +1,6 @@
 #!/bin/bash
 # set -ev
-ROOT=${TRAVIS_BUILD_DIR:-"$( cd "$(dirname "$0")/../../.." ; pwd -P )"}
+ROOT=${TRAVIS_BUILD_DIR:-"$( cd "$(dirname "$0")/../../../.." ; pwd -P )"}
 
 # fail the job when a build fails, with an error annotation naming what failed
 build_or_fail(){
