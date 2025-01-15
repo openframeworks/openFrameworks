@@ -248,6 +248,8 @@ endif
 # core sources
 PLATFORM_CORE_EXCLUSIONS += %.mm
 PLATFORM_CORE_EXCLUSIONS += %.m
+PLATFORM_CORE_EXCLUSIONS += %.swift
+PLATFORM_CORE_EXCLUSIONS += %.kotlin
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofDirectShowGrabber.cpp
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofDirectShowPlayer.cpp
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofMediaFoundationPlayer.cpp
@@ -260,7 +262,7 @@ else
 endif
 
 # third party
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/glew/%
+# PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/glew/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/cairo/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/videoInput/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/freetype/%
@@ -268,9 +270,11 @@ PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/FreeImage/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/assimp/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/rtAudio/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openssl/%
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/glfw/%
+PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/boost/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/curl/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/uriparser/%
+PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/metalangle/%
+#PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/glfw/%
 
 ifeq ($(USE_FMOD),0)
 	PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/fmod/%
@@ -345,7 +349,7 @@ PLATFORM_SHARED_LIBRARIES =
 
 PLATFORM_PKG_CONFIG_LIBRARIES =
 PLATFORM_PKG_CONFIG_LIBRARIES += cairo
-PLATFORM_PKG_CONFIG_LIBRARIES += zlib
+# PLATFORM_PKG_CONFIG_LIBRARIES += zlib
 PLATFORM_PKG_CONFIG_LIBRARIES += gstreamer-app-$(GST_VERSION)
 PLATFORM_PKG_CONFIG_LIBRARIES += gstreamer-$(GST_VERSION)
 PLATFORM_PKG_CONFIG_LIBRARIES += gstreamer-video-$(GST_VERSION)
@@ -371,17 +375,17 @@ ifeq "$(shell pkg-config --exists libcurl4 && echo 1)" "1"
 endif
 
 
-ifeq ($(CROSS_COMPILING),1)
-	ifeq "$(shell export PKG_CONFIG_LIBDIR=$(PKG_CONFIG_LIBDIR); pkg-config --exists glfw3 && echo 1)" "1"
-		PLATFORM_PKG_CONFIG_LIBRARIES += glfw3
-		PLATFORM_LIBRARIES += Xinerama
-	endif
-else
-	ifeq "$(shell pkg-config --exists glfw3 && echo 1)" "1"
-		PLATFORM_PKG_CONFIG_LIBRARIES += glfw3
-		PLATFORM_LIBRARIES += Xinerama
-	endif
-endif
+# ifeq ($(CROSS_COMPILING),1)
+# 	ifeq "$(shell export PKG_CONFIG_LIBDIR=$(PKG_CONFIG_LIBDIR); pkg-config --exists glfw3 && echo 1)" "1"
+# 		PLATFORM_PKG_CONFIG_LIBRARIES += glfw3
+# 		PLATFORM_LIBRARIES += Xinerama
+# 	endif
+# else
+# 	ifeq "$(shell pkg-config --exists glfw3 && echo 1)" "1"
+# 		PLATFORM_PKG_CONFIG_LIBRARIES += glfw3
+# 		PLATFORM_LIBRARIES += Xinerama
+# 	endif
+# endif
 
 ifeq ($(CROSS_COMPILING),1)
 	ifeq "$(shell export PKG_CONFIG_LIBDIR=$(PKG_CONFIG_LIBDIR); pkg-config --exists rtaudio && echo 1)" "1"
