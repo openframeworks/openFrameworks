@@ -54,8 +54,8 @@ echo "Installing dependencies..."
 $SCRIPT_DIR/$TARGET/install.sh
 
 # Update submodules
-echo "Updating submodules..."
-$OF_ROOT/scripts/dev/init_submodules.sh
+# echo "Updating submodules..."
+# $OF_ROOT/scripts/dev/init_submodules.sh
 
 # Download libraries
 echo "Downloading libraries..."
