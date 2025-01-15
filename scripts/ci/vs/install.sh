@@ -3,13 +3,14 @@ OF_ROOT=$PWD
 SCRIPT_DIR="${BASH_SOURCE%/*}"
 
 RELEASE="${RELEASE:-nightly}"
+ARCH="${ARCH:-64}"
 
 if [[ ! -d "$SCRIPT_DIR" ]]; then SCRIPT_DIR="$PWD"; fi
 . "$SCRIPT_DIR/../../dev/downloader.sh"
 
 unset BITS
 cd "${OF_ROOT}"
-./scripts/vs/download_libs.sh -p vs --silent -t $RELEASE
+./scripts/vs/download_libs.sh -p vs --silent -t $RELEASE -a $ARCH
 
 rm -rf projectGenerator
 mkdir -p projectGenerator
