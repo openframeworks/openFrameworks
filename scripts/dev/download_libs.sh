@@ -8,7 +8,7 @@ LEGACY=0
 SILENT_ARGS=""
 NO_SSL=""
 BLEEDING_EDGE=0
-DL_VERSION=2.7.3
+DL_VERSION=2.7.4
 GCC_VERSION=0
 TAG=""
 
@@ -170,11 +170,7 @@ if [ "$ARCH" == "" ]; then
         if [ "$ARCH" == "x86_64" ]; then
         	ARCH=64
         elif [ "$ARCH" == "arm64" ]; then
-        	ARCH=64
-        elif [ "$ARCH" == "armv7l" ]; then
-            if [ -f /opt/vc/include/bcm_host.h ]; then # Check for Raspberry Pi
-                ARCH=armv6l #this makes no sense
-            fi
+        	ARCH=64 # for now
         elif [ "$ARCH" == "i686" ] || [ "$ARCH" == "i386" ]; then
             echo "32bit linux is not officially supported anymore but compiling the libraries using the build script in apothecary/scripts should compile all the dependencies without problem"
             exit 1
@@ -217,13 +213,15 @@ if [ "$PLATFORM" == "linux" ]; then
     elif [ "$ARCH" == "arm64" ]; then
 		OPT="_${GCC_VERSION}"
 	elif [ "$ARCH" == "aarch64" ]; then
-		OPT=bookworm
+		OPT=""
+	elif [ "$ARCH" == "armv8l" ]; then
+	    OPT=""
 	elif [ "$ARCH" == "armv7l" ]; then
-	    OPT=bookworm
+	    OPT=""
 	elif [ "$ARCH" == "armv6l" ]; then
-		OPT=bookworm
+		OPT=""
 	elif [ "$ARCH" == "jetson" ]; then
-		OPT=jetson
+		OPT=""
 	fi
 fi
 
