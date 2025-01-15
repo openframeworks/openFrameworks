@@ -327,8 +327,9 @@ jobs:
     strategy:
       matrix:
         cfg:
-          - {target: linux, arch: 64, gcc: gcc14}
-          - {target: linux, arch: 64, gcc: gcc10}
+          # - {target: linux, arch: 64, gcc: 6}
+          - {target: linux, arch: 64, gcc: 14}
+          - {target: linux, arch: 64, gcc: 10}
     env:
       TARGET: ${{matrix.cfg.target}}
       GCC: ${{matrix.cfg.gcc}}
