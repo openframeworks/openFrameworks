@@ -5,3 +5,4 @@
 [submodule "scripts/apothecary"]
 	path = scripts/apothecary
 	url = https://github.com/openframeworks/apothecary
+	branch = bleeding
