@@ -8,7 +8,7 @@ LEGACY=0
 SILENT_ARGS=""
 NO_SSL=""
 BLEEDING_EDGE=0
-DL_VERSION=2.7.1
+DL_VERSION=2.7.2
 GCC_VERSION=0
 TAG=""
 
@@ -249,6 +249,9 @@ if [ "$PLATFORM" == "emscripten" ]; then
         if [[ $ARCH = "" ]] ; then
             ARCH="32"
         fi
+        if [[ $ARCH = "64" ]] ; then
+            ARCH="_64"
+        fi
     fi
 fi
 
@@ -396,6 +399,11 @@ fi
 echo " ------ "
 for PKG in $PKGS; do
     echo " Uncompressing libraries [${PLATFORM}] from [$PKG]"
+    if [ ! -f "download/$PKG" ]; then
+    	echo "Error: File 'download/$PKG' does not exist!" >&2
+    	exit 71
+	fi
+
     if [ "$PLATFORM" == "msys2" ] || [ "$PLATFORM" == "vs" ]; then
         unzip -qo download/$PKG
         # rm -r download/$PKG
