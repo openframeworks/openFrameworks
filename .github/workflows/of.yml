@@ -368,7 +368,7 @@ jobs:
             scripts/ci/$TARGET/$ARCH/build.sh;
           fi
 
-  build-linux-64-22.04:
+  build-linux-64-22-04:
     runs-on: ubuntu-22.04
     strategy:
       matrix:
