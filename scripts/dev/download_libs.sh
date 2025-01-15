@@ -15,6 +15,7 @@ SILENT_ARGS=""
 NO_SSL=""
 BLEEDING_EDGE=0
 DL_VERSION=2.7.5
+GCC_VERSION=0
 TAG=""
 REPO="latest"
 SHA_VERIFIED=0
@@ -36,7 +37,7 @@ cat << EOF
                                       arm64 also downloads x64 (and arm64ec)
                                     msys2: 64
                                     android: armv7, arm64, and x86 (if not specified will download all)
-                                    linux: 64gcc6, armv6l or armv7l
+                                    linux: 64, armv6l or armv7l
     -n, --no-overwrite          Pure merge: do not delete anything before extract.
                                 Default (without -n) only removes libs/<lib>/lib/\$PLATFORM so other
                                 platforms (android + ios + macos + emscripten …) can coexist.
@@ -49,6 +50,7 @@ cat << EOF
     -h, --help                  Shows this message
     -k, --no-ssl                Allow no SSL validation
     -t, --tag                   tag release for libraries
+    -g, --gcc-version           GCC Version
 EOF
 }
 
@@ -173,6 +175,10 @@ while [[ $# -gt 0 ]]; do
         MSYSTEM="$2"
         shift # past argument
         ;;
+        -g|--gcc-version)
+        GCC_VERSION="$2"
+        shift # past argument
+        ;;
         -t|--tag)
         TAG="$2"
         shift # past argument
@@ -244,18 +250,12 @@ if [ "$ARCH" == "" ]; then
     if [ "$PLATFORM" == "linux" ]; then
         ARCH=$(uname -m)
         if [ "$ARCH" == "x86_64" ]; then
-            if command -v gcc &> /dev/null
-            then
-                GCC_VERSION=$(gcc -dumpversion | cut -f1 -d.)
-            else
-                GCC_VERSION=6
-            fi
-            if [ $GCC_VERSION -eq 4 ]; then
-                ARCH=64gcc6
-            elif [ $GCC_VERSION -eq 5 ]; then
-                ARCH=64gcc6
-            else
-                ARCH=64gcc6
+            ARCH=64
+        elif [ "$ARCH" == "arm64" ]; then
+            # ARCH=arm64 # need to fix
+            ARCH=64
+            if [ -f /opt/vc/include/bcm_host.h ]; then # RPi
+                ARCH=aarch64
             fi
         elif [ "$ARCH" == "armv7l" ]; then
             # Check for Raspberry Pi
@@ -303,6 +303,23 @@ if [ "$PLATFORM" == "vs" ]; then
     esac
 fi
 
+if [ "$PLATFORM" == "linux" ]; then
+	if [ "$GCC_VERSION" == 0 ]; then
+		if command -v gcc &> /dev/null; then
+			GCC_VERSION=$(gcc -dumpversion | cut -f1 -d.)
+			echo "GCC_VERSION from bash: [$GCC_VERSION]"
+		else
+			GCC_VERSION=6
+		fi
+		if [ "$GCC_VERSION" -gt 14 ]; then
+			echo "GCC version is greater than 14. latest supported"
+			GCC_VERSION=14
+		fi
+	fi
+	echo "GCC_VERSION: [$GCC_VERSION]"
+	GCC_VERSION="gcc${GCC_VERSION}"
+fi
+
 
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd "$SCRIPT_DIR"
@@ -313,14 +330,6 @@ fi
 
 if [[ $TAG != "" ]] && [[ $TAG != "nightly" ]] ; then
     VER="$TAG"
-fi
-
-if [ "$PLATFORM" == "linux" ] && [ "$ARCH" == "64" ]; then
-    if [[ $BLEEDING_EDGE = 1 ]] ; then
-        ARCH=64_gcc6
-    else
-        ARCH=64gcc6
-    fi
 fi
 
 echo " openFrameworks download_libs.sh v$DL_VERSION args=$@"
@@ -426,7 +435,7 @@ elif [ "$PLATFORM" == "emscripten" ]; then
     fi
 else # Linux
     if [[ $BLEEDING_EDGE = 1 ]] ; then
-        PKGS="openFrameworksLibs_${VER}_${PLATFORM}${ARCH}.tar.bz2"
+        PKGS="openFrameworksLibs_${VER}_${PLATFORM}_${ARCH}_${GCC_VERSION}.tar.bz2"
     else
         PKGS="openFrameworksLibs_${VER}_${PLATFORM}${ARCH}.tar.bz2"
     fi
