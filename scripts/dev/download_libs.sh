@@ -257,16 +257,11 @@ if [ "$ARCH" == "" ]; then
                 ARCH=aarch64
             fi
         elif [ "$ARCH" == "armv7l" ]; then
-            # Check for Raspberry Pi
-            if [ -f /opt/vc/include/bcm_host.h ]; then
-                ARCH=armv6l
+            if [ -f /opt/vc/include/bcm_host.h ]; then # Check for Raspberry Pi
+                ARCH=armv6l #this makes no sense
             fi
         elif [ "$ARCH" == "i686" ] || [ "$ARCH" == "i386" ]; then
-            cat << EOF
-32bit linux is not officially supported anymore but compiling
-the libraries using the build script in apothecary/scripts
-should compile all the dependencies without problem
-EOF
+            echo "32bit linux is not officially supported anymore but compiling the libraries using the build script in apothecary/scripts should compile all the dependencies without problem"
             exit 1
         fi
     elif [ "$PLATFORM" == "msys2" ]; then
@@ -286,7 +281,6 @@ EOF
         ARCH=$(detectHostVsArch)
         echo " VS host arch → ${ARCH} (pass -a all for every VS arch, or -a 64|arm64|arm64ec)"
     fi
-
     if [ "$PLATFORM" == "osx" ]; then
         ARCH=x86_64
     fi
@@ -317,7 +311,21 @@ if [ "$PLATFORM" == "linux" ]; then
 	fi
 	echo "GCC_VERSION: [$GCC_VERSION]"
 	GCC_VERSION="gcc${GCC_VERSION}"
+	if [ "$ARCH" == "x86_64" ] || [ "$ARCH" == "64" ]; then
+        OPT="_${GCC_VERSION}"
+    elif [ "$ARCH" == "arm64" ]; then
+		OPT="_${GCC_VERSION}"
+	elif [ "$ARCH" == "aarch64" ]; then
+		OPT=bookworm
+	elif [ "$ARCH" == "armv7l" ]; then
+	    OPT=bookworm
+	elif [ "$ARCH" == "armv6l" ]; then
+		OPT=bookworm
+	elif [ "$ARCH" == "jetson" ]; then
+		OPT=jetson
+	fi
 fi
+
 
 
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
@@ -422,7 +430,7 @@ elif [ "$PLATFORM" == "emscripten" ]; then
     fi
 else # Linux
     if [[ $BLEEDING_EDGE = 1 ]] ; then
-        PKGS="openFrameworksLibs_${VER}_${PLATFORM}_${ARCH}_${GCC_VERSION}.tar.bz2"
+        PKGS="openFrameworksLibs_${VER}_${PLATFORM}_${ARCH}${OPT}.tar.bz2"
     else
         PKGS="openFrameworksLibs_${VER}_${PLATFORM}${ARCH}.tar.bz2"
     fi
