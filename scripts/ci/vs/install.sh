@@ -4,6 +4,11 @@ SCRIPT_DIR="${BASH_SOURCE%/*}"
 
 RELEASE="${RELEASE:-nightly}"
 ARCH="${ARCH:-64}"
+if [[ "$ARCH" == "x64" ]]; then
+	ARCH=64
+fi
+
+
 
 if [[ ! -d "$SCRIPT_DIR" ]]; then SCRIPT_DIR="$PWD"; fi
 . "$SCRIPT_DIR/../../dev/downloader.sh"
