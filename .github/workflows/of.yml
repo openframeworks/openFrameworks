@@ -119,7 +119,7 @@ jobs:
     runs-on: windows-2022
     strategy:
       matrix:
-        platform: [x64, ARM64, ARM64EC]
+        platform: [64, ARM64, ARM64EC]
     env:
       BITS: ${{ matrix.platform }}
       ARCH: ${{ matrix.platform }}
