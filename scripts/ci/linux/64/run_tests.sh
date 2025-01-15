@@ -1,6 +1,6 @@
 #!/bin/bash
 # set -ev
-ROOT=${TRAVIS_BUILD_DIR:-"$( cd "$(dirname "$0")/../../.." ; pwd -P )"}
+ROOT=${TRAVIS_BUILD_DIR:-"$( cd "$(dirname "$0")/../../../.." ; pwd -P )"}
 
 # if [ "$OPT" == "qbs" ]; then
 	# exit 0
