@@ -232,12 +232,12 @@ jobs:
           echo "=== curl ver ==="; cat libs/curl/include/curl/curlver.h 2>&1 | head -n 5
           echo "=== system curl ==="; curl --version 2>&1 | head -n1
       - name: Install dependencies
-        run: ./scripts/ci/linuxrpi/install.sh;
+        run: ./scripts/ci/linux/rpi/install.sh;
       - name: LS
         shell: bash
         run: ls -alfR
       - name: Build
-        run: ./scripts/ci/linuxrpi/build.sh;
+        run: ./scripts/ci/linux/rpi/build.sh;
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
