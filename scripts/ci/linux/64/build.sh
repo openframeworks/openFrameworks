@@ -25,12 +25,12 @@ else
     echo "PLATFORM_CFLAGS += $CUSTOMFLAGS" >> libs/openFrameworksCompiled/project/linux/64/config.linux64.default.mk
     sed -i "s/PLATFORM_OPTIMIZATION_CFLAGS_DEBUG = .*/PLATFORM_OPTIMIZATION_CFLAGS_DEBUG = -g0/" libs/openFrameworksCompiled/project/makefileCommon/config.linux.common.mk
     cd libs/openFrameworksCompiled/project
-    make -j2
+    make -j2 DEBUG=1 MAKEFILE_DEBUG=1
     echo "##[endgroup]"
 
     echo "##[group]**** Building emptyExample ****"
     cd $ROOT/scripts/templates/linux64
-    make -j2
+    make -j2 DEBUG=1 MAKEFILE_DEBUG=1
     echo "##[endgroup]"
 
     echo "##[group]**** Building allAddonsExample ****"
@@ -38,6 +38,6 @@ else
     cp scripts/templates/linux64/Makefile examples/templates/allAddonsExample/
     cp scripts/templates/linux64/config.make examples/templates/allAddonsExample/
     cd examples/templates/allAddonsExample/
-    make -j2
+    make -j2 DEBUG=1 MAKEFILE_DEBUG=1
     echo "##[endgroup]"
 fi
