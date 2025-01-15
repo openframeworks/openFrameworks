@@ -22,7 +22,7 @@ else
 
     echo "##[group]**** Building OF core ****"
     # this carries over to subsequent compilations of examples
-    echo "PLATFORM_CFLAGS += $CUSTOMFLAGS" >> libs/openFrameworksCompiled/project/linux64/config.linux64.default.mk
+    echo "PLATFORM_CFLAGS += $CUSTOMFLAGS" >> libs/openFrameworksCompiled/project/linux/64/config.linux64.default.mk
     sed -i "s/PLATFORM_OPTIMIZATION_CFLAGS_DEBUG = .*/PLATFORM_OPTIMIZATION_CFLAGS_DEBUG = -g0/" libs/openFrameworksCompiled/project/makefileCommon/config.linux.common.mk
     cd libs/openFrameworksCompiled/project
     make -j2
