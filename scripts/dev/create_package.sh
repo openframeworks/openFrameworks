@@ -11,7 +11,7 @@
 platform=$1
 version=$2
 
-all_platforms="linux linux64 linuxarmv6l linuxarmv7l linuxaarch64 osx msys2 vs vs2019 ios macos tvos android emscripten"
+all_platforms="linux linux64 linuxarmv6l linuxarmv7l linuxaarch64 osx msys2 vs ios macos tvos android emscripten"
 
 of_root=$(readlink -f "$(dirname "$(readlink -f "$0")")/../..")
 
