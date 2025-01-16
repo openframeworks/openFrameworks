@@ -22,8 +22,7 @@ else
 
     echo "##[group]**** Building OF core ****"
     # this carries over to subsequent compilations of examples
-    echo "PLATFORM_CFLAGS += $CUSTOMFLAGS" >> libs/openFrameworksCompiled/project/linux/64/config.linux64.default.mk
-    sed -i "s/PLATFORM_OPTIMIZATION_CFLAGS_DEBUG = .*/PLATFORM_OPTIMIZATION_CFLAGS_DEBUG = -g0/" libs/openFrameworksCompiled/project/makefileCommon/config.linux.common.mk
+    # echo "PLATFORM_CFLAGS += $CUSTOMFLAGS" >> libs/openFrameworksCompiled/project/linux/64/config.linux64.default.mk
     cd libs/openFrameworksCompiled/project
     make -j2 Debug
     echo "##[endgroup]"
@@ -42,5 +41,5 @@ else
     cd examples/templates/allAddonsExample/
     make -j2 Debug
     echo "##[endgroup]"
-     echo -e "\033[33m**** Building allAddonsExample: COMPLETE ****\033[0m"
+    echo -e "\033[33m**** Building allAddonsExample: COMPLETE ****\033[0m"
 fi
