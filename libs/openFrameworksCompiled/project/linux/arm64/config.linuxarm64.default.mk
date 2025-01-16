@@ -95,7 +95,7 @@ PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/sound/ofFmodSoundPlay
 
 ifeq ($(CROSS_COMPILING),1)
 ifdef MAKEFILE_DEBUG
-    $(info detected cross compiling $(CROSS_COMPILING))
+	$(info detected cross compiling $(CROSS_COMPILING))
 endif
 
 	ifdef GCC_PREFIX
