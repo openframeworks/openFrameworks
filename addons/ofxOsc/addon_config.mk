@@ -68,15 +68,15 @@ common:
 	# a specific platform
 	# ADDON_INCLUDES_EXCLUDE =
 
-linuxarmv6l:
+linux/armv6l:
 	ADDON_SOURCES_EXCLUDE = libs/oscpack/src/ip/win32/%
 	ADDON_INCLUDES_EXCLUDE = libs/oscpack/src/ip/win32
 
-linuxarmv7l:
+linux/armv7l:
 	ADDON_SOURCES_EXCLUDE = libs/oscpack/src/ip/win32/%
 	ADDON_INCLUDES_EXCLUDE = libs/oscpack/src/ip/win32
 
-linuxaarch64:
+linux/aarch64:
 	ADDON_SOURCES_EXCLUDE = libs/oscpack/src/ip/win32/%
 	ADDON_INCLUDES_EXCLUDE = libs/oscpack/src/ip/win32
 
@@ -84,7 +84,7 @@ linux:
 	ADDON_SOURCES_EXCLUDE = libs/oscpack/src/ip/win32/%
 	ADDON_INCLUDES_EXCLUDE = libs/oscpack/src/ip/win32
 
-linux64:
+linux/64:
 	ADDON_SOURCES_EXCLUDE = libs/oscpack/src/ip/win32/%
 	ADDON_INCLUDES_EXCLUDE = libs/oscpack/src/ip/win32
 
