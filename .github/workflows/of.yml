@@ -23,6 +23,7 @@ env:
 jobs:
   build-emscripten:
     runs-on: ubuntu-24.04
+    needs: build-linux-6
     strategy:
       matrix:
         cfg:
@@ -117,6 +118,7 @@ jobs:
 
   build-vs2022:
     runs-on: windows-2022
+    needs: build-linux-64
     strategy:
       matrix:
         platform: [x64, ARM64, ARM64EC]
@@ -165,6 +167,7 @@ jobs:
 
   build-vs2019:
     runs-on: windows-2019
+    needs: build-linux-6
     strategy:
       matrix:
         platform: [x64]
@@ -223,6 +226,7 @@ jobs:
 
   rpi-build:
     runs-on: ubuntu-24.04
+    needs: build-linux-6
     strategy:
       matrix:
         cfg:
@@ -286,6 +290,7 @@ jobs:
 
   build-ios-tvos:
     runs-on: macos-15
+    needs: build-linux-6
     strategy:
       matrix:
         cfg:
@@ -453,6 +458,7 @@ jobs:
 
   build-macos:
     runs-on: macos-15
+    needs: build-linux-6
     strategy:
       matrix:
         cfg:
