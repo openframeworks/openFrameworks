@@ -68,19 +68,19 @@ ios:
 	ADDON_LIBS = libs/svgtiny/lib/ios/svgtiny.a
 	ADDON_LIBS += libs/libxml2/lib/ios/xml2.a
 
-linux64:
+linux/64:
 	ADDON_LIBS = libs/svgtiny/lib/linux/64/libsvgtiny.a
 	ADDON_LIBS += libs/libxml2/lib/linux/64/libxml2.a
 
-linuxarmv6l:
+linux/armv6l:
 	ADDON_LIBS = libs/svgtiny/lib/linux/armv6l/libsvgtiny.a
 	ADDON_LIBS += libs/libxml2/lib/linux/armv6l/libxml2.a
 
-linuxarmv7l:
+linux/armv7l:
 	ADDON_LIBS = libs/svgtiny/lib/linux/armv7l/libsvgtiny.a
 	ADDON_LIBS += libs/libxml2/lib/linux/armv7l/libxml2.a
 
-linuxaarch64:
+linux/aarch64:
 	ADDON_LIBS = libs/svgtiny/lib/linux/aarch64/libsvgtiny.a
 	ADDON_LIBS += libs/libxml2/lib/linux/aarch64/libxml2.a
 

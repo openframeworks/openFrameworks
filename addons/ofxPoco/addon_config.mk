@@ -65,26 +65,6 @@ common:
 	ADDON_SOURCES_EXCLUDE = libs/poco/include/%
 
 linux:
-    ADDON_LDFLAGS = -lPocoNetSSL
-	ADDON_LDFLAGS += -lPocoNet
-	ADDON_LDFLAGS += -lPocoCrypto
-	ADDON_LDFLAGS += -lPocoUtil
-	ADDON_LDFLAGS += -lPocoXML
-	ADDON_LDFLAGS += -lPocoFoundation
-	ADDON_LDFLAGS += -lcrypto
-	ADDON_LDFLAGS += -lssl
-
-linux64:
-    ADDON_LDFLAGS = -lPocoNetSSL
-	ADDON_LDFLAGS += -lPocoNet
-	ADDON_LDFLAGS += -lPocoCrypto
-	ADDON_LDFLAGS += -lPocoUtil
-	ADDON_LDFLAGS += -lPocoXML
-	ADDON_LDFLAGS += -lPocoFoundation
-	ADDON_LDFLAGS += -lcrypto
-	ADDON_LDFLAGS += -lssl
-
-linuxarmv6l:
 	ADDON_LDFLAGS = -lPocoNetSSL
 	ADDON_LDFLAGS += -lPocoNet
 	ADDON_LDFLAGS += -lPocoCrypto
@@ -94,7 +74,27 @@ linuxarmv6l:
 	ADDON_LDFLAGS += -lcrypto
 	ADDON_LDFLAGS += -lssl
 
-linuxarmv7l:
+linux/64:
+	ADDON_LDFLAGS = -lPocoNetSSL
+	ADDON_LDFLAGS += -lPocoNet
+	ADDON_LDFLAGS += -lPocoCrypto
+	ADDON_LDFLAGS += -lPocoUtil
+	ADDON_LDFLAGS += -lPocoXML
+	ADDON_LDFLAGS += -lPocoFoundation
+	ADDON_LDFLAGS += -lcrypto
+	ADDON_LDFLAGS += -lssl
+
+linux/armv6l:
+	ADDON_LDFLAGS = -lPocoNetSSL
+	ADDON_LDFLAGS += -lPocoNet
+	ADDON_LDFLAGS += -lPocoCrypto
+	ADDON_LDFLAGS += -lPocoUtil
+	ADDON_LDFLAGS += -lPocoXML
+	ADDON_LDFLAGS += -lPocoFoundation
+	ADDON_LDFLAGS += -lcrypto
+	ADDON_LDFLAGS += -lssl
+
+linux/armv7l:
 	ADDON_LDFLAGS = -lPocoNetSSL
 	ADDON_LDFLAGS += -lPocoNet
 	ADDON_LDFLAGS += -lPocoCrypto
