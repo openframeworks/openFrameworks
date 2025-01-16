@@ -28,8 +28,8 @@
 include $(OF_SHARED_MAKEFILES_PATH)/config.linux.common.mk
 
 ifneq ($(shell command -v ld.gold),)
-	PLATFORM_LDFLAGS += -fuse-ld=gold
-	$(info Using Gold linker.)
+PLATFORM_LDFLAGS += -fuse-ld=gold
+$(info Using Gold linker.)
 else
-	$(info Gold linker not found. Using default linker.)
+$(info Gold linker not found. Using default linker.)
 endif
