@@ -227,7 +227,8 @@ $(error This package doesn't support your platform, $(OF_LIBS_OF_COMPILED_PROJEC
 endif
 
 # generate a list of valid core platform variants from the files in the platform makefiles directory
-AVAILABLE_PLATFORM_VARIANTS=$(shell $(FIND) $(OF_PLATFORM_MAKEFILES)/config.*.mk -maxdepth 1 -type f | sed -E 's/.*\.([^\.]*)\.mk/\1/' )
+AVAILABLE_PLATFORM_VARIANTS=$(shell $(FIND) $(OF_PLATFORM_MAKEFILES)/config.*.mk -maxdepth 2 -type f | sed -E 's/.*\.([^\.]*)\.mk/\1/' )
+$(info AVAILABLE_PLATFORM_VARIANTS=$(AVAILABLE_PLATFORM_VARIANTS))
 AVAILABLE_PLATFORM_VARIANTS+=default
 
 # check to see if we have a file for the desired variant.  if not, quit and list the variants.
