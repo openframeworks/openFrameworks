@@ -24,7 +24,7 @@ else
     # this carries over to subsequent compilations of examples
     # echo "PLATFORM_CFLAGS += $CUSTOMFLAGS" >> libs/openFrameworksCompiled/project/linux/64/config.linux64.default.mk
     cd libs/openFrameworksCompiled/project
-    make -j2 Debug
+    MAKEFILE_DEBUG=1 make -j2 Debug
     echo "##[endgroup]"
     echo -e "\033[33m**** Building OF core: COMPLETE ****\033[0m"
 
