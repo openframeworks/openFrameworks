@@ -44,13 +44,13 @@ ifndef GST_VERSION
 		ifeq ($(shell export PKG_CONFIG_LIBDIR=$(PKG_CONFIG_LIBDIR);pkg-config gstreamer-1.0 --exists; echo $$?),0)
 			GST_VERSION = 1.0
 			ifdef MAKEFILE_DEBUG
-                $(info GSTVERSION=$(GST_VERSION))
+	            $(info GSTVERSION=$(GST_VERSION))
 			endif
 		else
 			GST_VERSION = 0.10
 			ifdef MAKEFILE_DEBUG
-                $(info GSTVERSION=$(GST_VERSION))
-                $(info $(shell export PKG_CONFIG_LIBDIR=$(PKG_CONFIG_LIBDIR);pkg-config gstreamer-1.0 --exists; echo $$?))
+	            $(info GSTVERSION=$(GST_VERSION))
+	            $(info $(shell export PKG_CONFIG_LIBDIR=$(PKG_CONFIG_LIBDIR);pkg-config gstreamer-1.0 --exists; echo $$?))
 			endif
 		endif
 	else
