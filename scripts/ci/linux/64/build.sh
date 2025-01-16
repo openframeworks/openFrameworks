@@ -27,11 +27,13 @@ else
     cd libs/openFrameworksCompiled/project
     make -j2 DEBUG=1 MAKEFILE_DEBUG=1
     echo "##[endgroup]"
+    echo -e "\033[1;32m**** Building OF core: COMPLETE ****\033[0m"
 
     echo "##[group]**** Building emptyExample ****"
     cd $ROOT/scripts/templates/linux64
     make -j2 DEBUG=1 MAKEFILE_DEBUG=1
     echo "##[endgroup]"
+     echo -e "\033[1;32m**** Building emptyExample: COMPLETE ****\033[0m"
 
     echo "##[group]**** Building allAddonsExample ****"
     cd $ROOT
@@ -40,4 +42,5 @@ else
     cd examples/templates/allAddonsExample/
     make -j2 DEBUG=1 MAKEFILE_DEBUG=1
     echo "##[endgroup]"
+     echo -e "\033[1;32m**** Building allAddonsExample: COMPLETE ****\033[0m"
 fi
