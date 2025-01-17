@@ -2,9 +2,11 @@
 
 export LC_ALL=C
 
-OF_ROOT=$(cd $(dirname $0)/../..; pwd -P)
+OFDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+OF_ROOT="$(realpath "$OF_DIR/../..")"
+OF_PG_DIR="$(realpath "$OF_DIR/apps/projectGenerator")"
 
-make Release -C ${OF_ROOT}/apps/projectGenerator/commandLine
+make Release -C ${OF_PG_DIR}/commandLine
 ret=$?
 if [ $ret -ne 0 ]; then
   echo "There has been a problem compiling the command line projectGenerator."
@@ -18,7 +20,7 @@ read -p "Do you want to install the command line project generator? [Y/n] " -r
 echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
     echo "To copy the command line project generator we need root permission."
-    sudo cp ${OF_ROOT}/apps/projectGenerator/commandLine/bin/projectGenerator /usr/local/bin/projectGenerator
+    sudo cp ${OF_PG_DIR}/commandLine/bin/projectGenerator /usr/local/bin/projectGenerator
     if [ ! $? -eq 0 ]; then
         echo "Failed to copy the projectGenerator file."
         exit
