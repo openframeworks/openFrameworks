@@ -1,12 +1,20 @@
 #!/usr/bin/env bash
 
 export LC_ALL=C
+OFDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+OFDIR="$(realpath "$OF_DIR/../..")"
 
 ARCH=$(uname -m)
-if [ "$ARCH" = "x86_64" ]; then
-        LIBSPATH=linux64
-else
-        LIBSPATH=linux
+if [ "$ARCH" == "" ]; then
+	if [ "$ARCH" = "x86_64" ]; then
+		LIBSPATH=linux/64
+	elif [ "$ARCH" = "arm64" ]; then
+		LIBSPATH=linux/arm64
+	elif [ "$ARCH" = "jetson" ]; then
+		LIBSPATH=linux/jetson
+	else
+		LIBSPATH=linux
+	fi
 fi
 
 pushd `dirname $0` > /dev/null
@@ -18,13 +26,13 @@ JOBS=1
 while getopts tj: opt ; do
 	case "$opt" in
 		t)  # testing, only build Debug
-		    BUILD="test" ;;
+			BUILD="test" ;;
 		j)  # make job count for parallel build
-		    JOBS="$OPTARG"
+			JOBS="$OPTARG"
 	esac
 done
 
-cd "${SCRIPTPATH}/../../libs/openFrameworksCompiled/project"
+cd "${OFDIR}/libs/openFrameworksCompiled/project"
 make -j$JOBS Debug
 exit_code=$?
 if [ $exit_code != 0 ]; then
@@ -34,11 +42,11 @@ if [ $exit_code != 0 ]; then
 fi
 
 if [ "$BUILD" == "install" ]; then
-    make -j$JOBS Release
-    exit_code=$?
-    if [ $exit_code != 0 ]; then
-      echo "there has been a problem compiling Release OF library"
-      echo "please report this problem in the forums"
-      exit $exit_code
-    fi
+	make -j$JOBS Release
+	exit_code=$?
+	if [ $exit_code != 0 ]; then
+	  echo "there has been a problem compiling Release OF library"
+	  echo "please report this problem in the forums"
+	  exit $exit_code
+	fi
 fi

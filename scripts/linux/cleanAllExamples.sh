@@ -1,8 +1,12 @@
 #!/bin/bash
 
+OFDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+OFDIR="$(realpath "$OF_DIR/../..")"
+OFCORE_EXAMPLES_DIR="$(realpath "$OF_DIR/examples")"
+
 for category in $( find ../../examples/ -maxdepth 1 -type d )
 do
-    if [ "$category" = "../../examples/android" -o "$category" = "../../examples/ios" -o "$category" = "../../examples/" ]; then
+    if [ "$category" = "${OFCORE_EXAMPLES_DIR}/android" -o "$category" = "${OFCORE_EXAMPLES_DIR}/ios" -o "$category" = "${OFCORE_EXAMPLES_DIR}/" ]; then
         continue
     fi
 
