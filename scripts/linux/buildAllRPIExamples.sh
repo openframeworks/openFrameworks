@@ -1,7 +1,12 @@
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 PARENT_DIR="$(dirname "$DIR")"
+
+OFDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+OFDIR="$(realpath "$OF_DIR/../..")"
+OFCORE_EXAMPLES_DIR="$(realpath "$OF_DIR/examples")"
+
 MAKEFILE_PATH=$PARENT_DIR/templates/linuxarmv6l/Makefile
-cd ${DIR}/../../examples
+cd ${OFCORE_EXAMPLES_DIR}
 
 for category in $(ls -1d *)
 do
