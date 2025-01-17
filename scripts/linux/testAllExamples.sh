@@ -1,7 +1,11 @@
 #!/bin/bash
 
 export LC_ALL=C
-cd ../../examples
+OFDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+OFDIR="$(realpath "$OF_DIR/../..")"
+OFCORE_EXAMPLES_DIR="$(realpath "$OF_DIR/examples")"
+
+cd ${OFCORE_EXAMPLES_DIR}
 
 for category in $( ls . )
 do
@@ -16,7 +20,7 @@ do
             continue
         fi    
         echo "-----------------------------------------------------------------"
-        echo "building " + $example
+        echo "building [" + $example "]"
         cd $example
         make Debug
         ret=$?
@@ -30,6 +34,7 @@ do
           echo error compiling $example
           exit
         fi
+        echo "build success [" + $example "]"
         cd bin
         ./$example
         cd ../../
