@@ -233,8 +233,8 @@ echo " openFrameworks download_libs.sh v$DL_VERSION args=$@"
 
 if [ "$PLATFORM" == "emscripten" ]; then
     if [[ $BLEEDING_EDGE = 1 ]] ; then
-        if [[ $ARCH = "64" ]] ; then
-            ARCH="_memory64"
+        if [[ $ARCH = "" ]] ; then
+            ARCH="32"
         fi
     fi
 fi
@@ -303,7 +303,7 @@ elif [ "$ARCH" == "" ] && [ "$PLATFORM" == "android" ]; then
     fi
 elif [ "$PLATFORM" == "emscripten" ]; then
     if [[ $BLEEDING_EDGE = 1 ]] ; then
-        PKGS="openFrameworksLibs_${VER}_${PLATFORM}${ARCH}.tar.bz2"
+        PKGS="openFrameworksLibs_${VER}_${PLATFORM}_${ARCH}.tar.bz2"
     else
         PKGS="openFrameworksLibs_${VER}_${PLATFORM}${ARCH}.tar.bz2"
     fi
