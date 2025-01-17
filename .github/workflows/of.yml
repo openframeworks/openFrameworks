@@ -227,6 +227,7 @@ jobs:
   rpi-build:
     runs-on: ubuntu-24.04
     needs: build-linux
+    if: ${{ false }} # DISABLED
     strategy:
       matrix:
         cfg:
