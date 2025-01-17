@@ -148,7 +148,8 @@ check_remote_vs_local() {
 finalurl() {
     local input_url="$1"
     local trimmed_url=$(echo "$input_url" | sed 's/[[:space:]]*$//')
-    local resolved_url=$(curl -L -I --retry "${RETRY_MAX:-5}" --max-redirs "${MAX_REDIRECTS:-5}" --retry-connrefused --write-out '%{url_effective}' --silent --output /dev/null "$trimmed_url")
+    local resolved_url=$(curl -L -I --retry "${RETRY_MAX:-5}" --max-redirs "${MAX_REDIRECTS:-5}" \
+        --retry-connrefused --write-out '%{url_effective}' --silent --output /dev/null "$trimmed_url")
     if [[ -z "$resolved_url" ]]; then
         echoError "Failed to resolve URL: $trimmed_url"
         return 1
@@ -166,7 +167,7 @@ downloader() {
     NO_SSL=0
     COMPRESSION=1
     VERBOSE=0
-    WGET2=0
+    WGET2=1
     CURL=1
     WGET=1
     CLOSE_CONNECTION=1
