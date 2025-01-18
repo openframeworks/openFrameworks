@@ -60,19 +60,20 @@ coreScriptPath() {
 autoDetectOS
 echo " platfrom:[$OF_PLATFORM] arch:[$OF_ARCH]"
 coreScriptPath
-echo " coreScriptPath: $OF_SCRIPT_PATH"
+echo " coreScriptPath: [$OF_SCRIPT_PATH]"
 
 runCommand() {
     local CMD=$1
     local SUBCMD=$2
     local SCRIPT
+
     case "$CMD" in
         setup)
-			echo "openFrameworks setup"
+            echo "openFrameworks setup"
             SCRIPT="${OF_SCRIPT_PATH}/setup.sh"
             ;;
         update)
-			echo "openFrameworks update"
+            echo "openFrameworks update"
             SCRIPT="${OF_SCRIPT_PATH}/download_libs.sh"
             ;;
         upgrade)
@@ -80,36 +81,37 @@ runCommand() {
             case "$SUBCMD" in
                 addons)
                     echo "Upgrading addons"
-                    SCRIPT="${OF_SCRIPT_PATH}/dev/upgrade.sh addons"
+                    SCRIPT="${OF_SCRIPT_PATH}/dev/upgrade.sh"
                     ;;
                 apps)
                     echo "Upgrading apps"
-                    echo "Warning: This script will modify files in the Apps folder. Stop and Back up the folder. Commit all to all local repos. Then Continue"
-					echo "Please confirm backup your projects before proceeding."
-					read -p "Do you want to continue? (Y/n): " CONFIRM
-					if [[ ! "$CONFIRM" =~ ^[Yy]$ ]]; then
-					    echo "Upgrade cancelled. No changes were made."
-					    exit 0
-					fi
-                    SCRIPT="${OF_SCRIPT_PATH}/dev/upgrade.sh addons"
+                    echo "Warning: This script will modify files in the Apps folder. Stop and back up the folder. Commit all to local repos before proceeding."
+                    read -p "Do you want to continue? (Y/n): " CONFIRM
+                    if [[ ! "$CONFIRM" =~ ^[Yy]$ ]]; then
+                        echo "Upgrade cancelled. No changes were made."
+                        exit 0
+                    fi
+                    SCRIPT="${OF_SCRIPT_PATH}/dev/upgrade.sh"
                     ;;
                 *)
                     echo "Unknown upgrade action: $SUBCMD"
-                    echo "Valid upgrade actions: addons"
+                    echo "Valid upgrade actions: addons, apps"
                     exit 1
                     ;;
             esac
+            ;;
         *)
-            echo "Unknown command: $command"
-            echo "Valid commands: setup, update"
+            echo "Unknown command: $CMD"
+            echo "Valid commands: setup, update, upgrade"
             exit 1
             ;;
     esac
+
     if [[ -x "$SCRIPT" ]]; then
-        echo "Executing platform-specific script: $SCRIPT"
+        echo "runCommand: [$SCRIPT]"
         "$SCRIPT" "${@:2}"
     else
-        echo "Error: Script for '$CMD' not found at $SCRIPT"
+        echo "Error: Script for ['$CMD'] not found or not executable at: [$SCRIPT]"
         exit 1
     fi
 }
