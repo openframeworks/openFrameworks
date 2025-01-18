@@ -1,6 +1,6 @@
 #!/bin/bash
 # pipe commands to core openFrameworks scripts
-OF_SCRIPT_VERSION=0.1.0
+OF_SCRIPT_VERSION=0.1.1
 # Dan Rosser 2025
 OF_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 OF_DIR="$(realpath "$OF_DIR/../")"
@@ -64,6 +64,7 @@ echo " coreScriptPath: $OF_SCRIPT_PATH"
 
 runCommand() {
     local CMD=$1
+    local SUBCMD=$2
     local SCRIPT
     case "$CMD" in
         setup)
@@ -74,6 +75,30 @@ runCommand() {
 			echo "openFrameworks update"
             SCRIPT="${OF_SCRIPT_PATH}/download_libs.sh"
             ;;
+        upgrade)
+            echo "openFrameworks upgrade"
+            case "$SUBCMD" in
+                addons)
+                    echo "Upgrading addons"
+                    SCRIPT="${OF_SCRIPT_PATH}/dev/upgrade.sh addons"
+                    ;;
+                apps)
+                    echo "Upgrading apps"
+                    echo "Warning: This script will modify files in the Apps folder. Stop and Back up the folder. Commit all to all local repos. Then Continue"
+					echo "Please confirm backup your projects before proceeding."
+					read -p "Do you want to continue? (Y/n): " CONFIRM
+					if [[ ! "$CONFIRM" =~ ^[Yy]$ ]]; then
+					    echo "Upgrade cancelled. No changes were made."
+					    exit 0
+					fi
+                    SCRIPT="${OF_SCRIPT_PATH}/dev/upgrade.sh addons"
+                    ;;
+                *)
+                    echo "Unknown upgrade action: $SUBCMD"
+                    echo "Valid upgrade actions: addons"
+                    exit 1
+                    ;;
+            esac
         *)
             echo "Unknown command: $command"
             echo "Valid commands: setup, update"
