@@ -31,8 +31,8 @@
 		    "outputPaths": [],
 		    "runOnlyForDeploymentPostprocessing": "0",
 		    "shellPath": "/usr/bin/env bash",
-			"showEnvVarsInLog": "0",
-		    "shellScript": "#!/usr/bin/env bash; TARGET_DIR=\"${BUILT_PRODUCTS_DIR:-$SRCROOT/bin}\"; [ ! -d \"$TARGET_DIR\" ] && echo \"Error: Target directory $TARGET_DIR does not exist.\" && exit 1; ATTRIBUTE_CHECK=$(xattr -p com.apple.xcode.CreatedByBuildSystem \"$TARGET_DIR\" 2>/dev/null); [ -z \"$ATTRIBUTE_CHECK\" ] && xattr -w com.apple.xcode.CreatedByBuildSystem true \"$TARGET_DIR\" && echo \"Attribute com.apple.xcode.CreatedByBuildSystem set to true for $TARGET_DIR\" || echo \"Attribute com.apple.xcode.CreatedByBuildSystem already set for $TARGET_DIR"
+			"shellScript": "#!/usr/bin/env bash\n\n# Determine the Xcode build directory\nTARGET_DIR=\"${BUILT_PRODUCTS_DIR:-$SRCROOT/bin}\"\n\n# Check if the directory exists\nif [ ! -d \"$TARGET_DIR\" ]; then\n  echo \"Error: Target directory $TARGET_DIR does not exist.\"\n  exit 1\nfi\n\n# Check and set the com.apple.xcode.CreatedByBuildSystem attribute\nATTRIBUTE_CHECK=$(xattr -p com.apple.xcode.CreatedByBuildSystem \"$TARGET_DIR\" 2>/dev/null)\nif [ -z \"$ATTRIBUTE_CHECK\" ]; then\n  xattr -w com.apple.xcode.CreatedByBuildSystem true \"$TARGET_DIR\"\n  echo \"Attribute com.apple.xcode.CreatedByBuildSystem set to true for $TARGET_DIR\"\nelse\n  echo \"Attribute com.apple.xcode.CreatedByBuildSystem already set for $TARGET_DIR\"\nfi\n",
+			"showEnvVarsInLog": "0"
 		},
 		"E42962A92163ECCD00A6A9E2": {
 			"alwaysOutOfDate": "1",
