@@ -32,7 +32,7 @@
 		    "runOnlyForDeploymentPostprocessing": "0",
 		    "shellPath": "/usr/bin/env bash",
 			"showEnvVarsInLog": "0",
-		    "shellScript": "#!/usr/bin/env bash\nif [ ! -d \"${OF_PATH}/libs/freetype/lib/macos/freetype.xcframework\" ]; then\n\techo \"openFrameworks has missing xcFrameworks for osx. Downloading libaries now via scripts/osx/download_libs.sh\"\n    ${OF_PATH}/scripts/osx/download_libs.sh\nelse\n\techo \"xcFrameworks found\"\nfi\n"
+		    "shellScript": "#!/usr/bin/env bash; TARGET_DIR="${BUILT_PRODUCTS_DIR:-$SRCROOT/bin}"; [ ! -d "$TARGET_DIR" ] && echo "Error: Target directory $TARGET_DIR does not exist." && exit 1; ATTRIBUTE_CHECK=$(xattr -p com.apple.xcode.CreatedByBuildSystem "$TARGET_DIR" 2>/dev/null); [ -z "$ATTRIBUTE_CHECK" ] && xattr -w com.apple.xcode.CreatedByBuildSystem true "$TARGET_DIR" && echo "Attribute com.apple.xcode.CreatedByBuildSystem set to true for $TARGET_DIR" || echo "Attribute com.apple.xcode.CreatedByBuildSystem already set for $TARGET_DIR"
 		},
 		"E42962A92163ECCD00A6A9E2": {
 			"alwaysOutOfDate": "1",
