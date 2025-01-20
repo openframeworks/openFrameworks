@@ -809,7 +809,6 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = E4B27C3210CBEBB200536013 /* Build configuration list for PBXNativeTarget "openFrameworks" */;
 			buildPhases = (
-				BFEF3FA72C50AEC7009B3CD8 /* Run Script */,
 				E4B27C1110CBEB8E00536013 /* Headers */,
 				E4B27C1210CBEB8E00536013 /* Sources */,
 				E4B27C1310CBEB8E00536013 /* Frameworks */,
@@ -854,26 +853,6 @@
 /* End PBXProject section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		BFEF3FA72C50AEC7009B3CD8 /* Run Script */ = {
-			isa = PBXShellScriptBuildPhase;
-			alwaysOutOfDate = 1;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "Run Script";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = "/usr/bin/env bash";
-			shellScript = "#!/usr/bin/env bash\nif [ ! -d \"${SRCROOT}/../../../freetype/lib/macos/freetype.xcframework\" ]; then\n\techo \"openFrameworks has missing xcFrameworks for osx. Downloading libaries now via scripts/osx/download_libs.sh\"\n    ${SRCROOT}/../../../../scripts/osx/download_libs.sh\nelse\n\techo \"xcFrameworks found\"\nfi\n";
-			showEnvVarsInLog = 0;
-		};
 		BFF80A5D2C50B2C300784E74 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
