@@ -1,0 +1,12 @@
+prefix=/usr
+exec_prefix=${prefix}
+libdir=${prefix}/lib/openframeworks
+includedir=${prefix}/include/openframeworks
+
+Name: openframeworks-poco
+Description: OpenFrameworks ofxPoco addon
+Version: 0.10.0
+
+Requires: openframeworks
+Libs: -lofxPoco -L${libdir}/ofxPoco -lPocoNetSSL -lPocoNet -lPocoCrypto -lPocoUtil -lPocoJSON -lPocoXML -lPocoFoundation -lcrypto -lssl
+Cflags: -I${includedir}/ofxPoco -DPOCO_STATIC
