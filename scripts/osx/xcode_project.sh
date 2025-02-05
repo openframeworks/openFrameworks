@@ -186,7 +186,7 @@ bundle_dylibs() {
 
 echo ''
 divider
-echo "Running $OF_PATH/scripts/osx/xcode_project.sh"
+echo "Running $0"
 
 copy_resources
 bundle_data_folder
