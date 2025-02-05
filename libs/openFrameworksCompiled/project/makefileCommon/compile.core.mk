@@ -61,7 +61,7 @@ $(info 💾 CC = $(CC))
 ################################################################################
 
 # clean it
-ALL_CFLAGS =
+ALL_CFLAGS = -fPIC
 
 # add the core flags (platform flags are aggregated in here)
 ALL_CFLAGS += $(OF_CORE_BASE_CFLAGS)
