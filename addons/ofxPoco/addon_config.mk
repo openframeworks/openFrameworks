@@ -65,26 +65,6 @@ common:
 	ADDON_SOURCES_EXCLUDE = libs/poco/include/%
 
 linux:
-    ADDON_LDFLAGS = -lPocoNetSSL
-	ADDON_LDFLAGS += -lPocoNet
-	ADDON_LDFLAGS += -lPocoCrypto
-	ADDON_LDFLAGS += -lPocoUtil
-	ADDON_LDFLAGS += -lPocoXML
-	ADDON_LDFLAGS += -lPocoFoundation
-	ADDON_LDFLAGS += -lcrypto
-	ADDON_LDFLAGS += -lssl
-
-linux64:
-    ADDON_LDFLAGS = -lPocoNetSSL
-	ADDON_LDFLAGS += -lPocoNet
-	ADDON_LDFLAGS += -lPocoCrypto
-	ADDON_LDFLAGS += -lPocoUtil
-	ADDON_LDFLAGS += -lPocoXML
-	ADDON_LDFLAGS += -lPocoFoundation
-	ADDON_LDFLAGS += -lcrypto
-	ADDON_LDFLAGS += -lssl
-
-linuxarmv6l:
 	ADDON_LDFLAGS = -lPocoNetSSL
 	ADDON_LDFLAGS += -lPocoNet
 	ADDON_LDFLAGS += -lPocoCrypto
@@ -94,7 +74,27 @@ linuxarmv6l:
 	ADDON_LDFLAGS += -lcrypto
 	ADDON_LDFLAGS += -lssl
 
-linuxarmv7l:
+linux/64:
+	ADDON_LDFLAGS = -lPocoNetSSL
+	ADDON_LDFLAGS += -lPocoNet
+	ADDON_LDFLAGS += -lPocoCrypto
+	ADDON_LDFLAGS += -lPocoUtil
+	ADDON_LDFLAGS += -lPocoXML
+	ADDON_LDFLAGS += -lPocoFoundation
+	ADDON_LDFLAGS += -lcrypto
+	ADDON_LDFLAGS += -lssl
+
+linux/armv6l:
+	ADDON_LDFLAGS = -lPocoNetSSL
+	ADDON_LDFLAGS += -lPocoNet
+	ADDON_LDFLAGS += -lPocoCrypto
+	ADDON_LDFLAGS += -lPocoUtil
+	ADDON_LDFLAGS += -lPocoXML
+	ADDON_LDFLAGS += -lPocoFoundation
+	ADDON_LDFLAGS += -lcrypto
+	ADDON_LDFLAGS += -lssl
+
+linux/armv7l:
 	ADDON_LDFLAGS = -lPocoNetSSL
 	ADDON_LDFLAGS += -lPocoNet
 	ADDON_LDFLAGS += -lPocoCrypto
@@ -129,39 +129,12 @@ android/x86:
 
 osx:
 	ADDON_INCLUDES += libs/openssl/include
-	ADDON_LIBS = libs/poco/lib/osx/PocoNetSSL.a
-	ADDON_LIBS += libs/poco/lib/osx/PocoNet.a
-	ADDON_LIBS += libs/poco/lib/osx/PocoCrypto.a
-	ADDON_LIBS += libs/poco/lib/osx/PocoUtil.a
-	ADDON_LIBS += libs/poco/lib/osx/PocoJSON.a
-	ADDON_LIBS += libs/poco/lib/osx/PocoXML.a
-	ADDON_LIBS += libs/poco/lib/osx/PocoFoundation.a
-	ADDON_LIBS += libs/openssl/lib/osx/crypto.a
-	ADDON_LIBS += libs/openssl/lib/osx/ssl.a
 
 ios:
 	ADDON_INCLUDES += libs/openssl/include
-	ADDON_LIBS = libs/poco/lib/ios/PocoNetSSL.a
-	ADDON_LIBS += libs/poco/lib/ios/PocoNet.a
-	ADDON_LIBS += libs/poco/lib/ios/PocoCrypto.a
-	ADDON_LIBS += libs/poco/lib/ios/PocoUtil.a
-	ADDON_LIBS += libs/poco/lib/ios/PocoJSON.a
-	ADDON_LIBS += libs/poco/lib/ios/PocoXML.a
-	ADDON_LIBS += libs/poco/lib/ios/PocoFoundation.a
-	ADDON_LIBS += libs/openssl/lib/ios/crypto.a
-	ADDON_LIBS += libs/openssl/lib/ios/ssl.a
 
 tvos:
 	ADDON_INCLUDES += libs/openssl/include
-	ADDON_LIBS = libs/poco/lib/tvos/PocoNetSSL.a
-	ADDON_LIBS += libs/poco/lib/tvos/PocoNet.a
-	ADDON_LIBS += libs/poco/lib/tvos/PocoCrypto.a
-	ADDON_LIBS += libs/poco/lib/tvos/PocoUtil.a
-	ADDON_LIBS += libs/poco/lib/tvos/PocoJSON.a
-	ADDON_LIBS += libs/poco/lib/tvos/PocoXML.a
-	ADDON_LIBS += libs/poco/lib/tvos/PocoFoundation.a
-	ADDON_LIBS += libs/openssl/lib/tvos/crypto.a
-	ADDON_LIBS += libs/openssl/lib/tvos/ssl.a
 
 msys2:
 	ADDON_LDFLAGS = -lPocoNetSSL
