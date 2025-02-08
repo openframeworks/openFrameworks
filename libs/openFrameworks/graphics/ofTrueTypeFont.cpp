@@ -370,7 +370,7 @@ static bool loadFontFace(const string & _fontname, FT_Face & face,
 	auto fontname = _fontname;
 	auto filename = ofToDataPathFS(fontname);
 	int fontID = index;
-	if(!of::filesystem::exists(filename)){
+	if(!std::filesystem::exists(filename)){
 #ifdef TARGET_LINUX
 		filename = linuxFontPathByName(fontname);
 #elif defined(TARGET_OSX)
@@ -397,7 +397,7 @@ static bool loadFontFace(const string & _fontname, FT_Face & face,
 		}
 		filename = winFontPathByName(fontname);
 #endif
-		if(filename == "" ){
+		if(filename.empty() ){
 			ofLogError("ofTrueTypeFont") << "loadFontFace(): couldn't find font " << fontname;
 			return false;
 		}
