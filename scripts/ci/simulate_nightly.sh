@@ -9,7 +9,7 @@ OF_ROOT=$SCRIPT_DIR/../../
 # Define environment variables
 TARGET="linux64"
 LIBS="64gcc6"
-RELEASE="nightly"  # Set default release value
+RELEASE="nightly"
 
 # Parse command line arguments
 while getopts "r:" opt; do
@@ -28,24 +28,10 @@ echo "OF_ROOT: $OF_ROOT"
 echo "OF_SCRIPT_DIR: $OF_SCRIPT_DIR"
 
 if [[ "$(uname -s)" == "Linux" ]]; then
-# Install libunwind
-# echo "Installing libunwind..."
-sudo apt-get update
-sudo apt-get install -y libunwind-dev
-sudo apt-get install -y npm
-sudo apt-get install -y curl
+	sudo apt-get update
+	sudo apt-get install -y libunwind-dev npm curl
 fi
 
-# Cache packages
-# echo "Caching packages..."
-# This part would require a custom implementation or external tool as caching 
-# packages is specific to GitHub Actions and not easily replicated in bash.
-
-# Checkout the repository (make sure the script is executed in a repository context)
-# echo "Checking out the repository..."
-# git checkout master
-
-# Run ccache (assumes ccache is installed and configured)
 echo "Running ccache..."
 ccache --show-stats
 
@@ -54,8 +40,8 @@ echo "Installing dependencies..."
 $SCRIPT_DIR/$TARGET/install.sh
 
 # Update submodules
-echo "Updating submodules..."
-$OF_ROOT/scripts/dev/init_submodules.sh
+# echo "Updating submodules..."
+# $OF_ROOT/scripts/dev/init_submodules.sh
 
 # Download libraries
 echo "Downloading libraries..."
