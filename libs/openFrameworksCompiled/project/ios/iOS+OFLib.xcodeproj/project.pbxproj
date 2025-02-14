@@ -46,7 +46,7 @@
 		15594FCB15C56D1E00727FF2 /* ofxiOSMapKitDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 15594FBC15C56D1E00727FF2 /* ofxiOSMapKitDelegate.h */; };
 		15594FCC15C56D1E00727FF2 /* ofxiOSMapKitListener.h in Headers */ = {isa = PBXBuildFile; fileRef = 15594FBD15C56D1E00727FF2 /* ofxiOSMapKitListener.h */; };
 		1594366415CF5F420087B684 /* ofxiOSVideoGrabber.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1594366015CF5F420087B684 /* ofxiOSVideoGrabber.mm */; };
-		1594366515CF5F420087B684 /* ofxiOSVideoPlayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1594366115CF5F420087B684 /* ofxiOSVideoPlayer.mm */; };
+		1594366515CF5F420087B684 /* ofxiOSVideoPlayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1594366115CF5F420087B684 /* ofxiOSVideoPlayer.mm */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		1594366615CF5F420087B684 /* ofxiOSVideoGrabber.h in Headers */ = {isa = PBXBuildFile; fileRef = 1594366215CF5F420087B684 /* ofxiOSVideoGrabber.h */; };
 		1594366715CF5F420087B684 /* ofxiOSVideoPlayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 1594366315CF5F420087B684 /* ofxiOSVideoPlayer.h */; };
 		2E49891A292C98000096EC56 /* ofCubeMapShaders.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E498917292C98000096EC56 /* ofCubeMapShaders.h */; };
@@ -125,6 +125,28 @@
 		BB24DED110DA7A3F00E9C588 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB16EBD80F2B2AB500518274 /* QuartzCore.framework */; };
 		BF2B781A2C7E6CF000EAAD6E /* ES3Renderer.m in Sources */ = {isa = PBXBuildFile; fileRef = BF2B78182C7E6CF000EAAD6E /* ES3Renderer.m */; };
 		BF2B781B2C7E6CF000EAAD6E /* ES3Renderer.h in Headers */ = {isa = PBXBuildFile; fileRef = BF2B78192C7E6CF000EAAD6E /* ES3Renderer.h */; };
+		BF3E028A2CE66D830022E17F /* EAMLKView.h in Headers */ = {isa = PBXBuildFile; fileRef = BF3E02872CE66D830022E17F /* EAMLKView.h */; };
+		BF3E028B2CE66D830022E17F /* EAMLKView.mm in Sources */ = {isa = PBXBuildFile; fileRef = BF3E02882CE66D830022E17F /* EAMLKView.mm */; };
+		BF443C922CE6F000005B6CCB /* metalangle.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF3E028C2CE66E670022E17F /* metalangle.xcframework */; };
+		BF443C942CE6F01B005B6CCB /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF443C932CE6F01B005B6CCB /* Metal.framework */; };
+		BF443CA82CE6F0DC005B6CCB /* MGLLayer.h in Headers */ = {isa = PBXBuildFile; fileRef = BF443CA42CE6F0DC005B6CCB /* MGLLayer.h */; };
+		BF443CA92CE6F0DC005B6CCB /* MGLContext.h in Headers */ = {isa = PBXBuildFile; fileRef = BF443C952CE6F0DC005B6CCB /* MGLContext.h */; };
+		BF443CAA2CE6F0DC005B6CCB /* MGLDisplay.h in Headers */ = {isa = PBXBuildFile; fileRef = BF443C982CE6F0DC005B6CCB /* MGLDisplay.h */; };
+		BF443CAB2CE6F0DC005B6CCB /* MGLKViewController+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = BF443CA32CE6F0DC005B6CCB /* MGLKViewController+Private.h */; };
+		BF443CAC2CE6F0DC005B6CCB /* MGLKViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = BF443C9F2CE6F0DC005B6CCB /* MGLKViewController.h */; };
+		BF443CAD2CE6F0DC005B6CCB /* MGLKit.h in Headers */ = {isa = PBXBuildFile; fileRef = BF443C9A2CE6F0DC005B6CCB /* MGLKit.h */; };
+		BF443CAE2CE6F0DC005B6CCB /* MGLContext+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = BF443C972CE6F0DC005B6CCB /* MGLContext+Private.h */; };
+		BF443CAF2CE6F0DC005B6CCB /* MGLKitPlatform.h in Headers */ = {isa = PBXBuildFile; fileRef = BF443C9B2CE6F0DC005B6CCB /* MGLKitPlatform.h */; };
+		BF443CB02CE6F0DC005B6CCB /* MGLKView.h in Headers */ = {isa = PBXBuildFile; fileRef = BF443C9C2CE6F0DC005B6CCB /* MGLKView.h */; };
+		BF443CB12CE6F0DC005B6CCB /* MGLLayer+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = BF443CA62CE6F0DC005B6CCB /* MGLLayer+Private.h */; };
+		BF443CB22CE6F0DC005B6CCB /* MGLKView+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = BF443C9E2CE6F0DC005B6CCB /* MGLKView+Private.h */; };
+		BF443CB32CE6F0DC005B6CCB /* MGLKViewController+iOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = BF443CA12CE6F0DC005B6CCB /* MGLKViewController+iOS.mm */; };
+		BF443CB42CE6F0DC005B6CCB /* MGLContext.mm in Sources */ = {isa = PBXBuildFile; fileRef = BF443C962CE6F0DC005B6CCB /* MGLContext.mm */; };
+		BF443CB52CE6F0DC005B6CCB /* MGLLayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = BF443CA52CE6F0DC005B6CCB /* MGLLayer.mm */; };
+		BF443CB62CE6F0DC005B6CCB /* MGLKViewController+Mac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BF443CA22CE6F0DC005B6CCB /* MGLKViewController+Mac.mm */; platformFilter = maccatalyst; settings = {COMPILER_FLAGS = "-fobjc-arc -fexceptions -fvisibility=default"; }; };
+		BF443CB72CE6F0DC005B6CCB /* MGLKView.mm in Sources */ = {isa = PBXBuildFile; fileRef = BF443C9D2CE6F0DC005B6CCB /* MGLKView.mm */; };
+		BF443CB82CE6F0DC005B6CCB /* MGLDisplay.mm in Sources */ = {isa = PBXBuildFile; fileRef = BF443C992CE6F0DC005B6CCB /* MGLDisplay.mm */; };
+		BF443CB92CE6F0DC005B6CCB /* MGLKViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = BF443CA02CE6F0DC005B6CCB /* MGLKViewController.mm */; settings = {COMPILER_FLAGS = "-fobjc-arc -fexceptions -fvisibility=default"; }; };
 		BFB0B4042C50E019008FB5A3 /* brotli.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BFEC5C022C4FFC5900728DEC /* brotli.xcframework */; };
 		BFB0B4052C50E019008FB5A3 /* openssl.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BFEC5C002C4FFC3A00728DEC /* openssl.xcframework */; };
 		BFB0B4062C50E019008FB5A3 /* curl.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF4730B02BA4056B00E6E3C6 /* curl.xcframework */; };
@@ -136,6 +158,10 @@
 		BFB0B40C2C50E019008FB5A3 /* freetype.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF7E590D2BA204D300E5C52E /* freetype.xcframework */; };
 		BFB0B40D2C50E019008FB5A3 /* fmt.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF7E590B2BA204BC00E5C52E /* fmt.xcframework */; };
 		BFB0B40E2C50E019008FB5A3 /* FreeImage.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF7E59052BA203BC00E5C52E /* FreeImage.xcframework */; };
+		BFBCA8462D2E2B2000816ADC /* ofxiOSMLKView.mm in Sources */ = {isa = PBXBuildFile; fileRef = BFBCA8432D2E2B2000816ADC /* ofxiOSMLKView.mm */; };
+		BFBCA8472D2E2B2000816ADC /* ofxiOSMLKViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = BFBCA8452D2E2B2000816ADC /* ofxiOSMLKViewController.mm */; };
+		BFBCA8482D2E2B2000816ADC /* ofxiOSMLKView.h in Headers */ = {isa = PBXBuildFile; fileRef = BFBCA8422D2E2B2000816ADC /* ofxiOSMLKView.h */; };
+		BFBCA8492D2E2B2000816ADC /* ofxiOSMLKViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = BFBCA8442D2E2B2000816ADC /* ofxiOSMLKViewController.h */; };
 		E4F76E19176CB27200798745 /* of3dPrimitives.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F76D6F176CB27200798745 /* of3dPrimitives.cpp */; };
 		E4F76E1A176CB27200798745 /* of3dPrimitives.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F76D70176CB27200798745 /* of3dPrimitives.h */; };
 		E4F76E1B176CB27200798745 /* of3dUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F76D71176CB27200798745 /* of3dUtils.cpp */; };
@@ -371,6 +397,28 @@
 		BBE5EAB70F49AD8400F28951 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		BF2B78182C7E6CF000EAAD6E /* ES3Renderer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ES3Renderer.m; sourceTree = "<group>"; };
 		BF2B78192C7E6CF000EAAD6E /* ES3Renderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ES3Renderer.h; sourceTree = "<group>"; };
+		BF3E02872CE66D830022E17F /* EAMLKView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EAMLKView.h; sourceTree = "<group>"; };
+		BF3E02882CE66D830022E17F /* EAMLKView.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = EAMLKView.mm; sourceTree = "<group>"; };
+		BF3E028C2CE66E670022E17F /* metalangle.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = metalangle.xcframework; path = ../../../metalangle/lib/macos/metalangle.xcframework; sourceTree = "<group>"; };
+		BF443C932CE6F01B005B6CCB /* Metal.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Metal.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.1.sdk/System/Library/Frameworks/Metal.framework; sourceTree = DEVELOPER_DIR; };
+		BF443C952CE6F0DC005B6CCB /* MGLContext.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MGLContext.h; sourceTree = "<group>"; };
+		BF443C962CE6F0DC005B6CCB /* MGLContext.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = MGLContext.mm; sourceTree = "<group>"; };
+		BF443C972CE6F0DC005B6CCB /* MGLContext+Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MGLContext+Private.h"; sourceTree = "<group>"; };
+		BF443C982CE6F0DC005B6CCB /* MGLDisplay.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MGLDisplay.h; sourceTree = "<group>"; };
+		BF443C992CE6F0DC005B6CCB /* MGLDisplay.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = MGLDisplay.mm; sourceTree = "<group>"; };
+		BF443C9A2CE6F0DC005B6CCB /* MGLKit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MGLKit.h; sourceTree = "<group>"; };
+		BF443C9B2CE6F0DC005B6CCB /* MGLKitPlatform.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MGLKitPlatform.h; sourceTree = "<group>"; };
+		BF443C9C2CE6F0DC005B6CCB /* MGLKView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MGLKView.h; sourceTree = "<group>"; };
+		BF443C9D2CE6F0DC005B6CCB /* MGLKView.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = MGLKView.mm; sourceTree = "<group>"; };
+		BF443C9E2CE6F0DC005B6CCB /* MGLKView+Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MGLKView+Private.h"; sourceTree = "<group>"; };
+		BF443C9F2CE6F0DC005B6CCB /* MGLKViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MGLKViewController.h; sourceTree = "<group>"; };
+		BF443CA02CE6F0DC005B6CCB /* MGLKViewController.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = MGLKViewController.mm; sourceTree = "<group>"; };
+		BF443CA12CE6F0DC005B6CCB /* MGLKViewController+iOS.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; path = "MGLKViewController+iOS.mm"; sourceTree = "<group>"; };
+		BF443CA22CE6F0DC005B6CCB /* MGLKViewController+Mac.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; path = "MGLKViewController+Mac.mm"; sourceTree = "<group>"; };
+		BF443CA32CE6F0DC005B6CCB /* MGLKViewController+Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MGLKViewController+Private.h"; sourceTree = "<group>"; };
+		BF443CA42CE6F0DC005B6CCB /* MGLLayer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MGLLayer.h; sourceTree = "<group>"; };
+		BF443CA52CE6F0DC005B6CCB /* MGLLayer.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = MGLLayer.mm; sourceTree = "<group>"; };
+		BF443CA62CE6F0DC005B6CCB /* MGLLayer+Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MGLLayer+Private.h"; sourceTree = "<group>"; };
 		BF4730B02BA4056B00E6E3C6 /* curl.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = curl.xcframework; path = ../../../curl/lib/macos/curl.xcframework; sourceTree = "<group>"; };
 		BF7E59052BA203BC00E5C52E /* FreeImage.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = FreeImage.xcframework; path = ../../../FreeImage/lib/macos/FreeImage.xcframework; sourceTree = "<group>"; };
 		BF7E590B2BA204BC00E5C52E /* fmt.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = fmt.xcframework; path = ../../../fmt/lib/macos/fmt.xcframework; sourceTree = "<group>"; };
@@ -380,6 +428,10 @@
 		BF7E59192BA2054700E5C52E /* tess2.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = tess2.xcframework; path = ../../../tess2/lib/macos/tess2.xcframework; sourceTree = "<group>"; };
 		BF7E591B2BA2056600E5C52E /* uriparser.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = uriparser.xcframework; path = ../../../uriparser/lib/macos/uriparser.xcframework; sourceTree = "<group>"; };
 		BF7E591D2BA2057900E5C52E /* zlib.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = zlib.xcframework; path = ../../../zlib/lib/macos/zlib.xcframework; sourceTree = "<group>"; };
+		BFBCA8422D2E2B2000816ADC /* ofxiOSMLKView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ofxiOSMLKView.h; sourceTree = "<group>"; };
+		BFBCA8432D2E2B2000816ADC /* ofxiOSMLKView.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ofxiOSMLKView.mm; sourceTree = "<group>"; };
+		BFBCA8442D2E2B2000816ADC /* ofxiOSMLKViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ofxiOSMLKViewController.h; sourceTree = "<group>"; };
+		BFBCA8452D2E2B2000816ADC /* ofxiOSMLKViewController.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ofxiOSMLKViewController.mm; sourceTree = "<group>"; };
 		BFEC5C002C4FFC3A00728DEC /* openssl.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = openssl.xcframework; path = ../../../openssl/lib/macos/openssl.xcframework; sourceTree = "<group>"; };
 		BFEC5C022C4FFC5900728DEC /* brotli.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = brotli.xcframework; path = ../../../brotli/lib/macos/brotli.xcframework; sourceTree = "<group>"; };
 		E41D3E9013B38BE900A75A5D /* CoreOF.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = CoreOF.xcconfig; sourceTree = SOURCE_ROOT; };
@@ -502,6 +554,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BF443C942CE6F01B005B6CCB /* Metal.framework in Frameworks */,
+				BF443C922CE6F000005B6CCB /* metalangle.xcframework in Frameworks */,
 				99752D331BF21EEE0026316A /* GameController.framework in Frameworks */,
 				67D48ED01C10399900F719BC /* CoreMotion.framework in Frameworks */,
 				BB24DECA10DA7A3F00E9C588 /* AudioToolbox.framework in Frameworks */,
@@ -642,6 +696,10 @@
 		15594F8A15C56A4E00727FF2 /* core */ = {
 			isa = PBXGroup;
 			children = (
+				BFBCA8422D2E2B2000816ADC /* ofxiOSMLKView.h */,
+				BFBCA8432D2E2B2000816ADC /* ofxiOSMLKView.mm */,
+				BFBCA8442D2E2B2000816ADC /* ofxiOSMLKViewController.h */,
+				BFBCA8452D2E2B2000816ADC /* ofxiOSMLKViewController.mm */,
 				15594F8F15C56A8A00727FF2 /* ofxiOSAppDelegate.h */,
 				15594F8C15C56A8A00727FF2 /* ofxiOSAppDelegate.mm */,
 				15594F8E15C56A8A00727FF2 /* ofxiOSEAGLView.h */,
@@ -725,6 +783,7 @@
 		BB24E02310DA7C6100E9C588 /* ofxiOS */ = {
 			isa = PBXGroup;
 			children = (
+				BF3E02892CE66D830022E17F /* metal */,
 				BB24E02810DA7C6100E9C588 /* src */,
 			);
 			name = ofxiOS;
@@ -754,6 +813,42 @@
 				29B97323FDCFA39411CA2CEA /* core frameworks */,
 			);
 			name = core;
+			sourceTree = "<group>";
+		};
+		BF3E02892CE66D830022E17F /* metal */ = {
+			isa = PBXGroup;
+			children = (
+				BF443CA72CE6F0DC005B6CCB /* MGLKit */,
+				BF3E02872CE66D830022E17F /* EAMLKView.h */,
+				BF3E02882CE66D830022E17F /* EAMLKView.mm */,
+			);
+			name = metal;
+			path = src/metal;
+			sourceTree = "<group>";
+		};
+		BF443CA72CE6F0DC005B6CCB /* MGLKit */ = {
+			isa = PBXGroup;
+			children = (
+				BF443C952CE6F0DC005B6CCB /* MGLContext.h */,
+				BF443C962CE6F0DC005B6CCB /* MGLContext.mm */,
+				BF443C972CE6F0DC005B6CCB /* MGLContext+Private.h */,
+				BF443C982CE6F0DC005B6CCB /* MGLDisplay.h */,
+				BF443C992CE6F0DC005B6CCB /* MGLDisplay.mm */,
+				BF443C9A2CE6F0DC005B6CCB /* MGLKit.h */,
+				BF443C9B2CE6F0DC005B6CCB /* MGLKitPlatform.h */,
+				BF443C9C2CE6F0DC005B6CCB /* MGLKView.h */,
+				BF443C9D2CE6F0DC005B6CCB /* MGLKView.mm */,
+				BF443C9E2CE6F0DC005B6CCB /* MGLKView+Private.h */,
+				BF443C9F2CE6F0DC005B6CCB /* MGLKViewController.h */,
+				BF443CA02CE6F0DC005B6CCB /* MGLKViewController.mm */,
+				BF443CA12CE6F0DC005B6CCB /* MGLKViewController+iOS.mm */,
+				BF443CA22CE6F0DC005B6CCB /* MGLKViewController+Mac.mm */,
+				BF443CA32CE6F0DC005B6CCB /* MGLKViewController+Private.h */,
+				BF443CA42CE6F0DC005B6CCB /* MGLLayer.h */,
+				BF443CA52CE6F0DC005B6CCB /* MGLLayer.mm */,
+				BF443CA62CE6F0DC005B6CCB /* MGLLayer+Private.h */,
+			);
+			path = MGLKit;
 			sourceTree = "<group>";
 		};
 		E4F76D69176CB27200798745 /* openFrameworks */ = {
@@ -995,6 +1090,8 @@
 		E9F39181299E892200280B58 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				BF443C932CE6F01B005B6CCB /* Metal.framework */,
+				BF3E028C2CE66E670022E17F /* metalangle.xcframework */,
 				BFEC5C022C4FFC5900728DEC /* brotli.xcframework */,
 				BFEC5C002C4FFC3A00728DEC /* openssl.xcframework */,
 				BF4730B02BA4056B00E6E3C6 /* curl.xcframework */,
@@ -1021,8 +1118,11 @@
 				E4F76E1A176CB27200798745 /* of3dPrimitives.h in Headers */,
 				E4F76E1C176CB27200798745 /* of3dUtils.h in Headers */,
 				E999E70E299D53FC00649F18 /* ofxiOSCoreHaptics.h in Headers */,
+				BFBCA8482D2E2B2000816ADC /* ofxiOSMLKView.h in Headers */,
+				BFBCA8492D2E2B2000816ADC /* ofxiOSMLKViewController.h in Headers */,
 				E4F76E1E176CB27200798745 /* ofCamera.h in Headers */,
 				E4F76E20176CB27200798745 /* ofEasyCam.h in Headers */,
+				BF3E028A2CE66D830022E17F /* EAMLKView.h in Headers */,
 				E4F76E22176CB27200798745 /* ofMesh.h in Headers */,
 				E4F76E24176CB27200798745 /* ofNode.h in Headers */,
 				67833F8419F8990D00DBE7AA /* ofFpsCounter.h in Headers */,
@@ -1033,6 +1133,17 @@
 				E4F76E37176CB27200798745 /* ofEvents.h in Headers */,
 				E4F76E38176CB27200798745 /* ofEventUtils.h in Headers */,
 				67D48ED31C103BAE00F719BC /* ofxiOSCoreMotion.h in Headers */,
+				BF443CA82CE6F0DC005B6CCB /* MGLLayer.h in Headers */,
+				BF443CA92CE6F0DC005B6CCB /* MGLContext.h in Headers */,
+				BF443CAA2CE6F0DC005B6CCB /* MGLDisplay.h in Headers */,
+				BF443CAB2CE6F0DC005B6CCB /* MGLKViewController+Private.h in Headers */,
+				BF443CAC2CE6F0DC005B6CCB /* MGLKViewController.h in Headers */,
+				BF443CAD2CE6F0DC005B6CCB /* MGLKit.h in Headers */,
+				BF443CAE2CE6F0DC005B6CCB /* MGLContext+Private.h in Headers */,
+				BF443CAF2CE6F0DC005B6CCB /* MGLKitPlatform.h in Headers */,
+				BF443CB02CE6F0DC005B6CCB /* MGLKView.h in Headers */,
+				BF443CB12CE6F0DC005B6CCB /* MGLLayer+Private.h in Headers */,
+				BF443CB22CE6F0DC005B6CCB /* MGLKView+Private.h in Headers */,
 				E4F76E3A176CB27200798745 /* ofFbo.h in Headers */,
 				E4F76E3C176CB27200798745 /* ofGLProgrammableRenderer.h in Headers */,
 				E4F76E3E176CB27200798745 /* ofGLRenderer.h in Headers */,
@@ -1246,6 +1357,8 @@
 				E4F76E41176CB27200798745 /* ofLight.cpp in Sources */,
 				E4F76E43176CB27200798745 /* ofMaterial.cpp in Sources */,
 				E4F76E45176CB27200798745 /* ofShader.cpp in Sources */,
+				BFBCA8462D2E2B2000816ADC /* ofxiOSMLKView.mm in Sources */,
+				BFBCA8472D2E2B2000816ADC /* ofxiOSMLKViewController.mm in Sources */,
 				E4F76E49176CB27200798745 /* ofTexture.cpp in Sources */,
 				E999E70F299D53FC00649F18 /* ofxiOSCoreHaptics.mm in Sources */,
 				E4F76E4B176CB27200798745 /* ofVbo.cpp in Sources */,
@@ -1258,6 +1371,13 @@
 				E4F76E59176CB27200798745 /* ofPath.cpp in Sources */,
 				E4F76E5B176CB27200798745 /* ofPixels.cpp in Sources */,
 				E4F76E5F176CB27200798745 /* ofRendererCollection.cpp in Sources */,
+				BF443CB32CE6F0DC005B6CCB /* MGLKViewController+iOS.mm in Sources */,
+				BF443CB42CE6F0DC005B6CCB /* MGLContext.mm in Sources */,
+				BF443CB52CE6F0DC005B6CCB /* MGLLayer.mm in Sources */,
+				BF443CB62CE6F0DC005B6CCB /* MGLKViewController+Mac.mm in Sources */,
+				BF443CB72CE6F0DC005B6CCB /* MGLKView.mm in Sources */,
+				BF443CB82CE6F0DC005B6CCB /* MGLDisplay.mm in Sources */,
+				BF443CB92CE6F0DC005B6CCB /* MGLKViewController.mm in Sources */,
 				E4F76E61176CB27200798745 /* ofTessellator.cpp in Sources */,
 				E4F76E63176CB27200798745 /* ofTrueTypeFont.cpp in Sources */,
 				E4F76E65176CB27200798745 /* ofMath.cpp in Sources */,
@@ -1311,6 +1431,7 @@
 				67833F8A19F8996300DBE7AA /* ofBufferObject.cpp in Sources */,
 				1594366415CF5F420087B684 /* ofxiOSVideoGrabber.mm in Sources */,
 				1594366515CF5F420087B684 /* ofxiOSVideoPlayer.mm in Sources */,
+				BF3E028B2CE66D830022E17F /* EAMLKView.mm in Sources */,
 				678C3D24176F04F800D1CC68 /* ofxiOSSoundStream.mm in Sources */,
 				678C3D26176F04F800D1CC68 /* ofxiOSSoundStreamDelegate.mm in Sources */,
 				678C3D28176F04F800D1CC68 /* SoundInputStream.m in Sources */,
