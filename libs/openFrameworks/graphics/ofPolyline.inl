@@ -8,7 +8,8 @@
 #include "ofLog.h"
 #include "ofMath.h"
 
-#include <glm/gtx/vector_angle.hpp>
+#include <ofVectorMath.h> // toGlm
+//#include <glm/gtx/vector_angle.hpp>
 
 //----------------------------------------------------------
 template<class T>
