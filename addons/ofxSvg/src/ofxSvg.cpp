@@ -1859,7 +1859,7 @@ std::shared_ptr<ofx::svg::Group> ofxSvg::addGroup(std::string aname) {
 }
 
 //--------------------------------------------------------------
-std::shared_ptr<Path> ofxSvg::add( const ofPath& apath ) {
+std::shared_ptr<ofx::svg::Path> ofxSvg::add( const ofPath& apath ) {
 	auto path = std::make_shared<Path>();
 	path->path = apath;
 //	_config(path);
@@ -1872,7 +1872,7 @@ std::shared_ptr<Path> ofxSvg::add( const ofPath& apath ) {
 }
 
 //--------------------------------------------------------------
-std::vector< std::shared_ptr<Path> > ofxSvg::add( const std::vector<ofPath>& apaths ) {
+std::vector< std::shared_ptr<ofx::svg::Path> > ofxSvg::add( const std::vector<ofPath>& apaths ) {
 	std::vector< std::shared_ptr<Path> > rpaths;
 	for( auto& path : apaths ) {
 		rpaths.push_back( add(path) );
@@ -1881,7 +1881,7 @@ std::vector< std::shared_ptr<Path> > ofxSvg::add( const std::vector<ofPath>& apa
 }
 
 //--------------------------------------------------------------
-std::shared_ptr<Path> ofxSvg::add( const ofPolyline& apoly ) {
+std::shared_ptr<ofx::svg::Path> ofxSvg::add( const ofPolyline& apoly ) {
 	if( apoly.size() < 2 ) {
 		return std::shared_ptr<Path>();
 	}
@@ -1902,7 +1902,7 @@ std::shared_ptr<Path> ofxSvg::add( const ofPolyline& apoly ) {
 }
 
 //--------------------------------------------------------------
-std::vector< std::shared_ptr<Path> > ofxSvg::add( const std::vector<ofPolyline>& apolys ) {
+std::vector< std::shared_ptr<ofx::svg::Path> > ofxSvg::add( const std::vector<ofPolyline>& apolys ) {
 	std::vector< std::shared_ptr<Path> > rpaths;
 	for( auto& poly : apolys ) {
 		rpaths.push_back( add(poly) );
@@ -1911,12 +1911,12 @@ std::vector< std::shared_ptr<Path> > ofxSvg::add( const std::vector<ofPolyline>&
 }
 
 //--------------------------------------------------------------
-std::shared_ptr<Rectangle> ofxSvg::add( const ofRectangle& arect ) {
+std::shared_ptr<ofx::svg::Rectangle> ofxSvg::add( const ofRectangle& arect ) {
 	return add( arect, 0.0f);
 }
 
 //--------------------------------------------------------------
-std::shared_ptr<Rectangle> ofxSvg::add( const ofRectangle& arect, float aRoundRadius ) {
+std::shared_ptr<ofx::svg::Rectangle> ofxSvg::add( const ofRectangle& arect, float aRoundRadius ) {
 	auto rect = std::make_shared<Rectangle>();
 	rect->rectangle = arect;
 //	rect->pos = arect.getPosition();
@@ -1932,12 +1932,12 @@ std::shared_ptr<Rectangle> ofxSvg::add( const ofRectangle& arect, float aRoundRa
 }
 
 //--------------------------------------------------------------
-std::shared_ptr<Circle> ofxSvg::addCircle( float aradius ) {
+std::shared_ptr<ofx::svg::Circle> ofxSvg::addCircle( float aradius ) {
 	return addCircle(glm::vec2(0.f, 0.f), aradius );
 }
 
 //--------------------------------------------------------------
-std::shared_ptr<Circle> ofxSvg::addCircle( const glm::vec2& apos, float aradius ) {
+std::shared_ptr<ofx::svg::Circle> ofxSvg::addCircle( const glm::vec2& apos, float aradius ) {
 	auto circle = std::make_shared<Circle>();
 //	circle->pos = apos;
 	_applyModelMatrixToElement( circle, apos );
@@ -1953,22 +1953,22 @@ std::shared_ptr<Circle> ofxSvg::addCircle( const glm::vec2& apos, float aradius 
 }
 
 //--------------------------------------------------------------
-std::shared_ptr<Circle> ofxSvg::addCircle( const glm::vec3& apos, float aradius ) {
+std::shared_ptr<ofx::svg::Circle> ofxSvg::addCircle( const glm::vec3& apos, float aradius ) {
 	return addCircle( glm::vec2(apos.x, apos.y), aradius );
 }
 
 //--------------------------------------------------------------
-std::shared_ptr<Circle> ofxSvg::addCircle( const float& ax, const float& ay, float aradius ) {
+std::shared_ptr<ofx::svg::Circle> ofxSvg::addCircle( const float& ax, const float& ay, float aradius ) {
 	return addCircle( glm::vec2(ax, ay), aradius );
 }
 
 //--------------------------------------------------------------
-std::shared_ptr<Ellipse> ofxSvg::addEllipse( float aradiusX, float aradiusY ) {
+std::shared_ptr<ofx::svg::Ellipse> ofxSvg::addEllipse( float aradiusX, float aradiusY ) {
 	return addEllipse( glm::vec2(0.f, 0.f), aradiusX, aradiusY );
 }
 
 //--------------------------------------------------------------
-std::shared_ptr<Ellipse> ofxSvg::addEllipse( const glm::vec2& apos, float aradiusX, float aradiusY ) {
+std::shared_ptr<ofx::svg::Ellipse> ofxSvg::addEllipse( const glm::vec2& apos, float aradiusX, float aradiusY ) {
 	auto ellipse = std::make_shared<Ellipse>();
 	_applyModelMatrixToElement( ellipse, apos );
 	
@@ -1985,22 +1985,22 @@ std::shared_ptr<Ellipse> ofxSvg::addEllipse( const glm::vec2& apos, float aradiu
 }
 
 //--------------------------------------------------------------
-std::shared_ptr<Ellipse> ofxSvg::addEllipse( const glm::vec3& apos, float aradiusX, float aradiusY ) {
+std::shared_ptr<ofx::svg::Ellipse> ofxSvg::addEllipse( const glm::vec3& apos, float aradiusX, float aradiusY ) {
 	return addEllipse( glm::vec2(apos.x, apos.y), aradiusX, aradiusY );
 }
 
 //--------------------------------------------------------------
-std::shared_ptr<Ellipse> ofxSvg::addEllipse( const float& ax, const float& ay, float aradiusX, float aradiusY ) {
+std::shared_ptr<ofx::svg::Ellipse> ofxSvg::addEllipse( const float& ax, const float& ay, float aradiusX, float aradiusY ) {
 	return addEllipse( glm::vec2(ax, ay), aradiusX, aradiusY );
 }
 
 //--------------------------------------------------------------
-std::shared_ptr<Image> ofxSvg::addImage( const of::filesystem::path& apath, const ofTexture& atex ) {
+std::shared_ptr<ofx::svg::Image> ofxSvg::addImage( const of::filesystem::path& apath, const ofTexture& atex ) {
 	return addImage(glm::vec2(0.f, 0.f), apath, atex );
 }
 
 //--------------------------------------------------------------
-std::shared_ptr<Image> ofxSvg::addImage( const glm::vec2& apos, const of::filesystem::path& apath, const ofTexture& atex ) {
+std::shared_ptr<ofx::svg::Image> ofxSvg::addImage( const glm::vec2& apos, const of::filesystem::path& apath, const ofTexture& atex ) {
 	auto img = std::make_shared<Image>();
 	img->filepath = apath;
 	img->width = atex.getWidth();

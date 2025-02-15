@@ -119,25 +119,49 @@ public:
 	/// \param arect an ofRectangle with the dimensions of the bounds.
 	void setBounds( const ofRectangle& arect );
 	
-	
+	/// \brief Push a svg group to be active for adding elements to.
+	/// \param aname The path to the svg group in the document, if a group is already pushed, search in that group.
 	void pushGroup( const std::string& aname );
+	/// \brief Push a svg group to be active for adding elements to.
+	/// \param aname The group to push and make active.
 	void pushGroup( const std::shared_ptr<ofx::svg::Group>& agroup );
+	/// \brief Remove the most recent pushed group if any.
 	void popGroup();
-	
+	/// \brief Set the current fill color. Any subsequent items using a fill color will adopt this color.
+	/// \param acolor is the color to set.
 	void setFillColor(ofColor acolor);
+	/// \brief Set if items should be filled or not. Any subsequent added items will use this value.
+	/// \param abFilled should the items be filled or not.
 	void setFilled(bool abFilled);
-
+	/// \brief Set the current stroke color. Any subsequent items using a stroke color will adopt this color.
+	/// \param acolor is the color to set.
 	void setStrokeColor(ofColor acolor);
+	/// \brief Set the current stroke width. Any subsequent items using a stroke width will adopt this value.
+	/// \param aLineWidth is the width of the lines.
 	void setStrokeWidth(float aLineWidth);
+	/// \brief Set if items should have a stroke or not. Any subsequent items using a stroke will adopt this value.
+	/// \param abStroke activates or deactivates strokes.
 	void setHasStroke(bool abStroke);
-	
+	/// \brief Set the circle resolution for rendering.
+	/// Set this value before calling load.
+	/// \param ac (int) the resolution to use.
 	void setCircleResolution( int ac ) { mCircleResolution = ac; }
+	/// \brief Set the curve resolution for rendering.
+	/// Set this value before calling load.
+	/// \param ac (int) the resolution to use.
 	void setCurveResolution( int ac ) { mCurveResolution = ac; }
+	/// \brief Get the circle resolution for rendering.
+	/// \return int of the circle resolution.
 	int getCircleResolution() { return mCircleResolution; }
+	/// \brief Get the curve resolution for rendering.
+	/// \return int of the circle resolution.
 	int getCurveResolution() { return mCurveResolution; };
-	
+	/// \brief Get the current css used for items.
+	/// \return ofx::svg::CssClass.
 	ofx::svg::CssClass& getCurrentCss() { return mCurrentCss;}
-	
+	/// \brief Add a group to the document. This will also push back the group as current.
+	/// \param aname is the name of the group.
+	/// \return std::shared_ptr<ofx::svg::Group> as the group that was created.
 	std::shared_ptr<ofx::svg::Group> addGroup(std::string aname);
 	
 	std::shared_ptr<ofx::svg::Path> add( const ofPath& apath );

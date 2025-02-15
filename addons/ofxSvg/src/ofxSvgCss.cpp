@@ -132,10 +132,10 @@ ofColor CssClass::sGetColor(const std::string& astr ) {
 float CssClass::sGetFloat(const std::string& astr) {
 	if( astr.empty() ) return 0.f;
 	
-	bool bHasPix = false;
+//	bool bHasPix = false;
 	std::string cstr = astr;
 	if( ofIsStringInString(cstr, "px")) {
-		bHasPix = true;
+//		bHasPix = true;
 		ofStringReplace(cstr, "px", "");
 	}
 	return ofToFloat( cstr );
