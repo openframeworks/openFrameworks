@@ -2156,7 +2156,7 @@ float ofxSvg::_getZRotationRadians(const glm::mat4& amat) {
 	}
 	
 	// Compute rotation angle using atan2
-	float angleRadians = std::atan2f(xAxis.y, xAxis.x);
+	float angleRadians = atan2f(xAxis.y, xAxis.x);
 	return angleRadians;
 }
 

@@ -135,7 +135,7 @@ public:
 	virtual void draw() override;
 	glm::vec2 getAnchorPointForPercent( float ax, float ay );
 	
-	std::string getFilePath() { return filepath; }
+	std::filesystem::path getFilePath() { return filepath; }
 	
 	void setColor( ofColor aColor ) {
 		color = aColor;
