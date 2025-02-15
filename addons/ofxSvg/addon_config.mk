@@ -16,8 +16,8 @@
 
 meta:
 	ADDON_NAME = ofxSvg
-	ADDON_DESCRIPTION = Addon for parsing svg files into ofPaths
-	ADDON_AUTHOR = Joshua Noble, maintained by OF Team
+	ADDON_DESCRIPTION = Addon for parsing, manipulating and saving svg files.
+	ADDON_AUTHOR = Nick Hardeman, original by Joshua Noble, maintained by OF Team
 	ADDON_TAGS = "svg"
 	ADDON_URL = http://github.com/openframeworks/openFrameworks
 
@@ -59,30 +59,3 @@ common:
 	# when parsing the file system looking for libraries exclude this for all or
 	# a specific platform
 	# ADDON_LIBS_EXCLUDE =
-
-osx:
-	ADDON_LIBS = libs/svgtiny/lib/macos/svgtiny.xcframework/macos-arm64_x86_64/libsvgtiny.a
-	ADDON_LIBS += libs/libxml2/lib/macos/libxml2.xcframework/macos-arm64_x86_64/libxml2.a
-
-ios:
-	ADDON_LIBS = libs/svgtiny/lib/ios/svgtiny.a
-	ADDON_LIBS += libs/libxml2/lib/ios/xml2.a
-
-linux64:
-	ADDON_LIBS = libs/svgtiny/lib/linux64/libsvgtiny.a
-	ADDON_LIBS += libs/libxml2/lib/linux64/libxml2.a
-
-linuxarmv6l:
-	ADDON_LIBS = libs/svgtiny/lib/linuxarmv6l/libsvgtiny.a
-	ADDON_LIBS += libs/libxml2/lib/linuxarmv6l/libxml2.a
-
-linuxarmv7l:
-	ADDON_LIBS = libs/svgtiny/lib/linuxarmv7l/libsvgtiny.a
-	ADDON_LIBS += libs/libxml2/lib/linuxarmv7l/libxml2.a
-
-linuxaarch64:
-	ADDON_LIBS = libs/svgtiny/lib/linuxaarch64/libsvgtiny.a
-	ADDON_LIBS += libs/libxml2/lib/linuxaarch64/libxml2.a
-
-msys2:
-	ADDON_PKG_CONFIG_LIBRARIES = libxml-2.0
