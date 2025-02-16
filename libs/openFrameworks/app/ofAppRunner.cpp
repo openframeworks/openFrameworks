@@ -199,7 +199,7 @@ int ofRunApp(const shared_ptr<ofBaseApp> & app){
 //}
 
 void ofRunApp(
-			  const shared_ptr<ofAppBaseWindow> & window, 
+			  const shared_ptr<ofAppBaseWindow> & window,
 			  const shared_ptr<ofBaseApp> & app){
 	ofInit();
 	ofCore.mainLoop->run(window, app);
@@ -442,7 +442,7 @@ void ofToggleFullscreen(){
 
 //--------------------------------------
 void ofSetWindowMousePassThrough(bool allowPassThrough){
-	mainLoop()->getCurrentWindow()->setWindowMousePassthrough(allowPassThrough);
+	ofCore.getCurrentWindow()->setWindowMousePassthrough(allowPassThrough);
 }
 
 //--------------------------------------
