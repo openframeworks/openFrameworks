@@ -410,7 +410,7 @@ public:
 	bool notifyDragEvent(ofDragInfo info);
 
 private:
-	float targetRate;
+	float targetRate = 60.0f;
 	bool bFrameRateSet;
 	ofTimerFps timerFps;
 //	ofTimer timer;
@@ -424,7 +424,7 @@ private:
 	int modifiers = 0;
 
 	enum TimeMode {
-		System,
+		System = 0,
 		FixedRate,
 		Filtered,
 	} timeMode

@@ -166,6 +166,7 @@ void ofEnableSetupScreen();
 void ofDisableSetupScreen();
 void ofSetFullscreen(bool fullscreen);
 void ofToggleFullscreen();
+void ofSetWindowMousePassThrough(bool allowPassThrough);
 //-------------------------- sync
 void ofSetVerticalSync(bool bSync);
 

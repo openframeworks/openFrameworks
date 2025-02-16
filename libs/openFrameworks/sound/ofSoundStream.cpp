@@ -70,6 +70,7 @@ bool ofSoundStreamSettings::setInDevice(const ofSoundDevice & device){
 	}
 	api = device.api;
 	inDevice = device;
+	inDevice.api = api;
 	return true;
 }
 
@@ -80,6 +81,7 @@ bool ofSoundStreamSettings::setOutDevice(const ofSoundDevice & device){
 	}
 	api = device.api;
 	outDevice = device;
+	outDevice.api = api;
 	return true;
 }
 
@@ -90,7 +92,7 @@ bool ofSoundStreamSettings::setApi(ofSoundDevice::Api api){
 		return false;
 	}
 	if(api!=ofSoundDevice::UNSPECIFIED && outDevice.deviceID!=-1 && outDevice.api != api){
-		ofLogError("ofSoundStreamSettings") << "Setting API after setting IN device with api: " << toString(outDevice.api) << " won't do anything";
+		ofLogError("ofSoundStreamSettings") << "Setting API after setting OUT device with api: " << toString(outDevice.api) << " won't do anything";
 		return false;
 	}
 	this->api = api;

@@ -15,7 +15,7 @@ bool AnimationClip::shouldRemove( const AnimationClip& ac ) {
 }
 
 //--------------------------------------------------------------
-size_t AnimationMixer::getNumAnimationClips() {
+std::size_t AnimationMixer::getNumAnimationClips() {
 	return mAnimationClips.size();
 }
 

@@ -335,7 +335,8 @@ public:
 	///
 	/// \param path directory path
 	/// \returns cleaned path + trailing slash (if needed)
-	static of::filesystem::path getPathForDirectory(const of::filesystem::path & path);
+	static std::string getPathForDirectory(const of::filesystem::path & path);
+	static of::filesystem::path getPathForDirectoryFS(const of::filesystem::path & path);
 
 	/// Get the absolute, full path for a given path,
 	/// ie. "images" -> "/Users/mickey/of/apps/myApps/Donald/bin/data/images".
@@ -345,7 +346,9 @@ public:
 	/// are *not* in the data folder and want the direct path without relative
 	/// "../../"
 	/// \returns absolute path
-	static of::filesystem::path getAbsolutePath(const of::filesystem::path & path, bool bRelativeToData = true);
+	// FIXME: - Deprecate
+	static std::string getAbsolutePath(const of::filesystem::path & path, bool bRelativeToData = true);
+	static of::filesystem::path getAbsolutePathFS(const of::filesystem::path & path, bool bRelativeToData = true);
 
 	/// Check if a path is an absolute (aka a full path),
 	/// ie. "images" -> false,
@@ -378,6 +381,7 @@ public:
 	/// \param filePath file path
 	/// \returns basename
 
+  // FIXME: Deprecate / Remove this. Find instances in OF Core to remove
 	static std::string getBaseName(const of::filesystem::path & filePath);
 
 	/// Get the enclosing parent directory of a path,
@@ -389,7 +393,7 @@ public:
 	/// are *not* in the data folder and want the direct path without relative
 	/// "../../"
 	///\returns enclosing directory
-	static of::filesystem::path getEnclosingDirectory(const of::filesystem::path & filePath, bool bRelativeToData = true);
+	static std::string getEnclosingDirectory(const of::filesystem::path & filePath, bool bRelativeToData = true);
 
 	/// Create the enclosing parent directory of a path, ie.
 	/// "images" is the enclosing directory of "duck.jpg" = "images/duck.jpg".
@@ -430,7 +434,8 @@ public:
 	/// Linux: the binary file itself
 	///
 	/// \returns current executable path
-	static of::filesystem::path getCurrentExePath();
+	static of::filesystem::path getCurrentExePathFS();
+	static std::string getCurrentExePath();
 
 	/// Get the full path to the application's parent directory.
 	///
@@ -438,8 +443,8 @@ public:
 	/// Mac: the Contents/MacOS folder within the application's .app bundle
 	///
 	/// \returns current executable directory
-	static of::filesystem::path getCurrentExeDir();
-//	static std::string getCurrentExeDir();
+	static of::filesystem::path getCurrentExeDirFS();
+	static std::string getCurrentExeDir();
 
 	/// Get the absolute path to the user's home directory.
 	///
@@ -569,7 +574,8 @@ public:
 	/// Get the current path.
 	///
 	/// \returns current path
-	of::filesystem::path path() const;
+	std::string path() const;
+	of::filesystem::path pathFS() const;
 
 	/// Get the current path without its extension,
 	/// ie. "duck.jpg" ->"duck".
@@ -595,13 +601,15 @@ public:
 	/// directory.
 	///
 	/// \returns current path's enclosing directory
-	of::filesystem::path getEnclosingDirectory() const;
+	// MARK: - near future FS
+	std::string getEnclosingDirectory() const;
 
 	/// \biref Get the absolute, full path of the file,
 	/// ie. "images" -> "/Users/mickey/of/apps/myApps/Donald/bin/data/images".
 	///
 	/// \returns current path as an absolute path
-	of::filesystem::path getAbsolutePath() const;
+	// MARK: - near future FS
+	std::string getAbsolutePath() const;
 
 	/// Check if the current path is readable.
 	///
@@ -878,7 +886,9 @@ public:
 	/// ie. "images" -> "/Users/mickey/of/apps/myApps/Donald/bin/data/images".
 	///
 	/// \return current path as an absolute path
-	of::filesystem::path getAbsolutePath() const;
+	// MARK: - near future FS
+	std::string getAbsolutePath() const;
+	of::filesystem::path getAbsolutePathFS() const;
 
 	/// Check if the current path is readable.
 	///
@@ -1223,7 +1233,9 @@ void ofDisableDataPath();
 /// \param absolute Set to true to return an absolute path.
 /// \returns the new path, unless paths were disabled with ofDisableDataPath().
 
-of::filesystem::path ofToDataPath(const of::filesystem::path & path, bool absolute = false);
+of::filesystem::path ofToDataPathFS(const of::filesystem::path & path, bool absolute=false);
+
+std::string ofToDataPath(const of::filesystem::path & path, bool absolute = false);
 
 /// \brief Reset the working directory to the platform default.
 ///
@@ -1246,6 +1258,7 @@ void ofSetDataPathRoot(const of::filesystem::path & root);
 
 std::string ofPathToString(const of::filesystem::path & path);
 
+std::string ofGetExtensionLower(const of::filesystem::path & path);
 
 /*! \cond PRIVATE */
 namespace of {

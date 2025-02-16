@@ -57,7 +57,7 @@ protected:
 class AnimationMixer {
 public:
 	
-	size_t getNumAnimationClips();
+	std::size_t getNumAnimationClips();
 	AnimationClip& getAnimationClip(int aindex);
 	AnimationClip& getAnimationClip(const std::string& aname);
 	std::vector<AnimationClip>& getAnimationClips() { return mAnimationClips; }

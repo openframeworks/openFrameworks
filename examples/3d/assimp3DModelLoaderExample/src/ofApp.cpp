@@ -5,6 +5,10 @@
 
 //--------------------------------------------------------------
 void ofApp::setup(){
+	ofSetFrameRate(0);
+	ofSetVerticalSync(false);
+
+	
     ofSetLogLevel(OF_LOG_VERBOSE);
     ofBackground(50, 0);
 

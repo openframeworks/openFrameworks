@@ -31,7 +31,8 @@
 		    "outputPaths": [],
 		    "runOnlyForDeploymentPostprocessing": "0",
 		    "shellPath": "/usr/bin/env bash",
-		    "shellScript": "#!/usr/bin/env bash\nif [ ! -d \"${OF_PATH}/libs/freetype/lib/macos/freetype.xcframework\" ]; then\n\techo \"openFrameworks has missing xcFrameworks for osx. Downloading libaries now via scripts/osx/download_libs.sh\"\n    ${OF_PATH}/scripts/osx/download_libs.sh\nelse\n\techo \"xcFrameworks found\"\nfi\n"
+			"shellScript": "#!/usr/bin/env bash\n\n# Determine the Xcode build directory\nTARGET_DIR=\"${BUILT_PRODUCTS_DIR:-$SRCROOT/bin}\"\n\n# Check if the directory exists\nif [ ! -d \"$TARGET_DIR\" ]; then\n  echo \"Error: Target directory $TARGET_DIR does not exist.\"\n  exit 1\nfi\n\n# Check and set the com.apple.xcode.CreatedByBuildSystem attribute\nATTRIBUTE_CHECK=$(xattr -p com.apple.xcode.CreatedByBuildSystem \"$TARGET_DIR\" 2>/dev/null)\nif [ -z \"$ATTRIBUTE_CHECK\" ]; then\n  xattr -w com.apple.xcode.CreatedByBuildSystem true \"$TARGET_DIR\"\n  echo \"Attribute com.apple.xcode.CreatedByBuildSystem set to true for $TARGET_DIR\"\nelse\n  echo \"Attribute com.apple.xcode.CreatedByBuildSystem already set for $TARGET_DIR\"\nfi\n",
+			"showEnvVarsInLog": "0"
 		},
 		"E42962A92163ECCD00A6A9E2": {
 			"alwaysOutOfDate": "1",
@@ -42,7 +43,7 @@
 			"outputPaths": [],
 			"isa": "PBXShellScriptBuildPhase",
 			"runOnlyForDeploymentPostprocessing": "0",
-			"shellScript": "echo \"💾 Compiling openFrameworks\"\nxcodebuild -project \"$OF_PATH/libs/openFrameworksCompiled/project/osx/openFrameworksLib.xcodeproj\" -target openFrameworks -configuration \"${CONFIGURATION}\"  CLANG_CXX_LANGUAGE_STANDARD=$CLANG_CXX_LANGUAGE_STANDARD MACOSX_DEPLOYMENT_TARGET=$MACOSX_DEPLOYMENT_TARGET GCC_PREPROCESSOR_DEFINITIONS='$USER_PREPROCESSOR_DEFINITIONS'\n",
+			"shellScript": "$OF_CORE_BUILD_COMMAND\n",
 			"name": "Run Script — Compile OF",
 			"files": []
 		},
@@ -119,8 +120,8 @@
 			"runOnlyForDeploymentPostprocessing": "0",
 			"outputPaths": [],
 			"shellPath": "/bin/sh",
-			"inputFileListPaths": [],
 			"showEnvVarsInLog": "0",
+			"inputFileListPaths": [],
 			"isa": "PBXShellScriptBuildPhase",
 			"shellScript": "\"$OF_PATH/scripts/osx/xcode_project.sh\"\n",
 			"files": [],
@@ -132,7 +133,6 @@
 			"baseConfigurationReference": "E4EB6923138AFD0F00A09F29",
 			"isa": "XCBuildConfiguration",
 			"buildSettings": {
-				"ONLY_ACTIVE_ARCH" : "YES",
 				"CODE_SIGN_ENTITLEMENTS": "of.entitlements",
 				"GCC_UNROLL_LOOPS": "YES",
 				"HEADER_SEARCH_PATHS": [
@@ -149,7 +149,6 @@
 			"baseConfigurationReference": "E4EB6923138AFD0F00A09F29",
 			"isa": "XCBuildConfiguration",
 			"buildSettings": {
-				"ONLY_ACTIVE_ARCH" : "YES",				
 				"HEADER_SEARCH_PATHS": [
 					"$(OF_CORE_HEADERS)",
 					"src"
