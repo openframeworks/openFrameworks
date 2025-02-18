@@ -7,33 +7,32 @@
 #pragma once
 #include "ofxSvgElements.h"
 
-namespace ofx::svg {
-class Group : public Element {
+class ofxSvgGroup : public ofxSvgElement {
 public:
 	
-	virtual SvgType getType() override {return TYPE_GROUP;}
+	virtual ofxSvgType getType() override {return TYPE_GROUP;}
 	
 	virtual void draw() override;
 	
 	std::size_t getNumChildren();// override;
-	std::vector< std::shared_ptr<Element> >& getChildren();
-	std::vector< std::shared_ptr<Element> > getAllChildren(bool aBIncludeGroups);
-	std::vector< std::shared_ptr<ofx::svg::Group> > getAllChildGroups();
+	std::vector< std::shared_ptr<ofxSvgElement> >& getChildren();
+	std::vector< std::shared_ptr<ofxSvgElement> > getAllChildren(bool aBIncludeGroups);
+	std::vector< std::shared_ptr<ofxSvgGroup> > getAllChildGroups();
 	
-	template<typename ofxSvgType>
-	std::vector< std::shared_ptr<ofxSvgType> > getElementsForType( std::string aPathToGroup="", bool bStrict= false ) {
-		std::shared_ptr<ofxSvgType> temp = std::make_shared<ofxSvgType>();
+	template<typename ofxSvg_T>
+	std::vector< std::shared_ptr<ofxSvg_T> > getElementsForType( std::string aPathToGroup="", bool bStrict= false ) {
+		auto temp = std::make_shared<ofxSvg_T>();
 		auto sType = temp->getType();
 		
-		std::vector< std::shared_ptr<ofxSvgType> > telements;
-		std::vector< std::shared_ptr<Element> > elementsToSearch;
+		std::vector< std::shared_ptr<ofxSvg_T> > telements;
+		std::vector< std::shared_ptr<ofxSvgElement> > elementsToSearch;
 		if( aPathToGroup == "" ) {
 			elementsToSearch = mChildren;
 		} else {
-			std::shared_ptr< Element > temp = getElementForName( aPathToGroup, bStrict );
+			std::shared_ptr< ofxSvgElement > temp = getElementForName( aPathToGroup, bStrict );
 			if( temp ) {
 				if( temp->isGroup() ) {
-					std::shared_ptr< Group > tgroup = std::dynamic_pointer_cast<Group>( temp );
+					std::shared_ptr< ofxSvgGroup > tgroup = std::dynamic_pointer_cast<ofxSvgGroup>( temp );
 					elementsToSearch = tgroup->mChildren;
 				}
 			}
@@ -46,54 +45,54 @@ public:
 		
 		for( std::size_t i = 0; i < elementsToSearch.size(); i++ ) {
 			if( elementsToSearch[i]->getType() == sType ) {
-				telements.push_back( std::dynamic_pointer_cast< ofxSvgType>(elementsToSearch[i]) );
+				telements.push_back( std::dynamic_pointer_cast<ofxSvg_T>(elementsToSearch[i]) );
 			}
 		}
 		return telements;
 	}
 	
-	template<typename ofxSvgType>
-	std::shared_ptr<ofxSvgType> getFirstElementForType( std::string aPathToGroup="", bool bStrict= false ) {
-		auto eles = getElementsForType<ofxSvgType>(aPathToGroup, bStrict );
+	template<typename ofxSvg_T>
+	std::shared_ptr<ofxSvg_T> getFirstElementForType( std::string aPathToGroup="", bool bStrict= false ) {
+		auto eles = getElementsForType<ofxSvg_T>(aPathToGroup, bStrict );
 		if( eles.size() > 0 ) {
 			return eles[0];
 		}
-		return std::shared_ptr<ofxSvgType>();
+		return std::shared_ptr<ofxSvg_T>();
 	}
 	
-	template<typename ofxSvgType>
-	std::vector< std::shared_ptr<ofxSvgType> > getAllElementsForType() {
+	template<typename ofxSvg_T>
+	std::vector< std::shared_ptr<ofxSvg_T> > getAllElementsForType() {
 		
-		auto temp = std::make_shared<ofxSvgType>();
+		auto temp = std::make_shared<ofxSvg_T>();
 		auto sType = temp->getType();
 		
-		std::vector< std::shared_ptr<ofxSvgType> > telements;
+		std::vector< std::shared_ptr<ofxSvg_T> > telements;
 		auto elementsToSearch = getAllChildren(true);
 		
 		for( std::size_t i = 0; i < elementsToSearch.size(); i++ ) {
 			if( elementsToSearch[i]->getType() == sType ) {
-				telements.push_back( std::dynamic_pointer_cast<ofxSvgType>(elementsToSearch[i]) );
+				telements.push_back( std::dynamic_pointer_cast<ofxSvg_T>(elementsToSearch[i]) );
 			}
 		}
 		return telements;
 	}
 	
-	template<typename ofxSvgType>
-	std::vector< std::shared_ptr<ofxSvgType> > getAllElementsContainingNameForType(std::string aname) {
+	template<typename ofxSvg_T>
+	std::vector< std::shared_ptr<ofxSvg_T> > getAllElementsContainingNameForType(std::string aname) {
 		
-		auto temp = std::make_shared<ofxSvgType>();
+		auto temp = std::make_shared<ofxSvg_T>();
 		auto sType = temp->getType();
 		
-		std::vector< std::shared_ptr<ofxSvgType> > telements;
+		std::vector< std::shared_ptr<ofxSvg_T> > telements;
 		// get all children does not include groups, since it's meant to flatten hierarchy
 		
-		if( sType == ofx::svg::TYPE_GROUP ) {
+		if( sType == ofxSvgType::TYPE_GROUP ) {
 			auto groupsToSearch = getAllChildGroups();
 			
 			for( std::size_t i = 0; i < groupsToSearch.size(); i++ ) {
 				if( groupsToSearch[i]->getType() == sType ) {
 					if( ofIsStringInString(groupsToSearch[i]->getName(), aname) ) {
-						telements.push_back( std::dynamic_pointer_cast<ofxSvgType>(groupsToSearch[i]) );
+						telements.push_back( std::dynamic_pointer_cast<ofxSvg_T>(groupsToSearch[i]) );
 					}
 				}
 			}
@@ -103,7 +102,7 @@ public:
 			for( std::size_t i = 0; i < elementsToSearch.size(); i++ ) {
 				if( elementsToSearch[i]->getType() == sType ) {
 					if( ofIsStringInString(elementsToSearch[i]->getName(), aname) ) {
-						telements.push_back( std::dynamic_pointer_cast<ofxSvgType>(elementsToSearch[i]) );
+						telements.push_back( std::dynamic_pointer_cast<ofxSvg_T>(elementsToSearch[i]) );
 					}
 				}
 			}
@@ -113,56 +112,56 @@ public:
 		return telements;
 	}
 	
-	std::vector< std::shared_ptr<Path> > getAllElementsWithPath();
+	std::vector< std::shared_ptr<ofxSvgPath> > getAllElementsWithPath();
 	
-	std::shared_ptr<Element> getElementForName( std::string aPath, bool bStrict = false );	
-	std::vector< std::shared_ptr<Element> > getChildrenForName( const std::string& aname, bool bStrict = false );
+	std::shared_ptr<ofxSvgElement> getElementForName( std::string aPath, bool bStrict = false );
+	std::vector< std::shared_ptr<ofxSvgElement> > getChildrenForName( const std::string& aname, bool bStrict = false );
 	
-	template<typename ofxSvgType>
-	std::vector< std::shared_ptr<ofxSvgType> > getChildrenForTypeForName( const std::string& aname, bool bStrict = false ) {
-		auto temp = std::make_shared<ofxSvgType>();
+	template<typename ofxSvg_T>
+	std::vector< std::shared_ptr<ofxSvg_T> > getChildrenForTypeForName( const std::string& aname, bool bStrict = false ) {
+		auto temp = std::make_shared<ofxSvg_T>();
 		auto sType = temp->getType();
 		
-		std::vector< std::shared_ptr<ofxSvgType> > relements;
+		std::vector< std::shared_ptr<ofxSvg_T> > relements;
 		for( auto& kid : mChildren ) {
 			if( kid->getType() != sType ) {continue;}
 			if( bStrict ) {
 				if( kid->getName() == aname ) {
-					relements.push_back( std::dynamic_pointer_cast<ofxSvgType>(kid));
+					relements.push_back( std::dynamic_pointer_cast<ofxSvg_T>(kid));
 				}
 			} else {
 				if( ofIsStringInString( kid->getName(), aname )) {
-					relements.push_back(std::dynamic_pointer_cast<ofxSvgType>(kid));
+					relements.push_back(std::dynamic_pointer_cast<ofxSvg_T>(kid));
 				}
 			}
 		}
 		return relements;
 	}
 	
-	template<typename ofxSvgType>
-	std::shared_ptr< ofxSvgType > get( std::string aPath, bool bStrict = false ) {
-		auto stemp = std::dynamic_pointer_cast<ofxSvgType>( getElementForName( aPath, bStrict ) );
+	template<typename ofxSvg_T>
+	std::shared_ptr< ofxSvg_T > get( std::string aPath, bool bStrict = false ) {
+		auto stemp = std::dynamic_pointer_cast<ofxSvg_T>( getElementForName( aPath, bStrict ) );
 		return stemp;
 	}
 	
-	template<typename ofxSvgType>
-	std::shared_ptr< ofxSvgType > get( int aIndex ) {
-		auto stemp = std::dynamic_pointer_cast<ofxSvgType>( mChildren[ aIndex ] );
+	template<typename ofxSvg_T>
+	std::shared_ptr< ofxSvg_T > get( int aIndex ) {
+		auto stemp = std::dynamic_pointer_cast<ofxSvg_T>( mChildren[ aIndex ] );
 		return stemp;
 	}
 	
-	bool replace( std::shared_ptr<Element> aOriginal, std::shared_ptr<Element> aNew );
+	bool replace( std::shared_ptr<ofxSvgElement> aOriginal, std::shared_ptr<ofxSvgElement> aNew );
 	
 	// adding 
-	template<typename ofxSvgType>
-	std::shared_ptr<ofxSvgType> add(std::string aname) {
-		auto element = std::make_shared<ofxSvgType>();
+	template<typename ofxSvg_T>
+	std::shared_ptr<ofxSvg_T> add(std::string aname) {
+		auto element = std::make_shared<ofxSvg_T>();
 		element->name = aname;
 		mChildren.push_back(element);
 		return element;
 	};
 	
-	void add( std::shared_ptr<Element> aele ) { mChildren.push_back(aele); }
+	void add( std::shared_ptr<ofxSvgElement> aele ) { mChildren.push_back(aele); }
 	
 	virtual std::string toString(int nlevel = 0) override;
 	
@@ -170,16 +169,15 @@ public:
 	void enableColors();
 	
 protected:
-	void _getElementForNameRecursive( std::vector< std::string >& aNamesToFind, std::shared_ptr<Element>& aTarget, std::vector< std::shared_ptr<Element> >& aElements, bool bStrict );
-	void _getAllElementsRecursive( std::vector< std::shared_ptr<Element> >& aElesToReturn, std::shared_ptr<Element> aele, bool aBIncludeGroups );
+	void _getElementForNameRecursive( std::vector< std::string >& aNamesToFind, std::shared_ptr<ofxSvgElement>& aTarget, std::vector< std::shared_ptr<ofxSvgElement> >& aElements, bool bStrict );
+	void _getAllElementsRecursive( std::vector< std::shared_ptr<ofxSvgElement> >& aElesToReturn, std::shared_ptr<ofxSvgElement> aele, bool aBIncludeGroups );
 	
-	void _getAllGroupsRecursive( std::vector< std::shared_ptr<ofx::svg::Group> >& aGroupsToReturn, std::shared_ptr<Element> aele );
+	void _getAllGroupsRecursive( std::vector< std::shared_ptr<ofxSvgGroup> >& aGroupsToReturn, std::shared_ptr<ofxSvgElement> aele );
 	
-	void _replaceElementRecursive( std::shared_ptr<Element> aTarget, std::shared_ptr<Element> aNew, std::vector< std::shared_ptr<Element> >& aElements, bool& aBSuccessful );
+	void _replaceElementRecursive( std::shared_ptr<ofxSvgElement> aTarget, std::shared_ptr<ofxSvgElement> aNew, std::vector< std::shared_ptr<ofxSvgElement> >& aElements, bool& aBSuccessful );
 	
-	std::vector< std::shared_ptr<Element> > mChildren;
+	std::vector< std::shared_ptr<ofxSvgElement> > mChildren;
 };
-}
 
 
 

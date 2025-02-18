@@ -9,39 +9,38 @@
 
 using std::vector;
 using std::string;
-using namespace ofx::svg;
 
-std::map< string, Text::Font > Text::fonts;
-ofTrueTypeFont Text::defaultFont;
+std::map< string, ofxSvgText::Font > ofxSvgText::fonts;
+ofTrueTypeFont ofxSvgText::defaultFont;
 
 //--------------------------------------------------------------
-std::string Element::sGetTypeAsString(SvgType atype) {
+std::string ofxSvgElement::sGetTypeAsString(ofxSvgType atype) {
 	switch (atype) {
-		case TYPE_GROUP:
+		case ofxSvgType::TYPE_GROUP:
 			return "Group";
 			break;
-		case TYPE_RECTANGLE:
+		case ofxSvgType::TYPE_RECTANGLE:
 			return "Rectangle";
 			break;
-		case TYPE_IMAGE:
+		case ofxSvgType::TYPE_IMAGE:
 			return "Image";
 			break;
-		case TYPE_ELLIPSE:
+		case ofxSvgType::TYPE_ELLIPSE:
 			return "Ellipse";
 			break;
-		case TYPE_CIRCLE:
+		case ofxSvgType::TYPE_CIRCLE:
 			return "Circle";
 			break;
-		case TYPE_PATH:
+		case ofxSvgType::TYPE_PATH:
 			return "Path";
 			break;
-		case TYPE_TEXT:
+		case ofxSvgType::TYPE_TEXT:
 			return "Text";
 			break;
-		case TYPE_DOCUMENT:
+		case ofxSvgType::TYPE_DOCUMENT:
 			return "Document";
 			break;
-		case TYPE_ELEMENT:
+		case ofxSvgType::TYPE_ELEMENT:
 			return "Element";
 			break;
 		default:
@@ -51,48 +50,48 @@ std::string Element::sGetTypeAsString(SvgType atype) {
 }
 
 //--------------------------------------------------------------
-std::string Element::sGetSvgXmlName(SvgType atype) {
+std::string ofxSvgElement::sGetSvgXmlName(ofxSvgType atype) {
 	switch (atype) {
-		case TYPE_GROUP:
+		case ofxSvgType::TYPE_GROUP:
 			return "g";
 			break;
-		case TYPE_RECTANGLE:
+		case ofxSvgType::TYPE_RECTANGLE:
 			return "rect";
 			break;
-		case TYPE_IMAGE:
+		case ofxSvgType::TYPE_IMAGE:
 			return "image";
 			break;
-		case TYPE_ELLIPSE:
+		case ofxSvgType::TYPE_ELLIPSE:
 			return "ellipse";
 			break;
-		case TYPE_CIRCLE:
+		case ofxSvgType::TYPE_CIRCLE:
 			return "circle";
 			break;
-		case TYPE_PATH:
+		case ofxSvgType::TYPE_PATH:
 			return "path";
 			break;
-		case TYPE_TEXT:
+		case ofxSvgType::TYPE_TEXT:
 			return "text";
 			break;
-		case TYPE_DOCUMENT:
+		case ofxSvgType::TYPE_DOCUMENT:
 			return "svg";
 			break;
-		case TYPE_ELEMENT:
-			return "Element";
+		case ofxSvgType::TYPE_ELEMENT:
+			return "element";
 			break;
 		default:
 			break;
 	}
-	return "Unknown";
+	return "unknown";
 }
 
 //--------------------------------------------------------------
-string Element::getTypeAsString() {
+string ofxSvgElement::getTypeAsString() {
 	return sGetTypeAsString(getType());
 }
 
 //--------------------------------------------------------------
-string Element::toString( int nlevel ) {
+string ofxSvgElement::toString( int nlevel ) {
     
     string tstr = "";
     for( int k = 0; k < nlevel; k++ ) {
@@ -117,7 +116,7 @@ string Element::toString( int nlevel ) {
 //}
 
 //--------------------------------------------------------------
-glm::mat4 Element::getTransformMatrix() {
+glm::mat4 ofxSvgElement::getTransformMatrix() {
     glm::mat4 rmat = glm::translate(glm::mat4(1.0f), glm::vec3(pos.x, pos.y, 0.0f));
     if( rotation != 0.0f ) {
         glm::quat rq = glm::angleAxis(ofDegToRad(rotation), glm::vec3(0.f, 0.f, 1.0f ));
@@ -130,7 +129,7 @@ glm::mat4 Element::getTransformMatrix() {
 };
 
 //--------------------------------------------------------------
-ofNode Element::getNodeTransform() {
+ofNode ofxSvgElement::getNodeTransform() {
 	ofNode tnode;// = ofxSvgBase::getNodeTransform();
 	tnode.setPosition(pos.x, pos.y, 0.0f);
     if( rotation != 0.0f ) {
@@ -146,12 +145,12 @@ ofNode Element::getNodeTransform() {
 
 #pragma mark - Image
 //--------------------------------------------------------------
-ofRectangle Image::getRectangle() {
+ofRectangle ofxSvgImage::getRectangle() {
 	return ofRectangle(pos.x, pos.y, getWidth(), getHeight());
 }
 
 //--------------------------------------------------------------
-void Image::draw() {
+void ofxSvgImage::draw() {
 	if( !bTryLoad ) {
 		img.load( getFilePath() );
 		bTryLoad = true;
@@ -171,7 +170,7 @@ void Image::draw() {
 }
 
 //--------------------------------------------------------------
-glm::vec2 Image::getAnchorPointForPercent( float ax, float ay ) {
+glm::vec2 ofxSvgImage::getAnchorPointForPercent( float ax, float ay ) {
 	glm::vec2 ap = glm::vec2( width * ax * scale.x, height * ay * scale.y );
 	ap = glm::rotate(ap, glm::radians(rotation));
 	return ap;
@@ -180,7 +179,7 @@ glm::vec2 Image::getAnchorPointForPercent( float ax, float ay ) {
 #pragma mark - Text
 
 //--------------------------------------------------------------
-void Text::create() {
+void ofxSvgText::create() {
     meshes.clear();
     
     // now lets sort the text based on meshes that we need to create //
@@ -240,7 +239,7 @@ void Text::create() {
 				string tfontPath = tfont.fontFamily;
 				if (bHasFontDirectory) {
 
-					ofLogNotice(moduleName()) << __FUNCTION__ << " : " << tfont.fontFamily << " : starting off searching directory : " << fontsDirectory;
+					ofLogNotice("ofxSvgText") << __FUNCTION__ << " : " << tfont.fontFamily << " : starting off searching directory : " << fontsDirectory;
 					string tNewFontPath = "";
 					bool bFoundTheFont = _recursiveFontDirSearch(fontsDirectory, tfont.fontFamily, tNewFontPath);
 					if (bFoundTheFont) {
@@ -262,7 +261,7 @@ void Text::create() {
 					}*/
 				}
 
-				ofLogNotice(moduleName()) << __FUNCTION__ << " : Trying to load font from: " << tfontPath;
+				ofLogNotice("ofxSvgText") << __FUNCTION__ << " : Trying to load font from: " << tfontPath;
 
 				if (tfontPath == "") {
 					bFontLoadOk = false;
@@ -276,7 +275,7 @@ void Text::create() {
 //                    tfont.sizes[ vIt->first ]       = datFontTho;
                     tfont.textures[ vIt->first ]    = tfont.sizes[ vIt->first ].getFontTexture();
                 } else {
-                    ofLogError(moduleName()) << __FUNCTION__ << " : error loading font family: " << tfont.fontFamily << " size: " << vIt->first;
+                    ofLogError("ofxSvgText") << __FUNCTION__ << " : error loading font family: " << tfont.fontFamily << " size: " << vIt->first;
 					tfont.sizes.erase(vIt->first);
                 }
             }
@@ -288,7 +287,7 @@ void Text::create() {
             ofMesh& tmesh = meshMap[ vIt->first ];
             
             if( !tfont.sizes.count( vIt->first ) ) {
-				ofLogError(moduleName()) << __FUNCTION__ << " : Could not find that font size in the map: " << vIt->first;
+				ofLogError("ofxSvgText") << __FUNCTION__ << " : Could not find that font size in the map: " << vIt->first;
                 continue;
             }
             
@@ -341,7 +340,7 @@ void Text::create() {
 }
 
 //--------------------------------------------------------------
-void Text::draw() {
+void ofxSvgText::draw() {
     if( !isVisible() ) return;
 //    map< string, map<int, ofMesh> > meshes;
     if(bUseShapeColor) {
@@ -404,7 +403,7 @@ void Text::draw() {
 }
 
 //--------------------------------------------------------------
-void Text::draw(const std::string &astring, bool abCentered ) {
+void ofxSvgText::draw(const std::string &astring, bool abCentered ) {
 	if( textSpans.size() > 0 ) {
 		ofPushMatrix(); {
 			ofTranslate( pos.x, pos.y );
@@ -412,12 +411,12 @@ void Text::draw(const std::string &astring, bool abCentered ) {
 			textSpans[0]->draw(astring, abCentered );
 		} ofPopMatrix();
 	} else {
-		ofLogVerbose(moduleName()) << __FUNCTION__ << " : no text spans to draw with.";
+		ofLogVerbose("ofxSvgText") << __FUNCTION__ << " : no text spans to draw with.";
 	}
 }
 
 //--------------------------------------------------------------
-void Text::draw(const std::string& astring, const ofColor& acolor, bool abCentered ) {
+void ofxSvgText::draw(const std::string& astring, const ofColor& acolor, bool abCentered ) {
 	if( textSpans.size() > 0 ) {
 		ofPushMatrix(); {
 			ofTranslate( pos.x, pos.y );
@@ -425,18 +424,18 @@ void Text::draw(const std::string& astring, const ofColor& acolor, bool abCenter
 			textSpans[0]->draw(astring, acolor, abCentered );
 		} ofPopMatrix();
 	} else {
-		ofLogVerbose(moduleName()) << __FUNCTION__ << " : no text spans to draw with.";
+		ofLogVerbose("ofxSvgText") << __FUNCTION__ << " : no text spans to draw with.";
 	}
 }
 
 //--------------------------------------------------------------
-bool Text::_recursiveFontDirSearch(const string& afile, const string& aFontFamToLookFor, string& fontpath) {
+bool ofxSvgText::_recursiveFontDirSearch(const string& afile, const string& aFontFamToLookFor, string& fontpath) {
 	if (fontpath != "") {
 		return true;
 	}
 	ofFile tfFile( afile, ofFile::Reference );
 	if (tfFile.isDirectory()) {
-		ofLogVerbose(moduleName()) << __FUNCTION__ << " : searching in directory : " << afile << " | " << ofGetFrameNum();
+		ofLogVerbose("ofxSvgText") << __FUNCTION__ << " : searching in directory : " << afile << " | " << ofGetFrameNum();
 		ofDirectory tdir;
 		tdir.listDir(afile);
 		tdir.sort();
@@ -450,14 +449,14 @@ bool Text::_recursiveFontDirSearch(const string& afile, const string& aFontFamTo
 	} else {
 		if ( tfFile.getExtension() == "ttf" || tfFile.getExtension() == "otf") {
 			if (ofToLower( tfFile.getBaseName() ) == ofToLower(aFontFamToLookFor)) {
-				ofLogNotice(moduleName()) << __FUNCTION__ << " : found font file for " << aFontFamToLookFor;
+				ofLogNotice("ofxSvgText") << __FUNCTION__ << " : found font file for " << aFontFamToLookFor;
 				fontpath = tfFile.getAbsolutePath();
 				return true;
 			}
 			string tAltFileName = ofToLower(tfFile.getBaseName());
 			ofStringReplace(tAltFileName, " ", "-");
 			if (tAltFileName == ofToLower(aFontFamToLookFor)) {
-				ofLogNotice(moduleName()) << __FUNCTION__ << " : found font file for " << aFontFamToLookFor;
+				ofLogNotice("ofxSvgText") << __FUNCTION__ << " : found font file for " << aFontFamToLookFor;
 				fontpath = tfFile.getAbsolutePath();
 				return true;
 			}
@@ -468,8 +467,8 @@ bool Text::_recursiveFontDirSearch(const string& afile, const string& aFontFamTo
 
 // must return a reference for some reason here //
 //--------------------------------------------------------------
-ofTrueTypeFont& Text::TextSpan::getFont() {
-    if( Text::fonts.count( fontFamily ) > 0 ) {
+ofTrueTypeFont& ofxSvgText::TextSpan::getFont() {
+    if( ofxSvgText::fonts.count( fontFamily ) > 0 ) {
         Font& tfont = fonts[ fontFamily ];
         if( tfont.sizes.count(fontSize) > 0 ) {
             return tfont.sizes[ fontSize ];
@@ -479,12 +478,12 @@ ofTrueTypeFont& Text::TextSpan::getFont() {
 }
 
 //--------------------------------------------------------------
-void Text::TextSpan::draw(const std::string &astring, bool abCentered ) {
+void ofxSvgText::TextSpan::draw(const std::string &astring, bool abCentered ) {
 	draw( astring, color, abCentered );
 }
 
 //--------------------------------------------------------------
-void Text::TextSpan::draw(const std::string &astring, const ofColor& acolor, bool abCentered ) {
+void ofxSvgText::TextSpan::draw(const std::string &astring, const ofColor& acolor, bool abCentered ) {
 	ofSetColor( acolor );
 	auto& cfont = getFont();
 	ofRectangle tempBounds = cfont.getStringBoundingBox( astring, 0, 0 );
@@ -495,27 +494,27 @@ void Text::TextSpan::draw(const std::string &astring, const ofColor& acolor, boo
 }
 
 //--------------------------------------------------------------
-ofTrueTypeFont& Text::getFont() {
+ofTrueTypeFont& ofxSvgText::getFont() {
 	if( textSpans.size() > 0 ) {
 		return textSpans[0]->getFont();
 	}
-	ofLogWarning(moduleName()) << __FUNCTION__ << " : no font detected from text spans, returning default font.";
+	ofLogWarning("ofxSvgText") << __FUNCTION__ << " : no font detected from text spans, returning default font.";
 	return defaultFont;
 }
 
 //--------------------------------------------------------------
-ofColor Text::getColor() {
+ofColor ofxSvgText::getColor() {
 	if( textSpans.size() > 0 ) {
 		return textSpans[0]->color;
 	}
-	ofLogWarning(moduleName()) << __FUNCTION__ << " : no font detected from text spans, returning path fill color.";
+	ofLogWarning("ofxSvgText") << __FUNCTION__ << " : no font detected from text spans, returning path fill color.";
 	return path.getFillColor();
 }
 
 // get the bounding rect for all of the text spans in this svg'ness
 // should be called after create //
 //--------------------------------------------------------------
-ofRectangle Text::getRectangle() {
+ofRectangle ofxSvgText::getRectangle() {
     ofRectangle temp( 0, 0, 1, 1 );
     for( std::size_t i = 0; i < textSpans.size(); i++ ) {
         ofRectangle trect = textSpans[i]->rect;

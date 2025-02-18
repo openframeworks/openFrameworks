@@ -11,8 +11,7 @@
 #include <map>
 #include "ofTrueTypeFont.h"
 
-namespace ofx::svg {
-enum SvgType {
+enum ofxSvgType {
 	TYPE_ELEMENT = 0,
 	TYPE_GROUP,
 	TYPE_RECTANGLE,
@@ -25,18 +24,18 @@ enum SvgType {
 	TYPE_TOTAL
 };
 
-class Element {
+class ofxSvgElement {
 public:
 	
-	static std::string sGetTypeAsString(SvgType atype);
-	static std::string sGetSvgXmlName(SvgType atype);
+	static std::string sGetTypeAsString(ofxSvgType atype);
+	static std::string sGetSvgXmlName(ofxSvgType atype);
 	
-	virtual SvgType getType() {return TYPE_ELEMENT;}
+	virtual ofxSvgType getType() {return ofxSvgType::TYPE_ELEMENT;}
 	std::string getTypeAsString();
 	
 	std::string getName() { return name; }
 	bool isGroup() {
-		return (getType() == TYPE_GROUP);
+		return (getType() == ofxSvgType::TYPE_GROUP);
 	}
 	
 	void setVisible( bool ab ) { bVisible = ab; }
@@ -48,10 +47,6 @@ public:
 	float layer = -1.f;
 	bool bVisible=true;
 	bool bUseShapeColor = true;
-	
-	
-	// will log messages to this module name
-	static const std::string moduleName() { return "ofx::svg::Element"; }
 		
 	glm::vec2 pos = glm::vec2(0.f, 0.f);
 	glm::vec2 scale = glm::vec2(1.0f, 1.0f);
@@ -67,7 +62,7 @@ public:
 	}
 	
 	virtual ofPolyline getFirstPolyline() {
-		ofLogWarning(moduleName()) << __FUNCTION__ << " : Element " << getTypeAsString() << " does not have a path.";
+		ofLogWarning("ofxSvgElement") << __FUNCTION__ << " : Element " << getTypeAsString() << " does not have a path.";
 		return ofPolyline();
 	}
 //protected:
@@ -77,12 +72,12 @@ public:
 	
 };
 
-class Path : public Element {
+class ofxSvgPath : public ofxSvgElement {
 public:
-	virtual SvgType getType() override {return TYPE_PATH;}
+	virtual ofxSvgType getType() override {return ofxSvgType::TYPE_PATH;}
 	
 	virtual void setUseShapeColor( bool ab ) override {
-		Element::setUseShapeColor(ab);
+		ofxSvgElement::setUseShapeColor(ab);
 		path.setUseShapeColor(ab);
 	}
 	
@@ -100,16 +95,16 @@ public:
 		if( path.getOutline().size() > 0 ) {
 			return path.getOutline()[0];
 		}
-		ofLogWarning(moduleName()) << __FUNCTION__ << " : path does not have an outline.";
+		ofLogWarning("ofxSvgPath") << __FUNCTION__ << " : path does not have an outline.";
 		return ofPolyline();
 	}
 	
 	ofPath path;
 };
 
-class Rectangle : public Path {
+class ofxSvgRectangle : public ofxSvgPath {
 public:
-	virtual SvgType getType() override {return TYPE_RECTANGLE;}
+	virtual ofxSvgType getType() override {return ofxSvgType::TYPE_RECTANGLE;}
 	ofRectangle rectangle;
 	
 	float getWidth() { return rectangle.getWidth() * scale.x;}
@@ -121,9 +116,9 @@ public:
 //	float getHeightScaled() { return rectangle.getHeight() * scale.y;}
 };
 
-class Image : public Element {
+class ofxSvgImage : public ofxSvgElement {
 public:
-	virtual SvgType getType() override {return TYPE_IMAGE;}
+	virtual ofxSvgType getType() override {return ofxSvgType::TYPE_IMAGE;}
 	
 	float getWidth() { return width * scale.x;}
 	float getHeight() { return height * scale.y;}
@@ -152,22 +147,22 @@ public:
 	float height = 0.f;
 };
 
-class Circle : public Path {
+class ofxSvgCircle : public ofxSvgPath {
 public:
-	virtual SvgType getType() override {return TYPE_CIRCLE;}
+	virtual ofxSvgType getType() override {return ofxSvgType::TYPE_CIRCLE;}
 	float getRadius() {return radius;}
 	float radius = 10.0;
 };
 
-class Ellipse : public Path {
+class ofxSvgEllipse : public ofxSvgPath {
 public:
-	virtual SvgType getType() override {return TYPE_ELLIPSE;}
+	virtual ofxSvgType getType() override {return ofxSvgType::TYPE_ELLIPSE;}
 	float radiusX, radiusY = 10.0f;
 };
 
 
-class Text : public Rectangle {
-public:	
+class ofxSvgText : public ofxSvgRectangle {
+public:
 	class Font {
 	public:
 		std::string fontFamily;
@@ -205,7 +200,7 @@ public:
 	}
 	
 //	Text() { type = OFX_SVG_TYPE_TEXT; fdirectory=""; bCentered=false; alpha=1.0; bOverrideColor=false; }
-	virtual SvgType getType() override {return TYPE_TEXT;}
+	virtual ofxSvgType getType() override {return ofxSvgType::TYPE_TEXT;}
 	
 	ofTrueTypeFont& getFont();
 	ofColor getColor();
@@ -217,7 +212,6 @@ public:
 	
 	void setFontDirectory( std::string aPath ) {
 		fdirectory = aPath;
-		//		cout << "Setting the font directory to " << fdirectory << endl;
 	}
 	
 	void overrideColor( ofColor aColor ) {
@@ -241,8 +235,6 @@ protected:
 	ofFloatColor _overrideColor;
 	bool bOverrideColor = false;
 };
-
-}
 
 
 

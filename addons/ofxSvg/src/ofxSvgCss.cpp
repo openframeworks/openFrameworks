@@ -12,7 +12,6 @@
 #include <map>
 #include <optional>
 
-using namespace ofx::svg;
 
 std::map<std::string, ofColor> sCommonColors = {
 	{"white", ofColor(255, 255, 255)},
@@ -68,13 +67,13 @@ std::map<std::string, ofColor> sCommonColors = {
 };
 
 //--------------------------------------------------------------
-void CssClass::clear() {
+void ofxSvgCssClass::clear() {
 	properties.clear();
 	name = "default";
 }
 
 //--------------------------------------------------------------
-std::string CssClass::sRgbaToHexString(unsigned char r, unsigned char g, unsigned char b, unsigned char a) {
+std::string ofxSvgCssClass::sRgbaToHexString(unsigned char r, unsigned char g, unsigned char b, unsigned char a) {
 	std::stringstream ss;
 	ss << std::hex << std::setfill('0') << std::uppercase;
 	ss << std::setw(2) << static_cast<int>(r);
@@ -85,7 +84,7 @@ std::string CssClass::sRgbaToHexString(unsigned char r, unsigned char g, unsigne
 }
 
 //--------------------------------------------------------------
-std::string CssClass::sRgbToHexString(unsigned char r, unsigned char g, unsigned char b) {
+std::string ofxSvgCssClass::sRgbToHexString(unsigned char r, unsigned char g, unsigned char b) {
 	std::stringstream ss;
 	ss << std::hex << std::setfill('0') << std::uppercase;
 	ss << std::setw(2) << static_cast<int>(r);
@@ -95,7 +94,7 @@ std::string CssClass::sRgbToHexString(unsigned char r, unsigned char g, unsigned
 }
 
 //--------------------------------------------------------------
-bool CssClass::sIsNone( const std::string& astr ) {
+bool ofxSvgCssClass::sIsNone( const std::string& astr ) {
 	if( astr.empty() ) {
 		return true;
 	}
@@ -106,7 +105,7 @@ bool CssClass::sIsNone( const std::string& astr ) {
 }
 
 //--------------------------------------------------------------
-ofColor CssClass::sGetColor(const std::string& astr ) {
+ofColor ofxSvgCssClass::sGetColor(const std::string& astr ) {
 	bool bHasHash = false;
 	std::string cstr = astr;
 	if( ofIsStringInString(cstr, "#")) {
@@ -129,7 +128,7 @@ ofColor CssClass::sGetColor(const std::string& astr ) {
 }
 
 //--------------------------------------------------------------
-float CssClass::sGetFloat(const std::string& astr) {
+float ofxSvgCssClass::sGetFloat(const std::string& astr) {
 	if( astr.empty() ) return 0.f;
 	
 //	bool bHasPix = false;
@@ -142,7 +141,7 @@ float CssClass::sGetFloat(const std::string& astr) {
 }
 
 //--------------------------------------------------------------
-bool CssClass::addProperties( std::string aPropertiesString ) {
+bool ofxSvgCssClass::addProperties( std::string aPropertiesString ) {
 	if( aPropertiesString.size() > 0 ) {
 		auto propertiesStr = ofSplitString(aPropertiesString, ";", true, true);
 //		int pindex = 0;
@@ -160,7 +159,7 @@ bool CssClass::addProperties( std::string aPropertiesString ) {
 }
 
 //--------------------------------------------------------------
-bool CssClass::addProperty( std::string aPropString ) {
+bool ofxSvgCssClass::addProperty( std::string aPropString ) {
 	auto splitProps = ofSplitString(aPropString, ":", true );
 	if( splitProps.size() == 2 ) {
 		return addProperty(splitProps[0], splitProps[1]);
@@ -169,46 +168,34 @@ bool CssClass::addProperty( std::string aPropString ) {
 }
 
 //--------------------------------------------------------------
-bool CssClass::addProperty( std::string aName, std::string avalue ) {
+bool ofxSvgCssClass::addProperty( std::string aName, std::string avalue ) {
 	if( !aName.empty() && !avalue.empty() ) {
 		Property newProp;
 		newProp.srcString = avalue;
 		ofStringReplace(newProp.srcString, ";", "");
-//		if( ofIsStringInString(newProp.srcString, "px")) {
-//			newProp.bInPixels = true;
-//			ofStringReplace(newProp.srcString, "px", "");
-//		}
-//		if( ofIsStringInString(newProp.srcString, "#")) {
-//			newProp.bHasHash = true;
-//			ofStringReplace(newProp.srcString, "#", "");
-//		}
-		
 		ofStringReplace(newProp.srcString, "'", "");
 		properties[aName] = newProp;
-//		if( newProp.bInPixels ) {
-//			getFloatValue(aName, 1.f);
-//		}
 		return true;
 	}
 	return false;
 }
 
 //--------------------------------------------------
-bool CssClass::addProperty( const std::string& aName, const Property& aprop ) {
+bool ofxSvgCssClass::addProperty( const std::string& aName, const Property& aprop ) {
 	return addProperty(aName, aprop.srcString);
 }
 
 //--------------------------------------------------
-bool CssClass::addProperty( const std::string& aName, const float& avalue ) {
-	ofx::svg::CssClass::Property prop;
+bool ofxSvgCssClass::addProperty( const std::string& aName, const float& avalue ) {
+	ofxSvgCssClass::Property prop;
 	prop.fvalue = avalue;
 	prop.srcString = ofToString(avalue);
 	return addProperty(aName, prop );
 }
 
 //--------------------------------------------------
-bool CssClass::addProperty( const std::string& aName, const ofColor& acolor ) {
-	ofx::svg::CssClass::Property prop;
+bool ofxSvgCssClass::addProperty( const std::string& aName, const ofColor& acolor ) {
+	ofxSvgCssClass::Property prop;
 	prop.cvalue = acolor;
 	prop.srcString = sRgbToHexString(acolor.r, acolor.g, acolor.b);
 //	ofLogNotice(" CssClass::addProperty") << prop.srcString << " color: " << acolor;
@@ -216,47 +203,47 @@ bool CssClass::addProperty( const std::string& aName, const ofColor& acolor ) {
 }
 
 //--------------------------------------------------
-bool CssClass::setFillColor(const ofColor& acolor) {
+bool ofxSvgCssClass::setFillColor(const ofColor& acolor) {
 	return addProperty("fill", acolor);
 }
 
 //--------------------------------------------------
-bool CssClass::setNoFill() {
+bool ofxSvgCssClass::setNoFill() {
 	return addProperty("fill", "none" );
 }
 
 //--------------------------------------------------
-bool CssClass::isFilled() {
+bool ofxSvgCssClass::isFilled() {
 	return !isNone("fill");
 }
 
 //--------------------------------------------------
-bool CssClass::setStrokeColor(const ofColor& acolor) {
+bool ofxSvgCssClass::setStrokeColor(const ofColor& acolor) {
 	return addProperty("stroke", acolor);
 }
 
 //--------------------------------------------------
-bool CssClass::setStrokeWidth( const float& awidth ) {
+bool ofxSvgCssClass::setStrokeWidth( const float& awidth ) {
 	return addProperty("stroke-width", awidth);
 }
 
 //--------------------------------------------------
-bool CssClass::setNoStroke() {
+bool ofxSvgCssClass::setNoStroke() {
 	return addProperty("stroke", "none" );
 }
 
 //--------------------------------------------------
-bool CssClass::hasStroke() {
+bool ofxSvgCssClass::hasStroke() {
 	return !isNone("stroke");
 }
 
 //--------------------------------------------------
-bool CssClass::hasProperty( const std::string& akey ) {
+bool ofxSvgCssClass::hasProperty( const std::string& akey ) {
 	return (properties.count(akey) > 0);
 }
 
 //--------------------------------------------------
-CssClass::Property& CssClass::getProperty( const std::string& akey ) {
+ofxSvgCssClass::Property& ofxSvgCssClass::getProperty( const std::string& akey ) {
 	if( properties.count(akey) < 1 ) {
 		return dummyProp;
 	}
@@ -264,7 +251,7 @@ CssClass::Property& CssClass::getProperty( const std::string& akey ) {
 }
 
 //--------------------------------------------------
-bool CssClass::isNone(const std::string& akey) {
+bool ofxSvgCssClass::isNone(const std::string& akey) {
 	if( properties.count(akey) < 1 ) {
 		return true;
 	}
@@ -272,7 +259,7 @@ bool CssClass::isNone(const std::string& akey) {
 }
 
 //--------------------------------------------------
-bool CssClass::hasAndIsNone(const std::string& akey) {
+bool ofxSvgCssClass::hasAndIsNone(const std::string& akey) {
 	if( hasProperty(akey)) {
 		return sIsNone( properties[akey].srcString );
 	}
@@ -280,7 +267,7 @@ bool CssClass::hasAndIsNone(const std::string& akey) {
 }
 
 //--------------------------------------------------
-std::string CssClass::getValue(const std::string& akey, const std::string& adefault) {
+std::string ofxSvgCssClass::getValue(const std::string& akey, const std::string& adefault) {
 	if( properties.count(akey) < 1 ) {
 		return adefault;
 	}
@@ -292,7 +279,7 @@ std::string CssClass::getValue(const std::string& akey, const std::string& adefa
 }
 
 //--------------------------------------------------
-int CssClass::getIntValue(const std::string& akey, const int& adefault) {
+int ofxSvgCssClass::getIntValue(const std::string& akey, const int& adefault) {
 	if( properties.count(akey) < 1 ) {
 		return adefault;
 	}
@@ -304,26 +291,19 @@ int CssClass::getIntValue(const std::string& akey, const int& adefault) {
 }
 
 //--------------------------------------------------
-float CssClass::getFloatValue(const std::string& akey, const float& adefault) {
+float ofxSvgCssClass::getFloatValue(const std::string& akey, const float& adefault) {
 	if( properties.count(akey) < 1 ) {
 		return adefault;
 	}
 	auto& prop = properties[akey];
 	if( !prop.fvalue.has_value() ) {
 		prop.fvalue = sGetFloat(prop.srcString);
-//		bool bHasPix = false;
-//		std::string cstr = prop.srcString;
-//		if( ofIsStringInString(cstr, "px")) {
-//			bHasPix = true;
-//			ofStringReplace(cstr, "px", "");
-//		}
-//		prop.fvalue = ofToFloat( cstr );
 	}
 	return prop.fvalue.value();
 }
 
 //--------------------------------------------------
-ofColor CssClass::getColor(const std::string& akey) {
+ofColor ofxSvgCssClass::getColor(const std::string& akey) {
 	if( properties.count(akey) < 1 ) {
 		return ofColor(255);
 	}
@@ -335,7 +315,7 @@ ofColor CssClass::getColor(const std::string& akey) {
 }
 
 //--------------------------------------------------
-std::string CssClass::toString(bool aBPrettyPrint) {
+std::string ofxSvgCssClass::toString(bool aBPrettyPrint) {
 	std::stringstream ss;
 	for( auto& piter : properties ) {
 		if(aBPrettyPrint) {
@@ -347,7 +327,7 @@ std::string CssClass::toString(bool aBPrettyPrint) {
 }
 
 //--------------------------------------------------
-bool CssStyleSheet::parse( std::string aCssString ) {
+bool ofxSvgCssStyleSheet::parse( std::string aCssString ) {
 	if( aCssString.empty() ) {
 		return false;
 	}
@@ -418,38 +398,37 @@ bool CssStyleSheet::parse( std::string aCssString ) {
 }
 
 //--------------------------------------------------
-void CssStyleSheet::clear() {
+void ofxSvgCssStyleSheet::clear() {
 	classes.clear();
 }
 
 //--------------------------------------------------
-CssClass& CssStyleSheet::addClass(std::string aname) {
+ofxSvgCssClass& ofxSvgCssStyleSheet::addClass(std::string aname) {
 	if( hasClass(aname) ) {
-//		ofLogWarning("ofx::svg2") << "CssStyleSheet already has class " << aname <<".";
 		return classes[aname];
 	}
-	CssClass tclass;
+	ofxSvgCssClass tclass;
 	tclass.name = aname;
 	classes[aname] = tclass;
 	return classes[aname];
 }
 
 //--------------------------------------------------
-bool CssStyleSheet::hasClass(const std::string& aname) {
+bool ofxSvgCssStyleSheet::hasClass(const std::string& aname) {
 	return classes.count(aname) > 0;
 }
 
 //--------------------------------------------------
-CssClass& CssStyleSheet::getClass( const std::string& aname ) {
+ofxSvgCssClass& ofxSvgCssStyleSheet::getClass( const std::string& aname ) {
 	if( hasClass(aname)) {
 		return classes[aname];
 	}
-	ofLogWarning("ofx::svg2::CssStyleSheet") << "could not find class " << aname;
+	ofLogWarning("ofxSvgCssStyleSheet") << "could not find class " << aname;
 	return dummyClass;
 }
 
 //--------------------------------------------------
-CssClass& CssStyleSheet::getAddClass( CssClass& aclass ) {
+ofxSvgCssClass& ofxSvgCssStyleSheet::getAddClass( ofxSvgCssClass& aclass ) {
 	
 	for( auto& tclass : classes ) {
 		bool bFoundAll = true;
@@ -505,7 +484,7 @@ CssClass& CssStyleSheet::getAddClass( CssClass& aclass ) {
 }
 
 //--------------------------------------------------
-std::string CssStyleSheet::toString(bool aBPrettyPrint) {
+std::string ofxSvgCssStyleSheet::toString(bool aBPrettyPrint) {
 	std::stringstream ss;
 	for( auto& citer : classes ) {
 		ss << std::endl;

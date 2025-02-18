@@ -9,7 +9,6 @@
 #include <regex>
 #include "ofGraphics.h"
 
-using namespace ofx::svg;
 using std::string;
 using std::vector;
 using std::shared_ptr;
@@ -55,7 +54,7 @@ bool ofxSvg::load( const of::filesystem::path& fileName ) {
 	
 	ofXml xml;
 	if( !xml.load(tMainXmlBuffer )) {
-		ofLogWarning(moduleName()) << " unable to load svg from " << fileName;
+		ofLogWarning("ofxSvg") << " unable to load svg from " << fileName;
 		return false;
 	}
 	
@@ -116,30 +115,30 @@ bool ofxSvg::loadFromString(const std::string& data, std::string url) {
         }
 		
 		if(svgNode) {
-			ofLogVerbose(moduleName()) << svgNode.findFirst("style").toString() << "  bounds: " << mBounds;
+			ofLogVerbose("ofxSvg") << svgNode.findFirst("style").toString() << "  bounds: " << mBounds;
 		} else {
-			ofLogVerbose( moduleName() ) << __FUNCTION__ << " : NO svgNode: ";
+			ofLogVerbose("ofxSvg") << __FUNCTION__ << " : NO svgNode: ";
 		}
 		
 		
 		ofXml styleXmlNode = svgNode.findFirst("//style");
 		if( styleXmlNode ) {
-			ofLogVerbose(moduleName()) << __FUNCTION__ << " : STYLE NODE" << styleXmlNode.getAttribute("type").getValue() << " string: " << styleXmlNode.getValue();
+			ofLogVerbose("ofxSvg") << __FUNCTION__ << " : STYLE NODE" << styleXmlNode.getAttribute("type").getValue() << " string: " << styleXmlNode.getValue();
 			
 			mSvgCss.parse(styleXmlNode.getValue());
 			
-			ofLogVerbose(moduleName()) << "-----------------------------";
+			ofLogVerbose("ofxSvg") << "-----------------------------";
 			ofLogVerbose() << mSvgCss.toString();
-			ofLogVerbose(moduleName()) << "-----------------------------";
+			ofLogVerbose("ofxSvg") << "-----------------------------";
  		} else {
-			ofLogVerbose(moduleName()) << __FUNCTION__ << " : NO STYLE NODE";
+			ofLogVerbose("ofxSvg") << __FUNCTION__ << " : NO STYLE NODE";
 		}
         
 		
 		// the defs are added in the _parseXmlNode function //
 		_parseXmlNode( svgNode, mChildren );
 		
-		ofLogVerbose(moduleName()) << " number of defs elements: " << mDefElements.size();
+		ofLogVerbose("ofxSvg") << " number of defs elements: " << mDefElements.size();
     }
     
     return true;
@@ -148,7 +147,7 @@ bool ofxSvg::loadFromString(const std::string& data, std::string url) {
 //--------------------------------------------------------------
 bool ofxSvg::reload() {
     if( svgPath.empty() ) {
-        ofLogError(moduleName()) << __FUNCTION__ << " : svg path is empty, please call load with file path before calling reload";
+        ofLogError("ofxSvg") << __FUNCTION__ << " : svg path is empty, please call load with file path before calling reload";
         return false;
     }
     return load( svgPath );
@@ -259,7 +258,7 @@ ofPath& ofxSvg::getPathAt(int n) {
 		getPaths();
 	}
 	if( n < 0 || n >= mPaths.size() ) {
-		ofLogWarning(moduleName()) << "getPathAt: " << n << " out of bounds for number of paths: " << mPaths.size();
+		ofLogWarning("ofxSvg") << "getPathAt: " << n << " out of bounds for number of paths: " << mPaths.size();
 		return sDummyPath;
 	}
 	return mPaths[n];
@@ -385,7 +384,7 @@ string ofxSvg::cleanString( string aStr, string aReplace ) {
 }
 
 //--------------------------------------------------------------
-void ofxSvg::_parseXmlNode( ofXml& aParentNode, vector< shared_ptr<Element> >& aElements ) {
+void ofxSvg::_parseXmlNode( ofXml& aParentNode, vector< shared_ptr<ofxSvgElement> >& aElements ) {
     
     auto kids = aParentNode.getChildren();
     for( auto& kid : kids ) {
@@ -393,20 +392,20 @@ void ofxSvg::_parseXmlNode( ofXml& aParentNode, vector< shared_ptr<Element> >& a
 			auto fkid = kid.getFirstChild();
 			if( fkid ) {
 				mCurrentSvgCss.reset();
-				auto tgroup = std::make_shared<Group>();
+				auto tgroup = std::make_shared<ofxSvgGroup>();
 				tgroup->layer = mCurrentLayer += 1.0;
 				auto idattr = kid.getAttribute("id");
 				if( idattr ) {
 					tgroup->name = idattr.getValue();
 				}
 				
-				mCurrentSvgCss = std::make_shared<ofx::svg::CssClass>( _parseStyle(kid) );
+				mCurrentSvgCss = std::make_shared<ofxSvgCssClass>( _parseStyle(kid) );
 				
 				aElements.push_back( tgroup );
 				_parseXmlNode( kid, tgroup->getChildren() );
 			}
 		} else if( kid.getName() == "defs") {
-			ofLogVerbose(moduleName()) << __FUNCTION__ << " found a defs node.";
+			ofLogVerbose("ofxSvg") << __FUNCTION__ << " found a defs node.";
 			_parseXmlNode(kid, mDefElements );
         } else {
             
@@ -418,43 +417,43 @@ void ofxSvg::_parseXmlNode( ofXml& aParentNode, vector< shared_ptr<Element> >& a
 }
 
 //--------------------------------------------------------------
-bool ofxSvg::_addElementFromXmlNode( ofXml& tnode, vector< shared_ptr<Element> >& aElements ) {
-    shared_ptr<Element> telement;
+bool ofxSvg::_addElementFromXmlNode( ofXml& tnode, vector< shared_ptr<ofxSvgElement> >& aElements ) {
+    shared_ptr<ofxSvgElement> telement;
 	
 	if( tnode.getName() == "use") {
 		if( auto hrefAtt = tnode.getAttribute("xlink:href")) {
-			ofLogVerbose(moduleName()) << "found a use node with href " << hrefAtt.getValue();
+			ofLogVerbose("ofxSvg") << "found a use node with href " << hrefAtt.getValue();
 			std::string href = hrefAtt.getValue();
 			if( href.size() > 1 && href[0] == '#' ) {
 				// try to find by id
 				href = href.substr(1, std::string::npos);
-				ofLogVerbose(moduleName()) << "going to look for href " << href;
+				ofLogVerbose("ofxSvg") << "going to look for href " << href;
 				for( auto & def : mDefElements ) {
 					if( def->name == href ) {
-						if( def->getType() == ofx::svg::TYPE_RECTANGLE ) {
-							auto drect = std::dynamic_pointer_cast<ofx::svg::Rectangle>(def);
-							auto nrect = std::make_shared<ofx::svg::Rectangle>( *drect );
+						if( def->getType() == ofxSvgType::TYPE_RECTANGLE ) {
+							auto drect = std::dynamic_pointer_cast<ofxSvgRectangle>(def);
+							auto nrect = std::make_shared<ofxSvgRectangle>( *drect );
 							telement = nrect;
-						} else if( def->getType() == ofx::svg::TYPE_IMAGE ) {
-							auto dimg = std::dynamic_pointer_cast<ofx::svg::Image>(def);
-							auto nimg = std::make_shared<ofx::svg::Image>( *dimg );
-							ofLogVerbose(moduleName()) << "created an image node with filepath: " << nimg->getFilePath();
+						} else if( def->getType() == ofxSvgType::TYPE_IMAGE ) {
+							auto dimg = std::dynamic_pointer_cast<ofxSvgImage>(def);
+							auto nimg = std::make_shared<ofxSvgImage>( *dimg );
+							ofLogVerbose("ofxSvg") << "created an image node with filepath: " << nimg->getFilePath();
 							telement = nimg;
-						} else if( def->getType() == ofx::svg::TYPE_ELLIPSE ) {
-							auto dell= std::dynamic_pointer_cast<ofx::svg::Ellipse>(def);
-							auto nell = std::make_shared<ofx::svg::Ellipse>( *dell );
+						} else if( def->getType() == ofxSvgType::TYPE_ELLIPSE ) {
+							auto dell= std::dynamic_pointer_cast<ofxSvgEllipse>(def);
+							auto nell = std::make_shared<ofxSvgEllipse>( *dell );
 							telement = nell;
-						} else if( def->getType() == ofx::svg::TYPE_CIRCLE ) {
-							auto dcir= std::dynamic_pointer_cast<ofx::svg::Circle>(def);
-							auto ncir = std::make_shared<ofx::svg::Circle>( *dcir );
+						} else if( def->getType() == ofxSvgType::TYPE_CIRCLE ) {
+							auto dcir= std::dynamic_pointer_cast<ofxSvgCircle>(def);
+							auto ncir = std::make_shared<ofxSvgCircle>( *dcir );
 							telement = ncir;
-						} else if( def->getType() == ofx::svg::TYPE_PATH ) {
-							auto dpat= std::dynamic_pointer_cast<ofx::svg::Path>(def);
-							auto npat = std::make_shared<ofx::svg::Path>( *dpat );
+						} else if( def->getType() == ofxSvgType::TYPE_PATH ) {
+							auto dpat= std::dynamic_pointer_cast<ofxSvgPath>(def);
+							auto npat = std::make_shared<ofxSvgPath>( *dpat );
 							telement = npat;
-						} else if( def->getType() == ofx::svg::TYPE_TEXT ) {
-							auto dtex = std::dynamic_pointer_cast<ofx::svg::Text>(def);
-							auto ntex = std::make_shared<ofx::svg::Text>( *dtex );
+						} else if( def->getType() == ofxSvgType::TYPE_TEXT ) {
+							auto dtex = std::dynamic_pointer_cast<ofxSvgText>(def);
+							auto ntex = std::make_shared<ofxSvgText>( *dtex );
 							telement = ntex;
 						} else {
 							ofLogWarning("Parser") << "could not find type for def : " << def->name;
@@ -463,13 +462,13 @@ bool ofxSvg::_addElementFromXmlNode( ofXml& tnode, vector< shared_ptr<Element> >
 					}
 				}
 			} else {
-				ofLogWarning(moduleName()) << "could not parse use node with href : " << href;
+				ofLogWarning("ofxSvg") << "could not parse use node with href : " << href;
 			}
 		} else {
-			ofLogWarning(moduleName()) << "found a use node but no href!";
+			ofLogWarning("ofxSvg") << "found a use node but no href!";
 		}
 	} else if( tnode.getName() == "image" ) {
-        auto image = std::make_shared<Image>();
+        auto image = std::make_shared<ofxSvgImage>();
         auto wattr = tnode.getAttribute("width");
         if(wattr) image->width  = wattr.getFloatValue();
         auto hattr = tnode.getAttribute("height");
@@ -483,7 +482,7 @@ bool ofxSvg::_addElementFromXmlNode( ofXml& tnode, vector< shared_ptr<Element> >
         telement = image;
         
     } else if( tnode.getName() == "ellipse" ) {
-        auto ellipse = std::make_shared<Ellipse>();
+        auto ellipse = std::make_shared<ofxSvgEllipse>();
         auto cxAttr = tnode.getAttribute("cx");
         if(cxAttr) ellipse->pos.x = cxAttr.getFloatValue();
         auto cyAttr = tnode.getAttribute("cy");
@@ -503,7 +502,7 @@ bool ofxSvg::_addElementFromXmlNode( ofXml& tnode, vector< shared_ptr<Element> >
         
         telement = ellipse;
 	} else if( tnode.getName() == "circle" ) {
-		auto circle = std::make_shared<Circle>();
+		auto circle = std::make_shared<ofxSvgCircle>();
 		auto cxAttr = tnode.getAttribute("cx");
 		if(cxAttr) circle->pos.x = cxAttr.getFloatValue();
 		auto cyAttr = tnode.getAttribute("cy");
@@ -523,7 +522,7 @@ bool ofxSvg::_addElementFromXmlNode( ofXml& tnode, vector< shared_ptr<Element> >
 		telement = circle;
 		
 	} else if( tnode.getName() == "line" ) {
-		auto telePath = std::make_shared<Path>();
+		auto telePath = std::make_shared<ofxSvgPath>();
 		
 		glm::vec3 p1 = {0.f, 0.f, 0.f};
 		glm::vec3 p2 = {0.f, 0.f, 0.f};
@@ -547,17 +546,17 @@ bool ofxSvg::_addElementFromXmlNode( ofXml& tnode, vector< shared_ptr<Element> >
 		telement = telePath;
         
 	} else if(tnode.getName() == "polyline" || tnode.getName() == "polygon") {
-		auto tpath = std::make_shared<Path>();
+		auto tpath = std::make_shared<ofxSvgPath>();
 		_parsePolylinePolygon(tnode, tpath);
 		_applyStyleToPath( tnode, tpath );
 		telement = tpath;
 	} else if( tnode.getName() == "path" ) {
-		auto tpath = std::make_shared<Path>();
+		auto tpath = std::make_shared<ofxSvgPath>();
 		_parsePath( tnode, tpath );
 		_applyStyleToPath( tnode, tpath );
 		telement = tpath;
     } else if( tnode.getName() == "rect" ) {
-        auto rect = std::make_shared<Rectangle>();
+        auto rect = std::make_shared<ofxSvgRectangle>();
         auto xattr = tnode.getAttribute("x");
         if(xattr) rect->rectangle.x       = xattr.getFloatValue();
         auto yattr = tnode.getAttribute("y");
@@ -576,10 +575,10 @@ bool ofxSvg::_addElementFromXmlNode( ofXml& tnode, vector< shared_ptr<Element> >
 		rect->path.setCurveResolution(mCurveResolution);
 		
 		// make local so we can apply transform later in the function
-		if( !CssClass::sIsNone(rxAttr.getValue()) || !CssClass::sIsNone(ryAttr.getValue())) {
+		if( !ofxSvgCssClass::sIsNone(rxAttr.getValue()) || !ofxSvgCssClass::sIsNone(ryAttr.getValue())) {
 			
-			rect->round = std::max(CssClass::sGetFloat(rxAttr.getValue()),
-								   CssClass::sGetFloat(ryAttr.getValue()));
+			rect->round = std::max(ofxSvgCssClass::sGetFloat(rxAttr.getValue()),
+								   ofxSvgCssClass::sGetFloat(ryAttr.getValue()));
 			
 			rect->path.rectRounded(0.f, 0.f, rect->rectangle.getWidth(), rect->rectangle.getHeight(),
 								   rect->round
@@ -600,7 +599,7 @@ bool ofxSvg::_addElementFromXmlNode( ofXml& tnode, vector< shared_ptr<Element> >
         }
         
     } else if( tnode.getName() == "text" ) {
-        auto text = std::make_shared<Text>();
+        auto text = std::make_shared<ofxSvgText>();
         telement = text;
 //		std::cout << "has kids: " << tnode.getFirstChild() << " node value: " << tnode.getValue() << std::endl;
         if( tnode.getFirstChild() ) {
@@ -646,17 +645,17 @@ bool ofxSvg::_addElementFromXmlNode( ofXml& tnode, vector< shared_ptr<Element> >
         telement->name = idAttr.getValue();
     }
     
-    if( telement->getType() == TYPE_RECTANGLE || telement->getType() == TYPE_IMAGE || telement->getType() == TYPE_TEXT || telement->getType() == TYPE_CIRCLE || telement->getType() == TYPE_ELLIPSE ) {
+    if( telement->getType() == ofxSvgType::TYPE_RECTANGLE || telement->getType() == ofxSvgType::TYPE_IMAGE || telement->getType() == ofxSvgType::TYPE_TEXT || telement->getType() == ofxSvgType::TYPE_CIRCLE || telement->getType() == ofxSvgType::TYPE_ELLIPSE ) {
         auto transAttr = tnode.getAttribute("transform");
         if( transAttr ) {
 //            getTransformFromSvgMatrix( transAttr.getValue(), telement->pos, telement->scale.x, telement->scale.y, telement->rotation );
 			setTransformFromSvgMatrixString( transAttr.getValue(), telement );
         }
 		
-		std::vector<SvgType> typesToApplyTransformToPath = {
-			TYPE_RECTANGLE,
-			TYPE_CIRCLE,
-			TYPE_ELLIPSE
+		std::vector<ofxSvgType> typesToApplyTransformToPath = {
+			ofxSvgType::TYPE_RECTANGLE,
+			ofxSvgType::TYPE_CIRCLE,
+			ofxSvgType::TYPE_ELLIPSE
 		};
 		
 		bool bApplyTransformToPath = false;
@@ -668,7 +667,7 @@ bool ofxSvg::_addElementFromXmlNode( ofXml& tnode, vector< shared_ptr<Element> >
 		}
 		
 		if( bApplyTransformToPath ) {
-			auto epath = std::dynamic_pointer_cast<Path>( telement );
+			auto epath = std::dynamic_pointer_cast<ofxSvgPath>( telement );
 			auto outlines = epath->path.getOutline();
 			auto transform = epath->getTransformMatrix();
 			for( auto& outline : outlines ) {
@@ -695,8 +694,8 @@ bool ofxSvg::_addElementFromXmlNode( ofXml& tnode, vector< shared_ptr<Element> >
 		}
     }
     
-    if( telement->getType() == TYPE_TEXT ) {
-        auto text = std::dynamic_pointer_cast<Text>( telement );
+    if( telement->getType() == ofxSvgType::TYPE_TEXT ) {
+        auto text = std::dynamic_pointer_cast<ofxSvgText>( telement );
         text->ogPos = text->pos;
         text->create();
     }
@@ -836,15 +835,15 @@ glm::vec2 findArcCenter(glm::vec2 start, glm::vec2 end, double rx, double ry, do
 
 
 //--------------------------------------------------------------
-void ofxSvg::_parsePolylinePolygon( ofXml& tnode, std::shared_ptr<Path> aSvgPath ) {
+void ofxSvg::_parsePolylinePolygon( ofXml& tnode, std::shared_ptr<ofxSvgPath> aSvgPath ) {
 	auto pointsAttr = tnode.getAttribute("points");
 	if( !pointsAttr ) {
-		ofLogWarning(moduleName()) << __FUNCTION__ << " polyline or polygon does not have a points attriubute.";
+		ofLogWarning("ofxSvg") << __FUNCTION__ << " polyline or polygon does not have a points attriubute.";
 		return;
 	}
 	
 	if( pointsAttr.getValue().empty() ) {
-		ofLogWarning(moduleName()) << __FUNCTION__ << " polyline or polygon does not have points.";
+		ofLogWarning("ofxSvg") << __FUNCTION__ << " polyline or polygon does not have points.";
 		return;
 	}
 	
@@ -865,12 +864,12 @@ void ofxSvg::_parsePolylinePolygon( ofXml& tnode, std::shared_ptr<Path> aSvgPath
 }
 // reference: https://www.w3.org/TR/SVG2/paths.html#PathData
 //--------------------------------------------------------------
-void ofxSvg::_parsePath( ofXml& tnode, std::shared_ptr<Path> aSvgPath ) {
+void ofxSvg::_parsePath( ofXml& tnode, std::shared_ptr<ofxSvgPath> aSvgPath ) {
 	aSvgPath->path.clear();
 	
 	auto dattr = tnode.getAttribute("d");
 	if( !dattr ) {
-		ofLogWarning(moduleName()) << __FUNCTION__ << " path node does not have d attriubute.";
+		ofLogWarning("ofxSvg") << __FUNCTION__ << " path node does not have d attriubute.";
 		return;
 	}
 	
@@ -891,13 +890,13 @@ void ofxSvg::_parsePath( ofXml& tnode, std::shared_ptr<Path> aSvgPath ) {
 //	ofLogNotice(moduleName()) << __FUNCTION__ << " dattr: " << ostring;
 	
 	if( ostring.empty() ) {
-		ofLogError(moduleName()) << __FUNCTION__ << " there is no data in the d string.";
+		ofLogError("ofxSvg") << __FUNCTION__ << " there is no data in the d string.";
 		return;
 	}
 	
 	std::size_t index = 0;
 	if( ostring[index] != 'm' && ostring[index] != 'M' ) {
-		ofLogWarning(moduleName()) << __FUNCTION__ << " first char is not a m or M, ostring[index]: " << ostring[index];
+		ofLogWarning("ofxSvg") << __FUNCTION__ << " first char is not a m or M, ostring[index]: " << ostring[index];
 		return;
 	}
 	
@@ -1002,7 +1001,7 @@ void ofxSvg::_parsePath( ofXml& tnode, std::shared_ptr<Path> aSvgPath ) {
 		}
 		
 		
-		ofLogVerbose(moduleName()) << "["<<cchar<<"]: " << currentString;
+		ofLogVerbose("ofxSvg") << "["<<cchar<<"]: " << currentString;
 		
 		bool bRelative = false;
 		std::vector<glm::vec3> npositions= {glm::vec3(0.f, 0.f, 0.f)};
@@ -1082,10 +1081,10 @@ void ofxSvg::_parsePath( ofXml& tnode, std::shared_ptr<Path> aSvgPath ) {
 					glm::vec3(arcValues[5], arcValues[6], 0.0f)
 				};
 			} else {
-				ofLogError(moduleName()) << "unable to parse arc command, incorrect number of parameters detected: " << arcValues.size();
-				ofLogError(moduleName()) << "-- Arc values ---------------------- ";
+				ofLogError("ofxSvg") << "unable to parse arc command, incorrect number of parameters detected: " << arcValues.size();
+				ofLogError("ofxSvg") << "-- Arc values ---------------------- ";
 				for( std::size_t n = 0; n < arcValues.size(); n++ ) {
-					ofLogError(moduleName()) << n << ": " << arcValues[n];
+					ofLogError("ofxSvg") << n << ": " << arcValues[n];
 				}
 				
 			}
@@ -1110,7 +1109,7 @@ void ofxSvg::_parsePath( ofXml& tnode, std::shared_ptr<Path> aSvgPath ) {
 					currentPos = convertToAbsolute(bRelative, currentPos, tpositions );
 					npositions[3] = tpositions[0];
 				} else {
-					ofLogWarning("ofx::svg::Parser") << "invalid number of arc commands.";
+					ofLogWarning("ofxSvg") << "invalid number of arc commands.";
 				}
 			} else if( commandT == ofPath::Command::bezierTo ) {
 				if( cchar == 'S' || cchar == 's' ) {
@@ -1281,7 +1280,7 @@ void ofxSvg::_parsePath( ofXml& tnode, std::shared_ptr<Path> aSvgPath ) {
 						worderS = "counter clockwise";
 					}
 					
-					ofLogVerbose("Arc winding order is ") << worderS << " order: " << windingOrder << " startDiff: " << startDiff << " endDiff: " << endDiff << " xAxisRotation: " << xAxisRotation;
+					ofLogVerbose("ofxSvg") << "Arc winding order is: " << worderS << " order: " << windingOrder << " startDiff: " << startDiff << " endDiff: " << endDiff << " xAxisRotation: " << xAxisRotation;
 					
 					ofPolyline tline;
 										
@@ -1333,7 +1332,7 @@ void ofxSvg::_parsePath( ofXml& tnode, std::shared_ptr<Path> aSvgPath ) {
 					npositions.clear();
 					npositions.push_back(ept);
 				} else {
-					ofLogWarning("ofx::svg::Parser") << "unable to parse arc segment.";
+					ofLogWarning("ofxSvg") << "unable to parse arc segment.";
 				}
 			}
 			
@@ -1349,8 +1348,8 @@ void ofxSvg::_parsePath( ofXml& tnode, std::shared_ptr<Path> aSvgPath ) {
 }
 
 //--------------------------------------------------------------
-CssClass ofxSvg::_parseStyle( ofXml& anode ) {
-	CssClass css;
+ofxSvgCssClass ofxSvg::_parseStyle( ofXml& anode ) {
+	ofxSvgCssClass css;
 	
 	if( mCurrentSvgCss ) {
 		// apply first if we have a global style //
@@ -1414,7 +1413,7 @@ CssClass ofxSvg::_parseStyle( ofXml& anode ) {
 }
 
 //--------------------------------------------------------------
-void ofxSvg::_applyStyleToElement( ofXml& tnode, std::shared_ptr<Element> aEle ) {
+void ofxSvg::_applyStyleToElement( ofXml& tnode, std::shared_ptr<ofxSvgElement> aEle ) {
 	auto css = _parseStyle(tnode);
 //	ofLogNotice("_applyStyleToElement" ) << " " << aEle->name << " -----";
 	if( css.hasAndIsNone("display")) {
@@ -1424,13 +1423,13 @@ void ofxSvg::_applyStyleToElement( ofXml& tnode, std::shared_ptr<Element> aEle )
 }
 
 //--------------------------------------------------------------
-void ofxSvg::_applyStyleToPath( ofXml& tnode, std::shared_ptr<Path> aSvgPath ) {
+void ofxSvg::_applyStyleToPath( ofXml& tnode, std::shared_ptr<ofxSvgPath> aSvgPath ) {
 	auto css = _parseStyle(tnode);
 	_applyStyleToPath(css, aSvgPath);
 }
 
 //--------------------------------------------------------------
-void ofxSvg::_applyStyleToPath( CssClass& aclass, std::shared_ptr<Path> aSvgPath ) {
+void ofxSvg::_applyStyleToPath( ofxSvgCssClass& aclass, std::shared_ptr<ofxSvgPath> aSvgPath ) {
 	// now lets figure out if there is any css applied //
 	
 	if( aclass.hasProperty("fill")) {
@@ -1468,13 +1467,13 @@ void ofxSvg::_applyStyleToPath( CssClass& aclass, std::shared_ptr<Path> aSvgPath
 }
 
 //--------------------------------------------------------------
-void ofxSvg::_applyStyleToText( ofXml& anode, std::shared_ptr<Text::TextSpan> aTextSpan ) {
+void ofxSvg::_applyStyleToText( ofXml& anode, std::shared_ptr<ofxSvgText::TextSpan> aTextSpan ) {
 	auto css = _parseStyle(anode);
 	_applyStyleToText(css, aTextSpan);
 }
 
 //--------------------------------------------------------------
-void ofxSvg::_applyStyleToText( CssClass& aclass, std::shared_ptr<Text::TextSpan> aTextSpan ) {
+void ofxSvg::_applyStyleToText( ofxSvgCssClass& aclass, std::shared_ptr<ofxSvgText::TextSpan> aTextSpan ) {
 	// default font family
 	aTextSpan->fontFamily    = aclass.getValue("font-family", "Arial");
 	aTextSpan->fontSize      = aclass.getIntValue("font-size", 18 );
@@ -1487,7 +1486,7 @@ void ofxSvg::_applyStyleToText( CssClass& aclass, std::shared_ptr<Text::TextSpan
 glm::vec3 ofxSvg::_parseMatrixString(const std::string& input, const std::string& aprefix, bool abDefaultZero ) {
 //	std::string prefix = aprefix+"(";
 //	std::string suffix = ")";
-	ofLogVerbose(moduleName()) << __FUNCTION__ << " input: " << input;;
+	ofLogVerbose("ofxSvg") << __FUNCTION__ << " input: " << input;;
 	std::string searchStr = aprefix + "(";
 	size_t startPos = input.find(searchStr);
 	
@@ -1530,20 +1529,20 @@ glm::vec3 ofxSvg::_parseMatrixString(const std::string& input, const std::string
 
 //--------------------------------------------------------------
 //bool Parser::getTransformFromSvgMatrix( string aStr, glm::vec2& apos, float& scaleX, float& scaleY, float& arotation ) {
-bool ofxSvg::setTransformFromSvgMatrixString( string aStr, std::shared_ptr<Element> aele ) {
+bool ofxSvg::setTransformFromSvgMatrixString( string aStr, std::shared_ptr<ofxSvgElement> aele ) {
     
 	aele->scale = glm::vec2(1.0f, 1.0f);
 	aele->rotation = 0.0;
 	aele->mModelRotationPoint = glm::vec2(0.0f, 0.0f);
 	//TODO: implement matrix push and pop structure, similar to renderers
-	ofLogVerbose(moduleName()) << __FUNCTION__ << " going to parse string: " << aStr << " pos: " << aele->pos;
+	ofLogVerbose("ofxSvg") << __FUNCTION__ << " going to parse string: " << aStr << " pos: " << aele->pos;
 	
 	glm::mat4 mat = glm::mat4(1.f);
 	
 	if( ofIsStringInString(aStr, "translate")) {
 		auto transStr = aStr;
 		auto tp = _parseMatrixString(transStr, "translate", false );
-		ofLogVerbose(moduleName()) << __FUNCTION__ << " translate: " << tp;
+		ofLogVerbose("ofxSvg") << __FUNCTION__ << " translate: " << tp;
 //		apos += tp;
 		mat = glm::translate(glm::mat4(1.0f), glm::vec3(tp.x, tp.y, 0.0f));
 	} else {
@@ -1579,7 +1578,7 @@ bool ofxSvg::setTransformFromSvgMatrixString( string aStr, std::shared_ptr<Eleme
 			}
 //			ofLogNotice("svg parser") << "rcenter: " << rcenter.x << ", " << rcenter.y;
 		}
-		ofLogVerbose(moduleName()) << __FUNCTION__ << " arotation: " << aele->rotation;
+		ofLogVerbose("ofxSvg") << __FUNCTION__ << " arotation: " << aele->rotation;
 	}
 	
 	if( ofIsStringInString(aStr, "scale")) {
@@ -1587,7 +1586,7 @@ bool ofxSvg::setTransformFromSvgMatrixString( string aStr, std::shared_ptr<Eleme
 		auto ts = _parseMatrixString(transStr, "scale", false );
 		aele->scale.x = ts.x;
 		aele->scale.y = ts.y;
-		ofLogVerbose(moduleName()) << __FUNCTION__ << " scale: " << ts;
+		ofLogVerbose("ofxSvg") << __FUNCTION__ << " scale: " << ts;
 		
 		mat = glm::scale(mat, glm::vec3(aele->scale.x, aele->scale.y, 1.f));
 	}
@@ -1649,7 +1648,7 @@ bool ofxSvg::setTransformFromSvgMatrixString( string aStr, std::shared_ptr<Eleme
 }
 
 //--------------------------------------------------------------
-std::string ofxSvg::getSvgMatrixStringFromElement( std::shared_ptr<Element> aele ) {
+std::string ofxSvg::getSvgMatrixStringFromElement( std::shared_ptr<ofxSvgElement> aele ) {
 	// matrix(1 0 0 1 352.4516 349.0799)">
 
 	// there's probably a better way to determine if this should be rotated in a certain way
@@ -1696,8 +1695,8 @@ std::string ofxSvg::getSvgMatrixStringFromElement( std::shared_ptr<Element> aele
 }
 
 //--------------------------------------------------------------
-std::shared_ptr<Text::TextSpan> ofxSvg::_getTextSpanFromXmlNode( ofXml& anode ) {
-	auto tspan = std::make_shared<Text::TextSpan>();;
+std::shared_ptr<ofxSvgText::TextSpan> ofxSvg::_getTextSpanFromXmlNode( ofXml& anode ) {
+	auto tspan = std::make_shared<ofxSvgText::TextSpan>();
     
     string tText = anode.getValue();
     float tx = 0;
@@ -1788,11 +1787,11 @@ void ofxSvg::setBounds( const ofRectangle& arect ) {
 
 //--------------------------------------------------------------
 void ofxSvg::pushGroup( const std::string& apath ) {
-	std::shared_ptr<ofx::svg::Group> cgroup;
+	std::shared_ptr<ofxSvgGroup> cgroup;
 	if( mGroupStack.size() > 0 ) {
-		mGroupStack.back()->get<ofx::svg::Group>( apath );
+		mGroupStack.back()->get<ofxSvgGroup>( apath );
 	} else {
-		cgroup = get<ofx::svg::Group>( apath );
+		cgroup = get<ofxSvgGroup>( apath );
 	}
 	
 	if( cgroup ) {
@@ -1803,7 +1802,7 @@ void ofxSvg::pushGroup( const std::string& apath ) {
 }
 
 //--------------------------------------------------------------
-void ofxSvg::pushGroup( const std::shared_ptr<ofx::svg::Group>& agroup ) {
+void ofxSvg::pushGroup( const std::shared_ptr<ofxSvgGroup>& agroup ) {
 	if( agroup ) {
 		mGroupStack.push_back(agroup);
 	}
@@ -1852,8 +1851,8 @@ void ofxSvg::setHasStroke(bool abStroke) {
 }
 
 //--------------------------------------------------------------
-std::shared_ptr<ofx::svg::Group> ofxSvg::addGroup(std::string aname) {
-	auto tgroup = std::make_shared<Group>();
+std::shared_ptr<ofxSvgGroup> ofxSvg::addGroup(std::string aname) {
+	auto tgroup = std::make_shared<ofxSvgGroup>();
 	tgroup->name = aname;
 	_getPushedGroup()->add(tgroup);
 	recalculateLayers();
@@ -1861,8 +1860,8 @@ std::shared_ptr<ofx::svg::Group> ofxSvg::addGroup(std::string aname) {
 }
 
 //--------------------------------------------------------------
-std::shared_ptr<ofx::svg::Path> ofxSvg::add( const ofPath& apath ) {
-	auto path = std::make_shared<Path>();
+std::shared_ptr<ofxSvgPath> ofxSvg::add( const ofPath& apath ) {
+	auto path = std::make_shared<ofxSvgPath>();
 	path->path = apath;
 //	_config(path);
 	_applyModelMatrixToElement( path, glm::vec2(0.f, 0.f) );
@@ -1874,8 +1873,8 @@ std::shared_ptr<ofx::svg::Path> ofxSvg::add( const ofPath& apath ) {
 }
 
 //--------------------------------------------------------------
-std::vector< std::shared_ptr<ofx::svg::Path> > ofxSvg::add( const std::vector<ofPath>& apaths ) {
-	std::vector< std::shared_ptr<Path> > rpaths;
+std::vector< std::shared_ptr<ofxSvgPath> > ofxSvg::add( const std::vector<ofPath>& apaths ) {
+	std::vector< std::shared_ptr<ofxSvgPath> > rpaths;
 	for( auto& path : apaths ) {
 		rpaths.push_back( add(path) );
 	}
@@ -1883,9 +1882,9 @@ std::vector< std::shared_ptr<ofx::svg::Path> > ofxSvg::add( const std::vector<of
 }
 
 //--------------------------------------------------------------
-std::shared_ptr<ofx::svg::Path> ofxSvg::add( const ofPolyline& apoly ) {
+std::shared_ptr<ofxSvgPath> ofxSvg::add( const ofPolyline& apoly ) {
 	if( apoly.size() < 2 ) {
-		return std::shared_ptr<Path>();
+		return std::shared_ptr<ofxSvgPath>();
 	}
 	
 	ofPath opath;
@@ -1904,8 +1903,8 @@ std::shared_ptr<ofx::svg::Path> ofxSvg::add( const ofPolyline& apoly ) {
 }
 
 //--------------------------------------------------------------
-std::vector< std::shared_ptr<ofx::svg::Path> > ofxSvg::add( const std::vector<ofPolyline>& apolys ) {
-	std::vector< std::shared_ptr<Path> > rpaths;
+std::vector< std::shared_ptr<ofxSvgPath> > ofxSvg::add( const std::vector<ofPolyline>& apolys ) {
+	std::vector< std::shared_ptr<ofxSvgPath> > rpaths;
 	for( auto& poly : apolys ) {
 		rpaths.push_back( add(poly) );
 	}
@@ -1913,13 +1912,13 @@ std::vector< std::shared_ptr<ofx::svg::Path> > ofxSvg::add( const std::vector<of
 }
 
 //--------------------------------------------------------------
-std::shared_ptr<ofx::svg::Rectangle> ofxSvg::add( const ofRectangle& arect ) {
+std::shared_ptr<ofxSvgRectangle> ofxSvg::add( const ofRectangle& arect ) {
 	return add( arect, 0.0f);
 }
 
 //--------------------------------------------------------------
-std::shared_ptr<ofx::svg::Rectangle> ofxSvg::add( const ofRectangle& arect, float aRoundRadius ) {
-	auto rect = std::make_shared<Rectangle>();
+std::shared_ptr<ofxSvgRectangle> ofxSvg::add( const ofRectangle& arect, float aRoundRadius ) {
+	auto rect = std::make_shared<ofxSvgRectangle>();
 	rect->rectangle = arect;
 //	rect->pos = arect.getPosition();
 	_applyModelMatrixToElement( rect, arect.getPosition() );
@@ -1934,13 +1933,13 @@ std::shared_ptr<ofx::svg::Rectangle> ofxSvg::add( const ofRectangle& arect, floa
 }
 
 //--------------------------------------------------------------
-std::shared_ptr<ofx::svg::Circle> ofxSvg::addCircle( float aradius ) {
+std::shared_ptr<ofxSvgCircle> ofxSvg::addCircle( float aradius ) {
 	return addCircle(glm::vec2(0.f, 0.f), aradius );
 }
 
 //--------------------------------------------------------------
-std::shared_ptr<ofx::svg::Circle> ofxSvg::addCircle( const glm::vec2& apos, float aradius ) {
-	auto circle = std::make_shared<Circle>();
+std::shared_ptr<ofxSvgCircle> ofxSvg::addCircle( const glm::vec2& apos, float aradius ) {
+	auto circle = std::make_shared<ofxSvgCircle>();
 //	circle->pos = apos;
 	_applyModelMatrixToElement( circle, apos );
 	circle->radius = aradius;
@@ -1955,23 +1954,23 @@ std::shared_ptr<ofx::svg::Circle> ofxSvg::addCircle( const glm::vec2& apos, floa
 }
 
 //--------------------------------------------------------------
-std::shared_ptr<ofx::svg::Circle> ofxSvg::addCircle( const glm::vec3& apos, float aradius ) {
+std::shared_ptr<ofxSvgCircle> ofxSvg::addCircle( const glm::vec3& apos, float aradius ) {
 	return addCircle( glm::vec2(apos.x, apos.y), aradius );
 }
 
 //--------------------------------------------------------------
-std::shared_ptr<ofx::svg::Circle> ofxSvg::addCircle( const float& ax, const float& ay, float aradius ) {
+std::shared_ptr<ofxSvgCircle> ofxSvg::addCircle( const float& ax, const float& ay, float aradius ) {
 	return addCircle( glm::vec2(ax, ay), aradius );
 }
 
 //--------------------------------------------------------------
-std::shared_ptr<ofx::svg::Ellipse> ofxSvg::addEllipse( float aradiusX, float aradiusY ) {
+std::shared_ptr<ofxSvgEllipse> ofxSvg::addEllipse( float aradiusX, float aradiusY ) {
 	return addEllipse( glm::vec2(0.f, 0.f), aradiusX, aradiusY );
 }
 
 //--------------------------------------------------------------
-std::shared_ptr<ofx::svg::Ellipse> ofxSvg::addEllipse( const glm::vec2& apos, float aradiusX, float aradiusY ) {
-	auto ellipse = std::make_shared<Ellipse>();
+std::shared_ptr<ofxSvgEllipse> ofxSvg::addEllipse( const glm::vec2& apos, float aradiusX, float aradiusY ) {
+	auto ellipse = std::make_shared<ofxSvgEllipse>();
 	_applyModelMatrixToElement( ellipse, apos );
 	
 	ellipse->radiusX = aradiusX;
@@ -1987,23 +1986,23 @@ std::shared_ptr<ofx::svg::Ellipse> ofxSvg::addEllipse( const glm::vec2& apos, fl
 }
 
 //--------------------------------------------------------------
-std::shared_ptr<ofx::svg::Ellipse> ofxSvg::addEllipse( const glm::vec3& apos, float aradiusX, float aradiusY ) {
+std::shared_ptr<ofxSvgEllipse> ofxSvg::addEllipse( const glm::vec3& apos, float aradiusX, float aradiusY ) {
 	return addEllipse( glm::vec2(apos.x, apos.y), aradiusX, aradiusY );
 }
 
 //--------------------------------------------------------------
-std::shared_ptr<ofx::svg::Ellipse> ofxSvg::addEllipse( const float& ax, const float& ay, float aradiusX, float aradiusY ) {
+std::shared_ptr<ofxSvgEllipse> ofxSvg::addEllipse( const float& ax, const float& ay, float aradiusX, float aradiusY ) {
 	return addEllipse( glm::vec2(ax, ay), aradiusX, aradiusY );
 }
 
 //--------------------------------------------------------------
-std::shared_ptr<ofx::svg::Image> ofxSvg::addImage( const of::filesystem::path& apath, const ofTexture& atex ) {
+std::shared_ptr<ofxSvgImage> ofxSvg::addImage( const of::filesystem::path& apath, const ofTexture& atex ) {
 	return addImage(glm::vec2(0.f, 0.f), apath, atex );
 }
 
 //--------------------------------------------------------------
-std::shared_ptr<ofx::svg::Image> ofxSvg::addImage( const glm::vec2& apos, const of::filesystem::path& apath, const ofTexture& atex ) {
-	auto img = std::make_shared<Image>();
+std::shared_ptr<ofxSvgImage> ofxSvg::addImage( const glm::vec2& apos, const of::filesystem::path& apath, const ofTexture& atex ) {
+	auto img = std::make_shared<ofxSvgImage>();
 	img->filepath = apath;
 	img->width = atex.getWidth();
 	img->height = atex.getHeight();
@@ -2106,7 +2105,7 @@ void ofxSvg::drawDebug() {
 }
 
 //--------------------------------------------------------------
-ofx::svg::Group* ofxSvg::_getPushedGroup() {
+ofxSvgGroup* ofxSvg::_getPushedGroup() {
 	if( mGroupStack.size() > 0 ) {
 		return mGroupStack.back().get();
 	}
@@ -2119,7 +2118,7 @@ bool ofxSvg::_hasPushedMatrix() {
 }
 
 //--------------------------------------------------------------
-void ofxSvg::_applyModelMatrixToElement( std::shared_ptr<Element> aele, glm::vec2 aDefaultPos ) {
+void ofxSvg::_applyModelMatrixToElement( std::shared_ptr<ofxSvgElement> aele, glm::vec2 aDefaultPos ) {
 	if(_hasPushedMatrix() ) {
 		aele->pos = aDefaultPos;
 		aele->mModelPos = _getPos2d(mModelMatrix);
@@ -2163,8 +2162,8 @@ float ofxSvg::_getZRotationRadians(const glm::mat4& amat) {
 }
 
 //--------------------------------------------------------------
-CssClass& ofxSvg::_addCssClassFromPath( std::shared_ptr<Path> aSvgPath ) {
-	CssClass tcss;
+ofxSvgCssClass& ofxSvg::_addCssClassFromPath( std::shared_ptr<ofxSvgPath> aSvgPath ) {
+	ofxSvgCssClass tcss;
 //	tcss.name = aSvgPath->name+"st";
 	tcss.name = "st";
 	if( aSvgPath->path.isFilled() ) {
@@ -2187,24 +2186,18 @@ CssClass& ofxSvg::_addCssClassFromPath( std::shared_ptr<Path> aSvgPath ) {
 }
 
 //--------------------------------------------------------------
-void ofxSvg::_addCssClassFromPath( std::shared_ptr<Path> aSvgPath, ofXml& anode ) {
-	
-//	ofLogNotice("Parser::_addCssClassFromPath") << mSvgCss.toString();
-	
+void ofxSvg::_addCssClassFromPath( std::shared_ptr<ofxSvgPath> aSvgPath, ofXml& anode ) {
 	auto& css = _addCssClassFromPath(aSvgPath);
-	
-//	ofLogNotice("Parser::_addCssClassFromPath") << "adding: " << css.name << " fill: " << aSvgPath->getFillColor() << std::endl << mSvgCss.toString();
-	
 	if( auto xattr = anode.appendAttribute("class") ) {
 		xattr.set(css.name);
 	}
 }
 
 //--------------------------------------------------------------
-void ofxSvg::_addCssClassFromImage( std::shared_ptr<Image> aSvgImage, ofXml& anode ) {
+void ofxSvg::_addCssClassFromImage( std::shared_ptr<ofxSvgImage> aSvgImage, ofXml& anode ) {
 	
 	if( !aSvgImage->isVisible() ) {
-		CssClass tcss;
+		ofxSvgCssClass tcss;
 		tcss.name = "st";
 		tcss.addProperty("display", "none" );
 		
@@ -2217,15 +2210,15 @@ void ofxSvg::_addCssClassFromImage( std::shared_ptr<Image> aSvgImage, ofXml& ano
 }
 
 //--------------------------------------------------------------
-bool ofxSvg::_toXml( ofXml& aParentNode, std::shared_ptr<ofx::svg::Element> aele ) {
-	ofXml txml = aParentNode.appendChild( ofx::svg::Element::sGetSvgXmlName(aele->getType()));
+bool ofxSvg::_toXml( ofXml& aParentNode, std::shared_ptr<ofxSvgElement> aele ) {
+	ofXml txml = aParentNode.appendChild( ofxSvgElement::sGetSvgXmlName(aele->getType()));
 	if( !aele->getName().empty() ) {
 		if( auto iattr = txml.appendAttribute("id")) {
 			iattr.set(aele->getName());
 		}
 	}
-	if( aele->getType() == ofx::svg::TYPE_GROUP ) {
-		auto tgroup = std::dynamic_pointer_cast<ofx::svg::Group>(aele);
+	if( aele->getType() == ofxSvgType::TYPE_GROUP ) {
+		auto tgroup = std::dynamic_pointer_cast<ofxSvgGroup>(aele);
 		if( tgroup ) {
 			if( tgroup->getNumChildren() > 0 ) {
 				for( auto& kid : tgroup->getChildren() ) {
@@ -2233,8 +2226,8 @@ bool ofxSvg::_toXml( ofXml& aParentNode, std::shared_ptr<ofx::svg::Element> aele
 				}
 			}
 		}
-	} else if( aele->getType() == ofx::svg::TYPE_RECTANGLE ) {
-		auto trect = std::dynamic_pointer_cast<ofx::svg::Rectangle>(aele);
+	} else if( aele->getType() == ofxSvgType::TYPE_RECTANGLE ) {
+		auto trect = std::dynamic_pointer_cast<ofxSvgRectangle>(aele);
 		_addCssClassFromPath( trect, txml );
 		
 		if( auto xattr = txml.appendAttribute("x")) {
@@ -2258,8 +2251,8 @@ bool ofxSvg::_toXml( ofXml& aParentNode, std::shared_ptr<ofx::svg::Element> aele
 			}
 		}
 		
-	} else if( aele->getType() == ofx::svg::TYPE_IMAGE ) {
-		auto timage = std::dynamic_pointer_cast<ofx::svg::Image>(aele);
+	} else if( aele->getType() == ofxSvgType::TYPE_IMAGE ) {
+		auto timage = std::dynamic_pointer_cast<ofxSvgImage>(aele);
 		
 		_addCssClassFromImage( timage, txml );
 		
@@ -2276,8 +2269,8 @@ bool ofxSvg::_toXml( ofXml& aParentNode, std::shared_ptr<ofx::svg::Element> aele
 		}
 		
 		
-	} else if( aele->getType() == ofx::svg::TYPE_ELLIPSE ) {
-		auto tellipse = std::dynamic_pointer_cast<ofx::svg::Ellipse>(aele);
+	} else if( aele->getType() == ofxSvgType::TYPE_ELLIPSE ) {
+		auto tellipse = std::dynamic_pointer_cast<ofxSvgEllipse>(aele);
 		_addCssClassFromPath( tellipse, txml );
 		
 		if( auto xattr = txml.appendAttribute("cx")) {
@@ -2293,8 +2286,8 @@ bool ofxSvg::_toXml( ofXml& aParentNode, std::shared_ptr<ofx::svg::Element> aele
 			xattr.set(tellipse->radiusY);
 		}
 		
-	} else if( aele->getType() == ofx::svg::TYPE_CIRCLE ) {
-		auto tcircle = std::dynamic_pointer_cast<ofx::svg::Circle>(aele);
+	} else if( aele->getType() == ofxSvgType::TYPE_CIRCLE ) {
+		auto tcircle = std::dynamic_pointer_cast<ofxSvgCircle>(aele);
 		_addCssClassFromPath( tcircle, txml );
 		
 		if( auto xattr = txml.appendAttribute("cx")) {
@@ -2307,8 +2300,8 @@ bool ofxSvg::_toXml( ofXml& aParentNode, std::shared_ptr<ofx::svg::Element> aele
 			xattr.set(tcircle->getRadius());
 		}
 		
-	} else if( aele->getType() == ofx::svg::TYPE_PATH ) {
-		auto tpath = std::dynamic_pointer_cast<ofx::svg::Path>(aele);
+	} else if( aele->getType() == ofxSvgType::TYPE_PATH ) {
+		auto tpath = std::dynamic_pointer_cast<ofxSvgPath>(aele);
 		
 		_addCssClassFromPath( tpath, txml );
 		
@@ -2382,12 +2375,12 @@ bool ofxSvg::_toXml( ofXml& aParentNode, std::shared_ptr<ofx::svg::Element> aele
 		
 		
 		
-	} else if( aele->getType() == ofx::svg::TYPE_TEXT ) {
+	} else if( aele->getType() == ofxSvgType::TYPE_TEXT ) {
 		// TODO: Maybe at some point ;/
 	}
 	
 	// figure out if we need a transform attribute
-	if( aele->getType() == TYPE_IMAGE || aele->rotation != 0.0f || aele->scale.x != 1.0f || aele->scale.y != 1.0f ) {
+	if( aele->getType() == ofxSvgType::TYPE_IMAGE || aele->rotation != 0.0f || aele->scale.x != 1.0f || aele->scale.y != 1.0f ) {
 		if( auto xattr = txml.appendAttribute("transform")) {
 			xattr.set( getSvgMatrixStringFromElement(aele) );
 		}

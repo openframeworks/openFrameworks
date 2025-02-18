@@ -11,8 +11,7 @@
 #include "ofLog.h"
 #include "ofXml.h"
 
-namespace ofx::svg {
-class CssClass {
+class ofxSvgCssClass {
 public:
 	
 	// adding this Optional class since std::optional is not a part of all std:: distributions at the moment, looking at you gcc < 10
@@ -114,23 +113,22 @@ protected:
 	Property dummyProp;
 };
 
-class CssStyleSheet {
+class ofxSvgCssStyleSheet {
 public:
 	
 	bool parse( std::string aCssString );
 	void clear();
 	
-	CssClass& addClass( std::string aname );
+	ofxSvgCssClass& addClass( std::string aname );
 	bool hasClass( const std::string& aname );
-	CssClass& getClass( const std::string& aname );
+	ofxSvgCssClass& getClass( const std::string& aname );
 	
-	CssClass& getAddClass( CssClass& aclass );
+	ofxSvgCssClass& getAddClass( ofxSvgCssClass& aclass );
 	
-	std::unordered_map<std::string, CssClass> classes;
+	std::unordered_map<std::string, ofxSvgCssClass> classes;
 	
 	std::string toString(bool aBPrettyPrint=true);
 	
 protected:
-	CssClass dummyClass;
+	ofxSvgCssClass dummyClass;
 };
-}
