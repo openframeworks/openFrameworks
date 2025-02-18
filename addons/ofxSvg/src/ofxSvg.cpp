@@ -476,7 +476,9 @@ bool ofxSvg::_addElementFromXmlNode( ofXml& tnode, vector< shared_ptr<Element> >
         if(hattr) image->height = hattr.getFloatValue();
         auto xlinkAttr = tnode.getAttribute("xlink:href");
         if( xlinkAttr ) {
-            image->filepath = folderPath+xlinkAttr.getValue();
+			image->filepath = folderPath;
+			image->filepath.append(xlinkAttr.getValue());
+//            image->filepath = folderPath+xlinkAttr.getValue();
         }
         telement = image;
         
@@ -2269,7 +2271,7 @@ bool ofxSvg::_toXml( ofXml& aParentNode, std::shared_ptr<ofx::svg::Element> aele
 		}
 		if( !timage->getFilePath().empty() ) {
 			if( auto xattr = txml.appendAttribute("xlink:href")) {
-				xattr.set(timage->getFilePath());
+				xattr.set(timage->getFilePath().string());
 			}
 		}
 		

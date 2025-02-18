@@ -145,11 +145,11 @@ float CssClass::sGetFloat(const std::string& astr) {
 bool CssClass::addProperties( std::string aPropertiesString ) {
 	if( aPropertiesString.size() > 0 ) {
 		auto propertiesStr = ofSplitString(aPropertiesString, ";", true, true);
-		int pindex = 0;
+//		int pindex = 0;
 		for( auto& propStr : propertiesStr ) {
 //			std::cout << "    " << pindex << " - property: " << propStr << std::endl;
 			addProperty(propStr);
-			pindex++;
+//			pindex++;
 		}
 		
 //		for( auto& prop : properties ) {

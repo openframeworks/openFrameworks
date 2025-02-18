@@ -202,7 +202,7 @@ public:
 	
 protected:
 	std::string fontsDirectory = "";
-	std::string folderPath, svgPath;
+	of::filesystem::path folderPath, svgPath;
 	ofRectangle mViewbox;
 	ofRectangle mBounds;
 	void validateXmlSvgRoot( ofXml& aRootSvgNode );
