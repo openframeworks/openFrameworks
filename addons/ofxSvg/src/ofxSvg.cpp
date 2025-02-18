@@ -618,17 +618,14 @@ bool ofxSvg::_addElementFromXmlNode( ofXml& tnode, vector< shared_ptr<ofxSvgElem
 				text->textSpans.push_back( _getTextSpanFromXmlNode( tnode ) );
             }
         }
-        
-        string tempFolderPath = folderPath;
-        if( tempFolderPath.back() != '/' ) {
-            tempFolderPath += '/';
-        }
+		
+		string tempFolderPath = ofFilePath::addTrailingSlash(folderPath);
         if( ofDirectory::doesDirectoryExist( tempFolderPath+"fonts/" )) {
             text->setFontDirectory( tempFolderPath+"fonts/" );
         }
         if( fontsDirectory != "" ) {
             if( ofDirectory::doesDirectoryExist(fontsDirectory)) {
-                text->setFontDirectory( fontsDirectory );
+                text->setFontDirectory(fontsDirectory);
             }
         }
         
