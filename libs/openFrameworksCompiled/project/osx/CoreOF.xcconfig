@@ -115,7 +115,7 @@ SDKROOT = macosx
 WRAPPER_EXTENSION = app
 
 SKIP_INSTALL = YES
-CONFIGURATION_BUILD_DIR = $(SRCROOT)/bin/
+
 
 CC = $(OF_PATH)/scripts/osx/cc.sh
 CXX = $(OF_PATH)/scripts/osx/cxx.sh
