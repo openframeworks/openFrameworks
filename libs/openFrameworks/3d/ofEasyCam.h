@@ -211,12 +211,12 @@ private:
 	glm::vec3 translate;
 
 	/// \brief Sensitivity
-	/// These varibles determine how sensitive is the interaction.
+	/// These variables determine how sensitive the interaction is.
 	/// High values mean faster and bigger movements/rotations.
 	/// Low Values mean more presicion.
 	glm::vec3 sensitivityTranslate;
 	glm::vec3 sensitivityRot;
-	float sensitivityScroll = 1.0f;
+	float sensitivityScroll;
 
 	/// \brief The previous mouse position.
 	glm::vec2 prevMouse;

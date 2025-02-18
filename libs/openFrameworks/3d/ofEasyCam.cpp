@@ -19,6 +19,7 @@ ofEasyCam::ofEasyCam(){
 	reset();
 	sensitivityTranslate = {1,1,1};
 	sensitivityRot = {1,1,1};
+	sensitivityScroll = 1.0f;
 
     addInteraction(TRANSFORM_TRANSLATE_XY, OF_MOUSE_BUTTON_LEFT,doTranslationKey);
 	addInteraction(TRANSFORM_ROTATE, OF_MOUSE_BUTTON_LEFT);
@@ -211,6 +212,10 @@ void ofEasyCam::setTranslationSensitivity(const glm::vec3& sensitivity){
 //----------------------------------------
 void ofEasyCam::setTranslationSensitivity(float x, float y, float z){
 	sensitivityTranslate = {x,y,z};
+}
+//----------------------------------------
+void ofEasyCam::setScrollSensitivity(float sensitivity){
+	sensitivityScroll = sensitivity;
 }
 
 //----------------------------------------
