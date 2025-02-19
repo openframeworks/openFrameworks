@@ -13,7 +13,7 @@ class ofCoreEvents;
 using std::cout;
 using std::endl;
 
-static struct ofCoreInternal {
+struct ofCoreInternal {
 public:
 	ofCoreInternal() {};
 	~ofCoreInternal() {};
