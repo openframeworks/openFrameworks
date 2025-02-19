@@ -81,7 +81,7 @@ void ofBufferObject::unbind(GLenum target) const{
 	}
 }
 
-#if !defined(TARGET_OPENGLES) || defined(TARGET_EMSCRIPTEN)
+//#if !defined(TARGET_OPENGLES) || defined(TARGET_EMSCRIPTEN)
 void ofBufferObject::bindBase(GLenum target,GLuint index) const{
 	if(data){
 		glBindBufferBase(target,index,data->id);
@@ -108,7 +108,7 @@ void ofBufferObject::bindRange(GLenum target,GLuint index, GLintptr offset, GLsi
 void ofBufferObject::unbindRange(GLenum target,GLuint index) const{
 	glBindBufferBase(target,index,0);
 }
-#endif
+//#endif
 
 GLuint ofBufferObject::getId() const{
 	if(data) return data->id;

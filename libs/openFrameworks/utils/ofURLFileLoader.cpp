@@ -3,6 +3,8 @@
 #include "ofUtils.h"
 #include "ofFileUtils.h"
 #include "ofLog.h"
+// FIXME: unordered_set
+#include <set>
 
 using std::map;
 using std::set;
@@ -64,6 +66,7 @@ private:
 	ofThreadChannel<ofHttpRequest> requests;
 	ofThreadChannel<ofHttpResponse> responses;
 	ofThreadChannel<int> cancelRequestQueue;
+	// FIXME: unordered_set
 	set<int> cancelledRequests;
 };
 

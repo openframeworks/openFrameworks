@@ -1135,6 +1135,7 @@ void ofMaterial::updateLights(const ofShader & shader,ofGLProgrammableRenderer &
 		shared_ptr<ofLight::Data> light = ofLightsData()[i].lock();
 		if(!light || !light->isEnabled){
 			shader.setUniform1f("lights["+idx+"].enabled",0);
+//			lights[i].enabled = 0;
 			continue;
 		}
 		glm::vec4 lightEyePosition = light->position;
@@ -1154,20 +1155,35 @@ void ofMaterial::updateLights(const ofShader & shader,ofGLProgrammableRenderer &
 			}
 			if( light->lightType != OF_LIGHT_POINT ) {
 				shader.setUniform3f("lights["+idx+"].direction", light->direction );
+//				lights[i].direction = light->direction;
 			}
 		}
+
+//		lights[i].enabled = 1;
+//		lights[i].type = light->lightType;
+//		lights[i].position = lightEyePosition;
 
 		shader.setUniform1f("lights["+idx+"].enabled",1);
 		shader.setUniform1f("lights["+idx+"].type", light->lightType);
 		shader.setUniform4f("lights["+idx+"].position", lightEyePosition);
 		if( !isPBR() ) {
+//			lights[i].ambient = light->ambientColor;
+//			lights[i].specular = light->specularColor;
+
 			shader.setUniform4f("lights["+idx+"].ambient", light->ambientColor);
 			shader.setUniform4f("lights["+idx+"].specular", light->specularColor);
 		}
+//		lights[idx].diffuse = light->diffuseColor;
 		shader.setUniform4f("lights["+idx+"].diffuse", light->diffuseColor);
 
 		if(light->lightType!=OF_LIGHT_DIRECTIONAL){
 			// TODO: add in light radius if pbr?
+			
+//			lights[idx].radius = 0.0f;
+//			lights[idx].constantAttenuation = light->attenuation_constant;
+//			lights[idx].linearAttenuation = light->attenuation_linear;
+//			lights[idx].quadraticAttenuation = light->attenuation_quadratic;
+
 			shader.setUniform1f("lights["+idx+"].radius", 0.0f);
 			shader.setUniform1f("lights["+idx+"].constantAttenuation", light->attenuation_constant);
 			shader.setUniform1f("lights["+idx+"].linearAttenuation", light->attenuation_linear);
@@ -1182,9 +1198,16 @@ void ofMaterial::updateLights(const ofShader & shader,ofGLProgrammableRenderer &
 				glm::vec4 direction4 = renderer.getCurrentViewMatrix() * glm::vec4(direction,1.0);
 				direction = glm::vec3(direction4) / direction4.w;
 				direction = direction - glm::vec3(lightEyePosition);
+
 				shader.setUniform3f("lights["+idx+"].spotDirection", glm::normalize(direction));
+//				lights[idx].spotDirection = glm::normalize(direction);
+				
 			}
 			//shader.setUniform3f("lights["+idx+"].spotDirection", glm::normalize(direction));
+//			lights[idx].spotExponent = light->exponent;
+//			lights[idx].spotCutoff = light->spotCutOff;
+//			lights[idx].spotCosCutoff = std::cos(glm::radians(light->spotCutOff)));
+
 			shader.setUniform1f("lights["+idx+"].spotExponent", light->exponent);
 			shader.setUniform1f("lights["+idx+"].spotCutoff", light->spotCutOff);
 			shader.setUniform1f("lights["+idx+"].spotCosCutoff", std::cos(glm::radians(light->spotCutOff)));
@@ -1192,8 +1215,15 @@ void ofMaterial::updateLights(const ofShader & shader,ofGLProgrammableRenderer &
 			if( !isPBR() ) {
 				glm::vec3 halfVector(glm::normalize(glm::vec4(0.f, 0.f, 1.f, 0.f) + lightEyePosition));
 				shader.setUniform3f("lights["+idx+"].halfVector", halfVector);
+				
+//				lights[idx].halfVector = light->halfVector;
+
 			}
 		}else if(light->lightType==OF_LIGHT_AREA){
+			
+//			lights[idx].width = light->width;
+//			lights[idx].height = light->height;
+			
 			shader.setUniform1f("lights["+idx+"].width", light->width);
 			shader.setUniform1f("lights["+idx+"].height", light->height);
 			glm::vec3 direction = light->direction;
@@ -1202,6 +1232,9 @@ void ofMaterial::updateLights(const ofShader & shader,ofGLProgrammableRenderer &
 				glm::vec4 direction4 = renderer.getCurrentViewMatrix() * glm::vec4(direction, 1.0);
 				direction = glm::vec3(direction4) / direction4.w;
 				direction = direction - glm::vec3(lightEyePosition);
+				
+//				lights[idx].spotDirection = glm::normalize(direction);
+
 				shader.setUniform3f("lights["+idx+"].spotDirection", glm::normalize(direction));
 			}
 			
@@ -1214,6 +1247,11 @@ void ofMaterial::updateLights(const ofShader & shader,ofGLProgrammableRenderer &
 				right = right - glm::vec3(lightEyePosition);
 				up = glm::cross(right, direction);
 			}
+			
+			// FIXME: why toGlm in one and not in another?
+//			lights[idx].right = glm::normalize(toGlm(right));
+//			lights[idx].up = glm::normalize(up));
+
 			shader.setUniform3f("lights["+idx+"].right", glm::normalize(toGlm(right)));
 			shader.setUniform3f("lights["+idx+"].up", glm::normalize(up));
 		}

@@ -10,6 +10,8 @@
 #include "ofEvents.h"
 #include "ofUtils.h"
 
+#include <set>
+
 #if defined (TARGET_OF_IOS) || defined (TARGET_OSX)
 #include <OpenAL/al.h>
 #include <OpenAL/alc.h>

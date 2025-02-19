@@ -386,7 +386,6 @@ void ofAppEGLWindow::setup(const ofAppEGLWindowSettings & _settings) {
 	buttonInUse	= 0;
 	bEnableSetupScreen = true;
 	eglDisplayString = "";
-	orientation = OF_ORIENTATION_DEFAULT;
 
 	//TODO: 2.0f is an arbitrary factor that makes mouse speed ok at 1024x768,
 	// to be totally correct we might need to take into account screen size
@@ -917,7 +916,7 @@ void ofAppEGLWindow::destroyNativeEvents() {
 }
 
 //------------------------------------------------------------
-void ofAppEGLWindow::setWindowRect(const ofRectangle& requestedWindowRect) {
+void ofAppEGLWindow::setWindowRect(const ofRectangle & requestedWindowRect) {
 	if(!isWindowInited) {
 		ofLogError("ofAppEGLWindow") << "setWindowRect(): window not inited";
 		return;
@@ -1087,17 +1086,17 @@ void ofAppEGLWindow::setWindowTitle(std::string title) {
 }
 
 //------------------------------------------------------------
-glm::vec2 ofAppEGLWindow::getWindowSize(){
+glm::ivec2 ofAppEGLWindow::getWindowSize(){
 	return {currentWindowRect.width, currentWindowRect.height};
 }
 
 //------------------------------------------------------------
-glm::vec2 ofAppEGLWindow::getWindowPosition(){
+glm::ivec2 ofAppEGLWindow::getWindowPosition(){
 	return glm::vec2(currentWindowRect.getPosition());
 }
 
 //------------------------------------------------------------
-glm::vec2 ofAppEGLWindow::getScreenSize(){
+glm::ivec2 ofAppEGLWindow::getScreenSize(){
 	unsigned int screenWidth = 0;
 	unsigned int screenHeight = 0;
 
@@ -1140,16 +1139,6 @@ int ofAppEGLWindow::getHeight(){
 		return currentWindowRect.height;
 	}
 	return currentWindowRect.width;
-}
-
-//------------------------------------------------------------
-void ofAppEGLWindow::setOrientation(ofOrientation orientationIn){
-	orientation = orientationIn;
-}
-
-//------------------------------------------------------------
-ofOrientation ofAppEGLWindow::getOrientation(){
-	return orientation;
 }
 
 //------------------------------------------------------------
@@ -1247,11 +1236,6 @@ void ofAppEGLWindow::setWindowShape(int w, int h){
 		ofLogError("ofAppEGLWindow") << "setWindowPosition(): no native window type for this system, perhaps try X11?";
 #endif
 	}
-}
-
-//------------------------------------------------------------
-ofWindowMode ofAppEGLWindow::getWindowMode(){
-	return windowMode;
 }
 
 //------------------------------------------------------------
