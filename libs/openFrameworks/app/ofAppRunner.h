@@ -63,10 +63,9 @@ public:
 		return nullptr;
 	}
 	
-} ofCore;
+};
 
-
-
+extern ofCoreInternal ofCore;
 
 
 void ofInit();

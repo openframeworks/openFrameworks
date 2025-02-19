@@ -10,6 +10,8 @@
 #include "ofEvents.h" // of::priv
 #include "ofUtils.h" // initUtils
 
+ofCoreInternal ofCore;
+
 using std::shared_ptr;
 
 #if !defined(TARGET_NODISPLAY)
