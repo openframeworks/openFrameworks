@@ -134,7 +134,9 @@ enum ofTargetPlatform{
 	#define TARGET_OPENGLES
 	#define TARGET_LINUX_ARM
 #elif defined(__EMSCRIPTEN__)
+#ifndef TARGET_EMSCRIPTEN
 	#define TARGET_EMSCRIPTEN
+#endif
 	#define TARGET_OPENGLES
 	#define TARGET_PROGRAMMABLE_GL
 	#define TARGET_IMPLEMENTS_URL_LOADER
@@ -244,8 +246,12 @@ enum ofTargetPlatform{
 	#else // desktop linux
         #define TARGET_GLFW_WINDOW
         #define OF_RTAUDIO
-		#define __LINUX_PULSE__
-		#define __LINUX_ALSA__
+		#ifndef __LINUX_PULSE__
+			#define __LINUX_PULSE__
+		#endif
+		#ifndef __LINUX_ALSA__
+			#define __LINUX_ALSA__
+		#endif
 		#define __LINUX_OSS__
 		#include <GL/glew.h>
 	#endif
