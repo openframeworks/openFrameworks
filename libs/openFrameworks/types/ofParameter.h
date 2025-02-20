@@ -589,6 +589,13 @@ public:
 	ofParameter<ParameterType> & operator=(const ofParameter<ParameterType> & v);
 	const ParameterType & operator=(const ParameterType & v);
 
+	template <typename U = ParameterType>
+	typename std::enable_if_t<std::is_same_v<U, std::string>, ofParameter&>
+	operator=(const char* value) {
+		 set(std::string(value));
+		 return *this;
+	 }
+
 	ParameterType operator++(int v);
 	ofParameter<ParameterType> & operator++();
 
