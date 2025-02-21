@@ -45,6 +45,164 @@ Measurement parseMeasurement(const std::string& input) {
 }
 
 //--------------------------------------------------------------
+std::shared_ptr<ofxSvgElement> ofxSvg::clone( const std::shared_ptr<ofxSvgElement>& aele ) {
+	if (aele) {
+		if( aele->getType() == ofxSvgType::TYPE_ELEMENT ) {
+			return std::make_shared<ofxSvgElement>(*aele);
+		} else if( aele->getType() == ofxSvgType::TYPE_GROUP ) {
+			auto pg = std::dynamic_pointer_cast<ofxSvgGroup>(aele);
+			return std::make_shared<ofxSvgGroup>(*pg);
+		} else if( aele->getType() == ofxSvgType::TYPE_RECTANGLE ) {
+			auto pg = std::dynamic_pointer_cast<ofxSvgRectangle>(aele);
+			return std::make_shared<ofxSvgRectangle>(*pg);
+		} else if( aele->getType() == ofxSvgType::TYPE_IMAGE ) {
+			auto pg = std::dynamic_pointer_cast<ofxSvgImage>(aele);
+			return std::make_shared<ofxSvgImage>(*pg);
+		} else if( aele->getType() == ofxSvgType::TYPE_ELLIPSE ) {
+			auto pg = std::dynamic_pointer_cast<ofxSvgEllipse>(aele);
+			return std::make_shared<ofxSvgEllipse>(*pg);
+		} else if( aele->getType() == ofxSvgType::TYPE_CIRCLE ) {
+			auto pg = std::dynamic_pointer_cast<ofxSvgCircle>(aele);
+			return std::make_shared<ofxSvgCircle>(*pg);
+		} else if( aele->getType() == ofxSvgType::TYPE_PATH ) {
+			auto pg = std::dynamic_pointer_cast<ofxSvgPath>(aele);
+			return std::make_shared<ofxSvgPath>(*pg);
+		} else if( aele->getType() == ofxSvgType::TYPE_TEXT ) {
+			auto pg = std::dynamic_pointer_cast<ofxSvgText>(aele);
+			return std::make_shared<ofxSvgText>(*pg);
+		}
+	}
+	return std::shared_ptr<ofxSvgElement>();
+}
+
+// Function to deep copy a vector of shared_ptrs
+std::vector<std::shared_ptr<ofxSvgElement>> ofxSvg::deepCopyVector(const std::vector<std::shared_ptr<ofxSvgElement>>& original) {
+	std::vector<std::shared_ptr<ofxSvgElement>> copy;
+	copy.reserve(original.size()); // Reserve space for efficiency
+	
+	for (auto ptr : original) {
+		if (ptr) {
+			copy.push_back(clone(ptr));
+		} else {
+			ofLogNotice("ofxSvg") << "deepCopyVector :: nullptr";
+			copy.push_back(std::shared_ptr<ofxSvgElement>()); // Preserve nullptr entries
+		}
+	}
+	return copy;
+}
+
+void ofxSvg::deepCopyFrom( const ofxSvg & mom ) {
+	if( mom.mChildren.size() > 0 ) {
+		mChildren = deepCopyVector(mom.mChildren);
+	}
+	ofLogNotice("ofxSvg") << "deepCopyFrom mom num children: " << mom.mChildren.size() << " my size: " << mChildren.size();
+	if( mom.mDefElements.size() > 0 ) {
+		mDefElements = deepCopyVector(mom.mDefElements);
+	}
+	
+	mViewbox = mom.mViewbox;
+	mBounds = mom.mBounds;
+	
+	fontsDirectory = mom.fontsDirectory;
+	folderPath = mom.folderPath;
+	svgPath = mom.svgPath;
+	
+	mCurrentLayer = mom.mCurrentLayer;
+	mUnitStr = mom.mUnitStr;
+	
+	if(mom.mCurrentSvgCss) {
+		mCurrentSvgCss = std::make_shared<ofxSvgCssClass>(*mom.mCurrentSvgCss);
+	}
+	
+	mSvgCss = mom.mSvgCss;
+	mCurrentCss = mom.mCurrentCss;
+	mFillColor = mom.mFillColor;
+	mStrokeColor = mom.mStrokeColor;
+	
+	mModelMatrix = mom.mModelMatrix;
+	mModelMatrixStack = mom.mModelMatrixStack;
+	
+	mCircleResolution = mom.mCircleResolution;
+	mCurveResolution = mom.mCurveResolution;
+	
+	mPaths = mom.mPaths;
+}
+
+//--------------------------------------------------------------
+void ofxSvg::moveFrom( ofxSvg&& mom ) {
+	mChildren = std::move(mom.mChildren);
+	mDefElements = std::move(mom.mDefElements);
+	
+	mViewbox = mom.mViewbox;
+	mBounds = mom.mBounds;
+	
+	fontsDirectory = mom.fontsDirectory;
+	folderPath = mom.folderPath;
+	svgPath = mom.svgPath;
+	
+	mCurrentLayer = mom.mCurrentLayer;
+	mUnitStr = mom.mUnitStr;
+	
+	mCurrentSvgCss = mom.mCurrentSvgCss;
+	
+	mSvgCss = mom.mSvgCss;
+	mCurrentCss = mom.mCurrentCss;
+	mFillColor = mom.mFillColor;
+	mStrokeColor = mom.mStrokeColor;
+	
+	mModelMatrix = mom.mModelMatrix;
+	mModelMatrixStack = mom.mModelMatrixStack;
+	
+	mCircleResolution = mom.mCircleResolution;
+	mCurveResolution = mom.mCurveResolution;
+	
+	mPaths = mom.mPaths;
+}
+
+
+// Copy constructor (deep copy)
+//--------------------------------------------------------------
+ofxSvg::ofxSvg(const ofxSvg & mom) {
+	clear();
+	ofLogNotice("ofxSvg") << "ofxSvg(const ofxSvg & mom)";
+	deepCopyFrom(mom);
+}
+
+// Copy assignment operator (deep copy)
+//--------------------------------------------------------------
+ofxSvg& ofxSvg::operator=(const ofxSvg& mom) {
+	if (this != &mom) {
+		ofLogNotice("ofxSvg") << "ofxSvg::operator=(const ofxSvg& mom)";
+		clear();
+		deepCopyFrom(mom);
+	}
+	return *this;
+}
+
+// Move constructor
+//--------------------------------------------------------------
+ofxSvg::ofxSvg(ofxSvg && mom) {
+	ofLogNotice("ofxSvg") << "ofxSvg(ofxSvg && mom)";
+	clear();
+	moveFrom(std::move(mom));
+}
+
+// Move assignment operator
+ofxSvg& ofxSvg::operator=(ofxSvg&& mom) {
+	if (this != &mom) {
+		ofLogNotice("ofxSvg") << "ofxSvg::operator=(ofxSvg&& mom)";
+		clear();
+		moveFrom(std::move(mom));
+	}
+	return *this;
+}
+
+//--------------------------------------------------------------
+ofxSvg::ofxSvg(const of::filesystem::path & fileName) {
+	load(fileName);
+}
+
+//--------------------------------------------------------------
 bool ofxSvg::load( const of::filesystem::path& fileName ) {
 	ofFile mainXmlFile( fileName, ofFile::ReadOnly );
 	ofBuffer tMainXmlBuffer( mainXmlFile );
@@ -430,32 +588,8 @@ bool ofxSvg::_addElementFromXmlNode( ofXml& tnode, vector< shared_ptr<ofxSvgElem
 				ofLogVerbose("ofxSvg") << "going to look for href " << href;
 				for( auto & def : mDefElements ) {
 					if( def->name == href ) {
-						if( def->getType() == ofxSvgType::TYPE_RECTANGLE ) {
-							auto drect = std::dynamic_pointer_cast<ofxSvgRectangle>(def);
-							auto nrect = std::make_shared<ofxSvgRectangle>( *drect );
-							telement = nrect;
-						} else if( def->getType() == ofxSvgType::TYPE_IMAGE ) {
-							auto dimg = std::dynamic_pointer_cast<ofxSvgImage>(def);
-							auto nimg = std::make_shared<ofxSvgImage>( *dimg );
-							ofLogVerbose("ofxSvg") << "created an image node with filepath: " << nimg->getFilePath();
-							telement = nimg;
-						} else if( def->getType() == ofxSvgType::TYPE_ELLIPSE ) {
-							auto dell= std::dynamic_pointer_cast<ofxSvgEllipse>(def);
-							auto nell = std::make_shared<ofxSvgEllipse>( *dell );
-							telement = nell;
-						} else if( def->getType() == ofxSvgType::TYPE_CIRCLE ) {
-							auto dcir= std::dynamic_pointer_cast<ofxSvgCircle>(def);
-							auto ncir = std::make_shared<ofxSvgCircle>( *dcir );
-							telement = ncir;
-						} else if( def->getType() == ofxSvgType::TYPE_PATH ) {
-							auto dpat= std::dynamic_pointer_cast<ofxSvgPath>(def);
-							auto npat = std::make_shared<ofxSvgPath>( *dpat );
-							telement = npat;
-						} else if( def->getType() == ofxSvgType::TYPE_TEXT ) {
-							auto dtex = std::dynamic_pointer_cast<ofxSvgText>(def);
-							auto ntex = std::make_shared<ofxSvgText>( *dtex );
-							telement = ntex;
-						} else {
+						telement = clone(def);
+						if( !telement ) {
 							ofLogWarning("Parser") << "could not find type for def : " << def->name;
 						}
 						break;

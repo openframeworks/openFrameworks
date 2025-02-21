@@ -12,11 +12,32 @@
 
 /// \file
 /// ofxSVG is used for loading, manipulating, rendering and saving of SVG files.
+/// Based on this spec: https://www.w3.org/TR/SVG/Overview.html
 
-class ofxSvg : public ofxSvgGroup {
-public:
+class ofxSvg : public ofxSvgGroup {	
+protected:
+	std::shared_ptr<ofxSvgElement> clone( const std::shared_ptr<ofxSvgElement>& aele );
+	std::vector<std::shared_ptr<ofxSvgElement>> deepCopyVector(const std::vector<std::shared_ptr<ofxSvgElement>>& original);
+	void deepCopyFrom( const ofxSvg & mom );
+	void moveFrom( ofxSvg&& mom );
 	
+public:
 	virtual ofxSvgType getType() override {return ofxSvgType::TYPE_DOCUMENT;}
+	
+	// Default constructor
+	ofxSvg() = default;
+	// Copy constructor (deep copy)
+	ofxSvg(const ofxSvg & mom);// = default;
+	// Copy assignment operator (deep copy)
+	ofxSvg& operator=(const ofxSvg& mom);
+	// Move constructor
+	ofxSvg(ofxSvg&& mom);
+	// Move assignment operator
+	ofxSvg& operator=(ofxSvg&& mom);
+	
+	~ofxSvg() = default;
+	
+	ofxSvg(const of::filesystem::path & fileName);
 	
 	/// \brief Loads an SVG file from the provided filename.
 	/// \return true if the load was successful.
