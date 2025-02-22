@@ -118,6 +118,7 @@ ofColor ofxSvgCssClass::sGetColor(const std::string& astr ) {
 		ofColor tcolor(255);
 		int hint = ofHexToInt(cstr);
 		tcolor.setHex(hint);
+//		ofLogNotice("ofxSvgCssClass") << "color: " << cstr << " ofColor: " << tcolor;
 		return tcolor;
 	} else if( !astr.empty() ) {
 		if( sCommonColors.count(cstr)) {

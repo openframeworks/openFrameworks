@@ -84,7 +84,7 @@ std::vector<std::shared_ptr<ofxSvgElement>> ofxSvg::deepCopyVector(const std::ve
 		if (ptr) {
 			copy.push_back(clone(ptr));
 		} else {
-			ofLogNotice("ofxSvg") << "deepCopyVector :: nullptr";
+			ofLogVerbose("ofxSvg") << "deepCopyVector :: nullptr";
 			copy.push_back(std::shared_ptr<ofxSvgElement>()); // Preserve nullptr entries
 		}
 	}
@@ -95,7 +95,6 @@ void ofxSvg::deepCopyFrom( const ofxSvg & mom ) {
 	if( mom.mChildren.size() > 0 ) {
 		mChildren = deepCopyVector(mom.mChildren);
 	}
-	ofLogNotice("ofxSvg") << "deepCopyFrom mom num children: " << mom.mChildren.size() << " my size: " << mChildren.size();
 	if( mom.mDefElements.size() > 0 ) {
 		mDefElements = deepCopyVector(mom.mDefElements);
 	}
@@ -164,7 +163,7 @@ void ofxSvg::moveFrom( ofxSvg&& mom ) {
 //--------------------------------------------------------------
 ofxSvg::ofxSvg(const ofxSvg & mom) {
 	clear();
-	ofLogNotice("ofxSvg") << "ofxSvg(const ofxSvg & mom)";
+	ofLogVerbose("ofxSvg") << "ofxSvg(const ofxSvg & mom)";
 	deepCopyFrom(mom);
 }
 
@@ -172,7 +171,7 @@ ofxSvg::ofxSvg(const ofxSvg & mom) {
 //--------------------------------------------------------------
 ofxSvg& ofxSvg::operator=(const ofxSvg& mom) {
 	if (this != &mom) {
-		ofLogNotice("ofxSvg") << "ofxSvg::operator=(const ofxSvg& mom)";
+		ofLogVerbose("ofxSvg") << "ofxSvg::operator=(const ofxSvg& mom)";
 		clear();
 		deepCopyFrom(mom);
 	}
@@ -182,7 +181,7 @@ ofxSvg& ofxSvg::operator=(const ofxSvg& mom) {
 // Move constructor
 //--------------------------------------------------------------
 ofxSvg::ofxSvg(ofxSvg && mom) {
-	ofLogNotice("ofxSvg") << "ofxSvg(ofxSvg && mom)";
+	ofLogVerbose("ofxSvg") << "ofxSvg(ofxSvg && mom)";
 	clear();
 	moveFrom(std::move(mom));
 }
@@ -190,7 +189,7 @@ ofxSvg::ofxSvg(ofxSvg && mom) {
 // Move assignment operator
 ofxSvg& ofxSvg::operator=(ofxSvg&& mom) {
 	if (this != &mom) {
-		ofLogNotice("ofxSvg") << "ofxSvg::operator=(ofxSvg&& mom)";
+		ofLogVerbose("ofxSvg") << "ofxSvg::operator=(ofxSvg&& mom)";
 		clear();
 		moveFrom(std::move(mom));
 	}
@@ -1018,7 +1017,7 @@ void ofxSvg::_parsePath( ofXml& tnode, std::shared_ptr<ofxSvgPath> aSvgPath ) {
 		'A', 'a' // elliptical arc
 	};
 	std::string ostring = dattr.getValue();
-//	ofLogNotice(moduleName()) << __FUNCTION__ << " dattr: " << ostring;
+//	ofLogNotice("ofxSvg") << __FUNCTION__ << " dattr: " << ostring;
 	
 	if( ostring.empty() ) {
 		ofLogError("ofxSvg") << __FUNCTION__ << " there is no data in the d string.";
@@ -1097,14 +1096,14 @@ void ofxSvg::_parsePath( ofXml& tnode, std::shared_ptr<ofxSvgPath> aSvgPath ) {
 			break;
 		}
 		
-//		ofLogNotice(moduleName()) << " o : ["<< ostring[index] <<"]";
+		ofLogVerbose("ofxSvg") << " o : ["<< ostring[index] <<"]";
 		
 		// up to next valid character //
 		std::string currentString;
 		bool bFoundValidNextChar = false;
 		auto pos = index+1;
 		if( pos >= ostring.size() ) {
-			ofLogVerbose("svgParser") << "pos is greater than string size: " << pos << " / " << ostring.size();
+			ofLogVerbose("ofxSvg") << "pos is greater than string size: " << pos << " / " << ostring.size();
 //			break;
 			breakMe = true;
 		}
@@ -1127,7 +1126,7 @@ void ofxSvg::_parsePath( ofXml& tnode, std::shared_ptr<ofxSvgPath> aSvgPath ) {
 		
 		
 		if( currentString.empty() ) {
-			ofLogVerbose("svgParser") << "currentString is empty: " << cchar;
+			ofLogVerbose("ofxSvg") << "currentString is empty: " << cchar;
 //			break;
 		}
 		
@@ -1171,7 +1170,7 @@ void ofxSvg::_parsePath( ofXml& tnode, std::shared_ptr<ofxSvgPath> aSvgPath ) {
 			}
 			npositions = parsePoints(currentString);
 //			for( auto& np : npositions ) {
-//				ofLogNotice(moduleName()) << cchar << " line to: " << np;
+//				ofLogVerbose("ofxSvg") << cchar << " line to: " << np;
 //			}
 			ctype = ofPath::Command::lineTo;
 		} else if( cchar == 'z' || cchar == 'Z' ) {
@@ -1184,7 +1183,7 @@ void ofxSvg::_parsePath( ofXml& tnode, std::shared_ptr<ofxSvgPath> aSvgPath ) {
 			ctype = ofPath::Command::bezierTo;
 			npositions = parsePoints(currentString);
 //			for( auto& np : npositions ) {
-//				ofLogNotice(moduleName()) << cchar << " bezier to: " << np;
+//				ofLogVerbose("ofxSvg") << cchar << " bezier to: " << np;
 //			}
 		} else if( cchar == 'Q' || cchar == 'q' || cchar == 'T' || cchar == 't' ) {
 			if( cchar == 'q' ) {
@@ -1195,7 +1194,7 @@ void ofxSvg::_parsePath( ofXml& tnode, std::shared_ptr<ofxSvgPath> aSvgPath ) {
 			npositions = parsePoints(currentString);
 			
 //			for( auto& np : npositions ) {
-//				ofLogNotice(moduleName()) << " Quad bezier to: " << np;
+//				ofLogNotice("ofxSvg") << " Quad bezier to: " << np;
 //			}
 		} else if(cchar == 'a' || cchar == 'A' ) {
 			if( cchar == 'a' ) {
@@ -1220,14 +1219,14 @@ void ofxSvg::_parsePath( ofXml& tnode, std::shared_ptr<ofxSvgPath> aSvgPath ) {
 				
 			}
 //			for( auto& np : npositions ) {
-//				ofLogNotice(moduleName()) << " arc parsed positions: " << np;
+//				ofLogNotice("ofxSvg") << " arc parsed positions: " << np;
 //			}
 		}
 		
 		if( ctype.has_value() ) {
 			
 //			for( auto& np : npositions ) {
-//				ofLogNotice(moduleName()) << cchar << " position: " << np;
+//				ofLogNotice("ofxSvg") << cchar << " position: " << np;
 //			}
 			
 			auto prevPos = currentPos;
@@ -1253,7 +1252,7 @@ void ofxSvg::_parsePath( ofXml& tnode, std::shared_ptr<ofxSvgPath> aSvgPath ) {
 				
 			} else {
 //				if( commandT == ofPath::Command::moveTo ) {
-//					ofLogNotice("ofxSvgParser") << "before current pos is altered: move to: " << npositions[0] << " current Pos: " << currentPos << " relative: " << bRelative;
+//					ofLogNotice("ofxSvg") << "before current pos is altered: move to: " << npositions[0] << " current Pos: " << currentPos << " relative: " << bRelative;
 //				}
 				if( npositions.size() > 0 && commandT != ofPath::Command::close ) {
 					currentPos = convertToAbsolute(bRelative, currentPos, npositions );
@@ -1261,7 +1260,7 @@ void ofxSvg::_parsePath( ofXml& tnode, std::shared_ptr<ofxSvgPath> aSvgPath ) {
 			}
 			
 //			if( npositions.size() > 0 ) {
-//				ofLogNotice("ofxSvgParser") << "before current pos is altered: move to: " << npositions[0] << " current Pos: " << currentPos << " relative: " << bRelative;
+//				ofLogNotice("ofxSvg") << "before current pos is altered: move to: " << npositions[0] << " current Pos: " << currentPos << " relative: " << bRelative;
 //			}
 			
 			if( commandT != ofPath::Command::bezierTo ) {
@@ -1276,6 +1275,7 @@ void ofxSvg::_parsePath( ofXml& tnode, std::shared_ptr<ofxSvgPath> aSvgPath ) {
 			} else if( commandT == ofPath::Command::lineTo ) {
 				aSvgPath->path.lineTo(currentPos);
 			} else if( commandT == ofPath::Command::close ) {
+//				ofLogNotice("ofxSvg") << "Closing the path";
 				aSvgPath->path.close();
 			} else if( commandT == ofPath::Command::bezierTo ) {
 				
@@ -1471,7 +1471,7 @@ void ofxSvg::_parsePath( ofXml& tnode, std::shared_ptr<ofxSvgPath> aSvgPath ) {
 //			mCPoints.insert( mCPoints.end(), npositions.begin(), npositions.end() );
 		}
 		
-//		ofLogNotice(moduleName()) << "["<<cchar<<"]: " << currentString;
+//		ofLogNotice("ofxSvg") << "["<<cchar<<"]: " << currentString;
 		
 		
 		justInCase++;
@@ -1485,6 +1485,9 @@ ofxSvgCssClass ofxSvg::_parseStyle( ofXml& anode ) {
 	if( mCurrentSvgCss ) {
 		// apply first if we have a global style //
 		for( auto& tprop : mCurrentSvgCss->properties ) {
+			if( tprop.first.empty() ) {
+				ofLogNotice("ofxSvg") << "First prop is empty";
+			}
 			css.addProperty(tprop.first, tprop.second);
 		}
 	}
@@ -1494,10 +1497,10 @@ ofxSvgCssClass ofxSvg::_parseStyle( ofXml& anode ) {
 	if( auto classAttr = anode.getAttribute("class") ) {
 		// get a list of classes, is this separated by commas?
 		auto classList = ofSplitString(classAttr.getValue(), ",");
-//		ofLogNotice("ofx::svg::Parser") << " going to try and parse style classes string: " << classAttr.getValue();
+//		ofLogNotice("ofxSvg") << " going to try and parse style classes string: " << classAttr.getValue();
 		for( auto& className : classList ) {
 			if( mSvgCss.hasClass(className) ) {
-//				ofLogNotice("ofx::svg::Parser") << " has class " << className;
+//				ofLogNotice("ofxSvg") << " has class " << className;
 				// now lets try to apply it to the path
 				auto& tCss = mSvgCss.getClass(className);
 				for( auto& tprop : tCss.properties ) {
@@ -1509,15 +1512,26 @@ ofxSvgCssClass ofxSvg::_parseStyle( ofXml& anode ) {
 	
 	// locally set on node overrides the class listing
 	// are there any properties on the node?
-	if( auto fillAttr = anode.getAttribute("fill")) {
-		css.addProperty("fill", fillAttr.getValue());
-	}
-	if( auto strokeAttr = anode.getAttribute("stroke")) {
-		css.addProperty("stroke", strokeAttr.getValue());
-	}
 	
-	if( auto strokeWidthAttr = anode.getAttribute("stroke-width")) {
-		css.addProperty("stroke-width", strokeWidthAttr.getValue());
+	// avoid the following
+	std::vector<std::string> reservedAtts = {
+		"d", "id", "xlink:href", "width", "height", "rx", "ry", "cx", "cy", "r", "style", "font-family",
+		"x","y","x1","y1","x2","y2"
+	};
+	
+	// lets try to do this a better way
+	for( auto& att : anode.getAttributes() ) {
+		auto atName = ofToLower(att.getName());
+		bool bFileIt = true;
+		for( auto& rattName : reservedAtts ) {
+			if( atName == rattName ) {
+				bFileIt=false;
+				break;
+			}
+		}
+		if( bFileIt ) {
+			css.addProperty(att.getName(), att.getValue());
+		}
 	}
 	
 	if( auto ffattr = anode.getAttribute("font-family") ) {
@@ -1526,18 +1540,9 @@ ofxSvgCssClass ofxSvg::_parseStyle( ofXml& anode ) {
 		css.addProperty("font-family", tFontFam);
 	}
 	
-	if( auto fsattr = anode.getAttribute("font-size") ) {
-		css.addProperty("font-size", fsattr.getValue() );
-	}
-	
 	// and lastly style
 	if( auto styleAttr = anode.getAttribute("style") ) {
 		css.addProperties(styleAttr.getValue());
-	}
-	
-	// override anything else if set directly on the node
-	if( auto disAttr = anode.getAttribute("display") ) {
-		css.addProperties(disAttr.getValue());
 	}
 	
 	return css;
@@ -1546,9 +1551,8 @@ ofxSvgCssClass ofxSvg::_parseStyle( ofXml& anode ) {
 //--------------------------------------------------------------
 void ofxSvg::_applyStyleToElement( ofXml& tnode, std::shared_ptr<ofxSvgElement> aEle ) {
 	auto css = _parseStyle(tnode);
-//	ofLogNotice("_applyStyleToElement" ) << " " << aEle->name << " -----";
 	if( css.hasAndIsNone("display")) {
-//		ofLogNotice("parser") << "setting element to invisible: " << aEle->name;
+		ofLogVerbose("ofxSvg") << "setting element to invisible: " << aEle->name;
 		aEle->setVisible(false);
 	}
 }
@@ -1572,6 +1576,21 @@ void ofxSvg::_applyStyleToPath( ofxSvgCssClass& aclass, std::shared_ptr<ofxSvgPa
 	} else {
 //		aSvgPath->path.setFilled(false);
 		aSvgPath->path.setFillColor(ofColor(0));
+	}
+	
+	if( aclass.hasProperty("fill-opacity")) {
+		if( aclass.isNone("fill-opacity")) {
+			aSvgPath->path.setFilled(false);
+		} else {
+			float val = aclass.getFloatValue("fill-opacity", 1.0f);
+			if( val <= 0.0001f ) {
+				aSvgPath->path.setFilled(false);
+			} else {
+				auto pcolor = aSvgPath->path.getFillColor();
+				pcolor.a = val;
+				aSvgPath->path.setFillColor(pcolor);
+			}
+		}
 	}
 	
 	if( !aclass.isNone("stroke") ) {
@@ -1707,7 +1726,7 @@ bool ofxSvg::setTransformFromSvgMatrixString( string aStr, std::shared_ptr<ofxSv
 			} else {
 				mat = mat * glm::toMat4((const glm::quat&)glm::angleAxis(glm::radians(aele->rotation), glm::vec3(0.f, 0.f, 1.f)));
 			}
-//			ofLogNotice("svg parser") << "rcenter: " << rcenter.x << ", " << rcenter.y;
+//			ofLogNotice("ofxSvg") << "rcenter: " << rcenter.x << ", " << rcenter.y;
 		}
 		ofLogVerbose("ofxSvg") << __FUNCTION__ << " arotation: " << aele->rotation;
 	}
