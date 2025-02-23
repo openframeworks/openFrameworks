@@ -21,31 +21,18 @@
 			"fileEncoding": "4"
 		},
 		"BF26640B2C634C16004360E2": {
-		    "isa": "PBXShellScriptBuildPhase",
-		    "alwaysOutOfDate": "1",
-		    "buildActionMask": "2147483647",
-		    "files": [],
-		    "inputFileListPaths": [],
-		    "inputPaths": [],
-		    "outputFileListPaths": [],
-		    "outputPaths": [],
-		    "runOnlyForDeploymentPostprocessing": "0",
-		    "shellPath": "/usr/bin/env bash",
+			"buildActionMask": "2147483647",
+			"runOnlyForDeploymentPostprocessing": "0",
+			"outputPaths": [],
+			"shellPath": "/usr/bin/env bash",
+			"inputFileListPaths": [],
+			"showEnvVarsInLog": "0",
+			"isa": "PBXShellScriptBuildPhase",
 			"shellScript": "#!/usr/bin/env bash\n\n# Determine the Xcode build directory\nTARGET_DIR=\"${BUILT_PRODUCTS_DIR:-$SRCROOT/bin}\"\n\n# Check if the directory exists\nif [ ! -d \"$TARGET_DIR\" ]; then\n  echo \"Error: Target directory $TARGET_DIR does not exist.\"\n  exit 1\nfi\n\n# Check and set the com.apple.xcode.CreatedByBuildSystem attribute\nATTRIBUTE_CHECK=$(xattr -p com.apple.xcode.CreatedByBuildSystem \"$TARGET_DIR\" 2>/dev/null)\nif [ -z \"$ATTRIBUTE_CHECK\" ]; then\n  xattr -w com.apple.xcode.CreatedByBuildSystem true \"$TARGET_DIR\"\n  echo \"Attribute com.apple.xcode.CreatedByBuildSystem set to true for $TARGET_DIR\"\nelse\n  echo \"Attribute com.apple.xcode.CreatedByBuildSystem already set for $TARGET_DIR\"\nfi\n",
-			"showEnvVarsInLog": "0"
-		},
-		"E42962A92163ECCD00A6A9E2": {
+			"files": [],
 			"alwaysOutOfDate": "1",
 			"inputPaths": [],
-			"buildActionMask": "2147483647",
-			"shellPath": "/bin/sh",
-			"showEnvVarsInLog": "0",
-			"outputPaths": [],
-			"isa": "PBXShellScriptBuildPhase",
-			"runOnlyForDeploymentPostprocessing": "0",
-			"shellScript": "$OF_CORE_BUILD_COMMAND\n",
-			"name": "Run Script — Compile OF",
-			"files": []
+			"outputFileListPaths": []
 		},
 		"E4C2427710CC5ABF004149E2": {
 			"isa": "PBXCopyFilesBuildPhase",
@@ -120,14 +107,27 @@
 			"runOnlyForDeploymentPostprocessing": "0",
 			"outputPaths": [],
 			"shellPath": "/bin/sh",
-			"showEnvVarsInLog": "0",
 			"inputFileListPaths": [],
+			"showEnvVarsInLog": "0",
 			"isa": "PBXShellScriptBuildPhase",
 			"shellScript": "\"$OF_PATH/scripts/osx/xcode_project.sh\"\n",
 			"files": [],
 			"alwaysOutOfDate": "1",
 			"inputPaths": [],
 			"outputFileListPaths": []
+		},
+		"E42962A92163ECCD00A6A9E2": {
+			"alwaysOutOfDate": "1",
+			"inputPaths": [],
+			"buildActionMask": "2147483647",
+			"shellPath": "/bin/sh",
+			"showEnvVarsInLog": "0",
+			"outputPaths": [],
+			"isa": "PBXShellScriptBuildPhase",
+			"runOnlyForDeploymentPostprocessing": "0",
+			"shellScript": "$OF_CORE_BUILD_COMMAND\n",
+			"name": "Run Script — Compile OF",
+			"files": []
 		},
 		"E4B69B4F0A3A1720003C02F2": {
 			"baseConfigurationReference": "E4EB6923138AFD0F00A09F29",
@@ -142,27 +142,6 @@
 				"GCC_OPTIMIZATION_LEVEL": "3",
 				"OTHER_CPLUSPLUSFLAGS": "-D__MACOSX_CORE__",
 				"COPY_PHASE_STRIP": "YES"
-			},
-			"name": "Release"
-		},
-		"E4B69B610A3A1757003C02F2": {
-			"baseConfigurationReference": "E4EB6923138AFD0F00A09F29",
-			"isa": "XCBuildConfiguration",
-			"buildSettings": {
-				"HEADER_SEARCH_PATHS": [
-					"$(OF_CORE_HEADERS)",
-					"src"
-				],
-				"FRAMEWORK_SEARCH_PATHS": "$(inherited)",
-				"COPY_PHASE_STRIP": "YES",
-				"ARCHS": "$(ARCHS_STANDARD)",
-				"OTHER_LDFLAGS": [
-					"$(OF_CORE_LIBS)",
-					"$(OF_CORE_FRAMEWORKS)",
-					"$(LIB_OF)"
-				],
-				"baseConfigurationReference": "E4EB6923138AFD0F00A09F29",
-				"LIBRARY_SEARCH_PATHS": "$(inherited)"
 			},
 			"name": "Release"
 		},
@@ -238,6 +217,27 @@
 			"buildActionMask": "2147483647",
 			"files": [],
 			"runOnlyForDeploymentPostprocessing": "0"
+		},
+		"E4B69B610A3A1757003C02F2": {
+			"baseConfigurationReference": "E4EB6923138AFD0F00A09F29",
+			"isa": "XCBuildConfiguration",
+			"buildSettings": {
+				"HEADER_SEARCH_PATHS": [
+					"$(OF_CORE_HEADERS)",
+					"src"
+				],
+				"FRAMEWORK_SEARCH_PATHS": "$(inherited)",
+				"COPY_PHASE_STRIP": "YES",
+				"ARCHS": "$(ARCHS_STANDARD)",
+				"OTHER_LDFLAGS": [
+					"$(OF_CORE_LIBS)",
+					"$(OF_CORE_FRAMEWORKS)",
+					"$(LIB_OF)"
+				],
+				"baseConfigurationReference": "E4EB6923138AFD0F00A09F29",
+				"LIBRARY_SEARCH_PATHS": "$(inherited)"
+			},
+			"name": "Release"
 		},
 		"E4B69B4D0A3A1720003C02F2": {
 			"isa": "XCConfigurationList",

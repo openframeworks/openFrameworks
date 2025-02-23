@@ -340,7 +340,7 @@
 		BF6277D22BADCF7C008864C1 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23C00B2BAC8A1C000E2E0E /* QuartzCore.framework */; };
 		BF6277D32BADCF7C008864C1 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23BDAD2BAC7A6F000E2E0E /* CoreFoundation.framework */; };
 		BF6277D42BADCF7C008864C1 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23BDAE2BAC7A6F000E2E0E /* Accelerate.framework */; };
-		BF6277D52BADCF7C008864C1 /* CoreAudioTypes.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23BDAF2BAC7A6F000E2E0E /* CoreAudioTypes.framework */; };
+		BF6277D52BADCF7C008864C1 /* CoreAudioTypes.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23BDAF2BAC7A6F000E2E0E /* CoreAudioTypes.framework */; platformFilters = (maccatalyst, macos, watchos, xros, ); };
 		BF6277D62BADCF7C008864C1 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23C0052BAC8A1C000E2E0E /* MapKit.framework */; };
 		BF6277D72BADCF7C008864C1 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23BDB02BAC7A6F000E2E0E /* CoreData.framework */; };
 		BF6277D82BADCF7C008864C1 /* CoreHaptics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23BDBA2BAC7DD0000E2E0E /* CoreHaptics.framework */; platformFilters = (ios, maccatalyst, macos, tvos, xros, ); };
@@ -364,7 +364,6 @@
 		BF6277F22BADD5A9008864C1 /* AVFAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF6277F12BADD5A9008864C1 /* AVFAudio.framework */; };
 		BF6279EE2BB075A6008864C1 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF6279ED2BB075A6008864C1 /* Security.framework */; platformFilters = (maccatalyst, macos, watchos, xros, ); };
 		BF6279F02BB075DB008864C1 /* ApplicationServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF6279EF2BB075DB008864C1 /* ApplicationServices.framework */; platformFilters = (maccatalyst, macos, ); };
-		BF6279F22BB07B37008864C1 /* pugixml.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF6279F12BB07B37008864C1 /* pugixml.xcframework */; };
 		BF6609E52BA1DB6F005FA2B1 /* FreeImage.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF6609E42BA1DB6F005FA2B1 /* FreeImage.xcframework */; };
 		BF6609E72BA1DC13005FA2B1 /* cairo.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF6609E62BA1DC13005FA2B1 /* cairo.xcframework */; };
 		BF6609E92BA1DC4B005FA2B1 /* freetype.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF6609E82BA1DC4B005FA2B1 /* freetype.xcframework */; };
@@ -379,6 +378,28 @@
 		BF660A472BA1DD1D005FA2B1 /* zlib.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF660A462BA1DD1D005FA2B1 /* zlib.xcframework */; };
 		BF660A492BA1DD2E005FA2B1 /* fmt.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF660A482BA1DD2E005FA2B1 /* fmt.xcframework */; };
 		BF660A4B2BA1DD3B005FA2B1 /* curl.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF660A4A2BA1DD3B005FA2B1 /* curl.xcframework */; };
+		BF8D1B102D6AF3EE007984A0 /* brotli.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF8D1B0F2D6AF3EE007984A0 /* brotli.xcframework */; };
+		BF8D1B112D6AF3EE007984A0 /* brotli.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF8D1B0F2D6AF3EE007984A0 /* brotli.xcframework */; };
+		BF8D1B132D6AF423007984A0 /* ofMaterialBaseTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = BF8D1B122D6AF423007984A0 /* ofMaterialBaseTypes.h */; };
+		BF8D1B142D6AF423007984A0 /* ofMaterialBaseTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = BF8D1B122D6AF423007984A0 /* ofMaterialBaseTypes.h */; };
+		BF8D1B1C2D6AF435007984A0 /* ofSingleton.h in Headers */ = {isa = PBXBuildFile; fileRef = BF8D1B182D6AF435007984A0 /* ofSingleton.h */; };
+		BF8D1B1D2D6AF435007984A0 /* ofJson.h in Headers */ = {isa = PBXBuildFile; fileRef = BF8D1B152D6AF435007984A0 /* ofJson.h */; };
+		BF8D1B1E2D6AF435007984A0 /* ofRandomEngine.h in Headers */ = {isa = PBXBuildFile; fileRef = BF8D1B172D6AF435007984A0 /* ofRandomEngine.h */; };
+		BF8D1B1F2D6AF435007984A0 /* ofThreadChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = BF8D1B192D6AF435007984A0 /* ofThreadChannel.h */; };
+		BF8D1B202D6AF435007984A0 /* ofTimerFps.h in Headers */ = {isa = PBXBuildFile; fileRef = BF8D1B1A2D6AF435007984A0 /* ofTimerFps.h */; };
+		BF8D1B212D6AF435007984A0 /* ofRandomDistributions.h in Headers */ = {isa = PBXBuildFile; fileRef = BF8D1B162D6AF435007984A0 /* ofRandomDistributions.h */; };
+		BF8D1B222D6AF435007984A0 /* ofTimerFps.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BF8D1B1B2D6AF435007984A0 /* ofTimerFps.cpp */; };
+		BF8D1B232D6AF435007984A0 /* ofSingleton.h in Headers */ = {isa = PBXBuildFile; fileRef = BF8D1B182D6AF435007984A0 /* ofSingleton.h */; };
+		BF8D1B242D6AF435007984A0 /* ofJson.h in Headers */ = {isa = PBXBuildFile; fileRef = BF8D1B152D6AF435007984A0 /* ofJson.h */; };
+		BF8D1B252D6AF435007984A0 /* ofRandomEngine.h in Headers */ = {isa = PBXBuildFile; fileRef = BF8D1B172D6AF435007984A0 /* ofRandomEngine.h */; };
+		BF8D1B262D6AF435007984A0 /* ofThreadChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = BF8D1B192D6AF435007984A0 /* ofThreadChannel.h */; };
+		BF8D1B272D6AF435007984A0 /* ofTimerFps.h in Headers */ = {isa = PBXBuildFile; fileRef = BF8D1B1A2D6AF435007984A0 /* ofTimerFps.h */; };
+		BF8D1B282D6AF435007984A0 /* ofRandomDistributions.h in Headers */ = {isa = PBXBuildFile; fileRef = BF8D1B162D6AF435007984A0 /* ofRandomDistributions.h */; };
+		BF8D1B292D6AF435007984A0 /* ofTimerFps.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BF8D1B1B2D6AF435007984A0 /* ofTimerFps.cpp */; };
+		BF8D1B2C2D6AF44B007984A0 /* ES3Renderer.m in Sources */ = {isa = PBXBuildFile; fileRef = BF8D1B2B2D6AF44B007984A0 /* ES3Renderer.m */; };
+		BF8D1B2D2D6AF44B007984A0 /* ES3Renderer.h in Headers */ = {isa = PBXBuildFile; fileRef = BF8D1B2A2D6AF44B007984A0 /* ES3Renderer.h */; };
+		BF8D1B2E2D6AF44B007984A0 /* ES3Renderer.h in Headers */ = {isa = PBXBuildFile; fileRef = BF8D1B2A2D6AF44B007984A0 /* ES3Renderer.h */; };
+		BF8D1B2F2D6AF44B007984A0 /* ES3Renderer.m in Sources */ = {isa = PBXBuildFile; fileRef = BF8D1B2B2D6AF44B007984A0 /* ES3Renderer.m */; };
 		DA48FE78131D85A6000062BC /* ofPolyline.h in Headers */ = {isa = PBXBuildFile; fileRef = DA48FE74131D85A6000062BC /* ofPolyline.h */; };
 		DA94C2F01301D32200CCC773 /* ofRendererCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = DA94C2ED1301D32200CCC773 /* ofRendererCollection.h */; };
 		DA97FD3C12F5A61A005C9991 /* ofCairoRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DA97FD3612F5A61A005C9991 /* ofCairoRenderer.cpp */; };
@@ -671,7 +692,6 @@
 		BF6277F12BADD5A9008864C1 /* AVFAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFAudio.framework; path = System/Library/Frameworks/AVFAudio.framework; sourceTree = SDKROOT; };
 		BF6279ED2BB075A6008864C1 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		BF6279EF2BB075DB008864C1 /* ApplicationServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ApplicationServices.framework; path = System/Library/Frameworks/ApplicationServices.framework; sourceTree = SDKROOT; };
-		BF6279F12BB07B37008864C1 /* pugixml.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = pugixml.xcframework; path = ../../../pugixml/lib/macos/pugixml.xcframework; sourceTree = "<group>"; };
 		BF6609E42BA1DB6F005FA2B1 /* FreeImage.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = FreeImage.xcframework; path = ../../../FreeImage/lib/macos/FreeImage.xcframework; sourceTree = "<group>"; };
 		BF6609E62BA1DC13005FA2B1 /* cairo.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = cairo.xcframework; path = ../../../cairo/lib/macos/cairo.xcframework; sourceTree = "<group>"; };
 		BF6609E82BA1DC4B005FA2B1 /* freetype.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = freetype.xcframework; path = ../../../freetype/lib/macos/freetype.xcframework; sourceTree = "<group>"; };
@@ -686,6 +706,17 @@
 		BF660A462BA1DD1D005FA2B1 /* zlib.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = zlib.xcframework; path = ../../../zlib/lib/macos/zlib.xcframework; sourceTree = "<group>"; };
 		BF660A482BA1DD2E005FA2B1 /* fmt.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = fmt.xcframework; path = ../../../fmt/lib/macos/fmt.xcframework; sourceTree = "<group>"; };
 		BF660A4A2BA1DD3B005FA2B1 /* curl.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = curl.xcframework; path = ../../../curl/lib/macos/curl.xcframework; sourceTree = "<group>"; };
+		BF8D1B0F2D6AF3EE007984A0 /* brotli.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = brotli.xcframework; path = /Users/one/SOURCE/openFrameworksiOSTIPS/libs/brotli/lib/macos/brotli.xcframework; sourceTree = "<absolute>"; };
+		BF8D1B122D6AF423007984A0 /* ofMaterialBaseTypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ofMaterialBaseTypes.h; path = gl/ofMaterialBaseTypes.h; sourceTree = "<group>"; };
+		BF8D1B152D6AF435007984A0 /* ofJson.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ofJson.h; sourceTree = "<group>"; };
+		BF8D1B162D6AF435007984A0 /* ofRandomDistributions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ofRandomDistributions.h; sourceTree = "<group>"; };
+		BF8D1B172D6AF435007984A0 /* ofRandomEngine.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ofRandomEngine.h; sourceTree = "<group>"; };
+		BF8D1B182D6AF435007984A0 /* ofSingleton.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ofSingleton.h; sourceTree = "<group>"; };
+		BF8D1B192D6AF435007984A0 /* ofThreadChannel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ofThreadChannel.h; sourceTree = "<group>"; };
+		BF8D1B1A2D6AF435007984A0 /* ofTimerFps.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ofTimerFps.h; sourceTree = "<group>"; };
+		BF8D1B1B2D6AF435007984A0 /* ofTimerFps.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ofTimerFps.cpp; sourceTree = "<group>"; };
+		BF8D1B2A2D6AF44B007984A0 /* ES3Renderer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ES3Renderer.h; sourceTree = "<group>"; };
+		BF8D1B2B2D6AF44B007984A0 /* ES3Renderer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ES3Renderer.m; sourceTree = "<group>"; };
 		DA48FE74131D85A6000062BC /* ofPolyline.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofPolyline.h; sourceTree = "<group>"; };
 		DA94C2ED1301D32200CCC773 /* ofRendererCollection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofRendererCollection.h; sourceTree = "<group>"; };
 		DA97FD3612F5A61A005C9991 /* ofCairoRenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofCairoRenderer.cpp; sourceTree = "<group>"; };
@@ -818,7 +849,6 @@
 				BF6277BF2BADCF7C008864C1 /* FreeImage.xcframework in Frameworks */,
 				BF6277C02BADCF7C008864C1 /* tess2.xcframework in Frameworks */,
 				BF6277C12BADCF7C008864C1 /* pugixml.xcframework in Frameworks */,
-				BF6279F22BB07B37008864C1 /* pugixml.xcframework in Frameworks */,
 				BF6277C22BADCF7C008864C1 /* glew.xcframework in Frameworks */,
 				BF6277C32BADCF7C008864C1 /* glfw.xcframework in Frameworks */,
 				BF6277C42BADCF7C008864C1 /* rtAudio.xcframework in Frameworks */,
@@ -840,6 +870,7 @@
 				BF6277D52BADCF7C008864C1 /* CoreAudioTypes.framework in Frameworks */,
 				BF6277D62BADCF7C008864C1 /* MapKit.framework in Frameworks */,
 				BF6277D72BADCF7C008864C1 /* CoreData.framework in Frameworks */,
+				BF8D1B112D6AF3EE007984A0 /* brotli.xcframework in Frameworks */,
 				BF6277D82BADCF7C008864C1 /* CoreHaptics.framework in Frameworks */,
 				BF6277D92BADCF7C008864C1 /* GLKit.framework in Frameworks */,
 				BF6277DA2BADCF7C008864C1 /* CoreMedia.framework in Frameworks */,
@@ -870,6 +901,7 @@
 				BF6276AA2BADB16E008864C1 /* openssl.xcframework in Frameworks */,
 				BF6609F12BA1DC9F005FA2B1 /* pixman.xcframework in Frameworks */,
 				BF6609E72BA1DC13005FA2B1 /* cairo.xcframework in Frameworks */,
+				BF8D1B102D6AF3EE007984A0 /* brotli.xcframework in Frameworks */,
 				BF660A492BA1DD2E005FA2B1 /* fmt.xcframework in Frameworks */,
 				BF6609EF2BA1DC91005FA2B1 /* libpng.xcframework in Frameworks */,
 				BF6609E52BA1DB6F005FA2B1 /* FreeImage.xcframework in Frameworks */,
@@ -983,6 +1015,8 @@
 		BF23BF5F2BAC872D000E2E0E /* gl */ = {
 			isa = PBXGroup;
 			children = (
+				BF8D1B2A2D6AF44B007984A0 /* ES3Renderer.h */,
+				BF8D1B2B2D6AF44B007984A0 /* ES3Renderer.m */,
 				BF23BF562BAC872D000E2E0E /* EAGLKView.h */,
 				BF23BF572BAC872D000E2E0E /* EAGLKView.m */,
 				BF23BF582BAC872D000E2E0E /* EAGLView.h */,
@@ -1130,6 +1164,7 @@
 		BF5BF83E2B7378ED0049DEF6 /* xcframeworks */ = {
 			isa = PBXGroup;
 			children = (
+				BF8D1B0F2D6AF3EE007984A0 /* brotli.xcframework */,
 				BF6609E62BA1DC13005FA2B1 /* cairo.xcframework */,
 				BF660A4A2BA1DD3B005FA2B1 /* curl.xcframework */,
 				BF660A482BA1DD2E005FA2B1 /* fmt.xcframework */,
@@ -1141,7 +1176,6 @@
 				BF6276A92BADB16E008864C1 /* openssl.xcframework */,
 				BF6609F22BA1DCAD005FA2B1 /* pugixml.xcframework */,
 				BF6609F02BA1DC9F005FA2B1 /* pixman.xcframework */,
-				BF6279F12BB07B37008864C1 /* pugixml.xcframework */,
 				BF660A442BA1DD04005FA2B1 /* uriparser.xcframework */,
 				BF660A422BA1DCF9005FA2B1 /* tess2.xcframework */,
 				BF6609F42BA1DCBB005FA2B1 /* rtAudio.xcframework */,
@@ -1163,6 +1197,7 @@
 		DACFA8C8132D09C7008D4B7A /* gl */ = {
 			isa = PBXGroup;
 			children = (
+				BF8D1B122D6AF423007984A0 /* ofMaterialBaseTypes.h */,
 				694425151FE4544C00770088 /* ofGLBaseTypes.h */,
 				2292E73C19E3049700DE9411 /* ofBufferObject.cpp */,
 				2292E73D19E3049700DE9411 /* ofBufferObject.h */,
@@ -1388,6 +1423,13 @@
 		E4F3BAE212F4C745002D19BB /* utils */ = {
 			isa = PBXGroup;
 			children = (
+				BF8D1B152D6AF435007984A0 /* ofJson.h */,
+				BF8D1B162D6AF435007984A0 /* ofRandomDistributions.h */,
+				BF8D1B172D6AF435007984A0 /* ofRandomEngine.h */,
+				BF8D1B182D6AF435007984A0 /* ofSingleton.h */,
+				BF8D1B192D6AF435007984A0 /* ofThreadChannel.h */,
+				BF8D1B1A2D6AF435007984A0 /* ofTimerFps.h */,
+				BF8D1B1B2D6AF435007984A0 /* ofTimerFps.cpp */,
 				692C298719DC5C5500C27C5D /* ofFpsCounter.cpp */,
 				692C298819DC5C5500C27C5D /* ofFpsCounter.h */,
 				692C298919DC5C5500C27C5D /* ofTimer.cpp */,
@@ -1468,6 +1510,7 @@
 				BF6276C32BADCF7C008864C1 /* SoundStream.h in Headers */,
 				BF6276C42BADCF7C008864C1 /* ofxiOSVideoGrabber.h in Headers */,
 				BF6276C52BADCF7C008864C1 /* ofxiOSApp.h in Headers */,
+				BF8D1B2E2D6AF44B007984A0 /* ES3Renderer.h in Headers */,
 				BF6276C62BADCF7C008864C1 /* ofxtvOSAppDelegate.h in Headers */,
 				BF6276C72BADCF7C008864C1 /* SoundEngine.h in Headers */,
 				BF6276C82BADCF7C008864C1 /* ofxiOSAppDelegate.h in Headers */,
@@ -1479,6 +1522,7 @@
 				BF6276CE2BADCF7C008864C1 /* ofxiOSEAGLView.h in Headers */,
 				BF6276CF2BADCF7C008864C1 /* ofxiOSSoundPlayer.h in Headers */,
 				BF6276D02BADCF7C008864C1 /* AVFoundationVideoPlayer.h in Headers */,
+				BF8D1B132D6AF423007984A0 /* ofMaterialBaseTypes.h in Headers */,
 				BF6276D12BADCF7C008864C1 /* ofxiPhone.h in Headers */,
 				BF6276D22BADCF7C008864C1 /* ofxtvOSViewController.h in Headers */,
 				BF6276D32BADCF7C008864C1 /* ofxtvOSURLFileLoader.h in Headers */,
@@ -1502,6 +1546,12 @@
 				BF6276E52BADCF7C008864C1 /* ofxtvOS.h in Headers */,
 				BF6276E62BADCF7C008864C1 /* ofxiOSImagePicker.h in Headers */,
 				BF6276E72BADCF7C008864C1 /* ofxiOSEventAdapter.h in Headers */,
+				BF8D1B232D6AF435007984A0 /* ofSingleton.h in Headers */,
+				BF8D1B242D6AF435007984A0 /* ofJson.h in Headers */,
+				BF8D1B252D6AF435007984A0 /* ofRandomEngine.h in Headers */,
+				BF8D1B262D6AF435007984A0 /* ofThreadChannel.h in Headers */,
+				BF8D1B272D6AF435007984A0 /* ofTimerFps.h in Headers */,
+				BF8D1B282D6AF435007984A0 /* ofRandomDistributions.h in Headers */,
 				BF6276E82BADCF7C008864C1 /* ofxiOSCoreMotion.h in Headers */,
 				BF6276E92BADCF7C008864C1 /* ofxiOSMapKitListener.h in Headers */,
 				BF6276EA2BADCF7C008864C1 /* ofxiOSCoreHaptics.h in Headers */,
@@ -1519,6 +1569,7 @@
 				30CC5385207A36FD008234AF /* ofMathConstants.h in Headers */,
 				E4F3BA6A12F4C4BF002D19BB /* ofCamera.h in Headers */,
 				E4F3BA6C12F4C4BF002D19BB /* ofEasyCam.h in Headers */,
+				BF8D1B2D2D6AF44B007984A0 /* ES3Renderer.h in Headers */,
 				E4F3BA7412F4C4BF002D19BB /* ofNode.h in Headers */,
 				E4F3BA8B12F4C4C9002D19BB /* ofFmodSoundPlayer.h in Headers */,
 				E4F3BA8F12F4C4C9002D19BB /* ofSoundPlayer.h in Headers */,
@@ -1563,6 +1614,7 @@
 				2E498916292C96340096EC56 /* ofCubeMap.h in Headers */,
 				E4F3BB2F12F4C752002D19BB /* ofTrueTypeFont.h in Headers */,
 				DA97FD3D12F5A61A005C9991 /* ofCairoRenderer.h in Headers */,
+				BF8D1B142D6AF423007984A0 /* ofMaterialBaseTypes.h in Headers */,
 				DA94C2F01301D32200CCC773 /* ofRendererCollection.h in Headers */,
 				53EEEF4B130766EF0027C199 /* ofMesh.h in Headers */,
 				DA48FE78131D85A6000062BC /* ofPolyline.h in Headers */,
@@ -1593,6 +1645,12 @@
 				22769592170D9DD200604FC3 /* ofMatrixStack.h in Headers */,
 				22246D94176C9987008A8AF4 /* ofGLProgrammableRenderer.h in Headers */,
 				E495DF7E178896A900994238 /* ofAppNoWindow.h in Headers */,
+				BF8D1B1C2D6AF435007984A0 /* ofSingleton.h in Headers */,
+				BF8D1B1D2D6AF435007984A0 /* ofJson.h in Headers */,
+				BF8D1B1E2D6AF435007984A0 /* ofRandomEngine.h in Headers */,
+				BF8D1B1F2D6AF435007984A0 /* ofThreadChannel.h in Headers */,
+				BF8D1B202D6AF435007984A0 /* ofTimerFps.h in Headers */,
+				BF8D1B212D6AF435007984A0 /* ofRandomDistributions.h in Headers */,
 				27DEA3121796F578000A9E90 /* ofXml.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1608,6 +1666,7 @@
 				BF6276ED2BADCF7C008864C1 /* Sources */,
 				BF6277B82BADCF7C008864C1 /* Frameworks */,
 				BF6277EC2BADCF7C008864C1 /* Resources */,
+				BF8D1B302D6AF78A007984A0 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -1618,9 +1677,9 @@
 			productReference = BF6277F02BADCF7C008864C1 /* openFrameworks.framework */;
 			productType = "com.apple.product-type.framework";
 		};
-		E4B27C1410CBEB8E00536013 /* openFrameworks-static */ = {
+		E4B27C1410CBEB8E00536013 /* openFrameworksLib */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = E4B27C3210CBEBB200536013 /* Build configuration list for PBXNativeTarget "openFrameworks-static" */;
+			buildConfigurationList = E4B27C3210CBEBB200536013 /* Build configuration list for PBXNativeTarget "openFrameworksLib" */;
 			buildPhases = (
 				E4B27C1110CBEB8E00536013 /* Headers */,
 				E4B27C1210CBEB8E00536013 /* Sources */,
@@ -1630,7 +1689,7 @@
 			);
 			dependencies = (
 			);
-			name = "openFrameworks-static";
+			name = openFrameworksLib;
 			productName = openFrameworksLib;
 			productReference = BF6276AF2BADB855008864C1 /* openFrameworksDebug.a */;
 			productType = "com.apple.product-type.library.static";
@@ -1661,7 +1720,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				E4B27C1410CBEB8E00536013 /* openFrameworks-static */,
+				E4B27C1410CBEB8E00536013 /* openFrameworksLib */,
 				BF6276B92BADCF7C008864C1 /* openFrameworks */,
 			);
 		};
@@ -1677,6 +1736,27 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		BF8D1B302D6AF78A007984A0 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "#!/bin/bash\nset -e  # Exit on any error\n\n# Default to current directory if SRCROOT isn’t set (for non-Xcode runs)\nSRCROOT=\"${SRCROOT:-$(pwd)}\"\nTARGET_DIR=\"${SRCROOT}/../../lib/macos/\"\nTARGET_CONFIG_DIR=\"${SRCROOT}/../../lib/macos/build/output\"\nSTATIC_NAME=\"openFrameworks\"\nSOURCE_FOLDER=\"${TARGET_CONFIG_DIR}/${STATIC_NAME}.framework\"\nDEST_FOLDER=\"${TARGET_DIR}/${STATIC_NAME}.framework\"\n\necho \"Configuration: ${CONFIGURATION:-Unknown}\"\necho \"Source folder: ${SOURCE_FOLDER}\"\necho \"Destination folder: ${DEST_FOLDER}\"\n\n# Create target directory if it doesn’t exist\nmkdir -p \"${TARGET_DIR}\" || {\n    echo \"ERROR: Failed to create ${TARGET_DIR}\"\n    exit 1\n}\n\n# Check writability\nif [ ! -w \"${TARGET_DIR}\" ]; then\n    echo \"ERROR: Target directory ${TARGET_DIR} is not writable.\"\n    ls -ld \"${TARGET_DIR}\"\n    exit 1\nfi\n\n# Verify source exists\nif [ ! -d \"${SOURCE_FOLDER}\" ]; then\n    echo \"ERROR: Framework folder ${SOURCE_FOLDER} does not exist.\"\n    ls -ld \"${TARGET_CONFIG_DIR}\"\n    exit 1\nfi\n\n# Remove existing destination\nif [ -d \"${DEST_FOLDER}\" ]; then\n    echo \"Removing existing ${DEST_FOLDER}...\"\n    rm -rf \"${DEST_FOLDER}\" || {\n        echo \"ERROR: Failed to remove ${DEST_FOLDER}\"\n        exit 1\n    }\nfi\n\n# Copy the framework (preserve metadata, exclude extended attributes)\necho \"Copying ${SOURCE_FOLDER} to ${DEST_FOLDER}...\"\ncp -R -p \"${SOURCE_FOLDER}\" \"${DEST_FOLDER}\" || {\n    echo \"ERROR: Failed to copy ${SOURCE_FOLDER} to ${DEST_FOLDER}\"\n    exit 1\n}\n\n# Mark as bundle if SetFile is available (macOS-specific)\nif command -v SetFile >/dev/null 2>&1; then\n    SetFile -a B \"${DEST_FOLDER}\" || echo \"Warning: Failed to mark ${DEST_FOLDER} as bundle\"\n    echo \"Marked ${DEST_FOLDER} as a bundle.\"\nelse\n    echo \"Warning: SetFile not found; Finder might not recognize ${DEST_FOLDER} as a framework.\"\nfi\n\necho \"Framework copy successful.\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		BF6276ED2BADCF7C008864C1 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -1687,6 +1767,7 @@
 				BF6276F02BADCF7C008864C1 /* EAGLKView.m in Sources */,
 				BF6276F12BADCF7C008864C1 /* ofxiOSGLKView.mm in Sources */,
 				BF6276F22BADCF7C008864C1 /* of3dUtils.cpp in Sources */,
+				BF8D1B292D6AF435007984A0 /* ofTimerFps.cpp in Sources */,
 				BF6276F32BADCF7C008864C1 /* ofxtvOSViewController.mm in Sources */,
 				BF6276F42BADCF7C008864C1 /* of3dUtils.h in Sources */,
 				BF6276F52BADCF7C008864C1 /* ofCamera.cpp in Sources */,
@@ -1795,6 +1876,7 @@
 				BF62775C2BADCF7C008864C1 /* ofxiOSSoundStreamDelegate.mm in Sources */,
 				BF62775D2BADCF7C008864C1 /* ofTessellator.h in Sources */,
 				BF62775E2BADCF7C008864C1 /* ofTrueTypeFont.cpp in Sources */,
+				BF8D1B2F2D6AF44B007984A0 /* ES3Renderer.m in Sources */,
 				BF62775F2BADCF7C008864C1 /* ofTrueTypeFont.h in Sources */,
 				BF6277602BADCF7C008864C1 /* ofAVEngineSoundPlayer.h in Sources */,
 				BF6277612BADCF7C008864C1 /* ofAVEngineSoundPlayer.mm in Sources */,
@@ -1923,6 +2005,7 @@
 				2E498914292C96340096EC56 /* ofCubeMap.cpp in Sources */,
 				E4F3BAF412F4C745002D19BB /* ofLog.cpp in Sources */,
 				BBA81C431FFBE4DB0064EA94 /* ofBaseApp.cpp in Sources */,
+				BF8D1B2C2D6AF44B007984A0 /* ES3Renderer.m in Sources */,
 				9979E8231A1CCC44007E55D1 /* ofMainLoop.cpp in Sources */,
 				E4F3BAF712F4C745002D19BB /* ofSystemUtils.cpp in Sources */,
 				E4F3BAF912F4C745002D19BB /* ofThread.cpp in Sources */,
@@ -1931,6 +2014,7 @@
 				E4F3BB1812F4C752002D19BB /* ofBitmapFont.cpp in Sources */,
 				E4F3BB1C12F4C752002D19BB /* ofGraphics.cpp in Sources */,
 				2E6EA7041603AA7A00B7ADF3 /* of3dGraphics.cpp in Sources */,
+				BF8D1B222D6AF435007984A0 /* ofTimerFps.cpp in Sources */,
 				E4F3BB1E12F4C752002D19BB /* ofImage.cpp in Sources */,
 				E4F3BB2012F4C752002D19BB /* ofPixels.cpp in Sources */,
 				E4F3BB2A12F4C752002D19BB /* ofTessellator.cpp in Sources */,
@@ -2009,14 +2093,14 @@
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEFINES_MODULE = NO;
+				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 11.0;
 				DYLIB_CURRENT_VERSION = 11.0;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_MODULE_VERIFIER = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = NO;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				FRAMEWORK_SEARCH_PATHS = "";
 				"FRAMEWORK_SEARCH_PATHS[arch=*]" = (
 					"$(inherited)",
@@ -2052,6 +2136,10 @@
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = (
 					"@executable_path/../Frameworks",
 					"@loader_path/Frameworks",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SRCROOT)/../../lib/macos/build/output/",
 				);
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MACOSX_DEPLOYMENT_TARGET = 14.3;
@@ -2122,14 +2210,14 @@
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEFINES_MODULE = NO;
+				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 11.0;
 				DYLIB_CURRENT_VERSION = 11.0;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_MODULE_VERIFIER = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SDKROOT)/System/iOSSupport/System/Library/Frameworks",
@@ -2158,6 +2246,10 @@
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = (
 					"@executable_path/../Frameworks",
 					"@loader_path/Frameworks",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SRCROOT)/../../lib/macos/build/output/",
 				);
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MACOSX_DEPLOYMENT_TARGET = 14.3;
@@ -2194,6 +2286,7 @@
 				INSTALL_PATH = /usr/local/lib;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"$(SRCROOT)/../../lib/macos/build/output/",
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_2)",
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_3)",
@@ -2213,12 +2306,15 @@
 		E4B27C1710CBEB8E00536013 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/../../lib/macos/";
+				BUILT_PRODUCTS_DIR = "$(SRCROOT)/../../lib/macos/";
+				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/../../lib/macos/build/output";
+				CONFIGURATION_TEMP_DIR = "$(SRCROOT)/../../lib/macos/build/temp/release/";
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				EXECUTABLE_PREFIX = "";
 				INSTALL_PATH = /usr/local/lib;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"$(SRCROOT)/../../lib/macos/build/output/",
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_2)",
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_3)",
@@ -2229,7 +2325,7 @@
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_8)",
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_9)",
 				);
-				OBJROOT = "$(SRCROOT)/../../lib/macos/build/release/";
+				OBJROOT = "$(SRCROOT)/../../lib/macos/build/obj/release/";
 				PRODUCT_NAME = openFrameworks;
 				SDKROOT = macosx;
 			};
@@ -2241,13 +2337,14 @@
 			buildSettings = {
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				BUILT_PRODUCTS_DIR = "$(SRCROOT)/../../lib/macos/";
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
-				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/../../lib/macos/";
-				CONFIGURATION_TEMP_DIR = "$(SRCROOT)/../../lib/macos/build/debug/";
+				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/../../lib/macos/build/output";
+				CONFIGURATION_TEMP_DIR = "$(SRCROOT)/../../lib/macos/build/temp/release/";
 				ENABLE_TESTABILITY = YES;
 				MERGEABLE_LIBRARY = YES;
 				MERGED_BINARY_TYPE = automatic;
-				OBJROOT = "$(SRCROOT)/../../lib/macos/build/debug/";
+				OBJROOT = "$(SRCROOT)/../../lib/macos/build/obj/debug/";
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -2260,12 +2357,13 @@
 			buildSettings = {
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				BUILT_PRODUCTS_DIR = "$(SRCROOT)/../../lib/macos/";
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
-				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/../../lib/macos/";
-				CONFIGURATION_TEMP_DIR = "$(SRCROOT)/../../lib/macos/build/release/";
+				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/../../lib/macos/build/output";
+				CONFIGURATION_TEMP_DIR = "$(SRCROOT)/../../lib/macos/build/temp/release/";
 				MERGEABLE_LIBRARY = YES;
 				MERGED_BINARY_TYPE = automatic;
-				OBJROOT = "$(SRCROOT)/../../lib/macos/build/release";
+				OBJROOT = "$(SRCROOT)/../../lib/macos/build/obj/release";
 				ONLY_ACTIVE_ARCH = NO;
 				SDKROOT = macosx;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -2284,7 +2382,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		E4B27C3210CBEBB200536013 /* Build configuration list for PBXNativeTarget "openFrameworks-static" */ = {
+		E4B27C3210CBEBB200536013 /* Build configuration list for PBXNativeTarget "openFrameworksLib" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				E4B27C1610CBEB8E00536013 /* Debug */,
