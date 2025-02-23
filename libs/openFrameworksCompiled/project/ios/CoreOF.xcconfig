@@ -26,7 +26,9 @@ HEADER_OPENSSL = "$(OF_PATH)/libs/openssl/include"
 
 
 //------- Libraries
-LIB_OF = "$(OF_PATH)/libs/openFrameworksCompiled/lib/ios/libofxiOS_${PLATFORM_NAME}_${CONFIGURATION}.a"
+LIB_OF = "$(OF_PATH)/libs/openFrameworksCompiled/lib/ios/openFrameworks.a"
+LIB_OF_DEBUG = "$(OF_PATH)/libs/openFrameworksCompiled/lib/ios/openFrameworksDebug.a"
+
 //LIB_FREEIMAGE = "$(OF_PATH)/libs/FreeImage/lib/ios/freeimage.a"
 //LIB_FREETYPE = "$(OF_PATH)/libs/freetype/lib/ios/freetype.a"
 //LIB_TESS = "$(OF_PATH)/libs/tess2/lib/ios/tess2.a"
