@@ -22,6 +22,7 @@ HEADER_FMT = "$(OF_PATH)/libs/fmt/include"
 HEADER_CURL = "$(OF_PATH)/libs/curl/include"
 HEADER_URIPARSER = "$(OF_PATH)/libs/uriparser/include"
 HEADER_PUGIXML = "$(OF_PATH)/libs/pugixml/include"
+HEADER_OPENSSL = "$(OF_PATH)/libs/openssl/include"
 
 
 //------- Libraries
@@ -39,7 +40,7 @@ MISC_FLAGS = "-ObjC"
 
 OF_CORE_LIBS = $(MISC_FLAGS) $(LIB_OF)
 
-OF_CORE_HEADERS = $(HEADER_OF) $(HEADER_OFXIOS) $(HEADER_UTF8) $(HEADER_FREETYPE) $(HEADER_FREETYPE2) $(HEADER_GLEW) $(HEADER_FREEIMAGE) $(HEADER_TESS2) $(HEADER_RTAUDIO) $(HEADER_JSON) $(HEADER_GLM) $(HEADER_FMT) $(HEADER_CURL) $(HEADER_URIPARSER) $(HEADER_PUGIXML)
+OF_CORE_HEADERS = $(HEADER_OF) $(HEADER_OFXIOS) $(HEADER_UTF8) $(HEADER_FREETYPE) $(HEADER_FREETYPE2) $(HEADER_GLEW) $(HEADER_FREEIMAGE) $(HEADER_TESS2) $(HEADER_RTAUDIO) $(HEADER_JSON) $(HEADER_GLM) $(HEADER_FMT) $(HEADER_CURL) $(HEADER_URIPARSER) $(HEADER_PUGIXML) $(HEADER_OPENSSL)
 
 OF_CORE_FRAMEWORKS = -framework AudioToolbox -framework Accelerate -framework AVFoundation -framework CoreAudio -framework CoreGraphics -framework CoreLocation -framework CoreMotion -framework CoreMedia -framework CoreVideo -framework Foundation -framework GameController -framework GLKit -framework MapKit -framework OpenAL -framework OpenGLES -framework UIKit -framework Security -framework QuartzCore -framework CoreHaptics -framework Metal
 
@@ -98,7 +99,9 @@ DEAD_CODE_STRIPPING = YES
 ENABLE_BITCODE = NO
 ENABLE_STRICT_OBJC_MSGSEND = YES
 
-CONFIGURATION_BUILD_DIR = $(SRCROOT)/bin/
+BUILT_PRODUCTS_DIR = $(SRCROOT)/bin/
+
+SKIP_INSTALL = YES
 
 CC = $(OF_PATH)/scripts/osx/cc.sh
 CXX = $(OF_PATH)/scripts/osx/cxx.sh
