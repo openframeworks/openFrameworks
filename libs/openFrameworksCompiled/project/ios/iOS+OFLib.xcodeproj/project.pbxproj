@@ -1400,6 +1400,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
+				OBJROOT = "$(SRCROOT)/../../lib/ios/build/obj/Debug/";
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				WARNING_CFLAGS = (
 					"-Wno-non-virtual-dtor",
@@ -1438,6 +1439,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				ONLY_ACTIVE_ARCH = NO;
+				OBJROOT = "$(SRCROOT)/../../lib/ios/build/obj/Release/";
 				SDKROOT = iphoneos;
 				WARNING_CFLAGS = (
 					"-Wno-non-virtual-dtor",
