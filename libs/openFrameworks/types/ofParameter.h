@@ -514,15 +514,23 @@ public:
 	
 	/// \brief constructs an ofParameter of type ParameterType initialized to value of v
 	/// where v is convertible to ParameterType, with an exception for bool which can cause
-	/// unexpected behavious (as string and char arrays are convertible to bool)
+	/// unexpected behavious (as string and char arrays are convertible to bool) and
+	/// the exception of a single string-convertible argument with std::string ParameterType
 	/// \tparam ParameterType the type of the value held by the ofParameter
 	/// \tparam Arg a type convertible to ParameterType
 	/// \param v the value to initialize to
 	template <
 		typename Arg,
-		typename = std::enable_if_t<(std::is_convertible_v<Arg, ParameterType>  and
+		typename = std::enable_if_t<(!(std::is_convertible_v<Arg, std::string> and std::is_same_v<ParameterType, std::string>) and
+									 std::is_convertible_v<Arg, ParameterType>  and
 									 !((std::is_same_v<ParameterType, bool>)and!(std::is_arithmetic_v<Arg>)))>>
 	ofParameter(const Arg & v);
+
+	/// \brief constructs an ofParameter<std::string> initialized to value of v
+	/// \tparam ParameterType  the type of the value held by the ofParameter
+	/// \param v the string value to initialize to
+	template <typename U = ParameterType, typename = std::enable_if_t<std::is_same_v<U, std::string>>>
+	ofParameter(const std::string & v);
 
 	/// \brief constructs a named ofParameter of type ParameterType initialized to value of v
 	/// \tparam ParameterType the type of the value held by the ofParameter
@@ -723,6 +731,12 @@ template <typename Arg, typename>
 ofParameter<ParameterType>::ofParameter(const Arg & v)
 	: obj(std::make_shared<Value>(v))
 	, setMethod(std::bind(&ofParameter<ParameterType>::eventsSetValue, this, std::placeholders::_1)) { }
+
+template <typename ParameterType>
+template <typename U, typename>
+ofParameter<ParameterType>::ofParameter(const std::string & v)
+	: obj(std::make_shared<Value>(v))
+	, setMethod(std::bind(&ofParameter<std::string>::eventsSetValue, this, std::placeholders::_1)) { }
 
 template <typename ParameterType>
 ofParameter<ParameterType>::ofParameter(const std::string & name, const ParameterType & v)
