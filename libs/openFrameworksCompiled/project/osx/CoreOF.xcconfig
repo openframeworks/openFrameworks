@@ -113,10 +113,7 @@ INSTALL_PATH = /Applications
 SDKROOT = macosx
 WRAPPER_EXTENSION = app
 
-BUILT_PRODUCTS_DIR = $(SRCROOT)/bin/
-
 SKIP_INSTALL = YES
-
 
 CC = $(OF_PATH)/scripts/osx/cc.sh
 CXX = $(OF_PATH)/scripts/osx/cxx.sh
