@@ -190,7 +190,7 @@ copy_binary() {
 	msg "Copy Binary to bin/ ";
 	APP_NAME="${PRODUCT_NAME}.app"
 	APP_SOURCE="${CONFIGURATION_BUILD_DIR}/${APP_NAME}"
-	APP_DEST="${SRCROOT}/bin/${APP_NAME}"
+	APP_DEST="${SRCROOT}/bin/"
 	echo "------------------------------------------"
     echo "🔍 Debugging copy_binary function"
     echo "Configuration Build Dir: ${CONFIGURATION_BUILD_DIR}"
@@ -203,13 +203,26 @@ copy_binary() {
         exit 1
     fi
 
+
+
     # Check if the .app file exists
     if [ ! -d "${APP_SOURCE}" ]; then
         echo "ERROR: Application bundle not found: ${APP_SOURCE}"
         ls -l "${CONFIGURATION_BUILD_DIR}"  # List files in the build directory for debugging
         exit 1
     fi
-	mkdir -p "${SRCROOT}/bin/"
+    mkdir -p "${SRCROOT}/bin/"
+    if [ "${ACTION}" = "archive" ]; then
+        echo "Skipping copy to bin/ during Archive action."
+        return 0
+    fi
+
+    if [ -L "${APP_SOURCE}" ] || file "${APP_SOURCE}" | grep -q "alias"; then
+        echo "WARNING: App source ${APP_SOURCE} is an alias or symlink. Skipping copy to prevent corruption."
+        return 0
+    fi
+
+
 	rsync -avz --delete "$APP_SOURCE" "$APP_DEST"
 	if [ $? -eq 0 ]; then
 		echo "App successfully $APP_DEST"
