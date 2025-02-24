@@ -28,7 +28,7 @@ copy_resources() {
 		echo rsync -aved --delete --ignore-existing "$OF_PATH/libs/fmod/lib/macos/libfmod.dylib" "$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/Frameworks/";
 		rsync -aved --delete --ignore-existing "$OF_PATH/libs/fmod/lib/macos/libfmod.dylib" "$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/Frameworks/";
 	fi
-	# Not needed as we now call install_name_tool -id @loader_path/../Frameworks/libfmod.dylib libfmod.dylib on the dylib directly which prevents the need for calling every post build - keeping here for reference and possible legacy usage 
+	# Not needed as we now call install_name_tool -id @loader_path/../Frameworks/libfmod.dylib libfmod.dylib on the dylib directly which prevents the need for calling every post build - keeping here for reference and possible legacy usage
 	# install_name_tool -change @rpath/libfmod.dylib @executable_path/../Frameworks/libfmod.dylib "$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/MacOS/$PRODUCT_NAME";
 }
 
@@ -37,6 +37,7 @@ copy_resources() {
 bundle_data_folder() {
 	if [ -z "$OF_BUNDLE_DATA_FOLDER" ] ; then
 		msg 'Bundle data folder disabled \ncan be enabled with OF_BUNDLE_DATA_FOLDER=1 in Project.xcconfig ';
+		rsync -avz --delete --exclude='.DS_Store' "${SRCROOT}/bin/data/" "${TARGET_BUILD_DIR}/data/"
 	else
 		# Copy bin/data into App/Resources
 		msg 'Bundle data folder enabled - will copy bin/data to App Package'
@@ -120,7 +121,7 @@ code_sign() {
 		do
 			if lipo -archs "${ITEM}" | grep -q 'i386'; then
 				echo "Stripping invalid archs '${ITEM}'"
-				lipo -remove i386 "${ITEM}" -o "${ITEM}" 
+				lipo -remove i386 "${ITEM}" -o "${ITEM}"
 			else
 				echo "No need to strip invalid archs '{$ITEM}'"
 			fi
@@ -152,8 +153,8 @@ code_sign() {
 # activate via flag in Project.xcconfig
 #
 # note: dylib subdependencies (dylibs that load dylibs) will be found
-#		recursively and bundled within the .app but might need doctoring 
-#		to work in both bundled or freestanding states.
+#       recursively and bundled within the .app but might need doctoring
+#       to work in both bundled or freestanding states.
 #
 bundle_dylibs() {
 	if [ -z "$OF_BUNDLE_DYLIBS" ] ; then
@@ -172,10 +173,10 @@ bundle_dylibs() {
 				paths[$d]=$d
 			fi
 		done
-			
+
 		# construct a list of -s args for dylibbuilder to find the dylibs
 		for key val in "${(@kv)paths}"; do
-			sargs+=-s\ $key\ 
+			sargs+=-s\ $key\
 		done
 
 		# do the thing
@@ -184,13 +185,49 @@ bundle_dylibs() {
 	fi
 }
 
+
+copy_binary() {
+	msg "Copy Binary to bin/ ";
+	APP_NAME="${PRODUCT_NAME}.app"
+	APP_SOURCE="${CONFIGURATION_BUILD_DIR}/${APP_NAME}"
+	APP_DEST="${SRCROOT}/bin/${APP_NAME}"
+	echo "------------------------------------------"
+    echo "🔍 Debugging copy_binary function"
+    echo "Configuration Build Dir: ${CONFIGURATION_BUILD_DIR}"
+    echo "Product Name: ${PRODUCT_NAME}"
+    echo "App Source: ${APP_SOURCE}"
+    echo "App Destination: ${APP_DEST}"
+    echo "------------------------------------------"
+    if [ ! -d "${CONFIGURATION_BUILD_DIR}" ]; then
+        echo "ERROR: CONFIGURATION_BUILD_DIR does not exist: ${CONFIGURATION_BUILD_DIR}"
+        exit 1
+    fi
+
+    # Check if the .app file exists
+    if [ ! -d "${APP_SOURCE}" ]; then
+        echo "ERROR: Application bundle not found: ${APP_SOURCE}"
+        ls -l "${CONFIGURATION_BUILD_DIR}"  # List files in the build directory for debugging
+        exit 1
+    fi
+	mkdir -p "${SRCROOT}/bin/"
+	rsync -avz --delete "$APP_SOURCE" "$APP_DEST"
+	if [ $? -eq 0 ]; then
+		echo "App successfully $APP_DEST"
+	else
+		echo "ERROR: Failed to copy the app"
+		exit 1
+	fi
+}
+
 echo ''
 divider
-echo "Running $OF_PATH/scripts/osx/xcode_project.sh"
+echo "Running $0"
 
 copy_resources
 bundle_data_folder
 code_sign
 bundle_dylibs
+copy_binary
 
 divider
+

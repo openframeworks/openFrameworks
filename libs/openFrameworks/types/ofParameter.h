@@ -511,11 +511,6 @@ public:
 	/// \tparam ParameterType the type of the value held by the ofParameter
 	/// \param v the ofParameter to link to it's value
 	ofParameter(const ofParameter<ParameterType> & v);
-
-	/// \brief constructs an ofParameter of type ParameterType initialized to value of same-type v
-	/// \tparam ParameterType the type of the value held by the ofParameter
-	/// \param v the value to initialize to
-	ofParameter(const ParameterType & v);
 	
 	/// \brief constructs an ofParameter of type ParameterType initialized to value of v
 	/// where v is convertible to ParameterType, with an exception for bool which can cause
@@ -593,6 +588,13 @@ public:
 
 	ofParameter<ParameterType> & operator=(const ofParameter<ParameterType> & v);
 	const ParameterType & operator=(const ParameterType & v);
+
+	template <typename U = ParameterType>
+	typename std::enable_if_t<std::is_same_v<U, std::string>, ofParameter&>
+	operator=(const char* value) {
+		 set(std::string(value));
+		 return *this;
+	 }
 
 	ParameterType operator++(int v);
 	ofParameter<ParameterType> & operator++();

@@ -10,7 +10,6 @@
 #include <assert.h>
 // x11
 #include <X11/Xutil.h>
-#include <EGL/egl.h>
 
 // include includes for both native and X11 possibilities
 #include <libudev.h>
@@ -33,7 +32,7 @@ struct udev* udev;
 struct udev_monitor* mon;
 static int udev_fd = -1;
 
-typedef map<string, int> device;
+typedef std::map<std::string, int> device;
 static device inputDevices;
 
 // minimal map
@@ -76,8 +75,8 @@ typedef struct {
 	int mouseButtonState;
 } MouseState;
 
-typedef map<int, int> TouchState;
-typedef map<int, ofVec2f> TouchPosition;
+typedef std::map<int, int> TouchState;
+typedef std::map<int, ofVec2f> TouchPosition;
 
 // TODO, make this match the upcoming additions to ofWindow
 #define MOUSE_BUTTON_LEFT_MASK		1
@@ -150,7 +149,7 @@ static const struct {
 #define CASE_STR(x,y) case x: str = y; break
 
 static const char* eglErrorString(EGLint err) {
-	string str;
+	std::string str;
 	switch (err) {
 	CASE_STR(EGL_SUCCESS, "no error");
 	CASE_STR(EGL_NOT_INITIALIZED, "EGL not, or could not be, initialized");
@@ -412,7 +411,7 @@ void ofAppEGLWindow::setup(const ofAppEGLWindowSettings & _settings) {
 	// pDisplay = ofGetEnv("DISPLAY");
 	// bool bIsX11Available = (pDisplay != NULL);
 
-	bool bIsX11Available = ofGetEnv("DISPLAY") != NULL;
+	bool bIsX11Available = !empty(ofGetEnv("DISPLAY"));
 
 	if(settings.eglWindowPreference == OF_APP_WINDOW_AUTO) {
 		if(bIsX11Available) {
@@ -899,7 +898,7 @@ ofCoreEvents & ofAppEGLWindow::events(){
 }
 
 //------------------------------------------------------------
-shared_ptr<ofBaseRenderer> & ofAppEGLWindow::renderer(){
+std::shared_ptr<ofBaseRenderer> & ofAppEGLWindow::renderer(){
 	return currentRenderer;
 }
 
@@ -1033,7 +1032,7 @@ void ofAppEGLWindow::pollEvents(){
 			}
 		}
 	} else {
-		queue<ofMouseEventArgs> mouseEventsCopy;
+		std::queue<ofMouseEventArgs> mouseEventsCopy;
 		instance->lock();
 		mouseEventsCopy = instance->mouseEvents;
 		while(!instance->mouseEvents.empty()){
@@ -1046,7 +1045,7 @@ void ofAppEGLWindow::pollEvents(){
 		}
 
 		// KEYBOARD EVENTS
-		queue<ofKeyEventArgs> keyEventsCopy;
+		std::queue<ofKeyEventArgs> keyEventsCopy;
 		instance->lock();
 		keyEventsCopy = instance->keyEvents;
 		while(!instance->keyEvents.empty()){
@@ -1058,7 +1057,7 @@ void ofAppEGLWindow::pollEvents(){
 			keyEventsCopy.pop();
 		}
 
-		queue<ofTouchEventArgs> touchEventsCopy;
+		std::queue<ofTouchEventArgs> touchEventsCopy;
 		instance->lock();
 		touchEventsCopy = instance->touchEvents;
 		while(!instance->touchEvents.empty()){
@@ -1083,7 +1082,7 @@ void ofAppEGLWindow::showCursor(){
 }
 
 //------------------------------------------------------------
-void ofAppEGLWindow::setWindowTitle(string title) {
+void ofAppEGLWindow::setWindowTitle(std::string title) {
 	ofLogNotice("ofAppEGLWindow") << "setWindowTitle(): not implemented";
 }
 
@@ -1528,7 +1527,7 @@ void ofAppEGLWindow::processInput(int fd, const char * node){
 	while(nBytesRead >= 0){
 		if(ev.type == EV_KEY){
 			if(ev.code == BTN_LEFT){
-				ofLogNotice("ofAppEGLWindow") << "BTN_LEFT" << endl;
+				ofLogNotice("ofAppEGLWindow") << "BTN_LEFT" << std::endl;
 				if(ev.value == 0){ // release
 					mouseEvent.button = OF_MOUSE_BUTTON_LEFT;
 					mouseEvent.type = ofMouseEventArgs::Released;
@@ -1541,7 +1540,7 @@ void ofAppEGLWindow::processInput(int fd, const char * node){
 					pushMouseEvent = true;
 				}
 			}else if(ev.code == BTN_MIDDLE){
-				ofLogNotice("ofAppEGLWindow") << "BTN_MIDDLE" << endl;
+				ofLogNotice("ofAppEGLWindow") << "BTN_MIDDLE" << std::endl;
 				if(ev.value == 0){ // release
 					mouseEvent.button = OF_MOUSE_BUTTON_MIDDLE;
 					mouseEvent.type = ofMouseEventArgs::Released;
@@ -1554,7 +1553,7 @@ void ofAppEGLWindow::processInput(int fd, const char * node){
 					pushMouseEvent = true;
 				}
 			}else if(ev.code == BTN_RIGHT){
-				ofLogNotice("ofAppEGLWindow") << "BTN_RIGHT" << endl;
+				ofLogNotice("ofAppEGLWindow") << "BTN_RIGHT" << std::endl;
 				if(ev.value == 0){ // release
 					mouseEvent.button = OF_MOUSE_BUTTON_RIGHT;
 					mouseEvent.type = ofMouseEventArgs::Released;
@@ -1749,7 +1748,7 @@ void ofAppEGLWindow::processInput(int fd, const char * node){
 				axisValuePending = true;
 				break;
 			default:
-				ofLogNotice("ofAppEGLWindow") << "readMouseEvents(): unknown mouse axis (perhaps it's the scroll wheel?): axis " << axis << " amount " << amount << endl;
+				ofLogNotice("ofAppEGLWindow") << "readMouseEvents(): unknown mouse axis (perhaps it's the scroll wheel?): axis " << axis << " amount " << amount << std::endl;
 				break;
 			}
 		}else if (ev.type == EV_ABS){
@@ -1807,7 +1806,7 @@ void ofAppEGLWindow::processInput(int fd, const char * node){
 					touchAxisValuePending = true;
 					break;
 				default:
-					ofLogNotice("ofAppEGLWindow") << "EV_ABS unknown axis: axis " << axis << " amount " << amount << endl;
+					ofLogNotice("ofAppEGLWindow") << "EV_ABS unknown axis: axis " << axis << " amount " << amount << std::endl;
 					break;
 			}
 		}else if(ev.type == EV_MSC){
@@ -2265,7 +2264,7 @@ void ofAppEGLWindow::handleX11Event(const XEvent& event){
 		instance->coreEvents.notifyMouseEvent(mouseEvent);
 		break;
 	case MotionNotify:
-		//cout << "motion notify" << endl;
+		//cout << "motion notify" << std::endl;
 		mouseEvent.x = static_cast<float>(event.xmotion.x);
 		mouseEvent.y = static_cast<float>(event.xmotion.y);
 		mouseEvent.button = event.xbutton.button;
