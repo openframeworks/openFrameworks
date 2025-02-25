@@ -170,9 +170,9 @@ if [ "$ARCH" == "" ]; then
         if [ "$ARCH" == "x86_64" ]; then
         	ARCH=64
         elif [ "$ARCH" == "arm64" ]; then
-        	ARCH=64 # for now
+        	ARCH=arm64
        	elif [ "$ARCH" == "aarch64" ]; then
-       		ARCH=64 # for now
+       		ARCH=arm64
         elif [ "$ARCH" == "i686" ] || [ "$ARCH" == "i386" ]; then
             echo "32bit linux is not officially supported anymore but compiling the libraries using the build script in apothecary/scripts should compile all the dependencies without problem"
             exit 1
@@ -215,7 +215,7 @@ if [ "$PLATFORM" == "linux" ]; then
     elif [ "$ARCH" == "arm64" ]; then
 		OPT="_${GCC_VERSION}"
 	elif [ "$ARCH" == "aarch64" ]; then
-		OPT=""
+		OPT="_${GCC_VERSION}"
 	elif [ "$ARCH" == "armv8l" ]; then
 	    OPT=""
 	elif [ "$ARCH" == "armv7l" ]; then

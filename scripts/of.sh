@@ -30,8 +30,8 @@ autoDetectOS() {
                 ;;
         esac
     else
-    	export OF_OS=$(${OF_PLATFORM} | tr '[:upper:]' '[:lower:]')
-    	export OF_ARCH=""
+        export OF_OS=$(${OF_PLATFORM} | tr '[:upper:]' '[:lower:]')
+        export OF_ARCH=""
     fi
 }
 
@@ -74,14 +74,14 @@ runCommand() {
             ;;
         update)
             echo "openFrameworks update"
-            SCRIPT="${OF_SCRIPT_PATH}/download_libs.sh"
+            SCRIPT="${OF_CORE_SCRIPT_DIR}/${OF_PLATFORM}/download_libs.sh"
             ;;
         upgrade)
             echo "openFrameworks upgrade"
             case "$SUBCMD" in
                 addons)
                     echo "Upgrading addons"
-                    SCRIPT="${OF_SCRIPT_PATH}/dev/upgrade.sh"
+                    SCRIPT="${OF_CORE_SCRIPT_DIR}/dev/upgrade.sh"
                     ;;
                 apps)
                     echo "Upgrading apps"
@@ -91,7 +91,7 @@ runCommand() {
                         echo "Upgrade cancelled. No changes were made."
                         exit 0
                     fi
-                    SCRIPT="${OF_SCRIPT_PATH}/dev/upgrade.sh"
+                    SCRIPT="${OF_CORE_SCRIPT_DIR}/dev/upgrade.sh"
                     ;;
                 *)
                     echo "Unknown upgrade action: $SUBCMD"
