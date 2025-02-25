@@ -76,15 +76,15 @@ protected:
 	bool processScene(const ImportSettings& asettings);
 	void printAllNodeNames( aiNode* anode, int alevel );
 	void processNodes();
-	void processNodesRecursive(aiNode* anode, std::shared_ptr<SrcNode> aParentNode);
+	void processNodesRecursive(aiNode* anode, std::shared_ptr<SrcNode> aParentNode, std::unordered_map<std::string, aiBone*>& aBoneMap);
 	void processMeshes(aiNode* anode, std::shared_ptr<SrcNode> aSrcNode);
 	
 	void processBones();
-	bool isBone( aiNode* aAiNode );
-	bool isArmature( aiNode* aAiNode );
-	bool isRootBone( aiNode* aAiNode );
-	aiBone* getAiBoneForAiNode( aiNode* aAiNode );
-	void recursiveAddSrcBones( std::shared_ptr<ofx::assimp::SrcBone> abone );
+	bool isBone( aiNode* aAiNode, const std::unordered_map<std::string, aiBone*>& aBoneMap );
+	bool isArmature( aiNode* aAiNode, const std::unordered_map<std::string, aiBone*>& aBoneMap );
+	bool isRootBone( aiNode* aAiNode, std::unordered_map<std::string, aiBone*>& aBoneMap );
+	aiBone* getAiBoneForAiNode( aiNode* aAiNode, std::unordered_map<std::string, aiBone*>& aBoneMap );
+//	void recursiveAddSrcBones( std::shared_ptr<ofx::assimp::SrcBone> abone );
 	
 	std::shared_ptr<ofx::assimp::SrcNode> getSrcNodeForAiNodeName( const std::string& aAiNodeName );
 	
