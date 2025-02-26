@@ -6,7 +6,7 @@ ARCH=""
 OVERWRITE=1
 SILENT_ARGS=""
 BLEEDING_EDGE=0
-DL_VERSION=2.8.0
+DL_VERSION=3.0.0
 TAG=""
 
 printHelp(){
@@ -171,6 +171,8 @@ fi
 
 if [ "$PLATFORM" == "vs" ]; then
     EXT=".exe"
+elif [ "$PLATFORM" == "linux" ]; then
+    EXT=""
 else
     EXT=".app"
 fi
@@ -180,7 +182,12 @@ if [ "$PLATFORM" == "msys2" ] || [ "$PLATFORM" == "vs" ]; then
 else
     GUI=""
 fi
-PKG="projectGenerator-${PLATFORM}${GUI}.zip"
+
+if [ "$PLATFORM" == "linux" ]; then
+    PKG="projectGenerator-${PLATFORM}${GUI}.gz"
+else
+    PKG="projectGenerator-${PLATFORM}${GUI}.zip"
+fi
 
 echo " openFrameworks download_pg.sh"
 
@@ -192,6 +199,10 @@ mkdir -p download
 cd download
 
 download $PKG
+# if [ "$PLATFORM" == "linux" ]; then
+#     PKG="projectGenerator-${PLATFORM}.tar.bz2"
+#     download $PKG
+# fi
 
 if [ -d "${OUTDIR}/${OUTPUT}" ] || [ -f "${OUTDIR}/${OUTPUT}" ]; then
     rm -rf "${OUTDIR}/${OUTPUT}"
@@ -220,6 +231,18 @@ if [ "$PLATFORM" == "msys2" ] || [ "$PLATFORM" == "vs" ]; then
     # else
     #     echo "Warning: chmod command not found, skipping permission adjustment."
     # fi
+elif [ "$PLATFORM" == "linux" ]; then
+    # CLI version
+    mkdir -p "${OUTDIR}/${OUTPUT}"
+    # tar xjf "$PKG" -C "${OUTDIR}/${OUTPUT}"
+    # GUI version
+    if [ -f "projectGenerator-linux-gui.gz" ]; then
+        gunzip -c "projectGenerator-linux-gui.gz" > "${OUTDIR}/${OUTPUT}/projectGenerator"
+        chmod +x "${OUTDIR}/${OUTPUT}/projectGenerator"
+    fi
+    # Move CLI binary and set permissions
+    mv "${OUTDIR}/${OUTPUT}/resources/app/app/projectGenerator" "${OUTDIR}/${OUTPUT}/projectGeneratorCmd"
+    chmod +x "${OUTDIR}/${OUTPUT}/projectGeneratorCmd"
 else
     if ! command -v rsync &> /dev/null; then      
         cp -arX "${OUTDIR}/${OUTPUT}/projectGenerator$EXT/Contents/Resources/app/app/projectGenerator" "${OUTDIR}/${OUTPUT}/projectGenerator"
