@@ -40,6 +40,9 @@ else
 	FIND=find
 endif
 
+RPI_DETECTED := $(shell grep -qi 'Raspberry' /proc/device-tree/model && echo yes || echo no)
+JETSON_DETECTED := $(shell grep -qi -e 'Jetson' -e 'Tegra' /proc/device-tree/model && echo yes || echo no)
+
 #check for Raspbian as armv7l needs to use armv6l architecture
 ifeq ($(wildcard $(RPI_ROOT)/etc/*-release), /etc/os-release)
 	ifeq ($(shell grep ID=raspbian $(RPI_ROOT)/etc/*-release),ID=raspbian)
@@ -77,33 +80,41 @@ ifdef MAKEFILE_DEBUG
 	$(info CROSS_COMPILING=$(CROSS_COMPILING))
 	$(info PLATFORM_VARIANT=$(PLATFORM_VARIANT))
 	$(info IS_RASPBIAN=$(IS_RASPBIAN))
+	$(info IS_RASPBIAN=$(IS_RASPBIAN))
 endif
 
 # if not defined, construct the default PLATFORM_LIB_SUBPATH
 ifndef PLATFORM_LIB_SUBPATH
 	# determine from the arch
 	ifeq ($(PLATFORM_OS),Linux)
-		ifeq ($(PLATFORM_ARCH),x86_64)
-			PLATFORM_LIB_SUBPATH=linux/64
-		else ifeq ($(PLATFORM_ARCH),64)
-			PLATFORM_LIB_SUBPATH=linux/64
-		else ifeq ($(PLATFORM_ARCH),armv6l)
-			PLATFORM_LIB_SUBPATH=linux/armv6l
-		else ifeq ($(PLATFORM_ARCH),armv7l)
-			PLATFORM_LIB_SUBPATH=linux/armv7l
-		else ifeq ($(PLATFORM_ARCH),armv8l)
-			PLATFORM_LIB_SUBPATH=linux/armv8l
-		else ifeq ($(PLATFORM_ARCH),arm64)
-			PLATFORM_LIB_SUBPATH=linux/arm64
-		else ifeq ($(PLATFORM_ARCH),aarch64)
-			PLATFORM_LIB_SUBPATH=linux/aarch64
-		else ifeq ($(PLATFORM_ARCH),jetson)
+		ifeq ($(RPI_DETECTED),yes)
+			else ifeq ($(PLATFORM_ARCH),armv6l)
+				PLATFORM_LIB_SUBPATH=linux/armv6l
+			else ifeq ($(PLATFORM_ARCH),armv7l)
+				PLATFORM_LIB_SUBPATH=linux/armv7l
+			else ifeq ($(PLATFORM_ARCH),armv8l)
+				PLATFORM_LIB_SUBPATH=linux/armv8l
+			else ifeq ($(PLATFORM_ARCH),arm64)
+				PLATFORM_LIB_SUBPATH=linux/arm64
+			else ifeq ($(PLATFORM_ARCH),aarch64)
+				PLATFORM_LIB_SUBPATH=linux/aarch64
+		else ifeq ($(JETSON_DETECTED),yes)
 			PLATFORM_LIB_SUBPATH=linux/jetson
-		else ifeq ($(PLATFORM_ARCH),i386)
-			PLATFORM_LIB_SUBPATH=linux
 		else
-			PLATFORM_LIB_SUBPATH=linux
-			$(error This makefile does not support your architecture $(PLATFORM_ARCH))
+			ifeq ($(PLATFORM_ARCH),x86_64)
+				PLATFORM_LIB_SUBPATH=linux/64
+			else ifeq ($(PLATFORM_ARCH),64)
+				PLATFORM_LIB_SUBPATH=linux/64
+			else ifeq ($(PLATFORM_ARCH),arm64)
+				PLATFORM_LIB_SUBPATH=linux/arm64
+			else ifeq ($(PLATFORM_ARCH),aarch64)
+				PLATFORM_LIB_SUBPATH=linux/arm64
+			else ifeq ($(PLATFORM_ARCH),i386)
+				PLATFORM_LIB_SUBPATH=linux/i386
+			else
+				PLATFORM_LIB_SUBPATH=linux
+				$(error This makefile does not support your architecture $(PLATFORM_ARCH))
+			endif
 		endif
 		SHARED_LIB_EXTENSION=so
 	else ifneq (,$(findstring MINGW32_NT,$(PLATFORM_OS)))
