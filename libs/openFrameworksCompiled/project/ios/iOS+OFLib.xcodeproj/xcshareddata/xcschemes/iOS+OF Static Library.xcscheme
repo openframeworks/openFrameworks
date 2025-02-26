@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "BB24DE5C10DA7A3F00E9C588"
-               BuildableName = "libofxiOS_iphoneos_Debug.a"
+               BuildableName = "openFrameworksiOSDebug.a"
                BlueprintName = "iOS+OF Static Library"
                ReferencedContainer = "container:iOS+OFLib.xcodeproj">
             </BuildableReference>
@@ -50,7 +50,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "BB24DE5C10DA7A3F00E9C588"
-            BuildableName = "libofxiOS_iphoneos_Debug.a"
+            BuildableName = "openFrameworksiOSDebug.a"
             BlueprintName = "iOS+OF Static Library"
             ReferencedContainer = "container:iOS+OFLib.xcodeproj">
          </BuildableReference>

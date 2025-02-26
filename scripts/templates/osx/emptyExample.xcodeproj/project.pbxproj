@@ -16,36 +16,23 @@
 		"E4EB6923138AFD0F00A09F29": {
 			"path": "Project.xcconfig",
 			"isa": "PBXFileReference",
-			"lastKnownFileType": "text.xcconfig",
 			"sourceTree": "<group>",
-			"fileEncoding": "4"
+			"fileEncoding": "4",
+			"lastKnownFileType": "text.xcconfig"
 		},
 		"BF26640B2C634C16004360E2": {
-		    "isa": "PBXShellScriptBuildPhase",
-		    "alwaysOutOfDate": "1",
-		    "buildActionMask": "2147483647",
-		    "files": [],
-		    "inputFileListPaths": [],
-		    "inputPaths": [],
-		    "outputFileListPaths": [],
-		    "outputPaths": [],
-		    "runOnlyForDeploymentPostprocessing": "0",
-		    "shellPath": "/usr/bin/env bash",
+			"buildActionMask": "2147483647",
+			"runOnlyForDeploymentPostprocessing": "0",
+			"outputPaths": [],
+			"shellPath": "/usr/bin/env bash",
+			"inputFileListPaths": [],
+			"showEnvVarsInLog": "0",
+			"isa": "PBXShellScriptBuildPhase",
 			"shellScript": "#!/usr/bin/env bash\n\n# Determine the Xcode build directory\nTARGET_DIR=\"${BUILT_PRODUCTS_DIR:-$SRCROOT/bin}\"\n\n# Check if the directory exists\nif [ ! -d \"$TARGET_DIR\" ]; then\n  echo \"Error: Target directory $TARGET_DIR does not exist.\"\n  exit 1\nfi\n\n# Check and set the com.apple.xcode.CreatedByBuildSystem attribute\nATTRIBUTE_CHECK=$(xattr -p com.apple.xcode.CreatedByBuildSystem \"$TARGET_DIR\" 2>/dev/null)\nif [ -z \"$ATTRIBUTE_CHECK\" ]; then\n  xattr -w com.apple.xcode.CreatedByBuildSystem true \"$TARGET_DIR\"\n  echo \"Attribute com.apple.xcode.CreatedByBuildSystem set to true for $TARGET_DIR\"\nelse\n  echo \"Attribute com.apple.xcode.CreatedByBuildSystem already set for $TARGET_DIR\"\nfi\n",
-			"showEnvVarsInLog": "0"
-		},
-		"E42962A92163ECCD00A6A9E2": {
+			"files": [],
 			"alwaysOutOfDate": "1",
 			"inputPaths": [],
-			"buildActionMask": "2147483647",
-			"shellPath": "/bin/sh",
-			"showEnvVarsInLog": "0",
-			"outputPaths": [],
-			"isa": "PBXShellScriptBuildPhase",
-			"runOnlyForDeploymentPostprocessing": "0",
-			"shellScript": "$OF_CORE_BUILD_COMMAND\n",
-			"name": "Run Script — Compile OF",
-			"files": []
+			"outputFileListPaths": []
 		},
 		"E4C2427710CC5ABF004149E2": {
 			"isa": "PBXCopyFilesBuildPhase",
@@ -73,9 +60,9 @@
 		"191CD6FA2847E21E0085CBB6": {
 			"path": "of.entitlements",
 			"isa": "PBXFileReference",
-			"lastKnownFileType": "text.plist.entitlements",
 			"sourceTree": "<group>",
-			"fileEncoding": "4"
+			"fileEncoding": "4",
+			"lastKnownFileType": "text.plist.entitlements"
 		},
 		"E4B69B4C0A3A1720003C02F2": {
 			"buildConfigurationList": "E4B69B4D0A3A1720003C02F2",
@@ -102,32 +89,45 @@
 		"E4B69E1E0A3A1BDC003C02F2": {
 			"path": "src/ofApp.cpp",
 			"isa": "PBXFileReference",
-			"fileEncoding": "4",
-			"name": "ofApp.cpp",
 			"sourceTree": "SOURCE_ROOT",
-			"explicitFileType": "sourcecode.cpp.cpp"
+			"name": "ofApp.cpp",
+			"explicitFileType": "sourcecode.cpp.cpp",
+			"fileEncoding": "4"
 		},
 		"E4B69E1D0A3A1BDC003C02F2": {
 			"path": "src/main.cpp",
 			"isa": "PBXFileReference",
-			"lastKnownFileType": "sourcecode.cpp.cpp",
-			"name": "main.cpp",
 			"sourceTree": "SOURCE_ROOT",
-			"fileEncoding": "4"
+			"name": "main.cpp",
+			"fileEncoding": "4",
+			"lastKnownFileType": "sourcecode.cpp.cpp"
 		},
 		"19B789C429E5AB4A0082E9B8": {
 			"buildActionMask": "2147483647",
 			"runOnlyForDeploymentPostprocessing": "0",
 			"outputPaths": [],
 			"shellPath": "/bin/sh",
-			"showEnvVarsInLog": "0",
 			"inputFileListPaths": [],
+			"showEnvVarsInLog": "0",
 			"isa": "PBXShellScriptBuildPhase",
 			"shellScript": "\"$OF_PATH/scripts/osx/xcode_project.sh\"\n",
 			"files": [],
 			"alwaysOutOfDate": "1",
 			"inputPaths": [],
 			"outputFileListPaths": []
+		},
+		"E42962A92163ECCD00A6A9E2": {
+			"alwaysOutOfDate": "1",
+			"inputPaths": [],
+			"buildActionMask": "2147483647",
+			"shellPath": "/bin/sh",
+			"showEnvVarsInLog": "0",
+			"outputPaths": [],
+			"isa": "PBXShellScriptBuildPhase",
+			"runOnlyForDeploymentPostprocessing": "0",
+			"shellScript": "$OF_CORE_BUILD_COMMAND\n",
+			"files": [],
+			"name": "Run Script — Compile OF"
 		},
 		"E4B69B4F0A3A1720003C02F2": {
 			"baseConfigurationReference": "E4EB6923138AFD0F00A09F29",
@@ -142,27 +142,6 @@
 				"GCC_OPTIMIZATION_LEVEL": "3",
 				"OTHER_CPLUSPLUSFLAGS": "-D__MACOSX_CORE__",
 				"COPY_PHASE_STRIP": "YES"
-			},
-			"name": "Release"
-		},
-		"E4B69B610A3A1757003C02F2": {
-			"baseConfigurationReference": "E4EB6923138AFD0F00A09F29",
-			"isa": "XCBuildConfiguration",
-			"buildSettings": {
-				"HEADER_SEARCH_PATHS": [
-					"$(OF_CORE_HEADERS)",
-					"src"
-				],
-				"FRAMEWORK_SEARCH_PATHS": "$(inherited)",
-				"COPY_PHASE_STRIP": "YES",
-				"ARCHS": "$(ARCHS_STANDARD)",
-				"OTHER_LDFLAGS": [
-					"$(OF_CORE_LIBS)",
-					"$(OF_CORE_FRAMEWORKS)",
-					"$(LIB_OF)"
-				],
-				"baseConfigurationReference": "E4EB6923138AFD0F00A09F29",
-				"LIBRARY_SEARCH_PATHS": "$(inherited)"
 			},
 			"name": "Release"
 		},
@@ -239,6 +218,27 @@
 			"files": [],
 			"runOnlyForDeploymentPostprocessing": "0"
 		},
+		"E4B69B610A3A1757003C02F2": {
+			"baseConfigurationReference": "E4EB6923138AFD0F00A09F29",
+			"isa": "XCBuildConfiguration",
+			"buildSettings": {
+				"HEADER_SEARCH_PATHS": [
+					"$(OF_CORE_HEADERS)",
+					"src"
+				],
+				"FRAMEWORK_SEARCH_PATHS": "$(inherited)",
+				"COPY_PHASE_STRIP": "YES",
+				"ARCHS": "$(ARCHS_STANDARD)",
+				"OTHER_LDFLAGS": [
+					"$(OF_CORE_LIBS)",
+					"$(OF_CORE_FRAMEWORKS)",
+					"$(LIB_OF)"
+				],
+				"baseConfigurationReference": "E4EB6923138AFD0F00A09F29",
+				"LIBRARY_SEARCH_PATHS": "$(inherited)"
+			},
+			"name": "Release"
+		},
 		"E4B69B4D0A3A1720003C02F2": {
 			"isa": "XCConfigurationList",
 			"defaultConfigurationIsVisible": "0",
@@ -278,9 +278,9 @@
 		"E4B6FCAD0C3E899E008CF71C": {
 			"path": "openFrameworks-Info.plist",
 			"isa": "PBXFileReference",
-			"lastKnownFileType": "text.plist.xml",
 			"sourceTree": "<group>",
-			"fileEncoding": "4"
+			"fileEncoding": "4",
+			"lastKnownFileType": "text.plist.xml"
 		},
 		"E4B69B5F0A3A1757003C02F2": {
 			"isa": "XCConfigurationList",
@@ -301,10 +301,10 @@
 		"E4B69E1F0A3A1BDC003C02F2": {
 			"path": "src/ofApp.h",
 			"isa": "PBXFileReference",
-			"lastKnownFileType": "sourcecode.c.h",
-			"name": "ofApp.h",
 			"sourceTree": "SOURCE_ROOT",
-			"fileEncoding": "4"
+			"name": "ofApp.h",
+			"fileEncoding": "4",
+			"lastKnownFileType": "sourcecode.c.h"
 		}
 	},
 	"rootObject": "E4B69B4C0A3A1720003C02F2"
