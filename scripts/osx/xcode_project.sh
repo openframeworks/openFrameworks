@@ -230,6 +230,13 @@ copy_binary() {
 		echo "ERROR: Failed to copy the app"
 		exit 1
 	fi
+
+    if [ -z "${CODE_SIGN_IDENTITY}" ]; then
+        echo "No CODE_SIGN_IDENTITY set. Unable to sign the app."
+        exit 0
+    fi
+    echo "Current CODE_SIGN_IDENTITY: '${CODE_SIGN_IDENTITY}'"
+    codesign --force --sign "${CODE_SIGN_IDENTITY}" "${APP_DEST}/${APP_NAME}"
 }
 
 echo ''
