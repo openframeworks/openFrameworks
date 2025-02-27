@@ -69,6 +69,13 @@ else
 			CROSS_COMPILING=0
 		endif
 	endif
+	ifeq ($(PLATFORM_OS),Linux)
+	  ifeq ($(PLATFORM_ARCH),aarch64)
+		ifneq ($(RPI_DETECTED),no)
+			PLATFORM_ARCH=arm64
+		endif
+	  endif
+	endif
 endif
 
 
@@ -80,7 +87,7 @@ ifdef MAKEFILE_DEBUG
 	$(info CROSS_COMPILING=$(CROSS_COMPILING))
 	$(info PLATFORM_VARIANT=$(PLATFORM_VARIANT))
 	$(info IS_RASPBIAN=$(IS_RASPBIAN))
-	$(info IS_RASPBIAN=$(IS_RASPBIAN))
+	$(info JETSON_DETECTED=$(JETSON_DETECTED))
 endif
 
 # if not defined, construct the default PLATFORM_LIB_SUBPATH
@@ -94,8 +101,6 @@ ifndef PLATFORM_LIB_SUBPATH
 				PLATFORM_LIB_SUBPATH=linux/armv7l
 			else ifeq ($(PLATFORM_ARCH),armv8l)
 				PLATFORM_LIB_SUBPATH=linux/armv8l
-			else ifeq ($(PLATFORM_ARCH),arm64)
-				PLATFORM_LIB_SUBPATH=linux/arm64
 			else ifeq ($(PLATFORM_ARCH),aarch64)
 				PLATFORM_LIB_SUBPATH=linux/aarch64
 		else ifeq ($(JETSON_DETECTED),yes)
@@ -109,8 +114,6 @@ ifndef PLATFORM_LIB_SUBPATH
 				PLATFORM_LIB_SUBPATH=linux/arm64
 			else ifeq ($(PLATFORM_ARCH),aarch64)
 				PLATFORM_LIB_SUBPATH=linux/arm64
-			else ifeq ($(PLATFORM_ARCH),i386)
-				PLATFORM_LIB_SUBPATH=linux/i386
 			else
 				PLATFORM_LIB_SUBPATH=linux
 				$(error This makefile does not support your architecture $(PLATFORM_ARCH))
