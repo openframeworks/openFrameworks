@@ -149,11 +149,14 @@ define parse_addon
 	$(eval TMP_PROJECT_ADDONS_CFLAGS += $(ADDON_CPPFLAGS)) \
 	$(if $(strip $(ADDON_LIBS)), \
 		$(foreach addon_lib, $(strip $(ADDON_LIBS)), \
-			$(if $(wildcard $(addon)/$(addon_lib)), \
-				$(eval TMP_PROJECT_ADDONS_LIBS += $(addon)/$(addon_lib)) \
+			$(eval lib_pattern := $(subst %,*,$(addon_lib))) \
+			$(eval match := $(wildcard $(addon)/$(lib_pattern))) \
+			$(if $(match), \
+				$(eval TMP_PROJECT_ADDONS_LIBS += $(match)) \
 			) \
-			$(if $(wildcard $(addon_lib)), \
-				$(eval TMP_PROJECT_ADDONS_LIBS += $(addon_lib)) \
+			$(eval match_global := $(wildcard $(lib_pattern))) \
+			$(if $(match_global), \
+				$(eval TMP_PROJECT_ADDONS_LIBS += $(match_global)) \
 			) \
 		) \
 	) \

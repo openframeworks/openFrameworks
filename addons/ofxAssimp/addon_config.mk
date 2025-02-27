@@ -113,4 +113,4 @@ osx:
 	
 emscripten:
 	ADDON_LIBS=
-	ADDON_LIBS=../ofxAssimpModelLoader/libs/assimp/lib/emscripten/libassimp.a
+	ADDON_LIBS=../ofxAssimpModelLoader/libs/assimp/lib/emscripten/%/libassimp.a
