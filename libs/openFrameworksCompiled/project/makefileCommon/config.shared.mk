@@ -40,8 +40,17 @@ else
 	FIND=find
 endif
 
-RPI_DETECTED := $(shell grep -qi 'Raspberry' /proc/device-tree/model && echo yes || echo no)
-JETSON_DETECTED := $(shell grep -qi -e 'Jetson' -e 'Tegra' /proc/device-tree/model && echo yes || echo no)
+RPI_DETECTED := $(shell \
+    if [ -f /proc/device-tree/model ]; then file=/proc/device-tree/model; \
+    elif [ -f /sys/firmware/devicetree/base/model ]; then file=/sys/firmware/devicetree/base/model; \
+    else file=""; fi; \
+    if [ -n "$$file" ] && grep -qi 'Raspberry' $$file; then echo yes; else echo no; fi)
+
+JETSON_DETECTED := $(shell \
+    if [ -f /proc/device-tree/model ]; then file=/proc/device-tree/model; \
+    elif [ -f /sys/firmware/devicetree/base/model ]; then file=/sys/firmware/devicetree/base/model; \
+    else file=""; fi; \
+    if [ -n "$$file" ] && grep -qi -e 'Jetson' -e 'Tegra' $$file; then echo yes; else echo no; fi)
 
 #check for Raspbian as armv7l needs to use armv6l architecture
 ifeq ($(wildcard $(RPI_ROOT)/etc/*-release), /etc/os-release)
