@@ -143,7 +143,9 @@ static size_t channelsFromPixelFormat(ofPixelFormat format){
 		return 1;
 		break;
 	case OF_PIXELS_GRAY_ALPHA:
-	case OF_PIXELS_RGB565:
+
+	// this is not true for OF_PIXELS_RGB565. it has 3 channels and 2 bytes.
+	// case OF_PIXELS_RGB565:
 		return 2;
 		break;
 	case OF_PIXELS_NV12:
@@ -396,7 +398,7 @@ void ofPixels_<PixelType>::setFromExternalPixels(PixelType * newPixels, size_t w
 	width = w;
 	height = h;
 
-	pixelsSize = w * h;
+	pixelsSize = w * h * getNumChannels();
 
 	pixels = newPixels;
 	pixelsOwner = false;
@@ -514,7 +516,7 @@ void ofPixels_<PixelType>::allocate(size_t w, size_t h, ofPixelFormat format){
 	}
 
 	size_t newSize = w * h * pixelBitsFromPixelFormat(format);
-	size_t oldSize = size() * pixelBitsFromPixelFormat(pixelFormat);
+	size_t oldSize = width * height * pixelBitsFromPixelFormat(pixelFormat);
 	//we check if we are already allocated at the right size
 	if(bAllocated && newSize==oldSize){
 		pixelFormat = format;
@@ -530,11 +532,11 @@ void ofPixels_<PixelType>::allocate(size_t w, size_t h, ofPixelFormat format){
 	width 		= w;
 	height 		= h;
 
-	pixelsSize = w * h;
+	pixelsSize = w * h * getNumChannels();
 
 	// we have some incongruence here, if we use PixelType
 	// we are not able to use RGB565 format
-	pixels = new PixelType[pixelsSize * getNumChannels()];
+	pixels = new PixelType[pixelsSize];
 //	pixels = new uint8_t[newSize];
 	bAllocated = true;
 	pixelsOwner = true;
