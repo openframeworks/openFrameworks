@@ -2,7 +2,7 @@
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd $SCRIPT_DIR
 
-VERSION=3.1.74
+VERSION=4.0.4
 
 CHECKOUT=$1
 

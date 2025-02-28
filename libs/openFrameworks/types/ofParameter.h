@@ -23,7 +23,7 @@ template <typename ParameterType, typename Friend>
 class ofReadOnlyParameter;
 
 class ofParameterGroup;
-
+ 
 //----------------------------------------------------------------------
 /// Base class for ofParameter, ofReadOnlyParameter and ofParameterGroup
 class ofAbstractParameter {
@@ -39,6 +39,7 @@ public:
 	virtual std::string valueType() const = 0;
 
 	virtual bool isInit() const = 0;
+	virtual void reInit() = 0;
 
 	virtual void setParent(ofParameterGroup & _parent) = 0;
 	std::vector<std::string> getGroupHierarchyNames() const;
@@ -191,6 +192,12 @@ public:
 			if (!get(i).isInit()) return false;
 		}
 		return true;
+	}
+	
+	void reInit()  {
+		for (int i = 0; i < size(); i++) {
+			get(i).reInit();
+		}
 	}
 
 	const ofAbstractParameter & get(const std::string & name) const;
@@ -560,7 +567,6 @@ public:
 
 	ParameterType getInit() const;
 
-	void reInit();
 
 	/// \brief queries the parameter's event about its notification state
 	/// \returns true if the event was notified since last check
@@ -641,6 +647,7 @@ public:
 	void setMax(const ParameterType & max);
 	void setInit(const ParameterType & init);
 	bool isInit() const;
+	void reInit();
 
 	void setSerializable(bool serializable);
 	std::shared_ptr<ofAbstractParameter> newReference() const;
@@ -1087,7 +1094,14 @@ public:
 	ofParameter();
 	ofParameter(const std::string & name);
 
-	bool isInit() const { return false; }
+	bool isInit() const {
+		ofLogVerbose("ofParameter<void>::isInit()") << "isInit() called on ofParameter<void>, where it always returns true";
+		return true;
+	}
+
+	void reInit() {
+		ofLogVerbose("ofParameter<void>::reInit()") << "isInit() called on ofParameter<void>, where it is a no-op";
+	}
 
 	ofParameter<void> & set(const std::string & name);
 
@@ -1264,6 +1278,7 @@ protected:
 	void setMax(const ParameterType & max);
 	void setInit(const ParameterType & init);
 	bool isInit() const;
+	void reInit();
 
 	void fromString(const std::string & str);
 
@@ -1554,9 +1569,16 @@ template <typename ParameterType, typename Friend>
 inline bool ofReadOnlyParameter<ParameterType, Friend>::isInit() const {
 	// not sure what the expected behaviour for isInit() would be for ReadOnlyParameter
 	// as-is, it fails with : No member named 'value' in 'ofParameter<std::string>'
-	// returning true while informaing with a log msg seems sane
+	// returning true while informing with a log msg seems sane
 	ofLogVerbose("ofReadOnlyParameter::isInit()") << "isInit() called on ofReadOnlyParameter, where it always returns true";
 	return true;
+}
+
+template <typename ParameterType, typename Friend>
+inline void ofReadOnlyParameter<ParameterType, Friend>::reInit() {
+	// not sure what the expected behaviour for reInit() would be for ReadOnlyParameter
+	// informing with a log msg seems sane
+	ofLogVerbose("ofReadOnlyParameter::reInit()") << "reInit() called on ofReadOnlyParameter, where it is a no-op";
 }
 
 template <typename ParameterType, typename Friend>
