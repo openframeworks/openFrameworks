@@ -99,12 +99,6 @@ android/x86:
 	ADDON_LIBS=
 	ADDON_LIBS+=libs/assimp/lib/android/x86/libassimp.a
 	ADDON_LIBS+=libs/assimp/lib/android/x86/libIrrXML.a
-
-ios:
-	ADDON_LIBS=
-	ADDON_LIBS=libs/assimp/lib/macos/assimp.xcframework/ios-arm64/assimp.a
-	ADDON_LIBS=libs/assimp/lib/macos/assimp.xcframework/ios-arm64_x86_64-simulator/assimp.a
-	
 osx:
 	ADDON_INCLUDES_EXCLUDE = libs/assimp/include/%
 	ADDON_LIBS=
