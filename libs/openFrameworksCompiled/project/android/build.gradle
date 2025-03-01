@@ -53,7 +53,6 @@ model {
                                     "**/rtAudio/**/*",
                                     "**/poco/lib/**/*",
                                     "**/openssl/lib/**/*",
-                                    "**/boost/include/boost/**/*",
                                     "**/curl/**/*"
                         ]
                     }
