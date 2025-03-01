@@ -144,8 +144,8 @@ static size_t channelsFromPixelFormat(ofPixelFormat format){
 		break;
 	case OF_PIXELS_GRAY_ALPHA:
 
-	// this is not true for OF_PIXELS_RGB565. it has 3 channels and 2 bytes.
-	// case OF_PIXELS_RGB565:
+	// FIXME: this is not true for OF_PIXELS_RGB565. it has 3 channels and 2 bytes.
+	case OF_PIXELS_RGB565:
 		return 2;
 		break;
 	case OF_PIXELS_NV12:
