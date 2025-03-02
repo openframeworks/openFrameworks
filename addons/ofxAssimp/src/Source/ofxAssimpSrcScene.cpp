@@ -232,28 +232,47 @@ void SrcScene::printAllNodeNames( aiNode* anode, int alevel ) {
 	}
 }
 
+
 //-------------------------------------------
 void SrcScene::processNodes() {
 	// lets load in the node hierarchy here //
 	mSrcMeshes.clear();
 	mSrcMeshes.assign( scene->mNumMeshes, shared_ptr<ofx::assimp::SrcMesh>() );
 	processMeshes(scene->mRootNode, shared_ptr<SrcNode>());
+	
+	std::unordered_map<std::string, aiBone*> boneMap;
+	for (unsigned int i = 0; i < scene->mNumMeshes; ++i){
+		ofLogVerbose("ofx::assimp::SrcScene") << "getAiBoneForAiNode(): loading mesh " << i;
+		// current mesh we are introspecting
+		aiMesh* mesh = scene->mMeshes[i];
+		if( mesh == nullptr ) {
+			continue;
+		}
+		for(unsigned int a = 0; a < mesh->mNumBones; ++a) {
+			aiBone* bone = mesh->mBones[a];
+			if( bone != nullptr ) {
+				boneMap[std::string(bone->mName.C_Str())] = bone;
+			}
+		}
+	}
+	
+	
 	for (unsigned int i = 0; i < scene->mRootNode->mNumChildren; i++ ){
-		processNodesRecursive(scene->mRootNode->mChildren[i], shared_ptr<SrcNode>() );
+		processNodesRecursive(scene->mRootNode->mChildren[i], shared_ptr<SrcNode>(), boneMap );
 	}
 }
 
 //-------------------------------------------
-void SrcScene::processNodesRecursive(aiNode* anode, std::shared_ptr<SrcNode> aParentNode) {
+void SrcScene::processNodesRecursive(aiNode* anode, std::shared_ptr<SrcNode> aParentNode, std::unordered_map<std::string, aiBone*>& aBoneMap ) {
 	if( !anode ) return;
 	
 	std::shared_ptr<SrcNode> sNode;
-	if( isBone(anode) || isArmature(anode) ) {
+	if( isBone(anode, aBoneMap) || isArmature(anode, aBoneMap) ) {
 //	if( aiBone* tAiBone = getAiBoneForAiNode(anode) ) {
-		aiBone* tAiBone = getAiBoneForAiNode(anode);
+		aiBone* tAiBone = getAiBoneForAiNode(anode, aBoneMap);
 		auto sBone = std::make_shared<ofx::assimp::SrcBone>();
 		sBone->setAiBone(tAiBone, anode);
-		sBone->bRoot = isRootBone(anode) || !isBone(anode);
+		sBone->bRoot = isRootBone(anode, aBoneMap) || !isBone(anode, aBoneMap);
 //		sBone->bRoot = isArmature(anode);
 		if(tAiBone && tAiBone->mArmature) {
 //			std::cout << "SrcScene :: processNodes: " << tAiBone->mArmature->mName.data << std::endl;
@@ -286,7 +305,7 @@ void SrcScene::processNodesRecursive(aiNode* anode, std::shared_ptr<SrcNode> aPa
 	}
 	
 	for (unsigned int i = 0; i < anode->mNumChildren; i++ ){
-		processNodesRecursive(anode->mChildren[i], sNode );
+		processNodesRecursive(anode->mChildren[i], sNode, aBoneMap );
 	}
 }
 
@@ -318,44 +337,58 @@ void SrcScene::processMeshes(aiNode* anode, std::shared_ptr<SrcNode> aSrcNode) {
 }
 
 //-------------------------------------------
-bool SrcScene::isBone( aiNode* aAiNode ) {
+bool SrcScene::isBone( aiNode* aAiNode, const std::unordered_map<std::string, aiBone*>& aBoneMap ) {
+	if( aBoneMap.count(std::string(aAiNode->mName.C_Str())) > 0 ) {
+		return true;
+	}
+	return false;
+	
 //	if(isRootBone( aAiNode )) {
 //		return true;
 //	}
-	return (getAiBoneForAiNode(aAiNode) != nullptr);
+//	return (getAiBoneForAiNode(aAiNode) != nullptr);
 }
 
 //-------------------------------------------
-bool SrcScene::isArmature( aiNode* aAiNode ) {
-	for (unsigned int i = 0; i < scene->mNumMeshes; ++i){
-		// current mesh we are introspecting
-		aiMesh* mesh = scene->mMeshes[i];
-		if( mesh == nullptr ) {
-			continue;
-		}
-		for(unsigned int a = 0; a < mesh->mNumBones; ++a) {
-			aiBone* bone = mesh->mBones[a];
-			if( bone != nullptr ) {
-				if( aAiNode == bone->mArmature ) {
-					return true;
-				}
+bool SrcScene::isArmature( aiNode* aAiNode, const std::unordered_map<std::string, aiBone*>& aBoneMap ) {
+	for( const auto& iter : aBoneMap ) {
+		if( iter.second != nullptr ) {
+			if( iter.second->mArmature == aAiNode ) {
+				return true;
 			}
 		}
 	}
 	return false;
+	
+//	for (unsigned int i = 0; i < scene->mNumMeshes; ++i){
+//		// current mesh we are introspecting
+//		aiMesh* mesh = scene->mMeshes[i];
+//		if( mesh == nullptr ) {
+//			continue;
+//		}
+//		for(unsigned int a = 0; a < mesh->mNumBones; ++a) {
+//			aiBone* bone = mesh->mBones[a];
+//			if( bone != nullptr ) {
+//				if( aAiNode == bone->mArmature ) {
+//					return true;
+//				}
+//			}
+//		}
+//	}
+//	return false;
 }
 
 //-------------------------------------------
-bool SrcScene::isRootBone( aiNode* aAiNode ) {
+bool SrcScene::isRootBone( aiNode* aAiNode, std::unordered_map<std::string, aiBone*>& aBoneMap ) {
 	// check if there are parent bones
 	bool bHasBoneParent = false;
 	auto temp = aAiNode->mParent;
 	while( temp ) {
-		if( getAiBoneForAiNode(temp)) {
+		if( getAiBoneForAiNode(temp, aBoneMap)) {
 			bHasBoneParent=true;
 			break;
 		}
-		if( temp != scene->mRootNode && isArmature(temp)) {
+		if( temp != scene->mRootNode && isArmature(temp, aBoneMap)) {
 			bHasBoneParent=true;
 			break;
 		}
@@ -368,46 +401,53 @@ bool SrcScene::isRootBone( aiNode* aAiNode ) {
 }
 
 //-------------------------------------------
-aiBone*  SrcScene::getAiBoneForAiNode( aiNode* aAiNode ) {
-	for (unsigned int i = 0; i < scene->mNumMeshes; ++i){
-		ofLogVerbose("ofx::assimp::SrcScene") << "loadGLResources(): loading mesh " << i;
-		// current mesh we are introspecting
-		aiMesh* mesh = scene->mMeshes[i];
-		if( mesh == nullptr ) {
-			continue;
-		}
-		for(unsigned int a = 0; a < mesh->mNumBones; ++a) {
-			aiBone* bone = mesh->mBones[a];
-			if( bone != nullptr ) {
-				if( aAiNode->mName == bone->mName ) {
-//				if( bone->mNode == aAiNode) {
-					return bone;
-				}
-			}
-		}
+aiBone* SrcScene::getAiBoneForAiNode( aiNode* aAiNode, std::unordered_map<std::string, aiBone*>& aBoneMap ) {
+	
+	std::string bstr = std::string(aAiNode->mName.C_Str());
+	if( aBoneMap.count(bstr) > 0) {
+		return aBoneMap[bstr];
 	}
 	return nullptr;
+	
+//	for (unsigned int i = 0; i < scene->mNumMeshes; ++i){
+//		ofLogVerbose("ofx::assimp::SrcScene") << "getAiBoneForAiNode(): loading mesh " << i;
+//		// current mesh we are introspecting
+//		aiMesh* mesh = scene->mMeshes[i];
+//		if( mesh == nullptr ) {
+//			continue;
+//		}
+//		for(unsigned int a = 0; a < mesh->mNumBones; ++a) {
+//			aiBone* bone = mesh->mBones[a];
+//			if( bone != nullptr ) {
+//				if( aAiNode->mName == bone->mName ) {
+////				if( bone->mNode == aAiNode) {
+//					return bone;
+//				}
+//			}
+//		}
+//	}
+//	return nullptr;
 }
 
 //-------------------------------------------
-void SrcScene::recursiveAddSrcBones( std::shared_ptr<ofx::assimp::SrcBone> abone ) {
-	for( unsigned int i = 0; i < abone->getAiNode()->mNumChildren; i++ ) {
-		// aiNode, now we need to get the associated bone
-		auto boneNode = abone->getAiNode()->mChildren[i];
-		if( boneNode ) {
-			auto tbone = getAiBoneForAiNode( boneNode );
-			if( tbone ) {
-				auto nSrcBone = std::make_shared<ofx::assimp::SrcBone>();
-				nSrcBone->setAiBone(tbone, boneNode);
-				abone->childBones.push_back(nSrcBone);
-			}
-		}
-	}
-	
-	for( auto iter : abone->childBones ) {
-		recursiveAddSrcBones(iter);
-	}
-}
+//void SrcScene::recursiveAddSrcBones( std::shared_ptr<ofx::assimp::SrcBone> abone ) {
+//	for( unsigned int i = 0; i < abone->getAiNode()->mNumChildren; i++ ) {
+//		// aiNode, now we need to get the associated bone
+//		auto boneNode = abone->getAiNode()->mChildren[i];
+//		if( boneNode ) {
+//			auto tbone = getAiBoneForAiNode( boneNode );
+//			if( tbone ) {
+//				auto nSrcBone = std::make_shared<ofx::assimp::SrcBone>();
+//				nSrcBone->setAiBone(tbone, boneNode);
+//				abone->childBones.push_back(nSrcBone);
+//			}
+//		}
+//	}
+//	
+//	for( auto iter : abone->childBones ) {
+//		recursiveAddSrcBones(iter);
+//	}
+//}
 
 //-------------------------------------------
 std::shared_ptr<ofx::assimp::SrcNode> SrcScene::getSrcNodeForAiNodeName( const std::string& aAiNodeName ) {

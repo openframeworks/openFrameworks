@@ -215,6 +215,11 @@ double ofxiOSCoreLocation::getHeadingAccuracy()
 
 - (bool) startLocation
 {
+	if (locationManager.authorizationStatus == kCLAuthorizationStatusNotDetermined) {
+		// Request permission when in use or always
+		[locationManager requestWhenInUseAuthorization];  // or requestAlwaysAuthorization
+	}
+	
 	if([CLLocationManager locationServicesEnabled])
 	{
 		[locationManager startUpdatingLocation];

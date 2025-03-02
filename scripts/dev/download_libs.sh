@@ -338,7 +338,7 @@ cd download
 download "${PKGS[@]}"
 
 cd ../ # back to libs
-libs=("boost" "cairo" "curl" "FreeImage" "brotli" "fmod" "freetype" "glew" "glfw" "json" "libpng" "openssl" "pixman" "poco" "rtAudio" "tess2" "uriparser" "utf8" "videoInput" "zlib" "opencv" "ippicv" "assimp" "libxml2" "svgtiny" "fmt")
+libs=("cairo" "curl" "FreeImage" "brotli" "fmod" "freetype" "glew" "glfw" "json" "libpng" "openssl" "pixman" "poco" "rtAudio" "tess2" "uriparser" "utf8" "videoInput" "zlib" "opencv" "ippicv" "assimp" "libxml2" "svgtiny" "fmt")
 if [ $OVERWRITE -eq 1 ]; then
     echo " "
     echo " Overwrite - Removing prior libraries for [$PLATFORM]"

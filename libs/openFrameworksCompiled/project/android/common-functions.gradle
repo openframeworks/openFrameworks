@@ -319,8 +319,6 @@ def coreCppFlags(abi, ofRoot){
             "-I${file(ofRoot+"/addons/ofxAndroid/src")}".toString(),
             "-I${file(ofRoot+"/addons/ofxAccelerometer/src")}".toString(),
             "-I${file(libs+"/FreeImage/include")}".toString(),
-            "-I${file(libs+"/boost/include")}".toString(),
-            "-I${file(libs+"/boost/include/boost")}".toString(),
             "-I${file(libs+"/cairo/include")}".toString(),
             "-I${file(libs+"/cairo/include/cairo")}".toString(),
             "-I${file(libs+"/freetype/include")}".toString(),
@@ -371,8 +369,6 @@ def getPrebuiltLibPaths(abi, ofRoot) {
 
     def paths = []
     paths += file(libs+"/FreeImage/lib/android/${abi}/libfreeimage.a").toString()
-    paths += file(libs+"/boost/lib/android/${abi}/libboost_filesystem.a").toString()
-    paths += file(libs+"/boost/lib/android/${abi}/libboost_system.a").toString()
     paths += file(libs+"/freetype/lib/android/${abi}/libfreetype.a").toString()
     paths += file(libs+"/tess2/lib/android/${abi}/libtess2.a").toString()
     paths += file(libs+"/curl/lib/android/${abi}/libcurl.a").toString()
