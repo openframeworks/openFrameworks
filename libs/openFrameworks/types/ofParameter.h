@@ -38,7 +38,7 @@ public:
 	virtual std::string getEscapedName() const;
 	virtual std::string valueType() const = 0;
 
-	virtual bool isInit() const { return false; }
+	virtual bool isInit() const { return true; }
 	virtual void reInit() {};
 
 	virtual void setParent(ofParameterGroup & _parent) = 0;
