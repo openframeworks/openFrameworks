@@ -80,9 +80,7 @@ else
 	endif
 	ifeq ($(PLATFORM_OS),Linux)
 		ifeq ($(PLATFORM_ARCH),aarch64)
-			ifneq ($(RPI_DETECTED),no)
-				PLATFORM_ARCH=arm64
-			endif
+			PLATFORM_ARCH=arm64
 		endif
 	endif
 endif
