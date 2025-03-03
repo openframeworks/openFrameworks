@@ -60,7 +60,6 @@
       "buildPhases" : [
         "BF46A0162D754E9E00E4F02F",
         "1D60588D0D05DD3D006BFB54",
-        "BF1D97122D7552820033282F",
         "1D60588E0D05DD3D006BFB54",
         "1D60588F0D05DD3D006BFB54",
         "9255DD331112741900D6945E"
@@ -186,12 +185,6 @@
       ],
       "mainGroup" : "29B97314FDCFA39411CA2CEA",
       "projectDirPath" : "",
-      "projectReferences" : [
-        {
-          "ProductGroup" : "E41D40FE13B3A0D800A75A5D",
-          "ProjectRef" : "E41D40FD13B3A0D800A75A5D"
-        }
-      ],
       "projectRoot" : "",
       "targets" : [
         "1D6058900D05DD3D006BFB54"
@@ -417,7 +410,18 @@
     },
     "BB24E1F710DAA51900E9C588" : {
       "children" : [
-        "E41D40FD13B3A0D800A75A5D",
+        "BF8CFDD22D756AC800AA5C47",
+        "BF8CFDDF2D756AC800AA5C47",
+        "BF8CFDE82D756AC800AA5C47",
+        "BF8CFDE92D756AC800AA5C47",
+        "BF8CFDEE2D756AC800AA5C47",
+        "BF8CFE0B2D756AC800AA5C47",
+        "BF8CFE232D756AC800AA5C47",
+        "BF8CFE332D756AC800AA5C47",
+        "BF8CFE3D2D756AC800AA5C47",
+        "BF8CFE492D756AC800AA5C47",
+        "BF8CFE632D756AC800AA5C47",
+        "BF8CFE682D756AC800AA5C47",
         "32CA4F630368D1EE00C91783",
         "BB24DDC910DA781C00E9C588",
         "E41D3EE513B3906D00A75A5D",
@@ -447,29 +451,1074 @@
       "fileRef" : "BBE5EAB70F49AD8400F28951",
       "isa" : "PBXBuildFile"
     },
-    "BF1D97122D7552820033282F" : {
-      "alwaysOutOfDate" : "1",
-      "buildActionMask" : "2147483647",
-      "files" : [
+    "BF8CFDD22D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "name" : "ofMain.h",
+      "path" : "..\/..\/..\/libs\/openFrameworks\/ofMain.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFDD32D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "text",
+      "path" : "ofMesh.inl",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFDD42D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.cpp",
+      "path" : "of3dPrimitives.cpp",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFDD52D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "of3dPrimitives.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFDD62D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.cpp",
+      "path" : "of3dUtils.cpp",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFDD72D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "of3dUtils.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFDD82D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.cpp",
+      "path" : "ofCamera.cpp",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFDD92D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofCamera.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFDDA2D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.cpp",
+      "path" : "ofEasyCam.cpp",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFDDB2D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofEasyCam.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFDDC2D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofMesh.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFDDD2D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.cpp",
+      "path" : "ofNode.cpp",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFDDE2D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofNode.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFDDF2D756AC800AA5C47" : {
+      "children" : [
+        "BF8CFDD32D756AC800AA5C47",
+        "BF8CFDD42D756AC800AA5C47",
+        "BF8CFDD52D756AC800AA5C47",
+        "BF8CFDD62D756AC800AA5C47",
+        "BF8CFDD72D756AC800AA5C47",
+        "BF8CFDD82D756AC800AA5C47",
+        "BF8CFDD92D756AC800AA5C47",
+        "BF8CFDDA2D756AC800AA5C47",
+        "BF8CFDDB2D756AC800AA5C47",
+        "BF8CFDDC2D756AC800AA5C47",
+        "BF8CFDDD2D756AC800AA5C47",
+        "BF8CFDDE2D756AC800AA5C47"
+      ],
+      "isa" : "PBXGroup",
+      "name" : "3d",
+      "path" : "..\/..\/..\/libs\/openFrameworks\/3d",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFDE02D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.cpp",
+      "path" : "ofBaseApp.cpp",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFDE12D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofAppBaseWindow.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFDE22D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.cpp",
+      "path" : "ofAppRunner.cpp",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFDE32D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofAppRunner.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFDE42D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofBaseApp.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFDE52D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.cpp",
+      "path" : "ofMainLoop.cpp",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFDE62D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofMainLoop.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFDE72D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofWindowSettings.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFDE82D756AC800AA5C47" : {
+      "children" : [
+        "BF8CFDE02D756AC800AA5C47",
+        "BF8CFDE12D756AC800AA5C47",
+        "BF8CFDE22D756AC800AA5C47",
+        "BF8CFDE32D756AC800AA5C47",
+        "BF8CFDE42D756AC800AA5C47",
+        "BF8CFDE52D756AC800AA5C47",
+        "BF8CFDE62D756AC800AA5C47",
+        "BF8CFDE72D756AC800AA5C47"
+      ],
+      "isa" : "PBXGroup",
+      "name" : "app",
+      "path" : "..\/..\/..\/libs\/openFrameworks\/app",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFDE92D756AC800AA5C47" : {
+      "children" : [
 
       ],
-      "inputFileListPaths" : [
-
+      "isa" : "PBXGroup",
+      "name" : "communication",
+      "path" : "..\/..\/..\/libs\/openFrameworks\/communication",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFDEA2D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofEvent.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFDEB2D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.cpp",
+      "path" : "ofEvents.cpp",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFDEC2D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofEvents.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFDED2D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofEventUtils.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFDEE2D756AC800AA5C47" : {
+      "children" : [
+        "BF8CFDEA2D756AC800AA5C47",
+        "BF8CFDEB2D756AC800AA5C47",
+        "BF8CFDEC2D756AC800AA5C47",
+        "BF8CFDED2D756AC800AA5C47"
       ],
-      "inputPaths" : [
-
+      "isa" : "PBXGroup",
+      "name" : "events",
+      "path" : "..\/..\/..\/libs\/openFrameworks\/events",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFDEF2D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofGLBaseTypes.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFDF02D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.cpp",
+      "path" : "ofBufferObject.cpp",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFDF12D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofBufferObject.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFDF22D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.cpp",
+      "path" : "ofCubeMap.cpp",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFDF32D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofCubeMap.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFDF42D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofCubeMapShaders.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFDF52D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.cpp",
+      "path" : "ofFbo.cpp",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFDF62D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofFbo.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFDF72D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.cpp",
+      "path" : "ofGLProgrammableRenderer.cpp",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFDF82D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofGLProgrammableRenderer.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFDF92D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.cpp",
+      "path" : "ofGLRenderer.cpp",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFDFA2D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofGLRenderer.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFDFB2D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.cpp",
+      "path" : "ofGLUtils.cpp",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFDFC2D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofGLUtils.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFDFD2D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.cpp",
+      "path" : "ofLight.cpp",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFDFE2D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofLight.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFDFF2D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.cpp",
+      "path" : "ofShadow.cpp",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE0A2D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofVboMesh.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE0B2D756AC800AA5C47" : {
+      "children" : [
+        "BF8CFDEF2D756AC800AA5C47",
+        "BF8CFDF02D756AC800AA5C47",
+        "BF8CFDF12D756AC800AA5C47",
+        "BF8CFDF22D756AC800AA5C47",
+        "BF8CFDF32D756AC800AA5C47",
+        "BF8CFDF42D756AC800AA5C47",
+        "BF8CFDF52D756AC800AA5C47",
+        "BF8CFDF62D756AC800AA5C47",
+        "BF8CFDF72D756AC800AA5C47",
+        "BF8CFDF82D756AC800AA5C47",
+        "BF8CFDF92D756AC800AA5C47",
+        "BF8CFDFA2D756AC800AA5C47",
+        "BF8CFDFB2D756AC800AA5C47",
+        "BF8CFDFC2D756AC800AA5C47",
+        "BF8CFDFD2D756AC800AA5C47",
+        "BF8CFDFE2D756AC800AA5C47",
+        "BF8CFDFF2D756AC800AA5C47",
+        "BF8CFE002D756AC800AA5C47",
+        "BF8CFE012D756AC800AA5C47",
+        "BF8CFE022D756AC800AA5C47",
+        "BF8CFE032D756AC800AA5C47",
+        "BF8CFE042D756AC800AA5C47",
+        "BF8CFE052D756AC800AA5C47",
+        "BF8CFE062D756AC800AA5C47",
+        "BF8CFE072D756AC800AA5C47",
+        "BF8CFE082D756AC800AA5C47",
+        "BF8CFE092D756AC800AA5C47",
+        "BF8CFE0A2D756AC800AA5C47"
       ],
-      "isa" : "PBXShellScriptBuildPhase",
-      "outputFileListPaths" : [
-
+      "isa" : "PBXGroup",
+      "name" : "gl",
+      "path" : "..\/..\/..\/libs\/openFrameworks\/gl",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE0C2D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.cpp",
+      "path" : "ofGraphicsBaseTypes.cpp",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE0D2D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofGraphicsBaseTypes.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE0E2D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofGraphicsConstants.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE0F2D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "text",
+      "path" : "ofPolyline.inl",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE1A2D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.cpp",
+      "path" : "ofPixels.cpp",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE1B2D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofPixels.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE1C2D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofPolyline.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE1D2D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.cpp",
+      "path" : "ofRendererCollection.cpp",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE1E2D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofRendererCollection.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE1F2D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.cpp",
+      "path" : "ofTessellator.cpp",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE2A2D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofMatrix4x4.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE2B2D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.cpp",
+      "path" : "ofQuaternion.cpp",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE2C2D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofQuaternion.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE2D2D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.cpp",
+      "path" : "ofVec2f.cpp",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE002D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofShadow.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE2E2D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofVec2f.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE2F2D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofVec3f.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE3A2D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.cpp",
+      "path" : "ofSoundStream.cpp",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE3B2D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofSoundStream.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE3C2D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofSoundUtils.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE3D2D756AC800AA5C47" : {
+      "children" : [
+        "BF8CFE342D756AC800AA5C47",
+        "BF8CFE352D756AC800AA5C47",
+        "BF8CFE362D756AC800AA5C47",
+        "BF8CFE372D756AC800AA5C47",
+        "BF8CFE382D756AC800AA5C47",
+        "BF8CFE392D756AC800AA5C47",
+        "BF8CFE3A2D756AC800AA5C47",
+        "BF8CFE3B2D756AC800AA5C47",
+        "BF8CFE3C2D756AC800AA5C47"
       ],
-      "outputPaths" : [
-
+      "isa" : "PBXGroup",
+      "name" : "sound",
+      "path" : "..\/..\/..\/libs\/openFrameworks\/sound",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE3E2D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.cpp",
+      "path" : "ofBaseTypes.cpp",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE3F2D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.cpp",
+      "path" : "ofColor.cpp",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE4A2D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofConstants.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE4B2D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.cpp",
+      "path" : "ofFileUtils.cpp",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE4C2D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofFileUtils.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE4D2D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.cpp",
+      "path" : "ofFpsCounter.cpp",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE4E2D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofFpsCounter.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE4F2D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.cpp",
+      "path" : "ofLog.cpp",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE5A2D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofTimer.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE5B2D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.cpp",
+      "path" : "ofTimerFps.cpp",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE5C2D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofTimerFps.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE5D2D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.cpp",
+      "path" : "ofURLFileLoader.cpp",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE5E2D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofURLFileLoader.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE5F2D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.cpp",
+      "path" : "ofUtils.cpp",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE012D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.cpp",
+      "path" : "ofMaterial.cpp",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE022D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofMaterial.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE032D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.cpp",
+      "path" : "ofShader.cpp",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE042D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofShader.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE052D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.cpp",
+      "path" : "ofTexture.cpp",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE062D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofTexture.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE072D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.cpp",
+      "path" : "ofVbo.cpp",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE082D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofVbo.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE092D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.cpp",
+      "path" : "ofVboMesh.cpp",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE102D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.cpp",
+      "path" : "of3dGraphics.cpp",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE112D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "of3dGraphics.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE122D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.cpp",
+      "path" : "ofBitmapFont.cpp",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE132D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofBitmapFont.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE142D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.cpp",
+      "path" : "ofGraphics.cpp",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE152D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofGraphics.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE162D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.cpp",
+      "path" : "ofImage.cpp",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE172D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofImage.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE182D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.cpp",
+      "path" : "ofPath.cpp",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE192D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofPath.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE202D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofTessellator.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE212D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.cpp",
+      "path" : "ofTrueTypeFont.cpp",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE222D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofTrueTypeFont.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE232D756AC800AA5C47" : {
+      "children" : [
+        "BF8CFE0C2D756AC800AA5C47",
+        "BF8CFE0D2D756AC800AA5C47",
+        "BF8CFE0E2D756AC800AA5C47",
+        "BF8CFE0F2D756AC800AA5C47",
+        "BF8CFE102D756AC800AA5C47",
+        "BF8CFE112D756AC800AA5C47",
+        "BF8CFE122D756AC800AA5C47",
+        "BF8CFE132D756AC800AA5C47",
+        "BF8CFE142D756AC800AA5C47",
+        "BF8CFE152D756AC800AA5C47",
+        "BF8CFE162D756AC800AA5C47",
+        "BF8CFE172D756AC800AA5C47",
+        "BF8CFE182D756AC800AA5C47",
+        "BF8CFE192D756AC800AA5C47",
+        "BF8CFE1A2D756AC800AA5C47",
+        "BF8CFE1B2D756AC800AA5C47",
+        "BF8CFE1C2D756AC800AA5C47",
+        "BF8CFE1D2D756AC800AA5C47",
+        "BF8CFE1E2D756AC800AA5C47",
+        "BF8CFE1F2D756AC800AA5C47",
+        "BF8CFE202D756AC800AA5C47",
+        "BF8CFE212D756AC800AA5C47",
+        "BF8CFE222D756AC800AA5C47"
       ],
-      "runOnlyForDeploymentPostprocessing" : "0",
-      "shellPath" : "\/bin\/sh",
-      "shellScript" : "# Type a script or drag a script file from your workspace to insert its path.\necho \"CONFIGURATION: ${CONFIGURATION}\"\necho \"LIB_OF: ${LIB_OF}\"\n",
-      "showEnvVarsInLog" : "0"
+      "isa" : "PBXGroup",
+      "name" : "graphics",
+      "path" : "..\/..\/..\/libs\/openFrameworks\/graphics",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE242D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofMathConstants.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE252D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.cpp",
+      "path" : "ofMath.cpp",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE262D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofMath.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE272D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.cpp",
+      "path" : "ofMatrix3x3.cpp",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE282D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofMatrix3x3.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE292D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.cpp",
+      "path" : "ofMatrix4x4.cpp",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE302D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.cpp",
+      "path" : "ofVec4f.cpp",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE312D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofVec4f.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE322D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofVectorMath.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE332D756AC800AA5C47" : {
+      "children" : [
+        "BF8CFE242D756AC800AA5C47",
+        "BF8CFE252D756AC800AA5C47",
+        "BF8CFE262D756AC800AA5C47",
+        "BF8CFE272D756AC800AA5C47",
+        "BF8CFE282D756AC800AA5C47",
+        "BF8CFE292D756AC800AA5C47",
+        "BF8CFE2A2D756AC800AA5C47",
+        "BF8CFE2B2D756AC800AA5C47",
+        "BF8CFE2C2D756AC800AA5C47",
+        "BF8CFE2D2D756AC800AA5C47",
+        "BF8CFE2E2D756AC800AA5C47",
+        "BF8CFE2F2D756AC800AA5C47",
+        "BF8CFE302D756AC800AA5C47",
+        "BF8CFE312D756AC800AA5C47",
+        "BF8CFE322D756AC800AA5C47"
+      ],
+      "isa" : "PBXGroup",
+      "name" : "math",
+      "path" : "..\/..\/..\/libs\/openFrameworks\/math",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE342D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.cpp",
+      "path" : "ofSoundBaseTypes.cpp",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE352D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofSoundBaseTypes.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE362D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.cpp",
+      "path" : "ofSoundBuffer.cpp",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE372D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofSoundBuffer.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE382D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.cpp",
+      "path" : "ofSoundPlayer.cpp",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE392D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofSoundPlayer.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE402D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofColor.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE412D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.cpp",
+      "path" : "ofParameter.cpp",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE422D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofParameter.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE432D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.cpp",
+      "path" : "ofParameterGroup.cpp",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE442D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofParameterGroup.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE452D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofPoint.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE462D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.cpp",
+      "path" : "ofRectangle.cpp",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE472D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofRectangle.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE482D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofTypes.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE492D756AC800AA5C47" : {
+      "children" : [
+        "BF8CFE3E2D756AC800AA5C47",
+        "BF8CFE3F2D756AC800AA5C47",
+        "BF8CFE402D756AC800AA5C47",
+        "BF8CFE412D756AC800AA5C47",
+        "BF8CFE422D756AC800AA5C47",
+        "BF8CFE432D756AC800AA5C47",
+        "BF8CFE442D756AC800AA5C47",
+        "BF8CFE452D756AC800AA5C47",
+        "BF8CFE462D756AC800AA5C47",
+        "BF8CFE472D756AC800AA5C47",
+        "BF8CFE482D756AC800AA5C47"
+      ],
+      "isa" : "PBXGroup",
+      "name" : "types",
+      "path" : "..\/..\/..\/libs\/openFrameworks\/types",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE502D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofLog.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE512D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.cpp",
+      "path" : "ofMatrixStack.cpp",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE522D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofMatrixStack.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE532D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofNoise.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE542D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.cpp",
+      "path" : "ofSystemUtils.cpp",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE552D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofSystemUtils.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE562D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.cpp",
+      "path" : "ofThread.cpp",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE572D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofThread.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE582D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofThreadChannel.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE592D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.cpp",
+      "path" : "ofTimer.cpp",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE602D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofUtils.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE612D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.cpp",
+      "path" : "ofXml.cpp",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE622D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofXml.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE632D756AC800AA5C47" : {
+      "children" : [
+        "BF8CFE4A2D756AC800AA5C47",
+        "BF8CFE4B2D756AC800AA5C47",
+        "BF8CFE4C2D756AC800AA5C47",
+        "BF8CFE4D2D756AC800AA5C47",
+        "BF8CFE4E2D756AC800AA5C47",
+        "BF8CFE4F2D756AC800AA5C47",
+        "BF8CFE502D756AC800AA5C47",
+        "BF8CFE512D756AC800AA5C47",
+        "BF8CFE522D756AC800AA5C47",
+        "BF8CFE532D756AC800AA5C47",
+        "BF8CFE542D756AC800AA5C47",
+        "BF8CFE552D756AC800AA5C47",
+        "BF8CFE562D756AC800AA5C47",
+        "BF8CFE572D756AC800AA5C47",
+        "BF8CFE582D756AC800AA5C47",
+        "BF8CFE592D756AC800AA5C47",
+        "BF8CFE5A2D756AC800AA5C47",
+        "BF8CFE5B2D756AC800AA5C47",
+        "BF8CFE5C2D756AC800AA5C47",
+        "BF8CFE5D2D756AC800AA5C47",
+        "BF8CFE5E2D756AC800AA5C47",
+        "BF8CFE5F2D756AC800AA5C47",
+        "BF8CFE602D756AC800AA5C47",
+        "BF8CFE612D756AC800AA5C47",
+        "BF8CFE622D756AC800AA5C47"
+      ],
+      "isa" : "PBXGroup",
+      "name" : "utils",
+      "path" : "..\/..\/..\/libs\/openFrameworks\/utils",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE642D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.cpp",
+      "path" : "ofVideoGrabber.cpp",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE652D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofVideoGrabber.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE662D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.cpp",
+      "path" : "ofVideoPlayer.cpp",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE672D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofVideoPlayer.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE682D756AC800AA5C47" : {
+      "children" : [
+        "BF8CFE642D756AC800AA5C47",
+        "BF8CFE652D756AC800AA5C47",
+        "BF8CFE662D756AC800AA5C47",
+        "BF8CFE672D756AC800AA5C47"
+      ],
+      "isa" : "PBXGroup",
+      "name" : "video",
+      "path" : "..\/..\/..\/libs\/openFrameworks\/video",
+      "sourceTree" : "<group>"
     },
     "BF46A0162D754E9E00E4F02F" : {
       "alwaysOutOfDate" : "1",
@@ -624,21 +1673,6 @@
       "path" : "..\/..\/..\/libs\/openFrameworksCompiled\/project\/ios\/CoreOF.xcconfig",
       "sourceTree" : "SOURCE_ROOT"
     },
-    "E41D40FD13B3A0D800A75A5D" : {
-      "isa" : "PBXFileReference",
-      "lastKnownFileType" : "wrapper.pb-project",
-      "name" : "iOS+OFLib.xcodeproj",
-      "path" : "..\/..\/..\/libs\/openFrameworksCompiled\/project\/ios\/iOS+OFLib.xcodeproj",
-      "sourceTree" : "SOURCE_ROOT"
-    },
-    "E41D40FE13B3A0D800A75A5D" : {
-      "children" : [
-        "E41D410213B3A0D800A75A5D"
-      ],
-      "isa" : "PBXGroup",
-      "name" : "Products",
-      "sourceTree" : "<group>"
-    },
     "E41D400B13B39D2100A75A5D" : {
       "fileRef" : "E41D400613B39D2100A75A5D",
       "isa" : "PBXBuildFile"
@@ -682,20 +1716,6 @@
       "name" : "MapKit.framework",
       "path" : "System\/Library\/Frameworks\/MapKit.framework",
       "sourceTree" : "SDKROOT"
-    },
-    "E41D410113B3A0D800A75A5D" : {
-      "containerPortal" : "E41D40FD13B3A0D800A75A5D",
-      "isa" : "PBXContainerItemProxy",
-      "proxyType" : "2",
-      "remoteGlobalIDString" : "BB24DED610DA7A3F00E9C588",
-      "remoteInfo" : "iPhone+OF Static Library"
-    },
-    "E41D410213B3A0D800A75A5D" : {
-      "fileType" : "archive.ar",
-      "isa" : "PBXReferenceProxy",
-      "path" : "openFrameworksiOSDebug.a",
-      "remoteRef" : "E41D410113B3A0D800A75A5D",
-      "sourceTree" : "BUILT_PRODUCTS_DIR"
     }
   },
   "objectVersion" : "54",
