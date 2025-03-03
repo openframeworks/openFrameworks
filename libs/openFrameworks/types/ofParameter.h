@@ -616,6 +616,8 @@ public:
 	void makeReferenceTo(ofParameter<ParameterType> & mom);
 
 	ofParameter<ParameterType> & operator=(const ofParameter<ParameterType> & v);
+	
+	template<typename U = ParameterType, std::enable_if_t<!std::is_same_v<U, ofParameter<U>>, int> = 0>
 	const ParameterType & operator=(const ParameterType & v);
 
 	template <typename U = ParameterType>
@@ -776,6 +778,7 @@ inline ofParameter<ParameterType> & ofParameter<ParameterType>::operator=(const 
 }
 
 template <typename ParameterType>
+template<typename U, std::enable_if_t<!std::is_same_v<U, ofParameter<U>>, int>>
 inline const ParameterType & ofParameter<ParameterType>::operator=(const ParameterType & v) {
 	set(v);
 	return obj->value;
