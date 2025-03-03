@@ -1140,9 +1140,9 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		BB24DE5C10DA7A3F00E9C588 /* iOS+OF Static Library */ = {
+		BB24DE5C10DA7A3F00E9C588 /* openFrameworks */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = BB24DED210DA7A3F00E9C588 /* Build configuration list for PBXNativeTarget "iOS+OF Static Library" */;
+			buildConfigurationList = BB24DED210DA7A3F00E9C588 /* Build configuration list for PBXNativeTarget "openFrameworks" */;
 			buildPhases = (
 				BB24DE5D10DA7A3F00E9C588 /* Headers */,
 				BB24DEB110DA7A3F00E9C588 /* Sources */,
@@ -1153,7 +1153,7 @@
 			);
 			dependencies = (
 			);
-			name = "iOS+OF Static Library";
+			name = openFrameworks;
 			productName = "Static Library";
 			productReference = BB24DED610DA7A3F00E9C588 /* openFrameworksiOSDebug.a */;
 			productType = "com.apple.product-type.library.static";
@@ -1179,7 +1179,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				BB24DE5C10DA7A3F00E9C588 /* iOS+OF Static Library */,
+				BB24DE5C10DA7A3F00E9C588 /* openFrameworks */,
 			);
 		};
 /* End PBXProject section */
@@ -1398,9 +1398,9 @@
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				OBJROOT = "$(SRCROOT)/../../lib/ios/build/obj/Debug/";
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
-				OBJROOT = "$(SRCROOT)/../../lib/ios/build/obj/Debug/";
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				WARNING_CFLAGS = (
 					"-Wno-non-virtual-dtor",
@@ -1438,8 +1438,8 @@
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
-				ONLY_ACTIVE_ARCH = NO;
 				OBJROOT = "$(SRCROOT)/../../lib/ios/build/obj/Release/";
+				ONLY_ACTIVE_ARCH = NO;
 				SDKROOT = iphoneos;
 				WARNING_CFLAGS = (
 					"-Wno-non-virtual-dtor",
@@ -1451,7 +1451,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		BB24DED210DA7A3F00E9C588 /* Build configuration list for PBXNativeTarget "iOS+OF Static Library" */ = {
+		BB24DED210DA7A3F00E9C588 /* Build configuration list for PBXNativeTarget "openFrameworks" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				BB24DED310DA7A3F00E9C588 /* Debug */,

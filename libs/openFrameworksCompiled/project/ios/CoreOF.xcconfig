@@ -26,7 +26,7 @@ HEADER_OPENSSL = "$(OF_PATH)/libs/openssl/include"
 
 
 //------- Libraries
-LIB_OF = "$(OF_PATH)/libs/openFrameworksCompiled/lib/ios/openFrameworksiOS.a"
+LIB_OF_RELEASE = "$(OF_PATH)/libs/openFrameworksCompiled/lib/ios/openFrameworksiOS.a"
 LIB_OF_DEBUG = "$(OF_PATH)/libs/openFrameworksCompiled/lib/ios/openFrameworksiOSDebug.a"
 
 //LIB_FREEIMAGE = "$(OF_PATH)/libs/FreeImage/lib/ios/freeimage.a"
@@ -36,9 +36,8 @@ LIB_OF_DEBUG = "$(OF_PATH)/libs/openFrameworksCompiled/lib/ios/openFrameworksiOS
 //LIB_URIPARSER = "$(OF_PATH)/libs/uriparser/lib/ios/uriparser.a"
 //LIB_PUGIXML = "$(OF_PATH)/libs/pugixml/lib/ios/pugixml.a"
 
-
-
 MISC_FLAGS = "-ObjC"
+LINK_OBJC_RUNTIME = YES
 
 OF_CORE_LIBS = $(MISC_FLAGS) $(LIB_OF)
 

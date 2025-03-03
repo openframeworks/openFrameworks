@@ -61,6 +61,7 @@
 		9979E8231A1CCC44007E55D1 /* ofMainLoop.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9979E8201A1CCC44007E55D1 /* ofMainLoop.cpp */; };
 		9979E8241A1CCC44007E55D1 /* ofMainLoop.h in Headers */ = {isa = PBXBuildFile; fileRef = 9979E8211A1CCC44007E55D1 /* ofMainLoop.h */; };
 		BBA81C431FFBE4DB0064EA94 /* ofBaseApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BBA81C421FFBE4DB0064EA94 /* ofBaseApp.cpp */; };
+		BF14DA522D75650400A4B85E /* fmt.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF14DA512D75650400A4B85E /* fmt.xcframework */; };
 		BF6276A62BAD9900008864C1 /* ofBaseTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = BF6276A52BAD9900008864C1 /* ofBaseTypes.h */; };
 		BFB0B3F52C50DFE8008FB5A3 /* brotli.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF7C462D2C097CCE00461163 /* brotli.xcframework */; };
 		BFB0B3F62C50DFE8008FB5A3 /* curl.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF6276A32BAD6639008864C1 /* curl.xcframework */; };
@@ -235,6 +236,7 @@
 		9979E8201A1CCC44007E55D1 /* ofMainLoop.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofMainLoop.cpp; sourceTree = "<group>"; };
 		9979E8211A1CCC44007E55D1 /* ofMainLoop.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofMainLoop.h; sourceTree = "<group>"; };
 		BBA81C421FFBE4DB0064EA94 /* ofBaseApp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofBaseApp.cpp; sourceTree = "<group>"; };
+		BF14DA512D75650400A4B85E /* fmt.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = fmt.xcframework; path = ../../../fmt/lib/macos/fmt.xcframework; sourceTree = "<group>"; };
 		BF5BF83F2B737C0A0049DEF6 /* zlib.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = zlib.xcframework; path = ../../../zlib/lib/macos/zlib.xcframework; sourceTree = "<group>"; };
 		BF5BF8412B737C700049DEF6 /* uriparser.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = uriparser.xcframework; path = ../../../uriparser/lib/macos/uriparser.xcframework; sourceTree = "<group>"; };
 		BF5BF8432B737C7C0049DEF6 /* tess2.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = tess2.xcframework; path = ../../../tess2/lib/macos/tess2.xcframework; sourceTree = "<group>"; };
@@ -385,6 +387,7 @@
 				BFB0B3FF2C50DFE8008FB5A3 /* pugixml.xcframework in Frameworks */,
 				BFB0B4002C50DFE8008FB5A3 /* rtAudio.xcframework in Frameworks */,
 				BFB0B4012C50DFE8008FB5A3 /* tess2.xcframework in Frameworks */,
+				BF14DA522D75650400A4B85E /* fmt.xcframework in Frameworks */,
 				BFB0B4022C50DFE8008FB5A3 /* uriparser.xcframework in Frameworks */,
 				BFB0B4032C50DFE8008FB5A3 /* zlib.xcframework in Frameworks */,
 			);
@@ -396,6 +399,7 @@
 		BF5BF83E2B7378ED0049DEF6 /* frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				BF14DA512D75650400A4B85E /* fmt.xcframework */,
 				BF7C462D2C097CCE00461163 /* brotli.xcframework */,
 				BF6276A32BAD6639008864C1 /* curl.xcframework */,
 				BF6276A12BAD6619008864C1 /* openssl.xcframework */,
