@@ -41,16 +41,16 @@ else
 endif
 
 RPI_DETECTED := $(shell \
-    if [ -f /proc/device-tree/model ]; then file=/proc/device-tree/model; \
-    elif [ -f /sys/firmware/devicetree/base/model ]; then file=/sys/firmware/devicetree/base/model; \
-    else file=""; fi; \
-    if [ -n "$$file" ] && grep -qi 'Raspberry' $$file; then echo yes; else echo no; fi)
+	if [ -f /proc/device-tree/model ]; then file=/proc/device-tree/model; \
+	elif [ -f /sys/firmware/devicetree/base/model ]; then file=/sys/firmware/devicetree/base/model; \
+	else file=""; fi; \
+	if [ -n "$$file" ] && grep -qi 'Raspberry' $$file; then echo yes; else echo no; fi)
 
 JETSON_DETECTED := $(shell \
-    if [ -f /proc/device-tree/model ]; then file=/proc/device-tree/model; \
-    elif [ -f /sys/firmware/devicetree/base/model ]; then file=/sys/firmware/devicetree/base/model; \
-    else file=""; fi; \
-    if [ -n "$$file" ] && grep -qi -e 'Jetson' -e 'Tegra' $$file; then echo yes; else echo no; fi)
+	if [ -f /proc/device-tree/model ]; then file=/proc/device-tree/model; \
+	elif [ -f /sys/firmware/devicetree/base/model ]; then file=/sys/firmware/devicetree/base/model; \
+	else file=""; fi; \
+	if [ -n "$$file" ] && grep -qi -e 'Jetson' -e 'Tegra' $$file; then echo yes; else echo no; fi)
 
 #check for Raspbian as armv7l needs to use armv6l architecture
 ifeq ($(wildcard $(RPI_ROOT)/etc/*-release), /etc/os-release)
@@ -79,11 +79,11 @@ else
 		endif
 	endif
 	ifeq ($(PLATFORM_OS),Linux)
-	  ifeq ($(PLATFORM_ARCH),aarch64)
-		ifneq ($(RPI_DETECTED),no)
-			PLATFORM_ARCH=arm64
+		ifeq ($(PLATFORM_ARCH),aarch64)
+			ifneq ($(RPI_DETECTED),no)
+				PLATFORM_ARCH=arm64
+			endif
 		endif
-	  endif
 	endif
 endif
 
