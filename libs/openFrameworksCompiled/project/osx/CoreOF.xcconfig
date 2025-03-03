@@ -26,7 +26,7 @@ HEADER_URIPARSER = "$(OF_PATH)/libs/uriparser/include"
 HEADER_PUGIXML = "$(OF_PATH)/libs/pugixml/include"
 
 //------- Libraries
-LIB_OF = "$(OF_PATH)/libs/openFrameworksCompiled/lib/osx/openFrameworks.a"
+LIB_OF_RELEASE = "$(OF_PATH)/libs/openFrameworksCompiled/lib/osx/openFrameworks.a"
 LIB_OF_DEBUG = "$(OF_PATH)/libs/openFrameworksCompiled/lib/osx/openFrameworksDebug.a"
 
 //LIB_FMOD = "$(OF_PATH)/libs/fmod/lib/macos/libfmod.dylib"
