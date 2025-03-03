@@ -352,15 +352,20 @@ ofReadOnlyParameter<ParameterType, Friend> & ofParameterGroup::getReadOnly(std::
 namespace of {
 namespace priv {
 
-template <typename T, typename = void>
-struct is_comparable : std::false_type {};
+template<typename T, typename U = T>
+constexpr auto test_comparable(int) -> decltype(std::declval<T>() == std::declval<U>(), std::true_type{});
 
-template <typename T>
-struct is_comparable<T, std::void_t<decltype(std::declval<T&>() == std::declval<T&>())>>
-	: std::true_type {};
+template<typename T, typename U = T>
+constexpr std::false_type test_comparable(...);
 
-template <typename T>
-inline constexpr bool is_comparable_v = is_comparable<T>::value;
+template<typename T>
+struct is_comparable : decltype(test_comparable<T>(0)) {};
+
+template<typename T>
+struct is_comparable<std::vector<T>> : is_comparable<T> {};
+
+template<typename T>
+constexpr bool is_comparable_v = is_comparable<T>::value;
 
 
 //----------------------------------------------------------------------
@@ -689,7 +694,7 @@ protected:
 private:
 	class Value {
 		auto init_init(ParameterType &v) {
-			if constexpr (of::priv::is_comparable<ParameterType>()) {
+			if constexpr (of::priv::is_comparable_v<ParameterType>) {
 				if (!init_opt_out) init = v;
 			}
 		}
@@ -908,7 +913,7 @@ ParameterType ofParameter<ParameterType>::getMax() const {
 
 template <typename ParameterType>
 void ofParameter<ParameterType>::setInit(const ParameterType & init) {
-	if constexpr (of::priv::is_comparable<ParameterType>()) {
+	if constexpr (of::priv::is_comparable_v<ParameterType>) {
 		if (!init_opt_out) {
 			obj->init = init;
 			return;
@@ -924,7 +929,7 @@ ParameterType ofParameter<ParameterType>::getInit() const {
 
 template <typename ParameterType>
 bool ofParameter<ParameterType>::isInit() const {
-	if constexpr (of::priv::is_comparable<ParameterType>()) {
+	if constexpr (of::priv::is_comparable_v<ParameterType>) {
 		if (!init_opt_out) {
 			return obj->value == obj->init;
 		}
@@ -935,7 +940,7 @@ bool ofParameter<ParameterType>::isInit() const {
 
 template <typename ParameterType>
 void ofParameter<ParameterType>::reInit() {
-	if constexpr (of::priv::is_comparable<ParameterType>()) {
+	if constexpr (of::priv::is_comparable_v<ParameterType>) {
 		if (!init_opt_out) {
 			setMethod(obj->init);
 			return;
