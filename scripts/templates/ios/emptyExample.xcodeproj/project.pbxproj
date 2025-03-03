@@ -410,6 +410,7 @@
     },
     "BB24E1F710DAA51900E9C588" : {
       "children" : [
+        "BF8CFFB52D758AD200AA5C47",
         "BF8CFDD22D756AC800AA5C47",
         "BF8CFDDF2D756AC800AA5C47",
         "BF8CFDE82D756AC800AA5C47",
@@ -1519,6 +1520,702 @@
       "name" : "video",
       "path" : "..\/..\/..\/libs\/openFrameworks\/video",
       "sourceTree" : "<group>"
+    },
+    "BF8CFF5A2D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofxiOSEAGLView.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF5B2D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.objcpp",
+      "path" : "ofxiOSEAGLView.mm",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF5C2D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofxiOSGLKView.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF5D2D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.objcpp",
+      "path" : "ofxiOSGLKView.mm",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF5E2D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofxiOSGLKViewController.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF5F2D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.objcpp",
+      "path" : "ofxiOSGLKViewController.mm",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF6A2D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.objc",
+      "path" : "EAGLView.m",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF6B2D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ES1Renderer.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF6C2D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.objc",
+      "path" : "ES1Renderer.m",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF6D2D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ES2Renderer.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF6E2D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.objc",
+      "path" : "ES2Renderer.m",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF6F2D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ES3Renderer.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF7A2D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.objcpp",
+      "path" : "ofxiOSSoundStreamDelegate.mm",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF7B2D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofxOpenALSoundPlayer.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF7C2D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.cpp",
+      "path" : "ofxOpenALSoundPlayer.cpp",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF7D2D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "SoundEngine.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF7E2D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.cpp",
+      "path" : "SoundEngine.cpp",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF7F2D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "SoundInputStream.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF8A2D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofxtvOSURLFileLoader.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF8B2D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.cpp",
+      "path" : "ofxtvOSURLFileLoader.cpp",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF8C2D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofxtvOSViewController.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF8D2D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.objcpp",
+      "path" : "ofxtvOSViewController.mm",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF8E2D758AD200AA5C47" : {
+      "children" : [
+        "BF8CFF862D758AD200AA5C47",
+        "BF8CFF872D758AD200AA5C47",
+        "BF8CFF882D758AD200AA5C47",
+        "BF8CFF892D758AD200AA5C47",
+        "BF8CFF8A2D758AD200AA5C47",
+        "BF8CFF8B2D758AD200AA5C47",
+        "BF8CFF8C2D758AD200AA5C47",
+        "BF8CFF8D2D758AD200AA5C47"
+      ],
+      "isa" : "PBXGroup",
+      "path" : "tvOS",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF8F2D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofxiOSCoreHaptics.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF9A2D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.objcpp",
+      "path" : "ofxiOSExtras.mm",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF9B2D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofxiOSImagePicker.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF9C2D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.objcpp",
+      "path" : "ofxiOSImagePicker.mm",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF9D2D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofxiOSKeyboard.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF9E2D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.objcpp",
+      "path" : "ofxiOSKeyboard.mm",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF9F2D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofxiOSMapKit.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF542D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofAppiOSWindow.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF552D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.objcpp",
+      "path" : "ofAppiOSWindow.mm",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF562D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofxiOSApp.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF572D758AD200AA5C47" : {
+      "children" : [
+        "BF8CFF542D758AD200AA5C47",
+        "BF8CFF552D758AD200AA5C47",
+        "BF8CFF562D758AD200AA5C47"
+      ],
+      "isa" : "PBXGroup",
+      "path" : "app",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF582D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofxiOSAppDelegate.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF592D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.objcpp",
+      "path" : "ofxiOSAppDelegate.mm",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF602D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofxiOSViewController.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF612D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.objcpp",
+      "path" : "ofxiOSViewController.mm",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF622D758AD200AA5C47" : {
+      "children" : [
+        "BF8CFF582D758AD200AA5C47",
+        "BF8CFF592D758AD200AA5C47",
+        "BF8CFF5A2D758AD200AA5C47",
+        "BF8CFF5B2D758AD200AA5C47",
+        "BF8CFF5C2D758AD200AA5C47",
+        "BF8CFF5D2D758AD200AA5C47",
+        "BF8CFF5E2D758AD200AA5C47",
+        "BF8CFF5F2D758AD200AA5C47",
+        "BF8CFF602D758AD200AA5C47",
+        "BF8CFF612D758AD200AA5C47"
+      ],
+      "isa" : "PBXGroup",
+      "path" : "core",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF632D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofxiOSAlerts.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF642D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.objcpp",
+      "path" : "ofxiOSAlerts.mm",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF652D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofxiOSAlertsListener.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF662D758AD200AA5C47" : {
+      "children" : [
+        "BF8CFF632D758AD200AA5C47",
+        "BF8CFF642D758AD200AA5C47",
+        "BF8CFF652D758AD200AA5C47"
+      ],
+      "isa" : "PBXGroup",
+      "path" : "events",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF672D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "EAGLKView.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF682D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.objc",
+      "path" : "EAGLKView.m",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF692D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "EAGLView.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF702D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.objc",
+      "path" : "ES3Renderer.m",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF712D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ESRenderer.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF722D758AD200AA5C47" : {
+      "children" : [
+        "BF8CFF672D758AD200AA5C47",
+        "BF8CFF682D758AD200AA5C47",
+        "BF8CFF692D758AD200AA5C47",
+        "BF8CFF6A2D758AD200AA5C47",
+        "BF8CFF6B2D758AD200AA5C47",
+        "BF8CFF6C2D758AD200AA5C47",
+        "BF8CFF6D2D758AD200AA5C47",
+        "BF8CFF6E2D758AD200AA5C47",
+        "BF8CFF6F2D758AD200AA5C47",
+        "BF8CFF702D758AD200AA5C47",
+        "BF8CFF712D758AD200AA5C47"
+      ],
+      "isa" : "PBXGroup",
+      "path" : "gl",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF732D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "AVSoundPlayer.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF742D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.objc",
+      "path" : "AVSoundPlayer.m",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF752D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofxiOSSoundPlayer.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF762D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.objcpp",
+      "path" : "ofxiOSSoundPlayer.mm",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF772D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofxiOSSoundStream.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF782D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.objcpp",
+      "path" : "ofxiOSSoundStream.mm",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF792D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofxiOSSoundStreamDelegate.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF802D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.objc",
+      "path" : "SoundInputStream.m",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF812D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "SoundOutputStream.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF822D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.objc",
+      "path" : "SoundOutputStream.m",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF832D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "SoundStream.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF842D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.objc",
+      "path" : "SoundStream.m",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF852D758AD200AA5C47" : {
+      "children" : [
+        "BF8CFF732D758AD200AA5C47",
+        "BF8CFF742D758AD200AA5C47",
+        "BF8CFF752D758AD200AA5C47",
+        "BF8CFF762D758AD200AA5C47",
+        "BF8CFF772D758AD200AA5C47",
+        "BF8CFF782D758AD200AA5C47",
+        "BF8CFF792D758AD200AA5C47",
+        "BF8CFF7A2D758AD200AA5C47",
+        "BF8CFF7B2D758AD200AA5C47",
+        "BF8CFF7C2D758AD200AA5C47",
+        "BF8CFF7D2D758AD200AA5C47",
+        "BF8CFF7E2D758AD200AA5C47",
+        "BF8CFF7F2D758AD200AA5C47",
+        "BF8CFF802D758AD200AA5C47",
+        "BF8CFF812D758AD200AA5C47",
+        "BF8CFF822D758AD200AA5C47",
+        "BF8CFF832D758AD200AA5C47",
+        "BF8CFF842D758AD200AA5C47"
+      ],
+      "isa" : "PBXGroup",
+      "path" : "sound",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF862D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofxtvOSAppDelegate.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF872D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.objcpp",
+      "path" : "ofxtvOSAppDelegate.mm",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF882D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofxtvOSGLKViewController.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF892D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.objcpp",
+      "path" : "ofxtvOSGLKViewController.mm",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF902D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.objcpp",
+      "path" : "ofxiOSCoreHaptics.mm",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF912D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofxiOSCoreLocation.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF922D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.objcpp",
+      "path" : "ofxiOSCoreLocation.mm",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF932D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofxiOSCoreMotion.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF942D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.objcpp",
+      "path" : "ofxiOSCoreMotion.mm",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF952D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofxiOSEventAdapter.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF962D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.objcpp",
+      "path" : "ofxiOSEventAdapter.mm",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF972D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofxiOSExternalDisplay.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF982D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.objcpp",
+      "path" : "ofxiOSExternalDisplay.mm",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF992D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofxiOSExtras.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFFA02D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.objcpp",
+      "path" : "ofxiOSMapKit.mm",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFFA12D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofxiOSMapKitDelegate.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFFA22D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.objcpp",
+      "path" : "ofxiOSMapKitDelegate.mm",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFFA32D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofxiOSMapKitListener.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFFA42D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofxiPhoneExtras.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFFA52D758AD200AA5C47" : {
+      "children" : [
+        "BF8CFF8F2D758AD200AA5C47",
+        "BF8CFF902D758AD200AA5C47",
+        "BF8CFF912D758AD200AA5C47",
+        "BF8CFF922D758AD200AA5C47",
+        "BF8CFF932D758AD200AA5C47",
+        "BF8CFF942D758AD200AA5C47",
+        "BF8CFF952D758AD200AA5C47",
+        "BF8CFF962D758AD200AA5C47",
+        "BF8CFF972D758AD200AA5C47",
+        "BF8CFF982D758AD200AA5C47",
+        "BF8CFF992D758AD200AA5C47",
+        "BF8CFF9A2D758AD200AA5C47",
+        "BF8CFF9B2D758AD200AA5C47",
+        "BF8CFF9C2D758AD200AA5C47",
+        "BF8CFF9D2D758AD200AA5C47",
+        "BF8CFF9E2D758AD200AA5C47",
+        "BF8CFF9F2D758AD200AA5C47",
+        "BF8CFFA02D758AD200AA5C47",
+        "BF8CFFA12D758AD200AA5C47",
+        "BF8CFFA22D758AD200AA5C47",
+        "BF8CFFA32D758AD200AA5C47",
+        "BF8CFFA42D758AD200AA5C47"
+      ],
+      "isa" : "PBXGroup",
+      "path" : "utils",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFFA62D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "AVFoundationVideoGrabber.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFFA72D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.objcpp",
+      "path" : "AVFoundationVideoGrabber.mm",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFFA82D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "AVFoundationVideoPlayer.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFFA92D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.objc",
+      "path" : "AVFoundationVideoPlayer.m",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFFAA2D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofxiOSVideoGrabber.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFFAB2D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.objcpp",
+      "path" : "ofxiOSVideoGrabber.mm",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFFAC2D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofxiOSVideoPlayer.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFFAD2D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.objcpp",
+      "path" : "ofxiOSVideoPlayer.mm",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFFAE2D758AD200AA5C47" : {
+      "children" : [
+        "BF8CFFA62D758AD200AA5C47",
+        "BF8CFFA72D758AD200AA5C47",
+        "BF8CFFA82D758AD200AA5C47",
+        "BF8CFFA92D758AD200AA5C47",
+        "BF8CFFAA2D758AD200AA5C47",
+        "BF8CFFAB2D758AD200AA5C47",
+        "BF8CFFAC2D758AD200AA5C47",
+        "BF8CFFAD2D758AD200AA5C47"
+      ],
+      "isa" : "PBXGroup",
+      "path" : "video",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFFAF2D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofxiOS.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFFB02D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofxiOSConstants.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFFB12D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofxiOSExtensions.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFFB22D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofxiPhone.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFFB32D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofxtvOS.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFFB42D758AD200AA5C47" : {
+      "children" : [
+        "BF8CFF572D758AD200AA5C47",
+        "BF8CFF622D758AD200AA5C47",
+        "BF8CFF662D758AD200AA5C47",
+        "BF8CFF722D758AD200AA5C47",
+        "BF8CFF852D758AD200AA5C47",
+        "BF8CFF8E2D758AD200AA5C47",
+        "BF8CFFA52D758AD200AA5C47",
+        "BF8CFFAE2D758AD200AA5C47",
+        "BF8CFFAF2D758AD200AA5C47",
+        "BF8CFFB02D758AD200AA5C47",
+        "BF8CFFB12D758AD200AA5C47",
+        "BF8CFFB22D758AD200AA5C47",
+        "BF8CFFB32D758AD200AA5C47"
+      ],
+      "isa" : "PBXGroup",
+      "path" : "src",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFFB52D758AD200AA5C47" : {
+      "children" : [
+        "BF8CFFB42D758AD200AA5C47"
+      ],
+      "isa" : "PBXGroup",
+      "name" : "ofxiOS",
+      "path" : "\/Users\/one\/SOURCE\/openFrameworksiOSTIPS\/addons\/ofxiOS",
+      "sourceTree" : "<absolute>"
     },
     "BF46A0162D754E9E00E4F02F" : {
       "alwaysOutOfDate" : "1",
