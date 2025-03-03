@@ -781,7 +781,7 @@ template <typename ParameterType>
 template<typename U, std::enable_if_t<!std::is_same_v<U, ofParameter<U>>, int>>
 inline const ParameterType & ofParameter<ParameterType>::operator=(const ParameterType & v) {
 	set(v);
-	return obj->value;
+	return *this;
 }
 
 template <typename ParameterType>
