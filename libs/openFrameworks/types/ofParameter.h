@@ -38,8 +38,8 @@ public:
 	virtual std::string getEscapedName() const;
 	virtual std::string valueType() const = 0;
 
-	virtual bool isInit() const = 0;
-	virtual void reInit() = 0;
+	virtual bool isInit() const { return true; }
+	virtual void reInit() {};
 
 	virtual void setParent(ofParameterGroup & _parent) = 0;
 	std::vector<std::string> getGroupHierarchyNames() const;
@@ -351,6 +351,23 @@ ofReadOnlyParameter<ParameterType, Friend> & ofParameterGroup::getReadOnly(std::
 /*! \cond PRIVATE */
 namespace of {
 namespace priv {
+
+template<typename T, typename U = T>
+constexpr auto test_comparable(int) -> decltype(std::declval<T>() == std::declval<U>(), std::true_type{});
+
+template<typename T, typename U = T>
+constexpr std::false_type test_comparable(...);
+
+template<typename T>
+struct is_comparable : decltype(test_comparable<T>(0)) {};
+
+template<typename T>
+struct is_comparable<std::vector<T>> : is_comparable<T> {};
+
+template<typename T>
+constexpr bool is_comparable_v = is_comparable<T>::value;
+
+
 //----------------------------------------------------------------------
 // Mechanism to provide min and max default values for types where it makes sense
 template <typename T, bool B>
@@ -510,6 +527,9 @@ template <typename ParameterType>
 class ofParameter : public ofAbstractParameter {
 public:
 	
+	/// \brief flag to opt-out of the isInit mechanism (in-complement to auto-detection of incomparability)
+	static inline bool init_opt_out { false };
+
 	/// \brief constructs a default ofParameter of type ParameterType
 	/// \tparam ParameterType the type of the Value held by the ofParameter
 	ofParameter();
@@ -601,6 +621,8 @@ public:
 	void makeReferenceTo(ofParameter<ParameterType> & mom);
 
 	ofParameter<ParameterType> & operator=(const ofParameter<ParameterType> & v);
+	
+	template<typename U = ParameterType, std::enable_if_t<!std::is_same_v<U, ofParameter<U>>, int> = 0>
 	const ParameterType & operator=(const ParameterType & v);
 
 	template <typename U = ParameterType>
@@ -671,39 +693,38 @@ public:
 protected:
 private:
 	class Value {
+		auto init_init(ParameterType &v) {
+			if constexpr (of::priv::is_comparable_v<ParameterType>) {
+				if (!init_opt_out) init = v;
+			}
+		}
+
 	public:
 		Value()
-			: init(of::priv::TypeInfo<ParameterType>::min())
-			, min(of::priv::TypeInfo<ParameterType>::min())
+			: min(of::priv::TypeInfo<ParameterType>::min())
 			, max(of::priv::TypeInfo<ParameterType>::max())
 			, bInNotify(false)
-			, serializable(true) { }
-
+			, serializable(true) { init_init(min); }
 		Value(ParameterType v)
-			: init(v)
-			, value(v)
+			: value(v)
 			, min(of::priv::TypeInfo<ParameterType>::min())
 			, max(of::priv::TypeInfo<ParameterType>::max())
 			, bInNotify(false)
-			, serializable(true) { }
-
+			, serializable(true) { init_init(v); }
 		Value(std::string name, ParameterType v)
 			: name(name)
-			, init(v)
 			, value(v)
 			, min(of::priv::TypeInfo<ParameterType>::min())
 			, max(of::priv::TypeInfo<ParameterType>::max())
 			, bInNotify(false)
-			, serializable(true) { }
-
+			, serializable(true) { init_init(v); }
 		Value(std::string name, ParameterType v, ParameterType min, ParameterType max)
 			: name(name)
-			, init(v)
 			, value(v)
 			, min(min)
 			, max(max)
 			, bInNotify(false)
-			, serializable(true) { }
+			, serializable(true) { init_init(v); }
 
 		std::string name;
 		ParameterType init, value, min, max;
@@ -762,9 +783,10 @@ inline ofParameter<ParameterType> & ofParameter<ParameterType>::operator=(const 
 }
 
 template <typename ParameterType>
+template<typename U, std::enable_if_t<!std::is_same_v<U, ofParameter<U>>, int>>
 inline const ParameterType & ofParameter<ParameterType>::operator=(const ParameterType & v) {
 	set(v);
-	return obj->value;
+	return *this;
 }
 
 template <typename ParameterType>
@@ -891,7 +913,13 @@ ParameterType ofParameter<ParameterType>::getMax() const {
 
 template <typename ParameterType>
 void ofParameter<ParameterType>::setInit(const ParameterType & init) {
-	obj->init = init;
+	if constexpr (of::priv::is_comparable_v<ParameterType>) {
+		if (!init_opt_out) {
+			obj->init = init;
+			return;
+		}
+	}
+	ofLogWarning("ofParameter::setInit") << "called on a non-comparable (or opted-out) type";
 }
 
 template <typename ParameterType>
@@ -901,12 +929,24 @@ ParameterType ofParameter<ParameterType>::getInit() const {
 
 template <typename ParameterType>
 bool ofParameter<ParameterType>::isInit() const {
-	return obj->value == obj->init;
+	if constexpr (of::priv::is_comparable_v<ParameterType>) {
+		if (!init_opt_out) {
+			return obj->value == obj->init;
+		}
+	}
+	ofLogWarning("ofParameter::isInit") << "called on a non-comparable (or opted-out) type => always true";
+	return true;
 }
 
 template <typename ParameterType>
 void ofParameter<ParameterType>::reInit() {
-	setMethod(obj->init);
+	if constexpr (of::priv::is_comparable_v<ParameterType>) {
+		if (!init_opt_out) {
+			setMethod(obj->init);
+			return;
+		}
+	}
+	ofLogWarning("ofParameter::reInit") << "called on a non-comparable (or opted-out) type => no-op";
 }
 
 template <typename ParameterType>
@@ -1276,9 +1316,6 @@ protected:
 
 	void setMin(const ParameterType & min);
 	void setMax(const ParameterType & max);
-	void setInit(const ParameterType & init);
-	bool isInit() const;
-	void reInit();
 
 	void fromString(const std::string & str);
 
@@ -1558,27 +1595,6 @@ inline void ofReadOnlyParameter<ParameterType, Friend>::setMin(const ParameterTy
 template <typename ParameterType, typename Friend>
 inline void ofReadOnlyParameter<ParameterType, Friend>::setMax(const ParameterType & max) {
 	parameter.setMax(max);
-}
-
-template <typename ParameterType, typename Friend>
-inline void ofReadOnlyParameter<ParameterType, Friend>::setInit(const ParameterType & init) {
-	parameter.setInit(init);
-}
-
-template <typename ParameterType, typename Friend>
-inline bool ofReadOnlyParameter<ParameterType, Friend>::isInit() const {
-	// not sure what the expected behaviour for isInit() would be for ReadOnlyParameter
-	// as-is, it fails with : No member named 'value' in 'ofParameter<std::string>'
-	// returning true while informing with a log msg seems sane
-	ofLogVerbose("ofReadOnlyParameter::isInit()") << "isInit() called on ofReadOnlyParameter, where it always returns true";
-	return true;
-}
-
-template <typename ParameterType, typename Friend>
-inline void ofReadOnlyParameter<ParameterType, Friend>::reInit() {
-	// not sure what the expected behaviour for reInit() would be for ReadOnlyParameter
-	// informing with a log msg seems sane
-	ofLogVerbose("ofReadOnlyParameter::reInit()") << "reInit() called on ofReadOnlyParameter, where it is a no-op";
 }
 
 template <typename ParameterType, typename Friend>
