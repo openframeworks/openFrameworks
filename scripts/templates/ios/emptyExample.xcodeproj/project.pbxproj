@@ -2214,8 +2214,8 @@
       ],
       "isa" : "PBXGroup",
       "name" : "ofxiOS",
-      "path" : "\/Users\/one\/SOURCE\/openFrameworksiOSTIPS\/addons\/ofxiOS",
-      "sourceTree" : "<absolute>"
+      "path" : "..\/..\/..\/addons\/ofxiOS",
+      "sourceTree" : "<group>"
     },
     "BF46A0162D754E9E00E4F02F" : {
       "alwaysOutOfDate" : "1",
