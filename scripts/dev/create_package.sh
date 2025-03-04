@@ -11,7 +11,7 @@
 platform=$1
 version=$2
 
-all_platforms="linux linux64 linuxarmv6l linuxarmv7l linuxaarch64 osx msys2 vs ios macos tvos android emscripten"
+all_platforms="linux linux64 linuxarm64 linuxarmv6l linuxarmv7l linuxaarch64 osx msys2 vs ios macos tvos android emscripten"
 
 of_root=$(readlink -f "$(dirname "$(readlink -f "$0")")/../..")
 
@@ -77,7 +77,7 @@ echoDots(){
 }
 
 
-if [ "$platform" != "msys2" ] && [ "$platform" != "linux" ] && [ "$platform" != "linux64" ] && [ "$platform" != "linuxarmv6l" ] && [ "$platform" != "linuxaarch64" ] && [ "$platform" != "linuxarmv7l" ] && [ "$platform" != "vs" ] && [ "$platform" != "vs2019" ] && [ "$platform" != "osx" ] && [ "$platform" != "android" ] && [ "$platform" != "ios" ] && [ "$platform" != "macos" ]; then
+if [ "$platform" != "msys2" ] && [ "$platform" != "linux" ] && [ "$platform" != "linux64" ] && [ "$platform" != "linuxarm64" ] && [ "$platform" != "linuxarmv6l" ] && [ "$platform" != "linuxaarch64" ] && [ "$platform" != "linuxarmv7l" ] && [ "$platform" != "vs" ] && [ "$platform" != "vs2019" ] && [ "$platform" != "osx" ] && [ "$platform" != "android" ] && [ "$platform" != "ios" ] && [ "$platform" != "macos" ]; then
     echo usage:
     echo ./create_package.sh platform version
     echo platform:
@@ -171,7 +171,7 @@ function deleteEclipse {
 
 
 function createProjectFiles {
-    if [ "$pkg_platform" != "linuxarmv6l" ] && [ "$pkg_platform" != "linuxarmv7l" ] && [ "$pkg_platform" != "linuxaarch64" ] ; then
+    if [ "$pkg_platform" != "linuxarmv6l" ] && [ "$pkg_platform" != "linuxarmv7l" ] && [ "$pkg_platform" != "linuxaarch64" ] && [ "$pkg_platform" != "linuxarm64" ]; then
         mkdir -p ${main_ofroot}/libs/openFrameworksCompiled/lib/linux64/
         cd ${main_ofroot}/apps/projectGenerator/commandLine
         echo "Recompiling command line PG"
@@ -296,7 +296,7 @@ function createPackage {
         rm -Rf windowing
 	fi
 
-	if [ "$pkg_platform" == "linux" ] || [ "$pkg_platform" == "linux64" ]; then
+	if [ "$pkg_platform" == "linux" ] || [ "$pkg_platform" == "linux64" ] || [ "$pkg_platform" == "linuxarm64" ]; then
 	    rm -Rf gles
 	fi
 
@@ -350,7 +350,10 @@ function createPackage {
         scripts/osx/download_libs.sh -t $RELEASE
         scripts/emscripten/download_libs.sh -n -t $RELEASE
     elif [ "$pkg_platform" = "linux64" ]; then
-        scripts/linux/download_libs.sh -a 64$libs_abi
+        scripts/linux/download_libs.sh -t $RELEASE -a 64 -g $libs_abi
+        scripts/emscripten/download_libs.sh -n -t $RELEASE
+    elif [ "$pkg_platform" = "linuxarm64" ]; then
+        scripts/linux/download_libs.sh -t $RELEASE -a 64 -g $libs_abi
         scripts/emscripten/download_libs.sh -n -t $RELEASE
     elif [ "$pkg_platform" = "linuxarmv6l" ]; then
         scripts/linux/download_libs.sh -a armv6l -t $RELEASE
@@ -390,6 +393,9 @@ function createPackage {
     elif [ "$pkg_platform" = "linux64" ]; then
         otherplatforms=$(remove_current_platform "$all_platforms" "emscripten")
         otherplatforms=$(remove_current_platform "$otherplatforms" "linux64")
+    elif [ "$pkg_platform" = "linuxarm64" ]; then
+        otherplatforms=$(remove_current_platform "$all_platforms" "emscripten")
+        otherplatforms=$(remove_current_platform "$otherplatforms" "linuxarm64")
     elif [ "$pkg_platform" = "linuxarmv6l" ]; then
         otherplatforms=$(remove_current_platform "$all_platforms" "linuxarmv6l")
     elif [ "$pkg_platform" = "linuxarmv7l" ]; then
@@ -657,7 +663,7 @@ function createPackage {
     fi
 
     #create compressed package
-   if [[ "$pkg_platform" =~ ^(linux|linux64|android|linuxarmv6l|linuxarmv7l|linuxaarch64|macos|ios|osx)$ ]]; then
+   if [[ "$pkg_platform" =~ ^(linux|linuxarm64|linux64|android|linuxarmv6l|linuxarmv7l|linuxaarch64|macos|ios|osx)$ ]]; then
         if [ "$libs_abi" = "" ]; then
             pkg_name=of_v${pkg_version}_${pkg_platform}_release
         else
