@@ -8,7 +8,7 @@ LEGACY=0
 SILENT_ARGS=""
 NO_SSL=""
 BLEEDING_EDGE=0
-DL_VERSION=2.8.1
+DL_VERSION=2.8.2
 GCC_VERSION=0
 TAG=""
 
@@ -201,7 +201,7 @@ if [ "$PLATFORM" == "linux" ]; then
 			GCC_VERSION=$(gcc -dumpversion | cut -f1 -d.)
 			echo "GCC_VERSION from bash: [$GCC_VERSION]"
 		else
-			GCC_VERSION=6
+			GCC_VERSION=10
 		fi
 		if [ "$GCC_VERSION" -gt 14 ]; then
 			echo "GCC version is greater than 14. latest supported"
