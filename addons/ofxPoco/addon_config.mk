@@ -64,16 +64,6 @@ common:
 
 	ADDON_SOURCES_EXCLUDE = libs/poco/include/%
 
-linux:
-	ADDON_LDFLAGS = -lPocoNetSSL
-	ADDON_LDFLAGS += -lPocoNet
-	ADDON_LDFLAGS += -lPocoCrypto
-	ADDON_LDFLAGS += -lPocoUtil
-	ADDON_LDFLAGS += -lPocoXML
-	ADDON_LDFLAGS += -lPocoFoundation
-	ADDON_LDFLAGS += -lcrypto
-	ADDON_LDFLAGS += -lssl
-
 linux/64:
 	ADDON_LDFLAGS = -lPocoNetSSL
 	ADDON_LDFLAGS += -lPocoNet
@@ -105,36 +95,6 @@ linux/armv7l:
 	ADDON_LDFLAGS += -lcrypto
 	ADDON_LDFLAGS += -lssl
 
-android/armeabi-v7a:
-	ADDON_INCLUDES = libs/poco/include/%
-	ADDON_INCLUDES += src
-	ADDON_LIBS = libs/poco/lib/android/armeabi-v7a/libPocoNetSSL.a
-	ADDON_LIBS += libs/poco/lib/android/armeabi-v7a/libPocoNet.a
-	ADDON_LIBS += libs/poco/lib/android/armeabi-v7a/libPocoCrypto.a
-	ADDON_LIBS += libs/poco/lib/android/armeabi-v7a/libPocoUtil.a
-	ADDON_LIBS += libs/poco/lib/android/armeabi-v7a/libPocoJSON.a
-	ADDON_LIBS += libs/poco/lib/android/armeabi-v7a/libPocoXML.a
-	ADDON_LIBS += libs/poco/lib/android/armeabi-v7a/libPocoFoundation.a
-
-android/x86:
-	ADDON_INCLUDES = libs/poco/include/%
-	ADDON_INCLUDES += src
-	ADDON_LIBS = libs/poco/lib/android/x86/libPocoNetSSL.a
-	ADDON_LIBS += libs/poco/lib/android/x86/libPocoNet.a
-	ADDON_LIBS += libs/poco/lib/android/x86/libPocoCrypto.a
-	ADDON_LIBS += libs/poco/lib/android/x86/libPocoUtil.a
-	ADDON_LIBS += libs/poco/lib/android/x86/libPocoJSON.a
-	ADDON_LIBS += libs/poco/lib/android/x86/libPocoXML.a
-	ADDON_LIBS += libs/poco/lib/android/x86/libPocoFoundation.a
-
-osx:
-	ADDON_INCLUDES += libs/openssl/include
-
-ios:
-	ADDON_INCLUDES += libs/openssl/include
-
-tvos:
-	ADDON_INCLUDES += libs/openssl/include
 
 msys2:
 	ADDON_LDFLAGS = -lPocoNetSSL
