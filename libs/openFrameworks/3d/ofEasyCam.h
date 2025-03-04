@@ -93,6 +93,11 @@ public:
 	/// \param x , y z  Scales the xyz axes translation factor by these values.
 	void setTranslationSensitivity(float x, float y, float z);
 	void setTranslationSensitivity(const glm::vec3 & sensitivity);
+
+	/// \brief Sets the scroll sensitivity of the mouse scroll wheel.
+	/// \param sensitivity Scales the mouse scroll wheel values by factor.
+	void setScrollSensitivity(float sensitivity);
+
 	/// \brief Set the key used to switch between camera rotation and translation.
 	///
 	/// Translation will only happen when the translation key is pressed.
@@ -211,12 +216,12 @@ private:
 	glm::vec3 translate;
 
 	/// \brief Sensitivity
-	/// These varibles determine how sensitive is the interaction.
+	/// These variables determine how sensitive the interaction is.
 	/// High values mean faster and bigger movements/rotations.
 	/// Low Values mean more presicion.
 	glm::vec3 sensitivityTranslate;
 	glm::vec3 sensitivityRot;
-	float sensitivityScroll = 1.0f;
+	float sensitivityScroll;
 
 	/// \brief The previous mouse position.
 	glm::vec2 prevMouse;
