@@ -11,7 +11,7 @@
 platform=$1
 version=$2
 
-all_platforms="linux linux64 linuxarmv6l linuxarmv7l linuxaarch64 osx msys2 vs ios macos tvos android emscripten"
+all_platforms="linux linux64 linuxarm64 linuxarmv6l linuxarmv7l linuxaarch64 osx msys2 vs ios macos tvos android emscripten"
 
 of_root=$(readlink -f "$(dirname "$(readlink -f "$0")")/../..")
 
@@ -77,7 +77,7 @@ echoDots(){
 }
 
 
-if [ "$platform" != "msys2" ] && [ "$platform" != "linux" ] && [ "$platform" != "linux64" ] && [ "$platform" != "linuxarmv6l" ] && [ "$platform" != "linuxaarch64" ] && [ "$platform" != "linuxarmv7l" ] && [ "$platform" != "vs" ] && [ "$platform" != "vs2019" ] && [ "$platform" != "osx" ] && [ "$platform" != "android" ] && [ "$platform" != "ios" ] && [ "$platform" != "macos" ]; then
+if [ "$platform" != "msys2" ] && [ "$platform" != "linux" ] && [ "$platform" != "linux64" ] && [ "$platform" != "linuxarm64" ] && [ "$platform" != "linuxarmv6l" ] && [ "$platform" != "linuxaarch64" ] && [ "$platform" != "linuxarmv7l" ] && [ "$platform" != "vs" ] && [ "$platform" != "vs2019" ] && [ "$platform" != "osx" ] && [ "$platform" != "android" ] && [ "$platform" != "ios" ] && [ "$platform" != "macos" ]; then
     echo usage:
     echo ./create_package.sh platform version
     echo platform:
@@ -173,7 +173,7 @@ function deleteEclipse {
 
 
 function createProjectFiles {
-    if [ "$PKG_PLATFORM" != "linuxarmv6l" ] && [ "$PKG_PLATFORM" != "linuxarmv7l" ] && [ "$PKG_PLATFORM" != "linuxaarch64" ] && [ "$PKG_PLATFORM" != "android" ] ; then
+    if [ "$PKG_PLATFORM" != "linuxarmv6l" ] && [ "$PKG_PLATFORM" != "linuxarmv7l" ] && [ "$PKG_PLATFORM" != "linuxaarch64" ] && [ "$PKG_PLATFORM" != "linuxarm64" ] && [ "$PKG_PLATFORM" != "android" ] ; then
         mkdir -p ${MAIN_OFROOT}/libs/openFrameworksCompiled/lib/linux64/
         cd ${MAIN_OFROOT}/apps/projectGenerator/commandLine
         echo "Recompiling command line PG"
@@ -298,7 +298,7 @@ function createPackage {
         rm -Rf windowing
     fi
 
-    if [ "$PKG_PLATFORM" == "linux" ] || [ "$PKG_PLATFORM" == "linux64" ]; then
+    if [ "$PKG_PLATFORM" == "linux" ] || [ "$PKG_PLATFORM" == "linux64" ] || [ "$PKG_PLATFORM" == "linuxarm64" ]; then
         rm -Rf gles
     fi
 
@@ -357,7 +357,10 @@ function createPackage {
         scripts/osx/download_libs.sh -t $LIBS_VERSION
         scripts/emscripten/download_libs.sh -n -t $LIBS_VERSION
     elif [ "$PKG_PLATFORM" = "linux64" ]; then
-        scripts/linux/download_libs.sh -a 64$LIBS_ABI
+        scripts/linux/download_libs.sh -t $LIBS_VERSION -a 64 -g $LIBS_ABI
+        scripts/emscripten/download_libs.sh -n -t $LIBS_VERSION
+    elif [ "$PKG_PLATFORM" = "linuxarm64" ]; then
+        scripts/linux/download_libs.sh -t $LIBS_VERSION -a arm64 -g $LIBS_ABI
         scripts/emscripten/download_libs.sh -n -t $LIBS_VERSION
     elif [ "$PKG_PLATFORM" = "linuxarmv6l" ]; then
         scripts/linux/download_libs.sh -a armv6l -t $LIBS_VERSION
@@ -397,6 +400,9 @@ function createPackage {
     elif [ "$PKG_PLATFORM" = "linux64" ]; then
         otherplatforms=$(remove_current_platform "$all_platforms" "emscripten")
         otherplatforms=$(remove_current_platform "$otherplatforms" "linux64")
+    elif [ "$PKG_PLATFORM" = "linuxarm64" ]; then
+        otherplatforms=$(remove_current_platform "$all_platforms" "emscripten")
+        otherplatforms=$(remove_current_platform "$otherplatforms" "linuxarm64")
     elif [ "$PKG_PLATFORM" = "linuxarmv6l" ]; then
         otherplatforms=$(remove_current_platform "$all_platforms" "linuxarmv6l")
     elif [ "$PKG_PLATFORM" = "linuxarmv7l" ]; then
@@ -624,7 +630,7 @@ function createPackage {
     rm -Rf .gitattributes
 
 
-    if [ "$platform" = "linux" ] || [ "$platform" = "linux64" ] || [ "$platform" = "linuxarmv6l" ] || [ "$platform" = "linuxarmv7l" ] || [ "$platform" = "linuxaarch64" ]; then
+    if [ "$platform" = "linux" ] || [ "$platform" = "linux64" ] || [ "$platform" = "linuxarm64" ] || [ "$platform" = "linuxarmv6l" ] || [ "$platform" = "linuxarmv7l" ] || [ "$platform" = "linuxaarch64" ]; then
         cp docs/linux.md INSTALL.md
     fi
 
@@ -663,7 +669,7 @@ function createPackage {
     fi
 
     #create compressed package
-   if [[ "$PKG_PLATFORM" =~ ^(linux|linux64|android|linuxarmv6l|linuxarmv7l|linuxaarch64|macos|ios|osx)$ ]] && [ "${LIBS_ABI}" != "windows" ]; then
+   if [[ "$PKG_PLATFORM" =~ ^(linux|linuxarm64|linux64|android|linuxarmv6l|linuxarmv7l|linuxaarch64|macos|ios|osx)$ ]] && [ "${LIBS_ABI}" != "windows" ]; then
         if [ "$LIBS_ABI" = "" ]; then
             PKG_NAME=of_v${PKG_VERSION}_${PKG_PLATFORM}_release
         else
