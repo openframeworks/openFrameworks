@@ -350,10 +350,10 @@ function createPackage {
         scripts/osx/download_libs.sh -t $RELEASE
         scripts/emscripten/download_libs.sh -n -t $RELEASE
     elif [ "$pkg_platform" = "linux64" ]; then
-        scripts/linux/download_libs.sh -t $RELEASE -a 64 -g $libs_abi
+        scripts/linux/download_libs.sh -a 64 -g $libs_abi -t $RELEASE
         scripts/emscripten/download_libs.sh -n -t $RELEASE
     elif [ "$pkg_platform" = "linuxarm64" ]; then
-        scripts/linux/download_libs.sh -t $RELEASE -a 64 -g $libs_abi
+        scripts/linux/download_libs.sh -a arm64 -g $libs_abi -t $RELEASE
         scripts/emscripten/download_libs.sh -n -t $RELEASE
     elif [ "$pkg_platform" = "linuxarmv6l" ]; then
         scripts/linux/download_libs.sh -a armv6l -t $RELEASE
