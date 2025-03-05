@@ -1,6 +1,6 @@
 #!/bin/bash
 # pipe commands to core openFrameworks scripts
-OF_SCRIPT_VERSION=0.2.1
+OF_SCRIPT_VERSION=0.2.2
 # Dan Rosser 2025
 OF_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 OF_DIR="$(realpath "$OF_DIR/../")"
