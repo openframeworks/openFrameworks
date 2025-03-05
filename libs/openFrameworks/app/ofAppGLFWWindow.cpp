@@ -11,15 +11,18 @@
 	#include "ofIcon.h"
 	#include "ofImage.h"
 	#define GLFW_EXPOSE_NATIVE_X11
+	#define GLFW_EXPOSE_NATIVE_WAYLAND
 	#ifndef TARGET_OPENGLES
 		#define GLFW_EXPOSE_NATIVE_GLX
 	#else
 		#define GLFW_EXPOSE_NATIVE_EGL
 	#endif
 	#include <GLFW/glfw3native.h>
-	#include <X11/XKBlib.h>
-	#include <X11/Xatom.h>
-	#include <X11/extensions/Xrandr.h>
+	#ifdef GLFW_EXPOSE_NATIVE_X11
+		#include <X11/XKBlib.h>
+		#include <X11/Xatom.h>
+		#include <X11/extensions/Xrandr.h>
+	#endif
 	#include <xcb/xcb.h>
 	#include <xcb/xcbext.h>
 #elif defined(TARGET_OSX)
@@ -58,6 +61,10 @@ ofAppGLFWWindow::ofAppGLFWWindow()
 	windowH = 0;
 	currentW = 0;
 	currentH = 0;
+
+	#if defined(TARGET_LINUX) && !defined(TARGET_RASPBERRY_PI_LEGACY)
+	usingWayland = false;
+	#endif
 
 	glfwSetErrorCallback(error_cb);
 }
@@ -160,6 +167,11 @@ void ofAppGLFWWindow::setup(const ofGLESWindowSettings & settings) {
             ofLogError("ofAppGLFWWindow") << "couldn't init GLFW";
             return;
         }
+
+		#if defined(TARGET_LINUX) && !defined(TARGET_RASPBERRY_PI_LEGACY)
+			usingWayland = (glfwGetPlatform() == GLFW_PLATFORM_WAYLAND);
+			ofLogVerbose("ofAppGLFWWindow") << "Running under " << (usingWayland ? "Wayland" : "X11");
+		#endif
         
         //	ofLogNotice("ofAppGLFWWindow") << "WINDOW MODE IS " << screenMode;
         
@@ -399,24 +411,34 @@ void ofAppGLFWWindow::setup(const ofGLESWindowSettings & settings) {
         glfwSetWindowRefreshCallback(windowP, refresh_cb);
         
 #ifdef TARGET_LINUX
-        XSetLocaleModifiers("");
-        xim = XOpenIM(getX11Display(), 0, 0, 0);
-        if (!xim) {
-            // fallback to internal input method
-            XSetLocaleModifiers("@im=none");
-            xim = XOpenIM(getX11Display(), 0, 0, 0);
-        }
-        xic = XCreateIC(xim,
-                        XNInputStyle, XIMPreeditNothing | XIMStatusNothing,
-                        XNClientWindow, getX11Window(),
-                        XNFocusWindow, getX11Window(),
-                        NULL);
-#endif
+		if (!usingWayland) {
+			XSetLocaleModifiers("");
+			xim = XOpenIM(getX11Display(), 0, 0, 0);
+			if (!xim) {
+				// fallback to internal input method
+				XSetLocaleModifiers("@im=none");
+				xim = XOpenIM(getX11Display(), 0, 0, 0);
+			}
+			xic = XCreateIC(xim,
+				XNInputStyle, XIMPreeditNothing | XIMStatusNothing,
+				XNClientWindow, getX11Window(),
+				XNFocusWindow, getX11Window(),
+				NULL);
+		} else {
+			// Wayland input is handled by GLFW directly
+			ofLogVerbose("ofAppGLFWWindow") << "Using Wayland native input handling";
+		}
+
+	#endif
     }
     
 #ifdef TARGET_LINUX
     //------------------------------------------------------------
     void ofAppGLFWWindow::setWindowIcon(const of::filesystem::path & path) {
+		if (usingWayland) {
+			ofLogWarning("ofAppGLFWWindow") << "Setting window icon is not supported on Wayland";
+			return;
+		}
         ofPixels iconPixels;
         ofLoadImage(iconPixels, path);
         setWindowIcon(iconPixels);
@@ -424,6 +446,10 @@ void ofAppGLFWWindow::setup(const ofGLESWindowSettings & settings) {
     
     //------------------------------------------------------------
     void ofAppGLFWWindow::setWindowIcon(const ofPixels & iconPixels) {
+		if (usingWayland) {
+			ofLogWarning("ofAppGLFWWindow") << "Setting window icon is not supported on Wayland";
+			return;
+		}
         iconSet = true;
         int length = 2 + iconPixels.getWidth() * iconPixels.getHeight();
         vector<unsigned long> buffer(length);
@@ -744,127 +770,135 @@ void ofAppGLFWWindow::setup(const ofGLESWindowSettings & settings) {
         }
         
 #ifdef TARGET_LINUX
-#include <X11/Xatom.h>
-        
-        Window nativeWin = glfwGetX11Window(windowP);
-        Display * display = glfwGetX11Display();
-        if (targetWindowMode == OF_FULLSCREEN) {
-            
-#ifdef TARGET_RASPBERRY_PI
-            // save window shape before going fullscreen
-            if (windowP) {
-                int tmpW, tmpH;
-                glfwGetWindowSize(windowP, &tmpW, &tmpH);
-                windowRect.setSize(tmpW, tmpH);
-            }
-#endif
-            
-            int monitorCount;
-            GLFWmonitor ** monitors = glfwGetMonitors(&monitorCount);
-            if (settings.multiMonitorFullScreen && monitorCount > 1) {
-                // find the monitors at the edges of the virtual desktop
-                int minx = numeric_limits<int>::max();
-                int miny = numeric_limits<int>::max();
-                int maxx = numeric_limits<int>::min();
-                int maxy = numeric_limits<int>::min();
-                int x, y, w, h;
-                int monitorLeft = 0, monitorRight = 0, monitorTop = 0, monitorBottom = 0;
-                for (int i = 0; i < monitorCount; i++) {
-                    glfwGetMonitorPos(monitors[i], &x, &y);
-                    auto videoMode = glfwGetVideoMode(monitors[i]);
-                    w = videoMode->width;
-                    h = videoMode->height;
-                    if (x < minx) {
-                        monitorLeft = i;
-                        minx = x;
-                    }
-                    if (y < miny) {
-                        monitorTop = i;
-                        miny = y;
-                    }
-                    if (x + w > maxx) {
-                        monitorRight = i;
-                        maxx = x + w;
-                    }
-                    if (y + h > maxy) {
-                        monitorBottom = i;
-                        maxy = y + h;
-                    }
-                }
-                
-                // send fullscreen_monitors event with the edges monitors
-                Atom m_net_fullscreen_monitors = XInternAtom(display, "_NET_WM_FULLSCREEN_MONITORS", false);
-                
-                XEvent xev;
-                
-                xev.xclient.type = ClientMessage;
-                xev.xclient.serial = 0;
-                xev.xclient.send_event = True;
-                xev.xclient.window = nativeWin;
-                xev.xclient.message_type = m_net_fullscreen_monitors;
-                xev.xclient.format = 32;
-                
-                xev.xclient.data.l[0] = monitorTop;
-                xev.xclient.data.l[1] = monitorBottom;
-                xev.xclient.data.l[2] = monitorLeft;
-                xev.xclient.data.l[3] = monitorRight;
-                xev.xclient.data.l[4] = 1;
-                XSendEvent(display, RootWindow(display, DefaultScreen(display)),
-                           False, SubstructureRedirectMask | SubstructureNotifyMask, &xev);
-                currentW = maxx - minx;
-                currentH = maxy - minx;
-            } else {
-                auto monitor = glfwGetWindowMonitor(windowP);
-                if (monitor) {
-                    auto videoMode = glfwGetVideoMode(monitor);
-                    if (videoMode) {
-                        currentW = videoMode->width;
-                        currentH = videoMode->height;
-                    }
-                }
-            }
-        }
-        
-        // send fullscreen event
-        Atom m_net_state = XInternAtom(display, "_NET_WM_STATE", false);
-        Atom m_net_fullscreen = XInternAtom(display, "_NET_WM_STATE_FULLSCREEN", false);
-        
-        XEvent xev;
-        
-        xev.xclient.type = ClientMessage;
-        xev.xclient.serial = 0;
-        xev.xclient.send_event = True;
-        xev.xclient.window = nativeWin;
-        xev.xclient.message_type = m_net_state;
-        xev.xclient.format = 32;
-        
-        if (fullscreen)
-            xev.xclient.data.l[0] = 1;
-        else
-            xev.xclient.data.l[0] = 0;
-        
-        xev.xclient.data.l[1] = m_net_fullscreen;
-        xev.xclient.data.l[2] = 0;
-        xev.xclient.data.l[3] = 0;
-        xev.xclient.data.l[4] = 0;
-        XSendEvent(display, RootWindow(display, DefaultScreen(display)),
-                   False, SubstructureRedirectMask | SubstructureNotifyMask, &xev);
-        
-        // tell the window manager to bypass composition for this window in fullscreen for speed
-        // it'll probably help solving vsync issues
-        Atom m_bypass_compositor = XInternAtom(display, "_NET_WM_BYPASS_COMPOSITOR", False);
-        unsigned long value = fullscreen ? 1 : 0;
-        XChangeProperty(display, nativeWin, m_bypass_compositor, XA_CARDINAL, 32, PropModeReplace, (unsigned char *)&value, 1);
-        
-        XFlush(display);
-        
-#ifdef TARGET_RASPBERRY_PI
-        if (!fullscreen) {
-            needsResizeCheck = true;
-        }
-#endif
-        
-        //	setWindowShape(windowW, windowH);
+		if (!usingWayland) {
+			Window nativeWin = glfwGetX11Window(windowP);
+			Display * display = glfwGetX11Display();
+			if (targetWindowMode == OF_FULLSCREEN) {
+
+		#ifdef TARGET_RASPBERRY_PI
+				// save window shape before going fullscreen
+				if (windowP) {
+					int tmpW, tmpH;
+					glfwGetWindowSize(windowP, &tmpW, &tmpH);
+					windowRect.setSize(tmpW, tmpH);
+				}
+		#endif
+
+				int monitorCount;
+				GLFWmonitor ** monitors = glfwGetMonitors(&monitorCount);
+				if (settings.multiMonitorFullScreen && monitorCount > 1) {
+					// find the monitors at the edges of the virtual desktop
+					int minx = numeric_limits<int>::max();
+					int miny = numeric_limits<int>::max();
+					int maxx = numeric_limits<int>::min();
+					int maxy = numeric_limits<int>::min();
+					int x, y, w, h;
+					int monitorLeft = 0, monitorRight = 0, monitorTop = 0, monitorBottom = 0;
+					for (int i = 0; i < monitorCount; i++) {
+						glfwGetMonitorPos(monitors[i], &x, &y);
+						auto videoMode = glfwGetVideoMode(monitors[i]);
+						w = videoMode->width;
+						h = videoMode->height;
+						if (x < minx) {
+							monitorLeft = i;
+							minx = x;
+						}
+						if (y < miny) {
+							monitorTop = i;
+							miny = y;
+						}
+						if (x + w > maxx) {
+							monitorRight = i;
+							maxx = x + w;
+						}
+						if (y + h > maxy) {
+							monitorBottom = i;
+							maxy = y + h;
+						}
+					}
+
+					// send fullscreen_monitors event with the edges monitors
+					Atom m_net_fullscreen_monitors = XInternAtom(display, "_NET_WM_FULLSCREEN_MONITORS", false);
+
+					XEvent xev;
+
+					xev.xclient.type = ClientMessage;
+					xev.xclient.serial = 0;
+					xev.xclient.send_event = True;
+					xev.xclient.window = nativeWin;
+					xev.xclient.message_type = m_net_fullscreen_monitors;
+					xev.xclient.format = 32;
+
+					xev.xclient.data.l[0] = monitorTop;
+					xev.xclient.data.l[1] = monitorBottom;
+					xev.xclient.data.l[2] = monitorLeft;
+					xev.xclient.data.l[3] = monitorRight;
+					xev.xclient.data.l[4] = 1;
+					XSendEvent(display, RootWindow(display, DefaultScreen(display)),
+						False, SubstructureRedirectMask | SubstructureNotifyMask, &xev);
+					currentW = maxx - minx;
+					currentH = maxy - minx;
+				} else {
+					auto monitor = glfwGetWindowMonitor(windowP);
+					if (monitor) {
+						auto videoMode = glfwGetVideoMode(monitor);
+						if (videoMode) {
+							currentW = videoMode->width;
+							currentH = videoMode->height;
+						}
+					}
+				}
+			}
+
+			// send fullscreen event
+			Atom m_net_state = XInternAtom(display, "_NET_WM_STATE", false);
+			Atom m_net_fullscreen = XInternAtom(display, "_NET_WM_STATE_FULLSCREEN", false);
+
+			XEvent xev;
+
+			xev.xclient.type = ClientMessage;
+			xev.xclient.serial = 0;
+			xev.xclient.send_event = True;
+			xev.xclient.window = nativeWin;
+			xev.xclient.message_type = m_net_state;
+			xev.xclient.format = 32;
+
+			if (fullscreen)
+				xev.xclient.data.l[0] = 1;
+			else
+				xev.xclient.data.l[0] = 0;
+
+			xev.xclient.data.l[1] = m_net_fullscreen;
+			xev.xclient.data.l[2] = 0;
+			xev.xclient.data.l[3] = 0;
+			xev.xclient.data.l[4] = 0;
+			XSendEvent(display, RootWindow(display, DefaultScreen(display)),
+				False, SubstructureRedirectMask | SubstructureNotifyMask, &xev);
+
+			// tell the window manager to bypass composition for this window in fullscreen for speed
+			// it'll probably help solving vsync issues
+			Atom m_bypass_compositor = XInternAtom(display, "_NET_WM_BYPASS_COMPOSITOR", False);
+			unsigned long value = fullscreen ? 1 : 0;
+			XChangeProperty(display, nativeWin, m_bypass_compositor, XA_CARDINAL, 32, PropModeReplace, (unsigned char *)&value, 1);
+
+			XFlush(display);
+
+		#ifdef TARGET_RASPBERRY_PI
+			if (!fullscreen) {
+				needsResizeCheck = true;
+			}
+		#endif
+		} else {
+			int monitorCount;
+			GLFWmonitor ** monitors = glfwGetMonitors(&monitorCount);
+			int monitorIdx = getCurrentMonitor();
+			if (fullscreen) {
+				auto mode = glfwGetVideoMode(monitors[monitorIdx]);
+				glfwSetWindowMonitor(windowP, monitors[monitorIdx], 0, 0, mode->width, mode->height, mode->refreshRate);
+			} else {
+				glfwSetWindowMonitor(windowP, nullptr, windowRect.x, windowRect.y, windowW, windowH, 0);
+			}
+		}
         
 #elif defined(TARGET_OSX)
         
@@ -1738,17 +1772,29 @@ void ofAppGLFWWindow::setup(const ofGLESWindowSettings & settings) {
     
 #if defined(TARGET_LINUX)
     Display * ofAppGLFWWindow::getX11Display() {
-        return glfwGetX11Display();
+		return usingWayland ? nullptr : glfwGetX11Display();
     }
     
     Window ofAppGLFWWindow::getX11Window() {
-        return glfwGetX11Window(windowP);
+		return usingWayland ? 0 : glfwGetX11Window(windowP);
     }
     
     XIC ofAppGLFWWindow::getX11XIC() {
-        return xic;
+		return usingWayland ? nullptr : xic;
     }
-#endif
+
+	wl_display * ofAppGLFWWindow::getWaylandDisplay() {
+		return usingWayland ? glfwGetWaylandDisplay() : nullptr;
+	}
+
+	wl_surface * ofAppGLFWWindow::getWaylandSurface() {
+		return usingWayland ? glfwGetWaylandWindow(windowP) : nullptr;
+	}
+
+	bool ofAppGLFWWindow::isUsingWayland() const {
+		return usingWayland;
+	}
+	#endif
     
 #if defined(TARGET_LINUX) && !defined(TARGET_OPENGLES)
     GLXContext ofAppGLFWWindow::getGLXContext() {

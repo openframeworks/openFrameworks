@@ -23,6 +23,7 @@ env:
 jobs:
   build-emscripten:
     runs-on: ubuntu-24.04
+    needs: build-linux
     strategy:
       matrix:
         cfg:
@@ -30,7 +31,7 @@ jobs:
     env:
       TARGET: ${{matrix.cfg.target}}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4.2.2
       - name: Docker Step
         run: "docker run -di --name emscripten -v $PWD:/src emscripten/emsdk:4.0.4 bash"
       # - name: Determine Release
@@ -75,7 +76,7 @@ jobs:
       - name: Check system
         shell: bash
         run: gcc -v
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4.2.2
       - name: ccache
         uses: hendrikmuhs/ccache-action@v1.2.14
         with:
@@ -117,11 +118,14 @@ jobs:
 
   build-vs2022:
     runs-on: windows-2022
+    needs: build-linux
     strategy:
       matrix:
         platform: [x64, ARM64, ARM64EC]
     env:
-      BITS: ${{ matrix.bits }}
+      BITS: ${{ matrix.platform }}
+      ARCH: ${{ matrix.platform }}
+
     steps:
       - name: Clone repository
         uses: actions/checkout@v4
@@ -163,6 +167,7 @@ jobs:
 
   build-vs2019:
     runs-on: windows-2019
+    needs: build-linux
     strategy:
       matrix:
         platform: [x64]
@@ -221,6 +226,8 @@ jobs:
 
   rpi-build:
     runs-on: ubuntu-24.04
+    needs: build-linux
+    if: ${{ false }} # DISABLED
     strategy:
       matrix:
         cfg:
@@ -252,7 +259,7 @@ jobs:
         with:
           packages: multistrap unzip gcc-${{matrix.cfg.suffix}} g++-${{matrix.cfg.suffix}}
           version: 1.0
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4.2.2
       - name: ccache
         uses: hendrikmuhs/ccache-action@v1.2.14
         with:
@@ -273,17 +280,18 @@ jobs:
       - name: Download libs
         run: ./scripts/linux/download_libs.sh -t $RELEASE -a ${{matrix.cfg.libs}}
       - name: Install dependencies
-        run: ./scripts/ci/linuxrpi/install.sh;
+        run: ./scripts/ci/linux/rpi/install.sh;
       - name: LS
         shell: bash
         run: ls -alfR
       - name: Build
-        run: ./scripts/ci/linuxrpi/build.sh;
+        run: ./scripts/ci/linux/rpi/build.sh;
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   build-ios-tvos:
     runs-on: macos-15
+    needs: build-linux
     strategy:
       matrix:
         cfg:
@@ -292,7 +300,7 @@ jobs:
     env:
       TARGET: ${{matrix.cfg.target}}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4.2.2
       - name: ccache
         uses: hendrikmuhs/ccache-action@v1.2.14
         with:
@@ -322,105 +330,104 @@ jobs:
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  build-linux64:
+  build-linux:
     runs-on: ubuntu-24.04
     strategy:
       matrix:
         cfg:
-          - { target: linux64, libs: 64gcc6 }
+          # - {target: linux, arch: 64, gcc: 6}
+          - {target: linux, arch: 64, gcc: 14}
+          - {target: linux, arch: 64, gcc: 10}
     env:
       TARGET: ${{matrix.cfg.target}}
+      GCC: ${{matrix.cfg.gcc}}
+      ARCH: ${{matrix.cfg.arch}}
     steps:
       - name: Remove Old lib-unwind
-        run: if [ "$TARGET" = "linux64" ]; then
+        run: if [ "$TARGET" = "linux" ]; then
           sudo apt-get remove libunwind-14 -y;
           fi
+
       - name: Cache Packages
         uses: awalsh128/cache-apt-pkgs-action@latest
         with:
           packages: aptitude aptitude-common libboost-iostreams1.83.0 libcwidget4 libsigc++-2.0-0v5 libxapian30 fonts-wine{a} libasound2-plugins{a} libcapi20-3t64{a} libosmesa6{a} libpcsclite1{a} libspeexdsp1{a} libwine{a} libxkbregistry0{a} libz-mingw-w64{a} wine{a} wine64 wget2 make libjack-jackd2-0 libjack-jackd2-dev freeglut3-dev libasound2-dev libxmu-dev libxxf86vm-dev g++ libgl1-mesa-dev libglu1-mesa-dev libraw1394-dev libudev-dev libdrm-dev libglew-dev libopenal-dev libsndfile1-dev libfreeimage-dev libcairo2-dev libfreetype6-dev libpulse-dev libusb-1.0-0-dev libgtk2.0-dev libopencv-dev libassimp-dev librtaudio-dev gdb libglfw3-dev liburiparser-dev libpugixml-dev libgconf-2-4 libgtk2.0-0 libpoco-dev libxcursor-dev libxi-dev libxinerama-dev libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev gstreamer1.0-libav gstreamer1.0-pulseaudio gstreamer1.0-x gstreamer1.0-plugins-bad gstreamer1.0-alsa gstreamer1.0-plugins-base gstreamer1.0-plugins-good
           version: 1.0
-      # - name: Determine Release
-      #   id: vars
-      #   shell: bash
-      #   run: |
-      #     if [[ "${{ github.ref }}" == refs/tags/* ]]; then
-      #       echo "RELEASE=${{ github.ref_name }}" >> $GITHUB_ENV
-      #     elif [[ "${{ github.ref }}" == "refs/heads/master" ]]; then
-      #       echo "RELEASE=nightly" >> $GITHUB_ENV
-      #     elif [[ "${{ github.ref }}" == "refs/heads/bleeding" ]]; then
-      #       echo "RELEASE=latest" >> $GITHUB_ENV
-      #     else
-      #       echo "RELEASE=latest" >> $GITHUB_ENV
-      #     fi
-      - uses: actions/checkout@v4
+
+      - uses: actions/checkout@v4.2.2
       - name: ccache
         uses: hendrikmuhs/ccache-action@v1.2.14
         with:
-          key: ${{ matrix.cfg.target }}-${{ matrix.cfg.libs }}
+          key: ${{ matrix.cfg.target }}
+
+      - name: Install dependencies
+        run: ./scripts/ci/$TARGET/$ARCH/install.sh;
 
       - name: Download libs
-        run: ./scripts/linux/download_libs.sh -t $RELEASE -a ${{matrix.cfg.libs}}
-      - name: Install dependencies
-        run: ./scripts/ci/$TARGET/install.sh;
+        run: ./scripts/linux/download_libs.sh -t $RELEASE -a ${{matrix.cfg.arch}} -g ${{matrix.cfg.GCC}}
+
       - name: Build
-        run: if [ "$TARGET" = "linux64" ]; then
-          scripts/ci/linux64/build.sh;
-          scripts/ci/$TARGET/run_tests.sh;
+        run: |
+          if [ "$TARGET" = "linux" ]; then
+            scripts/ci/$TARGET/$ARCH/build.sh;
+            scripts/ci/$TARGET/$ARCH/run_tests.sh;
           else
-          scripts/ci/$TARGET/build.sh;
+            scripts/ci/$TARGET/$ARCH/build.sh;
           fi
 
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  build-linux-22:
+    runs-on: ubuntu-22.04
+    strategy:
+      matrix:
+        cfg:
+          - {target: linux, arch: 64, gcc: 10}
+    env:
+      TARGET: ${{matrix.cfg.target}}
+      GCC: ${{matrix.cfg.gcc}}
+      ARCH: ${{matrix.cfg.arch}}
+    steps:
+      - name: Remove Old lib-unwind
+        run: if [ "$TARGET" = "linux" ]; then
+          sudo apt-get remove libunwind-14 -y;
+          fi
 
-  # build-linux64-2204:
-  #   runs-on: ubuntu-22.04
-  #   strategy:
-  #       matrix:
-  #         cfg:
-  #         - {target: linux64, libs: 64gcc6}
-  #   env:
-  #     TARGET: ${{matrix.cfg.target}}
-  #   steps:
-  #   - name: Remove Old lib-unwind
-  #     run: if [ "$TARGET" = "linux64" ]; then
-  #           sudo apt-get remove libunwind-14 -y;
-  #          fi
-  #   - name: Cache Packages
-  #     uses: awalsh128/cache-apt-pkgs-action@latest
-  #     with:
-  #       packages: aptitude aptitude-common libboost-iostreams1.83.0 libcwidget4 libsigc++-2.0-0v5 libxapian30 fonts-wine{a} libasound2-plugins{a} libcapi20-3t64{a} libosmesa6{a} libpcsclite1{a} libspeexdsp1{a} libwine{a} libxkbregistry0{a} libz-mingw-w64{a} wine{a} wine64 wget2 make libjack-jackd2-0 libjack-jackd2-dev freeglut3-dev libasound2-dev libxmu-dev libxxf86vm-dev g++ libgl1-mesa-dev libglu1-mesa-dev libraw1394-dev libudev-dev libdrm-dev libglew-dev libopenal-dev libsndfile1-dev libfreeimage-dev libcairo2-dev libfreetype6-dev libpulse-dev libusb-1.0-0-dev libgtk2.0-dev libopencv-dev libassimp-dev librtaudio-dev gdb libglfw3-dev liburiparser-dev libpugixml-dev libgconf-2-4 libgtk2.0-0 libpoco-dev libxcursor-dev libxi-dev libxinerama-dev libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev gstreamer1.0-libav gstreamer1.0-pulseaudio gstreamer1.0-x gstreamer1.0-plugins-bad gstreamer1.0-alsa gstreamer1.0-plugins-base gstreamer1.0-plugins-good
-  #       version: 1.0
+      # - name: Cache Packages
+      #   uses: awalsh128/cache-apt-pkgs-action@latest
+      #   with:
+      #     packages: aptitude aptitude-common libboost-iostreams1.83.0 libcwidget4 libsigc++-2.0-0v5 libxapian30 fonts-wine{a} libasound2-plugins{a} libcapi20-3t64{a} libosmesa6{a} libpcsclite1{a} libspeexdsp1{a} libwine{a} libxkbregistry0{a} libz-mingw-w64{a} wine{a} wine64 wget2 make libjack-jackd2-0 libjack-jackd2-dev freeglut3-dev libasound2-dev libxmu-dev libxxf86vm-dev g++ libgl1-mesa-dev libglu1-mesa-dev libraw1394-dev libudev-dev libdrm-dev libglew-dev libopenal-dev libsndfile1-dev libfreeimage-dev libcairo2-dev libfreetype6-dev libpulse-dev libusb-1.0-0-dev libgtk2.0-dev libopencv-dev libassimp-dev librtaudio-dev gdb libglfw3-dev liburiparser-dev libpugixml-dev libgconf-2-4 libgtk2.0-0 libpoco-dev libxcursor-dev libxi-dev libxinerama-dev libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev gstreamer1.0-libav gstreamer1.0-pulseaudio gstreamer1.0-x gstreamer1.0-plugins-bad gstreamer1.0-alsa gstreamer1.0-plugins-base gstreamer1.0-plugins-good
+      #     version: 1.0
 
-  #   - uses: actions/checkout@v4
-  #   - name: ccache
-  #     uses: hendrikmuhs/ccache-action@v1.2.14
-  #     with:
-  #       key: ${{ matrix.cfg.target }}-${{ matrix.cfg.libs }}
+      - uses: actions/checkout@v4.2.2
+      - name: ccache
+        uses: hendrikmuhs/ccache-action@v1.2.14
+        with:
+          key: ${{ matrix.cfg.target }}
 
-  #   - name: Download libs
-  #     run: ./scripts/linux/download_libs.sh -a ${{matrix.cfg.libs}}
-  #   - name: Install dependencies
-  #     run: ./scripts/ci/$TARGET/install.sh;
-  #   - name: Build
-  #     run: if [ "$TARGET" = "linux64" ]; then
-  #           scripts/ci/linux64/build.sh;
-  #           scripts/ci/$TARGET/run_tests.sh;
-  #          else
-  #           scripts/ci/$TARGET/build.sh;
-  #          fi
+      - name: Install dependencies
+        run: ./scripts/ci/$TARGET/$ARCH/install.sh;
 
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      - name: Download libs
+        run: ./scripts/linux/download_libs.sh -t $RELEASE -a ${{matrix.cfg.arch}} -g ${{matrix.cfg.GCC}}
+
+      - name: Build
+        run: |
+          if [ "$TARGET" = "linux" ]; then
+            scripts/ci/$TARGET/$ARCH/build.sh;
+            scripts/ci/$TARGET/$ARCH/run_tests.sh;
+          else
+            scripts/ci/$TARGET/$ARCH/build.sh;
+          fi
 
   build-macos:
     runs-on: macos-15
+    needs: build-linux
     strategy:
       matrix:
         cfg:
           - { target: osx, opt: "xcode" }
           - { target: osx, opt: "makefiles" }
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4.2.2
       - name: ccache
         uses: hendrikmuhs/ccache-action@v1.2.14
         with:

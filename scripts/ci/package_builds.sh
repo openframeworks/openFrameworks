@@ -1,5 +1,5 @@
 #!/bin/bash
-set -ev
+set -e
 
 ROOT=${GITHUB_WORKSPACE}
 
@@ -50,21 +50,21 @@ echo "##[group]create package"
 cd $OUTPUT_FOLDER
 pwd
 if [[ "$(uname -s)" == "Linux" ]]; then
-	$ROOT/scripts/dev/create_package.sh linux64 $lastversion master gcc6
-	$ROOT/scripts/dev/create_package.sh linuxarmv6l $lastversion master
-	$ROOT/scripts/dev/create_package.sh linuxaarch64 $lastversion master
-	$ROOT/scripts/dev/create_package.sh msys2 $lastversion master mingw64
-	$ROOT/scripts/dev/create_package.sh msys2 $lastversion master clang64
-	$ROOT/scripts/dev/create_package.sh msys2 $lastversion master ucrt64
-	$ROOT/scripts/dev/create_package.sh vs $lastversion master
-	$ROOT/scripts/dev/create_package.sh vs $lastversion master 64
-	# $ROOT/scripts/dev/create_package.sh vs2019 $lastversion master 64
+    $ROOT/scripts/dev/create_package.sh linux64 $lastversion master 10 || echo "Failed: linux64"
+    $ROOT/scripts/dev/create_package.sh linuxarm64 $lastversion master 14 || echo "Failed: linuxarm64"
+    $ROOT/scripts/dev/create_package.sh linuxarmv6l $lastversion master || echo "Failed: linuxarmv6l"
+    $ROOT/scripts/dev/create_package.sh linuxaarch64 $lastversion master || echo "Failed: linuxaarch64"
+    $ROOT/scripts/dev/create_package.sh msys2 $lastversion master mingw64 || echo "Failed: msys2-mingw64"
+    $ROOT/scripts/dev/create_package.sh msys2 $lastversion master clang64 || echo "Failed: msys2-clang64"
+    $ROOT/scripts/dev/create_package.sh msys2 $lastversion master ucrt64 || echo "Failed: msys2-ucrt64"
+    $ROOT/scripts/dev/create_package.sh vs $lastversion master || echo "Failed: vs"
+    $ROOT/scripts/dev/create_package.sh vs $lastversion master 64 || echo "Failed: vs 64"
+    $ROOT/scripts/dev/create_package.sh vs2019 $lastversion master 64 || echo "Failed: vs2019 64"
 fi
-$ROOT/scripts/dev/create_package.sh osx $lastversion master
-$ROOT/scripts/dev/create_package.sh ios $lastversion master
-echo "##[endgroup]"
 
-# $ROOT/scripts/dev/create_package.sh macos $lastversion master
+$ROOT/scripts/dev/create_package.sh osx $lastversion master || echo "Failed: osx"
+$ROOT/scripts/dev/create_package.sh ios $lastversion master || echo "Failed: ios"
+echo "##[endgroup]"
 
 ls -la
 cd $ROOT

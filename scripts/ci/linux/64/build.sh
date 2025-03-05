@@ -1,6 +1,6 @@
 #!/bin/bash
-set -ev
-ROOT=${TRAVIS_BUILD_DIR:-"$( cd "$(dirname "$0")/../../.." ; pwd -P )"}
+set -e
+ROOT=${TRAVIS_BUILD_DIR:-"$( cd "$(dirname "$0")/../../../.." ; pwd -P )"}
 # Add compiler flag to reduce memory usage to enable builds to complete
 # see https://gcc.gnu.org/bugzilla/show_bug.cgi?id=56746#c7
 # the "proper" way does not work currently:
@@ -22,22 +22,24 @@ else
 
     echo "##[group]**** Building OF core ****"
     # this carries over to subsequent compilations of examples
-    echo "PLATFORM_CFLAGS += $CUSTOMFLAGS" >> libs/openFrameworksCompiled/project/linux64/config.linux64.default.mk
-    sed -i "s/PLATFORM_OPTIMIZATION_CFLAGS_DEBUG = .*/PLATFORM_OPTIMIZATION_CFLAGS_DEBUG = -g0/" libs/openFrameworksCompiled/project/makefileCommon/config.linux.common.mk
+    # echo "PLATFORM_CFLAGS += $CUSTOMFLAGS" >> libs/openFrameworksCompiled/project/linux/64/config.linux64.default.mk
     cd libs/openFrameworksCompiled/project
-    make -j2
+    make -j2 Debug
     echo "##[endgroup]"
+    echo -e "\033[33m**** Building OF core: COMPLETE ****\033[0m"
 
     echo "##[group]**** Building emptyExample ****"
     cd $ROOT/scripts/templates/linux64
-    make -j2
+    make -j2 Debug
     echo "##[endgroup]"
+    echo -e "\033[33m**** Building emptyExample: COMPLETE ****\033[0m"
 
     echo "##[group]**** Building allAddonsExample ****"
     cd $ROOT
     cp scripts/templates/linux64/Makefile examples/templates/allAddonsExample/
     cp scripts/templates/linux64/config.make examples/templates/allAddonsExample/
     cd examples/templates/allAddonsExample/
-    make -j2
+    make -j2 Debug
     echo "##[endgroup]"
+    echo -e "\033[33m**** Building allAddonsExample: COMPLETE ****\033[0m"
 fi

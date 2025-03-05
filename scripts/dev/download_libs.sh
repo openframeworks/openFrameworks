@@ -8,7 +8,8 @@ LEGACY=0
 SILENT_ARGS=""
 NO_SSL=""
 BLEEDING_EDGE=0
-DL_VERSION=2.6.4
+DL_VERSION=2.8.2
+GCC_VERSION=0
 TAG=""
 
 printHelp(){
@@ -24,13 +25,14 @@ cat << EOF
                                     vs: 64
                                     msys2: 64
                                     android: armv7, arm64, and x86 (if not specified will download all)
-                                    linux: 64gcc6, armv6l or armv7l
+                                    linux: 64, armv6l or armv7l
     -n, --no-overwrite          Merge new libraries with existing ones, use only to download same version for different platforms
                                 If not set deletes any existing libraries
     -s, --silent                Silent download progress
     -h, --help                  Shows this message
     -k, --no-ssl                Allow no SSL validation
     -t, --tag                   tag release for libraries
+    -g, --gcc-version           GCC Version
 EOF
 }
 
@@ -120,6 +122,10 @@ while [[ $# -gt 0 ]]; do
         MSYSTEM="$2"
         shift # past argument
         ;;
+        -g|--gcc-version)
+        GCC_VERSION="$2"
+        shift # past argument
+        ;;
         -t|--tag)
         TAG="$2"
         shift # past argument
@@ -162,30 +168,13 @@ if [ "$ARCH" == "" ]; then
     if [ "$PLATFORM" == "linux" ]; then
         ARCH=$(uname -m)
         if [ "$ARCH" == "x86_64" ]; then
-            if command -v gcc &> /dev/null
-            then
-                GCC_VERSION=$(gcc -dumpversion | cut -f1 -d.)
-            else
-                GCC_VERSION=6
-            fi
-            if [ $GCC_VERSION -eq 4 ]; then
-                ARCH=64gcc6
-            elif [ $GCC_VERSION -eq 5 ]; then
-                ARCH=64gcc6
-            else
-                ARCH=64gcc6
-            fi
-        elif [ "$ARCH" == "armv7l" ]; then
-            # Check for Raspberry Pi
-            if [ -f /opt/vc/include/bcm_host.h ]; then
-                ARCH=armv6l
-            fi
+        	ARCH=64
+        elif [ "$ARCH" == "arm64" ]; then
+        	ARCH=arm64
+       	elif [ "$ARCH" == "aarch64" ]; then
+       		ARCH=arm64
         elif [ "$ARCH" == "i686" ] || [ "$ARCH" == "i386" ]; then
-            cat << EOF
-32bit linux is not officially supported anymore but compiling
-the libraries using the build script in apothecary/scripts
-should compile all the dependencies without problem
-EOF
+            echo "32bit linux is not officially supported anymore but compiling the libraries using the build script in apothecary/scripts should compile all the dependencies without problem"
             exit 1
         fi
     elif [ "$PLATFORM" == "msys2" ]; then
@@ -201,11 +190,43 @@ EOF
             ARCH=clang64
         fi
     fi
-
     if [ "$PLATFORM" == "osx" ]; then
         ARCH=x86_64
     fi
 fi
+
+if [ "$PLATFORM" == "linux" ]; then
+	if [ "$GCC_VERSION" == 0 ]; then
+		if command -v gcc &> /dev/null; then
+			GCC_VERSION=$(gcc -dumpversion | cut -f1 -d.)
+			echo "GCC_VERSION from bash: [$GCC_VERSION]"
+		else
+			GCC_VERSION=10
+		fi
+		if [ "$GCC_VERSION" -gt 14 ]; then
+			echo "GCC version is greater than 14. latest supported"
+			GCC_VERSION=14
+		fi
+	fi
+	echo "GCC_VERSION: [$GCC_VERSION]"
+	GCC_VERSION="gcc${GCC_VERSION}"
+	if [ "$ARCH" == "x86_64" ] || [ "$ARCH" == "64" ]; then
+       	OPT="_${GCC_VERSION}"
+    elif [ "$ARCH" == "arm64" ]; then
+		OPT="_${GCC_VERSION}"
+	elif [ "$ARCH" == "aarch64" ]; then
+		OPT="_${GCC_VERSION}"
+	elif [ "$ARCH" == "armv8l" ]; then
+	    OPT=""
+	elif [ "$ARCH" == "armv7l" ]; then
+	    OPT=""
+	elif [ "$ARCH" == "armv6l" ]; then
+		OPT=""
+	elif [ "$ARCH" == "jetson" ]; then
+		OPT=""
+	fi
+fi
+
 
 
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
@@ -221,20 +242,15 @@ if [[ $TAG != "" ]] && [[ $TAG != "nightly" ]] ; then
     VER="$TAG"
 fi
 
-if [ "$PLATFORM" == "linux" ] && [ "$ARCH" == "64" ]; then
-    if [[ $BLEEDING_EDGE = 1 ]] ; then
-        ARCH=64_gcc6
-    else
-        ARCH=64gcc6
-    fi
-fi
-
 echo " openFrameworks download_libs.sh v$DL_VERSION args=$@"
 
 if [ "$PLATFORM" == "emscripten" ]; then
     if [[ $BLEEDING_EDGE = 1 ]] ; then
         if [[ $ARCH = "" ]] ; then
             ARCH="32"
+        fi
+        if [[ $ARCH = "64" ]] ; then
+            ARCH="_64"
         fi
     fi
 fi
@@ -309,7 +325,7 @@ elif [ "$PLATFORM" == "emscripten" ]; then
     fi
 else # Linux
     if [[ $BLEEDING_EDGE = 1 ]] ; then
-        PKGS="openFrameworksLibs_${VER}_${PLATFORM}${ARCH}.tar.bz2"
+        PKGS="openFrameworksLibs_${VER}_${PLATFORM}_${ARCH}${OPT}.tar.bz2"
     else
         PKGS="openFrameworksLibs_${VER}_${PLATFORM}${ARCH}.tar.bz2"
     fi
@@ -338,7 +354,19 @@ cd download
 download "${PKGS[@]}"
 
 cd ../ # back to libs
+VALID=1
+for PKG in $PKGS; do
+    echo " Validate libraries [${PLATFORM}] from [$PKG]"
+    if [ ! -f "download/$PKG" ]; then
+    	echo "Error: File 'download/$PKG' does not exist!" >&2
+    	VALID=0
+	fi
+done
+if [ $VALID -eq 0 ]; then
+	exit 71
+fi
 libs=("cairo" "curl" "FreeImage" "brotli" "fmod" "freetype" "glew" "glfw" "json" "libpng" "openssl" "pixman" "poco" "rtAudio" "tess2" "uriparser" "utf8" "videoInput" "zlib" "opencv" "ippicv" "assimp" "libxml2" "svgtiny" "fmt")
+
 if [ $OVERWRITE -eq 1 ]; then
     echo " "
     echo " Overwrite - Removing prior libraries for [$PLATFORM]"
@@ -383,6 +411,11 @@ fi
 echo " ------ "
 for PKG in $PKGS; do
     echo " Uncompressing libraries [${PLATFORM}] from [$PKG]"
+    if [ ! -f "download/$PKG" ]; then
+    	echo "Error: File 'download/$PKG' does not exist!" >&2
+    	exit 71
+	fi
+
     if [ "$PLATFORM" == "msys2" ] || [ "$PLATFORM" == "vs" ]; then
         unzip -qo download/$PKG
         # rm -r download/$PKG
