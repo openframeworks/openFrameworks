@@ -93,9 +93,7 @@ static NSString *kShouldEnginePauseNotification = @"kShouldEnginePauseNotificati
 @end
 
 
-@interface AVEnginePlayer () {
-    BOOL resetAudioEngine;
-}
+@interface AVEnginePlayer ()
 
 //@property(nonatomic, strong) AVAudioEngine *engine;
 @property(nonatomic, strong) AVAudioMixerNode *mainMixer;
@@ -125,10 +123,7 @@ static NSString *kShouldEnginePauseNotification = @"kShouldEnginePauseNotificati
 @synthesize timer;
 
 - (AVAudioEngine *) engine {
-    
-#if TARGET_OS_SIMULATOR
-    return nullptr; // doesnt work
-#endif
+
   if( _engine == nullptr ){
     @autoreleasepool {
         _engine = [[AVAudioEngine alloc] init];
@@ -1261,4 +1256,3 @@ void * ofAVEngineSoundPlayer::getAVEnginePlayer() {
 }
 
 #endif
-

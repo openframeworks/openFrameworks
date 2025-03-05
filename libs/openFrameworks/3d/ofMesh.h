@@ -196,9 +196,7 @@ public:
 	void removeVertex(ofIndexType index);
 
 	/// \brief Removes the vertices at the startIndex in the vector and the endindex specified
-
 	void removeVertices(ofIndexType startIndex, ofIndexType endIndex);
-
 
 	void setVertex(ofIndexType index, const V& v);
 
@@ -278,7 +276,6 @@ public:
 
 	/// \brief Remove normal's from index to end index from normals vector
 	void removeNormals(ofIndexType startIndex, ofIndexType endIndex);
-
 
 	/// \todo Documentation.
 	void setNormal(ofIndexType index, const N& n);
@@ -436,7 +433,7 @@ public:
 	void removeTexCoord(ofIndexType index);
 
 	void removeTexCoords(ofIndexType startIndex, ofIndexType endIndex);
-
+	
 	void setTexCoord(ofIndexType index, const T& t);
 
 	/// \brief  Clear all the texture coordinates.

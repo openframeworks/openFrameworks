@@ -355,6 +355,23 @@ void ofBaseSoundInput::audioIn( ofSoundBuffer& buffer ){
 	audioIn(&buffer[0], buffer.getNumFrames(), buffer.getNumChannels(), buffer.getDeviceID(), buffer.getTickCount());
 }
 
+void ofBaseSoundInput::audioIn( float * input, int bufferSize, int nChannels, int deviceID, long unsigned long tickCount ){
+	audioIn(input, bufferSize, nChannels);
+}
+
+void ofBaseSoundInput::audioIn( float * input, int bufferSize, int nChannels ){
+	audioReceived(input, bufferSize, nChannels);
+}
+
+
 void ofBaseSoundOutput::audioOut( ofSoundBuffer& buffer ){
 	audioOut(&buffer[0], buffer.getNumFrames(), buffer.getNumChannels(), buffer.getDeviceID(), buffer.getTickCount());
+}
+
+void ofBaseSoundOutput::audioOut( float * output, int bufferSize, int nChannels, int deviceID, long unsigned long tickCount  ){
+	audioOut(output, bufferSize, nChannels);
+}
+
+void ofBaseSoundOutput::audioOut( float * output, int bufferSize, int nChannels ){
+	audioRequested(output, bufferSize, nChannels);
 }
