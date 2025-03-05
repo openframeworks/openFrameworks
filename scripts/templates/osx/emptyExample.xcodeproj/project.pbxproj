@@ -51,30 +51,6 @@
       "path" : "..\/..\/..\/addons",
       "sourceTree" : "SOURCE_ROOT"
     },
-    "BF26640B2C634C16004360E2" : {
-      "alwaysOutOfDate" : "1",
-      "buildActionMask" : "2147483647",
-      "files" : [
-
-      ],
-      "inputFileListPaths" : [
-
-      ],
-      "inputPaths" : [
-
-      ],
-      "isa" : "PBXShellScriptBuildPhase",
-      "outputFileListPaths" : [
-
-      ],
-      "outputPaths" : [
-
-      ],
-      "runOnlyForDeploymentPostprocessing" : "0",
-      "shellPath" : "\/usr\/bin\/env bash",
-      "shellScript" : "#!\/usr\/bin\/env bash\n\n# Determine the Xcode build directory\nTARGET_DIR=\"${BUILT_PRODUCTS_DIR:-$SRCROOT\/bin}\"\n\n# Check if the directory exists\nif [ ! -d \"$TARGET_DIR\" ]; then\n  echo \"Error: Target directory $TARGET_DIR does not exist.\"\n  exit 1\nfi\n\n# Check and set the com.apple.xcode.CreatedByBuildSystem attribute\nATTRIBUTE_CHECK=$(xattr -p com.apple.xcode.CreatedByBuildSystem \"$TARGET_DIR\" 2>\/dev\/null)\nif [ -z \"$ATTRIBUTE_CHECK\" ]; then\n  xattr -w com.apple.xcode.CreatedByBuildSystem true \"$TARGET_DIR\"\n  echo \"Attribute com.apple.xcode.CreatedByBuildSystem set to true for $TARGET_DIR\"\nelse\n  echo \"Attribute com.apple.xcode.CreatedByBuildSystem already set for $TARGET_DIR\"\nfi\n",
-      "showEnvVarsInLog" : "0"
-    },
     "E4A5B60F29BAAAE400C2D356" : {
       "buildActionMask" : "2147483647",
       "dstPath" : "",
@@ -172,7 +148,6 @@
     "E4B69B5A0A3A1756003C02F2" : {
       "buildConfigurationList" : "E4B69B5F0A3A1757003C02F2",
       "buildPhases" : [
-        "BF26640B2C634C16004360E2",
         "E42962A92163ECCD00A6A9E2",
         "E4B69B580A3A1756003C02F2",
         "E4B69B590A3A1756003C02F2",
