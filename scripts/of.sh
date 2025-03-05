@@ -1,6 +1,6 @@
 #!/bin/bash
 # pipe commands to core openFrameworks scripts
-OF_SCRIPT_VERSION=0.2.1
+OF_SCRIPT_VERSION=0.2.2
 # Dan Rosser 2025
 OF_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 OF_DIR="$(realpath "$OF_DIR/../")"
@@ -9,7 +9,7 @@ OF_CORE_CI_SCRIPT_DIR="$(realpath "$OF_DIR/scripts/ci")"
 OF_PG_INSTALLED_DIR="$(realpath "$OF_DIR/projectGenerator")"
 VERBOSE=${VERBOSE:-0}
 echoVerbose() {
-    if [[ -n "$VERBOSE" ]]; then
+    if [[ "$VERBOSE" = 1 ]]; then
         echo "$@"
     fi
 }
@@ -75,6 +75,7 @@ Usage: $0 <command> [subcommand] [options]
 Commands:
   update [subcommand]    Update openFrameworks components
     libs                 Download openFrameworks libraries (default)
+    libs [platform]      i.e update libs ios
     pg | projectgenerator  Download Project Generator
 
   version [subcommand]   Show version information
@@ -126,7 +127,7 @@ runCommand() {
                     SCRIPT="${OF_CORE_SCRIPT_DIR}/${PLATFORM_DIR}/download_projectGenerator.sh"
                     ;;
                 *)
-                    SCRIPT="${OF_CORE_SCRIPT_DIR}/${PLATFORM_DIR}/download_libs.sh" ""
+                    SCRIPT="${OF_CORE_SCRIPT_DIR}/${PLATFORM_DIR}/download_libs.sh"
                     exit 1
                     ;;
             esac

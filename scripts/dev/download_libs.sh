@@ -8,7 +8,7 @@ LEGACY=0
 SILENT_ARGS=""
 NO_SSL=""
 BLEEDING_EDGE=0
-DL_VERSION=2.6.4
+DL_VERSION=2.6.5
 TAG=""
 
 printHelp(){
@@ -294,8 +294,7 @@ elif [ "$ARCH" == "" ] && [ "$PLATFORM" == "android" ]; then
     if [[ $BLEEDING_EDGE = 1 ]] ; then
         PKGS="openFrameworksLibs_${VER}_${PLATFORM}_armv7.tar.bz2 \
               openFrameworksLibs_${VER}_${PLATFORM}_arm64.tar.bz2 \
-              openFrameworksLibs_${VER}_${PLATFORM}_x86_64.tar.bz2
-              openFrameworksLibs_${VER}_${PLATFORM}_x86.tar.bz2"
+              openFrameworksLibs_${VER}_${PLATFORM}_x86_64.tar.bz2"
     else
         PKGS="openFrameworksLibs_${VER}_${PLATFORM}armv7.tar.bz2 \
           openFrameworksLibs_${VER}_${PLATFORM}arm64.tar.bz2 \
