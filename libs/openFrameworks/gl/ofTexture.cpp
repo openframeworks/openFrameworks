@@ -163,7 +163,27 @@ static void release(GLuint id){
 	}
 }
 
+#ifdef TARGET_ANDROID
+static set<ofTexture*> & allTextures(){
+	static set<ofTexture*> * allTextures = new set<ofTexture*>;
+	return *allTextures;
+}
 
+static void registerTexture(ofTexture * texture){
+	allTextures().insert(texture);
+}
+
+static void unregisterTexture(ofTexture * texture){
+	allTextures().erase(texture);
+}
+
+void ofRegenerateAllTextures(){
+	for(auto tex: allTextures()){
+		tex->clear();
+	}
+}
+
+#endif
 
 //----------------------------------------------------------
 ofTexture::ofTexture(){
@@ -1273,33 +1293,3 @@ float ofTexture::getHeight() const {
 float ofTexture::getWidth() const {
 	return texData.width;
 }
-
-void ofTexture::enableTextureTarget(int textureLocation) const {
-
-}
-
-void ofTexture::disableTextureTarget(int textureLocation) const {
-
-}
-
-#ifdef TARGET_ANDROID
- set<ofTexture*> & ofTexture::allTextures(){
-	static set<ofTexture*> * allTextures = new set<ofTexture*>;
-	return *allTextures;
-}
-
- void ofTexture::registerTexture(ofTexture * texture){
-	allTextures().insert(texture);
-}
-
- void ofTexture::unregisterTexture(ofTexture * texture){
-	allTextures().erase(texture);
-}
-
-void ofTexture::ofRegenerateAllTextures(){
-	for(auto tex: allTextures()){
-		tex->clear();
-	}
-}
-
-#endif
