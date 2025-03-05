@@ -9,7 +9,7 @@ OF_CORE_CI_SCRIPT_DIR="$(realpath "$OF_DIR/scripts/ci")"
 OF_PG_INSTALLED_DIR="$(realpath "$OF_DIR/projectGenerator")"
 VERBOSE=${VERBOSE:-0}
 echoVerbose() {
-    if [[ -n "$VERBOSE" ]]; then
+    if [[ "$VERBOSE" = 1 ]]; then
         echo "$@"
     fi
 }
@@ -126,7 +126,7 @@ runCommand() {
                     SCRIPT="${OF_CORE_SCRIPT_DIR}/${PLATFORM_DIR}/download_projectGenerator.sh"
                     ;;
                 *)
-                    SCRIPT="${OF_CORE_SCRIPT_DIR}/${PLATFORM_DIR}/download_libs.sh" ""
+                    SCRIPT="${OF_CORE_SCRIPT_DIR}/${PLATFORM_DIR}/download_libs.sh"
                     exit 1
                     ;;
             esac

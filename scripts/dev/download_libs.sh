@@ -294,8 +294,7 @@ elif [ "$ARCH" == "" ] && [ "$PLATFORM" == "android" ]; then
     if [[ $BLEEDING_EDGE = 1 ]] ; then
         PKGS="openFrameworksLibs_${VER}_${PLATFORM}_armv7.tar.bz2 \
               openFrameworksLibs_${VER}_${PLATFORM}_arm64.tar.bz2 \
-              openFrameworksLibs_${VER}_${PLATFORM}_x86_64.tar.bz2
-              openFrameworksLibs_${VER}_${PLATFORM}_x86.tar.bz2"
+              openFrameworksLibs_${VER}_${PLATFORM}_x86_64.tar.bz2"
     else
         PKGS="openFrameworksLibs_${VER}_${PLATFORM}armv7.tar.bz2 \
           openFrameworksLibs_${VER}_${PLATFORM}arm64.tar.bz2 \
