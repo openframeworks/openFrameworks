@@ -453,3 +453,23 @@ jobs:
           DEVELOPER_DIR: "/Applications/Xcode.app/Contents/Developer"
           SDKROOT: "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk"
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+ build-android:
+    runs-on: ubuntu-24.04
+    strategy:
+      matrix:
+        cfg:
+          - { target: android, opt: arm64 }
+    env:
+      TARGET: ${{matrix.cfg.target}}
+    steps:
+
+      - uses: actions/checkout@v4
+      # - name: ccache
+      #   uses: hendrikmuhs/ccache-action@v1.2.14
+      #   with:
+      #     key: ${{ matrix.cfg.target }}-${{ matrix.cfg.libs }}
+
+      - name: Download libs
+        run: ./scripts/android/download_libs.sh -t $RELEASE
+
