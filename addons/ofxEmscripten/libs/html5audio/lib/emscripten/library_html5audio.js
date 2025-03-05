@@ -80,7 +80,41 @@ var LibraryHTML5Audio = {
     },
     
     html5audio_sound_load: function (player_id, url) {
-        AUDIO.player[player_id].src = UTF8ToString(url);
+        try {
+            var filePath = UTF8ToString(url); 
+
+            if( filePath.indexOf("http") == 0 ) {
+                AUDIO.player[player_id].src = filePath;
+            }else{
+
+                //console.log("file path is" + filePath);
+                
+                var data = FS.readFile(filePath, { encoding: 'binary' });
+                
+                var ext = filePath.split('.').pop();
+                
+                var stats = FS.stat(filePath)
+                var fileSizeInBytes = stats.size;
+                    
+                var tag = ext; //this covers most types
+                if( ext == 'mp3'){
+                    tag = 'mpeg';
+                }else if( ext == 'oga'){
+                    tag = 'ogg';
+                }else if( ext == 'weba'){
+                    tag = 'webm';
+                }
+                
+                const blob = new Blob([data], { type: 'audio/' + tag });
+                const audioSrc = URL.createObjectURL(blob);
+            
+                AUDIO.player[player_id].src = audioSrc;
+            }
+
+        } catch (error) {
+            console.error('Error reading file:' + filePath + " " + error);
+        }
+        
     },
 
     html5audio_sound_play: function (player_id, multiplay, volume, speed, pan, offset) {
@@ -168,55 +202,47 @@ var LibraryHTML5Audio = {
     },
 
     html5audio_stream_create: function(bufferSize, inputChannels, outputChannels, inbuffer, outbuffer, callback, userData) {
-        var stream = AUDIO.context.createScriptProcessor(bufferSize, inputChannels, outputChannels);
-        var inbufferArray = Module.HEAPF32.subarray(inbuffer >> 2,(inbuffer>>2) + bufferSize * inputChannels);
-        var outbufferArray = Module.HEAPF32.subarray(outbuffer >> 2, (outbuffer>>2) + bufferSize * outputChannels);
+            var stream = AUDIO.context.createScriptProcessor(bufferSize, inputChannels, outputChannels);
+            var inbufferArray = Module.HEAPF32.subarray(inbuffer >> 2, (inbuffer >> 2) + bufferSize * inputChannels);
+            var outbufferArray = Module.HEAPF32.subarray(outbuffer >> 2, (outbuffer >> 2) + bufferSize * outputChannels);
 
-        stream.onaudioprocess = function(event) {
-            var i, j, c;
+            stream.onaudioprocess = function(event) {
+                var i, j, c;
+                if (inputChannels > 0) {
+                    for (c = 0; c < inputChannels; ++c) {
+                        var inChannel = event.inputBuffer.getChannelData(c);
+                        for (i = 0, j = c; i < bufferSize; ++i, j += inputChannels) {
+                            inbufferArray[j] = inChannel[i];
+                        }
+                    }
+                }
+
+                {{{ makeDynCall('viiii', 'callback') }}}(bufferSize, inputChannels, outputChannels, userData);
+
+                if (outputChannels > 0) {
+                    for (c = 0; c < outputChannels; ++c) {
+                        var outChannel = event.outputBuffer.getChannelData(c);
+                        for (i = 0, j = c; i < bufferSize; ++i, j += outputChannels) {
+                            outChannel[i] = outbufferArray[j];
+                        }
+                    }
+                }
+            };
+
             if (inputChannels > 0) {
-                for (c = 0; c < inputChannels; ++c) {
-                    var inChannel = event.inputBuffer.getChannelData(c);
-                    for (i = 0, j = c; i < bufferSize; ++i, j += inputChannels) {
-                        inbufferArray[j] = inChannel[i];
-                    }
-                }
+                navigator.mediaDevices.getUserMedia({ audio: true })
+                    .then(function (audioIn) {
+                        var mediaElement = AUDIO.context.createMediaStreamSource(audioIn);
+                        mediaElement.connect(stream);
+                        AUDIO.mediaElement = mediaElement;
+                    })
+                    .catch(function (error) {
+                        console.log("Error creating audio in", error);
+                    });
             }
 
-            {{{ makeDynCall('viiii', 'callback') }}}(bufferSize, inputChannels, outputChannels, userData);
-
-            if (outputChannels > 0) {
-                for (c = 0; c < outputChannels; ++c) {
-                    var outChannel = event.outputBuffer.getChannelData(c);
-                    for (i = 0, j = c; i<bufferSize; ++i, j += outputChannels) {
-                        outChannel[i] = outbufferArray[j];
-                    }
-                }
-            }
-        };
-
-        if (inputChannels > 0) {
-            navigator.getUserMedia = navigator.getUserMedia ||
-            navigator.webkitGetUserMedia ||
-            navigator.mozGetUserMedia ||
-            navigator.msGetUserMedia;
-            
-	    if (navigator.getUserMedia) {
-                navigator.getUserMedia(
-                {audio: true},
-                function (audioIn){
-                    var mediaElement = AUDIO.context.createMediaStreamSource(audioIn);
-                    mediaElement.connect(stream);
-                    AUDIO.mediaElement = mediaElement;
-                },
-                function (error){
-                    console.log("error creating audio in",error);
-                });
-	    }
-        }
-
-        stream.connect(AUDIO.fft);
-    },
+            stream.connect(AUDIO.fft);
+        },
 
     html5audio_stream_free: function () {
 

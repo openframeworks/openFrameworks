@@ -1,7 +1,11 @@
 #include "ofTrueTypeFont.h"
-//--------------------------
+#include "ofGraphics.h"
+#include "ofPixels.h"
+#include "ofPath.h"
 
 #include <ft2build.h>
+#include <algorithm>
+#include <numeric>
 
 #ifdef TARGET_LINUX
 #include <fontconfig/fontconfig.h>
@@ -11,11 +15,6 @@
 #include FT_GLYPH_H
 #include FT_OUTLINE_H
 #include FT_TRIGONOMETRY_H
-
-#include <algorithm>
-#include <numeric>
-
-#include "ofGraphics.h"
 
 using std::max;
 using std::vector;
@@ -174,7 +173,6 @@ const size_t TAB_WIDTH = 4; /// Number of spaces per tab
 static bool printVectorInfo = false;
 static int ttfGlobalDpi = 96;
 static bool librariesInitialized = false;
-static int fontsLoaded = 0;
 static FT_Library library;
 
 //--------------------------------------------------------
@@ -183,12 +181,7 @@ void ofTrueTypeShutdown(){
 	// This crashes if gtk was called at any time cause pango leaks
 	// its fc related objects: https://github.com/openframeworks/openFrameworks/issues/5061
 	//FcFini();
-#else
-    if(librariesInitialized && fontsLoaded == 0) {
-		FT_Done_FreeType(library);
-	}
 #endif
-
 }
 
 //--------------------------------------------------------
@@ -236,23 +229,26 @@ static ofPath makeContoursForCharacter(FT_Face face){
 }
 
 #ifdef TARGET_OSX
+
+#include <ApplicationServices/ApplicationServices.h>
+
 //------------------------------------------------------------------
-static string osxFontPathByName(const string& fontname){
-	CFStringRef targetName = CFStringCreateWithCString(nullptr, fontname.c_str(), kCFStringEncodingUTF8);
+static of::filesystem::path osxFontPathByName(const of::filesystem::path & fileName) {
+	CFStringRef targetName = CFStringCreateWithCString(nullptr, fileName.c_str(), kCFStringEncodingUTF8);
 	CTFontDescriptorRef targetDescriptor = CTFontDescriptorCreateWithNameAndSize(targetName, 0.0);
 	CFURLRef targetURL = (CFURLRef) CTFontDescriptorCopyAttribute(targetDescriptor, kCTFontURLAttribute);
-	string fontPath = "";
+	string fontDir = "";
 
 	if(targetURL) {
 		UInt8 buffer[PATH_MAX];
 		CFURLGetFileSystemRepresentation(targetURL, true, buffer, PATH_MAX);
-		fontPath = string((char *)buffer);
+		fontDir = string((char *)buffer);
 		CFRelease(targetURL);
 	}
 
 	CFRelease(targetName);
 	CFRelease(targetDescriptor);
-
+	of::filesystem::path fontPath = { fontDir };
 	return fontPath;
 }
 #endif
@@ -260,7 +256,7 @@ static string osxFontPathByName(const string& fontname){
 #ifdef TARGET_WIN32
 #include <unordered_map>
 // font font face -> file name name mapping
-static std::unordered_map<string, string> fonts_table;
+static std::unordered_map<string, of::filesystem::path> fonts_table;
 // read font linking information from registry, and store in std::map
 //------------------------------------------------------------------
 void initWindows(){
@@ -279,7 +275,6 @@ void initWindows(){
 	DWORD max_data_len;
 	wchar_t value_name[2048];
 	BYTE *value_data;
-
 
 	// get font_file_name -> font_face mapping from the "Fonts" registry key
 
@@ -301,48 +296,41 @@ void initWindows(){
 
 	char value_name_char[2048];
 	char value_data_char[2048];
-	/*char ppidl[2048];
-	char fontsPath[2048];
-	SHGetKnownFolderIDList(FOLDERID_Fonts, 0, nullptr, &ppidl);
-	SHGetPathFromIDList(ppidl,&fontsPath);*/
-	string fontsDir = getenv ("windir");
+	string fontsDir = ofGetEnv("windir");
 	fontsDir += "\\Fonts\\";
+	
 	for (DWORD i = 0; i < value_count; ++i)
 	{
 			DWORD name_len = 2048;
 			DWORD data_len = max_data_len;
-
 			l_ret = RegEnumValueW(key_ft, i, value_name, &name_len, nullptr, nullptr, value_data, &data_len);
 			if(l_ret != ERROR_SUCCESS){
 				 ofLogError("ofTrueTypeFont") << "initWindows(): couldn't read registry key for font type";
 				 continue;
 			}
-
 			wcstombs(value_name_char,value_name,2048);
 			wcstombs(value_data_char,reinterpret_cast<wchar_t *>(value_data),2048);
 			string curr_face = value_name_char;
 			string font_file = value_data_char;
 			curr_face = curr_face.substr(0, curr_face.find('(') - 1);
 			curr_face = ofToLower(curr_face);
-			fonts_table[curr_face] = fontsDir + font_file;
+			of::filesystem::path fontPath = { fontsDir + font_file };
+			fonts_table[curr_face] = fontPath;
 	}
-
-
 	HeapFree(GetProcessHeap(), 0, value_data);
-
 	l_ret = RegCloseKey(key_ft);
 }
 
 
-static string winFontPathByName(const string& fontname ){
+static of::filesystem::path winFontPathByName(const string & fontname) {
 	return fonts_table[fontname];
 }
 #endif
 
 #ifdef TARGET_LINUX
 //------------------------------------------------------------------
-static string linuxFontPathByName(const string& fontname){
-	string filename;
+static of::filesystem::path linuxFontPathByName(const string & fontname) {
+	of::filesystem::path fontPath;
 	FcPattern * pattern = FcNameParse((const FcChar8*)fontname.c_str());
 	FcBool ret = FcConfigSubstitute(0,pattern,FcMatchPattern);
 	if(!ret){
@@ -358,33 +346,33 @@ static string linuxFontPathByName(const string& fontname){
 		ofLogError() << "linuxFontPathByName(): couldn't match font file or system font with name \"" << fontname << "\"";
 		FcPatternDestroy(fontMatch);
 		FcPatternDestroy(pattern);
-		return "";
+		return {};
 	}
 	FcChar8	*file;
 	if (FcPatternGetString (fontMatch, FC_FILE, 0, &file) == FcResultMatch){
-		filename = (const char*)file;
+		fontPath = (const char*)file;
 	}else{
 		ofLogError() << "linuxFontPathByName(): couldn't find font match for \"" << fontname << "\"";
 		FcPatternDestroy(fontMatch);
 		FcPatternDestroy(pattern);
-		return "";
+		return {};
 	}
 	FcPatternDestroy(fontMatch);
 	FcPatternDestroy(pattern);
-	return filename;
+	return fontPath;
 }
 #endif
 
 //-----------------------------------------------------------
-static bool loadFontFace(const of::filesystem::path& _fontname, FT_Face & face, of::filesystem::path & filename, int index){
-	of::filesystem::path fontname = _fontname;
-	filename = ofToDataPath(_fontname,true);
-	ofFile fontFile(filename,ofFile::Reference);
+// FIXME: it seems first parameter is string because it represents the font name only / can be
+static bool loadFontFace(const string & _fontname, FT_Face & face,
+						 of::filesystem::path & _filename, int index){
+	auto fontname = _fontname;
+	auto filename = ofToDataPathFS(fontname);
 	int fontID = index;
-	if(!fontFile.exists()){
+	if(!of::filesystem::exists(filename)){
 #ifdef TARGET_LINUX
-		// FIXME: update function linuxFontPathByName to use path instead of string
-		filename = linuxFontPathByName(fontname.string());
+		filename = linuxFontPathByName(fontname);
 #elif defined(TARGET_OSX)
 		if(fontname==OF_TTF_SANS){
 			fontname = "Helvetica Neue";
@@ -398,37 +386,33 @@ static bool loadFontFace(const of::filesystem::path& _fontname, FT_Face & face, 
 		}else if(fontname==OF_TTF_MONO){
 			fontname = "Menlo Regular";
 		}
-		filename = osxFontPathByName(fontname.string());
+		filename = osxFontPathByName(fontname);
 #elif defined(TARGET_WIN32)
 		if(fontname==OF_TTF_SANS){
-			fontname = "Arial";
+			fontname = "arial";
 		}else if(fontname==OF_TTF_SERIF){
-			fontname = "Times New Roman";
+			fontname = "times new roman";
 		}else if(fontname==OF_TTF_MONO){
-			fontname = "Courier New";
+			fontname = "courier new";
 		}
-        filename = winFontPathByName(fontname.string());
-#elif defined(TARGET_ANDROID)
-		filename = ofToDataPath(_fontname, true);
+		filename = winFontPathByName(fontname);
 #endif
 		if(filename == "" ){
-			ofLogError("ofTrueTypeFont") << "loadFontFace(): couldn't find font \"" << fontname << "\"";
-			fontFile.close();
+			ofLogError("ofTrueTypeFont") << "loadFontFace(): couldn't find font " << fontname;
 			return false;
 		}
-		ofLogVerbose("ofTrueTypeFont") << "loadFontFace(): \"" << fontname << "\" not a file in data loading system font from \"" << filename << "\"";
+		ofLogVerbose("ofTrueTypeFont") << "loadFontFace(): " << fontname << " not a file in data loading system font from " << filename;
 	}
 	FT_Error err;
-	err = FT_New_Face( library, filename.string().c_str(), fontID, &face );
+	err = FT_New_Face( library, ofPathToString(filename).c_str(), fontID, &face );
 	if (err) {
 		// simple error table in lieu of full table (see fterrors.h)
 		string errorString = "unknown freetype";
 		if(err == 1) errorString = "INVALID FILENAME";
-		ofLogError("ofTrueTypeFont") << "loadFontFace(): couldn't create new face for \"" << fontname << "\": FT_Error " << err << " " << errorString;
-		fontFile.close();
+		ofLogError("ofTrueTypeFont") << "loadFontFace(): couldn't create new face for " << fontname << ": FT_Error " << err << " " << errorString;
 		return false;
 	}
-	fontFile.close();
+
 	return true;
 }
 
@@ -445,12 +429,11 @@ void ofTrueTypeFont::setGlobalDpi(int newDpi){
 //------------------------------------------------------------------
 bool ofTrueTypeFont::initLibraries(){
 	if(!librariesInitialized){
-		ofLogNotice("ofTrueTypeFont") << "initLibraries";
 		FT_Error err;
 		err = FT_Init_FreeType( &library );
 
 		if (err){
-			ofLogError("ofTrueTypeFont") << "initLibraries - loadFont(): couldn't initialize Freetype lib: FT_Error " << err;
+			ofLogError("ofTrueTypeFont") << "loadFont(): couldn't initialize Freetype lib: FT_Error " << err;
 			return false;
 		}
 #ifdef TARGET_LINUX
@@ -471,7 +454,7 @@ bool ofTrueTypeFont::initLibraries(){
 //------------------------------------------------------------------
 ofTrueTypeFont::ofTrueTypeFont()
 :settings("",0){
-	bLoadedOk		= false;
+	bLoadedOk = false;
 	letterSpacing = 1;
 	spaceSize = 1;
 	fontUnitScale = 1;
@@ -479,7 +462,6 @@ ofTrueTypeFont::ofTrueTypeFont()
 	ascenderHeight = 0;
 	descenderHeight = 0;
 	lineHeight = 0;
-	fontsLoaded++;
 }
 
 //------------------------------------------------------------------
@@ -487,25 +469,7 @@ ofTrueTypeFont::~ofTrueTypeFont(){
 	#if defined(TARGET_ANDROID)
 	ofRemoveListener(ofxAndroidEvents().unloadGL,this,&ofTrueTypeFont::unloadTextures);
 	ofRemoveListener(ofxAndroidEvents().reloadGL,this,&ofTrueTypeFont::reloadTextures);
-    #endif
-
-	texAtlas.clear();
-    fontsLoaded--;
-
-    if(face != nullptr) {
-    	ofLogVerbose("ofTrueTypeFont") << "unload FT_Face";
-    	face.reset();
-        //FT_Done_Face(reset);
-		//face = nullptr;
-    }
-
-	if(librariesInitialized && fontsLoaded == 0 && library != nullptr) {
-		ofLogNotice("ofTrueTypeFont") << "FT_Done_FreeType";
-		FT_Done_FreeType(library);
-        library = nullptr;
-        librariesInitialized = false;
-	}
-
+	#endif
 }
 
 //------------------------------------------------------------------
@@ -638,21 +602,17 @@ ofTrueTypeFont & ofTrueTypeFont::operator=(ofTrueTypeFont&& mom){
 
 //-----------------------------------------------------------
 void ofTrueTypeFont::unloadTextures(){
-	ofLogNotice("ofTrueTypeFont") << "unloadTextures for " << settings.fontName << " bLoadedOk: " << bLoadedOk;
-	texAtlas.clear();
 	if(!bLoadedOk) return;
-
+	texAtlas.clear();
 }
 
 //-----------------------------------------------------------
 void ofTrueTypeFont::reloadTextures(){
-	ofLogNotice("ofTrueTypeFont") << "reloadTextures for " << settings.fontName << " bLoadedOk: " << bLoadedOk;
-	texAtlas.clear();
 	if(bLoadedOk) load(settings);
 }
 
 //-----------------------------------------------------------
-bool ofTrueTypeFont::loadFont(string filename, int fontSize, bool bAntiAliased, bool bFullCharacterSet, bool makeContours, float simplifyAmt, int dpi) {
+bool ofTrueTypeFont::loadFont(const of::filesystem::path & filename, int fontSize, bool bAntiAliased, bool bFullCharacterSet, bool makeContours, float simplifyAmt, int dpi) {
 	return load(filename, fontSize, bAntiAliased, bFullCharacterSet, makeContours, simplifyAmt, dpi);
 }
 
@@ -728,7 +688,7 @@ ofTrueTypeFont::glyph ofTrueTypeFont::loadGlyph(uint32_t utf8) const{
 }
 
 //-----------------------------------------------------------
-bool ofTrueTypeFont::load(const of::filesystem::path& filename, int fontSize, bool antialiased, bool fullCharacterSet, bool makeContours, float simplifyAmt, int dpi) {
+bool ofTrueTypeFont::load(const of::filesystem::path & filename, int fontSize, bool antialiased, bool fullCharacterSet, bool makeContours, float simplifyAmt, int dpi) {
 	
 	ofTrueTypeFontSettings settings(filename,fontSize);
 	settings.antialiased = antialiased;
@@ -740,35 +700,14 @@ bool ofTrueTypeFont::load(const of::filesystem::path& filename, int fontSize, bo
 	}else{
 		settings.ranges = {ofUnicode::Latin};
 	}
-//	std::cout << "ofTrueTypeFont::load - simplify : " << settings.simplifyAmt << std::endl;
 	return load(settings);
-}
-
-bool compareGlyphProps(const ofTrueTypeFont::glyphProps & c1, const ofTrueTypeFont::glyphProps & c2)
-{
-    if(c1.tH == c2.tH) {
-        return c1.tW > c2.tW;
-    }
-    else {
-        return c1.tH > c2.tH;
-    }
 }
 
 bool ofTrueTypeFont::load(const ofTrueTypeFontSettings & _settings){
 	#if defined(TARGET_ANDROID)
 	ofAddListener(ofxAndroidEvents().unloadGL,this,&ofTrueTypeFont::unloadTextures);
 	ofAddListener(ofxAndroidEvents().reloadGL,this,&ofTrueTypeFont::reloadTextures);
-    #endif
-
-
-	static GLint maxSize;
-	glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxSize);
-	if (maxSize <= 128) {
-		ofLogError("ofTruetypeFont") << "Max size is <=0 maybe queried GL Context before ready GL_MAX_TEXTURE_SIZE is garbage:[" << maxSize << "]";
-		return false;
-	} else {
-		ofLogNotice("ofTruetypeFont") << "GL_MAX_TEXTURE_SIZE is:[" << maxSize << "]";
-	}
+	#endif
 
 	initLibraries();
 	settings = _settings;
@@ -776,22 +715,15 @@ bool ofTrueTypeFont::load(const ofTrueTypeFontSettings & _settings){
 		settings.dpi = ttfGlobalDpi;
 	}
 
-	if(face != nullptr) {
-		ofLogVerbose("ofTrueTypeFont") << "unload FT_Face";
-		face.reset();
-		//FT_Done_Face(face);
-		face = nullptr;
-	}
-
 	bLoadedOk = false;
 
 	//--------------- load the library and typeface
 	FT_Face loadFace;
-    if(!loadFontFace(settings.fontName, loadFace, settings.fontName, settings.index)){
-        ofLogError("ofTruetypeFont") << " could not loadFontFace for " << settings.fontName;
+	// FIXME: no need to pass two different parameters for the same variable
+	if(!loadFontFace(ofPathToString(settings.fontName), loadFace, settings.fontName, settings.index)){
 		return false;
 	}
-	face = std::shared_ptr<struct FT_FaceRec_>(loadFace, FT_Done_Face);
+	face = std::shared_ptr<struct FT_FaceRec_>(loadFace,FT_Done_Face);
 
 	if(settings.ranges.empty()){
 		settings.ranges.push_back(ofUnicode::Latin1Supplement);
@@ -810,21 +742,10 @@ bool ofTrueTypeFont::load(const ofTrueTypeFontSettings & _settings){
 				  (face->bbox.yMax - face->bbox.yMin) * fontUnitScale);
 
 	//--------------- initialize character info and textures
-	auto nGlyphs = 0u;
-	for(auto & range: settings.ranges){
-		nGlyphs += range.getNumGlyphs();
-	}
-
-    if(nGlyphs > 50000) {
-        ofLogError("ofTruetypeFont") << "With provided unicode ranges calculation of glyphs has failed with " << nGlyphs;
-		if(face != nullptr) {
-			ofLogVerbose("ofTrueTypeFont") << "unload FT_Face";
-			//FT_Done_Face(face);
-			face.reset();
-			face = nullptr;
-		}
-        return false;
-    }
+	auto nGlyphs = std::accumulate(settings.ranges.begin(), settings.ranges.end(), 0u,
+			[](uint32_t acc, ofUnicode::range range){
+				return acc + range.getNumGlyphs();
+			});
 	cps.resize(nGlyphs);
 	if(settings.contours){
 		charOutlines.resize(nGlyphs);
@@ -879,24 +800,25 @@ bool ofTrueTypeFont::load(const ofTrueTypeFontSettings & _settings){
 			}
 		}
 	}
-    ofLogNotice("ofTrueTypeFont") << "loadFont(): sorting glyphs";
+
 	vector<ofTrueTypeFont::glyphProps> sortedCopy = cps;
-	sort(sortedCopy.begin(),sortedCopy.end(), compareGlyphProps);
-
-
+	sort(sortedCopy.begin(),sortedCopy.end(),[](const ofTrueTypeFont::glyphProps & c1, const ofTrueTypeFont::glyphProps & c2){
+		if(c1.tH == c2.tH) return c1.tW > c2.tW;
+		else return c1.tH > c2.tH;
+	});
 
 	// pack in a texture, algorithm to calculate min w/h from
 	// http://upcommons.upc.edu/pfc/bitstream/2099.1/7720/1/TesiMasterJonas.pdf
-	ofLogNotice("ofTrueTypeFont") << "loadFont(): areaSum: " << areaSum << " now packing";
+	//ofLogNotice("ofTrueTypeFont") << "loadFont(): areaSum: " << areaSum
 
 	bool packed = false;
 	float alpha = logf(areaSum)*1.44269f;
 	int w;
 	int h;
 	while(!packed){
-		w = pow(2,floor((alpha/2.f) + 0.5f)); // there doesn't seem to be a round in cmath for windows.
-		//w = pow(2,round(alpha/2.f));
-		h = w;//pow(2,round(alpha - round(alpha/2.f)));
+		w = std::pow(2,std::floor((alpha/2.f) + 0.5f)); // there doesn't seem to be a round in cmath for windows.
+		//w = std::pow(2, std::round(alpha/2.f));
+		h = w;//std::pow(2, std::round(alpha - std::round(alpha/2.f)));
 		int x=0;
 		int y=0;
 		auto maxRowHeight = sortedCopy[0].tH + border*2;
@@ -918,7 +840,7 @@ bool ofTrueTypeFont::load(const ofTrueTypeFontSettings & _settings){
 	}
 
 
-    ofLogNotice("ofTrueTypeFont") << "loadFont(): set luminance";
+
 	ofPixels atlasPixelsLuminanceAlpha;
 	atlasPixelsLuminanceAlpha.allocate(w,h,OF_PIXELS_GRAY_ALPHA);
 	atlasPixelsLuminanceAlpha.set(0,255);
@@ -945,17 +867,12 @@ bool ofTrueTypeFont::load(const ofTrueTypeFontSettings & _settings){
 		x+= glyph.tW + border*2.0;
 	}
 
+	int maxSize;
+	glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxSize);
 	if(w > maxSize || h > maxSize){
-        ofLogError("ofTrueTypeFont")  << "Trying to allocate texture of " << w << "x" << h << " which is bigger than supported in current platform: " << maxSize;
-		if(face != nullptr) {
-			ofLogVerbose("ofTrueTypeFont") << "unload FT_Face";
-			face.reset();
-			//FT_Done_Face(face);
-			face = nullptr;
-		}
+		ofLogError("ofTruetypeFont") << "Trying to allocate texture of " << w << "x" << h << " which is bigger than supported in current platform: " << maxSize;
 		return false;
 	}else{
-		texAtlas.clear();
 		texAtlas.allocate(atlasPixelsLuminanceAlpha,false);
 		texAtlas.setRGToRGBASwizzles(true);
 
@@ -965,19 +882,6 @@ bool ofTrueTypeFont::load(const ofTrueTypeFontSettings & _settings){
 			texAtlas.setTextureMinMagFilter(GL_NEAREST,GL_NEAREST);
 		}
 		texAtlas.loadData(atlasPixelsLuminanceAlpha);
-		if(texAtlas.isAllocated()) {
-            ofLogNotice("ofTrueTypeFont")  << "texAtlas is allocated for font " << settings.fontName << " at " << settings.fontSize;
-        } else {
-            ofLogError("ofTrueTypeFont")  << "texAtlas is NOT allocated for font " << settings.fontName << " at " << settings.fontSize;
-            texAtlas.clear();
-			if(face != nullptr) {
-				ofLogVerbose("ofTrueTypeFont") << "unload FT_Face";
-				face.reset();
-				//FT_Done_Face(face);
-				face = nullptr;
-			}
-            return false;
-        }
 		bLoadedOk = true;
 		return true;
 	}
@@ -1055,8 +959,6 @@ ofPath ofTrueTypeFont::getCharacterAsPoints(uint32_t character, bool vflip, bool
 		return ofPath();
 	}
 	if (!isValidGlyph(character)){
-		ofLogError("ofxTrueTypeFont") << "getCharacterAsPoints():!isValidGlyph" << character;
-
 		return ofPath();
 	}
 
@@ -1079,9 +981,8 @@ ofPath ofTrueTypeFont::getCharacterAsPoints(uint32_t character, bool vflip, bool
 void ofTrueTypeFont::drawChar(uint32_t c, float x, float y, bool vFlipped) const{
 
 	if (!isValidGlyph(c)){
-		auto NUM_CHARACTER_TO_START = 0;
-		ofLogError("ofTrueTypeFont") << "drawChar(): char " << c + NUM_CHARACTER_TO_START << " not allocated: line " << __LINE__ << " in " << __FILE__;
-		//return;
+		//ofLogError("ofTrueTypeFont") << "drawChar(): char " << c + NUM_CHARACTER_TO_START << " not allocated: line " << __LINE__ << " in " << __FILE__;
+		return;
 	}
 
 	auto props = getGlyphProperties(c);
@@ -1213,11 +1114,11 @@ vector<ofPath> ofTrueTypeFont::getStringAsPoints(const string &  str, bool vflip
 }
 
 bool ofTrueTypeFont::isValidGlyph(uint32_t glyph) const{
-	
-	return (std::any_of(settings.ranges.begin(), settings.ranges.end(),
+	//return glyphIndexMap.find(glyph) != glyphIndexMap.end();
+	return std::any_of(settings.ranges.begin(), settings.ranges.end(),
 		[&](ofUnicode::range range){
 			return glyph >= range.begin && glyph <= range.end;
-    })) && glyphIndexMap.find(glyph) != glyphIndexMap.end();
+	});
 }
 
 size_t ofTrueTypeFont::indexForGlyph(uint32_t glyph) const{
@@ -1238,13 +1139,19 @@ void ofTrueTypeFont::drawCharAsShape(uint32_t c, float x, float y, bool vFlipped
 		if(filled){
 			charOutlines[indexForGlyph(c)].draw(x,y);
 		}else{
+			float cw = charOutlinesContour[indexForGlyph(c)].getStrokeWidth();
+			charOutlinesContour[indexForGlyph(c)].setStrokeWidth( ofGetStyle().lineWidth );
 			charOutlinesContour[indexForGlyph(c)].draw(x,y);
+			charOutlinesContour[indexForGlyph(c)].setStrokeWidth( cw );
 		}
 	}else{
 		if(filled){
 			charOutlinesNonVFlipped[indexForGlyph(c)].draw(x,y);
 		}else{
+			float cw = charOutlinesNonVFlippedContour[indexForGlyph(c)].getStrokeWidth();
+			charOutlinesNonVFlippedContour[indexForGlyph(c)].setStrokeWidth( ofGetStyle().lineWidth );
 			charOutlinesNonVFlippedContour[indexForGlyph(c)].draw(x,y);
+			charOutlinesNonVFlippedContour[indexForGlyph(c)].setStrokeWidth( cw );
 		}
 	}
 }
@@ -1252,13 +1159,18 @@ void ofTrueTypeFont::drawCharAsShape(uint32_t c, float x, float y, bool vFlipped
 //-----------------------------------------------------------
 float ofTrueTypeFont::stringWidth(const string& c) const{
 //	return getStringBoundingBox(c, 0,0).width;
-	int w = 0;
+	float w = 0;
 	iterateString( c, 0, 0, false, [&]( uint32_t c, glm::vec2 pos ){
-		if ( c == '\t' ){
-			w += getGlyphProperties(' ').advance * spaceSize * TAB_WIDTH;
-		} else {
-			w += getGlyphProperties( c ).advance;
+		float cWidth = 0;
+
+		if(settings.direction == OF_TTF_LEFT_TO_RIGHT){
+			if ( c == '\t' ){
+				cWidth = getGlyphProperties(' ').advance * spaceSize * TAB_WIDTH;
+			} else {
+				cWidth = getGlyphProperties( c ).advance;
+			}
 		}
+		w = std::max(w, std::abs(pos.x + cWidth));
 	});
 	return w;
 }
@@ -1270,9 +1182,9 @@ ofRectangle ofTrueTypeFont::getStringBoundingBox(const string& c, float x, float
 		return ofRectangle( x, y, 0.f, 0.f);
 	}
 
+	float minX = x;
 	float minY = y;
 	float maxY = y;
-	float minX = x;
 	// Calculate bounding box by iterating over glyph properties
 	// Meaning of props can be deduced from illustration at top of:
 	// https://www.freetype.org/freetype2/docs/tutorial/step2.html
@@ -1281,21 +1193,22 @@ ofRectangle ofTrueTypeFont::getStringBoundingBox(const string& c, float x, float
 	// vertices, as this would not correctly return spacing for
 	// blank characters.
 	
-	
 	float w = 0;
 	iterateString( c, x, y, vflip, [&]( uint32_t c, glm::vec2 pos ){
 		auto props = getGlyphProperties( c );
-		if ( c == '\t' ){
-			w += props.advance * spaceSize * TAB_WIDTH;
-		} else {
-			w += props.advance;
+
+		float cWidth = 0;
+
+		if(settings.direction == OF_TTF_LEFT_TO_RIGHT){
+			if ( c == '\t' ){
+				cWidth = getGlyphProperties(' ').advance * spaceSize * TAB_WIDTH;
+			} else {
+				cWidth = getGlyphProperties( c ).advance;
+			}
 		}
 
-        
-        if( c == ' ') {
-            props.advance = spaceSize;
-        }
-//		maxX = max( maxX, pos.x + props.xmin + props.width);
+		w = std::max(w, std::abs(pos.x - x) + cWidth);
+
 		minX = min( minX, pos.x );
 		if ( vflip ){
 			minY = min( minY, pos.y - ( props.ymax - props.ymin ) );

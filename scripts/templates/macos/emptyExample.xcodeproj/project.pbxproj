@@ -1,0 +1,1787 @@
+{
+	"classes": {},
+	"objectVersion": "54",
+	"archiveVersion": "1",
+	"objects": {
+		"BF6278662BADEBFE008864C1": {
+			"path": "ofxiOSVideoPlayer.h",
+			"isa": "PBXFileReference",
+			"lastKnownFileType": "sourcecode.c.h",
+			"sourceTree": "<group>",
+			"fileEncoding": "4"
+		},
+		"BF62784C2BADEBFE008864C1": {
+			"path": "ofxiOSCoreLocation.mm",
+			"isa": "PBXFileReference",
+			"lastKnownFileType": "sourcecode.cpp.objcpp",
+			"sourceTree": "<group>",
+			"fileEncoding": "4"
+		},
+		"BF6278712BADEBFE008864C1": {
+			"isa": "PBXBuildFile",
+			"fileRef": "BF62780A2BADEBFE008864C1"
+		},
+		"BF6278642BADEBFE008864C1": {
+			"path": "ofxiOSVideoGrabber.h",
+			"isa": "PBXFileReference",
+			"lastKnownFileType": "sourcecode.c.h",
+			"sourceTree": "<group>",
+			"fileEncoding": "4"
+		},
+		"BB4B014C10F69532006C3DED": {
+			"path": "../../../addons",
+			"isa": "PBXGroup",
+			"name": "addons",
+			"children": [
+				"BF62780F2BADEBFE008864C1",
+				"BF62786F2BADEBFE008864C1"
+			],
+			"sourceTree": "<group>"
+		},
+		"BF62784A2BADEBFE008864C1": {
+			"path": "ofxiOSCoreHaptics.mm",
+			"isa": "PBXFileReference",
+			"lastKnownFileType": "sourcecode.cpp.objcpp",
+			"sourceTree": "<group>",
+			"fileEncoding": "4"
+		},
+		"BF6278BC2BADEBFE008864C1": {
+			"isa": "PBXBuildFile",
+			"fileRef": "BF6278652BADEBFE008864C1"
+		},
+		"BF6278622BADEBFE008864C1": {
+			"path": "AVFoundationVideoPlayer.h",
+			"isa": "PBXFileReference",
+			"lastKnownFileType": "sourcecode.c.h",
+			"sourceTree": "<group>",
+			"fileEncoding": "4"
+		},
+		"E4B69B590A3A1756003C02F2": {
+			"isa": "PBXFrameworksBuildPhase",
+			"buildActionMask": "2147483647",
+			"files": [],
+			"runOnlyForDeploymentPostprocessing": "0"
+		},
+		"BF6278BA2BADEBFE008864C1": {
+			"isa": "PBXBuildFile",
+			"fileRef": "BF6278632BADEBFE008864C1"
+		},
+		"BF6278602BADEBFE008864C1": {
+			"path": "AVFoundationVideoGrabber.h",
+			"isa": "PBXFileReference",
+			"lastKnownFileType": "sourcecode.c.h",
+			"sourceTree": "<group>",
+			"fileEncoding": "4"
+		},
+		"191CD6FA2847E21E0085CBB6": {
+			"path": "of.entitlements",
+			"isa": "PBXFileReference",
+			"lastKnownFileType": "text.plist.entitlements",
+			"sourceTree": "<group>",
+			"fileEncoding": "4"
+		},
+		"E4B69E1F0A3A1BDC003C02F2": {
+			"path": "src/ofApp.h",
+			"isa": "PBXFileReference",
+			"lastKnownFileType": "sourcecode.c.h",
+			"name": "ofApp.h",
+			"sourceTree": "SOURCE_ROOT",
+			"fileEncoding": "4"
+		},
+		"BF6278492BADEBFE008864C1": {
+			"path": "ofxiOSCoreHaptics.h",
+			"isa": "PBXFileReference",
+			"lastKnownFileType": "sourcecode.c.h",
+			"sourceTree": "<group>",
+			"fileEncoding": "4"
+		},
+		"BF6278C12BADEC41008864C1": {
+			"path": "../../../libs/openFrameworksCompiled/lib/macos/openFrameworks.framework",
+			"isa": "PBXFileReference",
+			"name": "openFrameworks.framework",
+			"lastKnownFileType": "wrapper.framework",
+			"sourceTree": "<group>"
+		},
+		"BF62782F2BADEBFE008864C1": {
+			"path": "ofxiOSSoundPlayer.h",
+			"isa": "PBXFileReference",
+			"lastKnownFileType": "sourcecode.c.h",
+			"sourceTree": "<group>",
+			"fileEncoding": "4"
+		},
+		"E4B69E1D0A3A1BDC003C02F2": {
+			"path": "src/main.cpp",
+			"isa": "PBXFileReference",
+			"lastKnownFileType": "sourcecode.cpp.cpp",
+			"name": "main.cpp",
+			"sourceTree": "SOURCE_ROOT",
+			"fileEncoding": "4"
+		},
+		"BF6278472BADEBFE008864C1": {
+			"path": "ofxtvOSViewController.mm",
+			"isa": "PBXFileReference",
+			"lastKnownFileType": "sourcecode.cpp.objcpp",
+			"sourceTree": "<group>",
+			"fileEncoding": "4"
+		},
+		"BF6278B92BADEBFE008864C1": {
+			"isa": "PBXBuildFile",
+			"fileRef": "BF6278612BADEBFE008864C1"
+		},
+		"BF62789F2BADEBFE008864C1": {
+			"isa": "PBXBuildFile",
+			"fileRef": "BF6278432BADEBFE008864C1"
+		},
+		"BF62782D2BADEBFE008864C1": {
+			"path": "AVSoundPlayer.h",
+			"isa": "PBXFileReference",
+			"lastKnownFileType": "sourcecode.c.h",
+			"sourceTree": "<group>",
+			"fileEncoding": "4"
+		},
+		"E4B69B4F0A3A1720003C02F2": {
+			"baseConfigurationReference": "E4EB6923138AFD0F00A09F29",
+			"isa": "XCBuildConfiguration",
+			"buildSettings": {
+				"HEADER_SEARCH_PATHS": [
+					"$(OF_CORE_HEADERS)",
+					"src"
+				],
+				"OTHER_CPLUSPLUSFLAGS": "-D__MACOSX_CORE__",
+				"CODE_SIGN_ENTITLEMENTS": "of.entitlements",
+				"GCC_UNROLL_LOOPS": "YES",
+				"GCC_OPTIMIZATION_LEVEL": "3",
+				"COPY_PHASE_STRIP": "YES",
+				"ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS": "YES"
+			},
+			"name": "Release"
+		},
+		"BF6278452BADEBFE008864C1": {
+			"path": "ofxtvOSURLFileLoader.h",
+			"isa": "PBXFileReference",
+			"lastKnownFileType": "sourcecode.c.h",
+			"sourceTree": "<group>",
+			"fileEncoding": "4"
+		},
+		"BF6278382BADEBFE008864C1": {
+			"path": "SoundEngine.h",
+			"isa": "PBXFileReference",
+			"lastKnownFileType": "sourcecode.c.h",
+			"sourceTree": "<group>",
+			"fileEncoding": "4"
+		},
+		"BF62789D2BADEBFE008864C1": {
+			"isa": "PBXBuildFile",
+			"fileRef": "BF6278412BADEBFE008864C1"
+		},
+		"BF6278B72BADEBFE008864C1": {
+			"isa": "PBXBuildFile",
+			"fileRef": "BF62785C2BADEBFE008864C1"
+		},
+		"BF62782B2BADEBFE008864C1": {
+			"path": "ESRenderer.h",
+			"isa": "PBXFileReference",
+			"lastKnownFileType": "sourcecode.c.h",
+			"sourceTree": "<group>",
+			"fileEncoding": "4"
+		},
+		"BF62781E2BADEBFE008864C1": {
+			"path": "core",
+			"isa": "PBXGroup",
+			"children": [
+				"BF6278142BADEBFE008864C1",
+				"BF6278152BADEBFE008864C1",
+				"BF6278162BADEBFE008864C1",
+				"BF6278172BADEBFE008864C1",
+				"BF6278182BADEBFE008864C1",
+				"BF6278192BADEBFE008864C1",
+				"BF62781A2BADEBFE008864C1",
+				"BF62781B2BADEBFE008864C1",
+				"BF62781C2BADEBFE008864C1",
+				"BF62781D2BADEBFE008864C1"
+			],
+			"sourceTree": "<group>"
+		},
+		"BF6278432BADEBFE008864C1": {
+			"path": "ofxtvOSGLKViewController.mm",
+			"isa": "PBXFileReference",
+			"lastKnownFileType": "sourcecode.cpp.objcpp",
+			"sourceTree": "<group>",
+			"fileEncoding": "4"
+		},
+		"BF6278362BADEBFE008864C1": {
+			"path": "ofxOpenALSoundPlayer.h",
+			"isa": "PBXFileReference",
+			"lastKnownFileType": "sourcecode.c.h",
+			"sourceTree": "<group>",
+			"fileEncoding": "4"
+		},
+		"BF62789B2BADEBFE008864C1": {
+			"isa": "PBXBuildFile",
+			"fileRef": "BF62783E2BADEBFE008864C1"
+		},
+		"BF62788E2BADEBFE008864C1": {
+			"isa": "PBXBuildFile",
+			"fileRef": "BF6278322BADEBFE008864C1"
+		},
+		"BF6278B52BADEBFE008864C1": {
+			"isa": "PBXBuildFile",
+			"fileRef": "BF62785A2BADEBFE008864C1"
+		},
+		"BF62781C2BADEBFE008864C1": {
+			"path": "ofxiOSViewController.h",
+			"isa": "PBXFileReference",
+			"lastKnownFileType": "sourcecode.c.h",
+			"sourceTree": "<group>",
+			"fileEncoding": "4"
+		},
+		"BF6278412BADEBFE008864C1": {
+			"path": "ofxtvOSAppDelegate.mm",
+			"isa": "PBXFileReference",
+			"lastKnownFileType": "sourcecode.cpp.objcpp",
+			"sourceTree": "<group>",
+			"fileEncoding": "4"
+		},
+		"BF6278342BADEBFE008864C1": {
+			"path": "ofxiOSSoundStreamDelegate.mm",
+			"isa": "PBXFileReference",
+			"lastKnownFileType": "sourcecode.cpp.objcpp",
+			"sourceTree": "<group>",
+			"fileEncoding": "4"
+		},
+		"BF6278B32BADEBFE008864C1": {
+			"isa": "PBXBuildFile",
+			"fileRef": "BF6278582BADEBFE008864C1"
+		},
+		"BF62788C2BADEBFE008864C1": {
+			"isa": "PBXBuildFile",
+			"fileRef": "BF6278302BADEBFE008864C1"
+		},
+		"E4B69B4D0A3A1720003C02F2": {
+			"isa": "XCConfigurationList",
+			"defaultConfigurationIsVisible": "0",
+			"defaultConfigurationName": "Release",
+			"buildConfigurations": [
+				"E4B69B4E0A3A1720003C02F2",
+				"E4B69B4F0A3A1720003C02F2"
+			]
+		},
+		"BF62781A2BADEBFE008864C1": {
+			"path": "ofxiOSGLKViewController.h",
+			"isa": "PBXFileReference",
+			"lastKnownFileType": "sourcecode.c.h",
+			"sourceTree": "<group>",
+			"fileEncoding": "4"
+		},
+		"E4B69B5F0A3A1757003C02F2": {
+			"isa": "XCConfigurationList",
+			"defaultConfigurationIsVisible": "0",
+			"defaultConfigurationName": "Release",
+			"buildConfigurations": [
+				"E4B69B600A3A1757003C02F2",
+				"E4B69B610A3A1757003C02F2"
+			]
+		},
+		"BF6278322BADEBFE008864C1": {
+			"path": "ofxiOSSoundStream.mm",
+			"isa": "PBXFileReference",
+			"lastKnownFileType": "sourcecode.cpp.objcpp",
+			"sourceTree": "<group>",
+			"fileEncoding": "4"
+		},
+		"BF6278B12BADEBFE008864C1": {
+			"isa": "PBXBuildFile",
+			"fileRef": "BF6278562BADEBFE008864C1"
+		},
+		"BF6278A42BADEBFE008864C1": {
+			"isa": "PBXBuildFile",
+			"fileRef": "BF62784A2BADEBFE008864C1"
+		},
+		"BF62788A2BADEBFE008864C1": {
+			"isa": "PBXBuildFile",
+			"fileRef": "BF62782E2BADEBFE008864C1"
+		},
+		"E4B69E200A3A1BDC003C02F2": {
+			"isa": "PBXBuildFile",
+			"fileRef": "E4B69E1D0A3A1BDC003C02F2"
+		},
+		"BF62780B2BADEBFE008864C1": {
+			"path": "ofxAccelerometer.h",
+			"isa": "PBXFileReference",
+			"lastKnownFileType": "sourcecode.c.h",
+			"sourceTree": "<group>",
+			"fileEncoding": "4"
+		},
+		"BF6278302BADEBFE008864C1": {
+			"path": "ofxiOSSoundPlayer.mm",
+			"isa": "PBXFileReference",
+			"lastKnownFileType": "sourcecode.cpp.objcpp",
+			"sourceTree": "<group>",
+			"fileEncoding": "4"
+		},
+		"BF6278042BADE871008864C1": {
+			"isa": "XCBuildConfiguration",
+			"buildSettings": {
+				"CURRENT_PROJECT_VERSION": "1",
+				"CLANG_WARN_RANGE_LOOP_ANALYSIS": "YES",
+				"ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS": "YES",
+				"DEVELOPMENT_ASSET_PATHS": "\"emptymacOSExample/Preview Content\"",
+				"SUPPORTS_MACCATALYST": "YES",
+				"SWIFT_OPTIMIZATION_LEVEL": "-Onone",
+				"CLANG_WARN_INFINITE_RECURSION": "YES",
+				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]": "YES",
+				"ONLY_ACTIVE_ARCH": "YES",
+				"INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone": "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight",
+				"GCC_WARN_UNUSED_VARIABLE": "YES",
+				"CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING": "YES",
+				"INFOPLIST_KEY_LSApplicationCategoryType": "public.app-category.games",
+				"CLANG_WARN_UNGUARDED_AVAILABILITY": "YES_AGGRESSIVE",
+				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphoneos*]": "UIStatusBarStyleDefault",
+				"CLANG_WARN_BOOL_CONVERSION": "YES",
+				"CLANG_WARN_ENUM_CONVERSION": "YES",
+				"CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS": "YES",
+				"CLANG_WARN_COMMA": "YES",
+				"SWIFT_ACTIVE_COMPILATION_CONDITIONS": "DEBUG $(inherited)",
+				"MACOSX_DEPLOYMENT_TARGET": "14.3",
+				"CLANG_WARN_INT_CONVERSION": "YES",
+				"SWIFT_VERSION": "5.0",
+				"ENABLE_STRICT_OBJC_MSGSEND": "YES",
+				"TARGETED_DEVICE_FAMILY": "1,2,3,7",
+				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]": "UIStatusBarStyleDefault",
+				"CLANG_WARN_SUSPICIOUS_MOVE": "YES",
+				"CLANG_WARN_EMPTY_BODY": "YES",
+				"CLANG_WARN_DOCUMENTATION_COMMENTS": "YES",
+				"SDKROOT": "auto",
+				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]": "@executable_path/../Frameworks",
+				"CODE_SIGN_STYLE": "Automatic",
+				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphoneos*]": "YES",
+				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphonesimulator*]": "YES",
+				"MTL_ENABLE_DEBUG_INFO": "INCLUDE_SOURCE",
+				"MTL_FAST_MATH": "YES",
+				"IPHONEOS_DEPLOYMENT_TARGET": "17.4",
+				"SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD": "YES",
+				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphonesimulator*]": "YES",
+				"GENERATE_INFOPLIST_FILE": "YES",
+				"LD_RUNPATH_SEARCH_PATHS": "@executable_path/Frameworks",
+				"CLANG_ENABLE_OBJC_ARC": "YES",
+				"GCC_WARN_UNINITIALIZED_AUTOS": "YES_AGGRESSIVE",
+				"GCC_C_LANGUAGE_STANDARD": "c17",
+				"CLANG_ENABLE_MODULES": "YES",
+				"ALWAYS_SEARCH_USER_PATHS": "YES",
+				"CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF": "YES",
+				"CLANG_WARN_DIRECT_OBJC_ISA_USAGE": "YES_ERROR",
+				"CLANG_WARN_CONSTANT_CONVERSION": "YES",
+				"GCC_NO_COMMON_BLOCKS": "YES",
+				"MARKETING_VERSION": "1.0",
+				"CODE_SIGN_ENTITLEMENTS": "emptymacOSExample/emptymacOSExample.entitlements",
+				"CLANG_WARN_OBJC_ROOT_CLASS": "YES_ERROR",
+				"PRODUCT_NAME": "$(TARGET_NAME)",
+				"SUPPORTED_PLATFORMS": "appletvos appletvsimulator iphoneos iphonesimulator macosx xros xrsimulator",
+				"GCC_WARN_64_TO_32_BIT_CONVERSION": "YES",
+				"CLANG_CXX_LANGUAGE_STANDARD": "c++20",
+				"GCC_DYNAMIC_NO_PIC": "NO",
+				"CLANG_WARN__DUPLICATE_METHOD_MATCH": "YES",
+				"DEBUG_INFORMATION_FORMAT": "dwarf",
+				"LOCALIZATION_PREFERS_STRING_CATALOGS": "YES",
+				"GCC_WARN_UNDECLARED_SELECTOR": "YES",
+				"CLANG_ANALYZER_NONNULL": "YES",
+				"ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME": "AccentColor",
+				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]": "YES",
+				"CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION": "YES_AGGRESSIVE",
+				"INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad": "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight",
+				"CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER": "YES",
+				"CLANG_ENABLE_OBJC_WEAK": "YES",
+				"CLANG_WARN_STRICT_PROTOTYPES": "YES",
+				"ENABLE_USER_SCRIPT_SANDBOXING": "YES",
+				"GCC_WARN_ABOUT_RETURN_TYPE": "YES_ERROR",
+				"GCC_WARN_UNUSED_FUNCTION": "YES",
+				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]": "YES",
+				"CLANG_WARN_UNREACHABLE_CODE": "YES",
+				"SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD": "YES",
+				"ASSETCATALOG_COMPILER_APPICON_NAME": "AppIcon",
+				"ENABLE_PREVIEWS": "YES",
+				"SWIFT_EMIT_LOC_STRINGS": "YES",
+				"CLANG_WARN_NON_LITERAL_NULL_CONVERSION": "YES",
+				"GCC_PREPROCESSOR_DEFINITIONS": [
+					"DEBUG=1",
+					"$(inherited)"
+				],
+				"CLANG_WARN_OBJC_LITERAL_CONVERSION": "YES",
+				"PRODUCT_BUNDLE_IDENTIFIER": "com.openFrameworks.emptyExample"
+			},
+			"name": "Debug"
+		},
+		"BF6278A22BADEBFE008864C1": {
+			"isa": "PBXBuildFile",
+			"fileRef": "BF6278472BADEBFE008864C1"
+		},
+		"E4EB6923138AFD0F00A09F29": {
+			"path": "Project.xcconfig",
+			"isa": "PBXFileReference",
+			"lastKnownFileType": "text.xcconfig",
+			"sourceTree": "<group>",
+			"fileEncoding": "4"
+		},
+		"E4B6FCAD0C3E899E008CF71C": {
+			"path": "openFrameworks-Info.plist",
+			"isa": "PBXFileReference",
+			"lastKnownFileType": "text.plist.xml",
+			"sourceTree": "<group>",
+			"fileEncoding": "4"
+		},
+		"BF6278A02BADEBFE008864C1": {
+			"isa": "PBXBuildFile",
+			"fileRef": "BF6278442BADEBFE008864C1"
+		},
+		"E4B69B600A3A1757003C02F2": {
+			"baseConfigurationReference": "E4EB6923138AFD0F00A09F29",
+			"isa": "XCBuildConfiguration",
+			"buildSettings": {
+				"INFOPLIST_KEY_NSCameraUsageDescription": "This app needs to access the camera",
+				"HEADER_SEARCH_PATHS": [
+					"$(OF_CORE_HEADERS)",
+					"src"
+				],
+				"GCC_DYNAMIC_NO_PIC": "NO",
+				"FRAMEWORK_SEARCH_PATHS": "$(inherited)",
+				"COPY_PHASE_STRIP": "NO",
+				"ARCHS": "$(ARCHS_STANDARD)",
+				"OTHER_LDFLAGS": [
+					"$(OF_CORE_LIBS)",
+					"$(OF_CORE_FRAMEWORKS)",
+					"$(LIB_OF_DEBUG)"
+				],
+				"INFOPLIST_KEY_LSApplicationCategoryType": "public.app-category.games",
+				"LIBRARY_SEARCH_PATHS": "$(inherited)",
+				"INFOPLIST_KEY_NSMicrophoneUsageDescription": "This app needs to access the microphone"
+			},
+			"name": "Debug"
+		},
+		"BF6278192BADEBFE008864C1": {
+			"path": "ofxiOSGLKView.mm",
+			"isa": "PBXFileReference",
+			"lastKnownFileType": "sourcecode.cpp.objcpp",
+			"sourceTree": "<group>",
+			"fileEncoding": "4"
+		},
+		"BF6278892BADEBFE008864C1": {
+			"isa": "PBXBuildFile",
+			"fileRef": "BF62782A2BADEBFE008864C1"
+		},
+		"BF6278172BADEBFE008864C1": {
+			"path": "ofxiOSEAGLView.mm",
+			"isa": "PBXFileReference",
+			"lastKnownFileType": "sourcecode.cpp.objcpp",
+			"sourceTree": "<group>",
+			"fileEncoding": "4"
+		},
+		"BF62786F2BADEBFE008864C1": {
+			"path": "ofxiOS",
+			"isa": "PBXGroup",
+			"children": [
+				"BF62786E2BADEBFE008864C1"
+			],
+			"sourceTree": "<group>"
+		},
+		"BF6278872BADEBFE008864C1": {
+			"isa": "PBXBuildFile",
+			"fileRef": "BF6278282BADEBFE008864C1"
+		},
+		"BF6278152BADEBFE008864C1": {
+			"path": "ofxiOSAppDelegate.mm",
+			"isa": "PBXFileReference",
+			"lastKnownFileType": "sourcecode.cpp.objcpp",
+			"sourceTree": "<group>",
+			"fileEncoding": "4"
+		},
+		"BF62786D2BADEBFE008864C1": {
+			"path": "ofxtvOS.h",
+			"isa": "PBXFileReference",
+			"lastKnownFileType": "sourcecode.c.h",
+			"sourceTree": "<group>",
+			"fileEncoding": "4"
+		},
+		"BF6278852BADEBFE008864C1": {
+			"isa": "PBXBuildFile",
+			"fileRef": "BF6278262BADEBFE008864C1"
+		},
+		"BF6278782BADEBFE008864C1": {
+			"isa": "PBXBuildFile",
+			"fileRef": "BF6278172BADEBFE008864C1"
+		},
+		"BF6278132BADEBFE008864C1": {
+			"path": "app",
+			"isa": "PBXGroup",
+			"children": [
+				"BF6278102BADEBFE008864C1",
+				"BF6278112BADEBFE008864C1",
+				"BF6278122BADEBFE008864C1"
+			],
+			"sourceTree": "<group>"
+		},
+		"BF62786B2BADEBFE008864C1": {
+			"path": "ofxiOSExtensions.h",
+			"isa": "PBXFileReference",
+			"lastKnownFileType": "sourcecode.c.h",
+			"sourceTree": "<group>",
+			"fileEncoding": "4"
+		},
+		"BF62785E2BADEBFE008864C1": {
+			"path": "ofxiPhoneExtras.h",
+			"isa": "PBXFileReference",
+			"lastKnownFileType": "sourcecode.c.h",
+			"sourceTree": "<group>",
+			"fileEncoding": "4"
+		},
+		"BF6278832BADEBFE008864C1": {
+			"isa": "PBXBuildFile",
+			"fileRef": "BF6278242BADEBFE008864C1"
+		},
+		"BF6278762BADEBFE008864C1": {
+			"isa": "PBXBuildFile",
+			"fileRef": "BF6278152BADEBFE008864C1"
+		},
+		"BF6278112BADEBFE008864C1": {
+			"path": "ofAppiOSWindow.mm",
+			"isa": "PBXFileReference",
+			"lastKnownFileType": "sourcecode.cpp.objcpp",
+			"sourceTree": "<group>",
+			"fileEncoding": "4"
+		},
+		"BF62785C2BADEBFE008864C1": {
+			"path": "ofxiOSMapKitDelegate.mm",
+			"isa": "PBXFileReference",
+			"lastKnownFileType": "sourcecode.cpp.objcpp",
+			"sourceTree": "<group>",
+			"fileEncoding": "4"
+		},
+		"BF6278812BADEBFE008864C1": {
+			"isa": "PBXBuildFile",
+			"fileRef": "BF6278202BADEBFE008864C1"
+		},
+		"BF6278742BADEBFE008864C1": {
+			"isa": "PBXBuildFile",
+			"fileRef": "BF6278112BADEBFE008864C1"
+		},
+		"BF6277F62BADE870008864C1": {
+			"buildConfigurationList": "BF6278032BADE871008864C1",
+			"productReference": "BF6277F72BADE870008864C1",
+			"productType": "com.apple.product-type.application",
+			"productName": "emptymacOSExample",
+			"isa": "PBXNativeTarget",
+			"buildPhases": [
+				"BF6278092BADE950008864C1",
+				"BF6277F32BADE870008864C1",
+				"BF6277F42BADE870008864C1",
+				"BF6277F52BADE870008864C1"
+			],
+			"dependencies": [],
+			"name": "emptyExample",
+			"buildRules": []
+		},
+		"BF62785A2BADEBFE008864C1": {
+			"path": "ofxiOSMapKit.mm",
+			"isa": "PBXFileReference",
+			"lastKnownFileType": "sourcecode.cpp.objcpp",
+			"sourceTree": "<group>",
+			"fileEncoding": "4"
+		},
+		"BF6277F42BADE870008864C1": {
+			"isa": "PBXFrameworksBuildPhase",
+			"buildActionMask": "2147483647",
+			"files": [
+				"BF6278C22BADEC41008864C1"
+			],
+			"runOnlyForDeploymentPostprocessing": "0"
+		},
+		"BF6278702BADEBFE008864C1": {
+			"isa": "PBXBuildFile",
+			"fileRef": "BF62780A2BADEBFE008864C1"
+		},
+		"E4B69B580A3A1756003C02F2": {
+			"isa": "PBXSourcesBuildPhase",
+			"buildActionMask": "2147483647",
+			"files": [
+				"BF6278862BADEBFE008864C1",
+				"BF6278802BADEBFE008864C1",
+				"BF6278AA2BADEBFE008864C1",
+				"BF62789C2BADEBFE008864C1",
+				"E4B69E200A3A1BDC003C02F2",
+				"BF62787A2BADEBFE008864C1",
+				"BF6278A42BADEBFE008864C1",
+				"BF6278762BADEBFE008864C1",
+				"BF6278B62BADEBFE008864C1",
+				"E4B69E210A3A1BDC003C02F2",
+				"BF6278B42BADEBFE008864C1",
+				"BF6278B82BADEBFE008864C1",
+				"BF6278A82BADEBFE008864C1",
+				"BF6278982BADEBFE008864C1",
+				"BF6278A02BADEBFE008864C1",
+				"BF62789A2BADEBFE008864C1",
+				"BF6278B02BADEBFE008864C1",
+				"BF6278742BADEBFE008864C1",
+				"BF6278702BADEBFE008864C1",
+				"BF62788E2BADEBFE008864C1",
+				"BF6278BE2BADEBFE008864C1",
+				"BF6278B22BADEBFE008864C1",
+				"BF62787E2BADEBFE008864C1",
+				"BF6278AC2BADEBFE008864C1",
+				"BF62788A2BADEBFE008864C1",
+				"BF6278A62BADEBFE008864C1",
+				"BF6278BC2BADEBFE008864C1",
+				"BF62789E2BADEBFE008864C1",
+				"BF62788C2BADEBFE008864C1",
+				"BF6278822BADEBFE008864C1",
+				"BF6278BA2BADEBFE008864C1",
+				"BF6278A22BADEBFE008864C1",
+				"BF6278842BADEBFE008864C1",
+				"BF6278782BADEBFE008864C1",
+				"BF6278922BADEBFE008864C1",
+				"BF62787C2BADEBFE008864C1",
+				"BF6278902BADEBFE008864C1",
+				"BF6278AE2BADEBFE008864C1",
+				"BF6278882BADEBFE008864C1",
+				"BF6278942BADEBFE008864C1",
+				"BF6278962BADEBFE008864C1"
+			],
+			"runOnlyForDeploymentPostprocessing": "0"
+		},
+		"BF6278592BADEBFE008864C1": {
+			"path": "ofxiOSMapKit.h",
+			"isa": "PBXFileReference",
+			"lastKnownFileType": "sourcecode.c.h",
+			"sourceTree": "<group>",
+			"fileEncoding": "4"
+		},
+		"BF6278062BADE93C008864C1": {
+			"isa": "PBXBuildFile",
+			"fileRef": "E4B69E1D0A3A1BDC003C02F2"
+		},
+		"BF62783F2BADEBFE008864C1": {
+			"path": "sound",
+			"isa": "PBXGroup",
+			"children": [
+				"BF62782D2BADEBFE008864C1",
+				"BF62782E2BADEBFE008864C1",
+				"BF62782F2BADEBFE008864C1",
+				"BF6278302BADEBFE008864C1",
+				"BF6278312BADEBFE008864C1",
+				"BF6278322BADEBFE008864C1",
+				"BF6278332BADEBFE008864C1",
+				"BF6278342BADEBFE008864C1",
+				"BF6278352BADEBFE008864C1",
+				"BF6278362BADEBFE008864C1",
+				"BF6278372BADEBFE008864C1",
+				"BF6278382BADEBFE008864C1",
+				"BF6278392BADEBFE008864C1",
+				"BF62783A2BADEBFE008864C1",
+				"BF62783B2BADEBFE008864C1",
+				"BF62783C2BADEBFE008864C1",
+				"BF62783D2BADEBFE008864C1",
+				"BF62783E2BADEBFE008864C1"
+			],
+			"sourceTree": "<group>"
+		},
+		"BF6278BE2BADEBFE008864C1": {
+			"isa": "PBXBuildFile",
+			"fileRef": "BF6278672BADEBFE008864C1"
+		},
+		"BF6278572BADEBFE008864C1": {
+			"path": "ofxiOSKeyboard.h",
+			"isa": "PBXFileReference",
+			"lastKnownFileType": "sourcecode.c.h",
+			"sourceTree": "<group>",
+			"fileEncoding": "4"
+		},
+		"BF62783D2BADEBFE008864C1": {
+			"path": "SoundStream.h",
+			"isa": "PBXFileReference",
+			"lastKnownFileType": "sourcecode.c.h",
+			"sourceTree": "<group>",
+			"fileEncoding": "4"
+		},
+		"BF6278AF2BADEBFE008864C1": {
+			"isa": "PBXBuildFile",
+			"fileRef": "BF6278542BADEBFE008864C1"
+		},
+		"BF6278552BADEBFE008864C1": {
+			"path": "ofxiOSImagePicker.h",
+			"isa": "PBXFileReference",
+			"lastKnownFileType": "sourcecode.c.h",
+			"sourceTree": "<group>",
+			"fileEncoding": "4"
+		},
+		"BF6278482BADEBFE008864C1": {
+			"path": "tvOS",
+			"isa": "PBXGroup",
+			"children": [
+				"BF6278402BADEBFE008864C1",
+				"BF6278412BADEBFE008864C1",
+				"BF6278422BADEBFE008864C1",
+				"BF6278432BADEBFE008864C1",
+				"BF6278442BADEBFE008864C1",
+				"BF6278452BADEBFE008864C1",
+				"BF6278462BADEBFE008864C1",
+				"BF6278472BADEBFE008864C1"
+			],
+			"sourceTree": "<group>"
+		},
+		"BF62783B2BADEBFE008864C1": {
+			"path": "SoundOutputStream.h",
+			"isa": "PBXFileReference",
+			"lastKnownFileType": "sourcecode.c.h",
+			"sourceTree": "<group>",
+			"fileEncoding": "4"
+		},
+		"BF62782E2BADEBFE008864C1": {
+			"path": "AVSoundPlayer.m",
+			"isa": "PBXFileReference",
+			"lastKnownFileType": "sourcecode.c.objc",
+			"sourceTree": "<group>",
+			"fileEncoding": "4"
+		},
+		"BF6278AD2BADEBFE008864C1": {
+			"isa": "PBXBuildFile",
+			"fileRef": "BF6278522BADEBFE008864C1"
+		},
+		"BF6278462BADEBFE008864C1": {
+			"path": "ofxtvOSViewController.h",
+			"isa": "PBXFileReference",
+			"lastKnownFileType": "sourcecode.c.h",
+			"sourceTree": "<group>",
+			"fileEncoding": "4"
+		},
+		"BF6278532BADEBFE008864C1": {
+			"path": "ofxiOSExtras.h",
+			"isa": "PBXFileReference",
+			"lastKnownFileType": "sourcecode.c.h",
+			"sourceTree": "<group>",
+			"fileEncoding": "4"
+		},
+		"BF62789E2BADEBFE008864C1": {
+			"isa": "PBXBuildFile",
+			"fileRef": "BF6278432BADEBFE008864C1"
+		},
+		"E4B69E1C0A3A1BDC003C02F2": {
+			"path": "src",
+			"isa": "PBXGroup",
+			"children": [
+				"E4B69E1D0A3A1BDC003C02F2",
+				"E4B69E1E0A3A1BDC003C02F2",
+				"E4B69E1F0A3A1BDC003C02F2"
+			],
+			"sourceTree": "SOURCE_ROOT"
+		},
+		"BF62782C2BADEBFE008864C1": {
+			"path": "gl",
+			"isa": "PBXGroup",
+			"children": [
+				"BF6278232BADEBFE008864C1",
+				"BF6278242BADEBFE008864C1",
+				"BF6278252BADEBFE008864C1",
+				"BF6278262BADEBFE008864C1",
+				"BF6278272BADEBFE008864C1",
+				"BF6278282BADEBFE008864C1",
+				"BF6278292BADEBFE008864C1",
+				"BF62782A2BADEBFE008864C1",
+				"BF62782B2BADEBFE008864C1"
+			],
+			"sourceTree": "<group>"
+		},
+		"BF6278AB2BADEBFE008864C1": {
+			"isa": "PBXBuildFile",
+			"fileRef": "BF6278502BADEBFE008864C1"
+		},
+		"BF6278442BADEBFE008864C1": {
+			"path": "ofxtvOSURLFileLoader.cpp",
+			"isa": "PBXFileReference",
+			"lastKnownFileType": "sourcecode.cpp.cpp",
+			"sourceTree": "<group>",
+			"fileEncoding": "4"
+		},
+		"BF6278512BADEBFE008864C1": {
+			"path": "ofxiOSExternalDisplay.h",
+			"isa": "PBXFileReference",
+			"lastKnownFileType": "sourcecode.c.h",
+			"sourceTree": "<group>",
+			"fileEncoding": "4"
+		},
+		"BF62789C2BADEBFE008864C1": {
+			"isa": "PBXBuildFile",
+			"fileRef": "BF6278412BADEBFE008864C1"
+		},
+		"E4B69B4C0A3A1720003C02F2": {
+			"buildConfigurationList": "E4B69B4D0A3A1720003C02F2",
+			"targets": [
+				"BF6277F62BADE870008864C1",
+				"E4B69B5A0A3A1756003C02F2"
+			],
+			"developmentRegion": "en",
+			"knownRegions": [
+				"en",
+				"Base"
+			],
+			"isa": "PBXProject",
+			"compatibilityVersion": "Xcode 3.2",
+			"productRefGroup": "E4B69B4A0A3A1720003C02F2",
+			"projectDirPath": "",
+			"attributes": {
+				"LastSwiftUpdateCheck": "1530",
+				"BuildIndependentTargetsInParallel": "YES",
+				"LastUpgradeCheck": "1530",
+				"TargetAttributes": {
+					"BF6277F62BADE870008864C1": {
+						"CreatedOnToolsVersion": "15.3"
+					}
+				}
+			},
+			"hasScannedForEncodings": "0",
+			"projectRoot": "",
+			"mainGroup": "E4B69B4A0A3A1720003C02F2"
+		},
+		"BF62782A2BADEBFE008864C1": {
+			"path": "ES2Renderer.m",
+			"isa": "PBXFileReference",
+			"lastKnownFileType": "sourcecode.c.objc",
+			"sourceTree": "<group>",
+			"fileEncoding": "4"
+		},
+		"BF6278422BADEBFE008864C1": {
+			"path": "ofxtvOSGLKViewController.h",
+			"isa": "PBXFileReference",
+			"lastKnownFileType": "sourcecode.c.h",
+			"sourceTree": "<group>",
+			"fileEncoding": "4"
+		},
+		"BF62789A2BADEBFE008864C1": {
+			"isa": "PBXBuildFile",
+			"fileRef": "BF62783E2BADEBFE008864C1"
+		},
+		"E4B69B4A0A3A1720003C02F2": {
+			"isa": "PBXGroup",
+			"sourceTree": "<group>",
+			"children": [
+				"191CD6FA2847E21E0085CBB6",
+				"E4B6FCAD0C3E899E008CF71C",
+				"E4EB6923138AFD0F00A09F29",
+				"E4B69E1C0A3A1BDC003C02F2",
+				"191EF70929D778A400F35F26",
+				"BB4B014C10F69532006C3DED",
+				"E4B69B5B0A3A1756003C02F2",
+				"BF6277F72BADE870008864C1",
+				"BF6278C02BADEC41008864C1"
+			]
+		},
+		"BF6278402BADEBFE008864C1": {
+			"path": "ofxtvOSAppDelegate.h",
+			"isa": "PBXFileReference",
+			"lastKnownFileType": "sourcecode.c.h",
+			"sourceTree": "<group>",
+			"fileEncoding": "4"
+		},
+		"BF6278072BADE942008864C1": {
+			"isa": "PBXBuildFile",
+			"fileRef": "E4B69E1E0A3A1BDC003C02F2"
+		},
+		"BF6278B22BADEBFE008864C1": {
+			"isa": "PBXBuildFile",
+			"fileRef": "BF6278582BADEBFE008864C1"
+		},
+		"BF6278052BADE871008864C1": {
+			"isa": "XCBuildConfiguration",
+			"buildSettings": {
+				"CURRENT_PROJECT_VERSION": "1",
+				"CLANG_WARN_RANGE_LOOP_ANALYSIS": "YES",
+				"ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS": "YES",
+				"DEVELOPMENT_ASSET_PATHS": "\"emptymacOSExample/Preview Content\"",
+				"SUPPORTS_MACCATALYST": "YES",
+				"CLANG_WARN_INFINITE_RECURSION": "YES",
+				"SWIFT_COMPILATION_MODE": "wholemodule",
+				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]": "YES",
+				"INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone": "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight",
+				"GCC_WARN_UNUSED_VARIABLE": "YES",
+				"CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING": "YES",
+				"INFOPLIST_KEY_LSApplicationCategoryType": "public.app-category.games",
+				"CLANG_WARN_UNGUARDED_AVAILABILITY": "YES_AGGRESSIVE",
+				"COPY_PHASE_STRIP": "NO",
+				"CLANG_WARN_BOOL_CONVERSION": "YES",
+				"CLANG_WARN_ENUM_CONVERSION": "YES",
+				"CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS": "YES",
+				"CLANG_WARN_COMMA": "YES",
+				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphoneos*]": "UIStatusBarStyleDefault",
+				"MACOSX_DEPLOYMENT_TARGET": "14.3",
+				"CLANG_WARN_INT_CONVERSION": "YES",
+				"SWIFT_VERSION": "5.0",
+				"ENABLE_STRICT_OBJC_MSGSEND": "YES",
+				"TARGETED_DEVICE_FAMILY": "1,2,3,7",
+				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]": "UIStatusBarStyleDefault",
+				"CLANG_WARN_SUSPICIOUS_MOVE": "YES",
+				"CLANG_WARN_EMPTY_BODY": "YES",
+				"CLANG_WARN_DOCUMENTATION_COMMENTS": "YES",
+				"SDKROOT": "auto",
+				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]": "@executable_path/../Frameworks",
+				"CODE_SIGN_STYLE": "Automatic",
+				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphoneos*]": "YES",
+				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphonesimulator*]": "YES",
+				"MTL_ENABLE_DEBUG_INFO": "NO",
+				"MTL_FAST_MATH": "YES",
+				"IPHONEOS_DEPLOYMENT_TARGET": "17.4",
+				"SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD": "YES",
+				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphonesimulator*]": "YES",
+				"GENERATE_INFOPLIST_FILE": "YES",
+				"LD_RUNPATH_SEARCH_PATHS": "@executable_path/Frameworks",
+				"CLANG_ENABLE_OBJC_ARC": "YES",
+				"GCC_WARN_UNINITIALIZED_AUTOS": "YES_AGGRESSIVE",
+				"GCC_C_LANGUAGE_STANDARD": "c17",
+				"CLANG_ENABLE_MODULES": "YES",
+				"ALWAYS_SEARCH_USER_PATHS": "YES",
+				"CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF": "YES",
+				"CLANG_WARN_DIRECT_OBJC_ISA_USAGE": "YES_ERROR",
+				"CLANG_WARN_CONSTANT_CONVERSION": "YES",
+				"GCC_NO_COMMON_BLOCKS": "YES",
+				"MARKETING_VERSION": "1.0",
+				"CODE_SIGN_ENTITLEMENTS": "emptymacOSExample/emptymacOSExample.entitlements",
+				"CLANG_WARN_OBJC_ROOT_CLASS": "YES_ERROR",
+				"PRODUCT_NAME": "$(TARGET_NAME)",
+				"SUPPORTED_PLATFORMS": "appletvos appletvsimulator iphoneos iphonesimulator macosx xros xrsimulator",
+				"GCC_WARN_64_TO_32_BIT_CONVERSION": "YES",
+				"CLANG_CXX_LANGUAGE_STANDARD": "c++20",
+				"LOCALIZATION_PREFERS_STRING_CATALOGS": "YES",
+				"CLANG_WARN__DUPLICATE_METHOD_MATCH": "YES",
+				"DEBUG_INFORMATION_FORMAT": "dwarf-with-dsym",
+				"GCC_WARN_UNDECLARED_SELECTOR": "YES",
+				"CLANG_ANALYZER_NONNULL": "YES",
+				"ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME": "AccentColor",
+				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]": "YES",
+				"CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION": "YES_AGGRESSIVE",
+				"INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad": "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight",
+				"CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER": "YES",
+				"CLANG_ENABLE_OBJC_WEAK": "YES",
+				"CLANG_WARN_STRICT_PROTOTYPES": "YES",
+				"ENABLE_USER_SCRIPT_SANDBOXING": "YES",
+				"GCC_WARN_ABOUT_RETURN_TYPE": "YES_ERROR",
+				"GCC_WARN_UNUSED_FUNCTION": "YES",
+				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]": "YES",
+				"CLANG_WARN_UNREACHABLE_CODE": "YES",
+				"SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD": "YES",
+				"ASSETCATALOG_COMPILER_APPICON_NAME": "AppIcon",
+				"ENABLE_NS_ASSERTIONS": "NO",
+				"ENABLE_PREVIEWS": "YES",
+				"SWIFT_EMIT_LOC_STRINGS": "YES",
+				"CLANG_WARN_NON_LITERAL_NULL_CONVERSION": "YES",
+				"CLANG_WARN_OBJC_LITERAL_CONVERSION": "YES",
+				"PRODUCT_BUNDLE_IDENTIFIER": "com.openFrameworks.emptyExample"
+			},
+			"name": "Release"
+		},
+		"BF6278B02BADEBFE008864C1": {
+			"isa": "PBXBuildFile",
+			"fileRef": "BF6278562BADEBFE008864C1"
+		},
+		"BF6278032BADE871008864C1": {
+			"isa": "XCConfigurationList",
+			"defaultConfigurationIsVisible": "0",
+			"defaultConfigurationName": "Release",
+			"buildConfigurations": [
+				"BF6278042BADE871008864C1",
+				"BF6278052BADE871008864C1"
+			]
+		},
+		"BF6278292BADEBFE008864C1": {
+			"path": "ES2Renderer.h",
+			"isa": "PBXFileReference",
+			"lastKnownFileType": "sourcecode.c.h",
+			"sourceTree": "<group>",
+			"fileEncoding": "4"
+		},
+		"BF6278A82BADEBFE008864C1": {
+			"isa": "PBXBuildFile",
+			"fileRef": "BF62784E2BADEBFE008864C1"
+		},
+		"E4B69B610A3A1757003C02F2": {
+			"baseConfigurationReference": "E4EB6923138AFD0F00A09F29",
+			"isa": "XCBuildConfiguration",
+			"buildSettings": {
+				"INFOPLIST_KEY_NSCameraUsageDescription": "This app needs to access the camera",
+				"HEADER_SEARCH_PATHS": [
+					"$(OF_CORE_HEADERS)",
+					"src"
+				],
+				"FRAMEWORK_SEARCH_PATHS": "$(inherited)",
+				"COPY_PHASE_STRIP": "YES",
+				"ARCHS": "$(ARCHS_STANDARD)",
+				"OTHER_LDFLAGS": [
+					"$(OF_CORE_LIBS)",
+					"$(OF_CORE_FRAMEWORKS)",
+					"$(LIB_OF)"
+				],
+				"INFOPLIST_KEY_LSApplicationCategoryType": "public.app-category.games",
+				"LIBRARY_SEARCH_PATHS": "$(inherited)",
+				"baseConfigurationReference": "E4EB6923138AFD0F00A09F29",
+				"INFOPLIST_KEY_NSMicrophoneUsageDescription": "This app needs to access the microphone"
+			},
+			"name": "Release"
+		},
+		"BF6278992BADEBFE008864C1": {
+			"isa": "PBXBuildFile",
+			"fileRef": "BF62783C2BADEBFE008864C1"
+		},
+		"BF62780F2BADEBFE008864C1": {
+			"path": "ofxAccelerometer",
+			"isa": "PBXGroup",
+			"children": [
+				"BF62780C2BADEBFE008864C1"
+			],
+			"sourceTree": "<group>"
+		},
+		"BF6278272BADEBFE008864C1": {
+			"path": "ES1Renderer.h",
+			"isa": "PBXFileReference",
+			"lastKnownFileType": "sourcecode.c.h",
+			"sourceTree": "<group>",
+			"fileEncoding": "4"
+		},
+		"BF6278A62BADEBFE008864C1": {
+			"isa": "PBXBuildFile",
+			"fileRef": "BF62784C2BADEBFE008864C1"
+		},
+		"BF62787F2BADEBFE008864C1": {
+			"isa": "PBXBuildFile",
+			"fileRef": "BF62781D2BADEBFE008864C1"
+		},
+		"BF6278972BADEBFE008864C1": {
+			"isa": "PBXBuildFile",
+			"fileRef": "BF62783A2BADEBFE008864C1"
+		},
+		"BF6278252BADEBFE008864C1": {
+			"path": "EAGLView.h",
+			"isa": "PBXFileReference",
+			"lastKnownFileType": "sourcecode.c.h",
+			"sourceTree": "<group>",
+			"fileEncoding": "4"
+		},
+		"BF6278182BADEBFE008864C1": {
+			"path": "ofxiOSGLKView.h",
+			"isa": "PBXFileReference",
+			"lastKnownFileType": "sourcecode.c.h",
+			"sourceTree": "<group>",
+			"fileEncoding": "4"
+		},
+		"BF62787D2BADEBFE008864C1": {
+			"isa": "PBXBuildFile",
+			"fileRef": "BF62781B2BADEBFE008864C1"
+		},
+		"BF6278952BADEBFE008864C1": {
+			"isa": "PBXBuildFile",
+			"fileRef": "BF6278372BADEBFE008864C1"
+		},
+		"BF6278882BADEBFE008864C1": {
+			"isa": "PBXBuildFile",
+			"fileRef": "BF62782A2BADEBFE008864C1"
+		},
+		"BF6278232BADEBFE008864C1": {
+			"path": "EAGLKView.h",
+			"isa": "PBXFileReference",
+			"lastKnownFileType": "sourcecode.c.h",
+			"sourceTree": "<group>",
+			"fileEncoding": "4"
+		},
+		"BF6278162BADEBFE008864C1": {
+			"path": "ofxiOSEAGLView.h",
+			"isa": "PBXFileReference",
+			"lastKnownFileType": "sourcecode.c.h",
+			"sourceTree": "<group>",
+			"fileEncoding": "4"
+		},
+		"BF62787B2BADEBFE008864C1": {
+			"isa": "PBXBuildFile",
+			"fileRef": "BF6278192BADEBFE008864C1"
+		},
+		"BF62786E2BADEBFE008864C1": {
+			"path": "src",
+			"isa": "PBXGroup",
+			"children": [
+				"BF6278132BADEBFE008864C1",
+				"BF62781E2BADEBFE008864C1",
+				"BF6278222BADEBFE008864C1",
+				"BF62782C2BADEBFE008864C1",
+				"BF62783F2BADEBFE008864C1",
+				"BF6278482BADEBFE008864C1",
+				"BF62785F2BADEBFE008864C1",
+				"BF6278682BADEBFE008864C1",
+				"BF6278692BADEBFE008864C1",
+				"BF62786A2BADEBFE008864C1",
+				"BF62786B2BADEBFE008864C1",
+				"BF62786C2BADEBFE008864C1",
+				"BF62786D2BADEBFE008864C1"
+			],
+			"sourceTree": "<group>"
+		},
+		"BF6278932BADEBFE008864C1": {
+			"isa": "PBXBuildFile",
+			"fileRef": "BF6278352BADEBFE008864C1"
+		},
+		"BF6278862BADEBFE008864C1": {
+			"isa": "PBXBuildFile",
+			"fileRef": "BF6278282BADEBFE008864C1"
+		},
+		"BF6278212BADEBFE008864C1": {
+			"path": "ofxiOSAlertsListener.h",
+			"isa": "PBXFileReference",
+			"lastKnownFileType": "sourcecode.c.h",
+			"sourceTree": "<group>",
+			"fileEncoding": "4"
+		},
+		"BF6278142BADEBFE008864C1": {
+			"path": "ofxiOSAppDelegate.h",
+			"isa": "PBXFileReference",
+			"lastKnownFileType": "sourcecode.c.h",
+			"sourceTree": "<group>",
+			"fileEncoding": "4"
+		},
+		"BF62786C2BADEBFE008864C1": {
+			"path": "ofxiPhone.h",
+			"isa": "PBXFileReference",
+			"lastKnownFileType": "sourcecode.c.h",
+			"sourceTree": "<group>",
+			"fileEncoding": "4"
+		},
+		"E4A5B60F29BAAAE400C2D356": {
+			"isa": "PBXCopyFilesBuildPhase",
+			"buildActionMask": "2147483647",
+			"dstPath": "",
+			"dstSubfolderSpec": "6",
+			"files": [],
+			"runOnlyForDeploymentPostprocessing": "0"
+		},
+		"BF6278842BADEBFE008864C1": {
+			"isa": "PBXBuildFile",
+			"fileRef": "BF6278262BADEBFE008864C1"
+		},
+		"BF6278912BADEBFE008864C1": {
+			"isa": "PBXBuildFile",
+			"fileRef": "BF6278342BADEBFE008864C1"
+		},
+		"BF6278122BADEBFE008864C1": {
+			"path": "ofxiOSApp.h",
+			"isa": "PBXFileReference",
+			"lastKnownFileType": "sourcecode.c.h",
+			"sourceTree": "<group>",
+			"fileEncoding": "4"
+		},
+		"BF62786A2BADEBFE008864C1": {
+			"path": "ofxiOSConstants.h",
+			"isa": "PBXFileReference",
+			"lastKnownFileType": "sourcecode.c.h",
+			"sourceTree": "<group>",
+			"fileEncoding": "4"
+		},
+		"BF6278822BADEBFE008864C1": {
+			"isa": "PBXBuildFile",
+			"fileRef": "BF6278242BADEBFE008864C1"
+		},
+		"BF6277F72BADE870008864C1": {
+			"path": "emptyExample.app",
+			"isa": "PBXFileReference",
+			"includeInIndex": "0",
+			"explicitFileType": "wrapper.application",
+			"sourceTree": "BUILT_PRODUCTS_DIR"
+		},
+		"BF6278102BADEBFE008864C1": {
+			"path": "ofAppiOSWindow.h",
+			"isa": "PBXFileReference",
+			"lastKnownFileType": "sourcecode.c.h",
+			"sourceTree": "<group>",
+			"fileEncoding": "4"
+		},
+		"BF6278802BADEBFE008864C1": {
+			"isa": "PBXBuildFile",
+			"fileRef": "BF6278202BADEBFE008864C1"
+		},
+		"BF6277F52BADE870008864C1": {
+			"isa": "PBXResourcesBuildPhase",
+			"buildActionMask": "2147483647",
+			"files": [],
+			"runOnlyForDeploymentPostprocessing": "0"
+		},
+		"BF6277F32BADE870008864C1": {
+			"isa": "PBXSourcesBuildPhase",
+			"buildActionMask": "2147483647",
+			"files": [
+				"BF6278892BADEBFE008864C1",
+				"BF62788D2BADEBFE008864C1",
+				"BF6278792BADEBFE008864C1",
+				"BF6278932BADEBFE008864C1",
+				"BF6278852BADEBFE008864C1",
+				"BF62787B2BADEBFE008864C1",
+				"BF6278BB2BADEBFE008864C1",
+				"BF6278B32BADEBFE008864C1",
+				"BF6278072BADE942008864C1",
+				"BF6278712BADEBFE008864C1",
+				"BF6278BF2BADEBFE008864C1",
+				"BF6278A32BADEBFE008864C1",
+				"BF62787F2BADEBFE008864C1",
+				"BF62789F2BADEBFE008864C1",
+				"BF6278B72BADEBFE008864C1",
+				"BF6278952BADEBFE008864C1",
+				"BF6278B92BADEBFE008864C1",
+				"BF62788B2BADEBFE008864C1",
+				"BF6278772BADEBFE008864C1",
+				"BF6278812BADEBFE008864C1",
+				"BF6278B12BADEBFE008864C1",
+				"BF62788F2BADEBFE008864C1",
+				"BF6278992BADEBFE008864C1",
+				"BF6278AD2BADEBFE008864C1",
+				"BF6278A12BADEBFE008864C1",
+				"BF6278B52BADEBFE008864C1",
+				"BF6278082BADE942008864C1",
+				"BF6278A72BADEBFE008864C1",
+				"BF6278A92BADEBFE008864C1",
+				"BF6278752BADEBFE008864C1",
+				"BF6278BD2BADEBFE008864C1",
+				"BF6278832BADEBFE008864C1",
+				"BF62787D2BADEBFE008864C1",
+				"BF6278AB2BADEBFE008864C1",
+				"BF6278972BADEBFE008864C1",
+				"BF6278872BADEBFE008864C1",
+				"BF62789B2BADEBFE008864C1",
+				"BF6278912BADEBFE008864C1",
+				"BF6278062BADE93C008864C1",
+				"BF6278A52BADEBFE008864C1",
+				"BF6278AF2BADEBFE008864C1",
+				"BF62789D2BADEBFE008864C1"
+			],
+			"runOnlyForDeploymentPostprocessing": "0"
+		},
+		"E4B69B5B0A3A1756003C02F2": {
+			"path": "emptyExamplemacOSDebug.app",
+			"isa": "PBXFileReference",
+			"includeInIndex": "0",
+			"explicitFileType": "wrapper.application",
+			"sourceTree": "BUILT_PRODUCTS_DIR"
+		},
+		"BF6278692BADEBFE008864C1": {
+			"path": "ofxiOS.h",
+			"isa": "PBXFileReference",
+			"lastKnownFileType": "sourcecode.c.h",
+			"sourceTree": "<group>",
+			"fileEncoding": "4"
+		},
+		"BF62784F2BADEBFE008864C1": {
+			"path": "ofxiOSEventAdapter.h",
+			"isa": "PBXFileReference",
+			"lastKnownFileType": "sourcecode.c.h",
+			"sourceTree": "<group>",
+			"fileEncoding": "4"
+		},
+		"BF6278672BADEBFE008864C1": {
+			"path": "ofxiOSVideoPlayer.mm",
+			"isa": "PBXFileReference",
+			"lastKnownFileType": "sourcecode.cpp.objcpp",
+			"sourceTree": "<group>",
+			"fileEncoding": "4"
+		},
+		"BF62784D2BADEBFE008864C1": {
+			"path": "ofxiOSCoreMotion.h",
+			"isa": "PBXFileReference",
+			"lastKnownFileType": "sourcecode.c.h",
+			"sourceTree": "<group>",
+			"fileEncoding": "4"
+		},
+		"BF6278BF2BADEBFE008864C1": {
+			"isa": "PBXBuildFile",
+			"fileRef": "BF6278672BADEBFE008864C1"
+		},
+		"BF6278582BADEBFE008864C1": {
+			"path": "ofxiOSKeyboard.mm",
+			"isa": "PBXFileReference",
+			"lastKnownFileType": "sourcecode.cpp.objcpp",
+			"sourceTree": "<group>",
+			"fileEncoding": "4"
+		},
+		"BF6278652BADEBFE008864C1": {
+			"path": "ofxiOSVideoGrabber.mm",
+			"isa": "PBXFileReference",
+			"lastKnownFileType": "sourcecode.cpp.objcpp",
+			"sourceTree": "<group>",
+			"fileEncoding": "4"
+		},
+		"BF62784B2BADEBFE008864C1": {
+			"path": "ofxiOSCoreLocation.h",
+			"isa": "PBXFileReference",
+			"lastKnownFileType": "sourcecode.c.h",
+			"sourceTree": "<group>",
+			"fileEncoding": "4"
+		},
+		"BF62783E2BADEBFE008864C1": {
+			"path": "SoundStream.m",
+			"isa": "PBXFileReference",
+			"lastKnownFileType": "sourcecode.c.objc",
+			"sourceTree": "<group>",
+			"fileEncoding": "4"
+		},
+		"BF6278BD2BADEBFE008864C1": {
+			"isa": "PBXBuildFile",
+			"fileRef": "BF6278652BADEBFE008864C1"
+		},
+		"BF6278562BADEBFE008864C1": {
+			"path": "ofxiOSImagePicker.mm",
+			"isa": "PBXFileReference",
+			"lastKnownFileType": "sourcecode.cpp.objcpp",
+			"sourceTree": "<group>",
+			"fileEncoding": "4"
+		},
+		"BF6278632BADEBFE008864C1": {
+			"path": "AVFoundationVideoPlayer.m",
+			"isa": "PBXFileReference",
+			"lastKnownFileType": "sourcecode.c.objc",
+			"sourceTree": "<group>",
+			"fileEncoding": "4"
+		},
+		"BF62783C2BADEBFE008864C1": {
+			"path": "SoundOutputStream.m",
+			"isa": "PBXFileReference",
+			"lastKnownFileType": "sourcecode.c.objc",
+			"sourceTree": "<group>",
+			"fileEncoding": "4"
+		},
+		"BF6278BB2BADEBFE008864C1": {
+			"isa": "PBXBuildFile",
+			"fileRef": "BF6278632BADEBFE008864C1"
+		},
+		"BF6278AE2BADEBFE008864C1": {
+			"isa": "PBXBuildFile",
+			"fileRef": "BF6278542BADEBFE008864C1"
+		},
+		"BF6278542BADEBFE008864C1": {
+			"path": "ofxiOSExtras.mm",
+			"isa": "PBXFileReference",
+			"lastKnownFileType": "sourcecode.cpp.objcpp",
+			"sourceTree": "<group>",
+			"fileEncoding": "4"
+		},
+		"BF6278612BADEBFE008864C1": {
+			"path": "AVFoundationVideoGrabber.mm",
+			"isa": "PBXFileReference",
+			"lastKnownFileType": "sourcecode.cpp.objcpp",
+			"sourceTree": "<group>",
+			"fileEncoding": "4"
+		},
+		"BF62783A2BADEBFE008864C1": {
+			"path": "SoundInputStream.m",
+			"isa": "PBXFileReference",
+			"lastKnownFileType": "sourcecode.c.objc",
+			"sourceTree": "<group>",
+			"fileEncoding": "4"
+		},
+		"E42962A92163ECCD00A6A9E2": {
+			"alwaysOutOfDate": "1",
+			"inputPaths": [],
+			"buildActionMask": "2147483647",
+			"shellPath": "/bin/sh",
+			"showEnvVarsInLog": "0",
+			"outputPaths": [],
+			"isa": "PBXShellScriptBuildPhase",
+			"runOnlyForDeploymentPostprocessing": "0",
+			"shellScript": "echo \"💾 Compiling Openframeworks\"\nxcodebuild -project \"$OF_PATH/libs/openFrameworksCompiled/project/macos/openFrameworksLib.xcodeproj\" -target openFrameworks -configuration \"${CONFIGURATION}\"  CLANG_CXX_LANGUAGE_STANDARD=$CLANG_CXX_LANGUAGE_STANDARD MACOSX_DEPLOYMENT_TARGET=$MACOSX_DEPLOYMENT_TARGET GCC_PREPROCESSOR_DEFINITIONS=$USER_PREPROCESSOR_DEFINITIONS\n",
+			"name": "Run Script — Compile OF",
+			"files": []
+		},
+		"BF6278AC2BADEBFE008864C1": {
+			"isa": "PBXBuildFile",
+			"fileRef": "BF6278522BADEBFE008864C1"
+		},
+		"BF6278522BADEBFE008864C1": {
+			"path": "ofxiOSExternalDisplay.mm",
+			"isa": "PBXFileReference",
+			"lastKnownFileType": "sourcecode.cpp.objcpp",
+			"sourceTree": "<group>",
+			"fileEncoding": "4"
+		},
+		"BF6278AA2BADEBFE008864C1": {
+			"isa": "PBXBuildFile",
+			"fileRef": "BF6278502BADEBFE008864C1"
+		},
+		"BF6278502BADEBFE008864C1": {
+			"path": "ofxiOSEventAdapter.mm",
+			"isa": "PBXFileReference",
+			"lastKnownFileType": "sourcecode.cpp.objcpp",
+			"sourceTree": "<group>",
+			"fileEncoding": "4"
+		},
+		"BF6278C22BADEC41008864C1": {
+			"isa": "PBXBuildFile",
+			"fileRef": "BF6278C12BADEC41008864C1"
+		},
+		"BF6278082BADE942008864C1": {
+			"isa": "PBXBuildFile",
+			"fileRef": "E4B69E1F0A3A1BDC003C02F2"
+		},
+		"E4B69E1E0A3A1BDC003C02F2": {
+			"path": "src/ofApp.cpp",
+			"isa": "PBXFileReference",
+			"fileEncoding": "4",
+			"name": "ofApp.cpp",
+			"sourceTree": "SOURCE_ROOT",
+			"explicitFileType": "sourcecode.cpp.cpp"
+		},
+		"BF6278C02BADEC41008864C1": {
+			"isa": "PBXGroup",
+			"name": "Frameworks",
+			"children": [
+				"BF6278C12BADEC41008864C1"
+			],
+			"sourceTree": "<group>"
+		},
+		"BF6278392BADEBFE008864C1": {
+			"path": "SoundInputStream.h",
+			"isa": "PBXFileReference",
+			"lastKnownFileType": "sourcecode.c.h",
+			"sourceTree": "<group>",
+			"fileEncoding": "4"
+		},
+		"BF6278B82BADEBFE008864C1": {
+			"isa": "PBXBuildFile",
+			"fileRef": "BF6278612BADEBFE008864C1"
+		},
+		"E4B69B4E0A3A1720003C02F2": {
+			"baseConfigurationReference": "E4EB6923138AFD0F00A09F29",
+			"isa": "XCBuildConfiguration",
+			"buildSettings": {
+				"GCC_WARN_UNUSED_VARIABLE": "NO",
+				"HEADER_SEARCH_PATHS": [
+					"$(OF_CORE_HEADERS)",
+					"src"
+				],
+				"OTHER_CPLUSPLUSFLAGS": "-D__MACOSX_CORE__",
+				"CODE_SIGN_ENTITLEMENTS": "of.entitlements",
+				"COPY_PHASE_STRIP": "NO",
+				"GCC_OPTIMIZATION_LEVEL": "0",
+				"ENABLE_TESTABILITY": "YES",
+				"ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS": "YES"
+			},
+			"name": "Debug"
+		},
+		"BF62781F2BADEBFE008864C1": {
+			"path": "ofxiOSAlerts.h",
+			"isa": "PBXFileReference",
+			"lastKnownFileType": "sourcecode.c.h",
+			"sourceTree": "<group>",
+			"fileEncoding": "4"
+		},
+		"BF6278372BADEBFE008864C1": {
+			"path": "SoundEngine.cpp",
+			"isa": "PBXFileReference",
+			"lastKnownFileType": "sourcecode.cpp.cpp",
+			"sourceTree": "<group>",
+			"fileEncoding": "4"
+		},
+		"BF6278B62BADEBFE008864C1": {
+			"isa": "PBXBuildFile",
+			"fileRef": "BF62785C2BADEBFE008864C1"
+		},
+		"BF62788F2BADEBFE008864C1": {
+			"isa": "PBXBuildFile",
+			"fileRef": "BF6278322BADEBFE008864C1"
+		},
+		"BF6278A92BADEBFE008864C1": {
+			"isa": "PBXBuildFile",
+			"fileRef": "BF62784E2BADEBFE008864C1"
+		},
+		"BF62781D2BADEBFE008864C1": {
+			"path": "ofxiOSViewController.mm",
+			"isa": "PBXFileReference",
+			"lastKnownFileType": "sourcecode.cpp.objcpp",
+			"sourceTree": "<group>",
+			"fileEncoding": "4"
+		},
+		"BF6278352BADEBFE008864C1": {
+			"path": "ofxOpenALSoundPlayer.cpp",
+			"isa": "PBXFileReference",
+			"lastKnownFileType": "sourcecode.cpp.cpp",
+			"sourceTree": "<group>",
+			"fileEncoding": "4"
+		},
+		"BF6278B42BADEBFE008864C1": {
+			"isa": "PBXBuildFile",
+			"fileRef": "BF62785A2BADEBFE008864C1"
+		},
+		"BF6278282BADEBFE008864C1": {
+			"path": "ES1Renderer.m",
+			"isa": "PBXFileReference",
+			"lastKnownFileType": "sourcecode.c.objc",
+			"sourceTree": "<group>",
+			"fileEncoding": "4"
+		},
+		"BF62788D2BADEBFE008864C1": {
+			"isa": "PBXBuildFile",
+			"fileRef": "BF6278302BADEBFE008864C1"
+		},
+		"BF62781B2BADEBFE008864C1": {
+			"path": "ofxiOSGLKViewController.mm",
+			"isa": "PBXFileReference",
+			"lastKnownFileType": "sourcecode.cpp.objcpp",
+			"sourceTree": "<group>",
+			"fileEncoding": "4"
+		},
+		"BF6278982BADEBFE008864C1": {
+			"isa": "PBXBuildFile",
+			"fileRef": "BF62783C2BADEBFE008864C1"
+		},
+		"BF6278332BADEBFE008864C1": {
+			"path": "ofxiOSSoundStreamDelegate.h",
+			"isa": "PBXFileReference",
+			"lastKnownFileType": "sourcecode.c.h",
+			"sourceTree": "<group>",
+			"fileEncoding": "4"
+		},
+		"BF6278262BADEBFE008864C1": {
+			"path": "EAGLView.m",
+			"isa": "PBXFileReference",
+			"lastKnownFileType": "sourcecode.c.objc",
+			"sourceTree": "<group>",
+			"fileEncoding": "4"
+		},
+		"BF6278A52BADEBFE008864C1": {
+			"isa": "PBXBuildFile",
+			"fileRef": "BF62784A2BADEBFE008864C1"
+		},
+		"BF62787E2BADEBFE008864C1": {
+			"isa": "PBXBuildFile",
+			"fileRef": "BF62781D2BADEBFE008864C1"
+		},
+		"BF62788B2BADEBFE008864C1": {
+			"isa": "PBXBuildFile",
+			"fileRef": "BF62782E2BADEBFE008864C1"
+		},
+		"E4B69E210A3A1BDC003C02F2": {
+			"isa": "PBXBuildFile",
+			"fileRef": "E4B69E1E0A3A1BDC003C02F2"
+		},
+		"BF6278312BADEBFE008864C1": {
+			"path": "ofxiOSSoundStream.h",
+			"isa": "PBXFileReference",
+			"lastKnownFileType": "sourcecode.c.h",
+			"sourceTree": "<group>",
+			"fileEncoding": "4"
+		},
+		"BF6278242BADEBFE008864C1": {
+			"path": "EAGLKView.m",
+			"isa": "PBXFileReference",
+			"lastKnownFileType": "sourcecode.c.objc",
+			"sourceTree": "<group>",
+			"fileEncoding": "4"
+		},
+		"BF6278A32BADEBFE008864C1": {
+			"isa": "PBXBuildFile",
+			"fileRef": "BF6278472BADEBFE008864C1"
+		},
+		"BF62787C2BADEBFE008864C1": {
+			"isa": "PBXBuildFile",
+			"fileRef": "BF62781B2BADEBFE008864C1"
+		},
+		"BF6278962BADEBFE008864C1": {
+			"isa": "PBXBuildFile",
+			"fileRef": "BF62783A2BADEBFE008864C1"
+		},
+		"BF6278942BADEBFE008864C1": {
+			"isa": "PBXBuildFile",
+			"fileRef": "BF6278372BADEBFE008864C1"
+		},
+		"BF62780A2BADEBFE008864C1": {
+			"path": "ofxAccelerometer.cpp",
+			"isa": "PBXFileReference",
+			"lastKnownFileType": "sourcecode.cpp.cpp",
+			"sourceTree": "<group>",
+			"fileEncoding": "4"
+		},
+		"BF6278A72BADEBFE008864C1": {
+			"isa": "PBXBuildFile",
+			"fileRef": "BF62784C2BADEBFE008864C1"
+		},
+		"BF6278A12BADEBFE008864C1": {
+			"isa": "PBXBuildFile",
+			"fileRef": "BF6278442BADEBFE008864C1"
+		},
+		"BF62787A2BADEBFE008864C1": {
+			"isa": "PBXBuildFile",
+			"fileRef": "BF6278192BADEBFE008864C1"
+		},
+		"BF62780C2BADEBFE008864C1": {
+			"path": "src",
+			"isa": "PBXGroup",
+			"children": [
+				"BF62780A2BADEBFE008864C1",
+				"BF62780B2BADEBFE008864C1"
+			],
+			"sourceTree": "<group>"
+		},
+		"BF6278922BADEBFE008864C1": {
+			"isa": "PBXBuildFile",
+			"fileRef": "BF6278352BADEBFE008864C1"
+		},
+		"BF6278222BADEBFE008864C1": {
+			"path": "events",
+			"isa": "PBXGroup",
+			"children": [
+				"BF62781F2BADEBFE008864C1",
+				"BF6278202BADEBFE008864C1",
+				"BF6278212BADEBFE008864C1"
+			],
+			"sourceTree": "<group>"
+		},
+		"BF6278202BADEBFE008864C1": {
+			"path": "ofxiOSAlerts.mm",
+			"isa": "PBXFileReference",
+			"lastKnownFileType": "sourcecode.cpp.objcpp",
+			"sourceTree": "<group>",
+			"fileEncoding": "4"
+		},
+		"19B789C429E5AB4A0082E9B8": {
+			"inputPaths": [],
+			"buildActionMask": "2147483647",
+			"shellPath": "/bin/sh",
+			"showEnvVarsInLog": "0",
+			"outputPaths": [],
+			"isa": "PBXShellScriptBuildPhase",
+			"runOnlyForDeploymentPostprocessing": "0",
+			"shellScript": "\"$OF_PATH/scripts/osx/xcode_project.sh\"\n",
+			"outputFileListPaths": [],
+			"files": [],
+			"inputFileListPaths": []
+		},
+		"BF6278092BADE950008864C1": {
+			"name": "Run Script",
+			"inputPaths": [],
+			"buildActionMask": "2147483647",
+			"shellPath": "/bin/sh",
+			"isa": "PBXShellScriptBuildPhase",
+			"outputPaths": [
+				"$OF_PATH/libs/openFrameworksCompiled/lib/macos/openFrameworks.framework"
+			],
+			"runOnlyForDeploymentPostprocessing": "0",
+			"shellScript": "echo \"💾 Compiling OpenFrameworks\"\nxcodebuild -workspace \"$OF_PATH/libs/openFrameworksCompiled/project/macos/openFrameworksLib.xcworkspace\" -scheme openFrameworks -configuration \"${CONFIGURATION}\" CLANG_CXX_LANGUAGE_STANDARD=$CLANG_CXX_LANGUAGE_STANDARD MACOSX_DEPLOYMENT_TARGET=$MACOSX_DEPLOYMENT_TARGET GCC_PREPROCESSOR_DEFINITIONS=$USER_PREPROCESSOR_DEFINITIONS\n",
+			"outputFileListPaths": [],
+			"inputFileListPaths": [
+				""
+			],
+			"files": []
+		},
+		"191EF70929D778A400F35F26": {
+			"path": "../../../libs/openFrameworks",
+			"isa": "PBXFileReference",
+			"name": "openFrameworks",
+			"lastKnownFileType": "folder",
+			"sourceTree": "SOURCE_ROOT"
+		},
+		"BF6278902BADEBFE008864C1": {
+			"isa": "PBXBuildFile",
+			"fileRef": "BF6278342BADEBFE008864C1"
+		},
+		"E4C2427710CC5ABF004149E2": {
+			"buildActionMask": "2147483647",
+			"dstSubfolderSpec": "10",
+			"isa": "PBXCopyFilesBuildPhase",
+			"runOnlyForDeploymentPostprocessing": "0",
+			"dstPath": "",
+			"files": [],
+			"name": "Copy Files"
+		},
+		"BF6278792BADEBFE008864C1": {
+			"isa": "PBXBuildFile",
+			"fileRef": "BF6278172BADEBFE008864C1"
+		},
+		"BF62785F2BADEBFE008864C1": {
+			"path": "utils",
+			"isa": "PBXGroup",
+			"children": [
+				"BF6278492BADEBFE008864C1",
+				"BF62784A2BADEBFE008864C1",
+				"BF62784B2BADEBFE008864C1",
+				"BF62784C2BADEBFE008864C1",
+				"BF62784D2BADEBFE008864C1",
+				"BF62784E2BADEBFE008864C1",
+				"BF62784F2BADEBFE008864C1",
+				"BF6278502BADEBFE008864C1",
+				"BF6278512BADEBFE008864C1",
+				"BF6278522BADEBFE008864C1",
+				"BF6278532BADEBFE008864C1",
+				"BF6278542BADEBFE008864C1",
+				"BF6278552BADEBFE008864C1",
+				"BF6278562BADEBFE008864C1",
+				"BF6278572BADEBFE008864C1",
+				"BF6278582BADEBFE008864C1",
+				"BF6278592BADEBFE008864C1",
+				"BF62785A2BADEBFE008864C1",
+				"BF62785B2BADEBFE008864C1",
+				"BF62785C2BADEBFE008864C1",
+				"BF62785D2BADEBFE008864C1",
+				"BF62785E2BADEBFE008864C1"
+			],
+			"sourceTree": "<group>"
+		},
+		"BF6278772BADEBFE008864C1": {
+			"isa": "PBXBuildFile",
+			"fileRef": "BF6278152BADEBFE008864C1"
+		},
+		"BF62785D2BADEBFE008864C1": {
+			"path": "ofxiOSMapKitListener.h",
+			"isa": "PBXFileReference",
+			"lastKnownFileType": "sourcecode.c.h",
+			"sourceTree": "<group>",
+			"fileEncoding": "4"
+		},
+		"E4B69B5A0A3A1756003C02F2": {
+			"buildConfigurationList": "E4B69B5F0A3A1757003C02F2",
+			"productReference": "E4B69B5B0A3A1756003C02F2",
+			"productType": "com.apple.product-type.application",
+			"productName": "myOFApp",
+			"isa": "PBXNativeTarget",
+			"buildPhases": [
+				"E42962A92163ECCD00A6A9E2",
+				"E4B69B580A3A1756003C02F2",
+				"E4B69B590A3A1756003C02F2",
+				"E4C2427710CC5ABF004149E2",
+				"E4A5B60F29BAAAE400C2D356",
+				"19B789C429E5AB4A0082E9B8"
+			],
+			"dependencies": [],
+			"name": "emptyExamplemacOS",
+			"buildRules": []
+		},
+		"BF6278752BADEBFE008864C1": {
+			"isa": "PBXBuildFile",
+			"fileRef": "BF6278112BADEBFE008864C1"
+		},
+		"BF6278682BADEBFE008864C1": {
+			"path": "video",
+			"isa": "PBXGroup",
+			"children": [
+				"BF6278602BADEBFE008864C1",
+				"BF6278612BADEBFE008864C1",
+				"BF6278622BADEBFE008864C1",
+				"BF6278632BADEBFE008864C1",
+				"BF6278642BADEBFE008864C1",
+				"BF6278652BADEBFE008864C1",
+				"BF6278662BADEBFE008864C1",
+				"BF6278672BADEBFE008864C1"
+			],
+			"sourceTree": "<group>"
+		},
+		"BF62785B2BADEBFE008864C1": {
+			"path": "ofxiOSMapKitDelegate.h",
+			"isa": "PBXFileReference",
+			"lastKnownFileType": "sourcecode.c.h",
+			"sourceTree": "<group>",
+			"fileEncoding": "4"
+		},
+		"BF62784E2BADEBFE008864C1": {
+			"path": "ofxiOSCoreMotion.mm",
+			"isa": "PBXFileReference",
+			"lastKnownFileType": "sourcecode.cpp.objcpp",
+			"sourceTree": "<group>",
+			"fileEncoding": "4"
+		}
+	},
+	"rootObject": "E4B69B4C0A3A1720003C02F2"
+}

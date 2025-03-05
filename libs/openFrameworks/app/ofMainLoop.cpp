@@ -7,7 +7,7 @@
 
 #include "ofMainLoop.h"
 #include "ofBaseApp.h"
-#include "ofConstants.h"
+// #include "ofConstants.h"
 
 //========================================================================
 // default windowing
@@ -38,7 +38,7 @@ ofMainLoop::ofMainLoop()
 }
 
 ofMainLoop::~ofMainLoop() {
-	exit();
+
 }
 
 std::shared_ptr<ofAppBaseWindow> ofMainLoop::createWindow(const ofWindowSettings & settings){
@@ -130,6 +130,7 @@ int ofMainLoop::loop(){
 	}else{
 		windowLoop();
 	}
+	exit();	
 	return status;
 }
 

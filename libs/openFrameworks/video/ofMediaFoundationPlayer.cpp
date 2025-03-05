@@ -1,4 +1,34 @@
 
+/*
+ -----------------------------------------------------------------------------
+ Based on code by Andrew Wright
+ https://github.com/axjxwright/AX-MediaPlayer/
+ 
+ MIT License
+ 
+ Copyright (c) 2021 Andrew Wright / AX Interactive
+ 
+ Permission is hereby granted, free of charge, to any person obtaining a copy
+ of this software and associated documentation files (the "Software"), to deal
+ in the Software without restriction, including without limitation the rights
+ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ copies of the Software, and to permit persons to whom the Software is
+ furnished to do so, subject to the following conditions:
+ 
+ The above copyright notice and this permission notice shall be included in all
+ copies or substantial portions of the Software.
+ 
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ SOFTWARE.
+ -----------------------------------------------------------------------------
+ */
+
+
 #include "ofPixels.h"
 #include "ofMediaFoundationPlayer.h"
 #include "ofLog.h"
@@ -116,8 +146,9 @@ bool ofMediaFoundationPlayer::MEDXDeviceManager::createDX11Device() {
 
 class BstrURL {
 public:
-    BstrURL(std::string aurl) {
-        std::wstring ws = std::wstring(aurl.begin(), aurl.end());
+    BstrURL(const of::filesystem::path & aurl) {
+//        std::wstring ws = std::wstring(aurl.begin(), aurl.end());
+		std::wstring ws { aurl.wstring() };
         assert(!ws.empty());
         _bstrStr = SysAllocStringLen(ws.data(), ws.size());
     }
@@ -144,7 +175,6 @@ bool ofMediaFoundationPlayer::METexture::allocate( ofPixelFormat afmt, int aw, i
     mWidth = aw;
     mHeight = ah;
     mOfPixFmt = afmt;
-    //auto glFormat = ofGetGLInternalFormatFromPixelFormat(OF_PIXELS_BGRA);
     auto glFormat = ofGetGLInternalFormatFromPixelFormat(afmt);
     // make a GL_TEXTURE2D
     mOfTex->allocate(mWidth, mHeight, glFormat, false);
@@ -335,7 +365,9 @@ bool SharedDXGLTexture::isLocked() {
 //----------------------------------------------
 bool SharedDXGLTexture::draw(ofPixels& apix) {
     if (lock()) {
-        mOfTex->draw(0, 0);
+        if (mOfTex->isAllocated()) {
+            mOfTex->draw(0, 0);
+        }
         unlock();
         return true;
     }
@@ -626,19 +658,20 @@ std::shared_ptr<ofMediaFoundationPlayer::MEDXDeviceManager> ofMediaFoundationPla
 }
 
 //----------------------------------------------
-bool ofMediaFoundationPlayer::load(std::string name) {
-    return _load(name, false);
+bool ofMediaFoundationPlayer::load(const of::filesystem::path & fileName) {
+    return _load(fileName, false);
 }
 
 //----------------------------------------------
-void ofMediaFoundationPlayer::loadAsync(std::string name) {
-    _load(name, true);
+void ofMediaFoundationPlayer::loadAsync(const of::filesystem::path & fileName) {
+    _load(fileName, true);
 }
 
 //----------------------------------------------
-bool ofMediaFoundationPlayer::_load(std::string name, bool abAsync) {
+bool ofMediaFoundationPlayer::_load(const of::filesystem::path & fileName, bool abAsync) {
     close();
 
+    std::string name = ofPathToString(fileName);
     mBLoadAsync = abAsync;
 
     bool bStream = false;
@@ -647,7 +680,7 @@ bool ofMediaFoundationPlayer::_load(std::string name, bool abAsync) {
     bStream = bStream || ofIsStringInString(name, "rtsp://");
     bStream = bStream || ofIsStringInString(name, "rtmp://");
 
-    std::string absPath = name;
+    of::filesystem::path absPath = fileName;
 
     if (!bStream) {
         if (ofFile::doesFileExist(absPath)) {
@@ -825,8 +858,11 @@ bool ofMediaFoundationPlayer::isInitialized() const {
 
 //----------------------------------------------
 void ofMediaFoundationPlayer::OnMediaEngineEvent(DWORD aEvent, DWORD_PTR param1, DWORD param2) {
+
     if (aEvent == MF_MEDIA_ENGINE_EVENT_LOADEDMETADATA) {
         if (!mBLoadAsync) {
+            updateDuration();
+            updateDimensions();
             mBIsDoneAtomic.store(true);
             mWaitCondition.notify_one();
         }
@@ -1050,11 +1086,17 @@ void ofMediaFoundationPlayer::setSpeed(float speed) {
 
 //----------------------------------------------
 void ofMediaFoundationPlayer::setVolume(float volume) {
-    if (m_spMediaEngine) {
-        ofMediaFoundationUtils::CallAsyncBlocking(
-            [&] {m_spMediaEngine->SetVolume(static_cast<double>(volume)); 
-        });
-    }
+	if (m_spMediaEngine) {
+		double cvolume = ofClamp(volume, 0.0f, 1.0f);
+		HRESULT hr = m_spMediaEngine->SetVolume(cvolume);
+		if (hr != S_OK) {
+			ofLogVerbose("ofMediaFoundationPlayer :: setVolume : Unable to set volume to ") << volume << ".";
+		}
+		//ofMediaFoundationUtils::CallAsyncBlocking(
+		//[&] {m_spMediaEngine->SetVolume(static_cast<double>(volume));
+		//[&] {m_spMediaEngine->SetVolume(cvolume);
+		//});
+	}
 }
 
 //----------------------------------------------
@@ -1218,12 +1260,13 @@ void ofMediaFoundationPlayer::handleMEEvent(DWORD aevent) {
                 }
             }
             mBDone = false;
-            mWidth = 0.f;
-            mHeight = 0.f;
-            DWORD w, h;
-            if (SUCCEEDED(m_spMediaEngine->GetNativeVideoSize(&w, &h))) {
-                mWidth = w;
-                mHeight = h;
+            //mWidth = 0.f;
+            //mHeight = 0.f;
+            //DWORD w, h;
+            //if (SUCCEEDED(m_spMediaEngine->GetNativeVideoSize(&w, &h))) {
+                //mWidth = w;
+                //mHeight = h;
+            if(updateDimensions()) {
 
                 if (mMeTexture) {
                     if (mMeTexture->getWidth() != mWidth || mMeTexture->getHeight() != mHeight) {
@@ -1382,5 +1425,18 @@ void ofMediaFoundationPlayer::updateDuration() {
             mEstimatedNumFrames = 1;
         }
     }
+}
+
+//-----------------------------------------
+bool ofMediaFoundationPlayer::updateDimensions() {
+    mWidth = 0.f;
+    mHeight = 0.f;
+    DWORD w, h;
+    if (SUCCEEDED(m_spMediaEngine->GetNativeVideoSize(&w, &h))) {
+        mWidth = w;
+        mHeight = h;
+        return true;
+    }
+    return false;
 }
 

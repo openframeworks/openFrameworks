@@ -5,10 +5,11 @@
  *      Author: arturo
  */
 
-#ifndef OFSOUNDBUFFER_H_
-#define OFSOUNDBUFFER_H_
+#pragma once
 
-#include "ofConstants.h"
+#include <cstdint> // MARK: uint64_t msys2 only complain about this one it seems.
+#include <vector>
+#include <string>
 
 
 /*! 
@@ -232,5 +233,3 @@ protected:
 namespace std{
 	void swap(ofSoundBuffer & src, ofSoundBuffer & dst);
 }
-
-#endif /* OFSOUNDBUFFER_H_ */

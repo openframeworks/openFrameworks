@@ -1,6 +1,5 @@
 #include "ofDirectShowPlayer.h"
-#include "ofPixels.h"
-#include "ofMath.h"
+#include "ofPixels.h" // MARK: pixels, srcBuffer
 
 #ifdef _MSC_VER
 #pragma comment(lib,"Strmiids.lib")
@@ -11,7 +10,6 @@
 // DirectShow includes and helper methods 
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------
-
 
 #include <dshow.h>
 #ifdef _MSC_VER
@@ -536,11 +534,9 @@ class DirectShowVideo : public ISampleGrabberCB{
         }
 
         //printf("step 6\n"); 
-        std::string pathString = path.string();
-        std::wstring filePathW = std::wstring(pathString.begin(), pathString.end());
 
         //this is the easier way to connect the graph, but we have to remove the video window manually
-        hr = m_pGraph->RenderFile(filePathW.c_str(), NULL);
+        hr = m_pGraph->RenderFile(path.c_str(), NULL);
 
         //this is the more manual way to do it - its a pain though because the audio won't be connected by default
         /*hr = m_pGraph->AddSourceFilter(filePathW.c_str(), L"Source", &m_pSourceFile); 
@@ -1150,9 +1146,8 @@ ofDirectShowPlayer & ofDirectShowPlayer::operator=(ofDirectShowPlayer&& other) {
 	return *this;
 }
 
-// FIXME: convert to filesystem::path in near future
-bool ofDirectShowPlayer::load(std::string stringPath){
-    auto path = ofToDataPath(of::filesystem::path(stringPath));
+bool ofDirectShowPlayer::load(const of::filesystem::path & fileName){
+    auto path = ofToDataPath(fileName);
 
     close();
     player.reset(new DirectShowVideo());

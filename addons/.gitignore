@@ -10,6 +10,7 @@
 ofxAndroid/ofAndroidLib/bin
 ofxAndroid/ofAndroidLib/gen
 !ofxAssimpModelLoader
+!ofxAssimp
 !ofxGui
 !ofxiOS
 !ofxKinect

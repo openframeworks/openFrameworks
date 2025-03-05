@@ -1,0 +1,455 @@
+name: OF
+# make the action not run on the local repo if the branch is also in a pull request to OF/OF
+on:
+  push:
+    if: github.event_name == 'push' && github.event.pull_request == null
+    paths-ignore:
+      - "**/*.md"
+      - "examples/**"
+  pull_request:
+    if: github.event_name == 'pull_request' && github.repository == 'openframeworks/openFrameworks'
+    paths-ignore:
+      - "**/*.md"
+      - "examples/**"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.sha }}
+  cancel-in-progress: true
+
+env:
+  ccache: ccache
+  RELEASE: latest
+
+jobs:
+  build-emscripten:
+    runs-on: ubuntu-24.04
+    strategy:
+      matrix:
+        cfg:
+          - { target: emscripten }
+    env:
+      TARGET: ${{matrix.cfg.target}}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Docker Step
+        run: "docker run -di --name emscripten -v $PWD:/src emscripten/emsdk:4.0.4 bash"
+      # - name: Determine Release
+      #   id: vars
+      #   shell: bash
+      #   run: |
+      #     if [[ "${{ github.ref }}" == refs/tags/* ]]; then
+      #       echo "RELEASE=${{ github.ref_name }}" >> $GITHUB_ENV
+      #     elif [[ "${{ github.ref }}" == "refs/heads/master" ]]; then
+      #       echo "RELEASE=nightly" >> $GITHUB_ENV
+      #     elif [[ "${{ github.ref }}" == "refs/heads/bleeding" ]]; then
+      #       echo "RELEASE=latest" >> $GITHUB_ENV
+      #     else
+      #       echo "RELEASE=latest" >> $GITHUB_ENV
+      #     fi
+      - name: Download libs
+        run: ./scripts/$TARGET/download_libs.sh -t $RELEASE
+      - name: Install dependencies
+        run: ./scripts/ci/$TARGET/install.sh
+      - name: Build
+        run: docker exec -i emscripten sh -c "scripts/ci/$TARGET/build.sh";
+      - name: Upload Libs
+        run: scripts/ci/upload_of_lib.sh;
+        env:
+          GA_CI_SECRET: ${{ secrets.CI_SECRET }}
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  build-msys2:
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        msystem:
+          - mingw64
+          - ucrt64
+          - clang64
+        # - clangarm64
+    defaults:
+      run:
+        shell: msys2 {0}
+    steps:
+      - name: Check system
+        shell: bash
+        run: gcc -v
+      - uses: actions/checkout@v4
+      - name: ccache
+        uses: hendrikmuhs/ccache-action@v1.2.14
+        with:
+          # key: ${{ matrix.os }}-${{ matrix.type }}
+          key: ${{ matrix.msystem }}
+      - uses: msys2/setup-msys2@v2.24.1
+        with:
+          cache: true
+          release: true
+          update: true
+          msystem: ${{matrix.msystem}}
+          pacboy: openssl:p python:p gcc:p assimp:p cairo:p curl:p freeglut:p FreeImage:p glew:p glfw:p glm:p libsndfile:p libusb:p libxml2:p mpg123:p nlohmann-json:p openal:p opencv:p pugixml:p rtaudio:p uriparser:p utf8cpp:p
+          install: >-
+            unzip
+            make
+          # lld
+          # gcc:p gdb:p zlib:p poco:p pkgconf:p harfbuzz:p ntldd-git:p
+          # boost:p tools:p
+          # install: >-
+          # unzip
+          # git
+          # rsync
+          # wget
+
+      - name: Install dependencies
+        run: ./scripts/ci/msys2/install.sh --msystem=${{ matrix.msystem }}
+
+      - name: List Directories
+        shell: bash
+        run: find . -type d
+
+      - name: Build
+        run: ./scripts/ci/msys2/build.sh
+
+    # - name: Run tests
+    #   run: ./scripts/ci/msys2/run_tests.sh
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  build-vs2022:
+    runs-on: windows-2022
+    strategy:
+      matrix:
+        platform: [x64, ARM64, ARM64EC]
+    env:
+      BITS: ${{ matrix.bits }}
+    steps:
+      - name: Clone repository
+        uses: actions/checkout@v4
+      - uses: msys2/setup-msys2@v2.24.1
+        with:
+          update: true
+          install: >-
+            git
+            unzip
+      # - name: Determine Release
+      #   id: vars
+      #   shell: bash
+      #   run: |
+      #     if [[ "${{ github.ref }}" == refs/tags/* ]]; then
+      #       echo "RELEASE=${{ github.ref_name }}" >> $GITHUB_ENV
+      #     elif [[ "${{ github.ref }}" == "refs/heads/master" ]]; then
+      #       echo "RELEASE=nightly" >> $GITHUB_ENV
+      #     elif [[ "${{ github.ref }}" == "refs/heads/bleeding" ]]; then
+      #       echo "RELEASE=latest" >> $GITHUB_ENV
+      #     else
+      #       echo "RELEASE=latest" >> $GITHUB_ENV
+      #     fi
+      - name: Install dependencies
+        shell: msys2 {0}
+        run: ./scripts/ci/vs/install.sh
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v2
+
+      - name: Build DEBUG and RELEASE emptyExample
+        working-directory: ${{env.GITHUB_WORKSPACE}}
+        run: |
+          msbuild examples/templates/emptyExample/emptyExample.vcxproj /p:configuration=debug /p:platform=${{ matrix.platform }} /p:PlatformToolset=v143
+          msbuild examples/templates/emptyExample/emptyExample.vcxproj /p:configuration=release /p:platform=${{ matrix.platform }} /p:PlatformToolset=v143
+      - name: Build DEBUG and RELEASE allAddonsExample
+        working-directory: ${{env.GITHUB_WORKSPACE}}
+        run: |
+          msbuild examples/templates/allAddonsExample/allAddonsExample.vcxproj /p:configuration=debug /p:platform=${{ matrix.platform }} /p:PlatformToolset=v143
+          msbuild examples/templates/allAddonsExample/allAddonsExample.vcxproj /p:configuration=release /p:platform=${{ matrix.platform }} /p:PlatformToolset=v143
+
+  build-vs2019:
+    runs-on: windows-2019
+    strategy:
+      matrix:
+        platform: [x64]
+    env:
+      BITS: ${{ matrix.bits }}
+    steps:
+      - name: Clone repository
+        uses: actions/checkout@v4
+        
+      - uses: msys2/setup-msys2@v2.24.1
+        with:
+          update: true
+          install: >-
+            git
+            unzip
+
+      - name: Setup MSBuild (VS2019 - 16.11)
+        uses: microsoft/setup-msbuild@v2
+        with:
+          vs-version: '16.11'
+          msbuild-architecture: x64
+
+      - name: Verify MSBuild Version
+        run: msbuild -version
+
+      - name: Download libs
+        run: ./scripts/vs/download_libs_2019_x64.sh -t $RELEASE
+
+      - name: Download projectGenerator
+        shell: bash
+        run: ./scripts/vs/download_projectGenerator.sh
+
+      - name: Debug projectGenerator Directory
+        shell: bash
+        run: |
+          echo "Checking projectGenerator directory:"
+          ls -la projectGenerator/
+
+      # - name: run projectGenerator on examples
+      #   shell: bash
+      #   run: ./scripts/ci/vs/pg_projects.sh
+
+      # - name: Build DEBUG and RELEASE emptyExample
+      #   working-directory: ${{env.GITHUB_WORKSPACE}}
+      #   run: |
+      #     msbuild examples/templates/emptyExample/emptyExample.vcxproj /p:configuration=debug /p:platform=${{ matrix.platform }} /p:PlatformToolset=v142
+      #     msbuild examples/templates/emptyExample/emptyExample.vcxproj /p:configuration=release /p:platform=${{ matrix.platform }} /p:PlatformToolset=v142
+      # - name: Build DEBUG and RELEASE allAddonsExample
+      #   working-directory: ${{env.GITHUB_WORKSPACE}}
+      #   run: |
+      #     msbuild examples/templates/allAddonsExample/allAddonsExample.vcxproj /p:configuration=debug /p:platform=${{ matrix.platform }} /p:PlatformToolset=v142
+      #     msbuild examples/templates/allAddonsExample/allAddonsExample.vcxproj /p:configuration=release /p:platform=${{ matrix.platform }} /p:PlatformToolset=v142
+
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  rpi-build:
+    runs-on: ubuntu-24.04
+    strategy:
+      matrix:
+        cfg:
+          - {
+              libs: armv6l,
+              multistrap_arch: armhf,
+              suffix: arm-linux-gnueabihf,
+              alladdons: 1,
+            }
+          # - {
+          #     libs: armv7l,
+          #     multistrap_arch: armhf,
+          #     suffix: arm-linux-gnueabihf,
+          #     alladdons: 1,
+          #   }
+          - {
+              libs: aarch64,
+              multistrap_arch: arm64,
+              suffix: aarch64-linux-gnu,
+              alladdons: 1,
+            }
+    env:
+      ARCH: ${{matrix.cfg.libs}}
+      MULTISTRAP_ARCH: ${{matrix.cfg.multistrap_arch}}
+      ALLADDONSEXAMPLE: ${{matrix.cfg.alladdons}}
+    steps:
+      - name: Cache Packages
+        uses: awalsh128/cache-apt-pkgs-action@latest
+        with:
+          packages: multistrap unzip gcc-${{matrix.cfg.suffix}} g++-${{matrix.cfg.suffix}}
+          version: 1.0
+      - uses: actions/checkout@v4
+      - name: ccache
+        uses: hendrikmuhs/ccache-action@v1.2.14
+        with:
+          key: ${{ matrix.cfg.libs }}
+      # - name: Determine Release
+      #   id: vars
+      #   shell: bash
+      #   run: |
+      #     if [[ "${{ github.ref }}" == refs/tags/* ]]; then
+      #       echo "RELEASE=${{ github.ref_name }}" >> $GITHUB_ENV
+      #     elif [[ "${{ github.ref }}" == "refs/heads/master" ]]; then
+      #       echo "RELEASE=nightly" >> $GITHUB_ENV
+      #     elif [[ "${{ github.ref }}" == "refs/heads/bleeding" ]]; then
+      #       echo "RELEASE=latest" >> $GITHUB_ENV
+      #     else
+      #       echo "RELEASE=latest" >> $GITHUB_ENV
+      #     fi
+      - name: Download libs
+        run: ./scripts/linux/download_libs.sh -t $RELEASE -a ${{matrix.cfg.libs}}
+      - name: Install dependencies
+        run: ./scripts/ci/linuxrpi/install.sh;
+      - name: LS
+        shell: bash
+        run: ls -alfR
+      - name: Build
+        run: ./scripts/ci/linuxrpi/build.sh;
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  build-ios-tvos:
+    runs-on: macos-15
+    strategy:
+      matrix:
+        cfg:
+          - { target: ios, libs: macos }
+          - { target: tvos, libs: macos }
+    env:
+      TARGET: ${{matrix.cfg.target}}
+    steps:
+      - uses: actions/checkout@v4
+      - name: ccache
+        uses: hendrikmuhs/ccache-action@v1.2.14
+        with:
+          key: ${{ matrix.cfg.target }}-${{ matrix.cfg.libs }}
+      # - name: Determine Release
+      #   id: vars
+      #   shell: bash
+      #   run: |
+      #     if [[ "${{ github.ref }}" == refs/tags/* ]]; then
+      #       echo "RELEASE=${{ github.ref_name }}" >> $GITHUB_ENV
+      #     elif [[ "${{ github.ref }}" == "refs/heads/master" ]]; then
+      #       echo "RELEASE=nightly" >> $GITHUB_ENV
+      #     elif [[ "${{ github.ref }}" == "refs/heads/bleeding" ]]; then
+      #       echo "RELEASE=latest" >> $GITHUB_ENV
+      #     else
+      #       echo "RELEASE=latest" >> $GITHUB_ENV
+      #     fi
+      - name: Download libs
+        run: ./scripts/${{matrix.cfg.libs}}/download_libs.sh -t $RELEASE
+      - name: install
+        run: ./scripts/ci/$TARGET/install.sh
+      - name: Build
+        run: ./scripts/ci/$TARGET/build.sh;
+
+        env:
+          DEVELOPER_DIR: "/Applications/Xcode.app/Contents/Developer"
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  build-linux64:
+    runs-on: ubuntu-24.04
+    strategy:
+      matrix:
+        cfg:
+          - { target: linux64, libs: 64gcc6 }
+    env:
+      TARGET: ${{matrix.cfg.target}}
+    steps:
+      - name: Remove Old lib-unwind
+        run: if [ "$TARGET" = "linux64" ]; then
+          sudo apt-get remove libunwind-14 -y;
+          fi
+      - name: Cache Packages
+        uses: awalsh128/cache-apt-pkgs-action@latest
+        with:
+          packages: aptitude aptitude-common libboost-iostreams1.83.0 libcwidget4 libsigc++-2.0-0v5 libxapian30 fonts-wine{a} libasound2-plugins{a} libcapi20-3t64{a} libosmesa6{a} libpcsclite1{a} libspeexdsp1{a} libwine{a} libxkbregistry0{a} libz-mingw-w64{a} wine{a} wine64 wget2 make libjack-jackd2-0 libjack-jackd2-dev freeglut3-dev libasound2-dev libxmu-dev libxxf86vm-dev g++ libgl1-mesa-dev libglu1-mesa-dev libraw1394-dev libudev-dev libdrm-dev libglew-dev libopenal-dev libsndfile1-dev libfreeimage-dev libcairo2-dev libfreetype6-dev libpulse-dev libusb-1.0-0-dev libgtk2.0-dev libopencv-dev libassimp-dev librtaudio-dev gdb libglfw3-dev liburiparser-dev libpugixml-dev libgconf-2-4 libgtk2.0-0 libpoco-dev libxcursor-dev libxi-dev libxinerama-dev libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev gstreamer1.0-libav gstreamer1.0-pulseaudio gstreamer1.0-x gstreamer1.0-plugins-bad gstreamer1.0-alsa gstreamer1.0-plugins-base gstreamer1.0-plugins-good
+          version: 1.0
+      # - name: Determine Release
+      #   id: vars
+      #   shell: bash
+      #   run: |
+      #     if [[ "${{ github.ref }}" == refs/tags/* ]]; then
+      #       echo "RELEASE=${{ github.ref_name }}" >> $GITHUB_ENV
+      #     elif [[ "${{ github.ref }}" == "refs/heads/master" ]]; then
+      #       echo "RELEASE=nightly" >> $GITHUB_ENV
+      #     elif [[ "${{ github.ref }}" == "refs/heads/bleeding" ]]; then
+      #       echo "RELEASE=latest" >> $GITHUB_ENV
+      #     else
+      #       echo "RELEASE=latest" >> $GITHUB_ENV
+      #     fi
+      - uses: actions/checkout@v4
+      - name: ccache
+        uses: hendrikmuhs/ccache-action@v1.2.14
+        with:
+          key: ${{ matrix.cfg.target }}-${{ matrix.cfg.libs }}
+
+      - name: Download libs
+        run: ./scripts/linux/download_libs.sh -t $RELEASE -a ${{matrix.cfg.libs}}
+      - name: Install dependencies
+        run: ./scripts/ci/$TARGET/install.sh;
+      - name: Build
+        run: if [ "$TARGET" = "linux64" ]; then
+          scripts/ci/linux64/build.sh;
+          scripts/ci/$TARGET/run_tests.sh;
+          else
+          scripts/ci/$TARGET/build.sh;
+          fi
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  # build-linux64-2204:
+  #   runs-on: ubuntu-22.04
+  #   strategy:
+  #       matrix:
+  #         cfg:
+  #         - {target: linux64, libs: 64gcc6}
+  #   env:
+  #     TARGET: ${{matrix.cfg.target}}
+  #   steps:
+  #   - name: Remove Old lib-unwind
+  #     run: if [ "$TARGET" = "linux64" ]; then
+  #           sudo apt-get remove libunwind-14 -y;
+  #          fi
+  #   - name: Cache Packages
+  #     uses: awalsh128/cache-apt-pkgs-action@latest
+  #     with:
+  #       packages: aptitude aptitude-common libboost-iostreams1.83.0 libcwidget4 libsigc++-2.0-0v5 libxapian30 fonts-wine{a} libasound2-plugins{a} libcapi20-3t64{a} libosmesa6{a} libpcsclite1{a} libspeexdsp1{a} libwine{a} libxkbregistry0{a} libz-mingw-w64{a} wine{a} wine64 wget2 make libjack-jackd2-0 libjack-jackd2-dev freeglut3-dev libasound2-dev libxmu-dev libxxf86vm-dev g++ libgl1-mesa-dev libglu1-mesa-dev libraw1394-dev libudev-dev libdrm-dev libglew-dev libopenal-dev libsndfile1-dev libfreeimage-dev libcairo2-dev libfreetype6-dev libpulse-dev libusb-1.0-0-dev libgtk2.0-dev libopencv-dev libassimp-dev librtaudio-dev gdb libglfw3-dev liburiparser-dev libpugixml-dev libgconf-2-4 libgtk2.0-0 libpoco-dev libxcursor-dev libxi-dev libxinerama-dev libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev gstreamer1.0-libav gstreamer1.0-pulseaudio gstreamer1.0-x gstreamer1.0-plugins-bad gstreamer1.0-alsa gstreamer1.0-plugins-base gstreamer1.0-plugins-good
+  #       version: 1.0
+
+  #   - uses: actions/checkout@v4
+  #   - name: ccache
+  #     uses: hendrikmuhs/ccache-action@v1.2.14
+  #     with:
+  #       key: ${{ matrix.cfg.target }}-${{ matrix.cfg.libs }}
+
+  #   - name: Download libs
+  #     run: ./scripts/linux/download_libs.sh -a ${{matrix.cfg.libs}}
+  #   - name: Install dependencies
+  #     run: ./scripts/ci/$TARGET/install.sh;
+  #   - name: Build
+  #     run: if [ "$TARGET" = "linux64" ]; then
+  #           scripts/ci/linux64/build.sh;
+  #           scripts/ci/$TARGET/run_tests.sh;
+  #          else
+  #           scripts/ci/$TARGET/build.sh;
+  #          fi
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  build-macos:
+    runs-on: macos-15
+    strategy:
+      matrix:
+        cfg:
+          - { target: osx, opt: "xcode" }
+          - { target: osx, opt: "makefiles" }
+    steps:
+      - uses: actions/checkout@v4
+      - name: ccache
+        uses: hendrikmuhs/ccache-action@v1.2.14
+        with:
+          key: ${{ matrix.cfg.target }}-${{ matrix.cfg.opt }}
+
+      # - name: Determine Release
+      #   id: vars
+      #   shell: bash
+      #   run: |
+      #     if [[ "${{ github.ref }}" == refs/tags/* ]]; then
+      #       echo "RELEASE=${{ github.ref_name }}" >> $GITHUB_ENV
+      #     elif [[ "${{ github.ref }}" == "refs/heads/master" ]]; then
+      #       echo "RELEASE=nightly" >> $GITHUB_ENV
+      #     elif [[ "${{ github.ref }}" == "refs/heads/bleeding" ]]; then
+      #       echo "RELEASE=latest" >> $GITHUB_ENV
+      #     else
+      #       echo "RELEASE=latest" >> $GITHUB_ENV
+      #     fi
+
+      - name: Download libs
+        run: ./scripts/${{ matrix.cfg.target }}/download_libs.sh -t $RELEASE
+
+      - name: Build
+        run: if [ ${{ matrix.cfg.opt }} = "xcode" ]; then
+          scripts/ci/${{ matrix.cfg.target }}/build.sh ${{ matrix.cfg.opt }};
+          else
+          scripts/ci/${{ matrix.cfg.target }}/run_tests.sh;
+          fi
+        env:
+          DEVELOPER_DIR: "/Applications/Xcode.app/Contents/Developer"
+          SDKROOT: "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk"
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

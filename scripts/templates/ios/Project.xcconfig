@@ -5,13 +5,30 @@ OF_PATH = ../../..
 //THIS HAS ALL THE HEADER AND LIBS FOR OF CORE
 #include "../../../libs/openFrameworksCompiled/project/ios/CoreOF.xcconfig"
 
+// VERSIONING - overridden if changed in Xcode UI
+
+// this is "Version" in the Xcode target Identity UI
+// suggested to use semantic versioning format ala #.#.#
+MARKETING_VERSION = 0.1.0
+
+
+OF_NO_FMOD=1
+USER_PREPROCESSOR_DEFINITIONS="OF_NO_FMOD=1"
+
+// this is "Build" in the Xcode target Identity UI, an incremental build number
+// important for the App Store as new build submissions need a diff number even
+// if MARKETING_VERSION is the same
+CURRENT_PROJECT_VERSION = 1
+
 OTHER_LDFLAGS = $(OF_CORE_LIBS) $(OF_CORE_FRAMEWORKS)
 HEADER_SEARCH_PATHS = $(OF_CORE_HEADERS)
 
 ENABLE_BITCODE = NO
 COMPRESS_PNG_FILES = NO
 GCC_THUMB_SUPPORT = NO
-IPHONEOS_DEPLOYMENT_TARGET = 13.0
+IPHONEOS_DEPLOYMENT_TARGET = 15.0
 COMPILER_INDEX_STORE_ENABLE = NO
 
-PRODUCT_BUNDLE_IDENTIFIER = cc.openFrameworks.$(TARGET_NAME)
+PRODUCT_BUNDLE_IDENTIFIER = cc.openFrameworks.${TARGET_NAME:rfc1034identifier}
+
+#include? "App.xcconfig"

@@ -29,6 +29,8 @@
  * ***********************************************************************/ 
 
 #include "ofxiOSAlerts.h"
-
+#include "ofxiOSConstants.h"
+#if defined(TARGET_OF_IOS)
 ofxiOSAlertsHandler ofxiOSAlerts;
 
+#endif

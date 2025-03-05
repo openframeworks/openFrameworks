@@ -21,6 +21,8 @@ public:
 	ofxAppEmscriptenWindow();
 	~ofxAppEmscriptenWindow();
 
+
+
 	static bool allowsMultiWindow(){ return false; }
 	static bool doesLoop(){ return true; }
 	static bool needsPolling(){ return false; }
@@ -71,6 +73,8 @@ public:
 	ofCoreEvents & events();
 	std::shared_ptr<ofBaseRenderer> & renderer();
 	
+	EM_BOOL useCapture = 1;
+
 	void update();
 	void draw();
 
@@ -82,20 +86,23 @@ public:
 private:
 	static ofxAppEmscriptenWindow * instance;
 
+
+	static EM_BOOL rescale(int* x, int* y);
+	static void updateCanvas(int x, int y);
 	// static int getUniqueId();
 	static void display_cb();
-	static int keydown_cb(int eventType, const EmscriptenKeyboardEvent *keyEvent, void *userData);
-	static int keyup_cb(int eventType, const EmscriptenKeyboardEvent *keyEvent, void *userData);
-	
-	static int mousedown_cb(int eventType, const EmscriptenMouseEvent *mouseEvent, void *userData);
-	static int mouseup_cb(int eventType, const EmscriptenMouseEvent *mouseEvent, void *userData);
-	static int mousemoved_cb(int eventType, const EmscriptenMouseEvent *mouseEvent, void *userData);
-	static int mouseenter_cb(int eventType, const EmscriptenMouseEvent *mouseEvent, void *userData);
-	static int mouseleave_cb(int eventType, const EmscriptenMouseEvent *mouseEvent, void *userData);
-	
-	static int touch_cb(int eventType, const EmscriptenTouchEvent *touchEvent, void *userData);
-	
-	static int mousescrolled_cb(int eventType, const EmscriptenWheelEvent *wheelEvent, void *userData);
+	static EM_BOOL keydown_cb(int eventType, const EmscriptenKeyboardEvent * keyEvent, void * userData);
+	static EM_BOOL keyup_cb(int eventType, const EmscriptenKeyboardEvent * keyEvent, void * userData);
+
+	static EM_BOOL mousedown_cb(int eventType, const EmscriptenMouseEvent * mouseEvent, void * userData);
+	static EM_BOOL mouseup_cb(int eventType, const EmscriptenMouseEvent * mouseEvent, void * userData);
+	static EM_BOOL mousemoved_cb(int eventType, const EmscriptenMouseEvent * mouseEvent, void * userData);
+	static EM_BOOL mouseenter_cb(int eventType, const EmscriptenMouseEvent * mouseEvent, void * userData);
+	static EM_BOOL mouseleave_cb(int eventType, const EmscriptenMouseEvent * mouseEvent, void * userData);
+
+	static EM_BOOL touch_cb(int eventType, const EmscriptenTouchEvent * touchEvent, void * userData);
+
+	static EM_BOOL mousescrolled_cb(int eventType, const EmscriptenWheelEvent * wheelEvent, void * userData);
 		
 	static EM_BOOL emscripten_game_window_resized_callback(int eventType, const void *reserved, void *userData);
 

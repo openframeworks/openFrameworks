@@ -1,10 +1,24 @@
 #include "ofSoundStream.h"
-#include <utility>
 #include "ofAppRunner.h"
 #include "ofLog.h"
 
+//------------------------------------------------ soundstream
+// check if any soundstream api is defined from the compiler
+#if !defined(OF_SOUNDSTREAM_RTAUDIO) && !defined(OF_SOUNDSTREAM_ANDROID) && !defined(OF_SOUNDSTREAM_IOS) && !defined(OF_SOUNDSTREAM_EMSCRIPTEN)
+	#if defined(TARGET_LINUX) || defined(TARGET_WIN32) || defined(TARGET_OSX)
+		#define OF_SOUNDSTREAM_RTAUDIO
+	#elif defined(TARGET_ANDROID)
+		#define OF_SOUNDSTREAM_ANDROID
+	#elif defined(TARGET_OF_IOS)
+		#define OF_SOUNDSTREAM_IOS
+	#elif defined(TARGET_EMSCRIPTEN)
+		#define OF_SOUNDSTREAM_EMSCRIPTEN
+	#endif
+#endif
+
 #if defined(OF_SOUND_PLAYER_FMOD)
 #include "ofSoundPlayer.h"
+#include "ofFmodSoundPlayer.h"
 #endif
 
 #ifdef OF_SOUNDSTREAM_RTAUDIO
@@ -12,7 +26,6 @@
 #define OF_SOUND_STREAM_TYPE ofRtAudioSoundStream
 #elif defined(OF_SOUNDSTREAM_ANDROID)
 #include "ofxAndroidSoundStream.h"
-#include "ofSoundBaseTypes.h"
 #define OF_SOUND_STREAM_TYPE ofxAndroidSoundStream
 #elif defined(OF_SOUNDSTREAM_IOS)
 #include "ofxiOSSoundStream.h"
@@ -49,31 +62,33 @@ using std::vector;
 //------------------------------------------------------------
 bool ofSoundStreamSettings::setInDevice(const ofSoundDevice & device){
 	if(api!=ofSoundDevice::UNSPECIFIED && device.api!=api){
-		//ofLogWarning("ofSoundStreamSettings") << "Setting IN device with api: " << std::to_string(device.api) << " will override the previously set: " <<  std::to_string(api);
+		ofLogWarning("ofSoundStreamSettings") << "Setting IN device with api: " << toString(device.api) << " will override the previously set: " << toString(api);
 	}
 	api = device.api;
 	inDevice = device;
+	inDevice.api = api;
 	return true;
 }
 
 //------------------------------------------------------------
 bool ofSoundStreamSettings::setOutDevice(const ofSoundDevice & device){
 	if(api!=ofSoundDevice::UNSPECIFIED && device.api!=api){
-		//ofLogWarning("ofSoundStreamSettings") << "Setting OUT device with api: " <<  std::to_string(device.api) << " will override the previously set: " <<  std::to_string(api);
+		ofLogWarning("ofSoundStreamSettings") << "Setting OUT device with api: " << toString(device.api) << " will override the previously set: " << toString(api);
 	}
 	api = device.api;
 	outDevice = device;
+	outDevice.api = api;
 	return true;
 }
 
 //------------------------------------------------------------
 bool ofSoundStreamSettings::setApi(ofSoundDevice::Api api){
 	if(api!=ofSoundDevice::UNSPECIFIED && inDevice.deviceID!=-1 && inDevice.api != api){
-		//ofLogError("ofSoundStreamSettings") << "Setting API after setting IN device with api: " <<  std::to_string(inDevice.api) << " won't do anything";
+		ofLogError("ofSoundStreamSettings") << "Setting API after setting IN device with api: " << toString(inDevice.api) << " won't do anything";
 		return false;
 	}
 	if(api!=ofSoundDevice::UNSPECIFIED && outDevice.deviceID!=-1 && outDevice.api != api){
-		//ofLogError("ofSoundStreamSettings") << "Setting API after setting IN device with api: " <<  std::to_string(outDevice.api) << " won't do anything";
+		ofLogError("ofSoundStreamSettings") << "Setting API after setting OUT device with api: " << toString(outDevice.api) << " won't do anything";
 		return false;
 	}
 	this->api = api;
@@ -158,9 +173,7 @@ void ofSoundStreamClose(){
 //------------------------------------------------------------
 vector<ofSoundDevice> ofSoundStreamListDevices(){
 	vector<ofSoundDevice> deviceList = OF_SYSTEM_SS.getDeviceList();
-#if !ANDROID
 	ofLogNotice("ofSoundStreamListDevices") << std::endl << deviceList;
-#endif
 	return deviceList;
 }
 
@@ -193,7 +206,7 @@ vector<ofSoundDevice> ofSoundStream::getDeviceList(ofSoundDevice::Api api) const
 //------------------------------------------------------------
 vector<ofSoundDevice> ofSoundStream::listDevices() const{
 	vector<ofSoundDevice> deviceList = getDeviceList();
-	//ofLogNotice("ofSoundStream::listDevices") << std::endl << deviceList;
+	ofLogNotice("ofSoundStream::listDevices") << std::endl << deviceList;
 	return deviceList;
 }
 
@@ -375,8 +388,4 @@ vector<ofSoundDevice> ofSoundStream::getMatchingDevices(const std::string& name,
 	}
 	
 	return hits;
-}
-
-ofSoundStream::~ofSoundStream() {
-
 }

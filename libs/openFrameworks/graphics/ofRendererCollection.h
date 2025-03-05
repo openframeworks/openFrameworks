@@ -2,7 +2,7 @@
 
 #include "ofGraphicsBaseTypes.h"
 #include "of3dGraphics.h"
-#include "ofPath.h"
+#include "ofPath.h" // MARK: ofPath path;
 
 class ofRendererCollection: public ofBaseRenderer{
 public:
@@ -133,32 +133,32 @@ public:
 	 void setupScreen();
 
 	// color options
-	void setColor(int r, int g, int b);
+	void setColor(float r, float g, float b);
 
-	void setColor(int r, int g, int b, int a);
+	void setColor(float r, float g, float b, float a);
 
-	void setColor(const ofColor & color);
+	void setColor(const ofFloatColor & color);
 
-	void setColor(const ofColor & color, int _a);
+	void setColor(const ofFloatColor & color, float _a);
 
-	void setColor(int gray);
+	void setColor(float gray);
 
 	void setHexColor( int hexColor );
 
 	// bg color
-	ofColor getBackgroundColor();
+	ofFloatColor getBackgroundColor();
 
-	void setBackgroundColor(const ofColor & color);
+	void setBackgroundColor(const ofFloatColor & color);
 
 	bool getBackgroundAuto();
 
-	void background(const ofColor & c);
+	void background(const ofFloatColor & c);
 
 	void background(float brightness);
 
-	void background(int hexColor, float _a=255.0f);
+	void background(int hexColor, int _a=255);
 
-	void background(int r, int g, int b, int a=255);
+	void background(float r, float g, float b, float a=1.f);
 
 	void setBackgroundAuto(bool bManual);
 
@@ -180,7 +180,7 @@ public:
 	ofFillFlag getFillMode();
 
 	void setLineWidth(float lineWidth);
-
+	void setPointSize(float pointSize);
 	void setDepthTest(bool depthTest);
 
 	void setBlendMode(ofBlendMode blendMode);

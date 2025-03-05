@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ofSoundBaseTypes.h"
+// MARK: ofConstants FS
 #include "ofConstants.h"
 
 /// \brief Stops all active sound players on FMOD-based systems (windows, osx).
@@ -46,12 +47,14 @@ public:
     ///
     /// \param fileName Path to the sound file, relative to your app's data folder.
     /// \param stream set "true" to enable streaming from disk (for large files).
-    bool load(const of::filesystem::path& fileName, bool stream = false);
-    OF_DEPRECATED_MSG("Use load",bool loadSound(std::string fileName, bool stream = false));
+    bool load(const of::filesystem::path & fileName, bool stream = false);
+    [[deprecated("Use load")]]
+	bool loadSound(const of::filesystem::path & fileName, bool stream = false);
 
     /// \brief Stops and unloads the current sound.
     void unload();
-    OF_DEPRECATED_MSG("Use unload",void unloadSound());
+	[[deprecated("Use unload")]]
+	void unloadSound();
     
     /// \brief Starts playback.
     void play();
@@ -102,7 +105,8 @@ public:
     /// \brief Gets current playback state.
     /// \return true if the player is currently playing a file.
     bool isPlaying() const;
-    OF_DEPRECATED_MSG("Use isPlaying",bool getIsPlaying() const);
+    [[deprecated("Use isPlaying")]]
+	bool getIsPlaying() const;
 
     /// \brief Gets playback speed.
     /// \return playback speed (see ofSoundPlayer::setSpeed()).
@@ -119,6 +123,14 @@ public:
     /// \brief Queries the player to see if its file was loaded successfully.
     /// \return whether or not the player is ready to begin playback.
     bool isLoaded() const;
+	
+	/// \brief Gets duration in seconds.
+	/// \return duration in seconds.
+	float getDuration() const;
+	
+	/// \brief Gets duration in milliseconds.
+	/// \return duration in milliseconds.
+	unsigned int getDurationMS() const;
 
 protected:
     std::shared_ptr<ofBaseSoundPlayer> player;

@@ -4,9 +4,10 @@
 //  http://julapy.com/blog
 //
 
+#include "ofxiOSConstants.h"
+#if defined(OF_IOS_AVSOUNDPLAYER)
 #import "AVSoundPlayer.h"
 #include <TargetConditionals.h>
-
 @interface AVSoundPlayer() {
     BOOL bMultiPlay;
 }
@@ -209,6 +210,13 @@
     return self.player.currentTime * 1000;
 }
 
+- (float)duration {
+	if(self.player == nil) {
+		return 0.f;
+	}
+	return self.player.duration;
+}
+
 //----------------------------------------------------------- timer.
 - (void)updateTimer {
     if([self.delegate respondsToSelector:@selector(soundPlayerDidChange)]) {
@@ -258,3 +266,4 @@
 }
 
 @end
+#endif

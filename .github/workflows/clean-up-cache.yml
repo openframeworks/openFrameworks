@@ -1,0 +1,65 @@
+name: Cleanup Caches by Branch
+on:
+  pull_request:
+    types:
+      - closed
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+      - name: Setup GitHub CLI
+        run: |
+          # Ensure the latest version of GitHub CLI is installed
+          sudo apt-get update && sudo apt-get install -y gh
+          # Install the actions-cache extension
+          gh extension install actions/gh-actions-cache || echo "Extension already installed"
+
+      - name: Check Token Permissions
+        run: gh auth status
+        env:
+          GH_TOKEN: ${{ secrets.PAT_TOKEN || secrets.GITHUB_TOKEN }}
+          
+      - name: Cleanup Caches
+        run: |
+          REPO=${{ github.repository }}
+          # Adjust branch reference if necessary
+          BRANCH="refs/pull/${{ github.event.pull_request.number }}/merge"
+
+          echo "Fetching list of cache keys for branch: $BRANCH"
+          cacheKeysForPR=$(gh actions-cache list -R $REPO -B $BRANCH --json key | jq -r '.[].key')
+
+          if [ -z "$cacheKeysForPR" ]; then
+            echo "No caches found for branch: $BRANCH"
+            exit 0
+          fi
+
+          echo "Deleting caches..."
+          for cacheKey in $cacheKeysForPR; do
+            echo "Deleting cache: $cacheKey"
+            gh actions-cache delete $cacheKey -R $REPO -B $BRANCH --confirm
+          done
+          echo "Cleanup completed."
+        env:
+          GH_TOKEN: ${{ secrets.PAT_TOKEN || secrets.GITHUB_TOKEN }}
+
+      - name: Verify Remaining Caches
+        run: |
+          echo "Checking for remaining caches in branch: $BRANCH"
+          remainingCaches=$(gh actions-cache list -R ${{ github.repository }} -B $BRANCH --json key | jq -r '.[].key')
+
+          if [ -z "$remainingCaches" ]; then
+            echo "All caches successfully cleared."
+          else
+            echo "Remaining caches detected:"
+            echo "$remainingCaches"
+            exit 1
+          fi
+        env:
+          GH_TOKEN: ${{ secrets.PAT_TOKEN || secrets.GITHUB_TOKEN }}

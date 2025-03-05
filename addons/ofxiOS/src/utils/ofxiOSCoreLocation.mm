@@ -18,7 +18,8 @@
  */
 
 #include "ofxiOSCoreLocation.h"
-
+#include "ofxiOSConstants.h"
+#if defined(OF_CORE_LOCATION)
 #include <TargetConditionals.h>
 #if TARGET_OS_IOS || (TARGET_OS_IPHONE && !TARGET_OS_TV)
 
@@ -214,6 +215,11 @@ double ofxiOSCoreLocation::getHeadingAccuracy()
 
 - (bool) startLocation
 {
+	if (locationManager.authorizationStatus == kCLAuthorizationStatusNotDetermined) {
+		// Request permission when in use or always
+		[locationManager requestWhenInUseAuthorization];  // or requestAlwaysAuthorization
+	}
+	
 	if([CLLocationManager locationServicesEnabled])
 	{
 		[locationManager startUpdatingLocation];
@@ -341,4 +347,5 @@ double ofxiOSCoreLocation::getHeadingAccuracy()
 
 @end
 
+#endif
 #endif
