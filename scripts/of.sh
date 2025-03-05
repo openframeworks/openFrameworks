@@ -1,13 +1,19 @@
 #!/bin/bash
 # pipe commands to core openFrameworks scripts
-OF_SCRIPT_VERSION=0.2.0
+OF_SCRIPT_VERSION=0.2.1
 # Dan Rosser 2025
 OF_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 OF_DIR="$(realpath "$OF_DIR/../")"
 OF_CORE_SCRIPT_DIR="$(realpath "$OF_DIR/scripts")"
 OF_CORE_CI_SCRIPT_DIR="$(realpath "$OF_DIR/scripts/ci")"
 OF_PG_INSTALLED_DIR="$(realpath "$OF_DIR/projectGenerator")"
-echo "$(date): [openFrameworks: $@]"
+VERBOSE=${VERBOSE:-0}
+echoVerbose() {
+    if [[ -n "$VERBOSE" ]]; then
+        echo "$@"
+    fi
+}
+echoVerbose "$(date): [openFrameworks: $@]"
 autoDetectOS() {
     if [[ -z "$PLATFORM" ]]; then
         export OF_OS=$(uname -s | tr '[:upper:]' '[:lower:]')
@@ -58,16 +64,15 @@ coreScriptPath() {
 }
 
 autoDetectOS
-echo " platfrom:[$OF_PLATFORM] arch:[$OF_ARCH]"
+echoVerbose " platfrom:[$OF_PLATFORM] arch:[$OF_ARCH]"
 coreScriptPath
-echo " coreScriptPath: [$OF_SCRIPT_PATH]"
+echoVerbose " coreScriptPath: [$OF_SCRIPT_PATH]"
 
 printHelp() {
     cat << EOF
 Usage: $0 <command> [subcommand] [options]
 
 Commands:
-  setup                  Setup openFrameworks (TODO)
   update [subcommand]    Update openFrameworks components
     libs                 Download openFrameworks libraries (default)
     pg | projectgenerator  Download Project Generator
@@ -84,7 +89,6 @@ Options:
   -h, --help             Show this help message
 
 Examples:
-  $0 setup
   $0 update              # Updates libraries
   $0 update pg           # Updates Project Generator
   $0 version             # Shows openFrameworks version
@@ -107,10 +111,10 @@ runCommand() {
             printHelp
             exit 0
             ;;
-        setup)
-            echo "openFrameworks setup - TODO"
-            SCRIPT="${OF_SCRIPT_PATH}/setup.sh"
-            ;;
+        # setup)
+        #     echo "openFrameworks setup - TODO"
+        #     SCRIPT="${OF_SCRIPT_PATH}/setup.sh"
+        #     ;;
         update)
             echo "openFrameworks update"
             EXTRA_ARGS=""
