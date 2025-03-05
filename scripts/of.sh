@@ -75,6 +75,7 @@ Usage: $0 <command> [subcommand] [options]
 Commands:
   update [subcommand]    Update openFrameworks components
     libs                 Download openFrameworks libraries (default)
+    libs [platform]      i.e update libs ios
     pg | projectgenerator  Download Project Generator
 
   version [subcommand]   Show version information
