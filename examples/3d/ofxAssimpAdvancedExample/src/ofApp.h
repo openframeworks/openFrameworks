@@ -44,6 +44,7 @@ class ofApp : public ofBaseApp{
 	ofCubeMap cubeMap;
 	ofParameter<float> cubeMapExposure;
 	ofParameter<bool> mBDebug;
+	ofParameter<bool> mBEnableCubeMap;
 	
 	ofParameterGroup mShadowParams;
 	ofParameter<float> mShadowStrength;
