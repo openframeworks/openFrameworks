@@ -224,11 +224,9 @@ static bool loadImage(ofPixels_<PixelType> & pix, const of::filesystem::path & _
 	std::string scheme(uri.scheme.first, uri.scheme.afterLast);
 	uriFreeUriMembersA(&uri);
 
-#if !defined(NO_URL_LOADER)
 	if(scheme == "http" || scheme == "https"){
 		return ofLoadImage(pix, ofLoadURL(ofPathToString(_fileName)).data);
 	}
-#endif
 
 	
 	bool bLoaded = false;
