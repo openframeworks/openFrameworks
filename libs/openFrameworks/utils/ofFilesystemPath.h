@@ -67,7 +67,6 @@ public:
 	// TODO better (ideal) impl this just copy-pasted for proof of concept
 	mutable std::string cached_narrow_str_;
 	const char* to_narrow_cstr() const {
-		std::mbstate_t state = std::mbstate_t();
 		size_t size_needed = std::wcstombs(nullptr, wstring().c_str(), 0) + 1;
 		if (size_needed == static_cast<size_t>(-1)) {
 			throw std::runtime_error("Conversion error from wstring to string");
