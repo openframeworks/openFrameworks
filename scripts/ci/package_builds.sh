@@ -31,10 +31,12 @@ ls
 OUTPUT_FOLDER=$ROOT/out
 mkdir -p $OUTPUT_FOLDER
 
+RELEASE="${RELEASE:-latest}"
+
 lastversion=$(date +%Y%m%d)
-if [ -n "$1" ] && [ "$1" != "nightly" ]; then
-	lastversion=$1
-fi
+# if [ -n "$1" ] && [ "$1" != "nightly" ]; then
+	# lastversion=$1
+# fi
 echo "##[endgroup]"
 
 echo "##[group]submodule update and pull"
@@ -56,6 +58,7 @@ if [[ "$(uname -s)" == "Linux" ]]; then
 	$ROOT/scripts/dev/create_package.sh msys2 $lastversion master ucrt64
 	$ROOT/scripts/dev/create_package.sh vs $lastversion master
 	$ROOT/scripts/dev/create_package.sh vs $lastversion master 64
+	# $ROOT/scripts/dev/create_package.sh vs2019 $lastversion master 64
 fi
 $ROOT/scripts/dev/create_package.sh osx $lastversion master
 $ROOT/scripts/dev/create_package.sh ios $lastversion master

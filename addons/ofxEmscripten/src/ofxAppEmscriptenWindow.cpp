@@ -50,24 +50,24 @@ void ofxAppEmscriptenWindow::setup(const ofGLESWindowSettings & settings){
 	_renderer = std::make_shared<ofGLProgrammableRenderer>(this);
 	((ofGLProgrammableRenderer*)_renderer.get())->setup(2,0);
 
-	emscripten_set_keydown_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW, this, true, &keydown_cb);
-	emscripten_set_keyup_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW, this, true, &keyup_cb);
-    
-	emscripten_set_mousedown_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW, this, true, &mousedown_cb);
-	emscripten_set_mouseup_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW, this, true, &mouseup_cb);
-	emscripten_set_mousemove_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW, this, true, &mousemoved_cb);
-	emscripten_set_mouseenter_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW, this, true, &mouseenter_cb);
-	emscripten_set_mouseleave_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW, this, true, &mouseleave_cb);
+    emscripten_set_keydown_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW,this,useCapture,&keydown_cb);
+    emscripten_set_keyup_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW,this,useCapture,&keyup_cb);
 
-	emscripten_set_touchstart_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW, this, true, &touch_cb);
-	emscripten_set_touchend_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW, this, true, &touch_cb);
-	emscripten_set_touchmove_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW, this, true, &touch_cb);
-	emscripten_set_touchcancel_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW, this, true, &touch_cb);
-	
-	emscripten_set_wheel_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW, this, true, &mousescrolled_cb);
+    emscripten_set_mousedown_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW,this,useCapture,&mousedown_cb);
+    emscripten_set_mouseup_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW,this,useCapture,&mouseup_cb);
+    emscripten_set_mousemove_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW,this,useCapture,&mousemoved_cb);
+    emscripten_set_mouseenter_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW,this,useCapture,&mouseenter_cb);
+    emscripten_set_mouseleave_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW,this,useCapture,&mouseleave_cb);
+
+    emscripten_set_touchstart_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW,this,useCapture,&touch_cb);
+    emscripten_set_touchend_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW,this,useCapture,&touch_cb);
+    emscripten_set_touchmove_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW,this,useCapture,&touch_cb);
+    emscripten_set_touchcancel_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW,this,useCapture,&touch_cb);
+
+    emscripten_set_wheel_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW,this,useCapture,&mousescrolled_cb);
 	
 	// the following locks up the window for some reason.....
-	//emscripten_set_resize_callback(const char *target, void *userData, EM_BOOL useCapture, em_ui_callback_func callback)
+//	emscripten_set_resize_callback(const char *target, void *userData, EM_BOOL useCapture, em_ui_callback_func callback)
 //	emscripten_set_resize_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW, this, 1, &emscripten_window_resized_callback );
 	
 	mStartWindowMode = settings.windowMode;
@@ -247,10 +247,10 @@ EM_BOOL ofxAppEmscriptenWindow::keydown_cb(int eventType, const EmscriptenKeyboa
 	}else if(id == "Ü"){
 		key = 220;
 	}else if(id == "Dead" || id == "NumLock" || id == "ScrollLock" || id == "CapsLock" || id == "Pause" || key < 0){
-		return 0;
+		return true;
 	}
 	instance->events().notifyKeyPressed(key);
-	return 0;
+	return true;
 }
 
 //------------------------------------------------------------
@@ -338,16 +338,17 @@ EM_BOOL ofxAppEmscriptenWindow::keyup_cb(int eventType, const EmscriptenKeyboard
 	}else if(id == "Ü"){
 		key = 220;
 	}else if(id == "Dead" || id == "NumLock" || id == "ScrollLock" || id == "CapsLock" || id == "Pause" || key < 0){
-		return 0;
+		return true;
 	}
 	instance->events().notifyKeyReleased(key);
-	return 0;
+	return true;
 }
 
 //------------------------------------------------------------
-EM_BOOL ofxAppEmscriptenWindow::mousedown_cb(int eventType, const EmscriptenMouseEvent * mouseEvent, void * userData) {
-	float mouseX = mouseEvent->targetX - EM_ASM_INT(return canvas.getBoundingClientRect().left);
-	float mouseY = mouseEvent->targetY - EM_ASM_INT(return canvas.getBoundingClientRect().top);
+
+EM_BOOL ofxAppEmscriptenWindow::mousedown_cb(int eventType, const EmscriptenMouseEvent *mouseEvent, void *userData){
+	double mouseX = mouseEvent->targetX - EM_ASM_DOUBLE(return canvas.getBoundingClientRect().left);
+	double mouseY = mouseEvent->targetY - EM_ASM_DOUBLE(return canvas.getBoundingClientRect().top);
 	int canvasWidth, canvasHeight;
 	emscripten_get_canvas_element_size("#canvas", &canvasWidth, &canvasHeight);
         double cssWidth, cssHeight;
@@ -355,13 +356,16 @@ EM_BOOL ofxAppEmscriptenWindow::mousedown_cb(int eventType, const EmscriptenMous
 	if(mouseX * canvasWidth / cssWidth >= 0 && mouseX * canvasWidth / cssWidth < canvasWidth && mouseY * canvasHeight / cssHeight >= 0 && mouseY * canvasHeight / cssHeight < canvasHeight){
 		instance->events().notifyMousePressed(mouseX * canvasWidth / cssWidth, mouseY * canvasHeight / cssHeight, mouseEvent->button);
 	}
-	return 0;
+	return true;
+}
+EM_BOOL ofxAppEmscriptenWindow::rescale(int* x, int* y) {
+
 }
 
 //------------------------------------------------------------
 EM_BOOL ofxAppEmscriptenWindow::mouseup_cb(int eventType, const EmscriptenMouseEvent * mouseEvent, void * userData) {
-	float mouseX = mouseEvent->targetX - EM_ASM_INT(return canvas.getBoundingClientRect().left);
-	float mouseY = mouseEvent->targetY - EM_ASM_INT(return canvas.getBoundingClientRect().top);
+	double mouseX = mouseEvent->targetX - EM_ASM_DOUBLE(return canvas.getBoundingClientRect().left);
+	double mouseY = mouseEvent->targetY - EM_ASM_DOUBLE(return canvas.getBoundingClientRect().top);
 	int canvasWidth, canvasHeight;
 	emscripten_get_canvas_element_size("#canvas", &canvasWidth, &canvasHeight);
         double cssWidth, cssHeight;
@@ -369,13 +373,13 @@ EM_BOOL ofxAppEmscriptenWindow::mouseup_cb(int eventType, const EmscriptenMouseE
 	if(ofGetMousePressed()){
 		instance->events().notifyMouseReleased(mouseX * canvasWidth / cssWidth, mouseY * canvasHeight / cssHeight, mouseEvent->button);
 	}
-	return 0;
+	return true;
 }
 
 //------------------------------------------------------------
 EM_BOOL ofxAppEmscriptenWindow::mousemoved_cb(int eventType, const EmscriptenMouseEvent * mouseEvent, void * userData) {
-	float mouseX = mouseEvent->targetX - EM_ASM_INT(return canvas.getBoundingClientRect().left);
-	float mouseY = mouseEvent->targetY - EM_ASM_INT(return canvas.getBoundingClientRect().top);
+	double mouseX = mouseEvent->targetX - EM_ASM_DOUBLE(return canvas.getBoundingClientRect().left);
+	double mouseY = mouseEvent->targetY - EM_ASM_DOUBLE(return canvas.getBoundingClientRect().top);
 	int canvasWidth, canvasHeight;
 	emscripten_get_canvas_element_size("#canvas", &canvasWidth, &canvasHeight);
         double cssWidth, cssHeight;
@@ -389,43 +393,43 @@ EM_BOOL ofxAppEmscriptenWindow::mousemoved_cb(int eventType, const EmscriptenMou
 	}else if(mouseX * canvasWidth / cssWidth >= 0 && mouseX * canvasWidth / cssWidth < canvasWidth && mouseY * canvasHeight / cssHeight >= 0 && mouseY * canvasHeight / cssHeight < canvasHeight){
 		instance->events().notifyMouseMoved(mouseX * canvasWidth / cssWidth, mouseY * canvasHeight / cssHeight);
 	}
-	return 0;
+	return true;
 }
 
 //------------------------------------------------------------
 EM_BOOL ofxAppEmscriptenWindow::mousescrolled_cb(int eventType, const EmscriptenWheelEvent * wheelEvent, void * userData) {
 	instance->events().notifyMouseScrolled(ofGetMouseX(), ofGetMouseY(), wheelEvent->deltaX / 100, wheelEvent->deltaY / 100);
-	return 0;
+	return true;
 }
 
 //------------------------------------------------------------
 EM_BOOL ofxAppEmscriptenWindow::mouseenter_cb(int eventType, const EmscriptenMouseEvent * mouseEvent, void * userData) {
-	float mouseX = mouseEvent->targetX - EM_ASM_INT(return canvas.getBoundingClientRect().left);
-	float mouseY = mouseEvent->targetY - EM_ASM_INT(return canvas.getBoundingClientRect().top);
+	double mouseX = mouseEvent->targetX - EM_ASM_DOUBLE(return canvas.getBoundingClientRect().left);
+	double mouseY = mouseEvent->targetY - EM_ASM_DOUBLE(return canvas.getBoundingClientRect().top);
 	int canvasWidth, canvasHeight;
 	emscripten_get_canvas_element_size("#canvas", &canvasWidth, &canvasHeight);
         double cssWidth, cssHeight;
 	emscripten_get_element_css_size("#canvas", &cssWidth, &cssHeight);
 	instance->events().notifyMouseEntered(mouseX * canvasWidth / cssWidth, mouseY * canvasHeight / cssHeight);
-	return 0;
+	return true;
 }
 
 //------------------------------------------------------------
 EM_BOOL ofxAppEmscriptenWindow::mouseleave_cb(int eventType, const EmscriptenMouseEvent * mouseEvent, void * userData) {
-	float mouseX = mouseEvent->targetX - EM_ASM_INT(return canvas.getBoundingClientRect().left);
-	float mouseY = mouseEvent->targetY - EM_ASM_INT(return canvas.getBoundingClientRect().top);
+	double mouseX = mouseEvent->targetX - EM_ASM_DOUBLE(return canvas.getBoundingClientRect().left);
+	double mouseY = mouseEvent->targetY - EM_ASM_DOUBLE(return canvas.getBoundingClientRect().top);
 	int canvasWidth, canvasHeight;
 	emscripten_get_canvas_element_size("#canvas", &canvasWidth, &canvasHeight);
         double cssWidth, cssHeight;
 	emscripten_get_element_css_size("#canvas", &cssWidth, &cssHeight);
 	instance->events().notifyMouseExited(mouseX * canvasWidth / cssWidth, mouseY * canvasHeight / cssHeight);
-	return 0;
+	return true;
 }
 
 //------------------------------------------------------------
 EM_BOOL ofxAppEmscriptenWindow::touch_cb(int eventType, const EmscriptenTouchEvent * e, void * userData) {
-	float boundingX = EM_ASM_INT(return canvas.getBoundingClientRect().left);
-	float boundingY = EM_ASM_INT(return canvas.getBoundingClientRect().top);
+	double boundingX = EM_ASM_DOUBLE(return canvas.getBoundingClientRect().left);
+	double boundingY = EM_ASM_DOUBLE(return canvas.getBoundingClientRect().top);
 	int canvasWidth, canvasHeight;
 	emscripten_get_canvas_element_size("#canvas", &canvasWidth, &canvasHeight);
 	double cssWidth, cssHeight;
@@ -445,7 +449,7 @@ EM_BOOL ofxAppEmscriptenWindow::touch_cb(int eventType, const EmscriptenTouchEve
 			touchArgsType = ofTouchEventArgs::cancel;
 			break;
 		default:
-			return 1;
+			return false;
 	}
 	int numTouches = e->numTouches;
 	for (int i = 0; i < numTouches; i++) {
@@ -468,7 +472,7 @@ EM_BOOL ofxAppEmscriptenWindow::touch_cb(int eventType, const EmscriptenTouchEve
 			instance->events().notifyMouseEvent(args);
 		}
 	}
-    return 0;
+    return true;
 }
 
 //------------------------------------------------------------
@@ -478,8 +482,8 @@ void ofxAppEmscriptenWindow::hideCursor(){
 
 //------------------------------------------------------------
 void ofxAppEmscriptenWindow::setWindowShape(int w, int h){
-    emscripten_set_canvas_size(w,h);
-//	emscripten_set_canvas_element_size("#canvas", w, h);
+//    emscripten_set_canvas_size(w,h);
+	emscripten_set_canvas_element_size("#canvas", w, h);
 }
 
 //------------------------------------------------------------
@@ -497,6 +501,10 @@ glm::vec2 ofxAppEmscriptenWindow::getWindowSize(){
 	int width;
 	int height;
 	emscripten_get_canvas_element_size("canvas", &width, &height);
+	if(instance) {
+		instance->mCachedWidth = width;
+		instance->mCachedHeight = height;
+	}
 	return glm::vec2(width,height);
 }
 
@@ -635,7 +643,7 @@ void ofxAppEmscriptenWindow::startRender(){
 	renderer()->startRender();
 }
 
-//------------------------------------------------------------
+//-----------------------------------------EMSCRIPTEN_RESULT-------------------
 void ofxAppEmscriptenWindow::finishRender(){
 	renderer()->finishRender();
 }
@@ -646,20 +654,23 @@ EM_BOOL ofxAppEmscriptenWindow::emscripten_game_window_resized_callback(int even
 	if(instance->mLastResizeFrameNum != ofGetFrameNum() ) {
 		double twidth, theight;
 		emscripten_get_element_css_size("canvas", &twidth, &theight);
-		int iwidth = twidth;
-		int iheight = theight;
+		int iwidth = static_cast<int>(twidth);
+		int iheight = static_cast<int>(theight);
 		
-		emscripten_set_canvas_element_size("#canvas", int(twidth), int(theight));
+		emscripten_set_canvas_element_size("#canvas", twidth, theight);
 		ofLogVerbose("ofxAppEmscriptenWindow :: trying to set the canvas size to: ") << twidth << " x " << theight << " num frames: " << instance->nFramesSinceWindowResized;
+		updateCanvas(iwidth, iheight);
 		
-		if( iwidth != instance->mCachedWidth || iheight != instance->mCachedHeight ) {
-			instance->mCachedWidth = iwidth;
-			instance->mCachedHeight = iheight;
-			
-			instance->mLastResizeFrameNum = ofGetFrameNum();
-			instance->nFramesSinceWindowResized = 0;
-//			instance->events().notifyWindowResized( iwidth, iheight );
-		}
 	}
 	return true;
+}
+
+void ofxAppEmscriptenWindow::updateCanvas(int x, int y) {
+	if( x != instance->mCachedWidth || y != instance->mCachedHeight ) {
+		instance->mCachedWidth = x;
+		instance->mCachedHeight = y;
+		instance->mLastResizeFrameNum = ofGetFrameNum();
+		instance->nFramesSinceWindowResized = 0;
+//			instance->events().notifyWindowResized( x, y );
+	}
 }

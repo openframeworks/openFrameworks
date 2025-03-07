@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ImportGroup Label="PropertySheets">
+    <Import Project="openFrameworksCommon.props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_PropertySheetDisplayName>openFrameworksRelease</_PropertySheetDisplayName>
+    <OutDir>$(SolutionDir)bin\</OutDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Platform)'=='x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>$(OF_ROOT)\libs\openFrameworks;$(OF_ROOT)\libs\openFrameworks\graphics;$(OF_ROOT)\libs\openFrameworks\app;$(OF_ROOT)\libs\openFrameworks\sound;$(OF_ROOT)\libs\openFrameworks\utils;$(OF_ROOT)\libs\openFrameworks\communication;$(OF_ROOT)\libs\openFrameworks\video;$(OF_ROOT)\libs\openFrameworks\types;$(OF_ROOT)\libs\openFrameworks\math;$(OF_ROOT)\libs\openFrameworks\3d;$(OF_ROOT)\libs\openFrameworks\gl;$(OF_ROOT)\libs\openFrameworks\events;$(OF_ROOT)\libs\glm\include;$(OF_ROOT)\libs\rtAudio\include;$(OF_ROOT)\libs\quicktime\include;$(OF_ROOT)\libs\freetype\include;$(OF_ROOT)\libs\freetype\include\freetype2;$(OF_ROOT)\libs\freeImage\include;$(OF_ROOT)\libs\fmod\include;$(OF_ROOT)\libs\videoInput\include;$(OF_ROOT)\libs\glew\include\;$(OF_ROOT)\libs\glu\include;$(OF_ROOT)\libs\tess2\include;$(OF_ROOT)\libs\cairo\include\cairo;$(OF_ROOT)\libs\pixman\include\pixman;$(OF_ROOT)\libs\libpng\include;$(OF_ROOT)\libs\zlib\include;$(OF_ROOT)\libs\glfw\include;$(OF_ROOT)\libs\openssl\include;$(OF_ROOT)\libs\utf8\include;$(OF_ROOT)\libs\json\include;$(OF_ROOT)\libs\curl\include;$(OF_ROOT)\libs\uriparser\include;$(OF_ROOT)\libs\pugixml\include;$(OF_ROOT)\addons;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;POCO_STATIC;CAIRO_WIN32_STATIC_BUILD;DISABLE_SOME_FLOATING_POINT;URI_STATIC_BUILD;GLM_ENABLE_EXPERIMENTAL%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <Link>
+      
+      <AdditionalLibraryDirectories>$(OF_ROOT)\libs\glfw\lib\vs\x64;$(OF_ROOT)\libs\rtAudio\lib\vs\x64;$(OF_ROOT)\libs\FreeImage\lib\vs\x64;$(OF_ROOT)\libs\freetype\lib\vs\x64;$(OF_ROOT)\libs\fmod\lib\vs\x64;$(OF_ROOT)\libs\videoInput\lib\vs\x64;$(OF_ROOT)\libs\cairo\lib\vs\x64;$(OF_ROOT)\libs\pixman\lib\vs\x64;$(OF_ROOT)\libs\libpng\lib\vs\x64;$(OF_ROOT)\libs\zlib\lib\vs\x64;$(OF_ROOT)\libs\glew\lib\vs\x64;$(OF_ROOT)\libs\glu\lib\vs\x64;$(OF_ROOT)\libs\openssl\lib\vs\x64;$(OF_ROOT)\libs\curl\lib\vs\x64;$(OF_ROOT)\libs\tess2\lib\vs\x64;$(OF_ROOT)\libs\uriparser\lib\vs\x64;$(OF_ROOT)\libs\pugixml\lib\vs\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>libcairo.lib;libpixman-1.lib;libpng.lib;zlib.lib;msimg32.lib;OpenGL32.lib;GLu32.lib;kernel32.lib;setupapi.lib;Vfw32.lib;comctl32.lib;rtAudio.lib;videoInput.lib;freetype.lib;FreeImage.lib;dsound.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;libglew32.lib;fmod64_vc.lib;libssl.lib;libcrypto.lib;crypt32.lib;libcurl.lib;uriparser.lib;pugixml.lib;Ws2_32.lib;tess2.lib;glfw3.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <RandomizedBaseAddress>true</RandomizedBaseAddress>
+      <IgnoreSpecificDefaultLibraries>atlthunk.lib;LIBC.lib;LIBCMT</IgnoreSpecificDefaultLibraries>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Platform)'=='ARM64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>$(OF_ROOT)\libs\openFrameworks;$(OF_ROOT)\libs\openFrameworks\graphics;$(OF_ROOT)\libs\openFrameworks\app;$(OF_ROOT)\libs\openFrameworks\sound;$(OF_ROOT)\libs\openFrameworks\utils;$(OF_ROOT)\libs\openFrameworks\communication;$(OF_ROOT)\libs\openFrameworks\video;$(OF_ROOT)\libs\openFrameworks\types;$(OF_ROOT)\libs\openFrameworks\math;$(OF_ROOT)\libs\openFrameworks\3d;$(OF_ROOT)\libs\openFrameworks\gl;$(OF_ROOT)\libs\openFrameworks\events;$(OF_ROOT)\libs\glm\include;$(OF_ROOT)\libs\rtAudio\include;$(OF_ROOT)\libs\quicktime\include;$(OF_ROOT)\libs\freetype\include;$(OF_ROOT)\libs\freetype\include\freetype2;$(OF_ROOT)\libs\freeImage\include;$(OF_ROOT)\libs\fmod\include;$(OF_ROOT)\libs\videoInput\include;$(OF_ROOT)\libs\glew\include\;$(OF_ROOT)\libs\glu\include;$(OF_ROOT)\libs\tess2\include;$(OF_ROOT)\libs\cairo\include\cairo;$(OF_ROOT)\libs\pixman\include\pixman;$(OF_ROOT)\libs\libpng\include;$(OF_ROOT)\libs\zlib\include;$(OF_ROOT)\libs\glfw\include;$(OF_ROOT)\libs\openssl\include;$(OF_ROOT)\libs\utf8\include;$(OF_ROOT)\libs\json\include;$(OF_ROOT)\libs\curl\include;$(OF_ROOT)\libs\uriparser\include;$(OF_ROOT)\libs\pugixml\include;$(OF_ROOT)\addons;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;POCO_STATIC;CAIRO_WIN32_STATIC_BUILD;DISABLE_SOME_FLOATING_POINT;URI_STATIC_BUILD;GLM_ENABLE_EXPERIMENTAL%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <Link>
+      <AdditionalLibraryDirectories>$(OF_ROOT)\libs\glfw\lib\vs\ARM64;$(OF_ROOT)\libs\rtAudio\lib\vs\ARM64;$(OF_ROOT)\libs\FreeImage\lib\vs\ARM64;$(OF_ROOT)\libs\freetype\lib\vs\ARM64;$(OF_ROOT)\libs\fmod\lib\vs\ARM64;$(OF_ROOT)\libs\videoInput\lib\vs\ARM64;$(OF_ROOT)\libs\cairo\lib\vs\ARM64;$(OF_ROOT)\libs\pixman\lib\vs\ARM64;$(OF_ROOT)\libs\libpng\lib\vs\ARM64;$(OF_ROOT)\libs\zlib\lib\vs\ARM64;$(OF_ROOT)\libs\glew\lib\vs\ARM64;$(OF_ROOT)\libs\glu\lib\vs\ARM64;$(OF_ROOT)\libs\openssl\lib\vs\ARM64;$(OF_ROOT)\libs\curl\lib\vs\ARM64;$(OF_ROOT)\libs\tess2\lib\vs\ARM64;$(OF_ROOT)\libs\uriparser\lib\vs\ARM64;$(OF_ROOT)\libs\pugixml\lib\vs\ARM64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>libcairo.lib;libpixman-1.lib;libpng.lib;zlib.lib;msimg32.lib;OpenGL32.lib;GLu32.lib;kernel32.lib;setupapi.lib;Vfw32.lib;comctl32.lib;rtAudio.lib;videoInput.lib;freetype.lib;FreeImage.lib;dsound.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;libglew32.lib;libssl.lib;libcrypto.lib;crypt32.lib;libcurl.lib;uriparser.lib;pugixml.lib;Ws2_32.lib;tess2.lib;glfw3.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <RandomizedBaseAddress>true</RandomizedBaseAddress>
+      <IgnoreSpecificDefaultLibraries>atlthunk.lib;LIBC.lib;LIBCMT</IgnoreSpecificDefaultLibraries>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Platform)'=='ARM64EC'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>$(OF_ROOT)\libs\openFrameworks;$(OF_ROOT)\libs\openFrameworks\graphics;$(OF_ROOT)\libs\openFrameworks\app;$(OF_ROOT)\libs\openFrameworks\sound;$(OF_ROOT)\libs\openFrameworks\utils;$(OF_ROOT)\libs\openFrameworks\communication;$(OF_ROOT)\libs\openFrameworks\video;$(OF_ROOT)\libs\openFrameworks\types;$(OF_ROOT)\libs\openFrameworks\math;$(OF_ROOT)\libs\openFrameworks\3d;$(OF_ROOT)\libs\openFrameworks\gl;$(OF_ROOT)\libs\openFrameworks\events;$(OF_ROOT)\libs\glm\include;$(OF_ROOT)\libs\rtAudio\include;$(OF_ROOT)\libs\quicktime\include;$(OF_ROOT)\libs\freetype\include;$(OF_ROOT)\libs\freetype\include\freetype2;$(OF_ROOT)\libs\freeImage\include;$(OF_ROOT)\libs\fmod\include;$(OF_ROOT)\libs\videoInput\include;$(OF_ROOT)\libs\glew\include\;$(OF_ROOT)\libs\glu\include;$(OF_ROOT)\libs\tess2\include;$(OF_ROOT)\libs\cairo\include\cairo;$(OF_ROOT)\libs\pixman\include\pixman;$(OF_ROOT)\libs\libpng\include;$(OF_ROOT)\libs\zlib\include;$(OF_ROOT)\libs\glfw\include;$(OF_ROOT)\libs\openssl\include;$(OF_ROOT)\libs\utf8\include;$(OF_ROOT)\libs\json\include;$(OF_ROOT)\libs\curl\include;$(OF_ROOT)\libs\uriparser\include;$(OF_ROOT)\libs\pugixml\include;$(OF_ROOT)\addons;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;POCO_STATIC;CAIRO_WIN32_STATIC_BUILD;DISABLE_SOME_FLOATING_POINT;URI_STATIC_BUILD;GLM_ENABLE_EXPERIMENTAL%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <Link>
+      <AdditionalLibraryDirectories>$(OF_ROOT)\libs\glfw\lib\vs\ARM64EC;$(OF_ROOT)\libs\rtAudio\lib\vs\ARM64EC;$(OF_ROOT)\libs\FreeImage\lib\vs\ARM64EC;$(OF_ROOT)\libs\freetype\lib\vs\ARM64EC;$(OF_ROOT)\libs\fmod\lib\vs\ARM64EC;$(OF_ROOT)\libs\videoInput\lib\vs\ARM64EC;$(OF_ROOT)\libs\cairo\lib\vs\ARM64EC;$(OF_ROOT)\libs\pixman\lib\vs\ARM64EC;$(OF_ROOT)\libs\libpng\lib\vs\ARM64EC;$(OF_ROOT)\libs\zlib\lib\vs\ARM64EC;$(OF_ROOT)\libs\glew\lib\vs\ARM64EC;$(OF_ROOT)\libs\glu\lib\vs\ARM64EC;$(OF_ROOT)\libs\openssl\lib\vs\ARM64EC;$(OF_ROOT)\libs\curl\lib\vs\ARM64EC;$(OF_ROOT)\libs\tess2\lib\vs\ARM64EC;$(OF_ROOT)\libs\uriparser\lib\vs\ARM64EC;$(OF_ROOT)\libs\pugixml\lib\vs\ARM64EC;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>libcairo.lib;libpixman-1.lib;libpng.lib;zlib.lib;msimg32.lib;OpenGL32.lib;GLu32.lib;kernel32.lib;setupapi.lib;Vfw32.lib;comctl32.lib;rtAudio.lib;videoInput.lib;freetype.lib;FreeImage.lib;dsound.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;libglew32.lib;libssl.lib;libcrypto.lib;crypt32.lib;libcurl.lib;uriparser.lib;pugixml.lib;Ws2_32.lib;tess2.lib;glfw3.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <RandomizedBaseAddress>true</RandomizedBaseAddress>
+      <IgnoreSpecificDefaultLibraries>atlthunk.lib;LIBC.lib;LIBCMT</IgnoreSpecificDefaultLibraries>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup />
+</Project>

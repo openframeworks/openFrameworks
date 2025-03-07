@@ -77,11 +77,11 @@ echoDots(){
 }
 
 
-if [ "$platform" != "msys2" ] && [ "$platform" != "linux" ] && [ "$platform" != "linux64" ] && [ "$platform" != "linuxarmv6l" ] && [ "$platform" != "linuxaarch64" ] && [ "$platform" != "linuxarmv7l" ] && [ "$platform" != "vs" ] && [ "$platform" != "osx" ] && [ "$platform" != "android" ] && [ "$platform" != "ios" ] && [ "$platform" != "macos" ]; then
+if [ "$platform" != "msys2" ] && [ "$platform" != "linux" ] && [ "$platform" != "linux64" ] && [ "$platform" != "linuxarmv6l" ] && [ "$platform" != "linuxaarch64" ] && [ "$platform" != "linuxarmv7l" ] && [ "$platform" != "vs" ] && [ "$platform" != "vs2019" ] && [ "$platform" != "osx" ] && [ "$platform" != "android" ] && [ "$platform" != "ios" ] && [ "$platform" != "macos" ]; then
     echo usage:
     echo ./create_package.sh platform version
     echo platform:
-    echo msys2, linux, linux64, linuxarmv6l, linuxaarch64, linuxarmv7l, vs, osx, android, ios, macos, all
+    echo msys2, linux, linux64, linuxarmv6l, linuxaarch64, linuxarmv7l, vs, vs2019, osx, android, ios, macos, all
     exit 1
 fi
 
@@ -186,7 +186,7 @@ function createProjectFiles {
 
         cd ${pkg_ofroot}
         echo "Creating project files for $pkg_platform"
-        if [ "$pkg_platform" == "vs" ] || [ "$pkg_platform" == "android" ] || [ "$pkg_platform" == "ios" ]; then
+        if [ "$pkg_platform" == "vs" ] || [ "$pkg_platform" == "vs2019" ] || [ "$pkg_platform" == "android" ] || [ "$pkg_platform" == "ios" ]; then
             pg_platform=$pkg_platform
         else
             pg_platform="$pkg_platform,vscode"
@@ -289,10 +289,10 @@ function createPackage {
         rm -Rf utils/fileBufferLoadingCSVExample
         rm -Rf 3d/modelNoiseExample
         rm -Rf windowing
-	rm -Rf input_output
-	rm -Rf shader
-	rm -Rf sound
-	rm -Rf threads
+        rm -Rf input_output
+        rm -Rf shader
+        rm -Rf sound
+        rm -Rf threads
         rm -Rf windowing
 	fi
 
@@ -326,7 +326,7 @@ function createPackage {
         rm -Rf windowing
     fi
 
-    if [ "$pkg_platform" == "msys2" ] || [ "$pkg_platform" == "vs" ]; then
+    if [ "$pkg_platform" == "msys2" ] || [ "$pkg_platform" == "vs2019" ] || [ "$pkg_platform" == "vs" ]; then
         rm -Rf video/osxHighPerformanceVideoPlayerExample
         rm -Rf video/osxVideoRecorderExample
         rm -Rf gles
@@ -341,41 +341,46 @@ function createPackage {
     #delete tutorials by now
     rm -Rf $pkg_ofroot/tutorials
 
+    RELEASE="${RELEASE:-latest}"
+
     #download external dependencies
     cd $pkg_ofroot/
     echo " Location: {$pkg_ofroot}"
     if [ "$pkg_platform" = "osx" ]; then
-        scripts/osx/download_libs.sh
-        scripts/emscripten/download_libs.sh -n
+        scripts/osx/download_libs.sh -t $RELEASE
+        scripts/emscripten/download_libs.sh -n -t $RELEASE
     elif [ "$pkg_platform" = "linux64" ]; then
         scripts/linux/download_libs.sh -a 64$libs_abi
-        scripts/emscripten/download_libs.sh -n
+        scripts/emscripten/download_libs.sh -n -t $RELEASE
     elif [ "$pkg_platform" = "linuxarmv6l" ]; then
-        scripts/linux/download_libs.sh -a armv6l
+        scripts/linux/download_libs.sh -a armv6l -t $RELEASE
     elif [ "$pkg_platform" = "linuxarmv7l" ]; then
-        scripts/linux/download_libs.sh -a armv7l
+        scripts/linux/download_libs.sh -a armv7l -t $RELEASE
     elif [ "$pkg_platform" = "linuxaarch64" ]; then
-        scripts/linux/download_libs.sh -a aarch64
+        scripts/linux/download_libs.sh -a aarch64 -t $RELEASE
     elif [ "$pkg_platform" = "msys2" ]; then
-        scripts/msys2/download_libs.sh -a $libs_abi
-        scripts/emscripten/download_libs.sh -n
+        scripts/msys2/download_libs.sh -a $libs_abi -t $RELEASE
+        scripts/emscripten/download_libs.sh -n -t $RELEASE
+    elif [ "$pkg_platform" = "vs2019" ]; then
+        scripts/vs/download_libs.sh -a $libs_abi -t $RELEASE
+        scripts/emscripten/download_libs.sh -n -t $RELEASE
     elif [ "$pkg_platform" = "vs" ]; then
         if [ "$libs_abi" = "" ]; then
-            scripts/vs/download_libs.sh
+            scripts/vs/download_libs_2019_x64.sh -t $RELEASE
         else
-            scripts/vs/download_libs.sh -a $libs_abi
+            scripts/vs/download_libs.sh -a $libs_abi -t $RELEASE
         fi
-        scripts/emscripten/download_libs.sh -n
+        scripts/emscripten/download_libs.sh -n -t $RELEASE
     elif [ "$pkg_platform" = "android" ]; then
-        scripts/android/download_libs.sh
+        scripts/android/download_libs.sh -t $RELEASE
     elif [ "$pkg_platform" = "ios" ]; then
-        scripts/macos/download_libs.sh
+        scripts/macos/download_libs.sh -t $RELEASE
      elif [ "$pkg_platform" = "emscripten" ]; then
-       scripts/emscripten/download_libs.sh -n
+       scripts/emscripten/download_libs.sh -n -t $RELEASE
     elif [ "$pkg_platform" = "macos" ]; then
-        scripts/osx/download_libs.sh
-        scripts/macos/download_libs.sh
-        scripts/emscripten/download_libs.sh -n
+        scripts/osx/download_libs.sh -t $RELEASE
+        scripts/macos/download_libs.sh -t $RELEASE
+        scripts/emscripten/download_libs.sh -n -t $RELEASE
     fi
 
     createProjectFiles $pkg_platform $pkg_ofroot
@@ -396,7 +401,7 @@ function createPackage {
         otherplatforms=$(remove_current_platform "$otherplatforms" "emscripten")
     elif [ "$pkg_platform" = "msys2" ]; then
         otherplatforms=$(remove_current_platform "$all_platforms" "msys2")
-    elif [ "$pkg_platform" = "vs" ]; then
+    elif [ "$pkg_platform" = "vs" ] || [ "$pkg_platform" = "vs2019" ]; then
         otherplatforms=$(remove_current_platform "$all_platforms" "vs")
         otherplatforms=$(remove_current_platform "$otherplatforms" "emscripten")
     elif [ "$pkg_platform" = "ios" ]; then
@@ -423,24 +428,24 @@ function createPackage {
 	echo "Creating projectGenerator"
 	mkdir -p $HOME/.tmp
 	export TMPDIR=$HOME/.tmp
-    if [ "$pkg_platform" = "vs" ] || [ "$pkg_platform" = "msys2" ]; then
-		
-  
-  		# use prepackaged gui
-        downloader https://github.com/openframeworks/projectGenerator/releases/download/nightly/projectGenerator-vs-gui.zip 2> /dev/null
+
+    # FIXME: Temporary fix for latest projectGenerator
+    # there is no "latest" release so we use nightly. feel free to remove this when PG/Apothecary releases are in sync
+    if [ "$RELEASE" = "latest" ]; then
+        RELEASE="nightly"
+    fi
+
+ 
+    if [ "$pkg_platform" = "vs" ] || [ "$pkg_platform" = "vs2019" ] || [ "$pkg_platform" = "msys2" ]; then
+        downloader https://github.com/openframeworks/projectGenerator/releases/download/$RELEASE/projectGenerator-vs-gui.zip 2> /dev/null
         mkdir -p projectGenerator
         unzip -q projectGenerator-vs-gui.zip -d "projectGenerator" 2> /dev/null
-		# if [ "$pkg_platform" = "msys2" ]; then
-		# 	sed -i "s/osx/msys2/g" projectGenerator/resources/app/settings.json
-		# else
-		# 	sed -i "s/osx/vs/g" projectGenerator/resources/app/settings.json
-		# fi
 		rm projectGenerator-vs-gui.zip
 		rm -rf apps/projectGenerator
 	fi
 
     if [ "$pkg_platform" = "osx" ] || [ "$pkg_platform" = "ios" ] || [ "$pkg_platform" = "macos" ]; then
-	downloader https://github.com/openframeworks/projectGenerator/releases/download/nightly/projectGenerator-osx.zip 2> /dev/null
+	downloader https://github.com/openframeworks/projectGenerator/releases/download/$RELEASE/projectGenerator-osx.zip 2> /dev/null
         unzip -q projectGenerator-osx.zip
         mv projectGenerator-osx/ projectGenerator
         rm projectGenerator-osx.zip
@@ -470,7 +475,7 @@ function createPackage {
 		# npm run build:vs > /dev/null
 		# mv dist/projectGenerator-win32-ia32 ${pkg_ofroot}/projectGenerator-windows
 		# cd ${pkg_ofroot}/projectGenerator-windows/resources/app/app/
-		downloader https://github.com/openframeworks/projectGenerator/releases/download/nightly/projectGenerator-vs-gui.zip 2> /dev/null
+		downloader https://github.com/openframeworks/projectGenerator/releases/download/$RELEASE/projectGenerator-vs-gui.zip 2> /dev/null
 		unzip -q -d "projectGenerator" projectGenerator-vs-gui.zip 2> /dev/null
 		rm projectGenerator-vs-gui.zip
 		cd ${pkg_ofroot}
@@ -555,7 +560,7 @@ function createPackage {
     	rm -Rf $otherplatforms
         rm -Rf ci dev apothecary
 	else
-    	rm -Rf msys2 vs osx ios android ci dev apothecary
+    	rm -Rf msys2 vs vs2019 osx ios android ci dev apothecary
 	fi
 
     if [ "$pkg_platform" = "android" ] || [ "$pkg_platform" = "ios" ]; then
@@ -616,7 +621,7 @@ function createPackage {
         cp docs/linux.md INSTALL.md
     fi
 
-    if [ "$platform" = "vs" ]; then
+    if [ "$platform" = "vs" ] ||  [ "$platform" = "vs2019" ]; then
         cp docs/visualstudio.md INSTALL.md
     fi
 
