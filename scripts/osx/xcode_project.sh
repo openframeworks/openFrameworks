@@ -46,13 +46,13 @@ bundle_data_folder() {
 
     if [ -z "$OF_BUNDLE_DATA_FOLDER" ]; then
         msg 'Bundle data folder disabled \ncan be enabled with OF_BUNDLE_DATA_FOLDER=1 in Project.xcconfig ';
-        if [ "$ARCHIVING" = 0 ]; then
-            if [ -d "${SRCROOT}/bin/data/" ]; then
-                rsync -avz --delete --exclude='.DS_Store' "${SRCROOT}/bin/data/" "${TARGET_BUILD_DIR}/data/"
-            else
-                echo "Source directory ${SRCROOT}/bin/data/ does not exist."
-            fi
-        fi
+#        if [ "$ARCHIVING" = 0 ]; then
+#            if [ -d "${SRCROOT}/bin/data/" ]; then
+#                rsync -avz --delete --exclude='.DS_Store' "${SRCROOT}/bin/data/" "${TARGET_BUILD_DIR}/data/"
+#            else
+#                echo "Source directory ${SRCROOT}/bin/data/ does not exist."
+#            fi
+#        fi
     else
         # Copy bin/data into App/Resources
         msg 'Bundle data folder enabled - will copy bin/data to App Package'
@@ -279,7 +279,7 @@ copy_resources
 bundle_data_folder
 code_sign
 bundle_dylibs
-copy_binary
+#copy_binary
 
 divider
 

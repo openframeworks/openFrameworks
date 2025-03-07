@@ -78,6 +78,10 @@ OTHER_CFLAGS = $(OF_CORE_CFLAGS)
 OTHER_LDFLAGS = $(OF_CORE_LIBS) $(OF_CORE_FRAMEWORKS)
 HEADER_SEARCH_PATHS = $(OF_CORE_HEADERS)
 
+//THIS MAKES SURE THE APP BUILDS INSIDE THE BIN FOLDER
+//If you comment this line out the app will be run from DerrivedData and your data/ files won't be accessible unless you uncomment OF_BUNDLE_DATA_FOLDER = 1 above
+CONFIGURATION_BUILD_DIR = ${SRCROOT}/bin
+
 //OF_CORE_BUILD_COMMAND = echo \"💾 Compiling openFrameworks\"\nxcodebuild -project \"$OF_PATH/libs/openFrameworksCompiled/project/osx/openFrameworksLib.xcodeproj\" -target openFrameworks -configuration \"${CONFIGURATION}\"  CLANG_CXX_LANGUAGE_STANDARD=$CLANG_CXX_LANGUAGE_STANDARD MACOSX_DEPLOYMENT_TARGET=$MACOSX_DEPLOYMENT_TARGET GCC_PREPROCESSOR_DEFINITIONS='$USER_PREPROCESSOR_DEFINITIONS'
 
 

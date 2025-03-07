@@ -14,7 +14,9 @@ void ofApp::setup(){
 						   glm::vec3(-maxWizardPos,-maxWizardPos,-maxWizardPos),
 						   glm::vec3(maxWizardPos,maxWizardPos,maxWizardPos) ) );
 	gui.add(wizardHandOffset.set("WizardHandOffset", glm::vec3(10.0, 12, 38), glm::vec3(-200), glm::vec3(200)));
+	gui.add(mBEnableCubeMap.set("EnableCubeMap", true));
 	gui.add(cubeMapExposure.set("CubeMapExposure", 0.25, 0.0, 1.0));
+	gui.add(mBDrawCubeMap.set("DrawCubeMap", false ));
 	
 	ofx::assimp::ImportSettings tsettings;
 	tsettings.filePath = "ofLogoHollow.fbx";
@@ -109,9 +111,9 @@ void ofApp::setup(){
 	cam.setPosition( 0, 400, 1000 );
 	cam.lookAt( glm::vec3(0,150,0) );
 	
-	// try commenting this out to see the effect that cube maps have on lighting
+	// cube maps still have an effect on the final output even if an image is not loaded.
 	// https://polyhaven.com/a/kloppenheim_06_puresky
-	cubeMap.load( "kloppenheim_06_puresky_1k.exr", 512 );
+	cubeMap.load( "kloppenheim_06_puresky_1k.hdr", 512 );
 }
 
 //--------------------------------------------------------------
@@ -150,7 +152,10 @@ void ofApp::update(){
 	}
 	
 	light.getShadow().setStrength(mShadowStrength);
-	cubeMap.setExposure(cubeMapExposure);
+	cubeMap.setEnabled(mBEnableCubeMap);
+	if( mBEnableCubeMap ) {
+		cubeMap.setExposure(cubeMapExposure);
+	}
 	
 	float spacing = 50.0f;
 	float hw = (((float)foxes.size()-1.f) * spacing) / 2.f;
@@ -192,6 +197,9 @@ void ofApp::draw(){
 	
 	
 	cam.begin();
+	if(mBDrawCubeMap) {
+		cubeMap.draw();
+	}
 	renderScene();
 	if(mBDebug) {
 		light.draw();
