@@ -111,7 +111,7 @@ jobs:
         run: ./scripts/ci/msys2/build.sh
         
       - name: Allexamples
-        run: ./scripts/msys2/buildAllExamples.sh .
+        run: ./scripts/msys2/buildAllExamples.sh ./examples
 
     # - name: Run tests
     #   run: ./scripts/ci/msys2/run_tests.sh
