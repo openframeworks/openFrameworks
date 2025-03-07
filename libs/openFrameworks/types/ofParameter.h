@@ -195,7 +195,7 @@ public:
 	}
 	
 	void reInit()  {
-		for (int i = 0; i < size(); i++) {
+		for (std::size_t i = 0; i < size(); i++) {
 			get(i).reInit();
 		}
 	}
