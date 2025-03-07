@@ -41,6 +41,27 @@ public:
 	
 	// MARK: string conversions
 	
+	auto wstring() const { return path_.wstring(); }
+	auto generic_string() const { return path_.generic_string(); }
+	auto generic_wstring() const { return path_.generic_wstring(); }
+	auto generic_u8string() const { return path_.generic_u8string(); }
+	auto generic_u16string() const { return path_.generic_u16string(); }
+	auto generic_u32string() const { return path_.generic_u32string(); }
+	auto string() const { return path_.string(); }
+	auto native() const noexcept { return path_.native(); }
+	auto u8string() const { return path_.u8string(); }
+	auto u16string() const { return path_.u16string(); }
+	auto u32string() const { return path_.u32string(); }
+	const auto c_str() const noexcept { return path_.c_str(); }
+	
+	const std::filesystem::path& native_path() const { return path_; }
+	
+	static constexpr auto preferred_separator = std::filesystem::path::preferred_separator;
+	
+	bool empty() const noexcept { return path_.empty(); }
+	bool is_absolute() const { return path_.is_absolute(); }
+	bool is_relative() const { return path_.is_relative(); }
+	
 #if defined(TARGET_WIN32) // superfluous but usefull to facilitate testing on mac/linux
 	
 	// TODO better (ideal) impl this just copy-pasted for proof of concept
@@ -65,26 +86,7 @@ public:
 	explicit operator const std::filesystem::path::string_type() const { return path_.string(); }
 #endif
 	
-	auto wstring() const { return path_.wstring(); }
-	auto generic_string() const { return path_.generic_string(); }
-	auto generic_wstring() const { return path_.generic_wstring(); }
-	auto generic_u8string() const { return path_.generic_u8string(); }
-	auto generic_u16string() const { return path_.generic_u16string(); }
-	auto generic_u32string() const { return path_.generic_u32string(); }
-	auto string() const { return path_.string(); }
-	auto native() const noexcept { return path_.native(); }
-	auto u8string() const { return path_.u8string(); }
-	auto u16string() const { return path_.u16string(); }
-	auto u32string() const { return path_.u32string(); }
-	const auto c_str() const noexcept { return path_.c_str(); }
-	
-	const std::filesystem::path& native_path() const { return path_; }
-	
-	static constexpr auto preferred_separator = std::filesystem::path::preferred_separator;
-	
-	bool empty() const noexcept { return path_.empty(); }
-	bool is_absolute() const { return path_.is_absolute(); }
-	bool is_relative() const { return path_.is_relative(); }
+
 	
 	// MARK: std::filesystem forwards
 	bool exists() const { return std::filesystem::exists(path_); }
