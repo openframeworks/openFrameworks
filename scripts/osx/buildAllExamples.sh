@@ -5,7 +5,7 @@ cd $SCRIPT_DIR
 
 for category in $( find ../../examples -maxdepth 1 -type d )
 do
-    if [ "$category" = "../../examples/android" -o "$category" = "../../examples/templates" -o "$category" = "../../examples/tvOS" -o "$category" = "../../examples/ios" -o "$category" = "../../examples/gles" -o "$category" = "../../examples" ];
+    if [ "$category" = "../../examples/android" -o "$category" = "../../examples/templates" -o "$category" = "../../examples/tvOS" -o "$category" = "../../examples/ios" -o "$category" = "../../examples/gles" -o "$category" = "../../examples" ]; then
        	continue
     fi
     echo "-----------------------------------------------------------------"
