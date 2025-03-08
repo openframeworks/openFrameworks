@@ -6,7 +6,7 @@
 class ofxAndroidSoundPlayer: public ofBaseSoundPlayer{
 public:
 	ofxAndroidSoundPlayer();
-	virtual ~ofxAndroidSoundPlayer();
+	~ofxAndroidSoundPlayer();
 
 	bool load(const of::filesystem::path& fileName, bool stream = false);
 	void unload();
