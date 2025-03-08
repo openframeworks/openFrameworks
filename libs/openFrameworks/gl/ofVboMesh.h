@@ -51,5 +51,5 @@ private:
 	std::size_t vboNumNormals;
 	std::size_t vboNumTexCoords;
 	std::size_t vboNumColors;
-	bool updateSet;
+	bool updateSet = false;
 };
