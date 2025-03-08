@@ -497,7 +497,7 @@ string ofShader::parseForIncludes(const string & source, vector<of::filesystem::
         // --------| invariant: '#pragma include' has been requested
 
 		of::filesystem::path includeFS { sourceDirectoryPath / include };
-		of::filesystem::path includeFSAbsolute { of::filesystem::absolute(includeFS) };
+		of::filesystem::path includeFSAbsolute { std::filesystem::absolute(includeFS) };
 
         if (std::find(included.begin(), included.end(), includeFSAbsolute) != included.end()) {
             ofLogVerbose("ofShader") << include << " already included";

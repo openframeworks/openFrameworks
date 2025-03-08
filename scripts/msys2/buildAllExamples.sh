@@ -2,7 +2,13 @@
 
 export LC_ALL=C
 
-examples_dir=../../examples
+#!/bin/bash
+if [ -z "$1" ]; then
+	examples_dir=../../examples
+else
+	examples_dir="$1"
+fi
+
 examples_prefix="$examples_dir/"
 
 system=msys2
