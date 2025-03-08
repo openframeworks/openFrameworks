@@ -1,0 +1,15 @@
+../../addons/ofxGui/src/ofxBaseGui.h usr/include/openframeworks/ofxGui
+../../addons/ofxGui/src/ofxButton.h usr/include/openframeworks/ofxGui
+../../addons/ofxGui/src/ofxColorPicker.h usr/include/openframeworks/ofxGui
+../../addons/ofxGui/src/ofxGuiGroup.h usr/include/openframeworks/ofxGui
+../../addons/ofxGui/src/ofxGui.h usr/include/openframeworks/ofxGui
+../../addons/ofxGui/src/ofxInputField.h usr/include/openframeworks/ofxGui
+../../addons/ofxGui/src/ofxLabel.h usr/include/openframeworks/ofxGui
+../../addons/ofxGui/src/ofxPanel.h usr/include/openframeworks/ofxGui
+../../addons/ofxGui/src/ofxSliderGroup.h usr/include/openframeworks/ofxGui
+../../addons/ofxGui/src/ofxSlider.h usr/include/openframeworks/ofxGui
+../../addons/ofxGui/src/ofxToggle.h usr/include/openframeworks/ofxGui
+
+
+../../addons/libofxGui.a usr/lib/openframeworks
+debian/openframeworks-gui.pc usr/share/pkgconfig

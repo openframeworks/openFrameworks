@@ -1,0 +1,11 @@
+../../addons/ofxNetwork/src/ofxNetwork.h usr/include/openframeworks/ofxNetwork
+../../addons/ofxNetwork/src/ofxNetworkUtils.h usr/include/openframeworks/ofxNetwork
+../../addons/ofxNetwork/src/ofxTCPClient.h usr/include/openframeworks/ofxNetwork
+../../addons/ofxNetwork/src/ofxTCPManager.h usr/include/openframeworks/ofxNetwork
+../../addons/ofxNetwork/src/ofxTCPServer.h usr/include/openframeworks/ofxNetwork
+../../addons/ofxNetwork/src/ofxTCPSettings.h usr/include/openframeworks/ofxNetwork
+../../addons/ofxNetwork/src/ofxUDPManager.h usr/include/openframeworks/ofxNetwork
+../../addons/ofxNetwork/src/ofxUDPSettings.h usr/include/openframeworks/ofxNetwork
+
+../../addons/libofxNetwork.a usr/lib/openframeworks
+debian/openframeworks-network.pc usr/share/pkgconfig

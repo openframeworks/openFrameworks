@@ -1,0 +1,6 @@
+../../addons/ofxSvg/src/ofxSvg.h usr/include/openframeworks/ofxSvg
+
+../../addons/libofxSvg.a usr/lib/openframeworks
+../../addons/ofxSvg/libs/svgtiny/lib/linux64/libsvgtiny.a usr/lib/openframeworks/ofxSvg
+../../addons/ofxSvg/libs/libxml2/lib/linux64/libxml2.a usr/lib/openframeworks/ofxSvg
+debian/openframeworks-svg.pc usr/share/pkgconfig

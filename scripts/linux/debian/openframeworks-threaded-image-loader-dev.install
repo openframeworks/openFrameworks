@@ -1,0 +1,4 @@
+../../addons/ofxThreadedImageLoader/src/ofxThreadedImageLoader.h usr/include/openframeworks/ofxThreadedImageLoader
+
+../../addons/libofxThreadedImageLoader.a usr/lib/openframeworks
+debian/openframeworks-threaded-image-loader.pc usr/share/pkgconfig

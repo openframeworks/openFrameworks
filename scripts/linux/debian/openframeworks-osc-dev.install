@@ -1,0 +1,23 @@
+../../addons/ofxOsc/src/ofxOscArg.h usr/include/openframeworks/ofxOsc
+../../addons/ofxOsc/src/ofxOscBundle.h usr/include/openframeworks/ofxOsc
+../../addons/ofxOsc/src/ofxOsc.h usr/include/openframeworks/ofxOsc
+../../addons/ofxOsc/src/ofxOscMessage.h usr/include/openframeworks/ofxOsc
+../../addons/ofxOsc/src/ofxOscParameterSync.h usr/include/openframeworks/ofxOsc
+../../addons/ofxOsc/src/ofxOscReceiver.h usr/include/openframeworks/ofxOsc
+../../addons/ofxOsc/src/ofxOscSender.h usr/include/openframeworks/ofxOsc
+../../addons/ofxOsc/libs/oscpack/src/ip/IpEndpointName.h usr/include/openframeworks/ofxOsc/oscpack/ip
+../../addons/ofxOsc/libs/oscpack/src/ip/NetworkingUtils.h usr/include/openframeworks/ofxOsc/oscpack/ip
+../../addons/ofxOsc/libs/oscpack/src/ip/PacketListener.h usr/include/openframeworks/ofxOsc/oscpack/ip
+../../addons/ofxOsc/libs/oscpack/src/ip/TimerListener.h usr/include/openframeworks/ofxOsc/oscpack/ip
+../../addons/ofxOsc/libs/oscpack/src/ip/UdpSocket.h usr/include/openframeworks/ofxOsc/oscpack/ip
+../../addons/ofxOsc/libs/oscpack/src/osc/MessageMappingOscPacketListener.h usr/include/openframeworks/ofxOsc/oscpack/osc
+../../addons/ofxOsc/libs/oscpack/src/osc/OscException.h usr/include/openframeworks/ofxOsc/oscpack/osc
+../../addons/ofxOsc/libs/oscpack/src/osc/OscHostEndianness.h usr/include/openframeworks/ofxOsc/oscpack/osc
+../../addons/ofxOsc/libs/oscpack/src/osc/OscOutboundPacketStream.h usr/include/openframeworks/ofxOsc/oscpack/osc
+../../addons/ofxOsc/libs/oscpack/src/osc/OscPacketListener.h usr/include/openframeworks/ofxOsc/oscpack/osc
+../../addons/ofxOsc/libs/oscpack/src/osc/OscPrintReceivedElements.h usr/include/openframeworks/ofxOsc/oscpack/osc
+../../addons/ofxOsc/libs/oscpack/src/osc/OscReceivedElements.h usr/include/openframeworks/ofxOsc/oscpack/osc
+../../addons/ofxOsc/libs/oscpack/src/osc/OscTypes.h usr/include/openframeworks/ofxOsc/oscpack/osc
+
+../../addons/libofxOsc.a usr/lib/openframeworks
+debian/openframeworks-osc.pc usr/share/pkgconfig
