@@ -6,7 +6,7 @@
 #include "ofxAssimpSrcAnimKeyCollection.h"
 #include "ofxAssimpUtils.h"
 
-using namespace ofx::assimp;
+using namespace ofxAssimp;
 
 //--------------------------------------------------------------
 void SrcAnimKeyCollection::setup( aiNodeAnim* aNodeAnim, float aDurationInTicks ) {
@@ -21,7 +21,7 @@ bool  SrcAnimKeyCollection::hasKeys() {
 
 
 //--------------------------------------------------------------
-glm::vec3 SrcAnimKeyCollection::getVec3ForTime( const float& atime, const std::vector<ofx::assimp::AnimVectorKey>& akeys ) {
+glm::vec3 SrcAnimKeyCollection::getVec3ForTime( const float& atime, const std::vector<ofxAssimp::AnimVectorKey>& akeys ) {
 	size_t numKeys = akeys.size();
 	for( size_t i = 0; i < numKeys; i++ ) {
 		if( akeys[i].time == atime ) {

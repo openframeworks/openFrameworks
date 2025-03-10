@@ -22,7 +22,7 @@ struct aiNode;
 // This class loads and stores all of the resources used by a ofxAssimpModel
 // It is not intended for rendering
 
-namespace ofx::assimp {
+namespace ofxAssimp {
 //to pass into the load function use this syntax: ofxAssimpModelLoader::OPTIMIZE_DEFAULT
 //Note these are negative as we want to let users pass in assimp flags directly if they want to
 enum ImportFlags{
@@ -60,9 +60,9 @@ public:
 	void optimizeScene();
 	void clear();
 	
-	std::vector< std::shared_ptr<ofx::assimp::SrcNode> > getRootNodes() { return mSrcNodes; }
+	std::vector< std::shared_ptr<ofxAssimp::SrcNode> > getRootNodes() { return mSrcNodes; }
 	
-	std::vector< ofx::assimp::Animation >& getAnimations() {return mAnimations;}
+	std::vector< ofxAssimp::Animation >& getAnimations() {return mAnimations;}
 	
 	ImportSettings getImportSettings() { return mSettings; }
 	
@@ -84,26 +84,26 @@ protected:
 	bool isArmature( aiNode* aAiNode, const std::unordered_map<std::string, aiBone*>& aBoneMap );
 	bool isRootBone( aiNode* aAiNode, std::unordered_map<std::string, aiBone*>& aBoneMap );
 	aiBone* getAiBoneForAiNode( aiNode* aAiNode, std::unordered_map<std::string, aiBone*>& aBoneMap );
-//	void recursiveAddSrcBones( std::shared_ptr<ofx::assimp::SrcBone> abone );
+//	void recursiveAddSrcBones( std::shared_ptr<ofxAssimp::SrcBone> abone );
 	
-	std::shared_ptr<ofx::assimp::SrcNode> getSrcNodeForAiNodeName( const std::string& aAiNodeName );
+	std::shared_ptr<ofxAssimp::SrcNode> getSrcNodeForAiNodeName( const std::string& aAiNodeName );
 	
 	void processLights();
 	
 	void processAnimations();
-	void processKeyframes( std::shared_ptr<ofx::assimp::SrcNode> aSrcNode, aiNodeAnim* aNodeAnim, unsigned int aAnimIndex );
+	void processKeyframes( std::shared_ptr<ofxAssimp::SrcNode> aSrcNode, aiNodeAnim* aNodeAnim, unsigned int aAnimIndex );
 	
 	// Initial VBO creation, etc
-	void loadGLResources(std::shared_ptr<ofx::assimp::SrcMesh> aSrcMesh, aiMesh* amesh);
+	void loadGLResources(std::shared_ptr<ofxAssimp::SrcMesh> aSrcMesh, aiMesh* amesh);
 	
 	ofFile mFile;
 	
 	std::vector<ofLight> mLights;
-	std::map<of::filesystem::path, std::shared_ptr<ofx::assimp::Texture> > mAssimpTextures;
-	std::vector< ofx::assimp::Animation > mAnimations;
+	std::map<of::filesystem::path, std::shared_ptr<ofxAssimp::Texture> > mAssimpTextures;
+	std::vector< ofxAssimp::Animation > mAnimations;
 	
-	std::vector< std::shared_ptr<ofx::assimp::SrcMesh> > mSrcMeshes;
-	std::vector< std::shared_ptr<ofx::assimp::SrcNode> > mSrcNodes;
+	std::vector< std::shared_ptr<ofxAssimp::SrcMesh> > mSrcMeshes;
+	std::vector< std::shared_ptr<ofxAssimp::SrcNode> > mSrcNodes;
 	
 	ImportSettings mSettings;
 	
@@ -114,7 +114,7 @@ protected:
 	std::shared_ptr<const aiScene> scene;
 	std::shared_ptr<aiPropertyStore> store;
 	
-//	ofx::assimp::Bounds mSceneBoundsLocal;
+//	ofxAssimp::Bounds mSceneBoundsLocal;
 	
 };
 }

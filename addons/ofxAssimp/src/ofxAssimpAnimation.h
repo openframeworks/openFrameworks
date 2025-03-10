@@ -9,7 +9,7 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
-namespace ofx::assimp {
+namespace ofxAssimp {
 
 class Animation {
 public:

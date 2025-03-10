@@ -12,7 +12,7 @@
 #include "ofxAssimpUtils.h"
 #include "ofVboMesh.h"
 
-using namespace ofx::assimp;
+using namespace ofxAssimp;
 using std::shared_ptr;
 using std::make_shared;
 
@@ -20,7 +20,7 @@ using std::make_shared;
 std::unordered_map< int, std::shared_ptr<ofVboMesh> > Bone::sRenderMeshes;
 
 //--------------------------------------------------------------
-void Bone::setSrcBone( std::shared_ptr<ofx::assimp::SrcBone> aSrcBone ) {
+void Bone::setSrcBone( std::shared_ptr<ofxAssimp::SrcBone> aSrcBone ) {
 	mSrcBone = aSrcBone;
 	mOffsetMatrix = mSrcBone->getAiOffsetMatrix();
 	

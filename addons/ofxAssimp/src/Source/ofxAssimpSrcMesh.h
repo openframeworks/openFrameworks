@@ -12,13 +12,13 @@
 #include "ofVbo.h"
 #include "ofxAssimpBounds.h"
 
-namespace ofx::assimp {
-class SrcMesh : public ofx::assimp::SrcNode {
+namespace ofxAssimp {
+class SrcMesh : public ofxAssimp::SrcNode {
 public:
 	static ofTexture sDummyTex;
 	virtual NodeType getType() override { return OFX_ASSIMP_MESH; }
 	
-	void addTexture(std::shared_ptr<ofx::assimp::Texture> aAssimpTex);
+	void addTexture(std::shared_ptr<ofxAssimp::Texture> aAssimpTex);
 	bool hasTexture();
 	bool hasTexture(aiTextureType aTexType);
 	bool hasTexture( ofMaterialTextureType aType );
@@ -27,7 +27,7 @@ public:
 	ofTexture& getTexture();
 	ofTexture& getTexture(aiTextureType aTexType);
 	ofTexture& getTexture(ofMaterialTextureType aType);
-	std::vector<std::shared_ptr<ofx::assimp::Texture>> & getAllMeshTextures(){ return meshTextures; }
+	std::vector<std::shared_ptr<ofxAssimp::Texture>> & getAllMeshTextures(){ return meshTextures; }
 	
 	void setAiMesh(aiMesh* amesh, aiNode* aAiNode);
 	aiMesh* getAiMesh() { return mAiMesh; }
@@ -51,6 +51,6 @@ public:
 protected:
 	aiMesh* mAiMesh = nullptr; // pointer to the aiMesh we represent.
 	Bounds mLocalBounds;
-	std::vector<std::shared_ptr<ofx::assimp::Texture>> meshTextures;
+	std::vector<std::shared_ptr<ofxAssimp::Texture>> meshTextures;
 };
 }

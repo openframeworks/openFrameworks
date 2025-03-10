@@ -1,4 +1,4 @@
-#include "ofxAssimpModel.h"
+#include "ofxAssimpScene.h"
 #include "ofxAssimpUtils.h"
 #include "ofLight.h"
 #include "ofImage.h"
@@ -17,18 +17,18 @@ using std::vector;
 using std::make_shared;
 using std::string;
 
-using namespace ofx::assimp;
+using namespace ofxAssimp;
 
-Model::Model(){
+Scene::Scene(){
 	clear();
 }
 
-Model::~Model(){
+Scene::~Scene(){
 	clear();
 }
 
 //------------------------------------------
-bool Model::load(string aPathToFile, int assimpOptimizeFlags){
+bool Scene::load(string aPathToFile, int assimpOptimizeFlags){
 	ImportSettings tsettings;
 	tsettings.filePath = aPathToFile;
 	tsettings.assimpOptimizeFlags = assimpOptimizeFlags;
@@ -36,13 +36,13 @@ bool Model::load(string aPathToFile, int assimpOptimizeFlags){
 }
 
 //------------------------------------------
-bool Model::load(ofBuffer & buffer, int assimpOptimizeFlags, const char * extension){
-	ofLogVerbose("ofx::assimp::Model") << "load(): loading from memory buffer \"." << extension << "\"";
+bool Scene::load(ofBuffer & buffer, int assimpOptimizeFlags, const char * extension){
+	ofLogVerbose("ofxAssimp::Scene") << "load(): loading from memory buffer \"." << extension << "\"";
 	if( mSrcScene ) {
 		mSrcScene->clear();
 		mSrcScene.reset();
 	}
-	auto tscene = std::make_shared<ofx::assimp::SrcScene>();
+	auto tscene = std::make_shared<ofxAssimp::SrcScene>();
 	if(tscene->load( buffer, assimpOptimizeFlags, extension )) {
 		bLoadedSrcScene = true;
 		return setup(tscene);
@@ -52,8 +52,8 @@ bool Model::load(ofBuffer & buffer, int assimpOptimizeFlags, const char * extens
 }
 
 //------------------------------------------
-bool Model::load( const ImportSettings& asettings ) {
-	auto tscene = std::make_shared<ofx::assimp::SrcScene>();
+bool Scene::load( const ImportSettings& asettings ) {
+	auto tscene = std::make_shared<ofxAssimp::SrcScene>();
 	if(tscene->load(asettings)) {
 		bLoadedSrcScene = true;
 		return setup(tscene);
@@ -63,7 +63,7 @@ bool Model::load( const ImportSettings& asettings ) {
 }
 
 //------------------------------------------
-bool Model::setup( std::shared_ptr<ofx::assimp::SrcScene> ascene ) {
+bool Scene::setup( std::shared_ptr<ofxAssimp::SrcScene> ascene ) {
 	clear();
 	
 	mSrcScene = ascene;
@@ -72,12 +72,12 @@ bool Model::setup( std::shared_ptr<ofx::assimp::SrcScene> ascene ) {
 }
 
 //------------------------------------------
-bool Model::isLoaded() {
+bool Scene::isLoaded() {
 	return bProcessedSceneSuccessfully;
 }
 
 //------------------------------------------
-bool Model::processScene() {
+bool Scene::processScene() {
 //	mSettings = asettings;
 	mAnimationIndex = 0;
 	mBSceneBoundsDirty = true;
@@ -94,7 +94,7 @@ bool Model::processScene() {
 			}
 		}
 		
-		std::shared_ptr<ofx::assimp::Node> tempParent;
+		std::shared_ptr<ofxAssimp::Node> tempParent;
 		auto sceneSrcNodes = mSrcScene->getRootNodes();
 		for( auto sceneSrcNode : sceneSrcNodes ) {
 			processSceneNodesRecursive(sceneSrcNode, tempParent);
@@ -119,13 +119,13 @@ bool Model::processScene() {
 			for(unsigned int a = 0; a < mesh->mNumBones; ++a) {
 				aiBone* bone = mesh->mBones[a];
 				if( !bone ) {
-					ofLogError("ofx::assimp::Model : NULL bone! - ") << a;
+					ofLogError("ofxAssimp::Scene : NULL bone! - ") << a;
 					continue;
 				}
 //				aiNode* node = scene->mRootNode->FindNode(bone->mName);
 				aiNode* boneNode = bone->mNode;
 				if( !boneNode ) {
-					ofLogError("ofx::assimp::Model : unable to find scene node for bone!") << bone->mName.data;
+					ofLogError("ofxAssimp::Scene : unable to find scene node for bone!") << bone->mName.data;
 					continue;
 				}
 				
@@ -138,15 +138,15 @@ bool Model::processScene() {
 			}
 		}
 		
-		ofLogNotice("-- Model::processScene : scale: ") << getScale() << " global Scale: " << getGlobalScale();
+		ofLogNotice("-- Scene::processScene : scale: ") << getScale() << " global Scale: " << getGlobalScale();
 		
 		update();
 		calculateDimensions();
 
 		if(hasAnimations()) {
-			ofLogVerbose("ofx::assimp::Model") << "load(): scene has " << getNumAnimations() << "animations";
+			ofLogVerbose("ofxAssimp::Scene") << "load(): scene has " << getNumAnimations() << "animations";
 		} else {
-			ofLogVerbose("ofx::assimp::Model") << "load(): no animations";
+			ofLogVerbose("ofxAssimp::Scene") << "load(): no animations";
 		}
 		return true;
 	}
@@ -155,34 +155,34 @@ bool Model::processScene() {
 }
 
 //-------------------------------------------
-void Model::processSceneNodesRecursive( std::shared_ptr<ofx::assimp::SrcNode> aSrcNode, std::shared_ptr<ofx::assimp::Node> aParentNode ) {
+void Scene::processSceneNodesRecursive( std::shared_ptr<ofxAssimp::SrcNode> aSrcNode, std::shared_ptr<ofxAssimp::Node> aParentNode ) {
 	if( !aSrcNode ) return;
 	
-	shared_ptr<ofx::assimp::Node> newNode;
+	shared_ptr<ofxAssimp::Node> newNode;
 	auto nodeType = aSrcNode->getType();
-	if( nodeType == ofx::assimp::NodeType::OFX_ASSIMP_MESH ) {
-		auto tmesh = make_shared<ofx::assimp::Mesh>();
-		auto srcMesh = std::dynamic_pointer_cast<ofx::assimp::SrcMesh>(aSrcNode);
+	if( nodeType == ofxAssimp::NodeType::OFX_ASSIMP_MESH ) {
+		auto tmesh = make_shared<ofxAssimp::Mesh>();
+		auto srcMesh = std::dynamic_pointer_cast<ofxAssimp::SrcMesh>(aSrcNode);
 		tmesh->setSrcMesh( srcMesh );
 		mMeshes.push_back(tmesh);
 		newNode = tmesh;
-	} else if( nodeType == ofx::assimp::NodeType::OFX_ASSIMP_BONE ) {
+	} else if( nodeType == ofxAssimp::NodeType::OFX_ASSIMP_BONE ) {
 		
-		auto srcBone = std::dynamic_pointer_cast<ofx::assimp::SrcBone>(aSrcNode);
+		auto srcBone = std::dynamic_pointer_cast<ofxAssimp::SrcBone>(aSrcNode);
 		
-		std::shared_ptr<ofx::assimp::Bone> tbone;
+		std::shared_ptr<ofxAssimp::Bone> tbone;
 		if( srcBone->bRoot ) {
-			auto skel = make_shared<ofx::assimp::Skeleton>();
+			auto skel = make_shared<ofxAssimp::Skeleton>();
 			mSkeletons.push_back(skel);
 			tbone = skel;
 		} else {
-			tbone = make_shared<ofx::assimp::Bone>();
+			tbone = make_shared<ofxAssimp::Bone>();
 		}
 		tbone->setSrcBone( srcBone );
 		mBones.push_back(tbone);
 		newNode = tbone;
-	} else if( nodeType == ofx::assimp::NodeType::OFX_ASSIMP_NODE ) {
-		auto tnode = make_shared<ofx::assimp::Node>();
+	} else if( nodeType == ofxAssimp::NodeType::OFX_ASSIMP_NODE ) {
+		auto tnode = make_shared<ofxAssimp::Node>();
 		mNullNodes.push_back(tnode);
 		newNode = tnode;
 	}
@@ -207,7 +207,7 @@ void Model::processSceneNodesRecursive( std::shared_ptr<ofx::assimp::SrcNode> aS
 }
 
 //-------------------------------------------
-std::string Model::getHierarchyAsString() {
+std::string Scene::getHierarchyAsString() {
 	std::stringstream ss;
 	for( auto& node : mKids ) {
 		ss << node->getAsString(0);
@@ -216,7 +216,7 @@ std::string Model::getHierarchyAsString() {
 }
 
 //-------------------------------------------
-void Model::clear(){
+void Scene::clear(){
 	
 	if( bLoadedSrcScene && mSrcScene ){
 		mSrcScene->clear();
@@ -225,7 +225,7 @@ void Model::clear(){
 	bLoadedSrcScene = false;
 	bProcessedSceneSuccessfully = false;
 	
-	ofLogVerbose("ofx::assimp::Model") << "clear(): deleting GL resources";
+	ofLogVerbose("ofxAssimp::Scene") << "clear(): deleting GL resources";
 	
 	if( mSrcNode ) {
 		mSrcNode.reset();
@@ -257,32 +257,32 @@ void Model::clear(){
 }
 
 //-------------------------------------------
-void Model::centerAndScaleToWindow() {
+void Scene::centerAndScaleToWindow() {
 	centerAndScaleToViewRect( 0.f, 0.f, ofGetWidth(), ofGetHeight() );
 }
 
 //-------------------------------------------
-void Model::centerAndScaleToViewRect(const ofRectangle& arect) {
+void Scene::centerAndScaleToViewRect(const ofRectangle& arect) {
 	centerAndScaleToViewRect( arect.x, arect.y, arect.getWidth(), arect.getHeight());
 }
 
 //-------------------------------------------
-void Model::centerAndScaleToViewRect(const ofRectangle& arect, float aNormalizeFactor) {
+void Scene::centerAndScaleToViewRect(const ofRectangle& arect, float aNormalizeFactor) {
 	centerAndScaleToViewRect( arect.x, arect.y, arect.getWidth(), arect.getHeight(), aNormalizeFactor );
 }
 
 //-------------------------------------------
-void Model::centerAndScaleToViewRect( float awidth, float aheight ) {
+void Scene::centerAndScaleToViewRect( float awidth, float aheight ) {
 	centerAndScaleToViewRect( 0.f, 0.f, awidth, aheight );
 }
 
 //-------------------------------------------
-void Model::centerAndScaleToViewRect( float ax, float ay, float awidth, float aheight ) {
+void Scene::centerAndScaleToViewRect( float ax, float ay, float awidth, float aheight ) {
 	centerAndScaleToViewRect( 0.f, 0.f, awidth, aheight, awidth / 2.0 );
 }
 
 //-------------------------------------------
-void Model::centerAndScaleToViewRect( float ax, float ay, float awidth, float aheight, float aNormalizeFactor ) {
+void Scene::centerAndScaleToViewRect( float ax, float ay, float awidth, float aheight, float aNormalizeFactor ) {
 	calculateDimensions();
 	normalizeFactor = aNormalizeFactor;
 	
@@ -291,7 +291,7 @@ void Model::centerAndScaleToViewRect( float ax, float ay, float awidth, float ah
 	normalizedScale = std::max(double(mSceneBoundsLocal.max.z - mSceneBoundsLocal.min.z), normalizedScale);
 	
 	if (fabs(normalizedScale) < std::numeric_limits<float>::epsilon()){
-		ofLogWarning("ofx::assimp::Model") << "Error calculating normalized scale of scene" << std::endl;
+		ofLogWarning("ofxAssimp::Scene") << "Error calculating normalized scale of scene" << std::endl;
 		normalizedScale = 1.0;
 	} else {
 		if( normalizedScale != 0.0f ) {
@@ -308,9 +308,9 @@ void Model::centerAndScaleToViewRect( float ax, float ay, float awidth, float ah
 }
 
 //-------------------------------------------
-void Model::calculateDimensions(){
+void Scene::calculateDimensions(){
 	if(!mSrcScene) return;
-	ofLogVerbose("ofx::assimp::Model") << "calculateDimensions(): inited scene with "
+	ofLogVerbose("ofxAssimp::Scene") << "calculateDimensions(): inited scene with "
 	<< mSrcScene->getAiScene()->mNumMeshes << " meshes & " << mSrcScene->getAiScene()->mNumAnimations << " animations";
 	
 	mBSceneBoundsDirty = true;
@@ -324,19 +324,19 @@ void Model::calculateDimensions(){
 }
 
 //------------------------------------------- early update.
-void Model::earlyUpdate() {
+void Scene::earlyUpdate() {
 	if(!mSrcScene) return;
 	updateAnimations();
 }
 
 //------------------------------------------- update.
-void Model::update() {
+void Scene::update() {
 	earlyUpdate();
 	lateUpdate();
 }
 
 //------------------------------------------- late update.
-void Model::lateUpdate() {
+void Scene::lateUpdate() {
 	if(!hasAnimations() && !mBSceneDirty) {
 		return;
 	}
@@ -351,11 +351,11 @@ void Model::lateUpdate() {
 	mBSceneDirty = false;
 }
 
-void Model::flagSceneDirty() {
+void Scene::flagSceneDirty() {
 	mBSceneDirty = true;
 }
 
-void Model::updateAnimations() {
+void Scene::updateAnimations() {
 	if( mAnimMixer ) {
 		mAnimMixer->update(ofGetElapsedTimef());
 		for( auto& kid : mKids ) {
@@ -367,7 +367,7 @@ void Model::updateAnimations() {
 //	}
 }
 
-void Model::updateMeshesFromBones() {
+void Scene::updateMeshesFromBones() {
 	if (!hasAnimations() && !mBSceneDirty){
 		return;
 	}
@@ -441,7 +441,7 @@ void Model::updateMeshesFromBones() {
 	}
 }
 
-void Model::updateGLResources(){
+void Scene::updateGLResources(){
 	// now upload the result position and normal along with the other vertex attributes into a dynamic vertex buffer, VBO or whatever
 	for (size_t i = 0; i < mMeshes.size(); ++i){
 		if(mMeshes[i]->hasChanged ){
@@ -463,37 +463,37 @@ void Model::updateGLResources(){
 }
 
 //------------------------------------------- animations.
-bool Model::hasAnimations() {
+bool Scene::hasAnimations() {
 	return mAnimations.size() > 0;
 }
 
-unsigned int Model::getNumAnimations(){
+unsigned int Scene::getNumAnimations(){
 	return mAnimations.size();
 }
 
-unsigned int Model::getCurrentAnimationIndex() {
+unsigned int Scene::getCurrentAnimationIndex() {
 	return mAnimationIndex;
 }
 
-ofx::assimp::Animation& Model::getCurrentAnimation() {
+ofxAssimp::Animation& Scene::getCurrentAnimation() {
 	if( mAnimations.size() < 1 ) {
-		ofLogWarning("ofx::assimp::Model::getCurrentAnimation") << " no animations!!";
+		ofLogWarning("ofxAssimp::Scene::getCurrentAnimation") << " no animations!!";
 		return dummyAnimation;
 	}
 	if( mAnimMixer && mAnimMixer->getNumAnimationClips() > 0 ) {
 		return mAnimMixer->getAnimationClips().back().animation;
 	}
-	ofLogWarning("ofx::assimp::Model::getCurrentAnimation") << " does not have current animation!";
+	ofLogWarning("ofxAssimp::Scene::getCurrentAnimation") << " does not have current animation!";
 	return dummyAnimation;
 }
 
-bool Model::setCurrentAnimation( int aindex ) {
+bool Scene::setCurrentAnimation( int aindex ) {
 	if( mAnimations.size() < 1 ) {
-		ofLogWarning("ofx::assimp::Model::setAnimation") << " no animations!!";
+		ofLogWarning("ofxAssimp::Scene::setAnimation") << " no animations!!";
 		return false;
 	}
 	if( aindex == mAnimationIndex ) {
-		ofLogWarning("ofx::assimp::Model::setAnimation") << " already have this as the index!";
+		ofLogWarning("ofxAssimp::Scene::setAnimation") << " already have this as the index!";
 		return false;
 	}
 	mAnimationIndex = ofClamp(aindex, 0, mAnimations.size()-1);
@@ -503,18 +503,18 @@ bool Model::setCurrentAnimation( int aindex ) {
 	return true;
 }
 
-bool Model::setCurrentAnimation( const std::string& aname ) {
+bool Scene::setCurrentAnimation( const std::string& aname ) {
 	int tindex = getAnimationIndex(aname);
 	if( tindex < 0 ) {
-		ofLogWarning("ofx::assimp::Model::setAnimation") << " could not find animation with name" << aname;
+		ofLogWarning("ofxAssimp::Scene::setAnimation") << " could not find animation with name" << aname;
 		return false;
 	}
 	return setCurrentAnimation(tindex);
 }
 
-bool Model::transitionCurrentAnimation( int aTargetAnimIndex, float aduration ) {
+bool Scene::transitionCurrentAnimation( int aTargetAnimIndex, float aduration ) {
 	if( mAnimations.size() < 1 ) {
-		ofLogWarning("ofx::assimp::Model::setAnimation") << " no animations!!";
+		ofLogWarning("ofxAssimp::Scene::setAnimation") << " no animations!!";
 		return false;
 	}
 	mAnimationIndex = ofClamp(aTargetAnimIndex, 0, mAnimations.size()-1);
@@ -524,20 +524,20 @@ bool Model::transitionCurrentAnimation( int aTargetAnimIndex, float aduration ) 
 	return true;
 }
 
-bool Model::transitionCurrentAnimation( const std::string& aTargetAnimName, float aduration ) {
+bool Scene::transitionCurrentAnimation( const std::string& aTargetAnimName, float aduration ) {
 	int tindex = getAnimationIndex(aTargetAnimName);
 	if( tindex < 0 ) {
-		ofLogWarning("ofx::assimp::Model::transitionCurrentAnimation") << " could not find animation with name" << aTargetAnimName;
+		ofLogWarning("ofxAssimp::Scene::transitionCurrentAnimation") << " could not find animation with name" << aTargetAnimName;
 		return false;
 	}
 	return transitionCurrentAnimation(tindex, aduration);
 }
 
-bool Model::hasAnimation( const std::string& aname ) {
+bool Scene::hasAnimation( const std::string& aname ) {
 	return getAnimationIndex(aname) > -1;
 }
 
-int Model::getAnimationIndex( const std::string& aname ) {
+int Scene::getAnimationIndex( const std::string& aname ) {
 	int tindex = -1;
 	for( int i = 0; i < (int)mAnimations.size(); i++ ) {
 		if( mAnimations[i].getName() == aname ) {
@@ -548,39 +548,39 @@ int Model::getAnimationIndex( const std::string& aname ) {
 	return tindex;
 }
 
-ofx::assimp::Animation& Model::getAnimation(int aindex) {
+ofxAssimp::Animation& Scene::getAnimation(int aindex) {
 	if( mAnimations.size() < 1 ) {
-		ofLogWarning("ofx::assimp::Model::getAnimation") << " no animations!!";
+		ofLogWarning("ofxAssimp::Scene::getAnimation") << " no animations!!";
 		return dummyAnimation;
 	}
 	aindex = ofClamp(aindex, 0, mAnimations.size()-1);
 	return mAnimations[aindex];
 }
 
-ofx::assimp::Animation& Model::getAnimation(const std::string& aname) {
+ofxAssimp::Animation& Scene::getAnimation(const std::string& aname) {
 	int tindex = getAnimationIndex(aname);
 	if( tindex < 0 ) {
-		ofLogWarning("ofx::assimp::Model::getAnimation") << " could not find animation with name" << aname;
+		ofLogWarning("ofxAssimp::Scene::getAnimation") << " could not find animation with name" << aname;
 		return dummyAnimation;
 	}
 	return getAnimation(tindex);
 }
 
-bool Model::addAnimation( int aSrcAnimIndex, const std::string& aNewAnimName, float aStartTick, float aEndTick ) {
+bool Scene::addAnimation( int aSrcAnimIndex, const std::string& aNewAnimName, float aStartTick, float aEndTick ) {
 	return addAnimation( aSrcAnimIndex, aNewAnimName, aStartTick, aEndTick, OF_LOOP_NONE );
 }
 
-bool Model::addAnimation( int aSrcAnimIndex, const std::string& aNewAnimName, float aStartTick, float aEndTick, ofLoopType aLoopType ) {
+bool Scene::addAnimation( int aSrcAnimIndex, const std::string& aNewAnimName, float aStartTick, float aEndTick, ofLoopType aLoopType ) {
 	if( mAnimations.size() < 1 ) {
-		ofLogWarning("ofx::assimp::Model::addAnimation") << " no animations!!";
+		ofLogWarning("ofxAssimp::Scene::addAnimation") << " no animations!!";
 		return false;
 	}
 	if(aSrcAnimIndex < 0 || aSrcAnimIndex >= mAnimations.size() ) {
-		ofLogWarning("ofx::assimp::Model::addAnimation") << " aSrcAnimIndex out of range!!";
+		ofLogWarning("ofxAssimp::Scene::addAnimation") << " aSrcAnimIndex out of range!!";
 		return false;
 	}
 	auto& canim = mAnimations[aSrcAnimIndex];
-	ofx::assimp::Animation nanim = mAnimations[aSrcAnimIndex];
+	ofxAssimp::Animation nanim = mAnimations[aSrcAnimIndex];
 	nanim.setup(aStartTick, aEndTick);
 	nanim.setName(aNewAnimName);
 	nanim.setLoopType(aLoopType);
@@ -588,44 +588,44 @@ bool Model::addAnimation( int aSrcAnimIndex, const std::string& aNewAnimName, fl
 	return true;
 }
 
-//void Model::playAllAnimations() {
+//void Scene::playAllAnimations() {
 //	for(size_t i = 0; i < mAnimations.size(); i++) {
 //		mAnimations[i].play();
 //	}
 //}
 //
-//void Model::stopAllAnimations() {
+//void Scene::stopAllAnimations() {
 //	for(size_t i = 0; i < mAnimations.size(); i++) {
 //		mAnimations[i].stop();
 //	}
 //}
 //
-//void Model::resetAllAnimations() {
+//void Scene::resetAllAnimations() {
 //	for(size_t i = 0; i < mAnimations.size(); i++) {
 //		mAnimations[i].reset();
 //	}
 //}
 //
-//void Model::setPausedForAllAnimations(bool pause) {
+//void Scene::setPausedForAllAnimations(bool pause) {
 //	for(size_t i = 0; i < mAnimations.size(); i++) {
 //		mAnimations[i].setPaused(pause);
 //	}
 //}
 //
-//void Model::setLoopStateForAllAnimations(ofLoopType state) {
+//void Scene::setLoopStateForAllAnimations(ofLoopType state) {
 //	for(size_t i = 0; i < mAnimations.size(); i++) {
 //		mAnimations[i].setLoopState(state);
 //	}
 //}
 //
-//void Model::setPositionForAllAnimations(float position) {
+//void Scene::setPositionForAllAnimations(float position) {
 //	for(size_t i = 0; i < mAnimations.size(); i++) {
 //		mAnimations[i].setPosition(position);
 //	}
 //}
 
 //------------------------------------------- meshes.
-size_t Model::getNumVertices() {
+size_t Scene::getNumVertices() {
 	size_t totalVs = 0;
 	for( auto& mh : mMeshes ) {
 		totalVs += mh->getNumVertices();
@@ -633,17 +633,17 @@ size_t Model::getNumVertices() {
 	return totalVs;
 }
 
-bool Model::hasMeshes() {
+bool Scene::hasMeshes() {
 	return mMeshes.size() > 0;
 }
 
 //-------------------------------------------
-size_t Model::getNumMeshes(){
+size_t Scene::getNumMeshes(){
 	return mMeshes.size();
 }
 
 //-------------------------------------------
-vector<std::string> Model::getMeshNames(){
+vector<std::string> Scene::getMeshNames(){
 	if( mMeshes.size() < 1 ) {
 		return std::vector<std::string>();
 	}
@@ -654,176 +654,176 @@ vector<std::string> Model::getMeshNames(){
 	return names;
 }
 
-std::shared_ptr<ofx::assimp::Mesh> Model::getMesh(int ameshIndex) {
+std::shared_ptr<ofxAssimp::Mesh> Scene::getMesh(int ameshIndex) {
 	if( mMeshes.size() < 1 ) {
-		return std::shared_ptr<ofx::assimp::Mesh>();
+		return std::shared_ptr<ofxAssimp::Mesh>();
 	}
 	ameshIndex = ofClamp(ameshIndex, 0, mMeshes.size()-1);
 	return mMeshes[ameshIndex];
 }
 
-std::shared_ptr<ofx::assimp::Mesh> Model::getMesh(const std::string& aname) {
+std::shared_ptr<ofxAssimp::Mesh> Scene::getMesh(const std::string& aname) {
 	for( auto& mesh : mMeshes ) {
 		if( mesh->getName() == aname ) {
 			return mesh;
 		}
 	}
-	return std::shared_ptr<ofx::assimp::Mesh>();
+	return std::shared_ptr<ofxAssimp::Mesh>();
 }
 
 //-------------------------------------------
-ofMesh& Model::getOFMeshForMesh( const std::string& aname ){
+ofMesh& Scene::getOFMeshForMesh( const std::string& aname ){
 	auto helper = getMesh(aname);
 	if( !helper ) {
-		ofLogError("Model::getOFMeshForMesh : unable to find mesh with name") << aname << " returning dummy mesh";
+		ofLogError("Scene::getOFMeshForMesh : unable to find mesh with name") << aname << " returning dummy mesh";
 		return dummyMesh;
 	}
 	return helper->getMesh();
 }
 
 //-------------------------------------------
-ofMesh& Model::getOFMeshForMesh(unsigned int ameshIndex){
+ofMesh& Scene::getOFMeshForMesh(unsigned int ameshIndex){
 	auto helper = getMesh(ameshIndex);
 	if( !helper ) {
-		ofLogError("Model::getOFMeshForMesh : unable to find mesh with index") << ameshIndex << " returning dummy mesh";
+		ofLogError("Scene::getOFMeshForMesh : unable to find mesh with index") << ameshIndex << " returning dummy mesh";
 		return dummyMesh;
 	}
 	return helper->getMesh();
 }
 
 //-------------------------------------------
-ofMesh Model::getTransformedOFMeshForMesh(const std::string& aname) {
+ofMesh Scene::getTransformedOFMeshForMesh(const std::string& aname) {
 	auto helper = getMesh(aname);
 	if( !helper ) {
-		ofLogError("ofx::assimp::Model") << "getTransformedOFMeshForMesh(): unable to find mesh with name: " << aname;
+		ofLogError("ofxAssimp::Scene") << "getTransformedOFMeshForMesh(): unable to find mesh with name: " << aname;
 		return dummyMesh;
 	}
 	return helper->getTransformedMesh();
 }
 
 //-------------------------------------------
-ofMesh Model::getTransformedOFMeshForMesh(unsigned int ameshIndex) {
+ofMesh Scene::getTransformedOFMeshForMesh(unsigned int ameshIndex) {
 	auto helper = getMesh(ameshIndex);
 	if( !helper ) {
-		ofLogError("ofx::assimp::Model") << "getTransformedOFMeshForMesh(): unable to find mesh with index: " << ameshIndex;
+		ofLogError("ofxAssimp::Scene") << "getTransformedOFMeshForMesh(): unable to find mesh with index: " << ameshIndex;
 		return dummyMesh;
 	}
 	return helper->getTransformedMesh();
 }
 
 //-------------------------------------------
-std::shared_ptr<ofMaterial> Model::getMaterialForMesh(const std::string& aname){
+std::shared_ptr<ofMaterial> Scene::getMaterialForMesh(const std::string& aname){
 	auto helper = getMesh(aname);
 	if( !helper ) {
-		ofLogError("ofx::assimp::Model") << "getMaterialForMesh(): couldn't find mesh: \"" + aname << "\"";
+		ofLogError("ofxAssimp::Scene") << "getMaterialForMesh(): couldn't find mesh: \"" + aname << "\"";
 		return shared_ptr<ofMaterial>();
 	}
 	return helper->material;
 }
 
 //-------------------------------------------
-std::shared_ptr<ofMaterial> Model::getMaterialForMesh(unsigned int ameshIndex){
+std::shared_ptr<ofMaterial> Scene::getMaterialForMesh(unsigned int ameshIndex){
 	auto helper = getMesh(ameshIndex);
 	if(!helper) {
-		ofLogError("ofx::assimp::Model") << "getMaterialForMesh(): mesh id: " << ameshIndex << "out of range for total num meshes: " << mMeshes.size();
+		ofLogError("ofxAssimp::Scene") << "getMaterialForMesh(): mesh id: " << ameshIndex << "out of range for total num meshes: " << mMeshes.size();
 		return shared_ptr<ofMaterial>();
 	}
 	return helper->material;
 }
 
 //-------------------------------------------
-ofTexture& Model::getTextureForMesh(const std::string& aname){
+ofTexture& Scene::getTextureForMesh(const std::string& aname){
 	auto helper = getMesh(aname);
 	if( !helper ) {
-		ofLogError("ofx::assimp::Model") << "getTextureForMesh(): couldn't find mesh: \"" << aname << "\"";
+		ofLogError("ofxAssimp::Scene") << "getTextureForMesh(): couldn't find mesh: \"" << aname << "\"";
 		return dummyTexture;
 	}
 	if(helper->hasTexture()) {
 		return helper->getTexture();
 	}
-	ofLogError("ofx::assimp::Model") << "getTextureForMesh(): mesh: \"" << aname << "\" does not have a texture.";
+	ofLogError("ofxAssimp::Scene") << "getTextureForMesh(): mesh: \"" << aname << "\" does not have a texture.";
 	return dummyTexture;
 }
 
 //-------------------------------------------
-ofTexture& Model::getTextureForMesh(unsigned int ameshIndex){
+ofTexture& Scene::getTextureForMesh(unsigned int ameshIndex){
 	auto helper = getMesh(ameshIndex);
 	if(!helper) {
-		ofLogError("ofx::assimp::Model") << "getTextureForMesh(): couldn't find mesh: \"" << ameshIndex << "\" / " << getNumMeshes();
+		ofLogError("ofxAssimp::Scene") << "getTextureForMesh(): couldn't find mesh: \"" << ameshIndex << "\" / " << getNumMeshes();
 		return dummyTexture;
 	}
 	if(helper->hasTexture()) {
 		return helper->getTexture();
 	}
-	ofLogError("ofx::assimp::Model") << "getTextureForMesh(): mesh: \"" << ameshIndex << "\" does not have a texture.";
+	ofLogError("ofxAssimp::Scene") << "getTextureForMesh(): mesh: \"" << ameshIndex << "\" does not have a texture.";
 	return dummyTexture;
 }
 
 //-- Skeletons -----------------------------------------
-bool Model::hasSkeletons() {
+bool Scene::hasSkeletons() {
 	return (mSkeletons.size() > 0);
 }
 
 //-------------------------------------------
-size_t Model::getNumSkeletons() {
+size_t Scene::getNumSkeletons() {
 	return mSkeletons.size();
 }
 
 //-------------------------------------------
-std::shared_ptr<ofx::assimp::Skeleton> Model::getSkeleton( const unsigned int& aindex ) {
+std::shared_ptr<ofxAssimp::Skeleton> Scene::getSkeleton( const unsigned int& aindex ) {
 	if( mSkeletons.size() < 1 ) {
-		ofLogWarning("ofx::assimp::Model : no skeletons!!");
-		return std::shared_ptr<ofx::assimp::Skeleton>();
+		ofLogWarning("ofxAssimp::Scene : no skeletons!!");
+		return std::shared_ptr<ofxAssimp::Skeleton>();
 	}
 	return mSkeletons[ofClamp(aindex, 0, mSkeletons.size()-1)];
 }
 
 //-------------------------------------------
-std::shared_ptr<ofx::assimp::Skeleton> Model::getSkeleton( const std::string& aname ) {
+std::shared_ptr<ofxAssimp::Skeleton> Scene::getSkeleton( const std::string& aname ) {
 	for( auto skel : mSkeletons ) {
 		if( skel->getName() == aname ) {
 			return skel;
 		}
 	}
-	return std::shared_ptr<ofx::assimp::Skeleton>();
+	return std::shared_ptr<ofxAssimp::Skeleton>();
 }
 
 //-------------------------------------------
-std::vector< std::shared_ptr<ofx::assimp::Skeleton> > Model::getSkeletons() {
+std::vector< std::shared_ptr<ofxAssimp::Skeleton> > Scene::getSkeletons() {
 	return mSkeletons;
 }
 
 //-------------------------------------------
-unsigned int Model::getNumBones() {
+unsigned int Scene::getNumBones() {
 	unsigned int total = 0;
 	for( auto skel : mSkeletons ) {
-		total += skel->getAllNodesForType<ofx::assimp::Bone>().size();
+		total += skel->getAllNodesForType<ofxAssimp::Bone>().size();
 	}
 	return total;
 }
 
 //--------------------------------------------------------------
-void Model::draw(){
+void Scene::draw(){
 	drawFaces();
 }
 
 //--------------------------------------------------------------
-void Model::drawWireframe(){
+void Scene::drawWireframe(){
 	draw(OF_MESH_WIREFRAME);
 }
 
 //--------------------------------------------------------------
-void Model::drawFaces(){
+void Scene::drawFaces(){
 	draw(OF_MESH_FILL);
 }
 
 //--------------------------------------------------------------
-void Model::drawVertices(){
+void Scene::drawVertices(){
 	draw(OF_MESH_POINTS);
 }
 
 //--------------------------------------------------------------
-void Model::_drawMesh( const shared_ptr<ofx::assimp::Mesh>& amesh, ofPolyRenderMode aRenderType, bool bWithinLoop  ) {
+void Scene::_drawMesh( const shared_ptr<ofxAssimp::Mesh>& amesh, ofPolyRenderMode aRenderType, bool bWithinLoop  ) {
 //	auto mesh = getMesh(aMeshIndex);
 	if(!amesh || !amesh->isEnabled() ) {
 		// we are not enabled, dont draw
@@ -904,50 +904,50 @@ void Model::_drawMesh( const shared_ptr<ofx::assimp::Mesh>& amesh, ofPolyRenderM
 }
 
 //--------------------------------------------------------------
-void Model::drawMesh(const std::shared_ptr<ofx::assimp::Mesh>& amesh, ofPolyRenderMode aRenderType ) {
+void Scene::drawMesh(const std::shared_ptr<ofxAssimp::Mesh>& amesh, ofPolyRenderMode aRenderType ) {
 	_drawMesh(amesh, aRenderType, false);
 }
 
 //--------------------------------------------------------------
-void Model::drawMesh(int aMeshIndex, ofPolyRenderMode aRenderType) {
+void Scene::drawMesh(int aMeshIndex, ofPolyRenderMode aRenderType) {
 	if( aMeshIndex > -1 && aMeshIndex < mMeshes.size() ) {
 		_drawMesh(mMeshes[aMeshIndex], aRenderType, false);
 	}
 }
 
 //--------------------------------------------------------------
-void Model::drawMesh(const std::string& aMeshName, ofPolyRenderMode aRenderType) {
+void Scene::drawMesh(const std::string& aMeshName, ofPolyRenderMode aRenderType) {
 	if( auto mesh = getMesh(aMeshName) ) {
 		_drawMesh(mesh, aRenderType, false);
 	}
 }
 
 //--------------------------------------------------------------
-void Model::drawBones() {
+void Scene::drawBones() {
 	for( auto& bone : mBones ) {
 		bone->draw();
 	}
 }
 
 //--------------------------------------------------------------
-void Model::drawBones(float aAxisSize) {
+void Scene::drawBones(float aAxisSize) {
 	for( auto& bone : mBones ) {
 		bone->draw(aAxisSize);
 	}
 }
 
 //-------------------------------------------
-void Model::enableCulling(int glCullType){
+void Scene::enableCulling(int glCullType){
 	mCullType = glCullType;
 }
 
 //-------------------------------------------
-void Model::disableCulling(){
+void Scene::disableCulling(){
 	mCullType = -1;
 }
 
 //-------------------------------------------
-void Model::draw(ofPolyRenderMode renderType) {
+void Scene::draw(ofPolyRenderMode renderType) {
 	if(!mSrcScene) {
 		return;
 	}
@@ -978,7 +978,7 @@ void Model::draw(ofPolyRenderMode renderType) {
 }
 
 //-------------------------------------------
-ofx::assimp::Bounds Model::getSceneBounds() {
+ofxAssimp::Bounds Scene::getSceneBounds() {
 	if( mBSceneBoundsDirty ) {
 		mBSceneBoundsDirty=false;
 		mSceneBoundsGlobal.clear();
@@ -992,61 +992,61 @@ ofx::assimp::Bounds Model::getSceneBounds() {
 }
 
 //-------------------------------------------
-ofx::assimp::Bounds Model::getSceneBoundsLocal() {
+ofxAssimp::Bounds Scene::getSceneBoundsLocal() {
 	return mSceneBoundsLocal;
 }
 
 //-------------------------------------------
-std::shared_ptr<ofx::assimp::SrcScene> Model::getSrcScene() {
+std::shared_ptr<ofxAssimp::SrcScene> Scene::getSrcScene() {
 	return mSrcScene;
 }
 
 //-------------------------------------------
-float Model::getNormalizedScale(){
+float Scene::getNormalizedScale(){
 	return normalizedScale;
 }
 
 ////-------------------------------------------
-//const aiScene* Model::getAssimpScene(){
+//const aiScene* Scene::getAssimpScene(){
 //	return scene.get();
 //}
 
 //--------------------------------------------------------------
-void Model::enableTextures(){
+void Scene::enableTextures(){
 	bUsingTextures = true;
 }
 
 //--------------------------------------------------------------
-void Model::enableNormals(){
+void Scene::enableNormals(){
 	bUsingNormals = true;
 }
 
 //--------------------------------------------------------------
-void Model::enableColors(){
+void Scene::enableColors(){
 	bUsingColors = true;
 }
 
 //--------------------------------------------------------------
-void Model::enableMaterials(){
+void Scene::enableMaterials(){
 	bUsingMaterials = true;
 }
 
 //--------------------------------------------------------------
-void Model::disableTextures(){
+void Scene::disableTextures(){
 	bUsingTextures = false;
 }
 
 //--------------------------------------------------------------
-void Model::disableNormals(){
+void Scene::disableNormals(){
 	bUsingNormals = false;
 }
 
 //--------------------------------------------------------------
-void Model::disableColors(){
+void Scene::disableColors(){
 	bUsingColors = false;
 }
 
 //--------------------------------------------------------------
-void Model::disableMaterials(){
+void Scene::disableMaterials(){
 	bUsingMaterials = false;
 }

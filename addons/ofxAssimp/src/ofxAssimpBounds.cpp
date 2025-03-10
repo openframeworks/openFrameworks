@@ -8,7 +8,7 @@
 #include "ofGraphics.h"
 
 //--------------------------------------------------------------
-using namespace ofx::assimp;
+using namespace ofxAssimp;
 
 ofMesh Bounds::mLinesMesh;
 
@@ -291,7 +291,7 @@ Bounds& Bounds::operator*=( const glm::vec3& ascale ) {
 }
 
 //----------------------------------------------------------
-std::ostream& operator<<(std::ostream& os, const ofx::assimp::Bounds& ab){
+std::ostream& operator<<(std::ostream& os, const ofxAssimp::Bounds& ab){
 	os << " min: " << ab.min << ", max: " << ab.max << ", center: " << ab.radius;
 	return os;
 }

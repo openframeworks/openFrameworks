@@ -13,23 +13,23 @@
 using std::make_shared;
 using std::shared_ptr;
 
-using namespace ofx::assimp;
+using namespace ofxAssimp;
 
 static unsigned int sUniqueMeshCounter = 0;
 ofTexture SrcMesh::sDummyTex;
 
 //-------------------------------------------
-void SrcMesh::addTexture( std::shared_ptr<ofx::assimp::Texture> aAssimpTex){
+void SrcMesh::addTexture( std::shared_ptr<ofxAssimp::Texture> aAssimpTex){
 	
 	if(!material) {
 		material = std::make_shared<ofMaterial>();
 	}
 	
 	auto tAiType = aAssimpTex->getAiTextureType();
-	auto tofType = ofx::assimp::Texture::ofTextureTypeForAiType(tAiType);
+	auto tofType = ofxAssimp::Texture::ofTextureTypeForAiType(tAiType);
 	
 	if(tofType == OF_MATERIAL_TEXTURE_NONE ) {
-		ofLogError("ofx::assimp::Mesh::addTexture") << aAssimpTex->getAiTextureTypeAsString();
+		ofLogError("ofxAssimp::Mesh::addTexture") << aAssimpTex->getAiTextureTypeAsString();
 		return;
 	}
 	
@@ -70,7 +70,7 @@ bool SrcMesh::hasTexture(aiTextureType aTexType){
 
 //-------------------------------------------
 bool SrcMesh::hasTexture(ofMaterialTextureType aType){
-	return hasTexture( ofx::assimp::Texture::aiTextureTypeForOfType(aType));
+	return hasTexture( ofxAssimp::Texture::aiTextureTypeForOfType(aType));
 }
 
 //-------------------------------------------
@@ -80,13 +80,13 @@ std::size_t SrcMesh::getNumTextures() {
 
 //-------------------------------------------
 ofTexture& SrcMesh::getTexture() {
-	for( auto iter = ofx::assimp::Texture::sAiTexTypeToOfTexTypeMap.begin(); iter != ofx::assimp::Texture::sAiTexTypeToOfTexTypeMap.end(); iter++ ) {
+	for( auto iter = ofxAssimp::Texture::sAiTexTypeToOfTexTypeMap.begin(); iter != ofxAssimp::Texture::sAiTexTypeToOfTexTypeMap.end(); iter++ ) {
 		if( hasTexture((aiTextureType)iter->first) ) {
 			return getTexture((aiTextureType)iter->first);
 		}
 	}
 	
-	ofLogWarning("ofx::assimp::Mesh::getTexture") << " unable to find any allocated texture";
+	ofLogWarning("ofxAssimp::Mesh::getTexture") << " unable to find any allocated texture";
 	return sDummyTex;
 }
 
@@ -97,13 +97,13 @@ ofTexture& SrcMesh::getTexture(aiTextureType aTexType){
 			return tex->getTextureRef();
 		}
 	}
-	ofLogWarning("ofx::assimp::SrcMesh::getTexture : unable to find texture ref for ") << aTexType;
+	ofLogWarning("ofxAssimp::SrcMesh::getTexture : unable to find texture ref for ") << aTexType;
 	return sDummyTex;
 }
 
 //-------------------------------------------
 ofTexture& SrcMesh::getTexture(ofMaterialTextureType aType){
-	return getTexture( ofx::assimp::Texture::aiTextureTypeForOfType(aType) );
+	return getTexture( ofxAssimp::Texture::aiTextureTypeForOfType(aType) );
 }
 
 //-------------------------------------------

@@ -8,8 +8,8 @@
 #pragma once
 #include "ofxAssimpBone.h"
 
-namespace ofx::assimp {
-class Skeleton : public ofx::assimp::Bone {
+namespace ofxAssimp {
+class Skeleton : public ofxAssimp::Bone {
 public:
 	virtual NodeType getType() override { return OFX_ASSIMP_SKELETON; }
 	

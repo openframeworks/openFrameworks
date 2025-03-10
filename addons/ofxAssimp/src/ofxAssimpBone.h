@@ -11,21 +11,21 @@
 
 class ofVboMesh;
 
-namespace ofx::assimp {
-class Bone : public ofx::assimp::Node {
+namespace ofxAssimp {
+class Bone : public ofxAssimp::Node {
 public:
 	
 	virtual NodeType getType() override { return OFX_ASSIMP_BONE; }
 	
-	void setSrcBone( std::shared_ptr<ofx::assimp::SrcBone> aSrcBone );
+	void setSrcBone( std::shared_ptr<ofxAssimp::SrcBone> aSrcBone );
 	
 //	virtual void updateFromSrcBone();
 	void cacheGlobalBoneMat(glm::mat4& aInvMat);
 	virtual void draw(float aAxisSize=30.0f);
 	
-	std::shared_ptr<ofx::assimp::SrcBone> getSrcBone() { return mSrcBone; }
+	std::shared_ptr<ofxAssimp::SrcBone> getSrcBone() { return mSrcBone; }
 	
-//	std::shared_ptr<ofx::assimp::Bone> getBone( const std::string& aName );
+//	std::shared_ptr<ofxAssimp::Bone> getBone( const std::string& aName );
 //	void findBoneRecursive( const std::string& aName, std::shared_ptr<Bone>& returnBone );
 	
 //	aiMatrix4x4& getAiMatrix() { return mAiMatrix; }
@@ -35,8 +35,8 @@ public:
 	const aiMatrix4x4& getAiCachedGlobalBoneMat() { return mAiCachedGlobalBoneMat; }
 	
 protected:
-	std::vector< std::shared_ptr<ofx::assimp::Bone> > mChildBones;
-	std::shared_ptr<ofx::assimp::SrcBone> mSrcBone;
+	std::vector< std::shared_ptr<ofxAssimp::Bone> > mChildBones;
+	std::shared_ptr<ofxAssimp::SrcBone> mSrcBone;
 	
 	void _initRenderMesh();
 	
