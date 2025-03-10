@@ -1,10 +1,3 @@
-//
-//  ofxAssimpSrcMesh.cpp
-//  ofxAssimpExample
-//
-//  Created by Nick Hardeman on 10/24/23.
-//
-
 #include "ofxAssimpSrcMesh.h"
 #include "ofxAssimpUtils.h"
 #include "of3dGraphics.h"

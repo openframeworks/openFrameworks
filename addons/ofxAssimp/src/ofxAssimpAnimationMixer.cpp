@@ -1,8 +1,3 @@
-//
-//  ofxAssimpAnimationMixer.cpp
-//  Created by Nick Hardeman on 11/3/23.
-//
-
 #include "ofxAssimpAnimationMixer.h"
 #include "ofLog.h"
 #include "ofUtils.h"

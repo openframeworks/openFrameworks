@@ -6,11 +6,6 @@
 #include "ofGraphics.h"
 #include "ofConstants.h"
 
-#include <assimp/scene.h>
-#include <assimp/postprocess.h>
-#include <assimp/config.h>
-#include <assimp/DefaultLogger.hpp>
-
 using std::shared_ptr;
 using std::vector;
 using std::make_shared;
@@ -1004,11 +999,6 @@ std::shared_ptr<ofxAssimp::SrcScene> Scene::getSrcScene() {
 float Scene::getNormalizedScale(){
 	return normalizedScale;
 }
-
-////-------------------------------------------
-//const aiScene* Scene::getAssimpScene(){
-//	return scene.get();
-//}
 
 //--------------------------------------------------------------
 void Scene::enableTextures(){

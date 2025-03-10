@@ -102,11 +102,15 @@ bool SrcScene::load( const ImportSettings& asettings ) {
 }
 
 unsigned int SrcScene::initImportProperties(int assimpOptimizeFlags, const ImportSettings& asettings ) {
-	store.reset(aiCreatePropertyStore(), aiReleasePropertyStore);
+//	store.reset(aiCreatePropertyStore(), aiReleasePropertyStore);
 	
 	// only ever give us triangles.
-	aiSetImportPropertyInteger(store.get(), AI_CONFIG_PP_SBP_REMOVE, aiPrimitiveType_LINE | aiPrimitiveType_POINT );
-	aiSetImportPropertyInteger(store.get(), AI_CONFIG_PP_PTV_NORMALIZE, true);
+//	aiSetImportPropertyInteger(store.get(), AI_CONFIG_PP_SBP_REMOVE, aiPrimitiveType_LINE | aiPrimitiveType_POINT );
+//	aiSetImportPropertyInteger(store.get(), AI_CONFIG_PP_PTV_NORMALIZE, true);
+	
+	// only ever give us triangles; newer c++ api
+	importer.SetPropertyInteger(AI_CONFIG_PP_SBP_REMOVE, aiPrimitiveType_LINE | aiPrimitiveType_POINT );
+	importer.SetPropertyBool(AI_CONFIG_PP_PTV_NORMALIZE, true);
 	
 	unsigned int flags = assimpOptimizeFlags;
 	
@@ -157,9 +161,12 @@ unsigned int SrcScene::initImportProperties(int assimpOptimizeFlags, const Impor
 //-------------------------------------------
 void SrcScene::optimizeScene(){
 	if( scene ) {
-		aiApplyPostProcessing(scene.get(),aiProcess_ImproveCacheLocality | aiProcess_OptimizeGraph |
-							  aiProcess_OptimizeMeshes | aiProcess_JoinIdenticalVertices |
-							  aiProcess_RemoveRedundantMaterials);
+//		aiApplyPostProcessing(scene.get(),aiProcess_ImproveCacheLocality | aiProcess_OptimizeGraph |
+//							  aiProcess_OptimizeMeshes | aiProcess_JoinIdenticalVertices |
+//							  aiProcess_RemoveRedundantMaterials);
+		importer.ApplyPostProcessing(aiProcess_ImproveCacheLocality | aiProcess_OptimizeGraph |
+									 aiProcess_OptimizeMeshes | aiProcess_JoinIdenticalVertices |
+									 aiProcess_RemoveRedundantMaterials);
 	}
 }
 
@@ -200,7 +207,7 @@ bool SrcScene::processScene(const ImportSettings& asettings) {
 		
 		return true;
 	}else{
-		ofLogError("ofxAssimp::SrcScene") << "load(): " + (string) aiGetErrorString();
+		ofLogError("ofxAssimp::SrcScene") << "load(): " + (std::string)importer.GetErrorString();
 		clear();
 		return false;
 	}
@@ -410,46 +417,8 @@ aiBone* SrcScene::getAiBoneForAiNode( aiNode* aAiNode, std::unordered_map<std::s
 		return aBoneMap[bstr];
 	}
 	return nullptr;
-	
-//	for (unsigned int i = 0; i < scene->mNumMeshes; ++i){
-//		ofLogVerbose("ofxAssimp::SrcScene") << "getAiBoneForAiNode(): loading mesh " << i;
-//		// current mesh we are introspecting
-//		aiMesh* mesh = scene->mMeshes[i];
-//		if( mesh == nullptr ) {
-//			continue;
-//		}
-//		for(unsigned int a = 0; a < mesh->mNumBones; ++a) {
-//			aiBone* bone = mesh->mBones[a];
-//			if( bone != nullptr ) {
-//				if( aAiNode->mName == bone->mName ) {
-////				if( bone->mNode == aAiNode) {
-//					return bone;
-//				}
-//			}
-//		}
-//	}
-//	return nullptr;
-}
 
-//-------------------------------------------
-//void SrcScene::recursiveAddSrcBones( std::shared_ptr<ofxAssimp::SrcBone> abone ) {
-//	for( unsigned int i = 0; i < abone->getAiNode()->mNumChildren; i++ ) {
-//		// aiNode, now we need to get the associated bone
-//		auto boneNode = abone->getAiNode()->mChildren[i];
-//		if( boneNode ) {
-//			auto tbone = getAiBoneForAiNode( boneNode );
-//			if( tbone ) {
-//				auto nSrcBone = std::make_shared<ofxAssimp::SrcBone>();
-//				nSrcBone->setAiBone(tbone, boneNode);
-//				abone->childBones.push_back(nSrcBone);
-//			}
-//		}
-//	}
-//	
-//	for( auto iter : abone->childBones ) {
-//		recursiveAddSrcBones(iter);
-//	}
-//}
+}
 
 //-------------------------------------------
 std::shared_ptr<ofxAssimp::SrcNode> SrcScene::getSrcNodeForAiNodeName( const std::string& aAiNodeName ) {

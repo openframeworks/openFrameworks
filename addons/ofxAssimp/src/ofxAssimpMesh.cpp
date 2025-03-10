@@ -117,9 +117,6 @@ void Mesh::setSrcMesh( std::shared_ptr<ofxAssimp::SrcMesh> aSrcMesh ) {
 		blendMode = mSrcMesh->blendMode;
 		vbo = make_shared<ofVbo>();
 		mSrcMesh->setupVbo(vbo);
-//		ofVbo temp = *mSrcMesh->vbo;
-//		vbo = std::make_shared<ofVbo>(temp);
-//		vbo = make_shared<ofVbo>();
 		
 		mLocalBounds = mSrcMesh->getLocalBounds();
 		bConvertedToLeftHand = mSrcMesh->bConvertedToLeftHand;

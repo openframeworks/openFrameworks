@@ -1,8 +1,3 @@
-//
-//  ofxAssimpSrcAnimKeyCollection.cpp
-//  Created by Nick Hardeman on 11/1/23.
-//
-
 #include "ofxAssimpSrcAnimKeyCollection.h"
 #include "ofxAssimpUtils.h"
 

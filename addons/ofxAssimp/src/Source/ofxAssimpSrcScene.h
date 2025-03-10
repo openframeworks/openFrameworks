@@ -84,7 +84,6 @@ protected:
 	bool isArmature( aiNode* aAiNode, const std::unordered_map<std::string, aiBone*>& aBoneMap );
 	bool isRootBone( aiNode* aAiNode, std::unordered_map<std::string, aiBone*>& aBoneMap );
 	aiBone* getAiBoneForAiNode( aiNode* aAiNode, std::unordered_map<std::string, aiBone*>& aBoneMap );
-//	void recursiveAddSrcBones( std::shared_ptr<ofxAssimp::SrcBone> abone );
 	
 	std::shared_ptr<ofxAssimp::SrcNode> getSrcNodeForAiNodeName( const std::string& aAiNodeName );
 	
@@ -112,9 +111,7 @@ protected:
 	
 	// the main Asset Import scene that does the magic.
 	std::shared_ptr<const aiScene> scene;
-	std::shared_ptr<aiPropertyStore> store;
-	
-//	ofxAssimp::Bounds mSceneBoundsLocal;
+//	std::shared_ptr<aiPropertyStore> store;
 	
 };
 }

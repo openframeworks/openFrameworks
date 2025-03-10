@@ -1,6 +1,5 @@
 //
 //  ofxAssimpSkeleton.h
-//  ofxAssimpExample
 //
 //  Created by Nick Hardeman on 10/25/23.
 //

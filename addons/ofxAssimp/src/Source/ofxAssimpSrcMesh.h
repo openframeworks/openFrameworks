@@ -1,6 +1,5 @@
 //
 //  ofxAssimpSrcMesh.h
-//  ofxAssimpExample
 //
 //  Created by Nick Hardeman on 10/24/23.
 //

@@ -1,8 +1,3 @@
-//
-//  ofxAssimpNode.cpp
-//  Created by Nick Hardeman on 10/24/23.
-//
-
 #include "ofxAssimpNode.h"
 #include "ofxAssimpUtils.h"
 #include "of3dGraphics.h"

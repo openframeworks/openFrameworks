@@ -1,6 +1,5 @@
 //
 //  ofxAssimpBounds.h
-//  AssimpModelLoaderGlow
 //
 //  Created by Nick Hardeman on 10/18/23.
 //

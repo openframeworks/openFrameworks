@@ -1,9 +1,3 @@
-//
-//  ofxAssimpBounds.cpp
-//
-//  Created by Nick Hardeman on 10/18/23.
-//
-
 #include "ofxAssimpBounds.h"
 #include "ofGraphics.h"
 
