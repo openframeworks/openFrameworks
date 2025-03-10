@@ -6,7 +6,6 @@
 #pragma once
 
 #include "ofMaterial.h"
-#include <assimp/cimport.h>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 #include "ofxAssimpTexture.h"

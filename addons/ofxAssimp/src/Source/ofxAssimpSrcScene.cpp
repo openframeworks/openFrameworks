@@ -6,11 +6,8 @@
 #include "ofGraphics.h"
 #include "ofConstants.h"
 
-#include <assimp/cimport.h>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
-#include <assimp/config.h>
-#include <assimp/DefaultLogger.hpp>
 
 //--------------------------------------------------------------
 using std::shared_ptr;
@@ -91,6 +88,11 @@ bool SrcScene::load( const ImportSettings& asettings ) {
 	// loads scene from file
 	std::string path = mFile.getAbsolutePath();
 	const aiScene * scenePtr = importer.ReadFile(path.c_str(), flags);
+	
+	if(!scenePtr || scenePtr->mFlags & AI_SCENE_FLAGS_INCOMPLETE ) {
+		ofLogError("ofxAssimp::SrcScene") << "load: " << importer.GetErrorString();
+		return false;
+	}
 	
 	//this is funky but the scenePtr is managed by assimp and so we can't put it in our shared_ptr without disabling the deleter with: [](const aiScene*){}
 	scene = shared_ptr<const aiScene>(scenePtr,[](const aiScene*){});
