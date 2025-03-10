@@ -108,7 +108,7 @@ std::vector<AnimVectorKey> SrcAnimKeyCollection::getAnimVectorKeysForTime(const 
 	if(aNumKeys == 1) {
 		AnimVectorKey vkey;
 		vkey.time = aStartTime;
-		vkey.value = aiVecToOfVec(aAiKeys[0].mValue);
+		vkey.value = ofxAssimp::Utils::aiVecToOfVec(aAiKeys[0].mValue);
 		vkey.valueAi = aAiKeys[0].mValue;
 		rkeys.push_back( vkey );
 		return rkeys;
@@ -117,7 +117,7 @@ std::vector<AnimVectorKey> SrcAnimKeyCollection::getAnimVectorKeysForTime(const 
 	double currTime = aStartTime;
 	for( unsigned int i = 0; i < aNumKeys; i++ ) {
 		auto& key1 = aAiKeys[i];
-		auto v1 = aiVecToOfVec(key1.mValue);
+		auto v1 = ofxAssimp::Utils::aiVecToOfVec(key1.mValue);
 		AnimVectorKey vkey;
 		vkey.time = key1.mTime;
 		vkey.value = v1;
@@ -138,7 +138,7 @@ std::vector<AnimRotationKey> SrcAnimKeyCollection::getAnimRotationKeysForTime(co
 	if(aNumKeys == 1) {
 		AnimRotationKey vkey;
 		vkey.time = aStartTime;
-		vkey.value = aiQuatToOfQuat(aAiKeys[0].mValue);
+		vkey.value = ofxAssimp::Utils::aiQuatToOfQuat(aAiKeys[0].mValue);
 		vkey.valueAi = aAiKeys[0].mValue;
 		rkeys.push_back( vkey );
 		return rkeys;
@@ -146,7 +146,7 @@ std::vector<AnimRotationKey> SrcAnimKeyCollection::getAnimRotationKeysForTime(co
 	double currTime = aStartTime;
 	for( unsigned int i = 0; i < aNumKeys; i++ ) {
 		auto& key1 = aAiKeys[i];
-		auto v1 = aiQuatToOfQuat(key1.mValue);
+		auto v1 = ofxAssimp::Utils::aiQuatToOfQuat(key1.mValue);
 		AnimRotationKey vkey;
 		vkey.time = key1.mTime;
 		vkey.value = v1;

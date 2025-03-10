@@ -24,9 +24,9 @@ void Bone::setSrcBone( std::shared_ptr<ofxAssimp::SrcBone> aSrcBone ) {
 	mSrcBone = aSrcBone;
 	mOffsetMatrix = mSrcBone->getAiOffsetMatrix();
 	
-	mGlmOffsetMat = aiMatrix4x4ToGlmMatrix(mOffsetMatrix);
+	mGlmOffsetMat = ofxAssimp::Utils::aiMatrix4x4ToGlmMatrix(mOffsetMatrix);
 	
-	setOfNodeFromAiMatrix( mSrcBone->getAiMatrix(), this );
+	ofxAssimp::Utils::setOfNodeFromAiMatrix( mSrcBone->getAiMatrix(), this );
 }
 
 ////--------------------------------------------------------------
@@ -67,7 +67,7 @@ void Bone::cacheGlobalBoneMat(glm::mat4& aInvMat) {
 //	aiMatrix4x4 posTrafo = gBoneMat * sbone->getAiOffsetMatrix();
 	mCachedGlobalBoneMat = aInvMat * getGlobalTransformMatrix();
 	mCachedGlobalBoneMat = mCachedGlobalBoneMat * mGlmOffsetMat;
-	mAiCachedGlobalBoneMat = glmMat4ToAiMatrix4x4(mCachedGlobalBoneMat);
+	mAiCachedGlobalBoneMat = ofxAssimp::Utils::glmMat4ToAiMatrix4x4(mCachedGlobalBoneMat);
 }
 
 //--------------------------------------------------------------

@@ -132,9 +132,9 @@ void SrcMesh::setAiMesh( aiMesh* amesh, aiNode* aAiNode ) {
 void SrcMesh::setupVbo( std::shared_ptr<ofVbo> avbo ) {
 	ofMesh tempMesh;
 	if( hasTexture() ) {
-		aiMeshToOfMesh(mAiMesh, tempMesh, !bConvertedToLeftHand, &getTexture() );
+		ofxAssimp::Utils::aiMeshToOfMesh(mAiMesh, tempMesh, !bConvertedToLeftHand, &getTexture() );
 	} else {
-		aiMeshToOfMesh(mAiMesh, tempMesh, !bConvertedToLeftHand, nullptr);
+		ofxAssimp::Utils::aiMeshToOfMesh(mAiMesh, tempMesh, !bConvertedToLeftHand, nullptr);
 	}
 		
 	avbo->setVertexData(&mAiMesh->mVertices[0].x,3,mAiMesh->mNumVertices,usage,sizeof(aiVector3D));
@@ -164,9 +164,9 @@ void SrcMesh::setupVbo( std::shared_ptr<ofVbo> avbo ) {
 void SrcMesh::setMeshFromAiMesh( ofMesh& amesh ) {
 	if( mAiMesh != NULL && amesh.getNumVertices() < 1 ) {
 		if( hasTexture() ) {
-			aiMeshToOfMesh(mAiMesh, amesh, !bConvertedToLeftHand, &getTexture());
+			ofxAssimp::Utils::aiMeshToOfMesh(mAiMesh, amesh, !bConvertedToLeftHand, &getTexture());
 		} else {
-			aiMeshToOfMesh(mAiMesh, amesh, !bConvertedToLeftHand, nullptr);
+			ofxAssimp::Utils::aiMeshToOfMesh(mAiMesh, amesh, !bConvertedToLeftHand, nullptr);
 		}
 	}
 }

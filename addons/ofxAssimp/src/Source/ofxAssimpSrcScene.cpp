@@ -473,15 +473,15 @@ void SrcScene::processLights(){
 		mLights[i].enable();
 		if(scene->mLights[i]->mType==aiLightSource_DIRECTIONAL){
 			mLights[i].setDirectional();
-			mLights[i].setOrientation(aiVecToOfVec(scene->mLights[i]->mDirection));
+			mLights[i].setOrientation(ofxAssimp::Utils::aiVecToOfVec(scene->mLights[i]->mDirection));
 		}
 		if(scene->mLights[i]->mType!=aiLightSource_POINT){
 			mLights[i].setSpotlight();
-			mLights[i].setPosition(aiVecToOfVec(scene->mLights[i]->mPosition));
+			mLights[i].setPosition(ofxAssimp::Utils::aiVecToOfVec(scene->mLights[i]->mPosition));
 		}
-		mLights[i].setAmbientColor(aiColorToOfColor(scene->mLights[i]->mColorAmbient));
-		mLights[i].setDiffuseColor(aiColorToOfColor(scene->mLights[i]->mColorDiffuse));
-		mLights[i].setSpecularColor(aiColorToOfColor(scene->mLights[i]->mColorSpecular));
+		mLights[i].setAmbientColor(ofxAssimp::Utils::aiColorToOfColor(scene->mLights[i]->mColorAmbient));
+		mLights[i].setDiffuseColor(ofxAssimp::Utils::aiColorToOfColor(scene->mLights[i]->mColorDiffuse));
+		mLights[i].setSpecularColor(ofxAssimp::Utils::aiColorToOfColor(scene->mLights[i]->mColorSpecular));
 	}
 }
 
@@ -583,22 +583,22 @@ void SrcScene::loadGLResources(std::shared_ptr<ofxAssimp::SrcMesh> aSrcMesh, aiM
 		aiColor4D tcolor;
 		if( mSettings.importMaterials ) {
 			if(AI_SUCCESS == aiGetMaterialColor(mtl, AI_MATKEY_COLOR_DIFFUSE, &tcolor)){
-				auto col = aiColorToOfColor(tcolor);
+				auto col = ofxAssimp::Utils::aiColorToOfColor(tcolor);
 				aSrcMesh->material->setDiffuseColor(col);
 			}
 			
 			if(AI_SUCCESS == aiGetMaterialColor(mtl, AI_MATKEY_COLOR_SPECULAR, &tcolor)){
-				auto col = aiColorToOfColor(tcolor);
+				auto col = ofxAssimp::Utils::aiColorToOfColor(tcolor);
 				aSrcMesh->material->setSpecularColor(col);
 			}
 			
 			if(AI_SUCCESS == aiGetMaterialColor(mtl, AI_MATKEY_COLOR_AMBIENT, &tcolor)){
-				auto col = aiColorToOfColor(tcolor);
+				auto col = ofxAssimp::Utils::aiColorToOfColor(tcolor);
 				aSrcMesh->material->setAmbientColor(col);
 			}
 			
 			if(AI_SUCCESS == aiGetMaterialColor(mtl, AI_MATKEY_COLOR_EMISSIVE, &tcolor)){
-				auto col = aiColorToOfColor(tcolor);
+				auto col = ofxAssimp::Utils::aiColorToOfColor(tcolor);
 				aSrcMesh->material->setEmissiveColor(col);
 			}
 			
@@ -776,9 +776,9 @@ void SrcScene::loadGLResources(std::shared_ptr<ofxAssimp::SrcMesh> aSrcMesh, aiM
 		
 		ofMesh tempMesh;
 		if( aSrcMesh->hasTexture() ) {
-			aiMeshToOfMesh(amesh, tempMesh, !mSettings.convertToLeftHanded, &aSrcMesh->getTexture() );
+			ofxAssimp::Utils::aiMeshToOfMesh(amesh, tempMesh, !mSettings.convertToLeftHanded, &aSrcMesh->getTexture() );
 		} else {
-			aiMeshToOfMesh(amesh, tempMesh, !mSettings.convertToLeftHanded, nullptr);
+			ofxAssimp::Utils::aiMeshToOfMesh(amesh, tempMesh, !mSettings.convertToLeftHanded, nullptr);
 		}
 		
 		aSrcMesh->calculateLocalBounds(tempMesh);

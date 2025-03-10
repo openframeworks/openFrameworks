@@ -130,9 +130,9 @@ void Mesh::setSrcMesh( std::shared_ptr<ofxAssimp::SrcMesh> aSrcMesh ) {
 ofMesh& Mesh::getStaticMesh() {
 	if( mSrcMesh && mSrcMesh->getAiMesh() && mMesh.getNumVertices() < 1 ) {
 		if( hasTexture() ) {
-			aiMeshToOfMesh(mSrcMesh->getAiMesh(), mMesh, !bConvertedToLeftHand, &getTexture() );
+			ofxAssimp::Utils::aiMeshToOfMesh(mSrcMesh->getAiMesh(), mMesh, !bConvertedToLeftHand, &getTexture() );
 		} else {
-			aiMeshToOfMesh(mSrcMesh->getAiMesh(), mMesh, !bConvertedToLeftHand, nullptr);
+			ofxAssimp::Utils::aiMeshToOfMesh(mSrcMesh->getAiMesh(), mMesh, !bConvertedToLeftHand, nullptr);
 		}
 	}
 	return mMesh;
@@ -146,19 +146,19 @@ ofMesh& Mesh::getMesh() {
 				mBInitedAnimatedMesh=true;
 				if(mSrcMesh && mSrcMesh->getAiMesh()) {
 					if( hasTexture() ) {
-						aiMeshToOfMesh(mSrcMesh->getAiMesh(), mAnimatedMesh, !bConvertedToLeftHand, &getTexture() );
+						ofxAssimp::Utils::aiMeshToOfMesh(mSrcMesh->getAiMesh(), mAnimatedMesh, !bConvertedToLeftHand, &getTexture() );
 					} else {
-						aiMeshToOfMesh(mSrcMesh->getAiMesh(), mAnimatedMesh, !bConvertedToLeftHand, nullptr);
+						ofxAssimp::Utils::aiMeshToOfMesh(mSrcMesh->getAiMesh(), mAnimatedMesh, !bConvertedToLeftHand, nullptr);
 					}
 				}
 			}
 			
 			mAnimatedMesh.clearVertices();
 			mAnimatedMesh.clearNormals();
-			mAnimatedMesh.addVertices(aiVecVecToOfVecVec(animatedVertices));
+			mAnimatedMesh.addVertices(ofxAssimp::Utils::aiVecVecToOfVecVec(animatedVertices));
 //			mAnimatedMesh.addVertices(animatedVertices);
 			if(animatedNormals.size() == animatedVertices.size() ) {
-				mAnimatedMesh.addNormals(aiVecVecToOfVecVec(animatedNormals));
+				mAnimatedMesh.addNormals(ofxAssimp::Utils::aiVecVecToOfVecVec(animatedNormals));
 //				mAnimatedMesh.addNormals(animatedNormals);
 			}
 			validCache = true;
