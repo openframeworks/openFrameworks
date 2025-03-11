@@ -10,7 +10,7 @@
 #include <assimp/material.h>
 #include "ofMaterial.h"
 
-namespace ofx::assimp {
+namespace ofxAssimp {
 class Texture {
 public:
 	static std::unordered_map< int, ofMaterialTextureType > sAiTexTypeToOfTexTypeMap;

@@ -7,6 +7,7 @@
 // Kyle McDonald and Arturo Castro for C++ nuances
 // Lukasz Karluk additions Dec 2012.
 
+// ofxAssimp by Nick Hardeman
 
 #include "ofxAssimpMesh.h"
 #include "ofxAssimpSrcScene.h"
@@ -15,15 +16,15 @@
 struct aiScene;
 struct aiNode;
 
-namespace ofx::assimp {
+namespace ofxAssimp {
 
-class Model : public ofx::assimp::Node {
+class Scene : public ofxAssimp::Node {
 public:
 	
-	~Model();
-	Model();
+	~Scene();
+	Scene();
 	
-	virtual NodeType getType() { return OFX_ASSIMP_MODEL; }
+	virtual NodeType getType() { return OFX_ASSIMP_SCENE; }
 	
 	//use the default OF selected flags ( from the options above ) or pass in the exact assimp flags you want
 	//note: you will probably want to |= aiProcess_ConvertToLeftHanded to anything you pass in
@@ -45,7 +46,7 @@ public:
 	/// \brief Setup a model from a SrcScene.
 	/// \param ascene shared ptr of a SrcScene setup model with.
 	/// \return True if the scene is processed successfully.
-	bool setup( std::shared_ptr<ofx::assimp::SrcScene> ascene );
+	bool setup( std::shared_ptr<ofxAssimp::SrcScene> ascene );
 	
 	/// \brief Check to see if the scene is valid and loaded.
 	/// \return If the scene has been loaded or setup successfully.
@@ -81,7 +82,7 @@ public:
 	unsigned int getCurrentAnimationIndex();
 	/// \brief The current active animation that is influencing the bones / meshes.
 	/// \return The current animation.
-	ofx::assimp::Animation& getCurrentAnimation();
+	ofxAssimp::Animation& getCurrentAnimation();
 	/// \brief Immediately sets the current active animation that is influencing the bones / meshes.
 	/// \param aindex vector index of the desired animation.
 	/// \return True if the current index is not the same as aindex and there is at least 1 animation.
@@ -111,11 +112,11 @@ public:
 	/// \brief Get an animation by vector index.
 	/// \param aindex vector index of animation to retrieve.
 	/// \return Animation if found, dummy animation if no animations.
-	ofx::assimp::Animation& getAnimation(int aindex);
+	ofxAssimp::Animation& getAnimation(int aindex);
 	/// \brief Get an animation by aname.
 	/// \param aname name of the animation to retrieve.
 	/// \return Animation if found, dummy animation if no animations.
-	ofx::assimp::Animation& getAnimation(const std::string& aname);
+	ofxAssimp::Animation& getAnimation(const std::string& aname);
 	/// \brief Add a new animation based on an existing animation.
 	/// \param aSrcAnimIndex name of the animation to copy.
 	/// \param aNewAnimName name of the new animation.
@@ -155,15 +156,15 @@ public:
 	std::vector<std::string> getMeshNames();
 	/// \brief Get a mesh based on index. Clamps to valid index range.
 	/// \param meshIndex vector index of the desired mesh.
-	/// \return ofx::assimp::Mesh as a shared_ptr. Valid ptr if at least one mesh.
-	std::shared_ptr<ofx::assimp::Mesh> getMesh(int meshIndex);
+	/// \return ofxAssimp::Mesh as a shared_ptr. Valid ptr if at least one mesh.
+	std::shared_ptr<ofxAssimp::Mesh> getMesh(int meshIndex);
 	/// \brief Get a mesh based on name.
 	/// \param aname name of the desired mesh.
-	/// \return ofx::assimp::Mesh as a shared_ptr. Valid ptr if mesh was found by name.
-	std::shared_ptr<ofx::assimp::Mesh> getMesh(const std::string& aname);
+	/// \return ofxAssimp::Mesh as a shared_ptr. Valid ptr if mesh was found by name.
+	std::shared_ptr<ofxAssimp::Mesh> getMesh(const std::string& aname);
 	/// \brief Get all the meshes in the model.
-	/// \return vector of ofx::assimp::Mesh as shared_ptr.
-	std::vector< std::shared_ptr<ofx::assimp::Mesh> > getMeshes() {return mMeshes;}
+	/// \return vector of ofxAssimp::Mesh as shared_ptr.
+	std::vector< std::shared_ptr<ofxAssimp::Mesh> > getMeshes() {return mMeshes;}
 	/// \brief Get an OF mesh based on name of assimp mesh.
 	/// \param aname name of the desired assimp mesh.
 	/// \return ofMesh that is not transformed.
@@ -207,15 +208,15 @@ public:
 	size_t getNumSkeletons();
 	/// \brief Get a skeleton based on index. Clamps to valid index range.
 	/// \param aindex vector index of the desired skeleton.
-	/// \return ofx::assimp::Skeleton as a shared_ptr. Valid ptr if at least one skeleton.
-	std::shared_ptr<ofx::assimp::Skeleton> getSkeleton( const unsigned int& aindex );
+	/// \return ofxAssimp::Skeleton as a shared_ptr. Valid ptr if at least one skeleton.
+	std::shared_ptr<ofxAssimp::Skeleton> getSkeleton( const unsigned int& aindex );
 	/// \brief Get a skeleton based on aname.
 	/// \param aname name of the desired skeleton.
-	/// \return ofx::assimp::Skeleton as a shared_ptr. Valid ptr if skeleton was found by name.
-	std::shared_ptr<ofx::assimp::Skeleton> getSkeleton( const std::string& aname );
+	/// \return ofxAssimp::Skeleton as a shared_ptr. Valid ptr if skeleton was found by name.
+	std::shared_ptr<ofxAssimp::Skeleton> getSkeleton( const std::string& aname );
 	/// \brief Get all the skeletons in the model.
-	/// \return vector of ofx::assimp::Skeleton as shared_ptr.
-	std::vector< std::shared_ptr<ofx::assimp::Skeleton> > getSkeletons();
+	/// \return vector of ofxAssimp::Skeleton as shared_ptr.
+	std::vector< std::shared_ptr<ofxAssimp::Skeleton> > getSkeletons();
 	/// \brief Total number of bones in the model.
 	/// \return The number of bones.
 	unsigned int getNumBones();
@@ -228,8 +229,8 @@ public:
 	void drawFaces();
 	void drawVertices();
 	
-	void _drawMesh(const std::shared_ptr<ofx::assimp::Mesh>& amesh, ofPolyRenderMode aRenderType, bool bSetRenderType );
-	void drawMesh(const std::shared_ptr<ofx::assimp::Mesh>& amesh, ofPolyRenderMode aRenderType=OF_MESH_FILL );
+	void _drawMesh(const std::shared_ptr<ofxAssimp::Mesh>& amesh, ofPolyRenderMode aRenderType, bool bSetRenderType );
+	void drawMesh(const std::shared_ptr<ofxAssimp::Mesh>& amesh, ofPolyRenderMode aRenderType=OF_MESH_FILL );
 	void drawMesh(int aMeshIndex, ofPolyRenderMode aRenderType=OF_MESH_FILL );
 	void drawMesh(const std::string& aMeshName, ofPolyRenderMode aRenderType=OF_MESH_FILL );
 	
@@ -265,9 +266,9 @@ public:
 	
 	
 	// -- bounds ---------------------------------------
-	ofx::assimp::Bounds getSceneBounds();
-	ofx::assimp::Bounds getSceneBoundsLocal();
-	std::shared_ptr<ofx::assimp::SrcScene> getSrcScene();
+	ofxAssimp::Bounds getSceneBounds();
+	ofxAssimp::Bounds getSceneBoundsLocal();
+	std::shared_ptr<ofxAssimp::SrcScene> getSrcScene();
 	void calculateDimensions();
 	
 	
@@ -276,7 +277,7 @@ protected:
 	void updateMeshesFromBones();
 	
 	bool processScene();
-	void processSceneNodesRecursive( std::shared_ptr<ofx::assimp::SrcNode> aSrcNode, std::shared_ptr<ofx::assimp::Node> aParentNode );
+	void processSceneNodesRecursive( std::shared_ptr<ofxAssimp::SrcNode> aSrcNode, std::shared_ptr<ofxAssimp::Node> aParentNode );
 	
 	// updates the *actual GL resources* for the current animation
 	void updateGLResources();
@@ -284,14 +285,14 @@ protected:
 	double normalizedScale = 1.0;
 	
 	// stores all of the resources
-	std::shared_ptr<ofx::assimp::SrcScene> mSrcScene;
+	std::shared_ptr<ofxAssimp::SrcScene> mSrcScene;
 	
-	std::vector< std::shared_ptr<ofx::assimp::Mesh> > mMeshes;
-	std::vector< std::shared_ptr<ofx::assimp::Bone> > mBones;
+	std::vector< std::shared_ptr<ofxAssimp::Mesh> > mMeshes;
+	std::vector< std::shared_ptr<ofxAssimp::Bone> > mBones;
 	// the skeletons are the root bones
-	std::vector< std::shared_ptr<ofx::assimp::Skeleton> > mSkeletons;
-	std::vector< std::shared_ptr<ofx::assimp::Node> > mNullNodes;
-	std::vector<ofx::assimp::Animation> mAnimations;
+	std::vector< std::shared_ptr<ofxAssimp::Skeleton> > mSkeletons;
+	std::vector< std::shared_ptr<ofxAssimp::Node> > mNullNodes;
+	std::vector<ofxAssimp::Animation> mAnimations;
 	
 	int mAnimationIndex = 0;
 	
@@ -309,11 +310,11 @@ protected:
 	bool bProcessedSceneSuccessfully = false;
 	
 	bool mBSceneBoundsDirty=true;
-	ofx::assimp::Bounds mSceneBoundsGlobal;
-	ofx::assimp::Bounds mSceneBoundsLocal;
+	ofxAssimp::Bounds mSceneBoundsGlobal;
+	ofxAssimp::Bounds mSceneBoundsLocal;
 	
 	ofMesh dummyMesh;
-	ofx::assimp::Animation dummyAnimation;
+	ofxAssimp::Animation dummyAnimation;
 	ofTexture dummyTexture;
 };
 }

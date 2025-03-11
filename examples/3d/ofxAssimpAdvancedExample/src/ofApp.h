@@ -1,6 +1,6 @@
 #pragma once
 #include "ofMain.h"
-#include "ofxAssimpModel.h"
+#include "ofxAssimp.h"
 #include "ofxGui.h"
 
 class ofApp : public ofBaseApp{
@@ -27,11 +27,11 @@ class ofApp : public ofBaseApp{
 	
 	ofEasyCam cam;
 	ofLight	light;
-	ofx::assimp::Model wizardModel;
+	ofxAssimp::Scene wizardModel;
 	
-	ofx::assimp::Model logoModel;
-	shared_ptr<ofx::assimp::Model> srcFoxModel;
-	vector< shared_ptr<ofx::assimp::Model> > foxes;
+	ofxAssimp::Scene logoModel;
+	shared_ptr<ofxAssimp::Scene> srcFoxScene;
+	vector< shared_ptr<ofxAssimp::Scene> > foxes;
 	
 	shared_ptr<ofMaterial> logoMaterial;
 	
