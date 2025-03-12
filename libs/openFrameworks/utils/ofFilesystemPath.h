@@ -27,6 +27,7 @@ public:
 	path(std::filesystem::path&& p) noexcept : path_(std::move(p)) {}
 	path(const std::string& s) : path_(s) {}
 	path(const char* s) : path_(s) {}
+	path(const wchar_t* s) : path_(s) {}
 	path(const path& other) = default;
 	path& operator=(const path& other) = default;
 	path(path&& other) noexcept = default;
