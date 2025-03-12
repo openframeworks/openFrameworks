@@ -109,6 +109,9 @@ jobs:
 
       - name: Build
         run: ./scripts/ci/msys2/build.sh
+        
+#      - name: Allexamples (not quite fonctional due to relative paths
+#        run: ./scripts/msys2/buildAllExamples.sh ./examples
 
     # - name: Run tests
     #   run: ./scripts/ci/msys2/run_tests.sh

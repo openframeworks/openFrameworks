@@ -372,89 +372,15 @@ typedef TESSindex ofIndexType;
 	#endif
 #endif
 
+#include <filesystem> // TODO: move to ofMain.h?
+#define OF_USING_STD_FS 1 // TODO: remove usage of this #define which is now (C++17) always true
 
+#if defined(TARGET_WIN32) 
+	#define OF_ENABLE_TOLERANT_NARROW_PATH_CONVERSION 1 // to enable the feature
+#endif
 
-// If you are building with c++17 or newer std filesystem will be enabled by default
-#if __cplusplus >= 201500
-// #pragma message ( "__cplusplus >= 201500 " )
-    #define OF_HAS_CPP17
-    #if __cplusplus < 201703L
-		// #pragma message ( "__cplusplus < 201703L" )
-        #define OF_USE_EXPERIMENTAL_FS
-    #endif
+#if defined(OF_ENABLE_TOLERANT_NARROW_PATH_CONVERSION)
+	#include "ofFilesystemPath.h"
 #else
-    #undef OF_HAS_CPP17
-#endif
-
-
-#ifndef OF_USING_STD_FS
-	#if defined(OF_HAS_CPP17)
-		#define OF_USING_STD_FS
-	#else
-		#undef OF_USING_STD_FS
-	#endif
-#endif
-
-// Some projects will specify OF_USING_STD_FS even if the compiler isn't newer than 201703L
-// This may be okay but we need to test for the way C++17 is including the filesystem
-
-#if defined(OF_USING_STD_FS) && !defined(OF_USE_EXPERIMENTAL_FS)
-    #if defined(__cpp_lib_filesystem)
-		// #pragma message ( "ok __cpp_lib_filesystem" )
-        #undef OF_USE_EXPERIMENTAL_FS
-    #elif defined(__cpp_lib_experimental_filesystem)
-		// #pragma message ( "ok __cpp_lib_experimental_filesystem" )
-        #define OF_USE_EXPERIMENTAL_FS
-    #elif !defined(__has_include)
-		// #pragma message ( "not __has_include so we add OF_USE_EXPERIMENTAL_FS? seems wrong" )
-        #define OF_USE_EXPERIMENTAL_FS
-    #elif __has_include(<filesystem>)
-        // If we're compiling on Visual Studio and are not compiling with C++17, we need to use experimental
-        #ifdef _MSC_VER
-        
-            // Check and include header that defines "_HAS_CXX17"
-            #if __has_include(<yvals_core.h>)
-                #include <yvals_core.h>
-                
-                // Check for enabled C++17 support
-                #if defined(_HAS_CXX17) && _HAS_CXX17
-                // We're using C++17, so let's use the normal version
-                    #undef OF_USE_EXPERIMENTAL_FS
-                #endif
-            #endif
-
-            // If the macro isn't defined yet, that means any of the other VS specific checks failed, so we need to use experimental
-            #ifndef INCLUDE_STD_FILESYSTEM_EXPERIMENTAL
-                #define OF_USE_EXPERIMENTAL_FS
-            #endif
-
-        // Not on Visual Studio. Let's use the normal version
-        #else // #ifdef _MSC_VER
-            #undef OF_USE_EXPERIMENTAL_FS
-        #endif
-    #else
-        #undef OF_USE_EXPERIMENTAL_FS
-    #endif
-#endif
-
-
-#if defined(OF_USE_EXPERIMENTAL_FS)
-	// C++17 experimental fs support
-	#include <experimental/filesystem>
-	namespace std {
-		namespace experimental{
-			namespace filesystem {
-				using path = v1::path;
-			}
-		}
-	}
-
-	namespace of {
-		namespace filesystem = std::experimental::filesystem;
-	}
-#else
-	#include <filesystem>
-	namespace of {
-		namespace filesystem = std::filesystem;
-	}
+	namespace of::filesystem { using path = std::filesystem::path; }
 #endif
