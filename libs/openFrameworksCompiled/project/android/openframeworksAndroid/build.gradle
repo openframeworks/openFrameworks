@@ -3,7 +3,8 @@ plugins {
 }
 
 def PRJ_SRC_ROOT = './'
-def ofRoot() { return '../../../../' }
+
+static def ofRoot() { return '../../../../' }
 final ofSource = ofRoot() + 'libs/openFrameworks'
 final ofLibs = ofRoot() + 'libs'
 final addons = ofRoot() + 'addons'
@@ -15,16 +16,16 @@ def enableProguardInDebugBuilds = true
 tasks.register("prepareKotlinBuildScriptModel"){}
 
 android {
-	namespace 'com.example.openframeworksandroid' // Added to fix the previous error
+	namespace 'cc.openframeworks.android'
 	compileSdkVersion 34
 	ndkVersion '28.0.13004108'
-	buildToolsVersion '35.0.1'
+	buildToolsVersion '35.0.0' // Updated from 35.0.1 to 34.0.0
 
 	defaultConfig {
-		minSdkVersion 24
+		minSdkVersion 34
 		targetSdkVersion 34
 		versionCode 12
-		versionName '12'
+		versionName "12"
 		ndk.abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86_64'
 
 		externalNativeBuild {
@@ -76,11 +77,15 @@ android {
 	packagingOptions {
 		exclude("**/libopenFrameworksAndroid.so")
 	}
+	viewBinding {
+		enabled true
+	}
 }
 
 dependencies {
 	implementation fileTree(dir: 'libs', include: ['*.jar'])
 	implementation 'androidx.appcompat:appcompat:1.7.0'
-	implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-	implementation "com.getkeepsafe.relinker:relinker:1.6.0"
+	implementation 'androidx.constraintlayout:constraintlayout:2.2.1'
+	implementation "com.getkeepsafe.relinker:relinker:1.4.4"
+	implementation "com.android.ndk.thirdparty:curl:7.68.0-alpha-1"
 }

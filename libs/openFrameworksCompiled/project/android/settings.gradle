@@ -1,1 +1,2 @@
 include ':openframeworksAndroid'
+project(':openframeworksAndroid').projectDir = file('openframeworksAndroid')
