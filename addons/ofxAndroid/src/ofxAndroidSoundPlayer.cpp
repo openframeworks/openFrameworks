@@ -473,3 +473,13 @@ bool ofxAndroidSoundPlayer::isLoaded() const{
 
 	return env->CallBooleanMethod(javaSoundPlayer,javaIsLoadedMethod);
 }
+
+float ofxAndroidSoundPlayer::getDuration() const {
+    ofLogError("ofxAndroidSoundPlayer") << "getDuration(): not implemented";
+    return 0.0f;
+}
+
+unsigned int ofxAndroidSoundPlayer::getDurationMS() const {
+    ofLogError("ofxAndroidSoundPlayer") << "getDurationMS(): not implemented";
+    return 0;
+}
