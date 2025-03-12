@@ -248,10 +248,12 @@ target_link_libraries(openFrameworksAndroid
         ${PRJ_LIBS_ROOT}/brotli/lib/android/${ANDROID_ABI}/libbrotlidec.a
         ${PRJ_LIBS_ROOT}/brotli/lib/android/${ANDROID_ABI}/libbrotlienc.a
         ${PRJ_LIBS_ROOT}/fmt/lib/android/${ANDROID_ABI}/libfmt.a
+        ${PRJ_LIBS_ROOT}/zlib/lib/android/${ANDROID_ABI}/zlib.a
+        ${PRJ_LIBS_ROOT}/libpng/lib/android/${ANDROID_ABI}/libpng.a
         ${PRJ_LIBS_ROOT}/FreeImage/lib/android/${ANDROID_ABI}/libFreeImage.a
         ${PRJ_LIBS_ROOT}/freetype/lib/android/${ANDROID_ABI}/libfreetype.a
         ${PRJ_LIBS_ROOT}/pugixml/lib/android/${ANDROID_ABI}/libpugixml.a
         ${PRJ_LIBS_ROOT}/tess2/lib/android/${ANDROID_ABI}/libtess2.a
         ${PRJ_LIBS_ROOT}/uriparser/lib/android/${ANDROID_ABI}/liburiparser.a
-        ${PRJ_LIBS_ROOT}/zlib/lib/android/${ANDROID_ABI}/zlib.a
+
 )
