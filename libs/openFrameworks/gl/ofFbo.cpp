@@ -17,6 +17,7 @@
 #include <dlfcn.h>
 #endif
 #ifdef TARGET_ANDROID
+#include "ofEventUtils.h"
 #include "ofxAndroidUtils.h"
 #endif
 
@@ -35,7 +36,7 @@ using std::vector;
 
 #if defined(TARGET_OPENGLES) & !defined(TARGET_EMSCRIPTEN)
 	bool ofFbo::bglFunctionsInitialized=false;
-	
+
 	typedef void (* glGenFramebuffersType) (GLsizei n, GLuint* framebuffers);
 	glGenFramebuffersType glGenFramebuffersFunc;
 	#define glGenFramebuffers								glGenFramebuffersFunc
@@ -496,7 +497,7 @@ void ofFbo::destroy() {
 //--------------------------------------------------------------
 bool ofFbo::checkGLSupport() {
 #ifndef TARGET_OPENGLES
-	
+
 	if (!ofIsGLProgrammableRenderer()){
 		if(ofGLCheckExtension("GL_EXT_framebuffer_object")){
 			ofLogVerbose("ofFbo") << "GL frame buffer object supported";
@@ -535,7 +536,7 @@ void ofFbo::allocate(int width, int height, int internalformat, int numSamples) 
 	settings.height			= height;
 	settings.internalformat	= internalformat;
 	settings.numSamples		= numSamples;
-    
+
 #ifdef TARGET_OPENGLES
 	settings.useDepth		= false;
 	settings.useStencil		= false;
@@ -544,10 +545,10 @@ void ofFbo::allocate(int width, int height, int internalformat, int numSamples) 
 #else
 	settings.useDepth		= true;
 	settings.useStencil		= true;
-	//we do this as the fbo and the settings object it contains could be created before the user had the chance to disable or enable arb rect. 	
-    settings.textureTarget	= ofGetUsingArbTex() ? GL_TEXTURE_RECTANGLE_ARB : GL_TEXTURE_2D;    
-#endif 
-    
+	//we do this as the fbo and the settings object it contains could be created before the user had the chance to disable or enable arb rect.
+    settings.textureTarget	= ofGetUsingArbTex() ? GL_TEXTURE_RECTANGLE_ARB : GL_TEXTURE_2D;
+#endif
+
 	allocate(settings);
 }
 
@@ -577,7 +578,7 @@ void ofFbo::allocate(ofFboSettings _settings) {
 		_settings.numSamples = 0;
 	}
 
-	//currently depth only works if stencil is enabled. 
+	//currently depth only works if stencil is enabled.
 	// http://forum.openframeworks.cc/index.php/topic,6837.0.html
 #ifdef TARGET_OPENGLES
 	if(_settings.useDepth){
@@ -588,7 +589,7 @@ void ofFbo::allocate(ofFboSettings _settings) {
         ofLogWarning("ofFbo") << "allocate(): depthStencilAsTexture is not available for iOS";
     }
 #endif
-    
+
 	GLenum depthAttachment = GL_DEPTH_ATTACHMENT;
 
 	if( _settings.useDepth && _settings.useStencil ){
@@ -620,8 +621,8 @@ void ofFbo::allocate(ofFboSettings _settings) {
 	GLint previousFboId = 0;
 
 	// note that we are using a glGetInteger method here, which may stall the pipeline.
-	// in the allocate() method, this is not that tragic since this will not be called 
-	// within the draw() loop. Here, we need not optimise for performance, but for 
+	// in the allocate() method, this is not that tragic since this will not be called
+	// within the draw() loop. Here, we need not optimise for performance, but for
 	// simplicity and readability .
 
 	glGetIntegerv(GL_FRAMEBUFFER_BINDING, &previousFboId);
@@ -656,7 +657,7 @@ void ofFbo::allocate(ofFboSettings _settings) {
 			#endif
 		}
 	}
-    
+
     settings.useDepth = _settings.useDepth;
     settings.useStencil = _settings.useStencil;
     settings.depthStencilInternalFormat = _settings.depthStencilInternalFormat;
@@ -696,7 +697,7 @@ void ofFbo::allocate(ofFboSettings _settings) {
 #endif
 	}
 	settings.internalformat = _settings.internalformat;
-	
+
 	dirty.resize(_settings.colorFormats.size(), true); // we start with all color buffers dirty.
 
 	// if textures are attached to a different fbo (e.g. if using MSAA) check it's status
@@ -711,10 +712,10 @@ void ofFbo::allocate(ofFboSettings _settings) {
 	glBindFramebuffer(GL_FRAMEBUFFER, previousFboId);
 
     /* UNCOMMENT OUTSIDE OF DOING RELEASES
-	
+
     // this should never happen
 	if(settings != _settings) ofLogWarning("ofFbo") << "allocation not complete, passed settings not equal to created ones, this is an internal OF bug";
-    
+
     */
 #ifdef TARGET_ANDROID
 	ofAddListener(ofxAndroidEvents().reloadGL,this,&ofFbo::reloadFbo);
@@ -757,7 +758,7 @@ GLuint ofFbo::createAndAttachRenderbuffer(GLenum internalFormat, GLenum attachme
 
 //----------------------------------------------------------
 void ofFbo::createAndAttachTexture(GLenum internalFormat, GLenum attachmentPoint) {
-	
+
 	ofTextureData texData;
 
 	texData.textureTarget = settings.textureTarget;
@@ -784,21 +785,21 @@ void ofFbo::attachTexture(ofTexture & tex, GLenum internalFormat, GLenum attachm
 	GLint temp;
 	glGetIntegerv(GL_FRAMEBUFFER_BINDING, &temp);
 	glBindFramebuffer(GL_FRAMEBUFFER, fboTextures);
-    
+
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + attachmentPoint, tex.texData.textureTarget, tex.texData.textureID, 0);
     if(attachmentPoint >= textures.size()) {
         textures.resize(attachmentPoint+1);
     }
     textures[attachmentPoint] = tex;
-    
+
 	settings.colorFormats.resize(attachmentPoint + 1);
 	settings.colorFormats[attachmentPoint] = internalFormat;
 	settings.numColorbuffers = settings.colorFormats.size();
-    
+
 	// if MSAA, bind main fbo and attach renderbuffer
 	if(settings.numSamples) {
 		glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-        
+
 		GLuint colorBuffer = createAndAttachRenderbuffer(internalFormat, GL_COLOR_ATTACHMENT0 + attachmentPoint);
 		colorBuffers.push_back(colorBuffer);
 		retainRB(colorBuffer);
@@ -817,7 +818,7 @@ void ofFbo::createAndAttachDepthStencilTexture(GLenum target, GLint internalform
 	depthBufferTex.texData.bFlipTexture = false;
 	depthBufferTex.texData.width = settings.width;
 	depthBufferTex.texData.height = settings.height;
-	
+
 	depthBufferTex.allocate(depthBufferTex.texData,transferFormat,transferType);
 
 	glFramebufferTexture2D(GL_FRAMEBUFFER, attachment, target, depthBufferTex.texData.textureID, 0);
@@ -832,7 +833,7 @@ void ofFbo::createAndAttachDepthStencilTexture(GLenum target, GLint internalform
 	depthBufferTex.texData.bFlipTexture = false;
 	depthBufferTex.texData.width = settings.width;
 	depthBufferTex.texData.height = settings.height;
-	
+
 	depthBufferTex.allocate(depthBufferTex.texData);
 
 	glFramebufferTexture2D(GL_FRAMEBUFFER, attachment, target, depthBufferTex.texData.textureID, 0);
@@ -922,10 +923,10 @@ void ofFbo::flagDirty() const{
 		//
 		// All currently active draw buffers need to be flagged dirty
 		//
-		// If a draw buffer has been activated and then de-activated, it has been 
-		// flagged dirty at activation, so we can be sure all buffers which have 
+		// If a draw buffer has been activated and then de-activated, it has been
+		// flagged dirty at activation, so we can be sure all buffers which have
 		// been rendered to are flagged dirty.
-		// 
+		//
 		int numBuffersToFlag = std::min(dirty.size(), activeDrawBuffers.size());
 		for(int i=0; i < numBuffersToFlag; i++){
 			dirty[i] = true;
@@ -1020,7 +1021,7 @@ ofTexture& ofFbo::getTexture(){
 //----------------------------------------------------------
 ofTexture& ofFbo::getTexture(int attachmentPoint) {
 	updateTexture(attachmentPoint);
-    
+
     return textures[attachmentPoint];
 }
 
@@ -1111,7 +1112,7 @@ void ofFbo::updateTexture(int attachmentPoint) {
 	if(!bIsAllocated) return;
 #ifndef TARGET_OPENGLES
 	if(fbo != fboTextures && dirty[attachmentPoint]) {
-		
+
 		// if fbo != fboTextures, we are dealing with an MSAA enabled FBO.
 		// and we need to blit one fbo into another to see get the texture
 		// content
@@ -1125,11 +1126,11 @@ void ofFbo::updateTexture(int attachmentPoint) {
 		if(renderer){
 			GLint readBuffer;
 			glGetIntegerv(GL_READ_BUFFER, &readBuffer);
-			
+
 			renderer->bindForBlitting(*this,*this,attachmentPoint);
 			glBlitFramebuffer(0, 0, settings.width, settings.height, 0, 0, settings.width, settings.height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
 			renderer->unbind(*this);
-			
+
 			glReadBuffer(readBuffer);
 		}
 
