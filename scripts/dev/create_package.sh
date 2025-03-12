@@ -125,17 +125,19 @@ fi
 
 cd ${pkgfolder}
 packageroot=$PWD
-
-cd apps
-echo "Cloning project generator from $PG_REPO $PG_BRANCH"
-git clone $PG_REPO --depth=1 --branch=$PG_BRANCH 2> /dev/null
-gitfinishedok=$?
-if [ $gitfinishedok -ne 0 ]; then
-    echo "Error connecting to github"
-    exit 1
-fi
-
 cd $packageroot
+
+echo "Updating project generator to latest"
+./scripts/dev/init_submodules.sh
+
+#cd apps
+#echo "Cloning project generator from $PG_REPO $PG_BRANCH"
+#git clone $PG_REPO --depth=1 --branch=$PG_BRANCH 2> /dev/null
+#gitfinishedok=$?
+#if [ $gitfinishedok -ne 0 ]; then
+#    echo "Error connecting to github"
+#    exit 1
+#fi
 
 function deleteCodeblocks {
     #delete codeblock files
