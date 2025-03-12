@@ -128,6 +128,7 @@ enum ofTargetPlatform{
 #elif defined (__ANDROID__)
 	#define TARGET_ANDROID
 	#define TARGET_OPENGLES
+	#define TARGET_IMPLEMENTS_URL_LOADER
 //#elif defined(__ARMEL__)
 #elif defined(__ARM__)
 	#define TARGET_LINUX
