@@ -2077,7 +2077,9 @@ std::string ofPathToString(const of::filesystem::path & path) {
 	try {
 		return path.string();
 	} catch(std::filesystem::filesystem_error & e) {
-		ofLogError("ofFileUtils") << "ofPathToString: error converting fs::path to string " << e.what();
+		ofLogError("ofFileUtils") << "ofPathToString: filesystem error converting fs::path to string " << e.what();
+	} catch (std::system_error& e) {
+		ofLogError("ofFileUtils") << "ofPathToString: system error converting fs::path to string " << e.what();
 	}
 	return {};
 }
