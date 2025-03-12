@@ -168,7 +168,7 @@ static size_t channelsFromPixelFormat(ofPixelFormat format){
 		return 2;
 		break;
 	default:
-		ofLog(OF_LOG_ERROR,"ofPixels: format doesn't support channels");
+        ofLogError("ofPixels")  << "format doesn't support channels";
 		return 1;
 	}
 }
@@ -185,7 +185,7 @@ static ofPixelFormat ofPixelFormatFromImageType(ofImageType type){
 		return OF_PIXELS_RGBA;
 		break;
 	default:
-		ofLog(OF_LOG_ERROR,"ofPixels: image type not supported");
+        ofLogError("ofPixels")  << "image type not supported";
 		return OF_PIXELS_UNKNOWN;
 	}
 }
@@ -207,7 +207,7 @@ static ofImageType ofImageTypeFromPixelFormat(ofPixelFormat pixelFormat){
 	case OF_PIXELS_UNKNOWN:
 		return OF_IMAGE_UNDEFINED;
 	default:
-		ofLog(OF_LOG_ERROR,"ofPixels: image type not supported");
+        ofLogError("ofPixels")  <<  "image type not supported";
 		return OF_IMAGE_UNDEFINED;
 	}
 }
