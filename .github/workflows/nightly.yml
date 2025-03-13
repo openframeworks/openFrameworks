@@ -1,14 +1,26 @@
 name: nightly-linux64
 
 on:
- schedule:
-  - cron: "0 6 * * *"
- workflow_dispatch:
-    inputs:
-      release:
-        description: 'release'     
-        required: true
-        default: 'latest'
+  push:
+    if: github.event_name == 'push' && github.event.pull_request == null
+    paths-ignore:
+      - "**/*.md"
+      - "examples/**"
+  pull_request:
+    if: github.event_name == 'pull_request' && github.repository == 'openframeworks/openFrameworks'
+    paths-ignore:
+      - "**/*.md"
+      - "examples/**"
+
+# on:
+#  schedule:
+#   - cron: "0 6 * * *"
+#  workflow_dispatch:
+#     inputs:
+#       release:
+#         description: 'release'
+#         required: true
+#         default: 'latest'
 env:
   ccache: ccache
   RELEASE: latest
