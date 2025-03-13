@@ -282,7 +282,7 @@ ofHttpResponse ofURLFileLoaderImpl::handleRequest(const ofHttpRequest & request)
 		}
 	}
 	if(version->features & CURL_VERSION_SSL) {
-#if defined(TARGET_OSX) && !defined(NO_OPENSSL)
+#if !defined(NO_OPENSSL)
 		const std::string caPath = "ssl";
 		const std::string caFile = "ssl/cacert.pem";
 		if (ofFile::doesFileExist(ofToDataPath(CERTIFICATE_FILE)) && checkValidCertifcate(ofToDataPath(CERTIFICATE_FILE))) {
