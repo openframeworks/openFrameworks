@@ -58,7 +58,8 @@ if [[ "$(uname -s)" == "Linux" ]]; then
 	$ROOT/scripts/dev/create_package.sh msys2 $lastversion master ucrt64
 	$ROOT/scripts/dev/create_package.sh vs $lastversion master
 	$ROOT/scripts/dev/create_package.sh vs $lastversion master 64
-	# $ROOT/scripts/dev/create_package.sh vs2019 $lastversion master 64
+    $ROOT/scripts/dev/create_package.sh android $lastversion master windows
+    $ROOT/scripts/dev/create_package.sh android $lastversion master macos
 fi
 $ROOT/scripts/dev/create_package.sh osx $lastversion master
 $ROOT/scripts/dev/create_package.sh ios $lastversion master
