@@ -507,6 +507,12 @@ void ofGstUtils::setLoopState(ofLoopType state){
 void ofGstUtils::setSpeed(float _speed){
 	if(_speed == speed) return;
 
+	if (updated_in_frame) {
+		ofLogVerbose("ofGstUtils") << "setSpeed(): prevented multiple changes within a frame";
+		return;
+	}
+	updated_in_frame = true;
+
 	GstFormat format = GST_FORMAT_TIME;
 	GstSeekFlags flags = (GstSeekFlags) (GST_SEEK_FLAG_ACCURATE | GST_SEEK_FLAG_FLUSH);
 
@@ -910,6 +916,7 @@ ofTexture * ofGstVideoUtils::getTexture(){
 
 void ofGstVideoUtils::update(){
 	if (isLoaded()){
+		updated_in_frame = false;
 		if(!isFrameByFrame()){
 			std::unique_lock<std::mutex> lock(mutex);
 			bHavePixelsChanged = bBackPixelsChanged;

@@ -4,7 +4,7 @@
 #include "of3dUtils.h"
 #include "ofxAssimpUtils.h"
 
-using namespace ofx::assimp;
+using namespace ofxAssimp;
 
 //--------------------------------------------------------------
 void SrcBone::setAiBone(aiBone* aAiBone, aiNode* aAiNode) {
@@ -118,8 +118,8 @@ void SrcBone::setAiBone(aiBone* aAiBone, aiNode* aAiNode) {
 //}
 
 //--------------------------------------------------------------
-std::shared_ptr<ofx::assimp::SrcBone> SrcBone::getBone( aiNode* aAiNode ) {
-	std::shared_ptr<ofx::assimp::SrcBone> tbone;
+std::shared_ptr<ofxAssimp::SrcBone> SrcBone::getBone( aiNode* aAiNode ) {
+	std::shared_ptr<ofxAssimp::SrcBone> tbone;
 	findBoneRecursive( aAiNode, tbone );
 	if( tbone ) {
 		return tbone;

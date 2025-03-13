@@ -206,8 +206,8 @@ fi
 #jammy needs libunwind-dev installed before gstreamer
 #and some additional packages
 if [ $MAJOR_VERSION -gt 21 ]; then
-installPackages "libunwind-dev"
-
+echo "Ensuring latest libunwind-dev is installed..."
+apt-get ${FORCE_YES} -qq install --only-upgrade libunwind-dev || installPackages libunwind-dev
 PACKAGES+=" libharfbuzz-dev"
 PACKAGES+=" gstreamer1.0-vaapi"
 PACKAGES+=" gstreamer1.0-libav"

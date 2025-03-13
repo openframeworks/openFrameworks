@@ -23,7 +23,9 @@
 #endif
 
 // This enables glm's old behavior of initializing with non garbage values
-#define GLM_FORCE_CTOR_INIT
+#if !defined(GLM_FORCE_CTOR_INIT)
+	#define GLM_FORCE_CTOR_INIT
+#endif
 
 //-------------------------------
 

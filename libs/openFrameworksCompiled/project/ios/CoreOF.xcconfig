@@ -46,7 +46,7 @@ OF_CORE_HEADERS = $(HEADER_OF) $(HEADER_OFXIOS) $(HEADER_UTF8) $(HEADER_FREETYPE
 OF_CORE_FRAMEWORKS = -framework AudioToolbox -framework Accelerate -framework AVFoundation -framework CoreAudio -framework CoreGraphics -framework CoreLocation -framework CoreMotion -framework CoreMedia -framework CoreVideo -framework Foundation -framework GameController -framework GLKit -framework MapKit -framework OpenAL -framework OpenGLES -framework UIKit -framework Security -framework QuartzCore -framework CoreHaptics -framework Metal
 
 
-GCC_PREPROCESSOR_DEFINITIONS = $(inherited) GLES_SILENCE_DEPRECATION=1
+GCC_PREPROCESSOR_DEFINITIONS = $(inherited) GLES_SILENCE_DEPRECATION=1 GLM_FORCE_CTOR_INIT GLM_ENABLE_EXPERIMENTAL
 
 //COMPILER SETTINGS WHICH CAN BE OVERRIDDEN BY XCODE BUILD SETTINGS
 CLANG_ENABLE_OBJC_WEAK = YES

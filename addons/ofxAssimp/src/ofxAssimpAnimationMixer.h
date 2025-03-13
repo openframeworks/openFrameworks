@@ -6,7 +6,7 @@
 #pragma once
 #include "ofxAssimpAnimation.h"
 
-namespace ofx::assimp {
+namespace ofxAssimp {
 class AnimationClip {
 public:
 	static bool shouldRemove( const AnimationClip& ac );

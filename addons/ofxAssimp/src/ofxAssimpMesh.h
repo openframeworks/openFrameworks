@@ -6,7 +6,6 @@
 #pragma once
 
 #include "ofMaterial.h"
-#include <assimp/cimport.h>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 #include "ofxAssimpTexture.h"
@@ -19,9 +18,9 @@
 #include "ofxAssimpSrcMesh.h"
 
 struct aiMesh;
-namespace ofx::assimp {
+namespace ofxAssimp {
 
-class Mesh : public ofx::assimp::Node {
+class Mesh : public ofxAssimp::Node {
 public:
 	
 	virtual NodeType getType() override { return OFX_ASSIMP_MESH; }
@@ -32,14 +31,14 @@ public:
 	std::size_t getNumTextures();
 	ofTexture& getTexture();
 	ofTexture& getTexture(ofMaterialTextureType aType);
-	std::shared_ptr<ofx::assimp::Texture> getTexture( unsigned int aindex );
+	std::shared_ptr<ofxAssimp::Texture> getTexture( unsigned int aindex );
 	
 	std::size_t getNumVertices();
 	bool hasNormals();
 	aiMesh* getAiMesh();
 	std::size_t getNumIndices();
 	
-	void setSrcMesh( std::shared_ptr<ofx::assimp::SrcMesh> aSrcMesh );
+	void setSrcMesh( std::shared_ptr<ofxAssimp::SrcMesh> aSrcMesh );
 	
 	ofMesh& getStaticMesh();
 	ofMesh& getMesh();
@@ -66,16 +65,16 @@ public:
 	std::vector<aiVector3D> animatedVertices;
 	std::vector<aiVector3D> animatedNormals;
 	
-	std::vector< std::shared_ptr<ofx::assimp::Bone> > mBones;
+	std::vector< std::shared_ptr<ofxAssimp::Bone> > mBones;
 	
-	std::shared_ptr<ofx::assimp::SrcMesh> getSrcMesh() { return mSrcMesh; }
+	std::shared_ptr<ofxAssimp::SrcMesh> getSrcMesh() { return mSrcMesh; }
 	
 protected:
 	virtual void onPositionChanged() override;
 	virtual void onOrientationChanged() override;
 	virtual void onScaleChanged() override;
 	
-	std::shared_ptr<ofx::assimp::SrcMesh> mSrcMesh;
+	std::shared_ptr<ofxAssimp::SrcMesh> mSrcMesh;
 	
 	// calculate the local bounds for all of the vertices
 	// has no position, scale or rotations applied

@@ -331,10 +331,11 @@ jobs:
     env:
       TARGET: ${{matrix.cfg.target}}
     steps:
-      - name: Remove Old lib-unwind
-        run: if [ "$TARGET" = "linux64" ]; then
-          sudo apt-get remove libunwind-14 -y;
-          fi
+# handled by the install script now 
+#      - name: Remove Old lib-unwind
+#        run: if [ "$TARGET" = "linux64" ]; then
+#          sudo apt-get remove libunwind-14 -y;
+#          fi
       - name: Cache Packages
         uses: awalsh128/cache-apt-pkgs-action@latest
         with:
