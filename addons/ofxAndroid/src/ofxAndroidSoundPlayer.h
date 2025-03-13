@@ -6,30 +6,32 @@
 class ofxAndroidSoundPlayer: public ofBaseSoundPlayer{
 public:
 	ofxAndroidSoundPlayer();
-	virtual ~ofxAndroidSoundPlayer();
+	~ofxAndroidSoundPlayer() override;
 
-	bool load(const of::filesystem::path& fileName, bool stream = false);
-	void unload();
-	void play();
-	void stop();
+	bool load(const of::filesystem::path& fileName, bool stream) override;
+	void unload() override;
+	void play() override;
+	void stop() override;
 
-	void setVolume(float vol);
-	void setPan(float vol);
-	void setSpeed(float spd);
-	void setPaused(bool bP);
-	void setLoop(bool bLp);
-	void setMultiPlay(bool bMp);
-	void setPosition(float pct); // 0 = start, 1 = end;
-	void setPositionMS(int ms);
+	void setVolume(float vol) override;
+	void setPan(float vol) override;
+	void setSpeed(float spd) override;
+	void setPaused(bool bP) override;
+	void setLoop(bool bLp) override;
+	void setMultiPlay(bool bMp) override;
+	void setPosition(float pct) override; // 0 = start, 1 = end;
+	void setPositionMS(int ms) override;
 
-	float getPosition() const;
-	int getPositionMS() const;
-	bool isPlaying() const;
-	float getSpeed() const;
-	float getPan() const;
+	float getPosition() const override;
+    int getPositionMS() const override;
+	bool isPlaying() const override;
+	float getSpeed() const override;
+	float getPan() const override;
 	bool isPaused() const;
-	float getVolume() const;
-	bool isLoaded() const;
+	float getVolume() const override;
+	bool isLoaded() const override;
+    float getDuration() const override;
+    unsigned int getDurationMS() const override;
 
 private:
 	jobject javaSoundPlayer;

@@ -14,13 +14,19 @@
 
 class ofxAndroidApp: public ofBaseApp{
 public:
+
+	virtual void setup(){}
 	virtual void pause(){};
 	virtual void stop(){};
 	virtual void resume(){};
 	virtual void reloadTextures(){}
 	virtual void unloadTextures(){}
-	virtual void reloadGL(){reloadTextures();}
-	virtual void unloadGL(){unloadTextures();}
+	virtual void reloadGL(){
+		reloadTextures();
+	}
+	virtual void unloadGL(){
+		unloadTextures();
+	}
 	virtual void swipe(ofxAndroidSwipeDir swipeDir, int id){
 
 	}
@@ -43,4 +49,30 @@ public:
 	virtual void deviceOrientationChangedEvent(ofOrientation & newOrientation){
 		deviceOrientationChanged(newOrientation);
 	};
+
+	virtual void deviceRefreshRateChanged(int refreshRate){
+
+	}
+
+	virtual void deviceHighestRefreshRateChanged(int refreshRate){
+
+	}
+
+	virtual void deviceRefreshRateChangedEvent(int &refreshRate){
+		deviceRefreshRateChanged(refreshRate);
+	}
+
+	virtual void deviceHighestRefreshRateChangedEvent(int & refreshRate){
+		deviceHighestRefreshRateChanged(refreshRate);
+	}
+
+	virtual void audioIn( ofSoundBuffer& buffer ) {
+
+	}
+
+	virtual void audioOut( ofSoundBuffer& buffer ) {
+
+	}
 };
+
+

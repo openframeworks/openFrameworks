@@ -24,6 +24,7 @@ ofVboMesh::ofVboMesh(const ofMesh & mom)
 	vboNumColors = 0;
 	vboNumTexCoords = 0;
 	vboNumNormals = 0;
+	updateSet = false;
 }
 
 void ofVboMesh::operator=(const ofMesh & mom)
