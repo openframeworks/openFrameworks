@@ -458,7 +458,6 @@ function createPackage {
         downloader https://github.com/openframeworks/projectGenerator/releases/download/nightly/projectGenerator-linux-gui.gz 2> /dev/null
         gunzip projectGenerator-linux-gui.gz
         mv projectGenerator-linux-gui projectGenerator
-        rm projectGenerator-linux-gui.gz
         rm -rf apps/projectGenerator
     fi
 
@@ -479,7 +478,6 @@ function createPackage {
             downloader https://github.com/openframeworks/projectGenerator/releases/download/nightly/projectGenerator-linux-gui.gz 2> /dev/null
             gunzip projectGenerator-linux-gui.gz
             mv projectGenerator-linux-gui projectGenerator
-            rm projectGenerator-linux-gui.gz
             rm -rf apps/projectGenerator
         fi
 
