@@ -128,7 +128,6 @@ enum ofTargetPlatform{
 #elif defined (__ANDROID__)
 	#define TARGET_ANDROID
 	#define TARGET_OPENGLES
-	#define TARGET_IMPLEMENTS_URL_LOADER
 //#elif defined(__ARMEL__)
 #elif defined(__ARM__)
 	#define TARGET_LINUX
@@ -410,11 +409,11 @@ typedef TESSindex ofIndexType;
     #elif __has_include(<filesystem>)
         // If we're compiling on Visual Studio and are not compiling with C++17, we need to use experimental
         #ifdef _MSC_VER
-        
+
             // Check and include header that defines "_HAS_CXX17"
             #if __has_include(<yvals_core.h>)
                 #include <yvals_core.h>
-                
+
                 // Check for enabled C++17 support
                 #if defined(_HAS_CXX17) && _HAS_CXX17
                 // We're using C++17, so let's use the normal version

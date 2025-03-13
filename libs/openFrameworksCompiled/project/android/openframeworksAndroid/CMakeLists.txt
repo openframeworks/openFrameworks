@@ -208,6 +208,8 @@ include_directories(
         ${PRJ_LIBS_ROOT}/tess2/include
         ${PRJ_LIBS_ROOT}/zlib/include
 		${PRJ_LIBS_ROOT}/uriparser/include
+        ${PRJ_LIBS_ROOT}/openssl/include
+        ${PRJ_LIBS_ROOT}/curl/include
 )
 
 find_library(android-lib android)
@@ -255,5 +257,7 @@ target_link_libraries(openFrameworksAndroid
         ${PRJ_LIBS_ROOT}/pugixml/lib/android/${ANDROID_ABI}/libpugixml.a
         ${PRJ_LIBS_ROOT}/tess2/lib/android/${ANDROID_ABI}/libtess2.a
         ${PRJ_LIBS_ROOT}/uriparser/lib/android/${ANDROID_ABI}/liburiparser.a
-
+        ${PRJ_LIBS_ROOT}/openssl/lib/android/${ANDROID_ABI}/libssl.a
+        ${PRJ_LIBS_ROOT}/openssl/lib/android/${ANDROID_ABI}/libcrypto.a
+        ${PRJ_LIBS_ROOT}/curl/lib/android/${ANDROID_ABI}/libcurl.a
 )
