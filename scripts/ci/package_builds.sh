@@ -22,6 +22,12 @@ if [[ "$(uname -s)" == "Linux" ]]; then
 fi
 echo "##[endgroup]"
 
+echo "##[group]submodule update and pull"
+git submodule update --init --recursive
+git submodule update --recursive --remote
+cd apps/projectGenerator
+git pull origin master
+
 echo "##[group]ls"
 echo "Where is ROOT: $ROOT"
 cd $ROOT
