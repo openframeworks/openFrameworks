@@ -8,7 +8,7 @@ LEGACY=0
 SILENT_ARGS=""
 NO_SSL=""
 BLEEDING_EDGE=0
-DL_VERSION=2.6.5
+DL_VERSION=2.6.6
 TAG=""
 
 printHelp(){
@@ -392,9 +392,9 @@ for PKG in $PKGS; do
 
         if [ "$PLATFORM" == "linux" ] && { [ "$ARCH" == "aarch64" ] || [ "$ARCH" == "armv7l" ] || [ "$ARCH" == "armv6l" ]; }; then
             echo "tar xjfv download/$PKG  --strip-components=1"
-            tar xjf download/$PKG --strip-components=1
+            tar xjf download/$PKG --strip-components=1 > /dev/null 2>&1
         else
-            tar xjfv download/$PKG
+            tar xjf download/$PKG > /dev/null 2>&1
         fi
         # rm -r download/$PKG
     fi
