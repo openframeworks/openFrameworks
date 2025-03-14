@@ -32,6 +32,9 @@ Setting up openFrameworks with Android Studio is fairly straightforward. The bas
 
 Press the Play button next to the `androidEmptyExample` shown in the toolbar. It will build the app and deploy it to your Android device after a few seconds (or prompt you to deploy it to a suitable emulator). If the app runs, congratulations! You have setup openFrameworks.
 
+### Building directly with Gradle
+- Can build directly in folder with ./gradlew assembleDebug
+- System will need latest version of JDK for this https://www.oracle.com/us/java/technologies/downloads/#jdk23-mac
 
 ## Creating new projects
 
