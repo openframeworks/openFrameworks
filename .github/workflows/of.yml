@@ -481,7 +481,7 @@ jobs:
           java-version: '17'
 
       - name: Download Libraries
-        run: ./scripts/android/download_libs.sh -t $TARGET
+        run: ./of update libs android
 
       - name: Build openFrameworks Core - Debug
         run: |
