@@ -454,22 +454,48 @@ jobs:
           DEVELOPER_DIR: "/Applications/Xcode.app/Contents/Developer"
           SDKROOT: "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk"
 
-   build-android:
-      runs-on: ubuntu-24.04
-      strategy:
-        matrix:
-          cfg:
-            - { target: android, opt: arm64 }
-      env:
-        TARGET: ${{matrix.cfg.target}}
-      steps:
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  build-android:
+    runs-on: ubuntu-24.04
+    strategy:
+      matrix:
+        cfg:
+          - { target: android, opt: arm64-v8a }
+          - { target: android, opt: x86_64 }
+          - { target: android, opt: armeabi-v7a }
 
-        - uses: actions/checkout@v4
-        # - name: ccache
-        #   uses: hendrikmuhs/ccache-action@v1.2.14
-        #   with:
-        #     key: ${{ matrix.cfg.target }}-${{ matrix.cfg.libs }}
+    env:
+      TARGET: ${{ matrix.cfg.target }}
+      ARCH: ${{ matrix.cfg.opt }}
+      ANDROID_SDK_ROOT: $ANDROID_HOME
+      ANDROID_NDK_ROOT: $ANDROID_NDK_LATEST_HOME
 
-        - name: Download libs
-          run: ./scripts/android/download_libs.sh -t $RELEASE
+    steps:
+      - name: checkout openFrameworks
+        uses: actions/checkout@v4
+
+      - name: Set Up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Download Libraries
+        run: ./scripts/android/download_libs.sh -t $TARGET
+
+      - name: Build openFrameworks Core - Debug
+        run: |
+          cd libs/openFrameworksCompiled/project/android/
+          chmod +x gradlew
+          ./gradlew assembleDebug
+
+      - name: Check if openFrameworks output Exists
+        run: |
+          LIB_PATH="libs/openFrameworksCompiled/lib/android/${ARCH}/libopenFrameworksAndroid.so"
+          if [ -f "$LIB_PATH" ]; then
+            echo "Build Success - [$LIB_PATH]"
+          else
+            echo "ERROR: Build Failed not found: [$LIB_PATH]"
+            exit 1
+          fi
 
