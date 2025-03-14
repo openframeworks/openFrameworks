@@ -8,7 +8,7 @@ LEGACY=0
 SILENT_ARGS=""
 NO_SSL=""
 BLEEDING_EDGE=0
-DL_VERSION=2.6.5
+DL_VERSION=2.6.7
 TAG=""
 
 printHelp(){
@@ -392,9 +392,9 @@ for PKG in $PKGS; do
 
         if [ "$PLATFORM" == "linux" ] && { [ "$ARCH" == "aarch64" ] || [ "$ARCH" == "armv7l" ] || [ "$ARCH" == "armv6l" ]; }; then
             echo "tar xjfv download/$PKG  --strip-components=1"
-            tar xjf download/$PKG --strip-components=1
+            tar xf download/$PKG --strip-components=1 > /dev/null 2>&1
         else
-            tar xjfv download/$PKG
+            tar xf download/$PKG > /dev/null 2>&1
         fi
         # rm -r download/$PKG
     fi
@@ -407,7 +407,7 @@ if [ "$PLATFORM" == "osx" ]; then
         info_plist_path="${libs[i]}/lib/macos/${libs[i]}.xcframework/Info.plist"
         if [ -e "${info_plist_path}.bak" ]; then
             #echo "  Restoring: [${info_plist_path}.bak] to [${info_plist_path}]"
-            mv "${info_plist_path}.bak" "$info_plist_path"
+            mv "${info_plist_path}.bak" "$info_plist_path" 2>/dev/null
         fi
     done
 fi
@@ -501,7 +501,7 @@ if [ "$PLATFORM" == "osx" ]; then
         if [ -e ${addonslibs[i]} ] ; then
             info_plist_path="../addons/${addons[i]}/libs/${addonslibs[i]}/lib/macos/${addonslibs[i]}.xcframework/Info.plist"
             if [ -e "${info_plist_path}.bak" ]; then
-                mv "${info_plist_path}.bak" "$info_plist_path"
+                mv "${info_plist_path}.bak" "$info_plist_path" 2>/dev/null
             fi
         fi
     done

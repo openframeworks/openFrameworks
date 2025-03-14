@@ -22,12 +22,16 @@ if [[ "$(uname -s)" == "Linux" ]]; then
 fi
 echo "##[endgroup]"
 
+echo "##[group]submodule update and pull"
+git submodule update --init --recursive
+git submodule update --recursive --remote
+cd apps/projectGenerator
+git pull origin master
+
 echo "##[group]ls"
 echo "Where is ROOT: $ROOT"
 cd $ROOT
 ls
-
-
 OUTPUT_FOLDER=$ROOT/out
 mkdir -p $OUTPUT_FOLDER
 
@@ -39,32 +43,58 @@ lastversion=$(date +%Y%m%d)
 # fi
 echo "##[endgroup]"
 
-echo "##[group]submodule update and pull"
-git submodule update --init --recursive
-git submodule update --recursive --remote
-cd apps/projectGenerator
-git pull origin master
 echo "##[endgroup]"
-
-echo "##[group]create package"
 cd $OUTPUT_FOLDER
 pwd
-if [[ "$(uname -s)" == "Linux" ]]; then
-	$ROOT/scripts/dev/create_package.sh linux64 $lastversion master gcc6
-	$ROOT/scripts/dev/create_package.sh linuxarmv6l $lastversion master
-	$ROOT/scripts/dev/create_package.sh linuxaarch64 $lastversion master
-	$ROOT/scripts/dev/create_package.sh msys2 $lastversion master mingw64
-	$ROOT/scripts/dev/create_package.sh msys2 $lastversion master clang64
-	$ROOT/scripts/dev/create_package.sh msys2 $lastversion master ucrt64
-	$ROOT/scripts/dev/create_package.sh vs $lastversion master
-	$ROOT/scripts/dev/create_package.sh vs $lastversion master 64
-	# $ROOT/scripts/dev/create_package.sh vs2019 $lastversion master 64
-fi
-$ROOT/scripts/dev/create_package.sh osx $lastversion master
-$ROOT/scripts/dev/create_package.sh ios $lastversion master
-echo "##[endgroup]"
+PACKAGES=(
+  "linux64 $lastversion master gcc6"
+  "linuxarmv6l $lastversion master"
+  "linuxaarch64 $lastversion master"
+  "msys2 $lastversion master mingw64"
+  "msys2 $lastversion master clang64"
+  "msys2 $lastversion master ucrt64"
+  "vs $lastversion master"
+  "vs $lastversion master 64"
+  "android $lastversion master windows"
+  "android $lastversion master macos"
+  "osx $lastversion master"
+  "ios $lastversion master"
+)
 
-# $ROOT/scripts/dev/create_package.sh macos $lastversion master
+FAILED_PACKAGES=()
+
+echo "##[group]Create packages"
+for pkg in "${PACKAGES[@]}"; do
+    echo "Creating package with arguments: $pkg"
+    # Use "|| true" to prevent immediate exit on error.
+    $ROOT/scripts/dev/create_package.sh $pkg || FAILED_PACKAGES+=("$pkg")
+done
+
+
+
+echo "# Package Build Summary" > package_summary.md
+echo "" >> package_summary.md
+echo "| Configuration | Status |" >> package_summary.md
+echo "|---------------|--------|" >> package_summary.md
+
+for pkg in "${PACKAGES[@]}"; do
+    status="SUCCESS"
+    for fail in "${FAILED_PACKAGES[@]}"; do
+        if [ "$fail" = "$pkg" ]; then
+            status="FAILED"
+            break
+        fi
+    done
+    echo "| $pkg | $status |" >> package_summary.md
+done
+
+if [ "${GITHUB_ACTIONS}" == "true" ]; then
+    echo "## Package Build Summary" >> "$GITHUB_STEP_SUMMARY"
+    cat package_summary.md >> "$GITHUB_STEP_SUMMARY"
+else
+    echo "Package Build Summary:"
+    cat package_summary.md
+fi
 
 ls -la
 cd $ROOT
