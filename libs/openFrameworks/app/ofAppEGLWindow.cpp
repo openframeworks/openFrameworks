@@ -148,27 +148,25 @@ static const struct {
 // from http://cantuna.googlecode.com/svn-history/r16/trunk/src/screen.cpp
 #define CASE_STR(x,y) case x: str = y; break
 
-static const char* eglErrorString(EGLint err) {
-	std::string str;
+static std::string eglErrorString(EGLint err) {
 	switch (err) {
-	CASE_STR(EGL_SUCCESS, "no error");
-	CASE_STR(EGL_NOT_INITIALIZED, "EGL not, or could not be, initialized");
-	CASE_STR(EGL_BAD_ACCESS, "access violation");
-	CASE_STR(EGL_BAD_ALLOC, "could not allocate resources");
-	CASE_STR(EGL_BAD_ATTRIBUTE, "invalid attribute");
-	CASE_STR(EGL_BAD_CONTEXT, "invalid context specified");
-	CASE_STR(EGL_BAD_CONFIG, "invald frame buffer configuration specified");
-	CASE_STR(EGL_BAD_CURRENT_SURFACE, "current window, pbuffer or pixmap surface is no longer valid");
-	CASE_STR(EGL_BAD_DISPLAY, "invalid display specified");
-	CASE_STR(EGL_BAD_SURFACE, "invalid surface specified");
-	CASE_STR(EGL_BAD_MATCH, "bad argument match");
-	CASE_STR(EGL_BAD_PARAMETER, "invalid paramater");
-	CASE_STR(EGL_BAD_NATIVE_PIXMAP, "invalid NativePixmap");
-	CASE_STR(EGL_BAD_NATIVE_WINDOW, "invalid NativeWindow");
-	CASE_STR(EGL_CONTEXT_LOST, "APM event caused context loss");
-	default: str = "unknown error " + err; break;
+			CASE_STR(EGL_SUCCESS, "no error");
+			CASE_STR(EGL_NOT_INITIALIZED, "EGL not, or could not be, initialized");
+			CASE_STR(EGL_BAD_ACCESS, "access violation");
+			CASE_STR(EGL_BAD_ALLOC, "could not allocate resources");
+			CASE_STR(EGL_BAD_ATTRIBUTE, "invalid attribute");
+			CASE_STR(EGL_BAD_CONTEXT, "invalid context specified");
+			CASE_STR(EGL_BAD_CONFIG, "invalid frame buffer configuration specified");
+			CASE_STR(EGL_BAD_CURRENT_SURFACE, "current window, pbuffer or pixmap surface is no longer valid");
+			CASE_STR(EGL_BAD_DISPLAY, "invalid display specified");
+			CASE_STR(EGL_BAD_SURFACE, "invalid surface specified");
+			CASE_STR(EGL_BAD_MATCH, "bad argument match");
+			CASE_STR(EGL_BAD_PARAMETER, "invalid parameter");
+			CASE_STR(EGL_BAD_NATIVE_PIXMAP, "invalid NativePixmap");
+			CASE_STR(EGL_BAD_NATIVE_WINDOW, "invalid NativeWindow");
+			CASE_STR(EGL_CONTEXT_LOST, "APM event caused context loss");
+			default: return "unknown error " + std::to_string(err);
 	}
-	return str.c_str();
 }
 
 
