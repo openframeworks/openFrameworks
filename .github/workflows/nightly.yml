@@ -1,24 +1,24 @@
 name: nightly-linux64
 
-on:
-  push:
-    paths-ignore:
-      - "**/*.md"
-      - "examples/**"
-  pull_request:
-    paths-ignore:
-      - "**/*.md"
-      - "examples/**"
-
 # on:
-#  schedule:
-#   - cron: "0 6 * * *"
-#  workflow_dispatch:
-#     inputs:
-#       release:
-#         description: 'release'
-#         required: true
-#         default: 'latest'
+#   push:
+#     paths-ignore:
+#       - "**/*.md"
+#       - "examples/**"
+#   pull_request:
+#     paths-ignore:
+#       - "**/*.md"
+#       - "examples/**"
+
+on:
+ schedule:
+  - cron: "0 6 * * *"
+ workflow_dispatch:
+    inputs:
+      release:
+        description: 'release'
+        required: true
+        default: 'latest'
 env:
   ccache: ccache
   RELEASE: latest
