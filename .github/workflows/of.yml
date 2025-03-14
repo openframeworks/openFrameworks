@@ -483,9 +483,11 @@ jobs:
       - name: Download Libraries
         run: ./of update libs android
 
+
       - name: Build openFrameworks Core - Debug
         run: |
           cd libs/openFrameworksCompiled/project/android/
+          gradle wrapper
           chmod +x gradlew
           ./gradlew assembleDebug
 
