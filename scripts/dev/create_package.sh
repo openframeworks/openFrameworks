@@ -485,11 +485,13 @@ function createPackage {
     # linux remove other platform projects from PG source and copy ofxGui
     if [ "$PKG_PLATFORM" = "linux" ] || [ "$PKG_PLATFORM" = "linux64" ] || [ "$PKG_PLATFORM" = "linuxarmv6l" ] || [ "$PKG_PLATFORM" = "linuxaarch64" ] || [ "$PKG_PLATFORM" = "linuxarmv7l" ] || [ "$PKG_PLATFORM" = "android" ]; then
         cd ${PKG_OFROOT}
-        mv apps/projectGenerator/commandLine .
-        rm -rf apps/projectGenerator
-        mkdir apps/projectGenerator
-        mv commandLine apps/projectGenerator/
-        cd apps/projectGenerator/commandLine
+        if [ -e apps/projectGenerator/commandLine ]; then
+            mv apps/projectGenerator/commandLine .
+            rm -rf apps/projectGenerator
+            mkdir apps/projectGenerator
+            mv commandLine apps/projectGenerator/
+            cd apps/projectGenerator/commandLine
+        fi
         deleteCodeblocks
         deleteVS
         deleteXcode
@@ -651,7 +653,7 @@ function createPackage {
     fi
 
     #create compressed package
-   if [[ "$PKG_PLATFORM" =~ ^(linux|linux64|android|linuxarmv6l|linuxarmv7l|linuxaarch64|macos|ios|osx)$ ]]; then
+   if [[ "$PKG_PLATFORM" =~ ^(linux|linux64|android|linuxarmv6l|linuxarmv7l|linuxaarch64|macos|ios|osx)$ ]] && [ "${LIBS_ABI}" != "windows" ]; then
         if [ "$LIBS_ABI" = "" ]; then
             PKG_NAME=of_v${PKG_VERSION}_${PKG_PLATFORM}_release
         else

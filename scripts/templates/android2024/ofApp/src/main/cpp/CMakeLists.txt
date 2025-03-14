@@ -2,6 +2,7 @@
 # library.
 cmake_minimum_required(VERSION 3.22.1)
 
+# important the projectName is ofApp to be linked - see relinker
 project(ofApp LANGUAGES CXX)
 set(TARGET_ANDROID TRUE)
 
@@ -59,7 +60,7 @@ elseif(OF_LIBRARY_TYPE STREQUAL "STATIC")
     set(LIB_EXTENSION ".a")
 endif()
 
-add_library( ofApp
+add_library( ${PROJECT_NAME}
         ${OF_LIBRARY_TYPE}
         # src files for project (just c/cpp)
         ${CMAKE_SOURCE_DIR}/main.cpp
@@ -107,20 +108,33 @@ include_directories(
         ${OF_ANDROID}
 )
 
+# Load add-on include directories from Gradle
+if(DEFINED ADDON_INCLUDE_DIRS)
+    foreach(DIR ${ADDON_INCLUDE_DIRS})
+        include_directories(${DIR})
+    endforeach()
+endif()
+if(DEFINED ADDON_LIBS)
+    message(STATUS "Adding addon libraries: ${ADDON_LIBS}")
+    foreach(LIB ${ADDON_LIBS})
+        target_link_libraries(${PROJECT_NAME} ${LIB})
+    endforeach()
+endif()
+
 find_library(ANDROID_LIB NAMES android)
 find_library(LOG_LIB NAMES log)
 find_library(GLES1_LIB NAMES GLESv1_CM)
 find_library(GLES2_LIB NAMES GLESv2)
 find_library(GLES3_LIB NAMES GLESv3)
 
-target_link_libraries(ofApp
+target_link_libraries(${PROJECT_NAME}
         android
         log
         m
         z
         dl
 )
-target_link_libraries(ofApp
+target_link_libraries(${PROJECT_NAME}
         ${ANDROID_LIB}
         ${GLES2_LIB}
         ${GLES3_LIB}
@@ -128,5 +142,5 @@ target_link_libraries(ofApp
         ${LOG_LIB}
 )
 
-target_link_libraries( ofApp
+target_link_libraries( ${PROJECT_NAME}
         ${OF_ANDROID_OUTPUT}/${ANDROID_ABI}/libopenFrameworksAndroid${LIB_EXTENSION})
