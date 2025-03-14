@@ -1,5 +1,6 @@
 name: nightly-linux64
 
+# #used for testing the nightly
 # on:
 #   push:
 #     paths-ignore:
@@ -65,4 +66,4 @@ jobs:
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
         tag_name: "nightly"
-        files: ${{ steps.createpackage.outputs.FILES_OUT }}
+        files: out/of_v*.{tar.gz,zip}
