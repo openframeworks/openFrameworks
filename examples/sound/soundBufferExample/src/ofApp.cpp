@@ -12,7 +12,11 @@ void ofApp::setup(){
 	ofSoundStreamSettings settings;
 	settings.numOutputChannels = 2;
 	settings.sampleRate = 44100;
+#ifdef TARGET_EMSCRIPTEN
+	settings.bufferSize = 128;
+#else
 	settings.bufferSize = 512;
+#endif
 	settings.numBuffers = 4;
 	settings.setOutListener(this);
 	soundStream.setup(settings);
