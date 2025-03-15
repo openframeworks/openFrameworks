@@ -34,7 +34,7 @@ void ofApp::setup(){
 	// settings.device = devices[4];
 
 	// you can also get devices for an specific api
-	// auto devices = soundStream.getDevicesByApi(ofSoundDevice::Api::PULSE);
+	// auto devices = soundStream.getDeviceList(ofSoundDevice::Api::PULSE);
 	// settings.device = devices[0];
 
 	// or get the default device for an specific api:
