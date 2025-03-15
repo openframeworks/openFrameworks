@@ -4,8 +4,12 @@
 void ofApp::setup(){
 
 	ofBackground(34, 34, 34);
-	
-	int bufferSize		= 512;
+
+#ifdef TARGET_EMSCRIPTEN
+	int bufferSize = 128;
+#else
+	int bufferSize = 512;
+#endif
 	sampleRate 			= 44100;
 	phase 				= 0;
 	phaseAdder 			= 0.0f;
@@ -41,22 +45,15 @@ void ofApp::setup(){
 	//		settings.setOutDevice(devices[0]);
 	//	}
 
-
+#ifdef TARGET_LINUX
 	// Latest linux versions default to the HDMI output
 	// this usually fixes that. Also check the list of available
 	// devices if sound doesn't work
-
-	//settings.setApi(ofSoundDevice::MS_ASIO);
-	//settings.setApi(ofSoundDevice::MS_WASAPI);
-	//settings.setApi(ofSoundDevice::MS_DS);
-
 	auto devices = soundStream.getMatchingDevices("default");
 	if(!devices.empty()){
 		settings.setOutDevice(devices[0]);
 	}
-
-
-
+#endif
 
 	settings.setOutListener(this);
 	settings.sampleRate = sampleRate;
@@ -149,10 +146,10 @@ void ofApp::draw(){
 void ofApp::keyPressed  (int key){
 	if (key == '-' || key == '_' ){
 		volume -= 0.05;
-		volume = std::max(volume, 0.f);
+		volume = MAX(volume, 0);
 	} else if (key == '+' || key == '=' ){
 		volume += 0.05;
-		volume = std::min(volume, 1.f);
+		volume = MIN(volume, 1);
 	}
 	
 	if( key == 's' ){
@@ -177,7 +174,7 @@ void ofApp::mouseMoved(int x, int y ){
 	float height = (float)ofGetHeight();
 	float heightPct = ((height-y) / height);
 	targetFrequency = 2000.0f * heightPct;
-	phaseAdderTarget = (targetFrequency / (float) sampleRate) * glm::two_pi<float>();
+	phaseAdderTarget = (targetFrequency / (float) sampleRate) * TWO_PI;
 }
 
 //--------------------------------------------------------------
@@ -219,9 +216,9 @@ void ofApp::audioOut(ofSoundBuffer & buffer){
 	float rightScale = pan;
 
 	// sin (n) seems to have trouble when n is very large, so we
-	// keep phase in the range of 0-glm::two_pi<float>() like this:
-	while (phase > glm::two_pi<float>()){
-		phase -= glm::two_pi<float>();
+	// keep phase in the range of 0-TWO_PI like this:
+	while (phase > TWO_PI){
+		phase -= TWO_PI;
 	}
 
 	if ( bNoise == true){
