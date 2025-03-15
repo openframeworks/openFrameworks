@@ -30,6 +30,7 @@ class ofApp : public ofBaseApp{
 		
 		int 	bufferCounter;
 		int 	drawCounter;
+		int	multiply;
 		
 		float smoothedVol;
 		float scaledVol;
