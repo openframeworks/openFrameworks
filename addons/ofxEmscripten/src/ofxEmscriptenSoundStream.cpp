@@ -6,17 +6,64 @@
  */
 
 #include "ofxEmscriptenSoundStream.h"
-#include "html5audio.h"
 #include "ofBaseApp.h"
 #include "ofLog.h"
+#include "html5audio.h"
+#include "emscripten/webaudio.h"
 
 using namespace std;
+
+EM_BOOL ProcessAudio(int numInputs, const AudioSampleFrame *inputs, int numOutputs, AudioSampleFrame *outputs, int numParams, const AudioParamFrame *params, void *userData) {
+	ofxEmscriptenSoundStream * stream = (ofxEmscriptenSoundStream *)userData;
+	++stream->audioProcessedCount;
+	if (stream->settings.numInputChannels > 0 && stream->settings.inCallback) {
+		stream->settings.inCallback(stream->inbuffer);
+		for (int o = 0; o < numInputs; ++o) {
+			for (int i = 0; i < 128; ++i) {
+				for (int ch = 0; ch < inputs[o].numberOfChannels; ++ch) {
+					stream->inbuffer[i * inputs[o].numberOfChannels + ch] = inputs[o].data[ch * 128 + i];
+				}
+			}
+		}
+	}
+	if (stream->settings.numOutputChannels > 0 && stream->settings.outCallback) {
+		stream->settings.outCallback(stream->outbuffer);
+		for (int o = 0; o < numOutputs; ++o) {
+			for (int i = 0; i < 128; ++i) {
+				for (int ch = 0; ch < outputs[o].numberOfChannels; ++ch) {
+					outputs[o].data[ch * 128 + i] = stream->outbuffer[i * outputs[o].numberOfChannels + ch];
+				}
+			}
+		}
+	}
+	return EM_TRUE;
+}
+
+void AudioWorkletProcessorCreated(EMSCRIPTEN_WEBAUDIO_T audioContext, EM_BOOL success, void *userData) {
+	if (!success) return;
+	ofxEmscriptenSoundStream * stream = (ofxEmscriptenSoundStream *)userData;
+	int outputChannelCounts[1] = { static_cast<int>(stream->settings.numOutputChannels) };
+	EmscriptenAudioWorkletNodeCreateOptions options = {
+		.numberOfInputs = 1,
+		.numberOfOutputs = 1,
+		.outputChannelCounts = outputChannelCounts
+	};
+	EMSCRIPTEN_AUDIO_WORKLET_NODE_T audioWorklet = emscripten_create_wasm_audio_worklet_node(audioContext, "audio-processor", &options, &ProcessAudio, userData);
+	html5audio_stream_create(audioWorklet, stream->settings.numInputChannels);
+}
+
+void WebAudioWorkletThreadInitialized(EMSCRIPTEN_WEBAUDIO_T audioContext, EM_BOOL success, void *userData) {
+	if (!success) return;
+	WebAudioWorkletProcessorCreateOptions opts = {
+		.name = "audio-processor",
+	};
+	emscripten_create_wasm_audio_worklet_processor_async(audioContext, &opts, AudioWorkletProcessorCreated, userData);
+}
 
 int ofxEmscriptenAudioContext();
 
 ofxEmscriptenSoundStream::ofxEmscriptenSoundStream()
 :context(ofxEmscriptenAudioContext())
-,tickCount(0)
 {
 
 }
@@ -33,8 +80,9 @@ std::vector<ofSoundDevice> ofxEmscriptenSoundStream::getDeviceList(ofSoundDevice
 bool ofxEmscriptenSoundStream::setup(const ofSoundStreamSettings & settings) {
 	inbuffer.allocate(settings.bufferSize, settings.numInputChannels);
 	outbuffer.allocate(settings.bufferSize, settings.numOutputChannels);
+	audioProcessedCount = 0;
 	this->settings = settings;
-	html5audio_stream_create(settings.bufferSize,settings.numInputChannels,settings.numOutputChannels,inbuffer.getBuffer().data(),outbuffer.getBuffer().data(),&audio_cb,this);
+	emscripten_start_wasm_audio_worklet_thread_async(context, wasmAudioWorkletStack, sizeof(wasmAudioWorkletStack), WebAudioWorkletThreadInitialized, this);
 	return true;
 }
 
@@ -67,7 +115,7 @@ void ofxEmscriptenSoundStream::close() {
 }
 
 uint64_t ofxEmscriptenSoundStream::getTickCount() const{
-	return tickCount;
+	return audioProcessedCount;
 }
 
 int ofxEmscriptenSoundStream::getNumInputChannels() const{
@@ -84,15 +132,4 @@ int ofxEmscriptenSoundStream::getSampleRate() const{
 
 int ofxEmscriptenSoundStream::getBufferSize() const{
 	return settings.bufferSize;
-}
-
-void ofxEmscriptenSoundStream::audio_cb( int bufferSize, int inputChannels, int outputChannels, void * userData){
-	ofxEmscriptenSoundStream * stream = (ofxEmscriptenSoundStream*) userData;
-	stream->audioCB(bufferSize,inputChannels,outputChannels);
-}
-
-void ofxEmscriptenSoundStream::audioCB(int bufferSize, int inputChannels, int outputChannels){
-	if(inputChannels>0 && settings.inCallback) settings.inCallback(inbuffer);
-	if(outputChannels>0 && settings.outCallback) settings.outCallback(outbuffer);
-	tickCount++;
 }
