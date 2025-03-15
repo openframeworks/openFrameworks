@@ -98,8 +98,7 @@ void ofApp::draw(){
 					
 			ofBeginShape();
 			for (unsigned int i = 0; i < left.size(); i++){
-				int bufferSize = 256;
-				ofVertex(i*multiply, 100 -left[i]*180.0f);
+				ofVertex(i * multiply, 100 - left[i] * 180.0f);
 			}
 			ofEndShape(false);
 			
