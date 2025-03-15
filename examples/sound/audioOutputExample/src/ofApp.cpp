@@ -5,7 +5,11 @@ void ofApp::setup(){
 
 	ofBackground(34, 34, 34);
 	
-	int bufferSize		= 512;
+#ifdef TARGET_EMSCRIPTEN
+	int bufferSize = 128;
+#else
+	int bufferSize = 512;
+#endif
 	sampleRate 			= 44100;
 	phase 				= 0;
 	phaseAdder 			= 0.0f;
