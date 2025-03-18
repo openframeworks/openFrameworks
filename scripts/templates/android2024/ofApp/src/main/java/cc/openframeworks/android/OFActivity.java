@@ -22,27 +22,25 @@ import com.getkeepsafe.relinker.ReLinker;
 
 public class OFActivity extends cc.openframeworks.OFActivity {
 
-    private static final String appName = "ofapp"; // modify this to target appName (ofApp etc)
+    private static final String appName = "ofApp"; // modify this to target appName (ofApp etc)
     private static final String LOG_TAG = appName + "::OFActivity";
 
-    private ReLinker.Logger logcatLogger = new ReLinker.Logger() {
-        @Override
-        public void log(String message) {
-            Log.d("ReLinker", message);
-        }
-    };
-    private OFActivity thisActivity;
 
-
-    // Extremely important
+	// Extremely important
     public OFActivity() {
         OFAndroidLifeCycle.coreLibraryLoaded = true;
 
         OFAndroid.maxSamples = 4;
         OFAndroid.maximumFrameRate = 144;
 
-        thisActivity = this;
-        ReLinker.log(logcatLogger)
+		OFActivity thisActivity = this;
+		ReLinker.Logger logcatLogger = new ReLinker.Logger() {
+			@Override
+			public void log(String message) {
+				Log.d("ReLinker", message);
+			}
+		};
+		ReLinker.log(logcatLogger)
                 .force()
                 .recursively()
                 .loadLibrary(this, appName, new ReLinker.LoadListener() {

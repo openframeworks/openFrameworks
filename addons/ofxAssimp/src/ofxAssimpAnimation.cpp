@@ -7,7 +7,7 @@
 #include "ofAppRunner.h"
 #include "ofUtils.h"
 
-using namespace ofx::assimp;
+using namespace ofxAssimp;
 
 //-------------------------------------------
 Animation::Animation() {

@@ -1,13 +1,8 @@
-//
-//  ofxAssimpAnimationMixer.cpp
-//  Created by Nick Hardeman on 11/3/23.
-//
-
 #include "ofxAssimpAnimationMixer.h"
 #include "ofLog.h"
 #include "ofUtils.h"
 
-using namespace ofx::assimp;
+using namespace ofxAssimp;
 
 //--------------------------------------------------------------
 bool AnimationClip::shouldRemove( const AnimationClip& ac ) {
@@ -22,7 +17,7 @@ std::size_t AnimationMixer::getNumAnimationClips() {
 //--------------------------------------------------------------
 AnimationClip& AnimationMixer::getAnimationClip(int aindex) {
 	if( getNumAnimationClips() < 1 ) {
-		ofLogWarning("ofx::assimp::AnimationMixer::getAnimationClip") << "there are no animation clips.";
+		ofLogWarning("ofxAssimp::AnimationMixer::getAnimationClip") << "there are no animation clips.";
 		return dummy;
 	}
 	aindex = ofClamp( aindex, 0, getNumAnimationClips()-1);
@@ -32,7 +27,7 @@ AnimationClip& AnimationMixer::getAnimationClip(int aindex) {
 //--------------------------------------------------------------
 AnimationClip& AnimationMixer::getAnimationClip(const std::string& aname) {
 	if( getNumAnimationClips() < 1 ) {
-		ofLogWarning("ofx::assimp::AnimationMixer::getAnimationClip") << "there are no animation clips.";
+		ofLogWarning("ofxAssimp::AnimationMixer::getAnimationClip") << "there are no animation clips.";
 		return dummy;
 	}
 	for( auto& anim : mAnimationClips ) {
@@ -40,7 +35,7 @@ AnimationClip& AnimationMixer::getAnimationClip(const std::string& aname) {
 			return anim;
 		}
 	}
-	ofLogWarning("ofx::assimp::AnimationMixer::getAnimationClip") << " could not find clip " << aname;
+	ofLogWarning("ofxAssimp::AnimationMixer::getAnimationClip") << " could not find clip " << aname;
 	return dummy;
 }
 

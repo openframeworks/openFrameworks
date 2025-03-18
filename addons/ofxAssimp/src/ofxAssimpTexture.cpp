@@ -9,12 +9,12 @@
 #include "ofLog.h"
 #include "ofUtils.h"
 
-using namespace ofx::assimp;
+using namespace ofxAssimp;
 
-std::unordered_map< int, ofMaterialTextureType > ofx::assimp::Texture::sAiTexTypeToOfTexTypeMap;
+std::unordered_map< int, ofMaterialTextureType > ofxAssimp::Texture::sAiTexTypeToOfTexTypeMap;
 
 //-------------------------------------------
-void ofx::assimp::Texture::setup(const of::filesystem::path & texturePath, bool bTexRepeat) {
+void ofxAssimp::Texture::setup(const of::filesystem::path & texturePath, bool bTexRepeat) {
 //	this->texture = texture;
 	if( bTexRepeat ){
 		this->texture.setTextureWrap(GL_REPEAT, GL_REPEAT);
@@ -30,7 +30,7 @@ const char *aiTextureTypeToString(enum aiTextureType in)__attribute__((weak));
 #endif
 
 //-------------------------------------------
-void ofx::assimp::Texture::setAiTextureType(aiTextureType aTexType){
+void ofxAssimp::Texture::setAiTextureType(aiTextureType aTexType){
 	textureType = aTexType;
 
 	if( textureType >= 0 && textureType < AI_TEXTURE_TYPE_MAX){

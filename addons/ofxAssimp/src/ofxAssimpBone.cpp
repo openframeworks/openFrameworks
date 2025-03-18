@@ -1,10 +1,3 @@
-//
-//  ofxAssimpBone.cpp
-//  ofxAssimpExample
-//
-//  Created by Nick Hardeman on 10/24/23.
-//
-
 #include "ofxAssimpBone.h"
 #include "ofGraphics.h"
 #include "of3dGraphics.h"
@@ -12,7 +5,7 @@
 #include "ofxAssimpUtils.h"
 #include "ofVboMesh.h"
 
-using namespace ofx::assimp;
+using namespace ofxAssimp;
 using std::shared_ptr;
 using std::make_shared;
 
@@ -20,46 +13,14 @@ using std::make_shared;
 std::unordered_map< int, std::shared_ptr<ofVboMesh> > Bone::sRenderMeshes;
 
 //--------------------------------------------------------------
-void Bone::setSrcBone( std::shared_ptr<ofx::assimp::SrcBone> aSrcBone ) {
+void Bone::setSrcBone( std::shared_ptr<ofxAssimp::SrcBone> aSrcBone ) {
 	mSrcBone = aSrcBone;
 	mOffsetMatrix = mSrcBone->getAiOffsetMatrix();
 	
-	mGlmOffsetMat = aiMatrix4x4ToGlmMatrix(mOffsetMatrix);
+	mGlmOffsetMat = ofxAssimp::Utils::aiMatrix4x4ToGlmMatrix(mOffsetMatrix);
 	
-	setOfNodeFromAiMatrix( mSrcBone->getAiMatrix(), this );
+	ofxAssimp::Utils::setOfNodeFromAiMatrix( mSrcBone->getAiMatrix(), this );
 }
-
-////--------------------------------------------------------------
-//void Bone::updateFromSrcBone() {
-//	if( mSrcBone ) {
-//
-//		aiVector3t<float> tAiScale;
-//		aiQuaterniont<float> tAiRotation;
-//		aiVector3t<float> tAiPosition;
-//
-//		// TODO: These will get update via the animation keyframes
-//		// SO there won't be a decompose every frame
-////		mAiMatrixGlobal = mSrcBone->getAiMatrixGlobal();
-//		mAiMatrix = mSrcBone->getAiMatrix();
-//		// this is the local matrix
-//		mSrcBone->getAiMatrix().Decompose( tAiScale, tAiRotation, tAiPosition );
-//
-//		glm::vec3 tpos = glm::vec3( tAiPosition.x, tAiPosition.y, tAiPosition.z );
-//		glm::quat tquat = glm::quat(tAiRotation.w, tAiRotation.x, tAiRotation.y, tAiRotation.z);
-//	//	glm::quat tquat = glm::quat(tAiRotation.x, tAiRotation.y, tAiRotation.z, tAiRotation.w);
-//		glm::vec3 tscale = glm::vec3( tAiScale.x, tAiScale.y, tAiScale.z );
-//
-//		setPositionOrientationScale( tpos, tquat, tscale );
-//
-////		mOffsetMatrix.Decompose(tAiScale, tAiRotation, tAiPosition);
-//
-////		mOffsetOrientation = glm::quat(tAiRotation.w, tAiRotation.x, tAiRotation.y, tAiRotation.z);
-//
-////		setPosition( mSrcBone->getPosition() );
-////		setOrientation( mSrcBone->getOrientationQuat() );
-////		setScale( mSrcBone->getScale() );
-//	}
-//}
 
 //--------------------------------------------------------------
 void Bone::cacheGlobalBoneMat(glm::mat4& aInvMat) {
@@ -67,7 +28,7 @@ void Bone::cacheGlobalBoneMat(glm::mat4& aInvMat) {
 //	aiMatrix4x4 posTrafo = gBoneMat * sbone->getAiOffsetMatrix();
 	mCachedGlobalBoneMat = aInvMat * getGlobalTransformMatrix();
 	mCachedGlobalBoneMat = mCachedGlobalBoneMat * mGlmOffsetMat;
-	mAiCachedGlobalBoneMat = glmMat4ToAiMatrix4x4(mCachedGlobalBoneMat);
+	mAiCachedGlobalBoneMat = ofxAssimp::Utils::glmMat4ToAiMatrix4x4(mCachedGlobalBoneMat);
 }
 
 //--------------------------------------------------------------

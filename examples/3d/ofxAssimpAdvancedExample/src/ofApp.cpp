@@ -18,7 +18,7 @@ void ofApp::setup(){
 	gui.add(cubeMapExposure.set("CubeMapExposure", 0.25, 0.0, 1.0));
 	gui.add(mBDrawCubeMap.set("DrawCubeMap", false ));
 	
-	ofx::assimp::ImportSettings tsettings;
+	ofxAssimp::ImportSettings tsettings;
 	tsettings.filePath = "ofLogoHollow.fbx";
 	// we don't have any animations in this model
 	tsettings.importAnimations = false;
@@ -56,12 +56,12 @@ void ofApp::setup(){
 	tsettings.importAnimations = true;
 	tsettings.excludeNodesContainingStrings = {"_Goal"};
 	tsettings.convertToLeftHanded = false;
-	srcFoxModel = make_shared<ofx::assimp::Model>();
-	if( srcFoxModel->load(tsettings) ) {
+	srcFoxScene = make_shared<ofxAssimp::Scene>();
+	if( srcFoxScene->load(tsettings) ) {
 		int numFoxes = 16;
 		for( int i = 0; i < numFoxes; i++ ) {
-			auto fox = make_shared<ofx::assimp::Model>();
-			if( fox->setup(srcFoxModel->getSrcScene())) {
+			auto fox = make_shared<ofxAssimp::Scene>();
+			if( fox->setup(srcFoxScene->getSrcScene())) {
 				fox->addAnimation( 0, "idle", 2, 300, OF_LOOP_NORMAL );
 				fox->addAnimation( 0, "idleBark", 310, 350 );
 				fox->addAnimation( 0, "jump", 852, 890 );
@@ -173,7 +173,7 @@ void ofApp::update(){
 		fox->setPosition( fx-80.0, 20.0, 320.0f + sinf(glm::pi<float>() * fpct) * 100.0f  );
 	}
 	
-	auto wizardLeftHand = wizardModel.getNodeAsType<ofx::assimp::Bone>("*:hand right");
+	auto wizardLeftHand = wizardModel.getNodeAsType<ofxAssimp::Bone>("*:hand right");
 	if(wizardLeftHand) {
 		auto lpos = wizardLeftHand->getGlobalOrientation() * wizardHandOffset.get();
 		light.setPosition(wizardLeftHand->getGlobalPosition()+lpos);

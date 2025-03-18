@@ -1,6 +1,6 @@
 [openFrameworks](http://openframeworks.cc/) | [Documentation table of contents](table_of_contents.md)
 
-Android Studio
+Android Studio 2025
 =======
 
 The Android distribution of openFrameworks is setup to work with Android Studio IDE.
@@ -9,9 +9,17 @@ The Android distribution of openFrameworks is setup to work with Android Studio 
 
 Setting up openFrameworks with Android Studio is fairly straightforward. The basic steps are:
 
-- Install the latest version of [Android Studio](https://developer.android.com/studio/index.html) (tested with version 3.0).
-- Download openFrameworks 0.10.0 or later from the [download page](http://openframeworks.cc/download/) or from [github](https://github.com/openframeworks/openFrameworks/).
-- Download and unzip the Android NDK version r15c: [Windows](https://dl.google.com/android/repository/android-ndk-r15c-windows-x86_64.zip), [Linux](https://dl.google.com/android/repository/android-ndk-r15c-linux-x86_64.zip), [OSX](https://dl.google.com/android/repository/android-ndk-r15c-darwin-x86_64.zip). It doesn't matter where you store the library, you will point Android Studio to this location later. *Notice that openFrameworks only works with version r15c!*
+- Install the latest version of [Android Studio](https://developer.android.com/studio/index.html) (tested with Android Studio Meerkat | 2024.3.1).
+
+###  Select the following to be installed in SDK Manager (options)
+- Android SDK 36.0 (or latest) - add any older APIs if targetting
+- Build Tools 36.0.0 (or latest)
+- NDK 28.0.13004108 (Side by Side)
+- Android SDK Command Line Tools 19.0 (or latest)
+- CMake 3.31.6 (or latest)
+
+## Install openFrameworks
+- Download openFrameworks 0.12.1 or later from the [download page](http://openframeworks.cc/download/) or from [github](https://github.com/openframeworks/openFrameworks/).
 - If you got openFrameworks from git: 
 	- Run `scripts/android/download_libs.sh` to download libraries.
 	- Use the Project Generator to generate Android Studio project files for android examples.
@@ -22,7 +30,11 @@ Setting up openFrameworks with Android Studio is fairly straightforward. The bas
 
 ### Build and run
 
-Press the Play button next to the `androidEmptyExample` shown in the toolbar. With any luck, it should build the app and deploy it to your Android device after a few seconds (or prompt you to deploy it to a suitable emulator). If the app runs, congratulations! You have setup openFrameworks.
+Press the Play button next to the `androidEmptyExample` shown in the toolbar. It will build the app and deploy it to your Android device after a few seconds (or prompt you to deploy it to a suitable emulator). If the app runs, congratulations! You have setup openFrameworks.
+
+### Building directly with Gradle
+- Can build directly in folder with ./gradlew assembleDebug
+- System will need latest version of JDK for this https://www.oracle.com/us/java/technologies/downloads/#jdk23-mac
 
 ## Creating new projects
 

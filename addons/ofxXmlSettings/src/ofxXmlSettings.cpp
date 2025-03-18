@@ -565,7 +565,7 @@ string ofxXmlSettings::getAttribute(const string& tag, const string& attribute, 
 //---------------------------------------------------------
 int ofxXmlSettings::setAttribute(const string& tag, const string& attribute, int value, int which){
 	char valueStr[255];
-	sprintf(valueStr, "%i", value);
+    snprintf(valueStr, 255, "%i", value);
 	int tagID = writeAttribute(tag, attribute, valueStr, which) -1;
 	return tagID;
 }
@@ -573,7 +573,7 @@ int ofxXmlSettings::setAttribute(const string& tag, const string& attribute, int
 //---------------------------------------------------------
 int ofxXmlSettings::setAttribute(const string& tag, const string& attribute, double value, int which){
 	char valueStr[255];
-	sprintf(valueStr, "%lf", value);
+    snprintf(valueStr, 255, "%lf", value);
 	int tagID = writeAttribute(tag, attribute, valueStr, which) -1;
 	return tagID;
 }
