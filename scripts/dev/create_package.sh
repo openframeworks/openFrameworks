@@ -491,10 +491,10 @@ function createPackage {
             mkdir apps/projectGenerator
             mv commandLine apps/projectGenerator/
             cd apps/projectGenerator/commandLine
+            deleteCodeblocks
+            deleteVS
+            deleteXcode
         fi
-        deleteCodeblocks
-        deleteVS
-        deleteXcode
     fi
 
     #delete ofxAndroid in non android
