@@ -1,11 +1,11 @@
 plugins {
-	id 'com.android.application'
+    id 'com.android.application'
 }
 
-def CMAKELIST_PATH = './src/main/cpp'
-def CPP_SOURCE = './src/main/cpp'
-def JAVA_SOURCE = './src/main/java'
-def PRJ_SRC_ROOT = './src/main'
+def CMAKELIST_PATH = './src/'
+def CPP_SOURCE = './src/'
+def JAVA_SOURCE = './src/java'
+def PRJ_SRC_ROOT = './src/'
 def ofRoot(){ return '../../../../' }
 final ofSource = ofRoot() + 'libs/openFrameworks'
 final ofLibs = ofRoot() + 'libs'
@@ -17,11 +17,10 @@ def enableProguardInReleaseBuilds = true
 def enableProguardInDebugBuilds = false
 
 task wrapper(type: Wrapper) {
-	gradleVersion = '8.9.0'
+    gradleVersion = '8.9.0'
 }
 tasks.register("prepareKotlinBuildScriptModel"){
 }
-
 def projectRoot = rootProject.projectDir.absolutePath
 def addonFile = new File(projectRoot, "addons.make")
 
@@ -71,79 +70,71 @@ println "Found addons: " + addonPaths
 println "Include directories: " + addonIncludeDirs
 println "Libraries: " + addonLibs
 
-evaluationDependsOn(':openFrameworksProject')
-
-tasks.whenTaskAdded { task ->
-	if (task.name == 'assemble') {
-		task.dependsOn(':openFrameworksProject:assemble')
-	}
-}
-
 android {
-	compileSdkVersion 34
-	buildToolsVersion '35.0.0'
-	//ndkPath "/Users/x/android-ndk-r21e"  // Point to your own NDK if needed
-	ndkVersion '28.0.13004108' // use android studio side loaded ndk
-	buildFeatures {
-		prefab true
-	}
-	signingConfigs {
-		debug {
-		}
-		release {
-			storeFile new File("${System.properties['user.home']}/.android/debug.keystore")
-			storeType "jks"
-			keyAlias 'androiddebugkey'
+    compileSdkVersion 34
+    buildToolsVersion '35.0.0'
+    //ndkPath "/Users/x/android-ndk-r21e"  // Point to your own NDK if needed
+    ndkVersion '28.0.13004108' // use android studio side loaded ndk
+    buildFeatures {
+        prefab true
+    }
+    signingConfigs {
+        debug {
+        }
+        release {
+            storeFile new File("${System.properties['user.home']}/.android/debug.keystore")
+            storeType "jks"
+            keyAlias 'androiddebugkey'
 //			storePassword 'android' // <- UPDATE THIS
 //          keyPassword 'android'   // <- UPDATE THIS
-		}
-	}
-	defaultConfig {
-		applicationId "cc.openframeworks.emptyExample"  // IMPORTANT : THIS DEFINES THE ID OF THE APK
-		minSdkVersion 24
-		targetSdkVersion 34
-		versionCode 12
-		versionName '12.0'
-		ndk.abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86_64'
+        }
+    }
+    defaultConfig {
+        applicationId "cc.openframeworks.emptyExample"  // IMPORTANT : THIS DEFINES THE ID OF THE APK
+        minSdkVersion 24
+        targetSdkVersion 34
+        versionCode 12
+        versionName '12.0'
+        ndk.abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86_64'
 
-		externalNativeBuild {
+        externalNativeBuild {
 			cmake {
 				arguments "-DANDROID_STL=c++_shared",
-					"-DANDROID_ARM_NEON=TRUE",
-					"-DANDROID_TOOLCHAIN=clang",
-					cmakeIncludeArgs, // Include paths
-					cmakeLibArgs      // Library paths
-				"-DTARGET_OPENGLES=TRUE"
+						"-DANDROID_ARM_NEON=TRUE",
+						"-DANDROID_TOOLCHAIN=clang",
+							cmakeIncludeArgs, // Include paths
+							cmakeLibArgs      // Library paths
+						"-DTARGET_OPENGLES=TRUE"
 
 				version '3.22.1'
 			}
-		}
-		multiDexEnabled false
-	}
-	buildTypes {
-		release {
-			signingConfig signingConfigs.release
-			jniDebuggable false
-			debuggable false
-			minifyEnabled false
-			shrinkResources false
-			proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-			signingConfig signingConfigs.release
-		}
-		debug {
-			jniDebuggable true
-			debuggable true
-			minifyEnabled false
-			shrinkResources false
-			signingConfig signingConfigs.debug
-		}
-	}
-	flavorDimensions "version"
-	productFlavors {
-		playstore {
-			applicationIdSuffix ""
-			signingConfig signingConfigs.release
-		}
+        }
+        multiDexEnabled false
+    }
+    buildTypes {
+        release {
+            signingConfig signingConfigs.release
+            jniDebuggable false
+            debuggable false
+            minifyEnabled false
+            shrinkResources false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
+        }
+        debug {
+            jniDebuggable true
+            debuggable true
+            minifyEnabled false
+            shrinkResources false
+            signingConfig signingConfigs.debug
+        }
+    }
+    flavorDimensions "version"
+    productFlavors {
+        playstore {
+            applicationIdSuffix ""
+            signingConfig signingConfigs.release
+        }
 //        humble {
 //            applicationIdSuffix ".humble"
 //        }
@@ -156,35 +147,35 @@ android {
 //        oppo {
 //            applicationIdSuffix ".oppo"
 //        }
-	}
-	sourceSets {
-		main {
-			manifest.srcFile "${PRJ_SRC_ROOT}/AndroidManifest.xml"
-			java.srcDirs = ["${PRJ_SRC_ROOT}/java",
-							"${OFX_ANDROID}/Java"]
-			res.srcDirs = ["${PRJ_SRC_ROOT}/res"]
-			assets {
-				srcDirs 'src/main/assets', 'src/main/bin/data'
-			}
-		}
-	}
-	externalNativeBuild {
+    }
+    sourceSets {
+        main {
+            manifest.srcFile "${PRJ_SRC_ROOT}/AndroidManifest.xml"
+            java.srcDirs = ["${PRJ_SRC_ROOT}/java",
+                            "${OFX_ANDROID}/Java"]
+            res.srcDirs = ["${PRJ_SRC_ROOT}/res"]
+            assets {
+                srcDirs 'src/main/assets', 'src/main/bin/data'
+            }
+        }
+    }
+    externalNativeBuild {
 		cmake {
 			path "${CMAKELIST_PATH}/CMakeLists.txt"
 		}
 
-	}
-	compileOptions {
-		sourceCompatibility JavaVersion.VERSION_1_8
-		targetCompatibility JavaVersion.VERSION_1_8
-	}
-	androidResources {
-		noCompress ''
-	}
-	dependenciesInfo {
-		includeInApk false
-		includeInBundle false
-	}
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    androidResources {
+        noCompress ''
+    }
+    dependenciesInfo {
+        includeInApk false
+        includeInBundle false
+    }
 	namespace 'cc.openframeworks.android'
 //    testOptions {
 //        devices {
@@ -204,19 +195,19 @@ android {
 
 
 dependencies {
-	implementation fileTree(dir: 'libs', include: ['*.jar'])
-	implementation 'androidx.appcompat:appcompat:1.7.0'
-	implementation 'androidx.constraintlayout:constraintlayout:2.2.1'
-	implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-	implementation "com.getkeepsafe.relinker:relinker:1.4.5"
-	implementation 'com.google.android.material:material:1.12.0'
-	if (project.hasProperty("googleplay")) {
-		implementation "com.google.android.gms:play-services-games:22.0.1"
-		implementation "com.google.android.gms:play-services-auth:20.0.1"
-		implementation "com.google.android.gms:play-services-base:18.0.1"
-		implementation "com.google.android.gms:play-services-basement:18.0.0"
-		implementation "com.google.android.gms:play-services-instantapps:18.0.1"
-		implementation "com.google.android.gms:play-services-appset:16.0.2"
-	}
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'androidx.appcompat:appcompat:1.7.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.2.1'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation "com.getkeepsafe.relinker:relinker:1.4.5"
+    implementation 'com.google.android.material:material:1.12.0'
+    if (project.hasProperty("googleplay")) {
+        implementation "com.google.android.gms:play-services-games:22.0.1"
+        implementation "com.google.android.gms:play-services-auth:20.0.1"
+        implementation "com.google.android.gms:play-services-base:18.0.1"
+        implementation "com.google.android.gms:play-services-basement:18.0.0"
+        implementation "com.google.android.gms:play-services-instantapps:18.0.1"
+        implementation "com.google.android.gms:play-services-appset:16.0.2"
+    }
 }
 

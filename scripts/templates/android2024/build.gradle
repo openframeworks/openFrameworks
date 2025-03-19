@@ -20,3 +20,14 @@ allprojects {
 
     }
 }
+
+evaluationDependsOn(':openFrameworksProject')
+
+// Force OpenFrameworks to build before ofApp
+tasks.register('buildOpenFrameworks') {
+	dependsOn ':openFrameworksProject:assemble'
+}
+
+tasks.matching { it.name.startsWith("assemble") || it.name.startsWith("buildCMake") }.configureEach {
+	dependsOn ':buildOpenFrameworks'
+}
