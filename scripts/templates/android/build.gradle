@@ -7,7 +7,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.4.2'
+        classpath 'com.android.tools.build:gradle:8.9.0'
     }
 }
 
@@ -19,4 +19,15 @@ allprojects {
     ext {
 
     }
+}
+
+evaluationDependsOn(':openFrameworksProject')
+
+// Force OpenFrameworks to build before ofApp
+tasks.register('buildOpenFrameworks') {
+	dependsOn ':openFrameworksProject:assemble'
+}
+
+tasks.matching { it.name.startsWith("assemble") || it.name.startsWith("buildCMake") }.configureEach {
+	dependsOn ':buildOpenFrameworks'
 }
