@@ -30,10 +30,21 @@ android {
 
 		externalNativeBuild {
 			cmake {
-				arguments "-DANDROID_STL=c++_shared",
-					"-DANDROID_ARM_NEON=TRUE",
-					"-DANDROID_TOOLCHAIN=clang",
+				arguments "-DANDROID_TOOLCHAIN=clang",
 					"-DTARGET_OPENGLES=TRUE"
+
+				// Use c++_static if building OpenFrameworks as a STATIC library
+				if (project.hasProperty("OF_STATIC") && project.OF_STATIC.toBoolean()) {
+					arguments "-DANDROID_STL=c++_static"
+				} else {
+					arguments "-DANDROID_STL=c++_shared"
+				}
+
+				// Enable NEON only for ARM architectures
+				if (android.defaultConfig.ndk.abiFilters.contains("armeabi-v7a") || android.defaultConfig.ndk.abiFilters.contains("arm64-v8a")) {
+					arguments "-DANDROID_ARM_NEON=TRUE"
+				}
+
 				abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86_64'
 			}
 		}
@@ -86,6 +97,6 @@ dependencies {
 	implementation fileTree(dir: 'libs', include: ['*.jar'])
 	implementation 'androidx.appcompat:appcompat:1.7.0'
 	implementation 'androidx.constraintlayout:constraintlayout:2.2.1'
-	implementation "com.getkeepsafe.relinker:relinker:1.4.4"
+	implementation "com.getkeepsafe.relinker:relinker:1.4.4"  // keep 1.4.4
 	implementation "com.android.ndk.thirdparty:curl:7.68.0-alpha-1"
 }
