@@ -5,9 +5,11 @@ cmake_minimum_required(VERSION  3.22.1)
 project(openFrameworksAndroid LANGUAGES CXX)
 set(CMAKE_C_STANDARD 17)
 set(CMAKE_CXX_STANDARD 23)
-set(OF_LIBRARY_TYPE "SHARED")  # or "STATIC"
+if (NOT DEFINED OF_LIBRARY_TYPE)
+    set(OF_LIBRARY_TYPE "SHARED")  # Default to SHARED if not set by Gradle # or "STATIC"
+endif()
 set(CMAKE_VERBOSE_MAKEFILE ON)
-
+message(STATUS "Building openFrameworks as ${OF_LIBRARY_TYPE}")
 set(LOCAL_PATH ${CMAKE_SOURCE_DIR})
 set(PRJ_OF_ROOT ${LOCAL_PATH}/../../../../../)
 set(PURE_OF_ROOT ${LOCAL_PATH}/../../../../../)
