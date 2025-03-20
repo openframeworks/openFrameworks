@@ -228,20 +228,30 @@ def doesOFSoFileExist(arch) {
 }
 
 task checkAndBuildOF {
-	doLast {
-		println "checking openFrameworks libraries..."
-		def knownABIs = ["arm64-v8a", "armeabi-v7a", "x86_64"]
-		knownABIs.each { arch ->
-			if (!doesOFSoFileExist(arch)) {
-				println "openFrameworks library missing for $arch! Running CMake build..."
-				exec {
-					commandLine 'bash', file(CMAKE_SCRIPT).absolutePath
-				}
-			} else {
-				println "openFrameworks library exists for $arch"
-			}
-		}
-	}
+    doLast {
+        println "checking openFrameworks libraries..."
+        def knownABIs = ["arm64-v8a", "armeabi-v7a", "x86_64"]
+        def isWindows = System.getProperty("os.name").toLowerCase().contains("win")
+        def gitBashPath = isWindows ? "C:\\Program Files\\Git\\git-bash.exe" : "bash"
+        def cmakeScriptPath = file(CMAKE_SCRIPT).absolutePath
+        knownABIs.each { arch ->
+            if (!doesOFSoFileExist(arch)) {
+                println "openFrameworks library missing for $arch! Running CMake build..."
+                if(isWindows) {
+                    exec {
+                        commandLine '"C:\\Program Files\\Git\\bin\\bash.exe"'
+                        args cmakeScriptPath
+                    }
+                } else {
+                    exec {
+                        commandLine 'bash', cmakeScriptPath
+                    }
+                }
+            } else {
+                println "openFrameworks library exists for $arch"
+            }
+        }
+    }
 }
 preBuild.dependsOn checkAndBuildOF
 
