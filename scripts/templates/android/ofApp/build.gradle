@@ -10,7 +10,8 @@ def ofRoot(){ return '../../../../' }
 final ofSource = ofRoot() + 'libs/openFrameworks'
 final ofLibs = ofRoot() + 'libs'
 final addons = ofRoot() + 'addons'
-final ofLibOutput = ofRoot() + 'libs/openFrameworksCompiled/lib/android'
+ext.ofLibraryOutput = ofRoot() + 'libs/openFrameworksCompiled/lib/android'
+def CMAKE_SCRIPT = ofRoot() + 'libs/openFrameworksCompiled/project/android/cmake.sh'
 def OFX_ANDROID = ofRoot() + 'addons/ofxAndroid'
 //def OF_ADDONS_ARGUMENTS = "${OF_ADDONS}"
 def enableProguardInReleaseBuilds = true
@@ -99,13 +100,22 @@ android {
 
         externalNativeBuild {
 			cmake {
-				arguments "-DANDROID_STL=c++_shared",
-						"-DANDROID_ARM_NEON=TRUE",
-						"-DANDROID_TOOLCHAIN=clang",
-							cmakeIncludeArgs, // Include paths
-							cmakeLibArgs      // Library paths
-						"-DTARGET_OPENGLES=TRUE"
+				arguments "-DANDROID_TOOLCHAIN=clang",
+					"-DTARGET_OPENGLES=TRUE"
 
+				// Use c++_static if building OpenFrameworks as a STATIC library
+				if (project.hasProperty("OF_STATIC") && project.OF_STATIC.toBoolean()) {
+					arguments "-DANDROID_STL=c++_static"
+				} else {
+					arguments "-DANDROID_STL=c++_shared"
+				}
+
+				// Enable NEON only for ARM architectures
+				if (android.defaultConfig.ndk.abiFilters.contains("armeabi-v7a") || android.defaultConfig.ndk.abiFilters.contains("arm64-v8a")) {
+					arguments "-DANDROID_ARM_NEON=TRUE"
+				}
+
+				abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86_64'
 				version '3.22.1'
 			}
         }
@@ -210,4 +220,38 @@ dependencies {
         implementation "com.google.android.gms:play-services-appset:16.0.2"
     }
 }
+
+def doesOFSoFileExist(arch) {
+	def fileType = (project.hasProperty("OF_STATIC") && project.OF_STATIC.toBoolean()) ? "a" : "so"
+	def libFile = file("$ofLibraryOutput/$arch/libopenFrameworksAndroid.${fileType}")
+	return libFile.exists()
+}
+
+task checkAndBuildOF {
+    doLast {
+        println "checking openFrameworks libraries..."
+        def knownABIs = ["arm64-v8a", "armeabi-v7a", "x86_64"]
+        def isWindows = System.getProperty("os.name").toLowerCase().contains("win")
+        def gitBashPath = isWindows ? "C:\\Program Files\\Git\\git-bash.exe" : "bash"
+        def cmakeScriptPath = file(CMAKE_SCRIPT).absolutePath
+        knownABIs.each { arch ->
+            if (!doesOFSoFileExist(arch)) {
+                println "openFrameworks library missing for $arch! Running CMake build..."
+                if(isWindows) {
+                    exec {
+                        commandLine '"C:\\Program Files\\Git\\bin\\bash.exe"'
+                        args cmakeScriptPath
+                    }
+                } else {
+                    exec {
+                        commandLine 'bash', cmakeScriptPath
+                    }
+                }
+            } else {
+                println "openFrameworks library exists for $arch"
+            }
+        }
+    }
+}
+preBuild.dependsOn checkAndBuildOF
 
