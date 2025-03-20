@@ -25,6 +25,8 @@ if [[ "$(uname)" == "Darwin" ]]; then
     OS_TYPE="macOS"
 elif [[ "$(uname -o 2>/dev/null)" == "Msys" || "$(uname -o 2>/dev/null)" == "Cygwin" || "$(uname -o 2>/dev/null)" == "Windows_NT" ]]; then
     OS_TYPE="Windows"
+elif [[ "$(uname)" == "Linux" ]]; then
+    OS_TYPE="Linux"
 fi
 if [[ "$OS_TYPE" == "macOS" ]]; then
     echo "Running on macOS"
@@ -33,6 +35,9 @@ elif [[ "$OS_TYPE" == "Windows" ]]; then
     echo "Running on Windows (Git Bash)"
     WIN_USER=$(cmd.exe /c "echo %USERNAME%" | tr -d '\r')
     ANDROID_SDK_PATH="/c/Users/${WIN_USER}/AppData/Local/Android/Sdk"
+elif [[ "$OS_TYPE" == "Linux" ]]; then
+    echo "Running on Linux"
+    export ANDROID_SDK_PATH="$HOME/Android/Sdk"
 else
     echo "Unsupported OS!"
     exit 1
