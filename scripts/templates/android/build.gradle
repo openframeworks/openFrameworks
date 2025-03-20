@@ -23,11 +23,72 @@ allprojects {
 
 evaluationDependsOn(':openFrameworksProject')
 
-// Force OpenFrameworks to build before ofApp
-tasks.register('buildOpenFrameworks') {
-	dependsOn ':openFrameworksProject:assemble'
+def ofMainRoot(){ return '../../../' }
+final ofSource = ofMainRoot() + 'libs/openFrameworks'
+final ofLibProject = ofMainRoot() + 'libs/openFrameworksCompiled/project/android'
+
+
+task printPaths {
+	doLast {
+		println "🔍 Checking Paths..."
+		println "OF Source: ${file(ofSource).absolutePath}"
+		println "OF Lib Output: ${file(ofLibProject).absolutePath}"
+		println "Current Working Directory: ${projectDir.absolutePath}"
+	}
 }
 
-tasks.matching { it.name.startsWith("assemble") || it.name.startsWith("buildCMake") }.configureEach {
-	dependsOn ':buildOpenFrameworks'
+task checkGradleDir {
+	doLast {
+		def gradleDir = file(ofLibProject).absoluteFile
+		println "🔍 Checking directory: ${gradleDir}"
+		println "✅ Exists? ${gradleDir.exists()}"
+		println "📂 List contents: ${gradleDir.listFiles()}"
+	}
+}
+
+
+task setupGradle {
+	doLast {
+		println "🔍 Checking Gradle setup..."
+		def gradleDir = file(ofLibProject).absoluteFile
+		def gradleWrapper = new File(gradleDir, "gradlew")
+
+		println "Directory: ${gradleDir}"
+		if (!gradleWrapper.exists()) {
+			println "Gradle wrapper not found! Initializing Gradle..."
+			exec {
+				workingDir gradleDir
+				commandLine 'gradle', 'init'
+			}
+			exec {
+				workingDir gradleDir
+				commandLine 'gradle', 'wrapper'
+			}
+		} else {
+			println "Gradle wrapper found: ${gradleWrapper.absolutePath}"
+		}
+	}
+}
+
+task buildOF {
+	dependsOn setupGradle
+	doLast {
+		println "Building openFrameworks..."
+		exec {
+			workingDir file(ofLibProject)
+			commandLine "./gradlew", "assembleDebug"
+		}
+	}
+}
+
+// Clean OpenFrameworks build
+task cleanOF {
+	dependsOn setupGradle
+	doLast {
+		println "Cleaning openFrameworks build..."
+		exec {
+			workingDir file(ofLibProject)
+			commandLine "./gradlew", "clean"
+		}
+	}
 }
