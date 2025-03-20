@@ -40,8 +40,15 @@ if [[ "$OS_TYPE" == "macOS" ]]; then
     export ANDROID_SDK_PATH="$HOME/Library/Android/sdk"
 elif [[ "$OS_TYPE" == "Windows" ]]; then
     echo "Running on Windows (Git Bash)"
-    WIN_USER=$(cmd.exe /c "echo %USERNAME%" | tr -d '\r')
-    ANDROID_SDK_PATH="/c/Users/${WIN_USER}/AppData/Local/Android/Sdk"
+    WIN_USER=$(whoami)
+    if [ -z "$WIN_USER" ]; then
+        echo "Error: Could not determine Windows username."
+        exit 1
+    fi
+    echo "Windows User: $WIN_USER"
+    APPDATA_WIN="C:\\Users\\$WIN_USER\\AppData\\Local"
+    echo "LOCALAPPDATA (Windows): $APPDATA_WIN"
+    ANDROID_SDK_PATH="$(cygpath -u "${APPDATA_WIN}")/Android/Sdk"
 elif [[ "$OS_TYPE" == "Linux" ]]; then
     echo "Running on Linux"
     export ANDROID_SDK_PATH="${ANDROID_HOME:-/usr/local/lib/android/sdk}"
@@ -65,13 +72,22 @@ else
     echo "No NDK found inside SDK directory."
     exit 1
 fi
-export NINJA_PATH=$(find "$ANDROID_SDK_PATH/cmake" -name "ninja" -type f 2>/dev/null | head -n 1)
+ANDROID_CMAKE_PATH=$(ls -d "$ANDROID_SDK_PATH/cmake/"* 2>/dev/null | sort -V | tail -n 1)
+NINJA_PATH=$(find "$ANDROID_CMAKE_PATH" -name "ninja" -type f 2>/dev/null | head -n 1)
+if [[ "$OS_TYPE" == "Windows" ]]; then
+    NINJA_PATH=$(find "$ANDROID_CMAKE_PATH/bin" -name "ninja.exe" -type f 2>/dev/null | head -n 1)
+fi
+if [ -n "$NINJA_PATH" ]; then
+    echo "Latest Ninja found at: [$NINJA_PATH]"
+else
+    echo "Ninja not found in Android SDK! CMakePath: $ANDROID_CMAKE_PATH"
+    exit 1
+fi
 
 if [ -z "$ARCH" ] || [ "$ARCH" == "all" ]; then
   ARCH="$DEFAULT_ARCHS"
 fi
 
-echo "NINJA_PATH: $NINJA_PATH"
 echo "build for architecture(s): $ARCHES"
 for ARCHE in $ARCH; do
   echo "-------------------------------------"
