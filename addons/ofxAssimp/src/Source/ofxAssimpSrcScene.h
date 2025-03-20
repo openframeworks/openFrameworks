@@ -41,7 +41,7 @@ struct ImportSettings {
 	bool fixInfacingNormals = false; // aiProcess_FixInfacingNormals
 //	bool importLights = false;
 	bool convertToLeftHanded = true; // aiProcess_ConvertToLeftHanded
-	
+	bool transformRootNode = true; // orient based on src scene root node, helps with correct orientation
 	std::vector<std::string> excludeNodesContainingStrings;
 	unsigned int aiFlags = 0; // ai process flags, ie. aiProcess_FixInfacingNormals
 };
@@ -98,7 +98,10 @@ protected:
 	ofFile mFile;
 	
 	std::vector<ofLight> mLights;
-	std::map<of::filesystem::path, std::shared_ptr<ofxAssimp::Texture> > mAssimpTextures;
+//	std::map<of::filesystem::path, std::shared_ptr<ofxAssimp::Texture> > mAssimpTextures;
+	std::map<std::string, std::shared_ptr<ofxAssimp::Texture> > mAssimpTextures;
+	std::map<of::filesystem::path, std::shared_ptr<ofTexture> > mTextureCacheMap;
+	
 	std::vector< ofxAssimp::Animation > mAnimations;
 	
 	std::vector< std::shared_ptr<ofxAssimp::SrcMesh> > mSrcMeshes;
