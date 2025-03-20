@@ -10,7 +10,7 @@ def ofRoot(){ return '../../../../' }
 final ofSource = ofRoot() + 'libs/openFrameworks'
 final ofLibs = ofRoot() + 'libs'
 final addons = ofRoot() + 'addons'
-final ofLibOutput = ofRoot() + 'libs/openFrameworksCompiled/lib/android'
+ext.ofLibraryOutput = ofRoot() + 'libs/openFrameworksCompiled/lib/android'
 def CMAKE_SCRIPT = ofRoot() + 'libs/openFrameworksCompiled/project/android/cmake.sh'
 def OFX_ANDROID = ofRoot() + 'addons/ofxAndroid'
 //def OF_ADDONS_ARGUMENTS = "${OF_ADDONS}"
@@ -223,7 +223,7 @@ dependencies {
 
 def doesOFSoFileExist(arch) {
 	def fileType = (project.hasProperty("OF_STATIC") && project.OF_STATIC.toBoolean()) ? "a" : "so"
-	def libFile = file("$ofLibOutput/$arch/libopenFrameworksAndroid.${fileType}")
+	def libFile = file("$ofLibraryOutput/$arch/libopenFrameworksAndroid.${fileType}")
 	return libFile.exists()
 }
 

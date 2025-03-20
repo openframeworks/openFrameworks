@@ -79,6 +79,7 @@ for ARCHE in $ARCH; do
   echo "-------------------------------------"
   BUILD_DIR="../../lib/android/build/build-$ARCHE"
   mkdir -p "$BUILD_DIR"
+  cd "$SCRIPT_DIR"
   cd "$BUILD_DIR"
   export ANDROID_ABI=${ARCHE}
 
@@ -100,7 +101,8 @@ for ARCHE in $ARCH; do
     "$CMAKELISTS_DIR"
 
   ninja -j "$NUM_CORES"
-  cd ..
+
+  cd "$SCRIPT_DIR"
 done
 
 echo -e "=========================================\n"
