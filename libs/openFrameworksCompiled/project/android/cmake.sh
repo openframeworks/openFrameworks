@@ -37,7 +37,7 @@ elif [[ "$OS_TYPE" == "Windows" ]]; then
     ANDROID_SDK_PATH="/c/Users/${WIN_USER}/AppData/Local/Android/Sdk"
 elif [[ "$OS_TYPE" == "Linux" ]]; then
     echo "Running on Linux"
-    export ANDROID_SDK_PATH="$HOME/Android/Sdk"
+    export ANDROID_SDK_PATH="${ANDROID_HOME:-/usr/local/lib/android/sdk}"
 else
     echo "Unsupported OS!"
     exit 1
