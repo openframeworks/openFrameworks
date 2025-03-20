@@ -7,7 +7,7 @@ cd $SCRIPT_DIR
 APOTHECARY_LEVEL="$(cd "$SCRIPT_DIR/../.." && pwd)"
 
 ############################################
-# Configuration
+# CMake Build Core Android openFrameworks
 ############################################
 
 export MAKE_TARGET="${MAKE_TARGET:-cmake}"
@@ -20,13 +20,20 @@ DEFAULT_ARCHS="armeabi-v7a arm64-v8a x86_64"
 TOOLCHAIN_FILE="$(pwd)/../CMake/toolchain/android.toolchain.cmake"
 CMAKELISTS_DIR="$(pwd)/openframeworksAndroid"
 OUTPUT_DIR="$(pwd)/../../lib/android"
+
+
 OS_TYPE="unknown"
 if [[ "$(uname)" == "Darwin" ]]; then
     OS_TYPE="macOS"
+    PARALLEL_MAKE=$(sysctl -n hw.ncpu)
 elif [[ "$(uname -o 2>/dev/null)" == "Msys" || "$(uname -o 2>/dev/null)" == "Cygwin" || "$(uname -o 2>/dev/null)" == "Windows_NT" ]]; then
     OS_TYPE="Windows"
+    PARALLEL_MAKE=$(nproc 2>/dev/null || echo 1)
 elif [[ "$(uname)" == "Linux" ]]; then
     OS_TYPE="Linux"
+    PARALLEL_MAKE=$(nproc --all)
+else
+    PARALLEL_MAKE=1
 fi
 if [[ "$OS_TYPE" == "macOS" ]]; then
     echo "Running on macOS"
@@ -59,17 +66,11 @@ else
     exit 1
 fi
 export NINJA_PATH=$(find "$ANDROID_SDK_PATH/cmake" -name "ninja" -type f 2>/dev/null | head -n 1)
+
 if [ -z "$ARCH" ] || [ "$ARCH" == "all" ]; then
   ARCH="$DEFAULT_ARCHS"
 fi
 
-if command -v sysctl &> /dev/null; then
-    PARALLEL_MAKE=$(sysctl -n hw.ncpu)
-elif command -v nproc &> /dev/null; then
-    PARALLEL_MAKE=$(nproc)
-else
-    PARALLEL_MAKE=1
-fi
 echo "NINJA_PATH: $NINJA_PATH"
 echo "build for architecture(s): $ARCHES"
 for ARCHE in $ARCH; do
