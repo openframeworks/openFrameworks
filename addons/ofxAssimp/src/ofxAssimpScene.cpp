@@ -88,6 +88,10 @@ bool Scene::processScene() {
 			}
 		}
 		
+		if( mSrcScene->getImportSettings().transformRootNode && mSrcScene->getAiScene() && mSrcScene->getAiScene()->mRootNode ) {
+			ofxAssimp::Utils::setOfNodeFromAiMatrix( mSrcScene->getAiScene()->mRootNode->mTransformation, this );
+		}
+		
 		std::shared_ptr<ofxAssimp::Node> tempParent;
 		auto sceneSrcNodes = mSrcScene->getRootNodes();
 		for( auto sceneSrcNode : sceneSrcNodes ) {
@@ -98,7 +102,7 @@ bool Scene::processScene() {
 		auto numberOfBones = getNumBones();
 //		now associate the meshes with the bones
 		for( auto& modelMesh : mMeshes ) {
-			ofLogNotice("model mesh") << modelMesh->getName() << " indices: " << modelMesh->getNumIndices() << " vbo: " << modelMesh->vbo->getNumVertices();
+			ofLogVerbose("ofxAssimp::Scene") << "mesh: " << modelMesh->getName() << " indices: " << modelMesh->getNumIndices() << " vbo: " << modelMesh->vbo->getNumVertices();
 			
 			auto* mesh = modelMesh->getAiMesh();
 			
@@ -113,13 +117,13 @@ bool Scene::processScene() {
 			for(unsigned int a = 0; a < mesh->mNumBones; ++a) {
 				aiBone* bone = mesh->mBones[a];
 				if( !bone ) {
-					ofLogError("ofxAssimp::Scene : NULL bone! - ") << a;
+					ofLogError("ofxAssimp::Scene") << " NULL bone!" << a;
 					continue;
 				}
 //				aiNode* node = scene->mRootNode->FindNode(bone->mName);
 				aiNode* boneNode = bone->mNode;
 				if( !boneNode ) {
-					ofLogError("ofxAssimp::Scene : unable to find scene node for bone!") << bone->mName.data;
+					ofLogError("ofxAssimp::Scene") << "unable to find scene node for bone!" << bone->mName.data;
 					continue;
 				}
 				
@@ -132,7 +136,7 @@ bool Scene::processScene() {
 			}
 		}
 		
-		ofLogNotice("-- Scene::processScene : scale: ") << getScale() << " global Scale: " << getGlobalScale();
+		ofLogVerbose("ofxAssimp::Scene") << "scene scale: " << getScale() << " global Scale: " << getGlobalScale();
 		
 		update();
 		calculateDimensions();
@@ -314,6 +318,7 @@ void Scene::calculateDimensions(){
 	for( auto& meshHelper : mMeshes ) {
 		meshHelper->recalculateBounds(true);
 		mSceneBoundsLocal.include(globalInvMat, meshHelper->getGlobalBounds().getBoundingVerts());
+//		mSceneBoundsLocal.include(meshHelper->getModelBounds().getBoundingVerts());
 	}
 }
 
@@ -976,9 +981,9 @@ ofxAssimp::Bounds Scene::getSceneBounds() {
 	if( mBSceneBoundsDirty ) {
 		mBSceneBoundsDirty=false;
 		mSceneBoundsGlobal.clear();
-//		mSceneBoundsGlobal.include( getGlobalTransformMatrix(), mSceneBoundsLocal.getBoundingVerts() );
-//		mSceneBoundsGlobal.include( getGlobalTransformMatrix(), {mSceneBoundsLocal.min, mSceneBoundsLocal.max} );
 		for( auto mesh : mMeshes ) {
+//			ofLogNotice("Scene::getSceneBounds") << " mesh: " << mesh->getName() << " - has parent: " << ( mesh->getParent() != nullptr ? "yes" : "no" );
+			mesh->recalculateBounds(true); // force it.
 			mSceneBoundsGlobal.include( mesh->getGlobalBounds().getBoundingVerts() );
 		}
 	}

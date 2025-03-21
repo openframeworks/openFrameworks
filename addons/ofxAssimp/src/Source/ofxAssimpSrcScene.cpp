@@ -324,13 +324,13 @@ void SrcScene::processMeshes(aiNode* anode, std::shared_ptr<SrcNode> aSrcNode) {
 	for(unsigned int i = 0; i < anode->mNumMeshes; i++) {
 		unsigned int meshIndex = anode->mMeshes[i];
 		if( meshIndex >= mSrcMeshes.size() ) {
-			ofLogError("SrcScene::processNodesRecursive") << " mesh index out of range: " << meshIndex << " / " << mSrcMeshes.size() << " num in scene: " << scene->mNumMeshes;
+			ofLogError("ofxAssimp::Scene::processNodesRecursive") << " mesh index out of range: " << meshIndex << " / " << mSrcMeshes.size() << " num in scene: " << scene->mNumMeshes;
 			continue;
 		}
 		if( mSrcMeshes[meshIndex] ) {
-			ofLogWarning("SrcScene::processNodesRecursive") << " hmm we already have a SrcMesh at index: " << meshIndex << " " << anode->mName.data;
+			ofLogWarning("ofxAssimp::SrcScene::processNodesRecursive") << " hmm we already have a SrcMesh at index: " << meshIndex << " " << anode->mName.data;
 		} else {
-			ofLogNotice("SrcScene::processNodesRecursive") << " going to process mesh: " << scene->mMeshes[meshIndex]->mName.data << " from node: " << anode->mName.data << " num scene meshes: " << scene->mNumMeshes;
+			ofLogVerbose("ofxAssimp::SrcScene::processNodesRecursive") << " going to process mesh: " << scene->mMeshes[meshIndex]->mName.data << " from node: " << anode->mName.data << " num scene meshes: " << scene->mNumMeshes;
 			// ok, open slot for a src mesh //
 			auto srcMesh = std::make_shared<ofxAssimp::SrcMesh>();
 			srcMesh->setAiMesh(scene->mMeshes[meshIndex], anode );
@@ -497,7 +497,7 @@ void SrcScene::processKeyframes(std::shared_ptr<ofxAssimp::SrcNode> aSrcNode, ai
 	keyCollection.clear();
 	keyCollection.setup( aNodeAnim, anim.getDurationInTicks() );
 	
-//	ofLogNotice("SrcScene processKeyframes: ") << aSrcNode->getName() << " node anim: " << aNodeAnim->mNodeName.data << " node anim num pos keyframes: " << aNodeAnim->mNumPositionKeys << " scale: " << aNodeAnim->mNumScalingKeys << " rot: " << aNodeAnim->mNumRotationKeys;
+//	ofLogNotice("ofxAssimp::SrcScene processKeyframes: ") << aSrcNode->getName() << " node anim: " << aNodeAnim->mNodeName.data << " node anim num pos keyframes: " << aNodeAnim->mNumPositionKeys << " scale: " << aNodeAnim->mNumScalingKeys << " rot: " << aNodeAnim->mNumRotationKeys;
 	
 	double startTime = 0.0; // seconds
 	double endTime = anim.getDurationInTicks();// seconds;
@@ -570,6 +570,7 @@ void SrcScene::loadGLResources(std::shared_ptr<ofxAssimp::SrcMesh> aSrcMesh, aiM
 			
 			if(AI_SUCCESS == aiGetMaterialColor(mtl, AI_MATKEY_COLOR_EMISSIVE, &tcolor)){
 				auto col = ofxAssimp::Utils::aiColorToOfColor(tcolor);
+				ofLogVerbose("ofxAssimp::SrcScene") << "setting emissive color: " << col;
 				aSrcMesh->material->setEmissiveColor(col);
 			}
 			
@@ -585,6 +586,35 @@ void SrcScene::loadGLResources(std::shared_ptr<ofxAssimp::SrcMesh> aSrcMesh, aiM
 				}else{
 					aSrcMesh->blendMode=OF_BLENDMODE_ADD;
 				}
+			}
+			
+			float metallic = 0.f;
+			if( AI_SUCCESS == aiGetMaterialFloat(mtl, AI_MATKEY_METALLIC_FACTOR, &metallic) ) {
+				ofLogVerbose("ofxAssimp::SrcScene") << " setting metallic value: " << metallic;
+				aSrcMesh->material->setMetallic(metallic);
+			}
+			
+			float roughness = 0.f;
+			if( AI_SUCCESS == aiGetMaterialFloat(mtl, AI_MATKEY_ROUGHNESS_FACTOR, &roughness) ) {
+				ofLogVerbose("ofxAssimp::SrcScene") << " setting roughness value: " << roughness;
+				aSrcMesh->material->setRoughness(roughness);
+			}
+			
+			float clearcoatFactor = 0.f;
+			if( AI_SUCCESS == aiGetMaterialFloat(mtl, AI_MATKEY_CLEARCOAT_FACTOR, &clearcoatFactor) ) {
+				ofLogVerbose("ofxAssimp::SrcScene") << " setting clearcoat value: " << clearcoatFactor;
+				aSrcMesh->material->setClearCoatStrength(clearcoatFactor);
+				if( clearcoatFactor > 0.0f ) {
+					aSrcMesh->material->setClearCoatEnabled(true);
+				} else {
+					aSrcMesh->material->setClearCoatEnabled(false);
+				}
+			}
+			
+			float clearcoatRoughFactor = 0.f;
+			if( AI_SUCCESS == aiGetMaterialFloat(mtl, AI_MATKEY_CLEARCOAT_ROUGHNESS_FACTOR, &clearcoatRoughFactor) ) {
+				ofLogVerbose("ofxAssimp::SrcScene") << " setting clearcoat roughness value: " << clearcoatRoughFactor;
+				aSrcMesh->material->setClearCoatRoughness(clearcoatRoughFactor);
 			}
 		}
 		
@@ -615,9 +645,17 @@ void SrcScene::loadGLResources(std::shared_ptr<ofxAssimp::SrcMesh> aSrcMesh, aiM
 			for(int d = 0; d <= AI_TEXTURE_TYPE_MAX; d++){
 				if(AI_SUCCESS == mtl->GetTexture((aiTextureType)d, texIndex, &texPath, NULL, NULL, NULL, NULL, &texMapMode[0])){
 					
+					// getTextureTypeAsString(const ofMaterialTextureType & aMaterialTextureType)
+					auto matType = ofxAssimp::Texture::ofTextureTypeForAiType( (aiTextureType)d );
+					auto texTypeString = ofMaterial::getTextureTypeAsString(matType);
 					//this is a solution to support older versions of assimp. see the weak defination above
 					if( aiTextureTypeToString ){
 						ofLogVerbose("ofxAssimp::SrcScene") << "loadGLResource(): loading " <<  aiTextureTypeToString((aiTextureType)d) << " image from \"" << texPath.data << "\"";
+					}
+					
+					if( matType == OF_MATERIAL_TEXTURE_NONE ) {
+						ofLogWarning("ofxAssimp::SrcScene") << "unable to detect texture type: " << texPath.data;
+						continue;
 					}
 					
 					bool bWrap = (texMapMode[0]==aiTextureMapMode_Wrap);
@@ -657,26 +695,22 @@ void SrcScene::loadGLResources(std::shared_ptr<ofxAssimp::SrcMesh> aSrcMesh, aiM
 					}
 #endif
 					
+					
+					
 					bool bTextureAlreadyExists = false;
-					if(mAssimpTextures.count(realPath)){
+//					if(mAssimpTextures.count(realPath)){
+					if(mTextureCacheMap.count(realPath)) {
 						bTextureAlreadyExists = true;
 					}
 					
 					if(bTextureAlreadyExists) {
-//						ofxAssimpTexture assimpTexture;
-//						assimpTexture.setup(*textures[realPath].get(), realPath, bWrap);
-//						assimpTexture.setTextureType((aiTextureType)d);
-						auto assimpTexture = mAssimpTextures[realPath];
-						aSrcMesh->addTexture(assimpTexture);
-						
 						ofLogVerbose("ofxAssimp::SrcScene") << "loadGLResource(): texture already loaded: \""
-						<< mFile.getFileName() + "\" from \"" << realPath.string() << "\"" << " adding texture as " << assimpTexture->getAiTextureTypeAsString() ;
+						<< mFile.getFileName() + "\" from \"" << realPath.string() << "\"" << " adding texture as " << texTypeString;
 					} else {
-//						shared_ptr<ofTexture> texture = std::make_shared<ofTexture>();
-						auto assimpTexture = std::make_shared<ofxAssimp::Texture>();
+						shared_ptr<ofTexture> texture = std::make_shared<ofTexture>();
+//						auto assimpTexture = std::make_shared<ofxAssimp::Texture>();
 						
 						if( bHasEmbeddedTexture ){
-							
 #ifndef TARGET_LINUX_ARM
 							auto embeddedTexture = scene->GetEmbeddedTexture(ogPath.c_str());
 							
@@ -691,32 +725,47 @@ void SrcScene::loadGLResources(std::shared_ptr<ofxAssimp::SrcMesh> aSrcMesh, aiM
 								
 								ofLogVerbose("ofxAssimp::SrcScene") << "loadGLResource() texture size is " << tmp.getWidth() << "x" << tmp.getHeight();
 								
-								assimpTexture->getTextureRef().loadData(tmp.getPixels());
+//								assimpTexture->getTextureRef().loadData(tmp.getPixels());
+								texture->loadData(tmp.getPixels());
 							}else{
 								//uncompressed texture - might need swizzling from argb to rgba?
 								auto glFormat = getGLFormatFromAiFormat(embeddedTexture->achFormatHint);
-								assimpTexture->getTextureRef().loadData((const uint8_t *)embeddedTexture->pcData, embeddedTexture->mWidth, embeddedTexture->mHeight, glFormat);
+//								assimpTexture->getTextureRef().loadData((const uint8_t *)embeddedTexture->pcData, embeddedTexture->mWidth, embeddedTexture->mHeight, glFormat);
+								texture->loadData((const uint8_t *)embeddedTexture->pcData, embeddedTexture->mWidth, embeddedTexture->mHeight, glFormat);
 							}
 #endif
 						}else{
-//							ofLoadImage(*texture.get(), realPath);
-							ofLoadImage(assimpTexture->getTextureRef(), realPath );
+//							ofLoadImage(assimpTexture->getTextureRef(), realPath );
+							ofLoadImage(*texture, realPath);
 						}
 						
-						if(assimpTexture && assimpTexture->getTextureRef().isAllocated()){
-//							ofxAssimpTexture tmpTex;
-//							tmpTex.setup(*texture.get(), realPath, bWrap);
-							assimpTexture->setup( realPath, bWrap );
-							assimpTexture->setAiTextureType((aiTextureType)d);
-							mAssimpTextures[realPath] = assimpTexture;
-							ofLogNotice( "ofxAssimp::SrcScene") << " assimpTexture type: " << assimpTexture->getAiTextureTypeAsString() << " path: " << assimpTexture->getTexturePath();
-//							tmpTex.setTextureType((aiTextureType)d);
-							aSrcMesh->addTexture( assimpTexture );
-							
-							ofLogVerbose("ofxAssimp::SrcScene") << "loadGLResource(): texture " << assimpTexture->getAiTextureTypeAsString() << " loaded, dimensions: " << assimpTexture->getTextureRef().getWidth() << "x" << assimpTexture->getTextureRef().getHeight();
+						if(texture && texture->isAllocated()){
+							mTextureCacheMap[realPath] = texture;
+							ofLogVerbose("ofxAssimp::SrcScene") << "loadGLResource(): texture " << texTypeString << " loaded, dimensions: " << texture->getWidth() << "x" << texture->getHeight();
 						}else{
 							ofLogError("ofxAssimp::SrcScene") << "loadGLResource(): couldn't load texture: \""
 							<< mFile.getFileName() + "\" from \"" << realPath.string() << "\"";
+						}
+					}
+					
+					
+					if(mTextureCacheMap.count(realPath) > 0) {
+						// create a key using the type of texture and the path
+						std::string assimpTexKey = texTypeString+"_"+realPath.string();
+						std::shared_ptr<ofxAssimp::Texture> assimpTexture;
+						if( mAssimpTextures.count(assimpTexKey) ) {
+							assimpTexture = mAssimpTextures[assimpTexKey];
+						} else {
+							assimpTexture = std::make_shared<ofxAssimp::Texture>();
+							assimpTexture->setup( realPath, bWrap );
+							assimpTexture->setAiTextureType((aiTextureType)d);
+							assimpTexture->setTexture(mTextureCacheMap[realPath]);
+							mAssimpTextures[assimpTexKey] = assimpTexture;
+						}
+						
+						if( assimpTexture ) {
+							ofLogVerbose("ofxAssimp::SrcScene") << "adding texture type: " << texTypeString << " to mesh: " << aSrcMesh->getName();
+							aSrcMesh->addTexture( assimpTexture );
 						}
 					}
 				}
