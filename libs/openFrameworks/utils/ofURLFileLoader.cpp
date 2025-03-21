@@ -145,7 +145,7 @@ bool ofURLFileLoaderImpl::checkValidCertifcate(const std::string& cert_file) {
 void ofURLFileLoaderImpl::createSSLCertificate() {
 	EVP_PKEY *pkey = nullptr;
 	X509 *x509 = nullptr;
-	EVP_PKEY_CTX *pkey_ctx = EVP_PKEY_CTX_new_id(EVP_PKEY_RSA, NULL);
+	EVP_PKEY_CTX *pkey_ctx = EVP_PKEY_CTX_new_from_name(NULL, "RSA", NULL);
 	if (!pkey_ctx) {
 		ofLogError("ofURLFileLoader") << "Error initializing key generation context";
 		return;
@@ -274,6 +274,9 @@ ofHttpResponse ofURLFileLoaderImpl::handleRequest(const ofHttpRequest & request)
 	curl_version_info_data *version = curl_version_info( CURLVERSION_NOW );
 	if(request.verbose) {
 		CURLcode ret = curl_easy_setopt(curl.get(), CURLOPT_VERBOSE, 1L);
+		if (ret != CURLE_OK) {
+			ofLogWarning() << "cURL error: " << curl_easy_strerror(ret);
+		}
 		if (version) {
 			std::string userAgent = std::string("curl/") + version->version;
 			curl_easy_setopt(curl.get(), CURLOPT_USERAGENT, userAgent.c_str());
@@ -338,18 +341,16 @@ ofHttpResponse ofURLFileLoaderImpl::handleRequest(const ofHttpRequest & request)
 	if (request.method == ofHttpRequest::GET) {
 		curl_easy_setopt(curl.get(), CURLOPT_HTTPGET, 1);
 		curl_easy_setopt(curl.get(), CURLOPT_POST, 0);
-		curl_easy_setopt(curl.get(), CURLOPT_PUT, 0);
+		curl_easy_setopt(curl.get(), CURLOPT_UPLOAD, 0);
 	}
 	else if (request.method == ofHttpRequest::PUT) {
 		curl_easy_setopt(curl.get(), CURLOPT_UPLOAD, 1);
-		curl_easy_setopt(curl.get(), CURLOPT_PUT, 1);
 		curl_easy_setopt(curl.get(), CURLOPT_POST, 0);
 		curl_easy_setopt(curl.get(), CURLOPT_HTTPGET, 0);
 	}
 	else if (request.method == ofHttpRequest::POST) {
-	} else {
 		curl_easy_setopt(curl.get(), CURLOPT_POST, 1);
-		curl_easy_setopt(curl.get(), CURLOPT_PUT, 0);
+		curl_easy_setopt(curl.get(), CURLOPT_UPLOAD, 0);
 		curl_easy_setopt(curl.get(), CURLOPT_HTTPGET, 0);
 	}
 
