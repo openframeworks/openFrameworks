@@ -1,4 +1,6 @@
 #include "ofColor.h"
+#include <limits>
+
 
 template<typename PixelType> const ofColor_<PixelType> ofColor_<PixelType>::gray(limit() / 2, limit() / 2, limit() / 2);
 template<typename PixelType> const ofColor_<PixelType> ofColor_<PixelType>::white(limit(), limit(), limit());
@@ -426,7 +428,7 @@ void ofColor_<PixelType>::setHsb(float hue, float saturation, float brightness, 
 	} else {
 		float hueSix = hue * 6.f / limit();
 		float saturationNorm = saturation / limit();
-		int hueSixCategory = (int) floorf(hueSix);
+		int hueSixCategory = (int)std::floor( hueSix );
 		float hueSixRemainder = hueSix - hueSixCategory;
 		PixelType pv = (PixelType) ((1.f - saturationNorm) * brightness);
 		PixelType qv = (PixelType) ((1.f - saturationNorm * hueSixRemainder) * brightness);

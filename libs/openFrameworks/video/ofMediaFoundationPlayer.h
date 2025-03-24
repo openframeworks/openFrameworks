@@ -34,9 +34,8 @@
 #include <d3d11_1.h>
 #include <wrl.h>
 #include <wincodec.h>
-#include "ofConstants.h"
 #include "ofVideoBaseTypes.h"
-#include "ofPixels.h"
+#include "ofPixels.h" //mSrcPixels
 #include "ofFbo.h"
 #include "ofEvent.h"
 
@@ -100,9 +99,9 @@ public:
 
     static void setDurationHackEnabled(bool ab);
 
-    bool                load(std::string name) override;
-    void				loadAsync(std::string name) override;
-    void                close() override;
+    bool load(const of::filesystem::path & fileName) override;
+    void loadAsync(const of::filesystem::path & fileName) override;
+    void close() override;
 
     bool                isInitialized() const override;
 
@@ -160,7 +159,7 @@ public:
     ofEvent<MF_MEDIA_ENGINE_ERR> MFErrorEvent;
 
 protected:
-    bool _load(std::string name, bool abAsync);
+    bool _load(const of::filesystem::path & fileName, bool abAsync);
     void OnMediaEngineEvent(DWORD aEvent, DWORD_PTR param1, DWORD param2) override;
 
     class MEDXDeviceManager {

@@ -65,13 +65,17 @@ public:
 	bool bAvailable;
 };
 
+/// \class ofBaseVideo
 /// \brief A base class representing a video source.
 class ofBaseVideo: virtual public ofBaseHasPixels, public ofBaseUpdates{
 public:
+
 	/// \brief Destroy the ofBaseVideo.
 	virtual ~ofBaseVideo(){}
 
-	/// \returns true if the pixel data was updated since the last call to update().
+	/// \brief Check if the current frame is new since the last update.
+	///
+	/// \return true if the pixel data was updated since the last call to update().
 	virtual bool isFrameNew() const =0;
 
 	/// \brief Close the video source.
@@ -83,40 +87,48 @@ public:
 	/// setup() method.  Video sources such as movie players are often
 	/// initialized with a load() method.
 	///
-	/// \returns true if the video source is initialized.
+	/// \return true if the video source is initialized.
 	virtual bool isInitialized() const=0;
 
 	/// \brief Set the requested ofPixelFormat.
+	///
 	/// \param pixelFormat the requested ofPixelFormat.
-	/// \returns true if the format was successfully changed.
+	/// \return true if the format was successfully changed.
 	virtual bool setPixelFormat(ofPixelFormat pixelFormat) = 0;
 
-	/// \returns the current ofPixelFormat.
+	/// \brief Pixel format access.
+	///
+	/// \return the current ofPixelFormat.
 	virtual ofPixelFormat getPixelFormat() const = 0;
 };
 
 
+/// \class ofBaseVideoDraws
 /// \brief A base class representing a drawable video source.
 class ofBaseVideoDraws:
 	public ofBaseVideo,
 	public ofBaseDraws,
 	public ofBaseHasTexturePlanes{
 public:
+
 	/// \brief Destroy the ofBaseVideoDraws.
 	virtual ~ofBaseVideoDraws(){}
 };
 
+
+/// \class ofBaseVideoGrabber
 /// \brief A base class representing a video device such as a camera.
 class ofBaseVideoGrabber: virtual public ofBaseVideo{
+public:
 
-	public :
 	/// \brief Destroy the ofBaseVideoGrabber
 	virtual ~ofBaseVideoGrabber();
 
-	//needs implementing
+	// needs implementing
 	/// \brief Get a list of available video grabber devices.
-	/// \returns a std::vector of ofVideoDevice objects.
-	virtual std::vector<ofVideoDevice>	listDevices() const = 0;
+	///
+	/// \return a std::vector of ofVideoDevice objects.
+	virtual std::vector<ofVideoDevice> listDevices() const = 0;
 
 	/// \brief Set up the grabber with the requested width and height.
 	///
@@ -127,15 +139,17 @@ class ofBaseVideoGrabber: virtual public ofBaseVideo{
 	///
 	/// \param w the requested width.
 	/// \param h the requested height.
-	/// \returns true if the video grabber was set up successfully.
+	/// \return true if the video grabber was set up successfully.
 	virtual bool setup(int w, int h) = 0;
 
 	/// \brief Get the video grabber's height.
-	/// \returns the video grabber's height.
+	///
+	/// \return the video grabber's height.
 	virtual float getHeight() const = 0;
 
 	/// \brief Get the video grabber's width.
-	/// \returns the video grabber's width.
+	///
+	/// \return the video grabber's width.
 	virtual float getWidth() const = 0;
 
 	/// \brief Get the video grabber's internal ofTexture pointer if available.
@@ -143,10 +157,11 @@ class ofBaseVideoGrabber: virtual public ofBaseVideo{
 	/// \note Subclasses should implement this method only if internal API can
 	/// upload video grabber pixels directly to an ofTexture.
 	///
-	/// \returns the internal ofTexture pointer or nullptr if not available.
+	/// \return the internal ofTexture pointer or nullptr if not available.
 	virtual ofTexture * getTexturePtr(){ return nullptr; }
 
 	/// \brief Set the video grabber's hardware verbosity level.
+	///
 	/// \param bTalkToMe true if verbose grabber logging feedback is required.
 	virtual void setVerbose(bool bTalkToMe);
 
@@ -168,16 +183,19 @@ class ofBaseVideoGrabber: virtual public ofBaseVideo{
 	virtual void setDesiredFrameRate(int framerate);
 
 	/// \brief Request a native GUI for video grabber settings.
+	///
 	/// \note This feature may not be implemented by all video grabbers.
 	virtual void videoSettings();
 
 };
 
 
+/// \class ofBaseVideoPlayer
+///
 /// \brief A base class representing a video player.
 class ofBaseVideoPlayer: virtual public ofBaseVideo{
-
 public:
+
 	/// \brief Destroys the ofBaseVideoPlayer.
 	virtual ~ofBaseVideoPlayer();
 
@@ -187,9 +205,15 @@ public:
 	/// implementation dependent.
 	///
 	/// \param name The name of the video resource to load.
-	/// \returns True if the video was loaded successfully.
+	/// \return True if the video was loaded successfully.
 	/// \sa loadAsync()
-	virtual bool				load(std::string name) = 0;
+	virtual bool load(const of::filesystem::path & fileName);
+
+	/// \brief Legacy approach for loading videos for older inherited classes
+	/// \param name The name of the video resource to load.
+	/// \return True if the video was loaded successfully.
+	virtual bool load(std::string fileName);
+
 	/// \brief Asynchronously load a video resource by name.
 	///
 	/// The list of supported video types and sources (e.g. rtsp:// sources) is
@@ -200,52 +224,67 @@ public:
 	///
 	/// \param name The name of the video resource to load.
 	/// \sa isLoaded()
-	virtual void				loadAsync(std::string name);
+	virtual void loadAsync(const of::filesystem::path & fileName);
+	
+	/// \brief Legacy approach for Asynchronously load a video resource by name.
+	/// \param name The name of the video resource to load.
+	virtual void loadAsync(std::string fileName);
 
 	/// \brief Play the video from the current playhead position.
+	///
 	/// \sa getPosition()
 	/// \sa setPostion()
-	virtual void				play() = 0;
+	virtual void play() = 0;
+
 	/// \brief Pause and reset the playhead position to the first frame.
-	virtual void				stop() = 0;
+	virtual void stop() = 0;
+
 	/// \brief Get a pointer to the video texture used internally if it exists.
 	///
 	/// If the video player implementation supports direct-to-texture rendering,
 	/// this method will return a pointer to the internal texture. If
 	/// direct-to-texture rendering is not supported, nullptr is returned.
 	///
-	/// \returns A valid pointer to the internal texture, otherwise a nullptr.
-	virtual ofTexture *			getTexturePtr(){return nullptr;};
+	/// \return A valid pointer to the internal texture, otherwise a nullptr.
+	virtual ofTexture * getTexturePtr(){return nullptr;};
 
 	/// \brief Get the width in pixels of the loaded video.
-	/// \returns The width in pixels of the loaded video or 0 if none is loaded.
-	virtual float 				getWidth() const = 0;
+	///
+	/// \return The width in pixels of the loaded video or 0 if none is loaded.
+	virtual float getWidth() const = 0;
+
 	/// \brief Get the height in pixels of the loaded video.
-	/// \returns The height in pixels of the loaded video or 0 if none is loaded.
-	virtual float 				getHeight() const = 0;
+	///
+	/// \return The height in pixels of the loaded video or 0 if none is loaded.
+	virtual float getHeight() const = 0;
 
 	/// \brief Returns true if the video is paused.
-	/// \returns True if the video is paused.
-	virtual bool				isPaused() const = 0;
+	///
+	/// \return True if the video is paused.
+	virtual bool isPaused() const = 0;
+
 	/// \brief Returns true if a video is loaded.
 	///
 	/// This is helpful when loading a video with loadAsync(). This is also an
 	/// alias of isInitialized().
 	///
 	/// \sa loadAsync()
-	/// \returns True if a video is loaded.
-	virtual bool				isLoaded() const = 0;
+	/// \return True if a video is loaded.
+	virtual bool isLoaded() const = 0;
+
 	/// \brief Returns true if the loaded video is playing.
-	/// \returns True if the loaded video is playing.
-	virtual bool				isPlaying() const = 0;
+	///
+	/// \return True if the loaded video is playing.
+	virtual bool isPlaying() const = 0;
+
 	/// \brief Returns true if a video is loaded.
 	///
 	/// This is helpful when loading a video with loadAsync(). This is also
 	/// an alias of isLoaded().
 	///
 	/// \sa loadAsync()
-	/// \returns True if a video is loaded.
-	virtual bool				isInitialized() const{ return isLoaded(); }
+	/// \return True if a video is loaded.
+	virtual bool isInitialized() const {return isLoaded();}
 
 	/// \brief Get the current playhead position of the loaded video.
 	///
@@ -253,8 +292,9 @@ public:
 	/// represents the position of the playhead. 0.0 maps to the first frame of
 	/// the loaded video and 1.0 maps to the last frame of the loaded video.
 	///
-	/// \returns A value between 0.0 and 1.0 representing playhead position.
-	virtual float 				getPosition() const;
+	/// \return A value between 0.0 and 1.0 representing playhead position.
+	virtual float getPosition() const;
+
 	/// \brief Get the playback speed of the video player.
 	///
 	/// When the loop state is OF_LOOP_NONE or OF_LOOP_NORMAL, positive speed
@@ -263,18 +303,24 @@ public:
 	/// the direction of playback will change each loop, but the playback rate
 	/// will still be scaled by the absolute value of the speed.
 	///
-	/// \returns The playback speed of the video player.
-	virtual float 				getSpeed() const;
+	/// \return The playback speed of the video player.
+	virtual float getSpeed() const;
+
 	/// \brief Get the duration of the loaded video in seconds.
-	/// \returns The duration of the loaded video in seconds.
-	virtual float 				getDuration() const;
+	///
+	/// \return The duration of the loaded video in seconds.
+	virtual float getDuration() const;
+
 	/// \brief Returns true if the loaded video has finished playing.
-	/// \returns True if the loaded video has finished playing.
-	virtual bool				getIsMovieDone() const;
+	///
+	/// \return True if the loaded video has finished playing.
+	virtual bool getIsMovieDone() const;
 
 	/// \brief Set the paused state of the video.
+	///
 	/// \param bPause True to pause the video, false to play.
-	virtual void 				setPaused(bool bPause);
+	virtual void setPaused(bool bPause);
+
 	/// \brief Set the position of the playhead.
 	///
 	/// This value is a normalized floating point value between 0.0 and 1.0 that
@@ -282,7 +328,8 @@ public:
 	/// the loaded video and 1.0 maps to the last frame of the loaded video.
 	///
 	/// \param pct A value between 0.0 and 1.0 representing playhead position.
-	virtual void 				setPosition(float pct);
+	virtual void setPosition(float pct);
+
 	/// \brief Set the volume of the video player.
 	///
 	/// This value is a normalized floating point value between 0.0 and 1.0 that
@@ -290,11 +337,13 @@ public:
 	/// maximum volume.
 	///
 	/// \param volume A value between 0.0 and 1.0 representing volume.
-	virtual void 				setVolume(float volume);
+	virtual void setVolume(float volume);
+
 	/// \brief Set the video loop state.
 	/// \param state The loop state of the video.
 	/// \sa ::ofLoopType
-	virtual void 				setLoopState(ofLoopType state);
+	virtual void setLoopState(ofLoopType state);
+
 	/// \brief Set the video playback speed.
 	///
 	/// When the loop state is OF_LOOP_NONE or OF_LOOP_NORMAL, positive speed
@@ -310,7 +359,8 @@ public:
 	/// the normal rate and a rate of 0.0 will effectively stop playback.
 	///
 	/// \param speed The desired playback speed of the video.
-	virtual void   				setSpeed(float speed);
+	virtual void setSpeed(float speed);
+
 	/// \brief Set the current frame by frame number.
 	///
 	/// Similar to setPosition(), but accepts a frame number instead of
@@ -318,30 +368,37 @@ public:
 	/// frame as 0 and the last frame as getTotalNumFrames() - 1.
 	///
 	/// \param frame The frame number to set the new playhead to.
-	virtual void				setFrame(int frame);
+	virtual void setFrame(int frame);
 
 	/// \brief Get the current playhead position as a frame number.
-	/// \returns The current playhead position as a frame number.
-	virtual int					getCurrentFrame() const;
+	///
+	/// \return The current playhead position as a frame number.
+	virtual int getCurrentFrame() const;
+
 	/// \brief Get the total number of frames in the currently loaded video.
-	/// \returns The total number of frames in the currently loaded video.
-	virtual int					getTotalNumFrames() const;
+	///
+	/// \return The total number of frames in the currently loaded video.
+	virtual int getTotalNumFrames() const;
+
 	/// \brief Get the current loop state of the video.
+	///
 	/// \sa ::ofLoopType
-	virtual ofLoopType			getLoopState() const;
+	virtual ofLoopType getLoopState() const;
 
 	/// \brief Set the playhead position to the first frame.
 	///
 	/// This is functionally equivalent to setFrame(0) or setPosition(0.0).
-	virtual void				firstFrame();
+	virtual void firstFrame();
+
 	/// \brief Advance the playhead forward one frame.
 	///
 	/// This allows the user to advance through the video manually one frame at
 	/// a time without calling play().
-	virtual void				nextFrame();
+	virtual void nextFrame();
+
 	/// \brief Advance the playhead backward one frame.
 	///
 	/// This allows the user to advance backward through the video manually one
 	/// frame at a time without calling play().
-	virtual void				previousFrame();
+	virtual void previousFrame();
 };

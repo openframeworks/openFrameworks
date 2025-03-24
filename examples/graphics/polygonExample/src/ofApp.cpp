@@ -90,7 +90,7 @@ void ofApp::draw(){
 	float yPct = (float)(mouseY) / (float)(ofGetHeight());
 	int nTips = 5 + xPct * 60;
 	int nStarPts = nTips * 2;
-	float angleChangePerPt = TWO_PI / (float)nStarPts;
+	float angleChangePerPt = glm::two_pi<float>() / (float)nStarPts;
 	float innerRadius = 0 + yPct*80;
 	float outerRadius = 80;
 	float origx = 525;
@@ -102,13 +102,13 @@ void ofApp::draw(){
 	for (int i = 0; i < nStarPts; i++){
 		if (i % 2 == 0) {
 			// inside point:
-			float x = origx + innerRadius * cos(angle);
-			float y = origy + innerRadius * sin(angle);
+			float x = origx + innerRadius * std::cos(angle);
+			float y = origy + innerRadius * std::sin(angle);
 			ofVertex(x,y);
 		} else {
 			// outside point
-			float x = origx + outerRadius * cos(angle);
-			float y = origy + outerRadius * sin(angle);
+			float x = origx + outerRadius * std::cos(angle);
+			float y = origy + outerRadius * std::sin(angle);
 			ofVertex(x,y);
 		}
 		angle += angleChangePerPt;
@@ -143,13 +143,13 @@ void ofApp::draw(){
 		ofFill();
 		ofSetPolyMode(OF_POLY_WINDING_ODD);
 		ofBeginShape();
-		float angleStep 	= TWO_PI/(100.0f + sin(ofGetElapsedTimef()/5.0f) * 60); 
+		float angleStep 	= glm::two_pi<float>()/(100.0f + sin(ofGetElapsedTimef()/5.0f) * 60); 
 		float radiusAdder 	= 0.5f;
 		float radius 		= 0;
 		for (int i = 0; i < 200; i++){
 			float anglef = (i) * angleStep;
-			float x = radius * cos(anglef);
-			float y = radius * sin(anglef); 
+			float x = radius * std::cos(anglef);
+			float y = radius * std::sin(anglef); 
 			ofVertex(x,y);
 			radius 	+= radiusAdder; 
 		}
@@ -313,7 +313,7 @@ void ofApp::draw(){
 		ofNextContour(true);
 		
 		for (int i = 0; i < 20; i++){
-			float anglef = ((float)i / 19.0f) * TWO_PI;
+			float anglef = ((float)i / 19.0f) * glm::two_pi<float>();
 			float x = 340 + 30 * cos(anglef);
 			float y = 550 + 30 * sin(anglef); 
 			ofVertex(x,y);
@@ -335,9 +335,9 @@ void ofApp::draw(){
 		ofNextContour(true);
 		
 		for (int i = 0; i < 20; i++){
-			float anglef = ((float)i / 19.0f) * TWO_PI;
-			float x = 340 + 30 * cos(anglef);
-			float y = 550 + 30 * sin(anglef); 
+			float anglef = ((float)i / 19.0f) * glm::two_pi<float>();
+			float x = 340 + 30 * std::cos(anglef);
+			float y = 550 + 30 * std::sin(anglef); 
 			ofVertex(x,y);
 			radius 	+= radiusAdder; 
 		}
@@ -353,9 +353,9 @@ void ofApp::draw(){
 		ofNextContour(true);
 		
 		for (int i = 0; i < 20; i++){
-			float anglef = ((float)i / 19.0f) * TWO_PI;
-			float x = 340 + 30 * cos(anglef);
-			float y = 550 + 30 * sin(anglef); 
+			float anglef = ((float)i / 19.0f) * glm::two_pi<float>();
+			float x = 340 + 30 * std::cos(anglef);
+			float y = 550 + 30 * std::sin(anglef); 
 			ofVertex(x,y);
 			radius 	+= radiusAdder; 
 		}

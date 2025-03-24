@@ -11,7 +11,7 @@ Try changing the `circle res` slider to create a circle. Try clicking the `fill`
 
 Pressing the `h` key will hide and show the panel; spacebar sets color to white.
 
-![Gif of the GUI in use](./gui.gif)
+![Gif of the GUI in use](./guiExample.gif)
 
 ### Classes Used in This File
 

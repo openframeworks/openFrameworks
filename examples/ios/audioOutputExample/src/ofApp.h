@@ -28,16 +28,14 @@ class ofApp : public ofxiOSApp{
 		int sampleRate;
 		bool bNoise;
 		float volume;
-
-		float * lAudio;
-		float * rAudio;
+        vector <float> lAudio;
+        vector <float> rAudio;
 
 		//------------------- for the simple sine wave synthesis
 		float targetFrequency;
 		float phase;
 		float phaseAdder;
 		float phaseAdderTarget;
-		int initialBufferSize;
 
 	ofSoundStream soundStream;
 

@@ -29,10 +29,9 @@
  *
  * ***********************************************************************/
 
+#include "ofxiOSConstants.h"
+#if defined(OF_UI_KIT) && TARGET_OS_IOS || (TARGET_OS_IPHONE && !TARGET_OS_TV)
 #import "ofxiOSAppDelegate.h"
-
-#if TARGET_OS_IOS || (TARGET_OS_IPHONE && !TARGET_OS_TV)
-
 #import "ofxiOSViewController.h"
 #import "ofxiOSGLKViewController.h"
 #import "ofxiOSExternalDisplay.h"

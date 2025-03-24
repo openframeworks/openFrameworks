@@ -6,16 +6,14 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "VideoPlayerControls.h"
 #import "ofApp.h"
-
 /**
  *  this is a bit of obj-c that will help connect the OF app with the VideoPlayerControls UI.
  *  all this is doing is re-routing UI events from the controls to the OF app.
  */
 
-@interface VideoPlayerControlsDelegateForOF : NSObject <VideoPlayerControlsDelegate> {
-	ofApp * app;
+@interface VideoPlayerControlsDelegateForOF : NSObject {
+    ofApp * app;
 }
 
 - (id)initWithApp:(ofApp *)app;

@@ -30,7 +30,6 @@
     
 ==============================================================================*/
 #include "ofxKinect.h"
-#include "ofMain.h"
 
 #include "libfreenect_registration.h"
 #include "freenect_internal.h" // for access to freenect_device.registration.zero_plane_info
@@ -384,7 +383,7 @@ void ofxKinect::update() {
             if( videoPixels.getHeight() == videoPixelsIntra.getHeight() ){
                 std::swap(videoPixels,videoPixelsIntra);
             }else{
-				int minimumSize = MIN(videoPixels.size(), videoPixelsIntra.size());
+				int minimumSize = std::min(videoPixels.size(), videoPixelsIntra.size());
 				memcpy(videoPixels.getData(), videoPixelsIntra.getData(), minimumSize);
             }
 			bNeedsUpdateVideo = false;

@@ -1,5 +1,6 @@
 #pragma once
 
+// MARK: TARGET_ANDROID - maybe it can be removed
 #include "ofConstants.h"
 #ifndef TARGET_ANDROID
 #include "ofPixels.h"
@@ -72,6 +73,8 @@ public:
 
 	void setSinkListener(ofGstAppSink * appsink);
 
+	bool updated_in_frame { false };
+
 	// callbacks to get called from gstreamer
 #if GST_VERSION_MAJOR==0
 	virtual GstFlowReturn preroll_cb(std::shared_ptr<GstBuffer> buffer);
@@ -110,6 +113,7 @@ private:
 	std::condition_variable		eosCondition;
 	std::mutex			eosMutex;
 	guint				busWatchID;
+
 
 	class ofGstMainLoopThread: public ofThread{
 	public:
@@ -167,8 +171,8 @@ public:
 	void 			reallocateOnNextFrame();
 
 	bool 			isFrameNew() const;
-	ofPixels&		getPixels();
-	const ofPixels&	getPixels() const;
+	ofPixels &		getPixels();
+	const ofPixels &	getPixels() const;
 	ofTexture * 	getTexture();
 	void 			update();
 

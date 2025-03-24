@@ -2,11 +2,14 @@
 
 #include "ofVec2f.h"
 #include "ofVec4f.h"
-#include "ofMathConstants.h"
-#include "ofConstants.h"
-#include "glm/vec3.hpp"
-#include <cmath>
-#include <iostream>
+
+#if !defined(GLM_FORCE_CTOR_INIT)
+	#define GLM_FORCE_CTOR_INIT
+#endif
+#if !defined(GLM_ENABLE_EXPERIMENTAL)
+	#define GLM_ENABLE_EXPERIMENTAL
+#endif
+#include <glm/vec3.hpp>
 
 /// \brief  ofVec3f is a class for storing a three dimensional vector.
 /// 
@@ -971,15 +974,15 @@ public:
 	/// ~~~~{.cpp}
 	/// ofVec3f a1(2, 0, 0); // magnitude 2, parallel to x-axis
 	/// ofVec3f b1(3, 4, 0); // magnitude 5, 53.13 degree angle to a1
-	/// float dot = a1.dot(b1); // dot is 2 * 5 * cos(53.13) = 6.0
+	/// float dot = a1.dot(b1); // dot is 2 * 5 * std::cos(53.13) = 6.0
 	///
 	/// ofVec3f a2(1, 0, 0); // magnitude 1, parallel to x-axis
 	/// ofVec3f b2(0, 0, 1); // magnitude 1, 90 degree angle to a2
-	/// dot = a2.dot(b2); // dot is 1 * 1 * cos(90) = 0.0
+	/// dot = a2.dot(b2); // dot is 1 * 1 * std::cos(90) = 0.0
 	///
 	/// ofVec3f a3(0, 1, 0); // magnitude 1, parallel to y-axis
 	/// ofVec3f b3(0, -1, 0); // magnitude 1, 180 degree angle to a3
-	/// dot = a3.dot(b3); // dot is 1 * 1 * cos(180) = -1.0
+	/// dot = a3.dot(b3); // dot is 1 * 1 * std::cos(180) = -1.0
 	/// ~~~~
 	/// 
     float dot( const ofVec3f& vec ) const;
@@ -992,49 +995,49 @@ public:
     // this methods are deprecated in 006 please use:
 	/// \cond INTERNAL
 
-    // getScaled
-    OF_DEPRECATED_MSG("Use member method getScaled() instead.", ofVec3f rescaled( const float length ) const);
-	
-    // scale
-    OF_DEPRECATED_MSG("Use member method scale() instead.", ofVec3f& rescale( const float length ));
-	
-    // getRotated
-    OF_DEPRECATED_MSG("Use member method getRotated() instead.", ofVec3f rotated( float angle, const ofVec3f& axis ) const);
-	
-    // getRotated should this be const???
-    OF_DEPRECATED_MSG("Use member method getRotated() instead.", ofVec3f rotated(float ax, float ay, float az));
-	
-    // getNormalized
-    OF_DEPRECATED_MSG("Use member method getNormalized() instead.", ofVec3f normalized() const);
-	
-    // getLimited
-    OF_DEPRECATED_MSG("Use member method getLimited() instead.", ofVec3f limited(float max) const);
-	
-    // getCrossed
-    OF_DEPRECATED_MSG("Use member method getCrossed() instead.", ofVec3f crossed( const ofVec3f& vec ) const);
-	
-    // getPerpendicular
-    OF_DEPRECATED_MSG("Use member method getPerpendicular() instead.", ofVec3f perpendiculared( const ofVec3f& vec ) const);
+	[[deprecated("Use member method getScaled()")]]
+	ofVec3f rescaled( const float length ) const;
+
+	[[deprecated("Use member method scale()")]]
+	ofVec3f& rescale( const float length );
+
+	[[deprecated("Use member method getRotated()")]]
+	ofVec3f rotated( float angle, const ofVec3f& axis ) const;
+
+	[[deprecated("Use member method getRotated()")]]
+	ofVec3f rotated(float ax, float ay, float az);
+
+	[[deprecated("Use member method getNormalized()")]]
+	ofVec3f normalized() const;
+
+	[[deprecated("Use member method getLimited()")]]
+	ofVec3f limited(float max) const;
+
+	[[deprecated("Use member method getCrossed()")]]
+	ofVec3f crossed( const ofVec3f& vec ) const;
+
+	[[deprecated("Use member method getPerpendicular()")]]
+	ofVec3f perpendiculared( const ofVec3f& vec ) const;
     
-    // use getMapped
-    OF_DEPRECATED_MSG("Use member method getMapped() instead.", ofVec3f mapped( const ofVec3f& origin,
+    [[deprecated("Use member method getMapped()")]]
+	ofVec3f mapped( const ofVec3f& origin,
 					const ofVec3f& vx,
 					const ofVec3f& vy,
-					const ofVec3f& vz ) const);
+					const ofVec3f& vz ) const;
 	
-    // use squareDistance
-    OF_DEPRECATED_MSG("Use member method squareDistance() instead.", float  distanceSquared( const ofVec3f& pnt ) const);
-	
-    // use getInterpolated
-    OF_DEPRECATED_MSG("Use member method getInterpolated() instead.", ofVec3f interpolated( const ofVec3f& pnt, float p ) const);
-	
-    // use getMiddle
-    OF_DEPRECATED_MSG("Use member method getMiddle() instead.", ofVec3f middled( const ofVec3f& pnt ) const);
+	[[deprecated("Use member method squareDistance()")]]
+	float distanceSquared( const ofVec3f & pnt ) const;
+
+	[[deprecated("Use member method getInterpolated()")]]
+	ofVec3f interpolated( const ofVec3f & pnt, float p ) const;
+
+	[[deprecated("Use member method getMiddle()")]]
+	ofVec3f middled( const ofVec3f & pnt ) const;
     
-    // use getRotated
-    OF_DEPRECATED_MSG("Use member method getRotated() instead.", ofVec3f rotated( float angle,
-						const ofVec3f& pivot,
-						const ofVec3f& axis ) const);    
+    [[deprecated("Use member method getRotated()")]]
+	ofVec3f rotated(float angle,
+					const ofVec3f & pivot,
+					const ofVec3f & axis ) const;
 
     // return all zero vector
     static ofVec3f zero() { return ofVec3f(0, 0, 0); }
@@ -1064,8 +1067,8 @@ ofVec3f operator/( float f, const ofVec3f& vec );
 /////////////////
 
 
-inline ofVec3f::ofVec3f( const ofVec2f& vec ):x(vec.x), y(vec.y), z(0) {}
-inline ofVec3f::ofVec3f( const ofVec4f& vec ):x(vec.x), y(vec.y), z(vec.z) {}
+inline ofVec3f::ofVec3f( const ofVec2f& vec ) : x(vec.x), y(vec.y), z(0) {}
+inline ofVec3f::ofVec3f( const ofVec4f& vec ) : x(vec.x), y(vec.y), z(vec.z) {}
 inline ofVec3f::ofVec3f(): x(0), y(0), z(0) {}
 inline ofVec3f::ofVec3f( float _all ): x(_all), y(_all), z(_all) {}
 inline ofVec3f::ofVec3f( float _x, float _y, float _z ):x(_x), y(_y), z(_z) {}
@@ -1075,7 +1078,7 @@ inline ofVec3f::ofVec3f( const glm::vec3 & vec ):x(vec.x), y(vec.y), z(vec.z){}
 inline ofVec3f::ofVec3f( const glm::vec4 & vec ):x(vec.x), y(vec.y), z(vec.z){}
 
 inline ofVec3f::operator glm::vec3() const{
-	return glm::vec3(x,y,z);
+	return { x,y,z };
 }
 
 
@@ -1113,9 +1116,9 @@ inline bool ofVec3f::operator!=( const ofVec3f& vec ) const {
 }
 
 inline bool ofVec3f::match( const ofVec3f& vec, float tolerance ) const{
-	return (fabs(x - vec.x) < tolerance)
-	&& (fabs(y - vec.y) < tolerance)
-	&& (fabs(z - vec.z) < tolerance);
+	return (std::abs(x - vec.x) < tolerance)
+	&& (std::abs(y - vec.y) < tolerance)
+	&& (std::abs(z - vec.z) < tolerance);
 }
 
 /**
@@ -1299,9 +1302,9 @@ inline ofVec3f ofVec3f::rotated( float angle, const ofVec3f& axis ) const {
 }
 inline ofVec3f ofVec3f::getRotated( float angle, const ofVec3f& axis ) const {
 	ofVec3f ax = axis.getNormalized();
-	float a = (float)(ofDegToRad(angle));
-	float sina = sin( a );
-	float cosa = cos( a );
+	float a { glm::radians(angle) };
+	float sina = std::sin( a );
+	float cosa = std::cos( a );
 	float cosb = 1.0f - cosa;
 	
 	return ofVec3f( x*(ax.x*ax.x*cosb + cosa)
@@ -1318,8 +1321,8 @@ inline ofVec3f ofVec3f::getRotated( float angle, const ofVec3f& axis ) const {
 inline ofVec3f ofVec3f::getRotatedRad( float angle, const ofVec3f& axis ) const {
 	ofVec3f ax = axis.getNormalized();
 	float a = angle;
-	float sina = sin( a );
-	float cosa = cos( a );
+	float sina = std::sin( a );
+	float cosa = std::cos( a );
 	float cosb = 1.0f - cosa;
 	
 	return ofVec3f( x*(ax.x*ax.x*cosb + cosa)
@@ -1335,9 +1338,9 @@ inline ofVec3f ofVec3f::getRotatedRad( float angle, const ofVec3f& axis ) const 
 
 inline ofVec3f& ofVec3f::rotate( float angle, const ofVec3f& axis ) {
 	ofVec3f ax = axis.getNormalized();
-	float a = (float)(ofDegToRad(angle));
-	float sina = sin( a );
-	float cosa = cos( a );
+	float a { glm::radians(angle) };
+	float sina = std::sin( a );
+	float cosa = std::cos( a );
 	float cosb = 1.0f - cosa;
 	
 	float nx = x*(ax.x*ax.x*cosb + cosa)
@@ -1357,8 +1360,8 @@ inline ofVec3f& ofVec3f::rotate( float angle, const ofVec3f& axis ) {
 inline ofVec3f& ofVec3f::rotateRad(float angle, const ofVec3f& axis ) {
 	ofVec3f ax = axis.getNormalized();
 	float a = angle;
-	float sina = sin( a );
-	float cosa = cos( a );
+	float sina = std::sin( a );
+	float cosa = std::cos( a );
 	float cosb = 1.0f - cosa;
 	
 	float nx = x*(ax.x*ax.x*cosb + cosa)
@@ -1380,12 +1383,12 @@ inline ofVec3f ofVec3f::rotated(float ax, float ay, float az) {
 }
 
 inline ofVec3f ofVec3f::getRotated(float ax, float ay, float az) const {
-	float a = (float)cos(ofDegToRad(ax));
-	float b = (float)sin(ofDegToRad(ax));
-	float c = (float)cos(ofDegToRad(ay));
-	float d = (float)sin(ofDegToRad(ay));
-	float e = (float)cos(ofDegToRad(az));
-	float f = (float)sin(ofDegToRad(az));
+	float a = std::cos(glm::radians(ax));
+	float b = std::sin(glm::radians(ax));
+	float c = std::cos(glm::radians(ay));
+	float d = std::sin(glm::radians(ay));
+	float e = std::cos(glm::radians(az));
+	float f = std::sin(glm::radians(az));
 	
 	float nx = c * e * x - c * f * y + d * z;
 	float ny = (a * f + b * d * e) * x + (a * e - b * d * f) * y - b * c * z;
@@ -1395,12 +1398,12 @@ inline ofVec3f ofVec3f::getRotated(float ax, float ay, float az) const {
 }
 
 inline ofVec3f ofVec3f::getRotatedRad(float ax, float ay, float az) const {
-	float a = cos(ax);
-	float b = sin(ax);
-	float c = cos(ay);
-	float d = sin(ay);
-	float e = cos(az);
-	float f = sin(az);
+	float a = std::cos(ax);
+	float b = std::sin(ax);
+	float c = std::cos(ay);
+	float d = std::sin(ay);
+	float e = std::cos(az);
+	float f = std::sin(az);
 	
 	float nx = c * e * x - c * f * y + d * z;
 	float ny = (a * f + b * d * e) * x + (a * e - b * d * f) * y - b * c * z;
@@ -1411,12 +1414,12 @@ inline ofVec3f ofVec3f::getRotatedRad(float ax, float ay, float az) const {
 
 
 inline ofVec3f& ofVec3f::rotate(float ax, float ay, float az) {
-	float a = (float)cos(ofDegToRad(ax));
-	float b = (float)sin(ofDegToRad(ax));
-	float c = (float)cos(ofDegToRad(ay));
-	float d = (float)sin(ofDegToRad(ay));
-	float e = (float)cos(ofDegToRad(az));
-	float f = (float)sin(ofDegToRad(az));
+	float a = std::cos(glm::radians(ax));
+	float b = std::sin(glm::radians(ax));
+	float c = std::cos(glm::radians(ay));
+	float d = std::sin(glm::radians(ay));
+	float e = std::cos(glm::radians(az));
+	float f = std::sin(glm::radians(az));
 	
 	float nx = c * e * x - c * f * y + d * z;
 	float ny = (a * f + b * d * e) * x + (a * e - b * d * f) * y - b * c * z;
@@ -1428,12 +1431,12 @@ inline ofVec3f& ofVec3f::rotate(float ax, float ay, float az) {
 
 
 inline ofVec3f& ofVec3f::rotateRad(float ax, float ay, float az) {
-	float a = cos(ax);
-	float b = sin(ax);
-	float c = cos(ay);
-	float d = sin(ay);
-	float e = cos(az);
-	float f = sin(az);
+	float a = std::cos(ax);
+	float b = std::sin(ax);
+	float c = std::cos(ay);
+	float d = std::sin(ay);
+	float e = std::cos(az);
+	float f = std::sin(az);
 	
 	float nx = c * e * x - c * f * y + d * z;
 	float ny = (a * f + b * d * e) * x + (a * e - b * d * f) * y - b * c * z;
@@ -1462,9 +1465,9 @@ inline ofVec3f ofVec3f::getRotated( float angle,
 	float ty = y - pivot.y;
 	float tz = z - pivot.z;
 	
-	float a = ofDegToRad(angle);
-	float sina = sin( a );
-	float cosa = cos( a );
+	float a { glm::radians(angle) };
+	float sina = std::sin( a );
+	float cosa = std::cos( a );
 	float cosb = 1.0f - cosa;
 	
 	float xrot = tx*(ax.x*ax.x*cosb + cosa)
@@ -1492,8 +1495,8 @@ inline ofVec3f ofVec3f::getRotatedRad( float angle,
 	float tz = z - pivot.z;
 	
 	float a = angle;
-	float sina = sin( a );
-	float cosa = cos( a );
+	float sina = std::sin( a );
+	float cosa = std::cos( a );
 	float cosb = 1.0f - cosa;
 	
 	float xrot = tx*(ax.x*ax.x*cosb + cosa)
@@ -1520,9 +1523,9 @@ inline ofVec3f& ofVec3f::rotate( float angle,
 	y -= pivot.y;
 	z -= pivot.z;
 	
-	float a = ofDegToRad(angle);
-	float sina = sin( a );
-	float cosa = cos( a );
+	float a { glm::radians(angle) };
+	float sina = std::sin( a );
+	float cosa = std::cos( a );
 	float cosb = 1.0f - cosa;
 	
 	float xrot = x*(ax.x*ax.x*cosb + cosa)
@@ -1553,8 +1556,8 @@ inline ofVec3f& ofVec3f::rotateRad( float angle,
 	z -= pivot.z;
 	
 	float a = angle;
-	float sina = sin( a );
-	float cosa = cos( a );
+	float sina = std::sin( a );
+	float cosa = std::cos( a );
 	float cosb = 1.0f - cosa;
 	
 	float xrot = x*(ax.x*ax.x*cosb + cosa)
@@ -1844,13 +1847,13 @@ inline float ofVec3f::lengthSquared() const {
 inline float ofVec3f::angle( const ofVec3f& vec ) const {
 	ofVec3f n1 = this->getNormalized();
 	ofVec3f n2 = vec.getNormalized();
-	return ofRadToDeg(acos( n1.dot(n2) ));
+	return glm::degrees(std::acos( n1.dot(n2) ));
 }
 
 inline float ofVec3f::angleRad( const ofVec3f& vec ) const {
 	ofVec3f n1 = this->getNormalized();
 	ofVec3f n2 = vec.getNormalized();
-	return (float)acos( n1.dot(n2) );
+	return std::acos( n1.dot(n2) );
 }
 
 

@@ -1,0 +1,40 @@
+# EditorConfig https://editorconfig.org
+root = true
+
+# Default settings for all files
+[*]
+indent_style = tab
+indent_size = 4
+tab_width = 4
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+[*.{js,py}]
+charset = utf-8
+
+[*.sh]
+indent_style = space
+indent_size = 4
+tab_width = 4
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+# Override JSON 
+[*.json]
+indent_style = space
+indent_size = 2
+tab_width = 2
+
+# Override YAML 
+[*.yml]
+indent_style = space
+indent_size = 2
+tab_width = 2
+
+[*.html]
+indent_style = space
+indent_size = 2
+
+[*.js]
+indent_style = space
+indent_size = 2

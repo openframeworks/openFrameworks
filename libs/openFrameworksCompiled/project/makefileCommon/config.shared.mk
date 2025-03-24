@@ -19,7 +19,7 @@
 
 
 SHELL ?= /bin/sh
-OF_ROOT ?=  $(realpath ../../..)
+OF_ROOT ?= ../../..
 PLATFORM_VARIANT ?= default
 
 # ifeq ($(CC),$(EMSCRIPTEN)/emcc)
@@ -235,7 +235,12 @@ include $(OF_PLATFORM_MAKEFILES)/config.$(PLATFORM_LIB_SUBPATH).$(PLATFORM_VARIA
 ifdef ABI_PATH
 	ABI_LIB_SUBPATH=$(PLATFORM_LIB_SUBPATH)/$(strip $(ABI_PATH))
 else
+	#hack to get makefiles working again
+	ifeq ($(PLATFORM_LIB_SUBPATH),osx)
+		ABI_LIB_SUBPATH=macos
+	else
 	ABI_LIB_SUBPATH=$(PLATFORM_LIB_SUBPATH)
+	endif
 endif
 
 PLATFORM_PKG_CONFIG ?= pkg-config

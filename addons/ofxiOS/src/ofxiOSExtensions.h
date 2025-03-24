@@ -6,9 +6,11 @@
 //
 
 #pragma once
-
+#include "ofxiOSConstants.h"
+#if defined(TARGET_OF_IOS)
 void ofReloadGLResources();
 void ofReloadAllImageTextures();
 void ofReloadAllFontTextures();
 void ofUnloadAllFontTextures();
 void ofRegenerateAllVbos();
+#endif

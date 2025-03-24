@@ -30,7 +30,7 @@ ofPath & ofxSvg::getPathAt(int n) {
 void ofxSvg::load(const of::filesystem::path & fileName) {
 	of::filesystem::path file = ofToDataPath(fileName);
 	if (!of::filesystem::exists(file)) {
-		ofLogError("ofxSVG") << "load(): path does not exist: \"" << file << "\"";
+		ofLogError("ofxSVG") << "load(): path does not exist: " << file ;
 		return;
 	}
 
@@ -98,7 +98,7 @@ void ofxSvg::fixSvgString(std::string & xmlstring) {
 		for (ofXml & element : strokeWidthElements) {
 			//cout << element.toString() << endl;
 			float strokewidth = element.getAttribute("stroke-width").getFloatValue();
-			strokewidth = MAX(1, round(strokewidth));
+			strokewidth = std::fmax(1.0, std::round(strokewidth));
 			element.getAttribute("stroke-width").set(strokewidth);
 		}
 	}

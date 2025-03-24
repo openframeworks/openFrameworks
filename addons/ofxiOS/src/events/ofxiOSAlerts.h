@@ -29,6 +29,8 @@
  * ***********************************************************************/ 
 
 #pragma once
+#include "ofxiOSConstants.h"
+#if defined(TARGET_OF_IOS)
 
 #include <list>
 #include "ofxiOSAlertsListener.h"
@@ -100,3 +102,4 @@ extern ofxiOSAlertsHandler ofxiOSAlerts;
 
 #define ofxiPhoneAlertsHandler ofxiOSAlertsHandler
 
+#endif

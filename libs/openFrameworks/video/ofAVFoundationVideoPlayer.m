@@ -170,7 +170,7 @@ static const void *PlayerRateContext = &ItemStatusContext;
 	if(bAsync == YES){
 		queue = dispatch_get_main_queue();
 	} else {
-		queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+		queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0);
 	}
 	
 	dispatch_async(queue, ^{
@@ -628,8 +628,9 @@ static const void *PlayerRateContext = &ItemStatusContext;
 	if (bSampleAudio) {
 		// really?
 		double preferredHardwareSampleRate = 44100;
+        double currentSampleRate = preferredHardwareSampleRate;
 #ifdef TARGET_IOS
-		[[AVAudioSession sharedInstance] currentHardwareSampleRate];
+        currentSampleRate = [[AVAudioSession sharedInstance] sampleRate];
 #endif
 		
 		AudioChannelLayout channelLayout;

@@ -6,6 +6,7 @@
 //
 
 #include "ofxtvOSAppDelegate.h"
+#if defined(TARGET_OF_TVOS) && defined(OF_UI_KIT) && defined(TARGET_OF_IOS) && !defined(TARGET_OF_WATCHOS) && !defined(TARGET_OF_XROS)
 
 #include "ofxtvOSViewController.h"
 #include "ofxtvOSGLKViewController.h"
@@ -95,3 +96,4 @@
 
 
 @end
+#endif

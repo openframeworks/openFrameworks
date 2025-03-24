@@ -147,18 +147,18 @@ void ofApp::draw(){
 		int numSteps = ( (float)mouseX / ofGetWidth() )* 12.0;
 
 		//make sure we don't go bellow 3 sides
-		numSteps = MAX(3, numSteps);
+		numSteps = std::max(3, numSteps);
 
 
-		float step		= TWO_PI / (numSteps);
+		float step		= glm::two_pi<float>() / (numSteps);
 		float angle		= 0.0;
 		float cenX		= 110;
 		float cenY		= 430;
 		float radius	= 50;
 
 		for(int i = 0; i < numSteps; i++){
-			float rx = cenX + cos(angle) * radius;
-			float ry = cenY + sin(angle) * radius;
+			float rx = cenX + std::cos(angle) * radius;
+			float ry = cenY + std::sin(angle) * radius;
 
 			output.polyVertex(rx, ry);
 			angle += step;
@@ -182,9 +182,9 @@ void ofApp::draw(){
 		numSteps = ( (float)mouseX / ofGetWidth() )* 12.0;
 
 		//make sure we don't go bellow 3 sides
-		numSteps = MAX(3, numSteps);
+		numSteps = std::max(3, numSteps);
 
-		step		= TWO_PI / (numSteps);
+		step		= glm::two_pi<float>() / (numSteps);
 		angle		= 0.0;
 		cenX		= 340;
 		cenY		= 430;
@@ -217,14 +217,14 @@ void ofApp::draw(){
 		numSteps = ( (float)mouseX / ofGetWidth() )* 12.0;
 
 		//make sure we don't go bellow 3 sides
-		numSteps = MAX(3, numSteps);
+		numSteps = std::max(3, numSteps);
 
-		step		= TWO_PI / (numSteps);
+		step		= glm::two_pi<float>() / (numSteps);
 		angle		= 0.0;
 		cenX		= 550;
 		cenY		= 430.0;
 		radius		= 40.0;
-		float scale = 1.0 + 0.6 * sin(ofGetElapsedTimef());
+		float scale = 1.0 + 0.6 * std::sin(ofGetElapsedTimef());
 
 		for(int i = 0; i < numSteps; i++){
 			float rx = cenX + cos(angle) * radius;
@@ -234,12 +234,12 @@ void ofApp::draw(){
 				output.polyVertex(rx, ry);
 			}
 
-			float rx2 = cenX + cos(angle+step) * radius;
-			float ry2 = cenY + sin(angle+step) * radius;
+			float rx2 = cenX + std::cos(angle+step) * radius;
+			float ry2 = cenY + std::sin(angle+step) * radius;
 
 			//lets make our control points in between each side and out a little way
-			float cx = cenX + cos(angle + step*0.5) * radius * scale;
-			float cy = cenY + sin(angle + step*0.5) * radius * scale;
+			float cx = cenX + std::cos(angle + step*0.5) * radius * scale;
+			float cy = cenY + std::sin(angle + step*0.5) * radius * scale;
 
 			output.bezierVertex(cx, cy, cx, cy, rx2, ry2);
 

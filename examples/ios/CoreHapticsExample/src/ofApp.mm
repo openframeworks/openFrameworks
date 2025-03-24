@@ -7,7 +7,7 @@ void ofApp::setup(){
 
 //--------------------------------------------------------------
 void ofApp::update(){
-	haptics_.sendParameters(fmod(ofGetElapsedTimef()*2.0f,1),ofMap(sin(ofGetElapsedTimef()*PI/3.0f), -1, 1, 0, 1));
+	haptics_.sendParameters(fmod(ofGetElapsedTimef()*2.0f,1),ofMap(std::sin(ofGetElapsedTimef()*glm::pi<float>()/3.0f), -1, 1, 0, 1));
 }
 
 //--------------------------------------------------------------

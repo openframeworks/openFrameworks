@@ -9,30 +9,27 @@ void ofApp::setup(){
 	ofSetOrientation(OF_ORIENTATION_90_RIGHT);//Set iOS to Orientation Landscape Right
 
 	ofBackground(255, 255, 255);
-
+    sampleRate = 44100;
 	phase = 0;
 	phaseAdder = 0.0f;
 	phaseAdderTarget = 0.0;
 	volume = 0.15f;
 	pan = 0.5;
 	bNoise = false;
-		
-	lAudio = new float[initialBufferSize];
-	rAudio = new float[initialBufferSize];
-	
-	memset(lAudio, 0, initialBufferSize * sizeof(float));
-	memset(rAudio, 0, initialBufferSize * sizeof(float));
+    int bufferSize = 512;
+    lAudio.assign(bufferSize, 0.0);
+    rAudio.assign(bufferSize, 0.0);
 	
 	//we do this because we don't have a mouse move function to work with:
 	targetFrequency = 444.0;
-	phaseAdderTarget = (targetFrequency / (float)sampleRate) * TWO_PI;
+	phaseAdderTarget = (targetFrequency / (float)sampleRate) * glm::two_pi<float>();
 	
 	ofSoundStreamSettings settings;
 	settings.setOutListener(this);
-	settings.sampleRate = 44100;
+	settings.sampleRate = sampleRate;
 	settings.numOutputChannels = 2;
 	settings.numInputChannels = 0;
-	settings.bufferSize = 512;
+	settings.bufferSize = bufferSize;
 	soundStream.setup(settings);
 	
 	ofSetFrameRate(60);
@@ -57,8 +54,8 @@ void ofApp::draw(){
 	ofSetHexColor(0x333333);
 	ofDrawRectangle(leftX, topY, boxW, boxH);
 	ofSetHexColor(0xFFFFFF);
-	for(int i = 0; i < initialBufferSize; i++){
-		float x = ofMap(i, 0, initialBufferSize, 0, boxW, true);
+	for(int i = 0; i < lAudio.size(); i++){
+		float x = ofMap(i, 0, lAudio.size(), 0, boxW, true);
 		ofDrawLine(leftX + x,topY + boxH / 2,leftX + x, topY + boxH / 2 + lAudio[i] * boxH * 0.5);
 	}
 
@@ -66,8 +63,8 @@ void ofApp::draw(){
 	ofSetHexColor(0x333333);
 	ofDrawRectangle(rightX, topY, boxW, boxH);
 	ofSetHexColor(0xFFFFFF);
-	for(int i = 0; i < initialBufferSize; i++){
-		float x = ofMap(i, 0, initialBufferSize, 0, boxW, true);	
+	for(int i = 0; i < rAudio.size(); i++){
+		float x = ofMap(i, 0,  rAudio.size(), 0, boxW, true);
 		ofDrawLine(rightX + x, topY + boxH / 2, rightX + x, topY + boxH / 2 + rAudio[i] * boxH * 0.5);
 	}
 
@@ -91,9 +88,9 @@ void ofApp::audioOut(ofSoundBuffer & buffer){
 	float rightScale = pan;
 
 	// sin (n) seems to have trouble when n is very large, so we
-	// keep phase in the range of 0-TWO_PI like this:
-	while (phase > TWO_PI){
-		phase -= TWO_PI;
+	// keep phase in the range of 0-glm::two_pi<float>() like this:
+	while (phase > glm::two_pi<float>()){
+		phase -= glm::two_pi<float>();
 	}
 
 	if (bNoise == true){
@@ -106,7 +103,7 @@ void ofApp::audioOut(ofSoundBuffer & buffer){
 		phaseAdder = 0.95f * phaseAdder + 0.05f * phaseAdderTarget;
 		for (size_t i = 0; i < buffer.getNumFrames(); i++){
 			phase += phaseAdder;
-			float sample = sin(phase);
+			float sample = std::sin(phase);
 			lAudio[i] = buffer[i*buffer.getNumChannels()    ] = sample * volume * leftScale;
 			rAudio[i] = buffer[i*buffer.getNumChannels() + 1] = sample * volume * rightScale;
 		}
@@ -126,7 +123,7 @@ void ofApp::touchMoved(ofTouchEventArgs & touch){
 		
 		int height = ofGetHeight();
 		targetFrequency = ((float)touch.y / (float)height) * 1000;
-		phaseAdderTarget = (targetFrequency / (float)sampleRate) * TWO_PI;
+		phaseAdderTarget = (targetFrequency / (float)sampleRate) * glm::two_pi<float>();
 	}
 }
 

@@ -5,6 +5,7 @@
 //  Created by Daniel Rosser on 26/10/2015.
 
 #include "ofxtvOSViewController.h"
+#if defined(TARGET_OF_IOS) && defined(TARGET_OF_TVOS) && !defined(TARGET_OF_WATCHOS) && !defined(TARGET_OF_XROS)
 #import <QuartzCore/QuartzCore.h>
 #include "ofxiOSEAGLView.h"
 
@@ -103,3 +104,4 @@
 }
 
 @end
+#endif

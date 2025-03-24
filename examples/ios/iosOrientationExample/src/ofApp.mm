@@ -1,6 +1,6 @@
 #include "ofApp.h"
 #include "ofAppiOSWindow.h"
-#import "ActionSheetDelegateForOF.h"
+#import "AlertControllerForOF.h"
 
 //--------------------------------------------------------------
 void ofApp::setup(){
@@ -143,15 +143,9 @@ void ofApp::touchDown(ofTouchEventArgs & touch) {
 		autoTitle = @"Turn Auto Rotation ON";
 	}
 	
-	UIActionSheet * actionSheet;
-	actionSheet = [[UIActionSheet alloc] initWithTitle:@"Select Orientation"
-											  delegate:nil
-									 cancelButtonTitle:@"Cancel"
-								destructiveButtonTitle:nil
-									 otherButtonTitles:@"Portrait", @"Portrait Upside Down", @"Landscape Left", @"Landscape Right", autoTitle, nil];
-	actionSheet.actionSheetStyle = UIActionSheetStyleBlackTranslucent;
-	actionSheet.delegate = [[ActionSheetDelegateForOF alloc] initWithApp:this];
-	[actionSheet showInView:ofxiOSGetGLParentView()];
+    AlertControllerForOF * alertControllerForOF = [[AlertControllerForOF alloc] initWithApp:this];
+
+    [alertControllerForOF showRotationOptions];
 }
 
 //--------------------------------------------------------------

@@ -46,6 +46,44 @@ ofxButton* ofxButton::setup(const std::string& toggleName, float width, float he
 	return this;
 }
 
+void ofxButton::generateDraw(){
+	bg.clear();
+	bg.setFillColor(thisBackgroundColor);
+	bg.rectangle(b);
+
+	fg.clear();
+	fg.setFilled(false);
+	fg.setStrokeWidth(1);
+	fg.setStrokeColor(thisFillColor);
+	fg.rectRounded(b.getPosition()+checkboxRect.getTopLeft()+glm::vec2{1,1},checkboxRect.width-2,checkboxRect.height-2, 5);
+
+	cross.clear();
+	cross.setStrokeColor(thisTextColor);
+	cross.setFillColor(thisFillColor);
+	cross.setStrokeWidth(2);
+	cross.setFilled(true);
+	cross.rectRounded(b.getPosition()+checkboxRect.getTopLeft()+glm::vec2{1,1},checkboxRect.width-2,checkboxRect.height-2, 5);
+
+	std::string name;
+	auto textX = b.x + textPadding + checkboxRect.width;
+	if(getTextBoundingBox(getName(), textX, 0).getMaxX() > b.getMaxX() - textPadding){
+		for(auto c: ofUTF8Iterator(getName())){
+			auto next = name;
+			ofUTF8Append(next, c);
+			if(getTextBoundingBox(next,textX,0).getMaxX() > b.getMaxX() - textPadding){
+				break;
+			}else{
+				name = next;
+			}
+		}
+	}else{
+		name = getName();
+	}
+
+	textMesh = getTextMesh(name, textX, getTextVCenteredInRect(b));
+}
+
+
 bool ofxButton::mouseReleased(ofMouseEventArgs & args){
 	bool attended = setValue(args.x, args.y, false);
 	bGuiActive = false;

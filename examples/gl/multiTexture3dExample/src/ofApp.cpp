@@ -312,7 +312,7 @@ void ofApp::draw(){
 		if(mBHitATri ) {
 			float deltaTime = ofClamp( ofGetLastFrameTime(), 1.f/1000.f, 1.f/10.f );
 			fboInfluence.begin();
-			ofSetColor( 255, MAX( (deltaTime * 60.0f) * mBrushStrength, 1) );
+			ofSetColor( 255, std::max( (deltaTime * 60.0f) * mBrushStrength, 1.f) );
 			// only enable drawing into the red and alpha channels that will be used for the height
 			// offset on the mesh in the shader
 			glColorMask(GL_TRUE, GL_FALSE, GL_FALSE, GL_TRUE);

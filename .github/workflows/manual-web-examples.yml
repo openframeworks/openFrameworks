@@ -1,0 +1,48 @@
+name: build-web-examples
+
+
+# make the action not run on the local repo if the branch is also in a pull request to OF/OF
+on: 
+  workflow_dispatch:
+    inputs:
+          release:
+            description: 'release'     
+            required: true
+            default: 'nightly'
+#on:
+#  push:
+#    if: github.event_name == 'push' && github.event.pull_request == null
+#    paths-ignore:
+#    - '**/*.md'
+#    - 'examples/**'
+#  pull_request:
+#    if: github.event_name == 'pull_request' && github.repository == 'openframeworks/openFrameworks'
+#    paths-ignore:
+#      - '**/*.md'
+#      - 'examples/**'
+jobs:
+  build-web-examples:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        cfg:
+          - target: emscripten
+    env:
+      TARGET: ${{matrix.cfg.target}}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Docker Step
+        run:  docker run -di --name emscripten -v $PWD:/src emscripten/emsdk:3.1.50 bash
+      - name: Download libs
+        run: ./scripts/dev/download_libs.sh -p emscripten
+      - name: Install dependencies
+        run: ./scripts/ci/$TARGET/install_web_examples.sh
+      - name: Build
+        run: docker exec -e GA_EXAMPLES_USER=${{ secrets.SSH_USER }} -e GA_EXAMPLES_SERVER=${{ secrets.SSH_SERVER }} -e GA_EXAMPLES_KEY="${{ secrets.SSH_KEY }}" -e GH_HEAD_REF=${{ github.head_ref }} -e GH_BRANCH=${{ github.ref_name }} -e GH_ACTIONS=true -i emscripten sh -c "scripts/ci/$TARGET/examples_to_build.sh"
+        env:
+          GA_EXAMPLES_USER: ${{ secrets.SSH_USER }}
+          GA_EXAMPLES_SERVER: ${{ secrets.SSH_SERVER }}
+          GA_EXAMPLES_KEY: ${{ secrets.SSH_KEY }}
+          GH_HEAD_REF: ${{ github.head_ref }}
+          GH_BRANCH: ${{ github.ref_name }}
+          GH_ACTIONS: "true"

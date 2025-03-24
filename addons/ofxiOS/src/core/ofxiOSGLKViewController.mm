@@ -6,6 +6,8 @@
 //
 
 #include <TargetConditionals.h>
+#include "ofxiOSConstants.h"
+#if defined(OF_UI_KIT) && defined(OF_GL_KIT)
 #if TARGET_OS_IOS || (TARGET_OS_IPHONE && !TARGET_OS_TV)
 
 #import "ofxiOSGLKViewController.h"
@@ -13,6 +15,7 @@
 #include "ofxiOSGLKView.h"
 #import "ofxiOSExtras.h"
 #include "ofAppiOSWindow.h"
+#include <glm/gtc/constants.hpp>
 
 @interface ofxiOSGLKViewController() <EAGLKViewDelegate, GLKViewControllerDelegate> {
     UIInterfaceOrientation currentInterfaceOrientation;
@@ -195,11 +198,11 @@
     if (interfaceOrientation == UIInterfaceOrientationPortrait) {
         return 0;           // 0 degrees.
     } else if (interfaceOrientation == UIInterfaceOrientationLandscapeRight) {
-        return M_PI * 0.5;  // 90 degrees.
+        return glm::half_pi<float>();  // 90 degrees.
     } else if (interfaceOrientation == UIInterfaceOrientationPortraitUpsideDown) {
-        return M_PI;        // 180 degrees.
+        return glm::pi<float>();        // 180 degrees.
     } else if (interfaceOrientation == UIInterfaceOrientationLandscapeLeft) {
-        return M_PI * 1.5;  // 270 degrees.
+        return glm::pi<float>() + glm::half_pi<float>();  // 270 degrees.
     } else {
         return 0;
     }
@@ -469,4 +472,5 @@
 
 @end
 
+#endif
 #endif

@@ -8,6 +8,7 @@
 #include <cassert>
 #include <shared_mutex>
 #include <utility>
+#include <mutex>
 
 namespace of::utils {
 

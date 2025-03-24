@@ -3,7 +3,8 @@
 //  Created by Lukasz Karluk on 14/06/13.
 //  http://julapy.com/blog
 //
-
+#include "ofxiOSConstants.h"
+#ifdef TARGET_OF_IOS
 #include "ofxiOSSoundStreamDelegate.h"
 #include "ofLog.h"
 #include "ofSoundBuffer.h"
@@ -104,3 +105,4 @@
 }
 
 @end
+#endif

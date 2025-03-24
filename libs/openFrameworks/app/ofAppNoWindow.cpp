@@ -4,6 +4,10 @@
 #include "of3dGraphics.h"
 #include <memory>
 
+#include "ofConstants.h"
+#ifndef TARGET_WIN32
+	#include <unistd.h>
+#endif
 
 #if defined TARGET_OSX || defined TARGET_LINUX
 #include <stdlib.h>
@@ -95,13 +99,13 @@ private:
 	void viewport(float x = 0, float y = 0, float width = 0, float height = 0, bool invertY = true){};
 	void setupScreenPerspective(float width = 0, float height = 0, float fov = 60, float nearDist = 0, float farDist = 0){}
 	void setupScreenOrtho(float width = 0, float height = 0, float nearDist = -1, float farDist = 1){};
-	ofRectangle getCurrentViewport() const{return ofRectangle();};
-	ofRectangle getNativeViewport() const{return ofRectangle();};
+	ofRectangle getCurrentViewport() const{ return ofRectangle(); };
+	ofRectangle getNativeViewport() const{ return ofRectangle(); };
 	int getViewportWidth() const{return 0;};
 	int getViewportHeight() const{return 0;};
 
 	void setCoordHandedness(ofHandednessType handedness){};
-	ofHandednessType getCoordHandedness() const{return OF_LEFT_HANDED;};
+	ofHandednessType getCoordHandedness() const{ return OF_LEFT_HANDED; };
 
 	//our openGL wrappers
 	void pushMatrix(){};
@@ -143,6 +147,7 @@ private:
 	void setFillMode(ofFillFlag fill){}
 	ofFillFlag getFillMode(){return OF_FILLED;}
 	void setLineWidth(float lineWidth){}
+	void setPointSize(float pointSize) {}
 	void setBlendMode(ofBlendMode blendMode){}
 	void setLineSmoothing(bool smooth){}
 	void setCircleResolution(int res){};
@@ -216,6 +221,7 @@ ofAppNoWindow::ofAppNoWindow()
 :coreEvents(new ofCoreEvents)
 ,currentRenderer(new ofNoopRenderer){
 	ofAppPtr = nullptr;
+    ofInit();
 	width = 0;
 	height = 0;
 }

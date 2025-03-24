@@ -37,21 +37,21 @@ public:
 
 		counter = 0;
 		if (y<TOP_MARGIN) {//this if is to determine if the oscillator is either an horizontal or vertical oscillator.
-			phase = ofMap(x-LEFT_MARGIN, LEFT_MARGIN, ofGetWidth(), -PI, PI, false);//the phase is defined by to position of the locator.Here it's value gets remaped to the correct range.
+			phase = ofMap(x-LEFT_MARGIN, LEFT_MARGIN, ofGetWidth(), -glm::pi<float>(), glm::pi<float>(), false);//the phase is defined by to position of the locator.Here it's value gets remaped to the correct range.
 
 			amplitude = ofMap(y, 0, TOP_MARGIN, 0.1f, 300, false);//Amplitude is defined by the position, and it's value gets remaped to the correct range.
 
 		}else {
-			phase = ofMap(y-TOP_MARGIN, TOP_MARGIN, ofGetHeight(), -PI, PI, false);
+			phase = ofMap(y-TOP_MARGIN, TOP_MARGIN, ofGetHeight(), -glm::pi<float>(), glm::pi<float>(), false);
 			amplitude = ofMap(x, 0, LEFT_MARGIN, 0.1f, 300, false);
 		}
 	}
 
 	void update(){
 		counter += freq;//the counter is incremented by the value of freq each time the oscillators update methods is called.
-		waveSin = sin(counter + phase) * amplitude;//Here is where we calulate the sine value for the oscillator.
+		waveSin = std::sin(counter + phase) * amplitude;//Here is where we calulate the sine value for the oscillator.
 		//Then is multiplied by amplitude, because the sin() function returns a value between -1 and 1
-		waveCos = cos(counter + phase) * amplitude;
+		waveCos = std::cos(counter + phase) * amplitude;
 	}
 
 	void draw(){//here we draw the oscillator

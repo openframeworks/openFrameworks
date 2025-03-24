@@ -74,7 +74,7 @@ void ofApp::update() {
 		}
 		
 		// get the 2d heading
-		float angle = (float)atan2(-vel[i].y, vel[i].x) + PI;
+		float angle = std::atan2(-vel[i].y, vel[i].x) + glm::pi<float>();
 		rotations[i] = (angle * -1.0);
 	}
 }

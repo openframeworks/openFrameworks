@@ -7,7 +7,7 @@
 
 #include "ofMainLoop.h"
 #include "ofBaseApp.h"
-#include "ofConstants.h"
+// #include "ofConstants.h"
 
 //========================================================================
 // default windowing
@@ -38,7 +38,7 @@ ofMainLoop::ofMainLoop()
 }
 
 ofMainLoop::~ofMainLoop() {
-	exit();
+
 }
 
 std::shared_ptr<ofAppBaseWindow> ofMainLoop::createWindow(const ofWindowSettings & settings){
@@ -103,6 +103,8 @@ void ofMainLoop::run(const std::shared_ptr<ofAppBaseWindow> & window, std::share
 			ofAddListener(ofxAndroidEvents().reloadGL,androidApp,&ofxAndroidApp::reloadGL,OF_EVENT_ORDER_APP);
 			ofAddListener(ofxAndroidEvents().swipe,androidApp,&ofxAndroidApp::swipe,OF_EVENT_ORDER_APP);
 			ofAddListener(ofxAndroidEvents().deviceOrientationChanged,androidApp,&ofxAndroidApp::deviceOrientationChangedEvent,OF_EVENT_ORDER_APP);
+			ofAddListener(ofxAndroidEvents().deviceHighestRefreshRate,androidApp,&ofxAndroidApp::deviceHighestRefreshRateChangedEvent,OF_EVENT_ORDER_APP);
+			ofAddListener(ofxAndroidEvents().deviceRefreshRate,androidApp,&ofxAndroidApp::deviceRefreshRateChangedEvent,OF_EVENT_ORDER_APP);
 		}
 #endif
 	}
@@ -128,6 +130,7 @@ int ofMainLoop::loop(){
 	}else{
 		windowLoop();
 	}
+	exit();	
 	return status;
 }
 
@@ -206,6 +209,8 @@ void ofMainLoop::exit(){
 			ofRemoveListener(ofxAndroidEvents().reloadGL,androidApp,&ofxAndroidApp::reloadGL,OF_EVENT_ORDER_APP);
 			ofRemoveListener(ofxAndroidEvents().swipe,androidApp,&ofxAndroidApp::swipe,OF_EVENT_ORDER_APP);
 			ofRemoveListener(ofxAndroidEvents().deviceOrientationChanged,androidApp,&ofxAndroidApp::deviceOrientationChangedEvent,OF_EVENT_ORDER_APP);
+			ofRemoveListener(ofxAndroidEvents().deviceHighestRefreshRate,androidApp,&ofxAndroidApp::deviceHighestRefreshRateChangedEvent,OF_EVENT_ORDER_APP);
+			ofRemoveListener(ofxAndroidEvents().deviceRefreshRate,androidApp,&ofxAndroidApp::deviceRefreshRateChangedEvent,OF_EVENT_ORDER_APP);
 		}
 #endif
 	}

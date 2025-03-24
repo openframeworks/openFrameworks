@@ -13,19 +13,18 @@ static bool bScrubbing = false;
 void ofApp::setup() {
 	ofSetFrameRate(30);
 	ofBackground(225, 225, 225);
-
-	video.load("hands.m4v");
-	video.play();
 	
-	controls = [[VideoPlayerControls alloc] init];
-	controls.delegate = [[VideoPlayerControlsDelegateForOF alloc] initWithApp:this];
+    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"VideoPlayerControls" bundle:nil];
+    controls    =  [storyboard instantiateViewControllerWithIdentifier:@"VideoPlayerControls"];
 	[ofxiOSGetGLParentView() addSubview:controls.view];
 	
-	AVFoundationVideoPlayer * avVideoPlayer;
-	avVideoPlayer = (AVFoundationVideoPlayer *)video.getAVFoundationVideoPlayer();
-	[avVideoPlayer setVideoPosition:CGPointMake(0, 240)];
-	[ofxiOSGetGLParentView() insertSubview:avVideoPlayer.playerView belowSubview:controls.view];
-	avVideoPlayer.playerView.hidden = YES;
+    video.load("hands.m4v");
+    video.play();
+    
+    AVFoundationVideoPlayer * avVideoPlayer = (__bridge AVFoundationVideoPlayer *)(video.getAVFoundationVideoPlayer());
+    [avVideoPlayer setVideoPosition:CGPointMake(0, 240)];
+    [ofxiOSGetGLParentView() insertSubview:avVideoPlayer.playerView belowSubview:controls.view];
+    avVideoPlayer.playerView.hidden = YES;
 }
 
 //--------------------------------------------------------------
@@ -55,10 +54,8 @@ void ofApp::update(){
 void ofApp::draw(){
 	
 	ofSetColor(255);
-	video.getTexturePtr()->draw(0, 0);
-	
 	if(video.isLoaded()){
-		
+        video.getTexturePtr()->draw(0, 0);
 		// let's move through the "RGB" char array
 		// using the red pixel to control the size of a circle.
 		
@@ -126,8 +123,7 @@ void ofApp::loadPressed() {
 	video.load("hands.m4v");
 	video.play();
 	
-	AVFoundationVideoPlayer * avVideoPlayer;
-	avVideoPlayer = (AVFoundationVideoPlayer *)video.getAVFoundationVideoPlayer();
+    AVFoundationVideoPlayer * avVideoPlayer = (__bridge AVFoundationVideoPlayer *)(video.getAVFoundationVideoPlayer());
 	[avVideoPlayer setVideoPosition:CGPointMake(0, 240)];
 	[ofxiOSGetGLParentView() insertSubview:avVideoPlayer.playerView belowSubview:controls.view];
 	avVideoPlayer.playerView.hidden = YES;
@@ -151,12 +147,14 @@ void ofApp::loopOffPressed() {
 }
 
 void ofApp::nativeOnPressed() {
-	[(AVFoundationVideoPlayer *)video.getAVFoundationVideoPlayer() playerView].hidden = NO;
+    AVFoundationVideoPlayer * avVideoPlayer = (__bridge AVFoundationVideoPlayer *)(video.getAVFoundationVideoPlayer());
+	avVideoPlayer.playerView.hidden = NO;
 	[controls setNative:YES];
 }
 
 void ofApp::nativeOffPressed() {
-	[(AVFoundationVideoPlayer *)video.getAVFoundationVideoPlayer() playerView].hidden = YES;
+    AVFoundationVideoPlayer * avVideoPlayer = (__bridge AVFoundationVideoPlayer *)(video.getAVFoundationVideoPlayer());
+	avVideoPlayer.playerView.hidden = YES;
 	[controls setNative:NO];
 }
 
@@ -174,8 +172,6 @@ void ofApp::muteOffPressed() {
 void ofApp::exit(){
 	if(controls) {
 		[controls.view removeFromSuperview];
-		controls.delegate = nil;
-		[controls release];
 		controls = nil;
 	}
 }

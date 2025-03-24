@@ -544,6 +544,12 @@ void ofRendererCollection::setLineWidth(float lineWidth){
    }
 }
 
+void ofRendererCollection::setPointSize(float pointSize){
+	for(auto renderer: renderers){
+		renderer->setPointSize(pointSize);
+	}
+}
+
 void ofRendererCollection::setDepthTest(bool depthTest) {
    for(auto renderer: renderers){
 	   renderer->setDepthTest(depthTest);

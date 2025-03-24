@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ofxiOS.h"
+#include "ofxiOSVideoPlayer.h"
 
 class ofApp : public ofxiOSApp{
 	
@@ -35,6 +36,6 @@ class ofApp : public ofxiOSApp{
 		void nativeOffPressed();
 		void muteOnPressed();
 		void muteOffPressed();
-
+    
 		ofxiOSVideoPlayer video;
 };
