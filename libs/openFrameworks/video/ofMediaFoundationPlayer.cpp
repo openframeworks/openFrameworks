@@ -101,7 +101,7 @@ bool ofMediaFoundationPlayer::MEDXDeviceManager::createDX11Device() {
     );
 
     if (FAILED(hr)) {
-        ofLogError("ofMEDXDeviceManager::CreateDX11Device()") << " unable to use hw accel.";
+        ofLogError("ofMEDXDeviceManager::CreateDX11Device()") << "unable to use hw accel.";
         mBUseDX = false;
         return mBUseDX;
     }
@@ -110,7 +110,7 @@ bool ofMediaFoundationPlayer::MEDXDeviceManager::createDX11Device() {
     if (SUCCEEDED(m_spDX11Device.Get()->QueryInterface(IID_PPV_ARGS(&spMultithread)))) {
         spMultithread->SetMultithreadProtected(TRUE);
     } else {
-        ofLogError("ofMEDXDeviceManager :: CreateDX11Device") << " unable to set multi thread.";
+        ofLogError("ofMEDXDeviceManager::CreateDX11Device") << "unable to set multi thread.";
         mBUseDX = false;
         return mBUseDX;
     }
@@ -118,14 +118,14 @@ bool ofMediaFoundationPlayer::MEDXDeviceManager::createDX11Device() {
 
     hr = MFCreateDXGIDeviceManager(&mResetToken, &m_spDXGIManager);
     if (FAILED(hr)) {
-        ofLogError("ofMEDXDeviceManager :: CreateDX11Device") << " unable to create DXGIDeviceManager.";
+        ofLogError("ofMEDXDeviceManager::CreateDX11Device") << "unable to create DXGIDeviceManager.";
         mBUseDX = false;
         return mBUseDX;
     }
 
     hr = m_spDXGIManager->ResetDevice(m_spDX11Device.Get(), mResetToken);
     if (FAILED(hr)) {
-        ofLogError("ofMEDXDeviceManager :: CreateDX11Device") << " unable to ResetDevice.";
+        ofLogError("ofMEDXDeviceManager::CreateDX11Device") << "unable to ResetDevice.";
         mBUseDX = false;
         return mBUseDX;
     }
@@ -137,7 +137,7 @@ bool ofMediaFoundationPlayer::MEDXDeviceManager::createDX11Device() {
     }
 
     if (gl_handleD3D == nullptr) {
-        ofLogError("ofMEDXDeviceManager :: CreateDX11Device") << " error creating GL D3D Handle.";
+        ofLogError("ofMEDXDeviceManager::CreateDX11Device") << "error creating GL D3D Handle.";
         mBUseDX = false;
     }
 
@@ -312,13 +312,13 @@ bool SharedDXGLTexture::create(DXGI_FORMAT aDxFormat) {
 
         HRESULT hr = dxMan->getD11Device()->CreateTexture2D(&desc2, nullptr, stagingTexture.GetAddressOf());
         if (FAILED(hr)) {
-            ofLogError("ofMEVideoPlayer :: SharedDXGLTexture :: create") << " Failed to create staging texture";
+            ofLogError("ofMEVideoPlayer::SharedDXGLTexture::create") << "Failed to create staging texture";
             return false;
         }
 
         mBValid = (mGLDX_Handle != nullptr);
     } else {
-        ofLogError("SharedDXGLTexture :: createSharedTexture") << " ERROR Creating shared texture.";
+        ofLogError("SharedDXGLTexture::createSharedTexture") << "ERROR Creating shared texture.";
         mBValid = false;
     }
     return mBValid;
@@ -390,7 +390,7 @@ bool SharedDXGLTexture::updatePixels(ofTexture& aSrcTex, ofPixels& apix, ofPixel
     immediateContext->CopyResource(stagingTexture.Get(), lDestImage);
     // copy the texture to a staging resource
     if (!stagingTexture) {
-        ofLogError("ofMediaFoundationPlayer :: SharedDXGLTexture :: updatePixels") << " ERROR copying staging texture.";
+        ofLogError("ofMediaFoundationPlayer :: SharedDXGLTexture :: updatePixels") << "ERROR copying staging texture.";
         return false;
     }
 
@@ -402,13 +402,13 @@ bool SharedDXGLTexture::updatePixels(ofTexture& aSrcTex, ofPixels& apix, ofPixel
         0,
         &mapInfo);
     if (hr != S_OK) {
-        ofLogError("ofMediaFoundationPlayer :: SharedDXGLTexture :: updatePixels") << " Failed to map staging texture.";
+        ofLogError("ofMediaFoundationPlayer :: SharedDXGLTexture :: updatePixels") << "Failed to map staging texture.";
         return false;
     }
     immediateContext->Unmap(stagingTexture.Get(), 0);
 
     if (FAILED(hr)) {
-        ofLogVerbose("ofMediaFoundationPlayer :: SharedDXGLTexture :: updatePixels") << " unable to map hw dx texture.";
+        ofLogVerbose("ofMediaFoundationPlayer :: SharedDXGLTexture :: updatePixels") << "unable to map hw dx texture.";
         aSrcTex.readToPixels(apix);
         return apix.getWidth() > 0;
     }
