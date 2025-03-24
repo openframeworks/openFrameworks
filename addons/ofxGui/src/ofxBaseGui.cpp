@@ -228,9 +228,9 @@ float ofxBaseGui::getTextVCenteredInRect(const ofRectangle& container){
 }
 
 
-void ofxBaseGui::saveToFile(const std::string& filename){
-	auto extension = ofToLower(ofFilePath::getFileExt(filename));
-	if(extension == "xml"){
+void ofxBaseGui::saveToFile(const of::filesystem::path & filename){
+	auto extension = ofGetExtensionLower(filename);
+	if(extension == ".xml"){
 		ofXml xml;
 		if(ofFile(filename, ofFile::Reference).exists()){
 			xml.load(filename);
@@ -238,7 +238,7 @@ void ofxBaseGui::saveToFile(const std::string& filename){
 		saveTo(xml);
 		xml.save(filename);
     }else
-    if(extension == "json"){
+    if(extension == ".json"){
         ofJson json = ofLoadJson(filename);
 		saveTo(json);
         ofSavePrettyJson(filename, json);
@@ -247,14 +247,14 @@ void ofxBaseGui::saveToFile(const std::string& filename){
 	}
 }
 
-void ofxBaseGui::loadFromFile(const std::string& filename){
-	auto extension = ofToLower(ofFilePath::getFileExt(filename));
-	if(extension == "xml"){
+void ofxBaseGui::loadFromFile(const of::filesystem::path & filename){
+	auto extension = ofGetExtensionLower(filename);
+	if(extension == ".xml"){
 		ofXml xml;
 		xml.load(filename);
 		loadFrom(xml);
     }else
-    if(extension == "json"){
+    if(extension == ".json"){
 		ofFile jsonFile(filename);
 		ofJson json = ofLoadJson(jsonFile);
 		loadFrom(json);

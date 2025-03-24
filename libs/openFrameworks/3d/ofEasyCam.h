@@ -1,11 +1,17 @@
 #pragma once
 
 #include "ofCamera.h"
-#include "ofEvents.h"
-#include "ofRectangle.h"
+class ofEventListeners;
+class ofEventArgs;
+class ofRectangle;
 
-#define GLM_FORCE_CTOR_INIT
-#include "glm/gtc/quaternion.hpp"
+#if !defined(GLM_FORCE_CTOR_INIT)
+	#define GLM_FORCE_CTOR_INIT
+#endif
+#if !defined(GLM_ENABLE_EXPERIMENTAL)
+	#define GLM_ENABLE_EXPERIMENTAL
+#endif
+#include <glm/gtc/quaternion.hpp>
 
 /// \brief A super simple camera for interacting with objects in 3D space.
 class ofEasyCam : public ofCamera {

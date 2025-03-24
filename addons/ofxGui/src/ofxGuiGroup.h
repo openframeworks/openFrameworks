@@ -5,15 +5,16 @@
 #include "ofxButton.h"
 #include "ofxLabel.h"
 #include "ofxSlider.h"
+#include "ofPath.h"
 
 class ofxGuiGroup : public ofxBaseGui {
 public:
 	ofxGuiGroup();
-	ofxGuiGroup(const ofParameterGroup & parameters, const std::string & _filename = "settings.xml", float x = 10, float y = 10);
+	ofxGuiGroup(const ofParameterGroup & parameters, const of::filesystem::path & filename = "settings.xml", float x = 10, float y = 10);
 	virtual ~ofxGuiGroup() {
 	}
-	ofxGuiGroup * setup(const std::string & collectionName = "", const std::string & filename = "settings.xml", float x = 10, float y = 10);
-	ofxGuiGroup * setup(const ofParameterGroup & parameters, const std::string & filename = "settings.xml", float x = 10, float y = 10);
+	ofxGuiGroup * setup(const std::string & collectionName = "", const of::filesystem::path & filename = "settings.xml", float x = 10, float y = 10);
+	ofxGuiGroup * setup(const ofParameterGroup & parameters, const of::filesystem::path & filename = "settings.xml", float x = 10, float y = 10);
 
 	void add(ofxBaseGui * element);
 	void add(const ofParameterGroup & parameters);
@@ -107,7 +108,7 @@ protected:
 	std::vector<ofxBaseGui *> collection;
 	ofParameterGroup parameters;
 
-	std::string filename;
+	of::filesystem::path filename;
 	bool minimized;
 	bool bGuiActive;
 

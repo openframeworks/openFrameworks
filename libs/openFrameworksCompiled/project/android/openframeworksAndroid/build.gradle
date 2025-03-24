@@ -1,0 +1,102 @@
+plugins {
+	id 'com.android.library'
+}
+
+def PRJ_SRC_ROOT = './'
+
+static def ofRoot() { return '../../../../' }
+final ofSource = ofRoot() + 'libs/openFrameworks'
+final ofLibs = ofRoot() + 'libs'
+final addons = ofRoot() + 'addons'
+def OFX_ANDROID = ofRoot() + 'addons/ofxAndroid'
+final ofLibOutput = ofRoot() + 'libs/openFrameworksCompiled/lib/android'
+def LIB_OUTPUT = ofRoot() + './../../../../libs/openFrameworksCompiled/lib/android'
+def enableProguardInReleaseBuilds = true
+def enableProguardInDebugBuilds = true
+tasks.register("prepareKotlinBuildScriptModel"){}
+
+android {
+	namespace 'cc.openframeworks.android'
+	compileSdkVersion 34
+	ndkVersion '28.0.13004108'
+	buildToolsVersion '35.0.0' // Updated from 35.0.1 to 34.0.0
+
+	defaultConfig {
+		minSdkVersion 34
+		targetSdkVersion 34
+		versionCode 12
+		versionName "12"
+		ndk.abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86_64'
+
+		externalNativeBuild {
+			cmake {
+				arguments "-DANDROID_TOOLCHAIN=clang",
+					"-DTARGET_OPENGLES=TRUE"
+
+				// Use c++_static if building OpenFrameworks as a STATIC library
+				if (project.hasProperty("OF_STATIC") && project.OF_STATIC.toBoolean()) {
+					arguments "-DANDROID_STL=c++_static"
+				} else {
+					arguments "-DANDROID_STL=c++_shared"
+				}
+
+				// Enable NEON only for ARM architectures
+				if (android.defaultConfig.ndk.abiFilters.contains("armeabi-v7a") || android.defaultConfig.ndk.abiFilters.contains("arm64-v8a")) {
+					arguments "-DANDROID_ARM_NEON=TRUE"
+				}
+
+				abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86_64'
+			}
+		}
+		multiDexEnabled false
+	}
+	buildTypes {
+		release {
+			minifyEnabled true
+			shrinkResources false
+			jniDebuggable false
+			debuggable false
+			proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'),
+				'proguard-rules.pro'
+		}
+		debug {
+			shrinkResources false
+			jniDebuggable true
+			debuggable true
+		}
+	}
+	sourceSets {
+		main {
+			manifest.srcFile "${PRJ_SRC_ROOT}/AndroidManifest.xml"
+			java.srcDirs = ["${OFX_ANDROID}/Java"]
+		}
+	}
+	externalNativeBuild {
+		cmake {
+			path "CMakeLists.txt"
+		}
+	}
+	compileOptions {
+		sourceCompatibility JavaVersion.VERSION_1_8
+		targetCompatibility JavaVersion.VERSION_1_8
+	}
+	prefab {
+		openFrameworksAndroid {
+			headers "src/main/cpp/include"
+		}
+	}
+	packagingOptions {
+		exclude("**/libopenFrameworksAndroid.so")
+	}
+	viewBinding {
+		enabled true
+	}
+}
+
+dependencies {
+	implementation fileTree(dir: 'libs', include: ['*.jar'])
+	implementation 'androidx.appcompat:appcompat:1.7.0'
+	implementation 'androidx.constraintlayout:constraintlayout:2.2.1'
+	implementation "com.getkeepsafe.relinker:relinker:1.4.4"  // keep 1.4.4
+	implementation "com.android.ndk.thirdparty:curl:7.68.0-alpha-1"
+}

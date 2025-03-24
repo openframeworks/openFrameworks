@@ -6,12 +6,10 @@
 
 #include "ofConstants.h"
 
-#ifdef OF_VIDEO_CAPTURE_AVF
-
-//------
 #include "ofVideoBaseTypes.h"
 #include "ofTexture.h"
 #include "ofThread.h"
+// MARK: Template, if 
 #include "ofPixels.h"
 #include <mutex>
 
@@ -118,5 +116,3 @@ class ofAVFoundationGrabber : virtual public ofBaseVideoGrabber{
 		std::mutex capMutex;
 
 };
-
-#endif

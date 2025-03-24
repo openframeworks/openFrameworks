@@ -1,0 +1,6 @@
+{
+	"recommendations": [
+		"ms-vscode.makefile-tools",
+		"ms-vscode.cpptools"
+	]
+}

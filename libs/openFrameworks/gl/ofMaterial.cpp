@@ -5,7 +5,14 @@
 #include "ofImage.h"
 #include "ofGLProgrammableRenderer.h"
 
-#include <typeinfo>
+#if !defined(GLM_FORCE_CTOR_INIT)
+	#define GLM_FORCE_CTOR_INIT
+#endif
+#if !defined(GLM_ENABLE_EXPERIMENTAL)
+	#define GLM_ENABLE_EXPERIMENTAL
+#endif
+#include <glm/vec2.hpp>
+#include <glm/gtx/transform.hpp>
 
 using std::shared_ptr;
 using std::string;
@@ -60,6 +67,45 @@ std::string ofMaterial::getUniformName( const ofMaterialTextureType& aMaterialTe
 			break;
 	}
 	return "";
+}
+
+//----------------------------------------------------------
+std::string ofMaterial::getTextureTypeAsString(const ofMaterialTextureType & aMaterialTextureType) {
+	switch(aMaterialTextureType) {
+		case OF_MATERIAL_TEXTURE_DIFFUSE:
+			return "DIFFUSE";
+		case OF_MATERIAL_TEXTURE_SPECULAR:
+			return "SPECULAR";
+		case OF_MATERIAL_TEXTURE_AMBIENT:
+			return "AMBIENT";
+		case OF_MATERIAL_TEXTURE_EMISSIVE:
+			return "EMISSIVE";
+		case OF_MATERIAL_TEXTURE_NORMAL:
+			return "NORMAL";
+		case OF_MATERIAL_TEXTURE_OCCLUSION:
+			return "OCCLUSION";
+		case OF_MATERIAL_TEXTURE_AO_ROUGHNESS_METALLIC:
+			return "AO_ROUGHNESS_METALLIC";
+		case OF_MATERIAL_TEXTURE_ROUGHNESS_METALLIC:
+			return "ROUGHNESS_METALLIC";
+		case OF_MATERIAL_TEXTURE_ROUGHNESS:
+			return "ROUGHNESS";
+		case OF_MATERIAL_TEXTURE_METALLIC:
+			return "METALLIC";
+		case OF_MATERIAL_TEXTURE_DISPLACEMENT:
+			return "DISPLACEMENT";
+		case OF_MATERIAL_TEXTURE_CLEARCOAT:
+			return "CLEARCOAT";
+		case OF_MATERIAL_TEXTURE_CLEARCOAT_ROUGHNESS:
+			return "CLEARCOAT_ROUGHNESS";
+		case OF_MATERIAL_TEXTURE_CLEARCOAT_INTENSITY_ROUGHNESS:
+			return "CLEARCOAT_INTENSITY_ROUGHNESS";
+		case OF_MATERIAL_TEXTURE_CLEARCOAT_NORMAL:
+			return "CLEARCOAT_NORMAL";
+		default:
+			break;
+	}
+	return "NONE";
 }
 
 //----------------------------------------------------------
@@ -237,32 +283,26 @@ void ofMaterial::setTexCoordScale( float xscale, float yscale ) {
 
 //----------------------------------------------------------
 bool ofMaterial::loadTexture( const ofMaterialTextureType& aMaterialTextureType, std::string apath ) {
-	return loadTexture(aMaterialTextureType, apath, ofGetUsingArbTex(), false);
+	return loadTexture(aMaterialTextureType, apath, !ofGetUsingArbTex(), false);
 }
 
 //----------------------------------------------------------
 bool ofMaterial::loadTexture( const ofMaterialTextureType& aMaterialTextureType, std::string apath, bool bTex2d, bool mirrorY ) {
-	ofPixels tpix;
+	
 	bool bWasUsingArb = ofGetUsingArbTex();
-	bTex2d ? ofEnableArbTex() : ofDisableArbTex();
+	bTex2d ? ofDisableArbTex() : ofEnableArbTex();
 	
-	bool bLoadOk = false;
+	auto tex { std::make_shared<ofTexture>() };
+	bool bLoadOk = ofLoadImage(*tex, apath, mirrorY );
 	
-	if( ofLoadImage( tpix, apath )) {
-		if( mirrorY ) {
-			tpix.mirror(mirrorY, false);
-		}
-		bLoadOk = true;
-		// if there was a previous instance, then erase it, then replace it 
+	if( bLoadOk ) {
+		// if there was a previous instance, then erase it, then replace it
 		if( mLocalTextures.find(aMaterialTextureType) != mLocalTextures.end() ) {
 			if( mLocalTextures[aMaterialTextureType] ) {
 				mLocalTextures[aMaterialTextureType].reset();
 			}
 			mLocalTextures.erase(aMaterialTextureType);
 		}
-		
-		auto tex = std::make_shared<ofTexture>();
-		tex->loadData(tpix);
 		mLocalTextures[aMaterialTextureType] = tex;
 		setTexture( aMaterialTextureType, *tex );
 	} else {
@@ -271,6 +311,24 @@ bool ofMaterial::loadTexture( const ofMaterialTextureType& aMaterialTextureType,
 	
 	bWasUsingArb ? ofEnableArbTex() : ofDisableArbTex();
 	return bLoadOk;
+}
+
+//----------------------------------------------------------
+bool ofMaterial::hasLoadedTexture(const ofMaterialTextureType & aMaterialTextureType) {
+	if( mLocalTextures.find(aMaterialTextureType) != mLocalTextures.end() ) {
+		if(mLocalTextures[aMaterialTextureType]) {
+			return true;
+		}
+	}
+	return false;
+}
+
+//----------------------------------------------------------
+std::shared_ptr<ofTexture> ofMaterial::getLoadedTexture(const ofMaterialTextureType & aMaterialTextureType) {
+	if( mLocalTextures.find(aMaterialTextureType) != mLocalTextures.end() ) {
+		return mLocalTextures[aMaterialTextureType];
+	}
+	return std::shared_ptr<ofTexture>();
 }
 
 //----------------------------------------------------------
@@ -754,7 +812,7 @@ const ofShader& ofMaterial::getShadowDepthShader( const ofShadow& ashadow, ofGLP
 	auto shadowShader = mDepthShaders[&renderer]->shaders.find(shadowShaderId);
 	
 	if(shadowShader == mDepthShaders[&renderer]->shaders.end() || !mDepthShaders[&renderer]->shaders[shadowShaderId] ) {
-		auto nDepthShader = std::make_shared<ofShader>();
+		auto nDepthShader { std::make_shared<ofShader>() };
 		
 		auto customUniforms = data.customUniforms;
 		for( auto & custom : mCustomUniforms ){
@@ -907,7 +965,7 @@ void ofMaterial::initShaders(ofGLProgrammableRenderer & renderer) const{
 		
 		ofLogVerbose( "ofMaterial" ) << " fragment2DHeader------------------- ";
 		ofLogVerbose() << fragment2DHeader;
-		ofLogVerbose( "ofMaterial" ) << " fragment2DHeader xxxxxxx ";
+		ofLogVerbose( "ofMaterial" ) << " fragment2DHeader ";
 
         shaders[&renderer].reset(new Shaders);
         shaders[&renderer]->numLights = numLights;
@@ -1133,7 +1191,7 @@ void ofMaterial::updateLights(const ofShader & shader,ofGLProgrammableRenderer &
 			//shader.setUniform3f("lights["+idx+"].spotDirection", glm::normalize(direction));
 			shader.setUniform1f("lights["+idx+"].spotExponent", light->exponent);
 			shader.setUniform1f("lights["+idx+"].spotCutoff", light->spotCutOff);
-			shader.setUniform1f("lights["+idx+"].spotCosCutoff", cos(ofDegToRad(light->spotCutOff)));
+			shader.setUniform1f("lights["+idx+"].spotCosCutoff", std::cos(glm::radians(light->spotCutOff)));
 		}else if(light->lightType==OF_LIGHT_DIRECTIONAL){
 			if( !isPBR() ) {
 				glm::vec3 halfVector(glm::normalize(glm::vec4(0.f, 0.f, 1.f, 0.f) + lightEyePosition));

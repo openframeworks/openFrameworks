@@ -11,7 +11,34 @@
 
 #include <list>
 
+// References
+//------------------------------------------------------------------
 // https://github.com/microsoft/DirectXTK/blob/main/Audio/AudioEngine.cpp
+// https://github.com/walbourn/directx-sdk-samples/blob/main/XAudio2/XAudio2MFStream/XAudio2MFStream.cpp
+/*
+MIT License
+
+Copyright (c) Microsoft Corporation.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE
+ */
+//------------------------------------------------------------------
 
 namespace of {
 	struct MFSourceReaderNotifyCallback {
@@ -112,8 +139,8 @@ public:
 	bool isLoaded() const override;
 	float getVolume() const override;
 
-	float getDurationSeconds() { return mDurationSeconds; }
-	uint32_t getDurationMS() { return mDurationMS; }
+	float getDuration() const { return mDurationSeconds; }
+	unsigned int getDurationMS() const { return mDurationMS; }
 
 protected:
 
@@ -184,7 +211,7 @@ protected:
 
 	bool mBCanSeek = false;
 	double mDurationSeconds = 0;
-	uint32_t mDurationMS = 0;
+	unsigned int mDurationMS = 0;
 
 	// 2 = INT_16, 3 = INT_24 and 4 = FLOAT_32
 	// TODO: Adjust this based on file loaded 

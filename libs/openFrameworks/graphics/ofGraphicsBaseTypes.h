@@ -44,6 +44,19 @@ enum ofFboMode : short;
 enum ofLoopType : short;
 enum ofOrientation : short;
 
+struct ofBoundingBox{
+	glm::vec3 min { 0, 0, 0 };
+	glm::vec3 max { 0, 0, 0 };
+};
+
+#if !defined(GLM_FORCE_CTOR_INIT)
+	#define GLM_FORCE_CTOR_INIT
+#endif
+#if !defined(GLM_ENABLE_EXPERIMENTAL)
+	#define GLM_ENABLE_EXPERIMENTAL
+#endif
+#include <glm/mat4x4.hpp>
+
 /// \brief Contains general information about the style of ofGraphics
 /// elements such as color, line width and others.
 class ofStyle {
@@ -57,6 +70,7 @@ public:
 		sphereResolution = 20;
 		curveResolution = 20;
 		lineWidth = 1.0;
+		pointSize = 1.0;
 		polyMode = OF_POLY_WINDING_ODD;
 		rectMode = OF_RECTMODE_CORNER;
 #ifdef TARGET_OPENGLES
@@ -127,6 +141,9 @@ public:
 	/// \warning This is not currently implemented in modern OF renderers.
 	float lineWidth;
 
+	/// \brief The size of rendered points.
+	float pointSize;
+
 	//bool depthTest; removed since it'll break old projects setting depth test through glEnable
 };
 
@@ -134,8 +151,12 @@ public:
 // ofBaseDraws
 //----------------------------------------------------------
 
+/// \class ofBaseDraws
+///
+/// \brief An abstract class representing an object that draws.
 class ofBaseDraws {
 public:
+
 	/// \brief Destroy the abstract object.
 	virtual ~ofBaseDraws() { }
 
@@ -177,12 +198,19 @@ public:
 	virtual void draw(const glm::vec2 & point, float w, float h) const;
 
 	/// \brief Get the height.
-	/// \returns the height.
+	///
+	/// \return the height.
 	virtual float getHeight() const = 0;
 
 	/// \brief Get the width.
-	/// \returns the width.
+	///
+	/// \return the width.
 	virtual float getWidth() const = 0;
+	
+	// TODO: Implement correctly for texture, videos, etc.
+	virtual glm::vec2 getSize() {
+		return { getWidth(), getHeight() };
+	}
 
 	/// \brief Set the anchor point the item is drawn around as a percentage.
 	///
@@ -206,9 +234,12 @@ public:
 	virtual void resetAnchor() {};
 };
 
+/// \class ofBaseUpdates
+///
 /// \brief An abstract class representing an object that can be updated.
 class ofBaseUpdates {
 public:
+
 	/// \brief Destroy the ofBaseUpdates.
 	virtual ~ofBaseUpdates() { }
 
@@ -240,15 +271,19 @@ public:
 /// \endcode
 class ofAbstractHasPixels {
 public:
+
 	/// \brief Destroy the ofAbstractHasPixels.
 	virtual ~ofAbstractHasPixels() { }
 };
 
+/// \class ofBaseHasPixels_
+///
 /// \brief A base class represeting an object that has pixels.
 /// \tparam T The pixel data type.
 template <typename T>
 class ofBaseHasPixels_ : public ofAbstractHasPixels {
 public:
+
 	/// \brief Destroy the ofAbstractHasPixels.
 	virtual ~ofBaseHasPixels_() { }
 
@@ -270,6 +305,8 @@ typedef ofBaseHasPixels_<float> ofBaseHasFloatPixels;
 /// \brief A typedef for an unsigned short ofBaseHasPixels_.
 typedef ofBaseHasPixels_<unsigned short> ofBaseHasShortPixels;
 
+/// \class ofBaseVideoPlayer
+///
 /// \brief The base renderer interface.
 class ofBaseRenderer {
 public:
@@ -285,16 +322,22 @@ public:
 
 	/// \brief Starts using this renderer as the rendering surface.
 	virtual void startRender() = 0;
+
 	/// \brief Stop using this renderer as the rendering surface.
 	virtual void finishRender() = 0;
 
 	/// \brief Draw a polyline with this renderer.
+	///
 	/// \param poly The polyline to draw with this renderer.
 	virtual void draw(const ofPolyline & poly) const = 0;
+
 	/// \brief Draw a path with this renderer.
+	///
 	/// \param shape The path to draw with this renderer.
 	virtual void draw(const ofPath & shape) const = 0;
+
 	/// \brief Draw a path with this renderer at \p x and \p y.
+	///
 	/// \param shape The path to draw with this renderer.
 	/// \param x The x coordinate to use to draw \p shape.
 	/// \param y The y coordinate to use to draw \p shape.
@@ -304,6 +347,7 @@ public:
 		draw(shape);
 		const_cast<ofBaseRenderer *>(this)->popMatrix();
 	}
+
 	/// \brief Draw a \p mesh with this renderer using the \p renderType.
 	///
 	/// \p renderType defines how the \p mesh will be rendered and may be:
@@ -349,11 +393,13 @@ public:
 	virtual void draw(const of3dPrimitive & model, ofPolyRenderMode renderType) const = 0;
 
 	/// \brief Draw a node with this renderer using ofNode::customDraw().
+	///
 	/// \param model The node to draw with this renderer.
 	/// \sa ofNode::customDraw()
 	virtual void draw(const ofNode & model) const = 0;
 
 	/// \brief Draw an \p image with this renderer.
+	///
 	/// \param image The image to draw with this renderer.
 	/// \param x The x coordinate to use when drawing \p image with this
 	/// renderer.
@@ -368,6 +414,7 @@ public:
 	virtual void draw(const ofImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const = 0;
 
 	/// \brief Draw an \p image with this renderer.
+	///
 	/// \param image The image to draw with this renderer.
 	/// \param x The x coordinate to use to draw \p image with this renderer.
 	/// \param y The y coordinate to use to draw \p image with this renderer.
@@ -381,6 +428,7 @@ public:
 	virtual void draw(const ofFloatImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const = 0;
 
 	/// \brief Draw an \p image with this renderer.
+	///
 	/// \param image The image to draw with this renderer.
 	/// \param x The x coordinate to use to draw \p image with this renderer.
 	/// \param y The y coordinate to use to draw \p image with this renderer.
@@ -394,6 +442,7 @@ public:
 	virtual void draw(const ofShortImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const = 0;
 
 	/// \brief Draw a \p video with this renderer.
+	///
 	/// \param video The video with draw with this renderer.
 	/// \param x The x coordinate to use to draw \p video with this renderer.
 	/// \param y The y coordinate to use to draw \p video with this renderer.
@@ -402,7 +451,8 @@ public:
 	virtual void draw(const ofBaseVideoDraws & video, float x, float y, float w, float h) const = 0;
 
 	//--------------------------------------------
-	// transformations
+	// Transformations
+
 	/// \brief Push the current viewport into the renderer's viewport stack.
 	///
 	/// pushViewport() save the current viewport to the renderer's viewport
@@ -429,6 +479,7 @@ public:
 
 	/// \brief Set this renderer's viewport manually using x, y, width, and
 	/// height.
+	///
 	/// \param x The x coordinate of the viewport. Defaults to 0.
 	/// \param y The y coordinate of the viewport. Defaults to 0.
 	/// \param width The width of the viewport. Defaults to -1 setting its width
@@ -438,6 +489,7 @@ public:
 	virtual void viewport(float x = 0, float y = 0, float width = -1, float height = -1, bool vflip = true) = 0;
 
 	/// \brief Setup the renderer to use a perspective matrix.
+	///
 	/// \param width The width of the desired perspective matrix. Defaults to -1
 	/// setting its width according to the rendering surface's width.
 	/// \param height The height of the desired perspective matrix. Defaults to
@@ -454,6 +506,7 @@ public:
 	virtual void setupScreenPerspective(float width = -1, float height = -1, float fov = 60, float nearDist = 0, float farDist = 0) = 0;
 
 	/// \brief Setup the renderer to use an orthographic matrix.
+	///
 	/// \param width The width of the desired orthographic matrix. Defaults to
 	/// -1 setting its width according to the rendering surface's width.
 	/// \param height The height of the desired orthographic matrix. Defaults to
@@ -499,15 +552,18 @@ public:
 	virtual ofRectangle getNativeViewport() const = 0;
 
 	/// \brief Get the renderer's current viewport width.
+	///
 	/// \returns The renderer's current viewport width.
 	virtual int getViewportWidth() const = 0;
 
 	/// \brief Get the renderer's current viewport width.
+	///
 	/// \returns The renderer's current viewport width.
 	virtual int getViewportHeight() const = 0;
 
 	/// \brief Returns true if the renderer's current viewport is vertically
 	/// flipped.
+	///
 	/// \returns True if the renderer's current viewport is vertically flipped.
 	virtual bool isVFlipped() const = 0;
 
@@ -539,7 +595,8 @@ public:
 	/// \sa https://www.evl.uic.edu/ralph/508S98/coordinates.html
 	virtual ofHandednessType getCoordHandedness() const = 0;
 
-	//our openGL wrappers
+	//--------------------------------------------
+	// Our openGL wrappers
 
 	/// \brief Pushes this renderer's matrix stack down by one.
 	///
@@ -548,6 +605,7 @@ public:
 	/// this method. Should be paired with a call to popMatrix().
 	///
 	virtual void pushMatrix() = 0;
+
 	/// \brief Pops this renderer's current matrix stack.
 	///
 	/// popMatrix() restores the renderer's matrix to the state it was last
@@ -568,10 +626,12 @@ public:
 	virtual glm::mat4 getCurrentMatrix(ofMatrixMode matrixMode_) const = 0;
 
 	/// \brief Get this renderer's current orientation matrix.
+	///
 	/// \returns This renderer's current orientation matrix.
 	virtual glm::mat4 getCurrentOrientationMatrix() const = 0;
 
 	/// \brief Translate this renderer's current matrix by x, y, and z.
+	///
 	/// \param x The x coordinate to translate this renderer's current matrix
 	/// by.
 	/// \param y The y coordinate to translate this renderer's current matrix
@@ -581,10 +641,12 @@ public:
 	virtual void translate(float x, float y, float z = 0) = 0;
 
 	/// \brief Translate this renderer's current matrix by a point.
+	///
 	/// \param p The 3D point to translate this renderer's current matrix by.
 	virtual void translate(const glm::vec3 & p) = 0;
 
 	/// \brief Scale this renderer's current matrix by xAmnt, yAmnt, and zAmnt.
+	///
 	/// \param xAmnt The amount to scale this renderer's current matrix's x
 	/// axis by.
 	/// \param yAmnt The amount to scale this renderer's current matrix's y
@@ -594,6 +656,7 @@ public:
 	virtual void scale(float xAmnt, float yAmnt, float zAmnt = 1) = 0;
 
 	/// \brief Rotate this renderer's current matrix by \p degrees about a euler.
+	///
 	/// \param degrees Degrees to rotate about vecX, vecY, and vecZ.
 	/// \param vecX The x axis to rotate about.
 	/// \param vecY The y axis to rotate about.
@@ -602,16 +665,19 @@ public:
 
 	/// \brief Rotate this renderer's current matrix by \p degrees about the x
 	/// axis.
+	///
 	/// \param degrees Degrees to rotate about the x axis.
 	virtual void rotateXDeg(float degrees);
 
 	/// \brief Rotate this renderer's current matrix by \p degrees about the y
 	/// axis.
+	///
 	/// \param degrees Degrees to rotate about the y axis.
 	virtual void rotateYDeg(float degrees);
 
 	/// \brief Rotate this renderer's current matrix by \p degrees about the z
 	/// axis.
+	///
 	/// \param degrees Degrees to rotate about the z axis.
 	virtual void rotateZDeg(float degrees);
 
@@ -625,6 +691,7 @@ public:
 	virtual void rotateDeg(float degrees);
 
 	/// \brief Rotate this renderer's current matrix by \p degrees about a euler.
+	///
 	/// \param degrees Degrees to rotate about vecX, vecY, and vecZ.
 	/// \param vecX The x axis to rotate about.
 	/// \param vecY The y axis to rotate about.
@@ -633,16 +700,19 @@ public:
 
 	/// \brief Rotate this renderer's current matrix by \p degrees about the x
 	/// axis.
+	///
 	/// \param degrees Degrees to rotate about the x axis.
 	virtual void rotateXRad(float degrees) = 0;
 
 	/// \brief Rotate this renderer's current matrix by \p degrees about the y
 	/// axis.
+	///
 	/// \param degrees Degrees to rotate about the y axis.
 	virtual void rotateYRad(float degrees) = 0;
 
 	/// \brief Rotate this renderer's current matrix by \p degrees about the z
 	/// axis.
+	///
 	/// \param degrees Degrees to rotate about the z axis.
 	virtual void rotateZRad(float degrees) = 0;
 
@@ -681,6 +751,7 @@ public:
 	virtual void loadIdentityMatrix(void) = 0;
 
 	/// \brief Load a matrix as this renderer's current matrix.
+	///
 	/// \param m The matrix to load into this renderer.
 	virtual void loadMatrix(const glm::mat4 & m) = 0;
 
@@ -692,6 +763,7 @@ public:
 	virtual void loadMatrix(const float * m) = 0;
 
 	/// \brief Multiply this renderer's current matrix by \p m.
+	///
 	/// \param m The matrix to multiply this renderer's current matrix by.
 	virtual void multMatrix(const glm::mat4 & m) = 0;
 
@@ -704,18 +776,22 @@ public:
 	virtual void multMatrix(const float * m) = 0;
 
 	/// \brief Load \p m into this renderer's matrix stack as a view matrix.
+	///
 	/// \param m The view matrix to load into this renderer's matrix stack.
 	virtual void loadViewMatrix(const glm::mat4 & m) = 0;
 
 	/// \brief Multiply this renderer's view matrix by \p m.
+	///
 	/// \param m The matrix to multiply this renderer's view matrix by.
 	virtual void multViewMatrix(const glm::mat4 & m) = 0;
 
 	/// \brief Get this renderer's current view matrix.
+	///
 	/// \returns This renderer's current view matrix.
 	virtual glm::mat4 getCurrentViewMatrix() const = 0;
 
 	/// \brief Get this renderer's current normal matrix.
+	///
 	/// \returns This renderer's current normal matrix.
 	virtual glm::mat4 getCurrentNormalMatrix() const = 0;
 
@@ -729,16 +805,21 @@ public:
 	/// \param viewport The viewport to use when binding \p camera to this
 	/// renderer.
 	virtual void bind(const ofCamera & camera, const ofRectangle & viewport) = 0;
+
 	/// \brief Unbind the camera from this renderer.
+	///
 	/// \param camera The camera to unbind from this renderer.
 	virtual void unbind(const ofCamera & camera) = 0;
 
 	/// \brief setup the default graphics settings for this renderer.
 	virtual void setupGraphicDefaults() = 0;
+
 	/// \brief setup the default screen settings for this renderer.
 	virtual void setupScreen() = 0;
 
-	// drawing modes
+	//--------------------------------------------
+	// Drawing Modes
+
 	/// \brief Set this renderer's rect mode.
 	///
 	/// Possible rect modes include OF_RECTMODE_CORNER and OF_RECTMODE_CENTER.
@@ -746,6 +827,7 @@ public:
 	/// \param mode The rect mode to request this renderer to use.
 	/// \sa ofRectMode
 	virtual void setRectMode(ofRectMode mode) = 0;
+
 	/// \brief Get this renderer's current rect mode.
 	///
 	/// Possible rect modes include OF_RECTMODE_CORNER and OF_RECTMODE_CENTER.
@@ -753,6 +835,7 @@ public:
 	/// \returns The renderer's current rect mode.
 	/// \sa ofRectMode
 	virtual ofRectMode getRectMode() = 0;
+
 	/// \brief set this renderer's fill flag.
 	///
 	/// Possible fill flags include OF_OUTLINE and OF_FILLED.
@@ -760,6 +843,7 @@ public:
 	/// \param fill The fill flag to request this renderer to use.
 	/// \sa ofFillFlag
 	virtual void setFillMode(ofFillFlag fill) = 0;
+
 	/// \brief Get this renderer's current fill flag.
 	///
 	/// Possible fill flags include OF_OUTLINE and OF_FILLED.
@@ -767,9 +851,17 @@ public:
 	/// \returns The fill flag this render is currently using.
 	/// \sa ofFillFlag
 	virtual ofFillFlag getFillMode() = 0;
+
 	/// \brief Set the line width this renderer should use when drawing lines.
+	///
 	/// \param lineWidth The line width to request this renderer to use.
 	virtual void setLineWidth(float lineWidth) = 0;
+	
+	/// \brief Set the point size this renderer should use when drawing points.
+	///
+	/// \param pointSize The points size to request this renderer to use.
+	virtual void setPointSize(float pointSize) = 0;
+
 	/// \brief Enable/disable depth testing with this renderer.
 	///
 	/// When depth testing is enabled the order shapes are drawn with the
@@ -779,6 +871,7 @@ public:
 	///
 	/// \param depthTest True to enable depth testing.
 	virtual void setDepthTest(bool depthTest) = 0;
+
 	/// \brief Set this renderer's current blend mode.
 	///
 	/// Possible blend modes include:
@@ -795,17 +888,23 @@ public:
 	/// \sa ofBlendMode
 	/// \sa https://helpx.adobe.com/photoshop/using/blending-modes.html
 	virtual void setBlendMode(ofBlendMode blendMode) = 0;
+
 	/// \brief Enable/disable line smoothing for this renderer if it's supported.
+	///
 	/// \param smooth True to enable line smoothing for this renderer if it's
 	/// supported.
 	virtual void setLineSmoothing(bool smooth) = 0;
+
 	/// \brief Set the resolution to use when drawing ellipses with this
 	/// renderer.
+	///
 	/// \param res The number of points to use when drawing circles and ellipses
 	/// with this renderer.
 	virtual void setCircleResolution(int res) = 0;
+
 	/// \brief Enable this renderer to use anti-aliasing if it is supported.
 	virtual void enableAntiAliasing() = 0;
+
 	/// \brief Disable this renderer from using anti-aliasing.
 	virtual void disableAntiAliasing() = 0;
 
@@ -873,9 +972,12 @@ public:
 	virtual void setBitmapTextMode(ofDrawBitmapMode mode) = 0;
 
 	/// \brief Get this renderer's current background color.
+	///
 	/// \returns This renderer's current background color.
 	virtual ofFloatColor getBackgroundColor() = 0;
+
 	/// \brief Set this renderer's background color.
+	///
 	/// \param c The color to request this renderer to use.
 	virtual void setBackgroundColor(const ofFloatColor & c) = 0;
 
@@ -919,10 +1021,12 @@ public:
 	virtual void background(float r, float g, float b, float a = 1.f) = 0;
 
 	/// \brief Enable/disable automatic redrawing of the background each frame.
+	///
 	/// \param bManual False to disable automatic background redrawing.
 	virtual void setBackgroundAuto(bool bManual) = 0;
 
 	/// \brief Get the current auto redraw background setting for this renderer.
+	///
 	/// \returns True if this renderer is set to redraw the background each
 	/// frame.
 	virtual bool getBackgroundAuto() = 0;
@@ -932,6 +1036,7 @@ public:
 	/// clear() will clear the screen entirely.
 	///
 	virtual void clear() = 0;
+
 	/// \brief Clear this renderer's color and bit depths and replace them.
 	///
 	/// clear() will clear the screen entirely.
@@ -944,6 +1049,7 @@ public:
 	/// \param a The alpha value between 0 and 1 use when clearing the screen.
 	/// Defaults to 0.
 	virtual void clear(float r, float g, float b, float a = 0) = 0;
+
 	/// \brief Clear this renderer's color and bit depths replacing them.
 	///
 	/// clear() will clear the screen entirely.
@@ -953,10 +1059,12 @@ public:
 	/// \param a The alpha value between 0 and 1 to use when clearing the
 	/// screen. Defaults to 0.
 	virtual void clear(float brightness, float a = 0) = 0;
+
 	/// \brief Restore the alpha color to its full opacity value.
 	virtual void clearAlpha() = 0;
 
 	/// \brief Draw a line between two 3D points.
+	///
 	/// \param x1 The x coordinate of the first point.
 	/// \param y1 The y coordinate of the first point.
 	/// \param z1 The z coordinate of the first point.
@@ -964,7 +1072,9 @@ public:
 	/// \param y2 The y coordinate of the second point.
 	/// \param z2 The z coordinate of the second point.
 	virtual void drawLine(float x1, float y1, float z1, float x2, float y2, float z2) const = 0;
+
 	/// \brief Draw a rectangle using a 3D point and a width and height.
+	///
 	/// \param x The x coordinate of the rectangle.
 	/// \param y The y coordinate of the rectangle.
 	/// \param z The z coordinate of the rectangle.
@@ -972,7 +1082,9 @@ public:
 	/// \param h The height of the rectangle.
 	/// \sa ofRectMode
 	virtual void drawRectangle(float x, float y, float z, float w, float h) const = 0;
+
 	/// \brief Draw a triangle using three 3D points.
+	///
 	/// \param x1 The x coordinate of the first point.
 	/// \param y1 The y coordinate of the first point.
 	/// \param z1 The z coordinate of the first point.
@@ -983,19 +1095,24 @@ public:
 	/// \param y3 The y coordinate of the third point.
 	/// \param z3 The z coordinate of the third point.
 	virtual void drawTriangle(float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3) const = 0;
+
 	/// \brief Draw a circle using a 3D point and a radius.
+	///
 	/// \param x The x coordinate of the center of the circle.
 	/// \param y The y coordinate of the center of the circle.
 	/// \param z The z coordinate of the center of the circle.
 	/// \param radius The length of the radius of the circle.
 	virtual void drawCircle(float x, float y, float z, float radius) const = 0;
+
 	/// \brief Draw an ellipse using a 3D point, width, and height.
+	///
 	/// \param x The x coordinate of the center of the circle.
 	/// \param y The y coordinate of the center of the circle.
 	/// \param z The z coordinate of the center of the circle.
 	/// \param width The width of the circle.
 	/// \param height The height of the circle.
 	virtual void drawEllipse(float x, float y, float z, float width, float height) const = 0;
+
 	/// \brief Draw text with this renderer using the current bitmap text mode.
 	///
 	/// When using the OF_BITMAPMODE_SIMPLE bitmap text strings are drawn with
@@ -1012,7 +1129,9 @@ public:
 	/// \param y The y position for the left alignment of \p text.
 	/// \param z The z position of the text.
 	virtual void drawString(std::string text, float x, float y, float z) const = 0;
+
 	/// \brief Draw text with this renderer using an ofTrueType font.
+	///
 	/// \param font The font to use when drawing \p text.
 	/// \param text The text to draw with the renderer.
 	/// \param x The x position for the bottom of \p text.
@@ -1023,21 +1142,27 @@ public:
 	// immediate mode rendering working in multiwindow with multiple
 	// contexts without reimplementing the logic on every renderer
 	/// \brief Get a reference to the path used internally by this renderer.
+	///
 	/// \returns A reference to the path used internally by this renderer.
 	virtual ofPath & getPath() = 0;
 
 	/// \brief Get this renderer's current style object.
+	///
 	/// \returns This renderer's current style object.
 	virtual ofStyle getStyle() const = 0;
+
 	/// \brief Set this renderer's current style object.
+	///
 	/// \param style The style object to set this renderer to use.
 	virtual void setStyle(const ofStyle & style) = 0;
+
 	/// \brief Push this renderer's current style into its internal style stack.
 	///
 	/// This creates a new style object used by this renderer internally until
 	/// popStyle() is called.
 	///
 	virtual void pushStyle() = 0;
+
 	/// \brief Pop this renderer's current style from its internal style stack.
 	///
 	/// This restores the style that was last saved with pushStyle().
@@ -1045,6 +1170,7 @@ public:
 	virtual void popStyle() = 0;
 
 	/// \brief Set the resolution used when drawing curves with this renderer.
+	///
 	/// \param resolution The resolution to request this renderer to use when
 	/// drawing curves.
 	virtual void setCurveResolution(int resolution) = 0;
@@ -1063,18 +1189,26 @@ public:
 	virtual void setPolyMode(ofPolyWindingMode mode) = 0;
 
 	/// \brief Get a const reference of this renderer's 3D graphics object.
+	///
 	/// \returns The 3D graphics object currently being used by this renderer.
 	virtual const of3dGraphics & get3dGraphics() const = 0;
+
 	/// \brief Get a reference with this renderer's 3D graphics object.
+	///
 	/// \returns the 3D graphics object currently being used by this renderer.
 	virtual of3dGraphics & get3dGraphics() = 0;
 
+	//--------------------------------------------
+	// Plane
+
 	/// \brief Set this renderer's plane resolution using \p column and \p rows.
+	///
 	/// \param columns The number of columns to use when drawing planes with
 	/// this renderer.
 	/// \param rows The number of rows to use when drawing planes with this
 	/// renderer.
 	virtual void setPlaneResolution(int columns, int rows);
+
 	/// \brief Get this renderer's current plane resolution as a 2D vector.
 	///
 	/// The resulting vector's x and y values corresponds to the current column
@@ -1083,6 +1217,7 @@ public:
 	/// \returns A 2D vector representing this renderer's plane resolution in
 	/// columns and rows.
 	virtual glm::vec2 getPlaneResolution() const;
+
 	/// \brief Draw a plane with the renderer using x, y, width, and height.
 	///
 	/// The number of rows and columns this plane will have is dependent on this
@@ -1096,6 +1231,7 @@ public:
 	/// \param height The height to use when drawing the plane with this
 	/// renderer.
 	virtual void drawPlane(float x, float y, float width, float height) const;
+
 	/// \brief Draw a plane with the renderer using x, y, z, width, and height.
 	///
 	/// The number of rows and columns this plane will have is dependent on this
@@ -1111,6 +1247,7 @@ public:
 	/// \param height The height to use when drawing the plane with this
 	/// renderer.
 	virtual void drawPlane(float x, float y, float z, float width, float height) const;
+
 	/// \brief Draw a plane with the renderer using a 3D point, width, and height.
 	///
 	/// The number of rows and columns this plane will have is dependent on this
@@ -1122,6 +1259,7 @@ public:
 	/// \param height The height to use when drawing the plane with this
 	/// renderer.
 	virtual void drawPlane(const glm::vec3 & position, float width, float height) const;
+
 	/// \brief Draw a plane with the renderer at the origin.
 	///
 	/// The number of rows and columns this plane will have is dependent on this
@@ -1133,14 +1271,20 @@ public:
 	/// renderer.
 	virtual void drawPlane(float width, float height) const;
 
-	/// UV Sphere
+	//--------------------------------------------
+	// UV Sphere
+
 	/// \brief Set the point resolution to use when drawing a sphere with this
 	/// renderer.
+	///
 	/// \param res The desired sphere resolution to use with this renderer.
 	virtual void setSphereResolution(int res);
+
 	/// \brief Get this renderer's current sphere resolution.
+	///
 	/// \returns This renderer's current sphere resolution.
 	virtual int getSphereResolution() const;
+
 	/// \brief Draw a sphere with this renderer using x, y, and radius.
 	///
 	/// Spheres are drawn with x, y, and z coordinates representing the center
@@ -1150,6 +1294,7 @@ public:
 	/// \param y The y coordinate to use when drawing this sphere.
 	/// \param radius The radius to use when drawing this sphere.
 	virtual void drawSphere(float x, float y, float radius) const;
+
 	/// \brief Draw a sphere with this renderer using x, y, z, and radius.
 	///
 	/// Spheres are drawn with x, y, and z coordinates representing the center
@@ -1160,6 +1305,7 @@ public:
 	/// \param z The z coordinate to use when drawing this sphere.
 	/// \param radius The radius to use when drawing this sphere.
 	virtual void drawSphere(float x, float y, float z, float radius) const;
+
 	/// \brief Draw a sphere with this renderer using a position point and
 	/// radius.
 	///
@@ -1169,20 +1315,28 @@ public:
 	/// \param position The 3D position point to use when drawing the sphere.
 	/// \param radius The radius to use when drawing this sphere.
 	virtual void drawSphere(const glm::vec3 & position, float radius) const;
+
 	/// \brief Draw a sphere with the renderer at the defualt origin using
 	/// radius.
+	///
 	/// \param radius The radius to use when drawing the sphere with this
 	/// renderer.
 	virtual void drawSphere(float radius) const;
 
+	//--------------------------------------------
 	// Ico Sphere
+
 	/// \brief Set the point resolution to use when drawing an icosphere with
 	/// this renderer.
+	///
 	/// \param res The desired icosphere resolution to use with this renderer.
 	virtual void setIcoSphereResolution(int res);
+
 	/// \brief Get this renderer's current icosphere resolution.
+	///
 	/// \returns This renderer's current icosphere resolution.
 	virtual int getIcoSphereResolution() const;
+
 	/// \brief Draw an icosphere with this renderer using x, y, and radius.
 	///
 	/// Spheres are drawn with x, y, and z coordinates representing the center
@@ -1193,6 +1347,7 @@ public:
 	/// \param z The z coordinate to use when drawing this icosphere.
 	/// \param radius The radius to use when drawing this icosphere.
 	virtual void drawIcoSphere(float x, float y, float z, float radius) const;
+
 	/// \brief Draw an icosphere with this renderer using x, y, and radius.
 	///
 	/// Spheres are drawn with x, y, and z coordinates representing the center
@@ -1202,6 +1357,7 @@ public:
 	/// \param y The y coordinate to use when drawing this icosphere.
 	/// \param radius The radius to use when drawing this icosphere.
 	virtual void drawIcoSphere(float x, float y, float radius) const;
+
 	/// \brief Draw an icosphere with this renderer using x, y, and radius.
 	///
 	/// Icospheres are drawn with x, y, and z coordinates representing the
@@ -1210,12 +1366,18 @@ public:
 	/// \param position The 3D position point to use when drawing the icosphere.
 	/// \param radius The radius to use when drawing this icosphere.
 	virtual void drawIcoSphere(const glm::vec3 & position, float radius) const;
+
 	/// \brief Draw an icosphere with the renderer at the origin using radius.
+	///
 	/// \param radius The radius to use when drawing the icosphere with this
 	/// renderer.
 	virtual void drawIcoSphere(float radius) const;
 
+	//--------------------------------------------
+	// Cylinder
+
 	/// \brief Set this renderer's cylinder resolution.
+	///
 	/// \param radiusSegments The number of facets (subdivisions) around the
 	/// icosphere's circular footprint. A larger number yields a higher
 	/// resolution.
@@ -1224,6 +1386,7 @@ public:
 	/// \param capSegments The number of annular (ring-shaped) subdivisions of
 	/// the cylinder's endcap. Defaults to 2.
 	virtual void setCylinderResolution(int radiusSegments, int heightSegments, int capSegments = 2);
+
 	/// \brief Get this renderer's cylinder resolution as a 3D vector.
 	///
 	/// The resulting vector's x, y, and z properties correspond to the radius
@@ -1233,6 +1396,7 @@ public:
 	/// \returns A 3D vector representing this renderer's current cylinder
 	/// resolution.
 	virtual glm::vec3 getCylinderResolution() const;
+
 	/// \brief Draw a cylinder with this renderer using x, y, radius, and
 	/// height.
 	///
@@ -1246,6 +1410,7 @@ public:
 	/// footprint.
 	/// \param height The height to use when drawing this cylinder.
 	virtual void drawCylinder(float x, float y, float radius, float height) const;
+
 	/// \brief Draw a cylinder with this renderer using x, y, z, radius, and
 	/// height.
 	///
@@ -1260,6 +1425,7 @@ public:
 	/// footprint.
 	/// \param height The height to use when drawing this cylinder.
 	virtual void drawCylinder(float x, float y, float z, float radius, float height) const;
+
 	/// \brief Draw a cylinder with this renderer using position, radius, and
 	/// height.
 	///
@@ -1274,6 +1440,7 @@ public:
 	/// footprint.
 	/// \param height The height to use when drawing this cylinder.
 	virtual void drawCylinder(const glm::vec3 & position, float radius, float height) const;
+
 	/// \brief Draw a cylinder at the origin using radius and height.
 	///
 	/// A cylinder drawn in this way will be positioned at the origin. Radius is
@@ -1284,6 +1451,9 @@ public:
 	/// footprint.
 	/// \param height The height to use when drawing this cylinder.
 	virtual void drawCylinder(float radius, float height) const;
+
+	//--------------------------------------------
+	// Cone
 
 	/// \brief Set the resolution of a polygonized cone.
 	///
@@ -1308,8 +1478,7 @@ public:
 	/// resolution.
 	virtual glm::vec3 getConeResolution() const;
 
-	/// \brief Draw a cone with this renderer using x, y, z, radius, and
-	/// height.
+	/// \brief Draw a cone with this renderer using x, y, z, radius, and height.
 	///
 	/// Cones are drawn with x, y, and z coordinates representing the centroid
 	/// of the cone. Radius is the radius of the cone's circular
@@ -1322,8 +1491,8 @@ public:
 	/// footprint.
 	/// \param height The height to use when drawing this cone.
 	virtual void drawCone(float x, float y, float z, float radius, float height) const;
-	/// \brief Draw a cone with this renderer using x, y, z, radius, and
-	/// height.
+
+	/// \brief Draw a cone with this renderer using x, y, z, radius, and height.
 	///
 	/// Cones are drawn with x, y, and z coordinates representing the centroid
 	/// of the cylinder. Radius is the radius of the cone's circular
@@ -1335,8 +1504,8 @@ public:
 	/// footprint.
 	/// \param height The height to use when drawing this cone.
 	virtual void drawCone(float x, float y, float radius, float height) const;
-	/// \brief Draw a cone with this renderer using x, y, z, radius, and
-	/// height.
+
+	/// \brief Draw a cone with this renderer using x, y, z, radius, and height.
 	///
 	/// Cones are drawn with x, y, and z coordinates representing the centroid
 	/// of the cone. \p Radius is the radius of the cone's circular
@@ -1347,6 +1516,7 @@ public:
 	/// footprint.
 	/// \param height The height to use when drawing this cone.
 	virtual void drawCone(const glm::vec3 & position, float radius, float height) const;
+
 	/// \brief Draw a cone at the origin using radius and height.
 	///
 	/// This cone will be drawn with its position at the coordinate system's
@@ -1358,11 +1528,16 @@ public:
 	/// \param height The height to use when drawing this cone.
 	virtual void drawCone(float radius, float height) const;
 
+	//--------------------------------------------
 	// Box
+
 	/// \brief Set the resolution this renderer uses when drawing boxes.
+	///
 	/// \param res The resolution to use for box widths, heights, and depths.
 	virtual void setBoxResolution(int res);
+
 	/// \brief Set the resolution this renderer uses when drawing boxes.
+	///
 	/// \param resWidth The width resolution this renderer uses when drawing
 	/// boxes.
 	/// \param resHeight The height resolution this renderer uses when drawing
@@ -1370,6 +1545,7 @@ public:
 	/// \param resDepth The depth resolution this renderer uses when drawing
 	/// boxes.
 	virtual void setBoxResolution(int resWidth, int resHeight, int resDepth);
+
 	/// \brief Get this renderer's current box resolution as a 3D vector.
 	///
 	/// The returned vector's x, y, and z properties represent this renderer's
@@ -1396,7 +1572,6 @@ public:
 	virtual void drawBox(float x, float y, float z, float width, float height, float depth) const;
 
 	/// \brief Draws a cube using x, y, z, and size.
-	/// coordinates.
 	///
 	/// A cube is a rectangular solid bounded by six square faces of equal size.
 	/// It is also known as a regular hexahedron, a square parallelepiped, an
@@ -1461,6 +1636,7 @@ public:
 	/// \param height The height of the box.
 	/// \param depth The depth of the box.
 	virtual void drawBox(float width, float height, float depth) const;
+
 	/// \brief Draw the coordinate system's axes with the renderer.
 	///
 	/// This draws a red, green, and blue lines for the x, y, and z axes
@@ -1469,7 +1645,9 @@ public:
 	///
 	/// \param size The length to draw each axis line.
 	virtual void drawAxis(float size) const;
+
 	/// \brief Draw the coordinate system's axes as a grid with the renderer.
+	///
 	/// \param stepSize The size of each row/column in each axis grid.
 	/// \param numberOfSteps The number of rows/columns in each axis grid.
 	/// \param labels True to draw the name and values of the axis as a bitmap
@@ -1478,16 +1656,21 @@ public:
 	/// \param y True to draw the y axis.
 	/// \param z True to draw the z axis.
 	virtual void drawGrid(float stepSize, size_t numberOfSteps, bool labels, bool x, bool y, bool z) const;
+
 	/// \brief Draw a coordinate system plane using the y and z axes.
+	///
 	/// \param stepSize The size of each row/column on the axis grid.
 	/// \param numberOfSteps The number of rows/columns on the axis grid.
 	/// \param labels True to draw the names and values of the axes.
 	virtual void drawGridPlane(float stepSize, size_t numberOfSteps, bool labels) const;
+
 	/// \brief Draw an arrow between two 3D points.
+	///
 	/// \param start The 3D vector to use as the first point.
 	/// \param end The 3D vector to use as the second point.
 	/// \float headSize The size of the arrowhead.
 	virtual void drawArrow(const glm::vec3 & start, const glm::vec3 & end, float headSize) const;
+
 	/// \brief Draw the coordinate system's axes with the renderer.
 	///
 	/// This draws red, green, and blue lines for the x, y, and z rotation

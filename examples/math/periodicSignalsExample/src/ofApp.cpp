@@ -58,10 +58,10 @@ void ofApp::update(){
 	cout<< test << endl;
 	
 	y[3] = 60*5+ofRandom(-1,1)*yFactor.getValue(); // random can't be dependent on time or frequency
-	y[4] = 60*6+sin(t*freq.getValue()*TWO_PI)*yFactor.getValue();
-	y[5] = 60*7+(sin(t*freq.getValue()*TWO_PI)+1)*.5*yFactor.getValue();
-	y[6] = 60*8+fmod(t*freq.getValue(),1)*yFactor.getValue();
-	y[7] = 60*9+(fmod(t*freq.getValue(),1)*2-1)*yFactor.getValue();
+	y[4] = 60*6 + std::sin(t*freq.getValue()*glm::two_pi<float>())*yFactor.getValue();
+	y[5] = 60*7+(std::sin(t*freq.getValue()*glm::two_pi<float>())+1)*.5*yFactor.getValue();
+	y[6] = 60*8+std::fmod(t*freq.getValue(),1)*yFactor.getValue();
+	y[7] = 60*9+(std::fmod(t*freq.getValue(),1)*2-1)*yFactor.getValue();
 
 	for(int i=0;i<(int)trail.size();i++){
 		if(x<prevX){
@@ -109,8 +109,8 @@ void ofApp::draw(){
 	ofDrawBitmapString("ofNoise(t)",ofGetWidth()-160,60*3-4);
 	ofDrawBitmapString("ofSignedNoise(t)",ofGetWidth()-160,60*4-4);
 	ofDrawBitmapString("ofRandom(-1,1)",ofGetWidth()-160,60*5-4);
-	ofDrawBitmapString("sin(TWO_PI*t)",ofGetWidth()-160,60*6-4);
-	ofDrawBitmapString("(sin(TWO_PI*t)+1)/2",ofGetWidth()-160,60*7-4);
+	ofDrawBitmapString("sin(glm::two_pi<float>()*t)",ofGetWidth()-160,60*6-4);
+	ofDrawBitmapString("(sin(glm::two_pi<float>()*t)+1)/2",ofGetWidth()-160,60*7-4);
 	ofDrawBitmapString("modulo(t,1)",ofGetWidth()-160,60*8-4);
 	ofDrawBitmapString("modulo(t,1)*2-1",ofGetWidth()-160,60*9-4);
 

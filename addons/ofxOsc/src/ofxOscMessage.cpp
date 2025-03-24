@@ -14,7 +14,7 @@ ofxOscMessage::~ofxOscMessage() {
 	clear();
 }
 
-ofxOscMessage::ofxOscMessage(std::string & address) { setAddress(address); }
+ofxOscMessage::ofxOscMessage(const std::string & address) { setAddress(address); }
 
 //--------------------------------------------------------------
 ofxOscMessage::ofxOscMessage(const ofxOscMessage & other) {

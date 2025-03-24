@@ -1,9 +1,9 @@
 #include "ofMath.h"
 #include "ofNoise.h"
 #include "ofPolyline.h"
-#include <float.h>
-
 #include "ofRandomDistributions.h"
+
+#include <float.h>
 
 #ifndef TARGET_WIN32
 	#include <sys/time.h>
@@ -62,7 +62,7 @@ float ofNormalize(float value, float min, float max) {
 //--------------------------------------------------
 float ofMap(float value, float inputMin, float inputMax, float outputMin, float outputMax, bool clamp) {
 
-	if (fabs(inputMin - inputMax) < std::numeric_limits<float>::epsilon()) {
+	if (std::abs(inputMin - inputMax) < std::numeric_limits<float>::epsilon()) {
 		return outputMin;
 	} else {
 		float outVal = ((value - inputMin) / (inputMax - inputMin) * (outputMax - outputMin) + outputMin);
@@ -86,12 +86,12 @@ float ofMap(float value, float inputMin, float inputMax, float outputMin, float 
 
 //--------------------------------------------------
 float ofDist(float x1, float y1, float x2, float y2) {
-	return sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
+	return std::sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
 }
 
 //--------------------------------------------------
 float ofDist(float x1, float y1, float z1, float x2, float y2, float z2) {
-	return sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2) + (z1 - z2) * (z1 - z2));
+	return std::sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2) + (z1 - z2) * (z1 - z2));
 }
 
 //--------------------------------------------------
@@ -149,7 +149,7 @@ float ofWrap(float value, float from, float to) {
 	if (ofIsFloatEqual(cycle, 0.0f)) {
 		return to;
 	}
-	return value - cycle * floor((value - from) / cycle);
+	return value - cycle * std::floor((value - from) / cycle);
 }
 
 //--------------------------------------------------

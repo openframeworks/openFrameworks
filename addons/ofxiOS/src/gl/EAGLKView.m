@@ -4,11 +4,10 @@
 //
 //  Created by Dan Rosser on 7/3/18.
 //
-
+#include "ofxiOSConstants.h"
+#if defined(OF_UI_KIT) && defined(OF_GL_KIT)
 #include <TargetConditionals.h>
-
 #import "EAGLKView.h"
-
 #import "ES1Renderer.h"
 #import "ES2Renderer.h"
 
@@ -61,8 +60,12 @@
         
         //------------------------------------------------------
         if(rendererVersion == ESRendererVersion_30) {
-            NSLog(@"OpenGLES 3.0 Renderer not implemented for oF. Defaulting to OpenGLES 2.0");
-            rendererVersion = ESRendererVersion_20;
+            self.context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES3 sharegroup:sharegroup];
+            NSLog(@"Creating OpenGL ES3 Renderer");
+            if(!self.context) {
+                NSLog(@"OpenGL ES3 failed");
+                rendererVersion = ESRendererVersion_20;
+            }
         }
         
         if(rendererVersion == ESRendererVersion_20) {
@@ -183,3 +186,5 @@
 
 
 @end
+
+#endif

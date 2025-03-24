@@ -30,7 +30,8 @@
  * ***********************************************************************/ 
 
 #pragma once
-
+#include "ofxiOSConstants.h"
+#if defined(OF_UI_KIT) && defined(OF_GL_KIT)
 #import <UIKit/UIKit.h>
 #import "ESRenderer.h"
 
@@ -107,4 +108,8 @@
 - (void)notifyDraw;
 - (void)notifyResized;
 
+- (ESRendererVersion) getESVersion;
+
 @end
+
+#endif

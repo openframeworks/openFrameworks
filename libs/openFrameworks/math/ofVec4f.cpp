@@ -2,9 +2,14 @@
 #include "ofVec3f.h"
 #include "ofVec4f.h"
 
-#define GLM_FORCE_CTOR_INIT
-#include "glm/vec3.hpp"
-#include "glm/vec4.hpp"
+#if !defined(GLM_FORCE_CTOR_INIT)
+	#define GLM_FORCE_CTOR_INIT
+#endif
+#if !defined(GLM_ENABLE_EXPERIMENTAL)
+	#define GLM_ENABLE_EXPERIMENTAL
+#endif
+#include <glm/vec3.hpp>
+#include <glm/vec4.hpp>
 
 ofVec4f::ofVec4f(const ofVec3f& vec) {
 	x = vec.x;

@@ -9,6 +9,8 @@
 #pragma once
 
 #include <TargetConditionals.h>
+#include "ofxiOSConstants.h"
+#if defined(OF_CORE_LOCATION)
 #if TARGET_OS_IOS || (TARGET_OS_IPHONE && !TARGET_OS_TV)
 
 #import <CoreLocation/CoreLocation.h>
@@ -110,5 +112,6 @@ class ofxiOSCoreLocation
 
 #define ofxiPhoneCoreLocation ofxiOSCoreLocation
 
+#endif
 #endif
 

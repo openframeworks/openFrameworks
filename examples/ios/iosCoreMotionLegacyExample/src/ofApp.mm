@@ -38,7 +38,7 @@ void ofApp::draw() {
 	ofSetColor(54);
 	ofDrawBitmapString("Multitouch and Accel Example", 10, 20);
 
-	float angle = 180 - RAD_TO_DEG * atan2(accelerometerData.y, accelerometerData.x);
+	float angle = 180.0 - glm::degrees( atan2(accelerometerData.y, accelerometerData.x) );
 
 	ofEnableAlphaBlending();
 	ofSetColor(255);

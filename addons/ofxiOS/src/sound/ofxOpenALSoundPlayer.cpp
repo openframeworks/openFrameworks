@@ -23,6 +23,8 @@
  ************************************************************************/ 
 
 #import "ofxOpenALSoundPlayer.h"
+#include "ofxiOSConstants.h"
+#if defined(OF_OPEN_AL) && !TARGET_IPHONE_SIMULATOR && !TARGET_TVOS_SIMULATOR
 #include "ofUtils.h"
 #include "ofFileUtils.h"
 #include "ofMath.h"
@@ -144,6 +146,7 @@ void ofxOpenALSoundPlayer::unload() {
 		else
 			SoundEngine_UnloadEffect(myId);
 	}
+	length = 0;
 }
 
 //--------------------------------------------------------------
@@ -366,6 +369,16 @@ float ofxOpenALSoundPlayer::getVolume()  const{
 //--------------------------------------------------------------
 bool ofxOpenALSoundPlayer::isLoaded()  const{
     return bLoadedOk;
+}
+
+//--------------------------------------------------------------
+float ofxOpenALSoundPlayer::getDuration() const {
+	return (float)length / 1000.0f;
+}
+
+//--------------------------------------------------------------
+unsigned int ofxOpenALSoundPlayer::getDurationMS() const {
+	return length;
 }
 
 //--------------------------------------------------------------
@@ -627,3 +640,4 @@ void ofxOpenALSoundPlayer::ofxALSoundSetDistanceModel(ALenum model) {
 		alDistanceModel(model);
 }
 
+#endif

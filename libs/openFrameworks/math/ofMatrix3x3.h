@@ -5,9 +5,15 @@
 
 #pragma once
 
-#include "ofConstants.h"
+#if !defined(GLM_FORCE_CTOR_INIT)
+	#define GLM_FORCE_CTOR_INIT
+#endif
+#if !defined(GLM_ENABLE_EXPERIMENTAL)
+	#define GLM_ENABLE_EXPERIMENTAL
+#endif
 #include <glm/mat3x3.hpp>
 
+#include <iostream>
 
 /// \brief A 3x3 Matrix
 ///

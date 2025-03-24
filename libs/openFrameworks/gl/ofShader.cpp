@@ -1,16 +1,9 @@
 #include "ofBufferObject.h"
 #include "ofCubeMap.h"
-#include "ofFileUtils.h"
 #include "ofGLProgrammableRenderer.h"
-#include "ofGraphics.h"
 #include "ofLight.h"
-#include "ofMatrix3x3.h"
-#include "ofMatrix4x4.h"
-#include "ofParameter.h"
 #include "ofShader.h"
 #include "ofShadow.h"
-#include "ofTexture.h"
-#include "ofUtils.h"
 #ifdef TARGET_ANDROID
     #include "ofxAndroidUtils.h"
 #endif
@@ -198,7 +191,12 @@ ofShader & ofShader::operator=(ofShader && mom) {
 
 //--------------------------------------------------------------
 bool ofShader::load(const of::filesystem::path & shaderName) {
-    return load(shaderName.string() + ".vert", shaderName.string() + ".frag");
+	auto vertFile = shaderName;
+	auto fragFile = shaderName;
+	vertFile += ".vert";
+	fragFile += ".frag";
+//    return load(shaderName + ".vert", shaderName + ".frag");
+	return load(vertFile, fragFile);
 }
 
 //--------------------------------------------------------------
@@ -327,7 +325,7 @@ ofShader::Source ofShader::sourceFromFile(GLenum type, const of::filesystem::pat
 
 //--------------------------------------------------------------
 // FIXME: change to of::filesystem
-bool ofShader::setupShaderFromSource(GLenum type, string source, string sourceDirectoryPath) {
+bool ofShader::setupShaderFromSource(GLenum type, string source, of::filesystem::path sourceDirectoryPath) {
     return setupShaderFromSource({ type, source, sourceDirectoryPath });
 }
 
@@ -425,16 +423,16 @@ bool ofShader::setupShaderFromSource(ofShader::Source && source) {
 
 //--------------------------------------------------------------
 string ofShader::parseForIncludes(const string & source, const of::filesystem::path & sourceDirectoryPath) {
-    vector<string> included;
+    vector<of::filesystem::path> included;
     return parseForIncludes(source, included, 0, sourceDirectoryPath);
 }
 
 //--------------------------------------------------------------
 // FIXME: update to use fs::path in vector and source
-string ofShader::parseForIncludes(const string & source, vector<string> & included, int level, const of::filesystem::path & sourceDirectoryPath) {
+string ofShader::parseForIncludes(const string & source, vector<of::filesystem::path> & included, int level, const of::filesystem::path & sourceDirectoryPath) {
 
     if (level > 32) {
-        ofLogError("ofShader", "glsl header inclusion depth limit reached, might be caused by cyclic header inclusion");
+        ofLogError("ofShader") << "glsl header inclusion depth limit reached, might be caused by cyclic header inclusion";
         return "";
     }
 
@@ -498,28 +496,24 @@ string ofShader::parseForIncludes(const string & source, vector<string> & includ
 
         // --------| invariant: '#pragma include' has been requested
 
-        if (std::find(included.begin(), included.end(), include) != included.end()) {
+		of::filesystem::path includeFS { sourceDirectoryPath / include };
+		of::filesystem::path includeFSAbsolute { of::filesystem::absolute(includeFS) };
+
+        if (std::find(included.begin(), included.end(), includeFSAbsolute) != included.end()) {
             ofLogVerbose("ofShader") << include << " already included";
             continue;
         }
 
         // we store the absolute paths so as have (more) unique file identifiers.
-        // FIXME: Included can be a vector of of::filesystem::path in near future
-        include = ofFile(
-            sourceDirectoryPath / include
-            // ).getAbsolutePath().string();
-            )
-                      .getAbsolutePath();
+        included.push_back(includeFSAbsolute);
 
-        included.push_back(include);
-
-        ofBuffer buffer = ofBufferFromFile(include);
+        ofBuffer buffer { ofBufferFromFile(includeFS) };
         if (!buffer.size()) {
-            ofLogError("ofShader") << "Could not open glsl include file " << include;
+            ofLogError("ofShader") << "Could not open glsl include file " << includeFS;
             continue;
         }
 
-        auto currentDir = ofFile(include).getEnclosingDirectory();
+		auto currentDir = includeFS.parent_path();
         output << parseForIncludes(buffer.getText(), included, level + 1, currentDir) << endl;
     }
 
@@ -956,10 +950,19 @@ void ofShader::setUniformTexture(const string & name, int textureTarget, GLint t
     }
 }
 
+
 //--------------------------------------------------------------
 void ofShader::setUniformTexture(const string & name, const ofTexture & tex, int textureLocation) const {
+	if (bLoaded) {
+		ofTextureData texData = tex.getTextureData();
+		setUniformTexture( name, texData, textureLocation);
+	}
+}
+	
+//--------------------------------------------------------------
+void ofShader::setUniformTexture(const string & name, const ofTextureData & texData, int textureLocation) const{
     if (bLoaded) {
-        ofTextureData texData = tex.getTextureData();
+        //ofTextureData texData = tex.getTextureData();
         glActiveTexture(GL_TEXTURE0 + textureLocation);
         if (!ofIsGLProgrammableRenderer()) {
             glEnable(texData.textureTarget);
@@ -1060,6 +1063,11 @@ void ofShader::setUniform3f(const string & name, const glm::vec3 & v) const {
 //--------------------------------------------------------------
 void ofShader::setUniform4f(const string & name, const glm::vec4 & v) const {
     setUniform4f(name, v.x, v.y, v.z, v.w);
+}
+
+//--------------------------------------------------------------
+void ofShader::setUniform3f(const string & name, const ofFloatColor & v) const {
+	setUniform3f(name, v.r, v.g, v.b);
 }
 
 //--------------------------------------------------------------

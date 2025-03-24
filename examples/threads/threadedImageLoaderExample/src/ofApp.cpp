@@ -42,6 +42,7 @@ void ofApp::draw(){
 
 //--------------------------------------------------------------
 void ofApp::exit(){
+	ofStopURLLoader();
 	loader.stopThread();
 }
 

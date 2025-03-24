@@ -6,6 +6,8 @@
 //
 
 #import "AVFoundationVideoPlayer.h"
+#include "ofxiOSConstants.h"
+#if defined(TARGET_OF_IOS)
 
 #define IS_OS_6_OR_LATER    ([[[UIDevice currentDevice] systemVersion] floatValue] >= 6.0)
 
@@ -631,12 +633,12 @@ static const NSString * ItemStatusContext;
     
 	double interval = 1.0 / (double)timeObserverFps;
 	
-    __block typeof(self) weak_self = self;
-	timeObserver = [_player addPeriodicTimeObserverForInterval:CMTimeMakeWithSeconds(interval, NSEC_PER_SEC)
-                                                         queue:dispatch_get_main_queue() usingBlock:
-                     ^(CMTime time) {
-                         [weak_self update];
-                     }];
+//    __block typeof(self) weak_self = self;
+//	timeObserver = [_player addPeriodicTimeObserverForInterval:CMTimeMakeWithSeconds(interval, NSEC_PER_SEC)
+//                                                         queue:dispatch_get_main_queue() usingBlock:
+//                     ^(CMTime time) {
+//                         [weak_self update];
+//                     }];
 }
 
 - (void)removeTimeObserverFromPlayer {
@@ -927,3 +929,4 @@ UIImage * imageFromSampleBuffer(CMSampleBufferRef sampleBuffer) {
 }
 
 @end
+#endif

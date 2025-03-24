@@ -2,7 +2,7 @@
 
 #include "ofMain.h"
 #include <atomic>
-
+#include "ofPixels.h"
 /// This is a simple example of a ThreadedObject created by extending ofThread.
 /// It contains data (count) that will be accessed from within and outside the
 /// thread and demonstrates several of the data protection mechanisms (aka
@@ -69,17 +69,15 @@ public:
 			// The mutex is now locked so we can modify
 			// the shared memory without problem
 			auto t = ofGetElapsedTimef();
-			for(auto line: pixels.getLines()){
-				auto x = 0;
-				for(auto pixel: line.getPixels()){
-					auto ux = x/float(pixels.getWidth());
-					auto uy = line.getLineNum()/float(pixels.getHeight());
-					pixel[0] = ofNoise(ux, uy, t);
-					pixel[1] = ofNoise(ux, uy, t);
-					pixel[2] = ofNoise(ux, uy, t);
-					pixel[3] = 1;
-					x++;
-				}
+			auto pixelData = pixels.getData();
+			int totalPixels = pixels.getWidth() * pixels.getHeight();
+			for (int i = 0; i < totalPixels; i++) {
+				float ux = (i % pixels.getWidth()) / float(pixels.getWidth());
+				float uy = (i / pixels.getWidth()) / float(pixels.getHeight());
+				pixelData[i * 4 + 0] = ofNoise(ux, uy, t);
+				pixelData[i * 4 + 1] = ofNoise(ux, uy, t);
+				pixelData[i * 4 + 2] = ofNoise(ux, uy, t);
+				pixelData[i * 4 + 3] = 1;
 			}
 
 			// Now we wait for the main thread to finish

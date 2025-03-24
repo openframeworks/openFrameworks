@@ -188,7 +188,7 @@ PLATFORM_CXXFLAGS += $(PLATFORM_CXXVER)
 #   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
 
-PLATFORM_LDFLAGS = -Wl,-rpath=./libs:./bin/libs -Wl,--as-needed -Wl,--gc-sections
+PLATFORM_LDFLAGS = -Wl,-rpath=./libs:./bin/libs:./ -Wl,--as-needed -Wl,--gc-sections
 
 ifeq ($(OF_USING_STD_FS),1)
 	# gcc 8 need special file system linking with -lstdc++fs. gcc 9 onwards doesn't
@@ -268,7 +268,6 @@ PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/FreeImage/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/assimp/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/rtAudio/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openssl/%
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/boost/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/glfw/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/curl/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/uriparser/%
@@ -332,9 +331,6 @@ endif
 PLATFORM_LIBRARIES += freeimage
 ifeq ($(OF_USING_STD_FS),1)
 PLATFORM_LIBRARIES += stdc++fs
-else
-PLATFORM_LIBRARIES += boost_filesystem
-PLATFORM_LIBRARIES += boost_system
 endif
 PLATFORM_LIBRARIES += pugixml
 PLATFORM_LIBRARIES += uriparser
@@ -359,8 +355,21 @@ PLATFORM_PKG_CONFIG_LIBRARIES += freetype2
 PLATFORM_PKG_CONFIG_LIBRARIES += fontconfig
 PLATFORM_PKG_CONFIG_LIBRARIES += sndfile
 PLATFORM_PKG_CONFIG_LIBRARIES += openal
-# PLATFORM_PKG_CONFIG_LIBRARIES += openssl
-PLATFORM_PKG_CONFIG_LIBRARIES += libcurl
+
+
+ifeq "$(shell pkg-config --exists openssl && echo 1)" "1"
+	PLATFORM_PKG_CONFIG_LIBRARIES += openssl
+endif
+
+
+ifeq "$(shell pkg-config --exists libcurl && echo 1)" "1"
+	PLATFORM_PKG_CONFIG_LIBRARIES += libcurl
+endif
+
+ifeq "$(shell pkg-config --exists libcurl4 && echo 1)" "1"
+	PLATFORM_PKG_CONFIG_LIBRARIES += libcurl4
+endif
+
 
 ifeq ($(CROSS_COMPILING),1)
 	ifeq "$(shell export PKG_CONFIG_LIBDIR=$(PKG_CONFIG_LIBDIR); pkg-config --exists glfw3 && echo 1)" "1"

@@ -135,9 +135,9 @@ void ofApp::draw() {
 	float radius = 350;
 
 	for(unsigned int i=0; i<words.size()/2; i++) {
-		float t = -HALF_PI + ofMap(i, 0, (words.size()/2), 0, TWO_PI);
-		float x = cos( t ) * radius;
-		float y = sin( t ) * radius;
+		float t = -glm::half_pi<float>() + ofMap(i, 0, (words.size()/2), 0, glm::two_pi<float>());
+		float x = std::cos( t ) * radius;
+		float y = std::sin( t ) * radius;
 		float a = ofRadToDeg(atan2(y, x));
 		ofSetColor(0);
 		ofPushMatrix();

@@ -1,10 +1,14 @@
 #pragma once
 
-#define GLM_FORCE_CTOR_INIT
-#include "glm/gtx/wrap.hpp"
-#include <typeinfo>
+#if !defined(GLM_FORCE_CTOR_INIT)
+	#define GLM_FORCE_CTOR_INIT
+#endif
+#if !defined(GLM_ENABLE_EXPERIMENTAL)
+	#define GLM_ENABLE_EXPERIMENTAL
+#endif
+#include <glm/ext/scalar_common.hpp>
+#include <glm/vec3.hpp>
 #include <iostream>
-#include <limits>
 
 /// \class ofColor_
 ///
@@ -162,7 +166,13 @@ public:
                 float saturation,
                 float brightness,
                 float alpha = limit());
-
+	void setHsb(glm::vec3 hsb) {
+		setHsb(hsb.x, hsb.y, hsb.z);
+	}
+	void setNormalizedHsb(glm::vec3 hsb) {
+		hsb *= limit();
+		setHsb(hsb.x, hsb.y, hsb.z);
+	}
     /// \}
 
     /// \name Modifiers
@@ -303,6 +313,22 @@ public:
     /// \param brightness A reference to the brightness to fill. Will be in the
     ///     range of 0 - limit().
     void getHsb(float& hue, float& saturation, float& brightness) const;
+	
+	/// \brief Extract the hue, saturation and brightness (HSB) from this color.
+	///
+	/// \returns the 3 color-native values in a glm::vec3
+	glm::vec3 getHsb() const {
+		float h, s, b;
+		getHsb(h,s,b);
+		return { h, s, b };
+	}
+
+	/// \brief Extract the hue, saturation and brightness (HSB) from this color.
+	///
+	/// \returns the 3 values normalized 0-1 in a glm::vec3
+	glm::vec3 getNormalizedHsb() const {
+		return getHsb()/limit();
+	}
 
     /// \brief Get the maximum value of a color component.
     ///
@@ -662,6 +688,7 @@ void ofColor_<PixelType>::copyFrom(const ofColor_<SrcType> & mom){
 	if(typeid(SrcType) == typeid(float) || typeid(SrcType) == typeid(double)) {
 		// coming from float we need a special case to clamp the values
 		for(int i = 0; i < 4; i++){
+			// FIXME: replace by std::clamp when it is exclusive C++17
 			v[i] = glm::clamp(float(mom[i]), 0.f, 1.f) * factor;
 		}
 	} else{

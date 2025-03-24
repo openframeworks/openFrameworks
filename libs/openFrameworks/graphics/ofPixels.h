@@ -2,8 +2,6 @@
 
 #include "ofUtils.h"
 #include "ofLog.h"
-#include "ofMath.h"
-#include "ofConstants.h"
 
 template<typename T>
 class ofColor_;
@@ -315,8 +313,12 @@ public:
 	/// \returns A raw pointer to the pixel data.
 	PixelType * getData();
 	const PixelType * getData() const;
-	OF_DEPRECATED_MSG("Use getData instead",PixelType * getPixels());
-	OF_DEPRECATED_MSG("Use getData instead",const PixelType * getPixels() const);
+
+	[[deprecated("Use getData")]]
+	PixelType * getPixels();
+
+	[[deprecated("Use getData")]]
+	const PixelType * getPixels() const;
 
 	/// \brief Get the pixel index at a x,y position
 	///
@@ -677,8 +679,8 @@ private:
 	void copyFrom( const ofPixels_<SrcType>& mom );
 
 	PixelType * pixels = nullptr;
-	size_t 	width = 0;
-	size_t 	height = 0;
+	size_t width = 0;
+	size_t height = 0;
 
 	//int 	channels; // 1, 3, 4 channels per pixel (grayscale, rgb, rgba)
 	size_t 	pixelsSize = 0;

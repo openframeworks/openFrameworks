@@ -1,12 +1,12 @@
 #pragma once
 
-#include "ofConstants.h"
 #ifndef TARGET_NO_THREADS
 
-	#include <atomic>
-	#include <condition_variable>
-	#include <mutex>
-	#include <thread>
+#include <atomic>
+#include <condition_variable>
+#include <mutex>
+#include <thread>
+#include <string>
 
 /// \class ofThread
 /// \brief A threaded base class with a built in mutex for convenience.
@@ -43,6 +43,7 @@ class ofThread {
 public:
 	/// \brief Create an ofThread.
 	ofThread();
+	virtual ~ofThread() { }
 
 	/// \brief Check the running status of the thread.
 	/// \returns true iff the thread is currently running.
@@ -68,8 +69,8 @@ public:
 	///        block when lock() is called.
 	/// \note Subclasses can directly access the mutex and employ thier
 	///       own locking strategy.
-	OF_DEPRECATED_MSG("Use tryLock instead of setting the type of lock on startThread",
-		void startThread(bool mutexBlocks));
+	[[deprecated("Use tryLock instead of setting the type of lock on startThread")]]
+	void startThread(bool mutexBlocks);
 
 	/// \brief Lock the mutex.
 	///
@@ -300,6 +301,7 @@ private:
 
 class ofThread {
 public:
+	virtual ~ofThread() { }
 	void lock() { }
 	void unlock() { }
 	void startThread() { }
