@@ -13,6 +13,7 @@ using std::string;
 #include "ofThreadChannel.h"
 #include "ofThread.h"
 static bool curlInited = false;
+#define MAX_POSTFIELDS_SIZE (1024 * 1024)
 #if !defined(NO_OPENSSL)
 #include <openssl/evp.h>
 #include <openssl/pem.h>
@@ -327,11 +328,11 @@ ofHttpResponse ofURLFileLoaderImpl::handleRequest(const ofHttpRequest & request)
 #else
 		curl_easy_setopt(curl.get(), CURLOPT_SSL_VERIFYPEER, 1L);
 #endif
-		curl_easy_setopt(curl.get(), CURLOPT_MAXREDIRS, 50L);
 		curl_easy_setopt(curl.get(), CURLOPT_SSL_VERIFYHOST, 2);
 	}
 	curl_easy_setopt(curl.get(), CURLOPT_URL, request.url.c_str());
 	curl_easy_setopt(curl.get(), CURLOPT_FOLLOWLOCATION, 1L);
+	curl_easy_setopt(curl.get(), CURLOPT_MAXREDIRS, 20L);
 
 	if (request.contentType != "") {
 		headers = curl_slist_append(headers, ("Content-Type: " + request.contentType).c_str());
@@ -348,41 +349,47 @@ ofHttpResponse ofURLFileLoaderImpl::handleRequest(const ofHttpRequest & request)
 		headers = curl_slist_append(headers, (it->first + ": " + it->second).c_str());
 	}
 
-	curl_easy_setopt(curl.get(), CURLOPT_HTTPHEADER, headers);
+	if (headers) {
+		curl_easy_setopt(curl.get(), CURLOPT_HTTPHEADER, headers);
+	}
 	std::string body = request.body;
-	// set body if there's any
-	if (request.body != "") {
-		//		curl_easy_setopt(curl.get(), CURLOPT_UPLOAD, 1L); // Tis does PUT instead of POST
-		curl_easy_setopt(curl.get(), CURLOPT_POSTFIELDSIZE, request.body.size());
-		curl_easy_setopt(curl.get(), CURLOPT_POSTFIELDS, nullptr);
-		//curl_easy_setopt(curl.get(), CURLOPT_POSTFIELDS, request.body.c_str());
-		curl_easy_setopt(curl.get(), CURLOPT_READFUNCTION, readBody_cb);
-		curl_easy_setopt(curl.get(), CURLOPT_READDATA, &body);
+	if (!request.body.empty()) {
+		if (request.method == ofHttpRequest::PUT || request.body.size() > MAX_POSTFIELDS_SIZE) { // If request is an upload (e.g., file upload)
+			curl_easy_setopt(curl.get(), CURLOPT_UPLOAD, 1L);
+			curl_easy_setopt(curl.get(), CURLOPT_READFUNCTION, readBody_cb);
+			curl_easy_setopt(curl.get(), CURLOPT_READDATA, &body);
+			curl_easy_setopt(curl.get(), CURLOPT_POSTFIELDSIZE, 0L);
+		} else { // If request is a normal POST
+			curl_easy_setopt(curl.get(), CURLOPT_POSTFIELDSIZE, request.body.size());
+			curl_easy_setopt(curl.get(), CURLOPT_POSTFIELDS, request.body.c_str());
+		}
 	} else {
-		//		curl_easy_setopt(curl.get(), CURLOPT_UPLOAD, 0L);
-		curl_easy_setopt(curl.get(), CURLOPT_POSTFIELDSIZE, 0);
-		//curl_easy_setopt(curl.get(), CURLOPT_POSTFIELDS, nullptr);
+		curl_easy_setopt(curl.get(), CURLOPT_POSTFIELDSIZE, 0L);
+		curl_easy_setopt(curl.get(), CURLOPT_POSTFIELDS, "");
 		curl_easy_setopt(curl.get(), CURLOPT_READFUNCTION, nullptr);
 		curl_easy_setopt(curl.get(), CURLOPT_READDATA, nullptr);
 	}
 	if (request.method == ofHttpRequest::GET) {
-		curl_easy_setopt(curl.get(), CURLOPT_HTTPGET, 1);
-		curl_easy_setopt(curl.get(), CURLOPT_POST, 0);
-		curl_easy_setopt(curl.get(), CURLOPT_UPLOAD, 0);
+		curl_easy_setopt(curl.get(), CURLOPT_HTTPGET, 1L);
+		curl_easy_setopt(curl.get(), CURLOPT_POST, 0L);
+		curl_easy_setopt(curl.get(), CURLOPT_UPLOAD, 0L);
 	}
 	else if (request.method == ofHttpRequest::PUT) {
-		curl_easy_setopt(curl.get(), CURLOPT_UPLOAD, 1);
-		curl_easy_setopt(curl.get(), CURLOPT_POST, 0);
-		curl_easy_setopt(curl.get(), CURLOPT_HTTPGET, 0);
+		curl_easy_setopt(curl.get(), CURLOPT_UPLOAD, 1L);
+		curl_easy_setopt(curl.get(), CURLOPT_POST, 0L);
+		curl_easy_setopt(curl.get(), CURLOPT_HTTPGET, 0L);
 	}
 	else if (request.method == ofHttpRequest::POST) {
-		curl_easy_setopt(curl.get(), CURLOPT_POST, 1);
-		curl_easy_setopt(curl.get(), CURLOPT_UPLOAD, 0);
-		curl_easy_setopt(curl.get(), CURLOPT_HTTPGET, 0);
+		curl_easy_setopt(curl.get(), CURLOPT_POST, 1L);
+		curl_easy_setopt(curl.get(), CURLOPT_UPLOAD, 0L);
+		curl_easy_setopt(curl.get(), CURLOPT_HTTPGET, 0L);
 	}
 
 	if (request.timeoutSeconds > 0) {
 		curl_easy_setopt(curl.get(), CURLOPT_TIMEOUT, request.timeoutSeconds);
+	}
+	if (request.headerOnly) {
+		curl_easy_setopt(curl.get(), CURLOPT_NOBODY, 1L);
 	}
 
 	// start request and receive response
