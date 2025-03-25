@@ -34,6 +34,7 @@ ofEvent<ofHttpResponse> & ofURLResponseEvent() {
 }
 
 #if !defined(TARGET_IMPLEMENTS_URL_LOADER)
+std::mutex responseMutex;
 class ofURLFileLoaderImpl : public ofThread, public ofBaseURLFileLoader {
 public:
 	ofURLFileLoaderImpl();
@@ -261,37 +262,41 @@ void ofURLFileLoaderImpl::threadedFunction() {
 
 namespace {
 size_t saveToFile_cb(void * buffer, size_t size, size_t nmemb, void * userdata) {
+	std::lock_guard<std::mutex> lock(responseMutex);
 	auto saveTo = (ofFile *)userdata;
 	saveTo->write((const char *)buffer, size * nmemb);
 	return size * nmemb;
 }
 
 size_t saveToMemory_cb(void * buffer, size_t size, size_t nmemb, void * userdata) {
+	std::lock_guard<std::mutex> lock(responseMutex);
 	auto response = (ofHttpResponse *)userdata;
 	response->data.append((const char *)buffer, size * nmemb);
 	return size * nmemb;
 }
 
 size_t readBody_cb(void * ptr, size_t size, size_t nmemb, void * userdata) {
+	std::lock_guard<std::mutex> lock(responseMutex);
 	auto body = (std::string *)userdata;
-
 	if (size * nmemb < 1) {
 		return 0;
 	}
-
 	if (!body->empty()) {
 		auto sent = std::min(size * nmemb, body->size());
 		memcpy(ptr, body->c_str(), sent);
 		*body = body->substr(sent);
 		return sent;
 	}
-
 	return 0; /* no more data left to deliver */
 }
 }
 
 ofHttpResponse ofURLFileLoaderImpl::handleRequest(const ofHttpRequest & request) {
 	std::unique_ptr<CURL, void (*)(CURL *)> curl = std::unique_ptr<CURL, void (*)(CURL *)>(curl_easy_init(), curl_easy_cleanup);
+	if (!curl) {
+		ofLogError("ofURLFileLoader") << "curl_easy_init() failed!";
+		return ofHttpResponse(request, -1, "CURL initialization failed");
+	}
 	curl_slist * headers = nullptr;
 	curl_version_info_data *version = curl_version_info( CURLVERSION_NOW );
 	if(request.verbose) {
@@ -427,7 +432,12 @@ void ofURLFileLoaderImpl::update(ofEventArgs & args) {
 	ofHttpResponse response;
 	while (responses.tryReceive(response)) {
 		try {
-			response.request.done(response);
+			std::lock_guard<std::mutex> lock(responseMutex);
+			if (response.request.done) {
+				response.request.done(response);
+			} else {
+				ofLogWarning("ofURLFileLoader") << "No callback set for request: " << response.request.url;
+			}
 		} catch (...) {
 		}
 
