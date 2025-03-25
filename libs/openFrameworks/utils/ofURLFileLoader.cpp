@@ -387,12 +387,20 @@ ofHttpResponse ofURLFileLoaderImpl::handleRequest(const ofHttpRequest & request)
 		ofFile saveTo(request.name, ofFile::WriteOnly, true);
 		curl_easy_setopt(curl.get(), CURLOPT_WRITEDATA, &saveTo);
 		curl_easy_setopt(curl.get(), CURLOPT_WRITEFUNCTION, saveToFile_cb);
-		err = curl_easy_perform(curl.get());
 	} else {
 		curl_easy_setopt(curl.get(), CURLOPT_WRITEDATA, &response);
 		curl_easy_setopt(curl.get(), CURLOPT_WRITEFUNCTION, saveToMemory_cb);
-		err = curl_easy_perform(curl.get());
 	}
+	try {
+		err = curl_easy_perform(curl.get());
+	} catch (const std::exception & e) {
+		ofLogError("ofURLFileLoader") << "Exception: " << e.what();
+		return ofHttpResponse(request, -1, e.what());
+	} catch (...) {
+		ofLogError("ofURLFileLoader") << "Unknown exception caught!";
+		return ofHttpResponse(request, -1, "Unknown exception");
+	}
+
 	if (err == CURLE_OK) {
 		long http_code = 0;
 		curl_easy_getinfo(curl.get(), CURLINFO_RESPONSE_CODE, &http_code);
