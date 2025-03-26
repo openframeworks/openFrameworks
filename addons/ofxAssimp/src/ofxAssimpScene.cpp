@@ -79,12 +79,17 @@ bool Scene::processScene() {
 
 	if(mSrcScene){
 		if( mSrcScene->getImportSettings().importAnimations ) {
-			mAnimations = mSrcScene->getAnimations();
+			mAnimations.clear();
+			//			mAnimations = mSrcScene->getAnimations();
+			auto& srcAnims = mSrcScene->getAnimations();
+			for( auto& srcA : srcAnims ) {
+				auto nanim = std::make_shared<ofxAssimp::Animation>( srcA );
+				mAnimations.push_back(nanim);
+			}
 			if(mAnimations.size() > 0 ) {
-				// add a default mixer
-				mAnimMixer = std::make_shared<AnimationMixer>();
-				mAnimMixer->add( AnimationClip( mAnimations[0], 1.0f ));
-				mAnimMixer->getAnimationClip(0).animation.play();
+				mAnimationIndex = -1; // set to -1 so it will trigger playing
+				setCurrentAnimation(0);
+				getCurrentAnimation().play();
 			}
 		}
 		
@@ -354,6 +359,13 @@ void Scene::flagSceneDirty() {
 	mBSceneDirty = true;
 }
 
+std::shared_ptr<AnimationMixer> Scene::_getAnimationMixer() {
+	if( !mAnimMixer ) {
+		mAnimMixer = std::make_shared<AnimationMixer>();
+	}
+	return mAnimMixer;
+}
+
 void Scene::updateAnimations() {
 	if( mAnimMixer ) {
 		mAnimMixer->update(ofGetElapsedTimef());
@@ -480,7 +492,10 @@ ofxAssimp::Animation& Scene::getCurrentAnimation() {
 		return dummyAnimation;
 	}
 	if( mAnimMixer && mAnimMixer->getNumAnimationClips() > 0 ) {
-		return mAnimMixer->getAnimationClips().back().animation;
+		//		return mAnimMixer->getAnimationClips().back().animation;
+		if( auto alock = mAnimMixer->getAnimationClips().back().animationWeak.lock() ) {
+			return *alock;
+		}
 	}
 	ofLogWarning("ofxAssimp::Scene::getCurrentAnimation") << " does not have current animation!";
 	return dummyAnimation;
@@ -495,10 +510,11 @@ bool Scene::setCurrentAnimation( int aindex ) {
 		ofLogWarning("ofxAssimp::Scene::setAnimation") << " already have this as the index!";
 		return false;
 	}
+	_getAnimationMixer();
 	mAnimationIndex = ofClamp(aindex, 0, mAnimations.size()-1);
 	mAnimMixer->removeAll();
 	mAnimMixer->add( AnimationClip( mAnimations[mAnimationIndex], 1.0f ));
-	mAnimMixer->getAnimationClips().back().animation.reset();
+	mAnimMixer->getAnimationClips().back().resetAnimation();
 	return true;
 }
 
@@ -516,10 +532,11 @@ bool Scene::transitionCurrentAnimation( int aTargetAnimIndex, float aduration ) 
 		ofLogWarning("ofxAssimp::Scene::setAnimation") << " no animations!!";
 		return false;
 	}
+	_getAnimationMixer();
 	mAnimationIndex = ofClamp(aTargetAnimIndex, 0, mAnimations.size()-1);
 	mAnimMixer->add( AnimationClip( mAnimations[mAnimationIndex], 1.f-mAnimMixer->getTotalClipWeights() ));
-	mAnimMixer->transition(mAnimations[mAnimationIndex].getName(), aduration );
-	mAnimMixer->getAnimationClips().back().animation.reset();
+	mAnimMixer->transition(mAnimations[mAnimationIndex]->getName(), aduration );
+	mAnimMixer->getAnimationClips().back().resetAnimation();
 	return true;
 }
 
@@ -539,7 +556,7 @@ bool Scene::hasAnimation( const std::string& aname ) {
 int Scene::getAnimationIndex( const std::string& aname ) {
 	int tindex = -1;
 	for( int i = 0; i < (int)mAnimations.size(); i++ ) {
-		if( mAnimations[i].getName() == aname ) {
+		if( mAnimations[i] && mAnimations[i]->getName() == aname ) {
 			tindex = i;
 			break;
 		}
@@ -553,7 +570,7 @@ ofxAssimp::Animation& Scene::getAnimation(int aindex) {
 		return dummyAnimation;
 	}
 	aindex = ofClamp(aindex, 0, mAnimations.size()-1);
-	return mAnimations[aindex];
+	return *mAnimations[aindex];
 }
 
 ofxAssimp::Animation& Scene::getAnimation(const std::string& aname) {
@@ -579,10 +596,11 @@ bool Scene::addAnimation( int aSrcAnimIndex, const std::string& aNewAnimName, fl
 		return false;
 	}
 	auto& canim = mAnimations[aSrcAnimIndex];
-	ofxAssimp::Animation nanim = mAnimations[aSrcAnimIndex];
-	nanim.setup(aStartTick, aEndTick);
-	nanim.setName(aNewAnimName);
-	nanim.setLoopType(aLoopType);
+	//	ofxAssimp::Animation nanim = mAnimations[aSrcAnimIndex];
+	auto nanim = std::make_shared<ofxAssimp::Animation>( *mAnimations[aSrcAnimIndex] );
+	nanim->setup(aStartTick, aEndTick);
+	nanim->setName(aNewAnimName);
+	nanim->setLoopType(aLoopType);
 	mAnimations.push_back(nanim);
 	return true;
 }

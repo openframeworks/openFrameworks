@@ -273,6 +273,7 @@ public:
 	
 	
 protected:
+	std::shared_ptr<AnimationMixer> _getAnimationMixer();
 	void updateAnimations();
 	void updateMeshesFromBones();
 	
@@ -292,7 +293,8 @@ protected:
 	// the skeletons are the root bones
 	std::vector< std::shared_ptr<ofxAssimp::Skeleton> > mSkeletons;
 	std::vector< std::shared_ptr<ofxAssimp::Node> > mNullNodes;
-	std::vector<ofxAssimp::Animation> mAnimations;
+//	std::vector<ofxAssimp::Animation> mAnimations;
+	std::vector< std::shared_ptr<ofxAssimp::Animation> > mAnimations;
 	
 	int mAnimationIndex = 0;
 	
