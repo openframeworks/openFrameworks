@@ -1,20 +1,15 @@
-//
-//  ofxAssimpNode.cpp
-//  Created by Nick Hardeman on 10/24/23.
-//
-
 #include "ofxAssimpNode.h"
 #include "ofxAssimpUtils.h"
 #include "of3dGraphics.h"
 
-using namespace ofx::assimp;
+using namespace ofxAssimp;
 
 using std::shared_ptr;
 using std::string;
 using std::cout;
 
 //--------------------------------------------------------------
-void Node::setSrcNode( std::shared_ptr<ofx::assimp::SrcNode> aSrcNode ) {
+void Node::setSrcNode( std::shared_ptr<ofxAssimp::SrcNode> aSrcNode ) {
 	mSrcNode = aSrcNode;
 	if( getType() == OFX_ASSIMP_BONE ) {
 //		setOfNodeFromAiMatrix(mSrcNode->getAiNode()->mTransformation, this );
@@ -30,8 +25,8 @@ std::string Node::getName() {
 }
 
 //--------------------------------------------------------------
-void Node::update( const std::shared_ptr<ofx::assimp::AnimationMixer>& aAnimMixer ) {
-	std::shared_ptr<ofx::assimp::AnimationMixer> mixer;
+void Node::update( const std::shared_ptr<ofxAssimp::AnimationMixer>& aAnimMixer ) {
+	std::shared_ptr<ofxAssimp::AnimationMixer> mixer;
 	if( hasAnimationMixer() && areAnimationsEnabled() ) {
 		mixer = mAnimMixer;
 	} else {
@@ -39,7 +34,7 @@ void Node::update( const std::shared_ptr<ofx::assimp::AnimationMixer>& aAnimMixe
 	}
 
 	if( !mixer ) {
-		ofLogError("ofx::assimp::Node:update") << "not a valid AnimationMixer!";
+		ofLogError("ofxAssimp::Node:update") << "not a valid AnimationMixer!";
 		return;
 	}
 	
@@ -55,10 +50,14 @@ void Node::update( const std::shared_ptr<ofx::assimp::AnimationMixer>& aAnimMixe
 			bool bHasSomeKeys = false;
 			int clipWithKeysIndex = 0;
 			for( auto& animClip : mixer->getAnimationClips() ) {
-				auto& keyCollection = mSrcNode->getKeyCollection(animClip.animation.getUid());
+				
+				auto animation = animClip.animationWeak.lock();
+				if( !animation ) {continue;}
+				
+				auto& keyCollection = mSrcNode->getKeyCollection(animation->getUid());
 				
 				if( keyCollection.hasKeys() ) {
-					auto animTime = animClip.animation.getPositionInTicks() + animClip.animation.getStartTick();
+					auto animTime = animation->getPositionInTicks() + animation->getStartTick();
 					tempPos += animClip.weight * keyCollection.getPosition( animTime );
 					tempScale += animClip.weight * keyCollection.getScale( animTime );
 					// TODO: Keep an eye on this :O
@@ -142,7 +141,7 @@ void Node::setEnabled( bool aBEnable, bool aBRecursively) {
 }
 
 //----------------------------------------
-void Node::setParentNode( shared_ptr<ofx::assimp::Node> anode ) {
+void Node::setParentNode( shared_ptr<ofxAssimp::Node> anode ) {
 	mParentNode = anode;
 }
 
@@ -153,7 +152,7 @@ bool Node::hasParentNode() {
 }
 
 //----------------------------------------
-shared_ptr<ofx::assimp::Node> Node::getParentNode() {
+shared_ptr<ofxAssimp::Node> Node::getParentNode() {
 	return mParentNode;
 }
 
@@ -178,22 +177,22 @@ std::vector< std::shared_ptr<Node> >& Node::getChildren() {
 }
 
 //--------------------------------------------------------------
-std::shared_ptr<ofx::assimp::Node> Node::getNode( const string& aPath, bool bStrict ) {
+std::shared_ptr<ofxAssimp::Node> Node::getNode( const string& aPath, bool bStrict ) {
 	std::vector< std::string > tsearches;
 	if( ofIsStringInString( aPath, ":" ) ) {
 		tsearches = ofSplitString( aPath, ":" );
 	} else {
 		tsearches.push_back( aPath );
 	}
-	std::shared_ptr<ofx::assimp::Node> temp;
+	std::shared_ptr<ofxAssimp::Node> temp;
 	_getNodeForNameRecursive( tsearches, temp, mKids, bStrict );
 	return temp;
 }
 
 //--------------------------------------------------------------
 void Node::_getNodeForNameRecursive(std::vector<std::string>& aNamesToFind,
-									std::shared_ptr<ofx::assimp::Node>& aTarget,
-									std::vector< std::shared_ptr<ofx::assimp::Node> >& aElements, bool bStrict ) {
+									std::shared_ptr<ofxAssimp::Node>& aTarget,
+									std::vector< std::shared_ptr<ofxAssimp::Node> >& aElements, bool bStrict ) {
 	if( aNamesToFind.size() < 1 ) {
 		return;
 	}
@@ -248,8 +247,8 @@ void Node::_getNodeForNameRecursive(std::vector<std::string>& aNamesToFind,
 
 //--------------------------------------------------------------
 void Node::_getNodesForTypeRecursive( int atype, const std::string& aNameToContain,
-									std::vector< std::shared_ptr<ofx::assimp::Node> >& aFoundElements,
-									std::vector< std::shared_ptr<ofx::assimp::Node> >& aElements ) {
+									std::vector< std::shared_ptr<ofxAssimp::Node> >& aFoundElements,
+									std::vector< std::shared_ptr<ofxAssimp::Node> >& aElements ) {
 	
 	for( size_t i = 0; i < aElements.size(); i++ ) {
 		if( aElements[i]->getType() == atype ) {
@@ -286,7 +285,7 @@ std::string Node::getAsString( int aLevel ) {
 	} else {
 		oStr << "- ";
 	}
-	oStr << ofx::assimp::SrcNode::sGetNodeTypeShortAsString( getType() );
+	oStr << ofxAssimp::SrcNode::sGetNodeTypeShortAsString( getType() );
 	oStr << ": " << getName();
 	oStr << std::endl;
 	

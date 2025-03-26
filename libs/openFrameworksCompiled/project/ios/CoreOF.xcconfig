@@ -26,7 +26,7 @@ HEADER_OPENSSL = "$(OF_PATH)/libs/openssl/include"
 
 
 //------- Libraries
-LIB_OF = "$(OF_PATH)/libs/openFrameworksCompiled/lib/ios/openFrameworksiOS.a"
+LIB_OF_RELEASE = "$(OF_PATH)/libs/openFrameworksCompiled/lib/ios/openFrameworksiOS.a"
 LIB_OF_DEBUG = "$(OF_PATH)/libs/openFrameworksCompiled/lib/ios/openFrameworksiOSDebug.a"
 
 //LIB_FREEIMAGE = "$(OF_PATH)/libs/FreeImage/lib/ios/freeimage.a"
@@ -36,9 +36,8 @@ LIB_OF_DEBUG = "$(OF_PATH)/libs/openFrameworksCompiled/lib/ios/openFrameworksiOS
 //LIB_URIPARSER = "$(OF_PATH)/libs/uriparser/lib/ios/uriparser.a"
 //LIB_PUGIXML = "$(OF_PATH)/libs/pugixml/lib/ios/pugixml.a"
 
-
-
 MISC_FLAGS = "-ObjC"
+LINK_OBJC_RUNTIME = YES
 
 OF_CORE_LIBS = $(MISC_FLAGS) $(LIB_OF)
 
@@ -47,15 +46,7 @@ OF_CORE_HEADERS = $(HEADER_OF) $(HEADER_OFXIOS) $(HEADER_UTF8) $(HEADER_FREETYPE
 OF_CORE_FRAMEWORKS = -framework AudioToolbox -framework Accelerate -framework AVFoundation -framework CoreAudio -framework CoreGraphics -framework CoreLocation -framework CoreMotion -framework CoreMedia -framework CoreVideo -framework Foundation -framework GameController -framework GLKit -framework MapKit -framework OpenAL -framework OpenGLES -framework UIKit -framework Security -framework QuartzCore -framework CoreHaptics -framework Metal
 
 
-// BOOST can be enabled in OF Core by uncommenting this block
-//HEADER_BOOST = "$(OF_PATH)/libs/boost/include"
-//LIB_BOOST_SYSTEM = "$(OF_PATH)/libs/boost/lib/ios/boost_system.a"
-//LIB_BOOST_FS = "$(OF_PATH)/libs/boost/lib/ios/boost_filesystem.a"
-//LIB_BOOST = $(LIB_BOOST_SYSTEM) $(LIB_BOOST_FS)
-//OF_CORE_LIBS = $(inherited) $(LIB_BOOST)
-//OF_CORE_HEADERS = $(inherited) $(HEADER_BOOST)
-
-GCC_PREPROCESSOR_DEFINITIONS = $(inherited) GLES_SILENCE_DEPRECATION=1
+GCC_PREPROCESSOR_DEFINITIONS = $(inherited) GLES_SILENCE_DEPRECATION=1 GLM_FORCE_CTOR_INIT GLM_ENABLE_EXPERIMENTAL
 
 //COMPILER SETTINGS WHICH CAN BE OVERRIDDEN BY XCODE BUILD SETTINGS
 CLANG_ENABLE_OBJC_WEAK = YES
@@ -101,7 +92,7 @@ DEAD_CODE_STRIPPING = YES
 ENABLE_BITCODE = NO
 ENABLE_STRICT_OBJC_MSGSEND = YES
 
-SKIP_INSTALL = YES
+SKIP_INSTALL = NO
 
 CC = $(OF_PATH)/scripts/osx/cc.sh
 CXX = $(OF_PATH)/scripts/osx/cxx.sh

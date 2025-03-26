@@ -181,6 +181,8 @@ public:
 	ofEvent<void> backPressed;
 	ofEvent<bool> networkConnected;
 	ofEvent<ofOrientation> deviceOrientationChanged;
+	ofEvent<int> deviceRefreshRate;
+    ofEvent<int> deviceHighestRefreshRate;
 	
 	/**
 		The names start, stop, resume and pause correspond to Android Activity class lifecycle callbacks.

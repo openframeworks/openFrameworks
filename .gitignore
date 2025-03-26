@@ -169,3 +169,4 @@ libs/openFrameworksCompiled/project/vs/openframeworksLib.vcxproj.user
 libs/openFrameworksCompiled/project/vs2019/openframeworksLib.vcxproj.user
 scripts/templates/vs/bin/emptyExample_debug.exe
 scripts/templates/vs2019/emptyExample.vcxproj.user
+libs/openFrameworksCompiled/project/android/build-*/

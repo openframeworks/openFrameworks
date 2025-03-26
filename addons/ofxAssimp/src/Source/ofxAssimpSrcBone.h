@@ -6,15 +6,15 @@
 #pragma once
 #include "ofxAssimpSrcNode.h"
 
-namespace ofx::assimp {
-class SrcBone : public ofx::assimp::SrcNode {
+namespace ofxAssimp {
+class SrcBone : public ofxAssimp::SrcNode {
 public:
 	virtual NodeType getType() override { return OFX_ASSIMP_BONE; }
 	
 	void setAiBone(aiBone* aAiBone, aiNode* aAiNode);
 //	void update();
 	
-	std::shared_ptr<ofx::assimp::SrcBone> getBone( aiNode* aAiNode );
+	std::shared_ptr<ofxAssimp::SrcBone> getBone( aiNode* aAiNode );
 	void findBoneRecursive( aiNode* aAiNode, std::shared_ptr<SrcBone>& returnBone );
 	
 	std::string getAsString( unsigned int aLevel=0 );
@@ -29,7 +29,7 @@ public:
 //	aiMatrix4x4& getAiMatrixGlobal() { return mAiMatrixGlobal; }
 	aiMatrix4x4& getAiOffsetMatrix() { return mOffsetMatrix;}
 	
-	std::vector< std::shared_ptr<ofx::assimp::SrcBone> > childBones;
+	std::vector< std::shared_ptr<ofxAssimp::SrcBone> > childBones;
 	
 protected:
 	aiBone* mAiBone = nullptr;

@@ -63,13 +63,6 @@ ICON_FILE = $(OF_PATH)/libs/openFrameworksCompiled/project/osx/$(ICON_NAME)
 //OF_BUNDLE_DATA_FOLDER = 1
 //OF_BUNDLE_DYLIBS = 1
 
-// BOOST - UNCOMMENT BELOW TO ENABLE BOOST
-//HEADER_BOOST = "$(OF_PATH)/libs/boost/include"
-//LIB_BOOST_SYSTEM = "$(OF_PATH)/libs/boost/lib/osx/boost_system.a"
-//LIB_BOOST_FS = "$(OF_PATH)/libs/boost/lib/osx/boost_filesystem.a"
-//OF_CORE_LIBS = $(inherited) $(LIB_BOOST_FS) $(LIB_BOOST_SYSTEM)
-//OF_CORE_HEADERS = $(inherited) $(HEADER_BOOST)
-
 HIGH_RESOLUTION_CAPABLE = NO
 
 // Optional include to keep any permanent settings as CODE_SIGN_IDENTITY. 
@@ -84,6 +77,10 @@ GCC_PREPROCESSOR_DEFINITIONS=$(inherited) $(USER_PREPROCESSOR_DEFINITIONS)
 OTHER_CFLAGS = $(OF_CORE_CFLAGS)
 OTHER_LDFLAGS = $(OF_CORE_LIBS) $(OF_CORE_FRAMEWORKS)
 HEADER_SEARCH_PATHS = $(OF_CORE_HEADERS)
+
+//THIS MAKES SURE THE APP BUILDS INSIDE THE BIN FOLDER
+//If you comment this line out the app will be run from DerrivedData and your data/ files won't be accessible unless you uncomment OF_BUNDLE_DATA_FOLDER = 1 above
+CONFIGURATION_BUILD_DIR = ${SRCROOT}/bin
 
 //OF_CORE_BUILD_COMMAND = echo \"💾 Compiling openFrameworks\"\nxcodebuild -project \"$OF_PATH/libs/openFrameworksCompiled/project/osx/openFrameworksLib.xcodeproj\" -target openFrameworks -configuration \"${CONFIGURATION}\"  CLANG_CXX_LANGUAGE_STANDARD=$CLANG_CXX_LANGUAGE_STANDARD MACOSX_DEPLOYMENT_TARGET=$MACOSX_DEPLOYMENT_TARGET GCC_PREPROCESSOR_DEFINITIONS='$USER_PREPROCESSOR_DEFINITIONS'
 

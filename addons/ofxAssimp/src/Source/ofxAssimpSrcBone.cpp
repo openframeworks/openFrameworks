@@ -4,7 +4,7 @@
 #include "of3dUtils.h"
 #include "ofxAssimpUtils.h"
 
-using namespace ofx::assimp;
+using namespace ofxAssimp;
 
 //--------------------------------------------------------------
 void SrcBone::setAiBone(aiBone* aAiBone, aiNode* aAiNode) {
@@ -24,102 +24,9 @@ void SrcBone::setAiBone(aiBone* aAiBone, aiNode* aAiNode) {
 	mAiMatrix = mAiNode->mTransformation;
 }
 
-////--------------------------------------------------------------
-//void SrcBone::update() {
-//	if( mAiNode == nullptr ) {
-//		ofLogWarning("SrcBone::update mAiNode nullptr!!!");
-//		return;
-//	}
-//
-////	if( mAiBone == nullptr ) {
-////		ofLogWarning("SrcBone::update mAiBone nullptr!!!");
-////		return;
-////	}
-//
-////	if( bRoot ) {
-////		std::cout << "Bone: " << getName() << " has parent: " << (getParent() != nullptr) << " | " << ofGetFrameNum() << std::endl;
-////	}
-//	// update //
-////	mAiMatrix = mAiBone->mOffsetMatrix;
-//	mAiMatrix = mAiNode->mTransformation;
-//
-////	mAiMatrixGlobal = mAiNode->mTransformation;
-////	mBoneLocalTransform = glmMat4ToAiMatrix4x4(mAiMatrix);
-//	// and now append all node transformations down the parent chain until we're back at mesh coordinates again
-////	if( bRoot ) {
-////		const aiNode* tempNode = mAiNode;
-////		aiNode* node = scene->mRootNode->FindNode(mAiBone->mName);
-////		const aiNode* tempNode = mAiNode->mParent;
-////		while(tempNode) {
-//////			aiMatrix4x4 m = tempNode->mTransformation;
-//////			m.Transpose();
-////		// check your matrix multiplication order here!!!
-//////			mAiMatrix = m * mAiMatrix;//boneMatrices[a];
-//////			ofLogNotice("SrcBone name: ") << getName() << " parent: " << tempNode->mName.data;
-//////			mAiMatrixGlobal = tempNode->mTransformation * mAiMatrixGlobal;
-////			mAiMatrixGlobal = tempNode->mTransformation * mAiMatrixGlobal;
-////														 // boneMatrices[a] = boneMatrices[a] * tempNode->mTransformation;
-//////			mAiMatrix = tempNode->mTransformation * mAiMatrix;
-//////			mAiMatrix = mAiMatrix * tempNode->mTransformation;
-////			tempNode = tempNode->mParent;
-////		}
-////		mAiMatrix = aGlobalInv * mAiMatrix;
-////	} else {
-////		mAiMatrix = mAiNode->mTransformation * mAiMatrix;
-////		mAiMatrix = mAiMatrix * mAiNode->mTransformation;
-////	}
-//	if( bRoot) {
-////		mAiMatrix = mAiMatrixGlobal;
-//	}
-//
-////	mAiMatrix *= (mOffsetMatrix);
-//
-////	aiVector3t<float> tAiScale;
-////	aiQuaterniont<float> tAiRotation;
-////	aiVector3t<float> tAiPosition;
-////
-////	// this is the local matrix
-////	mAiMatrix.Decompose( tAiScale, tAiRotation, tAiPosition );
-////
-////	glm::vec3 tpos = glm::vec3( tAiPosition.x, tAiPosition.y, tAiPosition.z );
-////	glm::quat tquat = glm::quat(tAiRotation.w, tAiRotation.x, tAiRotation.y, tAiRotation.z);
-//////	glm::quat tquat = glm::quat(tAiRotation.x, tAiRotation.y, tAiRotation.z, tAiRotation.w);
-////	glm::vec3 tscale = glm::vec3( tAiScale.x, tAiScale.y, tAiScale.z );
-////
-//////	if( bRoot ) {
-//////		std::cout << "Bone: " << getName() << " tscale: " << tscale << " | " << ofGetFrameNum() << std::endl;
-//////	}
-////
-//////	if(bRoot) {
-//////		setGlobalPosition( tpos );
-//////		setGlobalOrientation( tquat );
-//////		setScale( tscale );
-//////	} else {
-////		setPositionOrientationScale( tpos, tquat, tscale );
-////	setPosition(tpos);
-////	setOrientation(tquat);
-////	setScale(tscale);
-//
-////	setGlobalPosition(tpos);
-////	setGlobalOrientation(tquat);
-////	setScale(tscale);
-//
-////	mPos = getGlobalPosition();
-////	}
-//
-////	for(auto it = childBones.begin(); it != childBones.end(); ++it ) {
-////		it->second->update();
-////	}
-////	for( auto& kid : childBones ) {
-////		kid->update();
-////	}
-//
-////	getGlobalTransformMatrix();
-//}
-
 //--------------------------------------------------------------
-std::shared_ptr<ofx::assimp::SrcBone> SrcBone::getBone( aiNode* aAiNode ) {
-	std::shared_ptr<ofx::assimp::SrcBone> tbone;
+std::shared_ptr<ofxAssimp::SrcBone> SrcBone::getBone( aiNode* aAiNode ) {
+	std::shared_ptr<ofxAssimp::SrcBone> tbone;
 	findBoneRecursive( aAiNode, tbone );
 	if( tbone ) {
 		return tbone;
@@ -130,13 +37,6 @@ std::shared_ptr<ofx::assimp::SrcBone> SrcBone::getBone( aiNode* aAiNode ) {
 //--------------------------------------------------------------
 void SrcBone::findBoneRecursive( aiNode* aAiNode, std::shared_ptr<SrcBone>& returnBone ) {
 	if( !returnBone ) {
-//		for(auto it = childBones.begin(); it != childBones.end(); ++it ) {
-//			if( it->second->getAiNode() == aAiNode ) {
-//				returnBone = (it->second);
-//				break;
-//			}
-//			it->second->findBoneRecursive( aAiNode, returnBone );
-//		}
 		for(auto& kid : childBones ) {
 			if( kid->getAiNode() == aAiNode ) {
 				returnBone = kid;//(it->second);
@@ -150,9 +50,6 @@ void SrcBone::findBoneRecursive( aiNode* aAiNode, std::shared_ptr<SrcBone>& retu
 //--------------------------------------------------------------
 unsigned int SrcBone::getNumBones() {
 	unsigned int ttotal = childBones.size();
-//	for(auto it = childBones.begin(); it != childBones.end(); ++it ) {
-//		ttotal += it->second->getNumBones();
-//	}
 	for(auto& kid : childBones ) {
 		ttotal += kid->getNumBones();
 	}

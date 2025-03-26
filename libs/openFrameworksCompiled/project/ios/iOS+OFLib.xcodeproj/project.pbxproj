@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		035324612BEFEF5D00B50A35 /* ofTimerFps.h in Headers */ = {isa = PBXBuildFile; fileRef = 0353245F2BEFEF5D00B50A35 /* ofTimerFps.h */; };
 		035324622BEFEF5D00B50A35 /* ofTimerFps.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 035324602BEFEF5D00B50A35 /* ofTimerFps.cpp */; };
+		037DF6522D77C8CE00BFFD5D /* AVFoundationVideoPlayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 037DF6512D77C8CE00BFFD5D /* AVFoundationVideoPlayer.m */; };
+		037DF6532D77C8CE00BFFD5D /* AVFoundationVideoPlayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 037DF6502D77C8CE00BFFD5D /* AVFoundationVideoPlayer.h */; };
 		15594F0C15C55AC900727FF2 /* EAGLView.m in Sources */ = {isa = PBXBuildFile; fileRef = 15594F0515C55AC900727FF2 /* EAGLView.m */; };
 		15594F0D15C55AC900727FF2 /* ES1Renderer.m in Sources */ = {isa = PBXBuildFile; fileRef = 15594F0615C55AC900727FF2 /* ES1Renderer.m */; };
 		15594F0E15C55AC900727FF2 /* ES2Renderer.m in Sources */ = {isa = PBXBuildFile; fileRef = 15594F0715C55AC900727FF2 /* ES2Renderer.m */; };
@@ -250,6 +252,8 @@
 /* Begin PBXFileReference section */
 		0353245F2BEFEF5D00B50A35 /* ofTimerFps.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofTimerFps.h; sourceTree = "<group>"; };
 		035324602BEFEF5D00B50A35 /* ofTimerFps.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofTimerFps.cpp; sourceTree = "<group>"; };
+		037DF6502D77C8CE00BFFD5D /* AVFoundationVideoPlayer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AVFoundationVideoPlayer.h; sourceTree = "<group>"; };
+		037DF6512D77C8CE00BFFD5D /* AVFoundationVideoPlayer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AVFoundationVideoPlayer.m; sourceTree = "<group>"; };
 		15594F0515C55AC900727FF2 /* EAGLView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EAGLView.m; sourceTree = "<group>"; };
 		15594F0615C55AC900727FF2 /* ES1Renderer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ES1Renderer.m; sourceTree = "<group>"; };
 		15594F0715C55AC900727FF2 /* ES2Renderer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ES2Renderer.m; sourceTree = "<group>"; };
@@ -631,6 +635,8 @@
 			children = (
 				15594FA115C56BB700727FF2 /* AVFoundationVideoGrabber.h */,
 				15594F9F15C56BB700727FF2 /* AVFoundationVideoGrabber.mm */,
+				037DF6502D77C8CE00BFFD5D /* AVFoundationVideoPlayer.h */,
+				037DF6512D77C8CE00BFFD5D /* AVFoundationVideoPlayer.m */,
 				1594366315CF5F420087B684 /* ofxiOSVideoPlayer.h */,
 				1594366115CF5F420087B684 /* ofxiOSVideoPlayer.mm */,
 				1594366215CF5F420087B684 /* ofxiOSVideoGrabber.h */,
@@ -1112,6 +1118,7 @@
 				15594FC515C56D1E00727FF2 /* ofxiOSCoreLocation.h in Headers */,
 				15594FC615C56D1E00727FF2 /* ofxiOSExternalDisplay.h in Headers */,
 				15594FC715C56D1E00727FF2 /* ofxiOSExtras.h in Headers */,
+				037DF6532D77C8CE00BFFD5D /* AVFoundationVideoPlayer.h in Headers */,
 				15594FC815C56D1E00727FF2 /* ofxiOSImagePicker.h in Headers */,
 				15594FC915C56D1E00727FF2 /* ofxiOSKeyboard.h in Headers */,
 				15594FCA15C56D1E00727FF2 /* ofxiOSMapKit.h in Headers */,
@@ -1140,9 +1147,9 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		BB24DE5C10DA7A3F00E9C588 /* iOS+OF Static Library */ = {
+		BB24DE5C10DA7A3F00E9C588 /* openFrameworks */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = BB24DED210DA7A3F00E9C588 /* Build configuration list for PBXNativeTarget "iOS+OF Static Library" */;
+			buildConfigurationList = BB24DED210DA7A3F00E9C588 /* Build configuration list for PBXNativeTarget "openFrameworks" */;
 			buildPhases = (
 				BB24DE5D10DA7A3F00E9C588 /* Headers */,
 				BB24DEB110DA7A3F00E9C588 /* Sources */,
@@ -1153,7 +1160,7 @@
 			);
 			dependencies = (
 			);
-			name = "iOS+OF Static Library";
+			name = openFrameworks;
 			productName = "Static Library";
 			productReference = BB24DED610DA7A3F00E9C588 /* openFrameworksiOSDebug.a */;
 			productType = "com.apple.product-type.library.static";
@@ -1179,7 +1186,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				BB24DE5C10DA7A3F00E9C588 /* iOS+OF Static Library */,
+				BB24DE5C10DA7A3F00E9C588 /* openFrameworks */,
 			);
 		};
 /* End PBXProject section */
@@ -1297,6 +1304,7 @@
 				678C3D26176F04F800D1CC68 /* ofxiOSSoundStreamDelegate.mm in Sources */,
 				678C3D28176F04F800D1CC68 /* SoundInputStream.m in Sources */,
 				678C3D2A176F04F800D1CC68 /* SoundOutputStream.m in Sources */,
+				037DF6522D77C8CE00BFFD5D /* AVFoundationVideoPlayer.m in Sources */,
 				678C3D2C176F04F800D1CC68 /* SoundStream.m in Sources */,
 				671C0AF51770246200DF03B3 /* AVSoundPlayer.m in Sources */,
 				671C0AF71770246200DF03B3 /* ofxiOSSoundPlayer.mm in Sources */,
@@ -1398,9 +1406,9 @@
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				OBJROOT = "$(SRCROOT)/../../lib/ios/build/obj/Debug/";
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
-				OBJROOT = "$(SRCROOT)/../../lib/ios/build/obj/Debug/";
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				WARNING_CFLAGS = (
 					"-Wno-non-virtual-dtor",
@@ -1438,8 +1446,8 @@
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
-				ONLY_ACTIVE_ARCH = NO;
 				OBJROOT = "$(SRCROOT)/../../lib/ios/build/obj/Release/";
+				ONLY_ACTIVE_ARCH = NO;
 				SDKROOT = iphoneos;
 				WARNING_CFLAGS = (
 					"-Wno-non-virtual-dtor",
@@ -1451,7 +1459,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		BB24DED210DA7A3F00E9C588 /* Build configuration list for PBXNativeTarget "iOS+OF Static Library" */ = {
+		BB24DED210DA7A3F00E9C588 /* Build configuration list for PBXNativeTarget "openFrameworks" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				BB24DED310DA7A3F00E9C588 /* Debug */,

@@ -26,7 +26,7 @@ HEADER_URIPARSER = "$(OF_PATH)/libs/uriparser/include"
 HEADER_PUGIXML = "$(OF_PATH)/libs/pugixml/include"
 
 //------- Libraries
-LIB_OF = "$(OF_PATH)/libs/openFrameworksCompiled/lib/osx/openFrameworks.a"
+LIB_OF_RELEASE = "$(OF_PATH)/libs/openFrameworksCompiled/lib/osx/openFrameworks.a"
 LIB_OF_DEBUG = "$(OF_PATH)/libs/openFrameworksCompiled/lib/osx/openFrameworksDebug.a"
 
 //LIB_FMOD = "$(OF_PATH)/libs/fmod/lib/macos/libfmod.dylib"
@@ -50,18 +50,10 @@ OF_CORE_HEADERS = $(HEADER_OF) $(HEADER_FREETYPE) $(HEADER_FREETYPE2) $(HEADER_G
 OF_CORE_FRAMEWORKS = -framework Accelerate -framework AGL -framework AppKit -framework ApplicationServices -framework AudioToolbox -framework AVFoundation -framework Cocoa -framework CoreAudio -framework CoreFoundation -framework CoreMedia -framework CoreServices -framework CoreVideo -framework Foundation -framework IOKit -framework OpenGL -framework QuartzCore -framework Security -framework SystemConfiguration -framework Metal
 
 
-// BOOST can be enabled in OF Core by uncommenting this block
-//HEADER_BOOST = "$(OF_PATH)/libs/boost/include"
-//LIB_BOOST_SYSTEM = "$(OF_PATH)/libs/boost/lib/osx/boost_system.a"
-//LIB_BOOST_FS = "$(OF_PATH)/libs/boost/lib/osx/boost_filesystem.a"
-//LIB_BOOST = $(LIB_BOOST_SYSTEM) $(LIB_BOOST_FS)
-//OF_CORE_LIBS = $(inherited) $(LIB_BOOST)
-//OF_CORE_HEADERS = $(inherited) $(HEADER_BOOST)
-
 
 ALWAYS_SEARCH_USER_PATHS = NO
 DISABLE_MANUAL_TARGET_ORDER_BUILD_WARNING = YES
-GCC_PREPROCESSOR_DEFINITIONS = $(inherited) GL_SILENCE_DEPRECATION=1 GLES_SILENCE_DEPRECATION=1 COREVIDEO_SILENCE_GL_DEPRECATION=1
+GCC_PREPROCESSOR_DEFINITIONS = $(inherited) GL_SILENCE_DEPRECATION=1 GLES_SILENCE_DEPRECATION=1 COREVIDEO_SILENCE_GL_DEPRECATION=1 GLM_FORCE_CTOR_INIT GLM_ENABLE_EXPERIMENTAL
 
 
 //COMPILER SETTINGS WHICH CAN BE OVERRIDDEN BY XCODE BUILD SETTINGS
@@ -113,7 +105,7 @@ INSTALL_PATH = /Applications
 SDKROOT = macosx
 WRAPPER_EXTENSION = app
 
-SKIP_INSTALL = YES
+SKIP_INSTALL = NO
 
 CC = $(OF_PATH)/scripts/osx/cc.sh
 CXX = $(OF_PATH)/scripts/osx/cxx.sh

@@ -1,311 +1,326 @@
 {
-	"classes": {},
-	"objectVersion": "54",
-	"archiveVersion": "1",
-	"objects": {
-		"E4B69E1C0A3A1BDC003C02F2": {
-			"path": "src",
-			"isa": "PBXGroup",
-			"children": [
-				"E4B69E1D0A3A1BDC003C02F2",
-				"E4B69E1E0A3A1BDC003C02F2",
-				"E4B69E1F0A3A1BDC003C02F2"
-			],
-			"sourceTree": "SOURCE_ROOT"
-		},
-		"E4EB6923138AFD0F00A09F29": {
-			"path": "Project.xcconfig",
-			"isa": "PBXFileReference",
-			"sourceTree": "<group>",
-			"fileEncoding": "4",
-			"lastKnownFileType": "text.xcconfig"
-		},
-		"BF26640B2C634C16004360E2": {
-			"buildActionMask": "2147483647",
-			"runOnlyForDeploymentPostprocessing": "0",
-			"outputPaths": [],
-			"shellPath": "/usr/bin/env bash",
-			"inputFileListPaths": [],
-			"showEnvVarsInLog": "0",
-			"isa": "PBXShellScriptBuildPhase",
-			"shellScript": "#!/usr/bin/env bash\n\n# Determine the Xcode build directory\nTARGET_DIR=\"${BUILT_PRODUCTS_DIR:-$SRCROOT/bin}\"\n\n# Check if the directory exists\nif [ ! -d \"$TARGET_DIR\" ]; then\n  echo \"Error: Target directory $TARGET_DIR does not exist.\"\n  exit 1\nfi\n\n# Check and set the com.apple.xcode.CreatedByBuildSystem attribute\nATTRIBUTE_CHECK=$(xattr -p com.apple.xcode.CreatedByBuildSystem \"$TARGET_DIR\" 2>/dev/null)\nif [ -z \"$ATTRIBUTE_CHECK\" ]; then\n  xattr -w com.apple.xcode.CreatedByBuildSystem true \"$TARGET_DIR\"\n  echo \"Attribute com.apple.xcode.CreatedByBuildSystem set to true for $TARGET_DIR\"\nelse\n  echo \"Attribute com.apple.xcode.CreatedByBuildSystem already set for $TARGET_DIR\"\nfi\n",
-			"files": [],
-			"alwaysOutOfDate": "1",
-			"inputPaths": [],
-			"outputFileListPaths": []
-		},
-		"E4C2427710CC5ABF004149E2": {
-			"isa": "PBXCopyFilesBuildPhase",
-			"buildActionMask": "2147483647",
-			"dstPath": "",
-			"dstSubfolderSpec": "10",
-			"files": [],
-			"runOnlyForDeploymentPostprocessing": "0"
-		},
-		"E4A5B60F29BAAAE400C2D356": {
-			"isa": "PBXCopyFilesBuildPhase",
-			"buildActionMask": "2147483647",
-			"dstPath": "",
-			"dstSubfolderSpec": "6",
-			"files": [],
-			"runOnlyForDeploymentPostprocessing": "0"
-		},
-		"191EF70929D778A400F35F26": {
-			"path": "../../../libs/openFrameworks",
-			"isa": "PBXFileReference",
-			"name": "openFrameworks",
-			"lastKnownFileType": "folder",
-			"sourceTree": "SOURCE_ROOT"
-		},
-		"191CD6FA2847E21E0085CBB6": {
-			"path": "of.entitlements",
-			"isa": "PBXFileReference",
-			"sourceTree": "<group>",
-			"fileEncoding": "4",
-			"lastKnownFileType": "text.plist.entitlements"
-		},
-		"E4B69B4C0A3A1720003C02F2": {
-			"buildConfigurationList": "E4B69B4D0A3A1720003C02F2",
-			"targets": [
-				"E4B69B5A0A3A1756003C02F2"
-			],
-			"developmentRegion": "en",
-			"knownRegions": [
-				"en",
-				"Base"
-			],
-			"isa": "PBXProject",
-			"compatibilityVersion": "Xcode 3.2",
-			"productRefGroup": "E4B69B4A0A3A1720003C02F2",
-			"projectDirPath": "",
-			"attributes": {
-				"LastUpgradeCheck": "1540",
-				"BuildIndependentTargetsInParallel": "YES"
-			},
-			"hasScannedForEncodings": "0",
-			"projectRoot": "",
-			"mainGroup": "E4B69B4A0A3A1720003C02F2"
-		},
-		"E4B69E1E0A3A1BDC003C02F2": {
-			"path": "src/ofApp.cpp",
-			"isa": "PBXFileReference",
-			"sourceTree": "SOURCE_ROOT",
-			"name": "ofApp.cpp",
-			"explicitFileType": "sourcecode.cpp.cpp",
-			"fileEncoding": "4"
-		},
-		"E4B69E1D0A3A1BDC003C02F2": {
-			"path": "src/main.cpp",
-			"isa": "PBXFileReference",
-			"sourceTree": "SOURCE_ROOT",
-			"name": "main.cpp",
-			"fileEncoding": "4",
-			"lastKnownFileType": "sourcecode.cpp.cpp"
-		},
-		"19B789C429E5AB4A0082E9B8": {
-			"buildActionMask": "2147483647",
-			"runOnlyForDeploymentPostprocessing": "0",
-			"outputPaths": [],
-			"shellPath": "/bin/sh",
-			"inputFileListPaths": [],
-			"showEnvVarsInLog": "0",
-			"isa": "PBXShellScriptBuildPhase",
-			"shellScript": "\"$OF_PATH/scripts/osx/xcode_project.sh\"\n",
-			"files": [],
-			"alwaysOutOfDate": "1",
-			"inputPaths": [],
-			"outputFileListPaths": []
-		},
-		"E42962A92163ECCD00A6A9E2": {
-			"alwaysOutOfDate": "1",
-			"inputPaths": [],
-			"buildActionMask": "2147483647",
-			"shellPath": "/bin/sh",
-			"showEnvVarsInLog": "0",
-			"outputPaths": [],
-			"isa": "PBXShellScriptBuildPhase",
-			"runOnlyForDeploymentPostprocessing": "0",
-			"shellScript": "$OF_CORE_BUILD_COMMAND\n",
-			"files": [],
-			"name": "Run Script — Compile OF"
-		},
-		"E4B69B4F0A3A1720003C02F2": {
-			"baseConfigurationReference": "E4EB6923138AFD0F00A09F29",
-			"isa": "XCBuildConfiguration",
-			"buildSettings": {
-				"CODE_SIGN_ENTITLEMENTS": "of.entitlements",
-				"GCC_UNROLL_LOOPS": "YES",
-				"HEADER_SEARCH_PATHS": [
-					"$(OF_CORE_HEADERS)",
-					"src"
-				],
-				"GCC_OPTIMIZATION_LEVEL": "3",
-				"OTHER_CPLUSPLUSFLAGS": "-D__MACOSX_CORE__",
-				"COPY_PHASE_STRIP": "YES"
-			},
-			"name": "Release"
-		},
-		"BB4B014C10F69532006C3DED": {
-			"path": "../../../addons",
-			"isa": "PBXGroup",
-			"name": "addons",
-			"children": [],
-			"sourceTree": "SOURCE_ROOT"
-		},
-		"E4B69B4A0A3A1720003C02F2": {
-			"isa": "PBXGroup",
-			"sourceTree": "<group>",
-			"children": [
-				"191CD6FA2847E21E0085CBB6",
-				"E4B6FCAD0C3E899E008CF71C",
-				"E4EB6923138AFD0F00A09F29",
-				"E4B69E1C0A3A1BDC003C02F2",
-				"191EF70929D778A400F35F26",
-				"BB4B014C10F69532006C3DED",
-				"E4B69B5B0A3A1756003C02F2"
-			]
-		},
-		"E4B69B580A3A1756003C02F2": {
-			"isa": "PBXSourcesBuildPhase",
-			"buildActionMask": "2147483647",
-			"files": [
-				"E4B69E200A3A1BDC003C02F2",
-				"E4B69E210A3A1BDC003C02F2"
-			],
-			"runOnlyForDeploymentPostprocessing": "0"
-		},
-		"E4B69B4E0A3A1720003C02F2": {
-			"baseConfigurationReference": "E4EB6923138AFD0F00A09F29",
-			"isa": "XCBuildConfiguration",
-			"buildSettings": {
-				"HEADER_SEARCH_PATHS": [
-					"$(OF_CORE_HEADERS)",
-					"src"
-				],
-				"OTHER_CPLUSPLUSFLAGS": "-D__MACOSX_CORE__",
-				"CODE_SIGN_ENTITLEMENTS": "of.entitlements",
-				"COPY_PHASE_STRIP": "NO",
-				"GCC_OPTIMIZATION_LEVEL": "0",
-				"ENABLE_TESTABILITY": "YES",
-				"GCC_WARN_UNUSED_VARIABLE": "NO"
-			},
-			"name": "Debug"
-		},
-		"E4B69B600A3A1757003C02F2": {
-			"baseConfigurationReference": "E4EB6923138AFD0F00A09F29",
-			"isa": "XCBuildConfiguration",
-			"buildSettings": {
-				"HEADER_SEARCH_PATHS": [
-					"$(OF_CORE_HEADERS)",
-					"src"
-				],
-				"GCC_DYNAMIC_NO_PIC": "NO",
-				"FRAMEWORK_SEARCH_PATHS": "$(inherited)",
-				"COPY_PHASE_STRIP": "NO",
-				"ARCHS": "$(ARCHS_STANDARD)",
-				"OTHER_LDFLAGS": [
-					"$(OF_CORE_LIBS)",
-					"$(OF_CORE_FRAMEWORKS)",
-					"$(LIB_OF_DEBUG)"
-				],
-				"LIBRARY_SEARCH_PATHS": "$(inherited)"
-			},
-			"name": "Debug"
-		},
-		"E4B69B590A3A1756003C02F2": {
-			"isa": "PBXFrameworksBuildPhase",
-			"buildActionMask": "2147483647",
-			"files": [],
-			"runOnlyForDeploymentPostprocessing": "0"
-		},
-		"E4B69B610A3A1757003C02F2": {
-			"baseConfigurationReference": "E4EB6923138AFD0F00A09F29",
-			"isa": "XCBuildConfiguration",
-			"buildSettings": {
-				"HEADER_SEARCH_PATHS": [
-					"$(OF_CORE_HEADERS)",
-					"src"
-				],
-				"FRAMEWORK_SEARCH_PATHS": "$(inherited)",
-				"COPY_PHASE_STRIP": "YES",
-				"ARCHS": "$(ARCHS_STANDARD)",
-				"OTHER_LDFLAGS": [
-					"$(OF_CORE_LIBS)",
-					"$(OF_CORE_FRAMEWORKS)",
-					"$(LIB_OF)"
-				],
-				"baseConfigurationReference": "E4EB6923138AFD0F00A09F29",
-				"LIBRARY_SEARCH_PATHS": "$(inherited)"
-			},
-			"name": "Release"
-		},
-		"E4B69B4D0A3A1720003C02F2": {
-			"isa": "XCConfigurationList",
-			"defaultConfigurationIsVisible": "0",
-			"defaultConfigurationName": "Release",
-			"buildConfigurations": [
-				"E4B69B4E0A3A1720003C02F2",
-				"E4B69B4F0A3A1720003C02F2"
-			]
-		},
-		"E4B69E200A3A1BDC003C02F2": {
-			"isa": "PBXBuildFile",
-			"fileRef": "E4B69E1D0A3A1BDC003C02F2"
-		},
-		"E4B69E210A3A1BDC003C02F2": {
-			"isa": "PBXBuildFile",
-			"fileRef": "E4B69E1E0A3A1BDC003C02F2"
-		},
-		"E4B69B5A0A3A1756003C02F2": {
-			"buildConfigurationList": "E4B69B5F0A3A1757003C02F2",
-			"productReference": "E4B69B5B0A3A1756003C02F2",
-			"productType": "com.apple.product-type.application",
-			"productName": "myOFApp",
-			"isa": "PBXNativeTarget",
-			"buildPhases": [
-				"BF26640B2C634C16004360E2",
-				"E42962A92163ECCD00A6A9E2",
-				"E4B69B580A3A1756003C02F2",
-				"E4B69B590A3A1756003C02F2",
-				"E4C2427710CC5ABF004149E2",
-				"E4A5B60F29BAAAE400C2D356",
-				"19B789C429E5AB4A0082E9B8"
-			],
-			"dependencies": [],
-			"name": "emptyExample",
-			"buildRules": []
-		},
-		"E4B6FCAD0C3E899E008CF71C": {
-			"path": "openFrameworks-Info.plist",
-			"isa": "PBXFileReference",
-			"sourceTree": "<group>",
-			"fileEncoding": "4",
-			"lastKnownFileType": "text.plist.xml"
-		},
-		"E4B69B5F0A3A1757003C02F2": {
-			"isa": "XCConfigurationList",
-			"defaultConfigurationIsVisible": "0",
-			"defaultConfigurationName": "Release",
-			"buildConfigurations": [
-				"E4B69B600A3A1757003C02F2",
-				"E4B69B610A3A1757003C02F2"
-			]
-		},
-		"E4B69B5B0A3A1756003C02F2": {
-			"path": "emptyExampleDebug.app",
-			"isa": "PBXFileReference",
-			"includeInIndex": "0",
-			"explicitFileType": "wrapper.application",
-			"sourceTree": "BUILT_PRODUCTS_DIR"
-		},
-		"E4B69E1F0A3A1BDC003C02F2": {
-			"path": "src/ofApp.h",
-			"isa": "PBXFileReference",
-			"sourceTree": "SOURCE_ROOT",
-			"name": "ofApp.h",
-			"fileEncoding": "4",
-			"lastKnownFileType": "sourcecode.c.h"
-		}
-	},
-	"rootObject": "E4B69B4C0A3A1720003C02F2"
+  "archiveVersion" : "1",
+  "classes" : {
+
+  },
+  "objects" : {
+    "19B789C429E5AB4A0082E9B8" : {
+      "alwaysOutOfDate" : "1",
+      "buildActionMask" : "2147483647",
+      "files" : [
+
+      ],
+      "inputFileListPaths" : [
+
+      ],
+      "inputPaths" : [
+
+      ],
+      "isa" : "PBXShellScriptBuildPhase",
+      "outputFileListPaths" : [
+
+      ],
+      "outputPaths" : [
+
+      ],
+      "runOnlyForDeploymentPostprocessing" : "0",
+      "shellPath" : "\/bin\/sh",
+      "shellScript" : "\"$OF_PATH\/scripts\/osx\/xcode_project.sh\"\n",
+      "showEnvVarsInLog" : "0"
+    },
+    "191CD6FA2847E21E0085CBB6" : {
+      "fileEncoding" : "4",
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "text.plist.entitlements",
+      "path" : "of.entitlements",
+      "sourceTree" : "<group>"
+    },
+    "191EF70929D778A400F35F26" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "folder",
+      "name" : "openFrameworks",
+      "path" : "..\/..\/..\/libs\/openFrameworks",
+      "sourceTree" : "SOURCE_ROOT"
+    },
+    "BB4B014C10F69532006C3DED" : {
+      "children" : [
+
+      ],
+      "isa" : "PBXGroup",
+      "name" : "addons",
+      "path" : "..\/..\/..\/addons",
+      "sourceTree" : "SOURCE_ROOT"
+    },
+    "E4A5B60F29BAAAE400C2D356" : {
+      "buildActionMask" : "2147483647",
+      "dstPath" : "",
+      "dstSubfolderSpec" : "6",
+      "files" : [
+
+      ],
+      "isa" : "PBXCopyFilesBuildPhase",
+      "runOnlyForDeploymentPostprocessing" : "0"
+    },
+    "E4B6FCAD0C3E899E008CF71C" : {
+      "fileEncoding" : "4",
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "text.plist.xml",
+      "path" : "openFrameworks-Info.plist",
+      "sourceTree" : "<group>"
+    },
+    "E4B69B4A0A3A1720003C02F2" : {
+      "children" : [
+        "191CD6FA2847E21E0085CBB6",
+        "E4B6FCAD0C3E899E008CF71C",
+        "E4EB6923138AFD0F00A09F29",
+        "E4B69E1C0A3A1BDC003C02F2",
+        "191EF70929D778A400F35F26",
+        "BB4B014C10F69532006C3DED",
+        "E4B69B5B0A3A1756003C02F2"
+      ],
+      "isa" : "PBXGroup",
+      "sourceTree" : "<group>"
+    },
+    "E4B69B4C0A3A1720003C02F2" : {
+      "attributes" : {
+        "BuildIndependentTargetsInParallel" : "YES",
+        "LastUpgradeCheck" : "1540"
+      },
+      "buildConfigurationList" : "E4B69B4D0A3A1720003C02F2",
+      "compatibilityVersion" : "Xcode 3.2",
+      "developmentRegion" : "en",
+      "hasScannedForEncodings" : "0",
+      "isa" : "PBXProject",
+      "knownRegions" : [
+        "en",
+        "Base"
+      ],
+      "mainGroup" : "E4B69B4A0A3A1720003C02F2",
+      "productRefGroup" : "E4B69B4A0A3A1720003C02F2",
+      "projectDirPath" : "",
+      "projectRoot" : "",
+      "targets" : [
+        "E4B69B5A0A3A1756003C02F2"
+      ]
+    },
+    "E4B69B4D0A3A1720003C02F2" : {
+      "buildConfigurations" : [
+        "E4B69B4E0A3A1720003C02F2",
+        "E4B69B4F0A3A1720003C02F2"
+      ],
+      "defaultConfigurationIsVisible" : "0",
+      "defaultConfigurationName" : "Release",
+      "isa" : "XCConfigurationList"
+    },
+    "E4B69B4E0A3A1720003C02F2" : {
+      "baseConfigurationReference" : "E4EB6923138AFD0F00A09F29",
+      "buildSettings" : {
+        "CODE_SIGN_ENTITLEMENTS" : "of.entitlements",
+        "COPY_PHASE_STRIP" : "NO",
+        "ENABLE_TESTABILITY" : "YES",
+        "GCC_OPTIMIZATION_LEVEL" : "0",
+        "GCC_WARN_UNUSED_VARIABLE" : "NO",
+        "HEADER_SEARCH_PATHS" : [
+          "$(OF_CORE_HEADERS)",
+          "src"
+        ],
+        "OTHER_CPLUSPLUSFLAGS" : "-D__MACOSX_CORE__"
+      },
+      "isa" : "XCBuildConfiguration",
+      "name" : "Debug"
+    },
+    "E4B69B4F0A3A1720003C02F2" : {
+      "baseConfigurationReference" : "E4EB6923138AFD0F00A09F29",
+      "buildSettings" : {
+        "CODE_SIGN_ENTITLEMENTS" : "of.entitlements",
+        "COPY_PHASE_STRIP" : "YES",
+        "GCC_OPTIMIZATION_LEVEL" : "3",
+        "GCC_UNROLL_LOOPS" : "YES",
+        "HEADER_SEARCH_PATHS" : [
+          "$(OF_CORE_HEADERS)",
+          "src"
+        ],
+        "OTHER_CPLUSPLUSFLAGS" : "-D__MACOSX_CORE__"
+      },
+      "isa" : "XCBuildConfiguration",
+      "name" : "Release"
+    },
+    "E4B69B5A0A3A1756003C02F2" : {
+      "buildConfigurationList" : "E4B69B5F0A3A1757003C02F2",
+      "buildPhases" : [
+        "E42962A92163ECCD00A6A9E2",
+        "E4B69B580A3A1756003C02F2",
+        "E4B69B590A3A1756003C02F2",
+        "E4C2427710CC5ABF004149E2",
+        "E4A5B60F29BAAAE400C2D356",
+        "19B789C429E5AB4A0082E9B8"
+      ],
+      "buildRules" : [
+
+      ],
+      "dependencies" : [
+
+      ],
+      "isa" : "PBXNativeTarget",
+      "name" : "emptyExample",
+      "productName" : "myOFApp",
+      "productReference" : "E4B69B5B0A3A1756003C02F2",
+      "productType" : "com.apple.product-type.application"
+    },
+    "E4B69B5B0A3A1756003C02F2" : {
+      "explicitFileType" : "wrapper.application",
+      "includeInIndex" : "0",
+      "isa" : "PBXFileReference",
+      "path" : "emptyExampleDebug.app",
+      "sourceTree" : "BUILT_PRODUCTS_DIR"
+    },
+    "E4B69B5F0A3A1757003C02F2" : {
+      "buildConfigurations" : [
+        "E4B69B600A3A1757003C02F2",
+        "E4B69B610A3A1757003C02F2"
+      ],
+      "defaultConfigurationIsVisible" : "0",
+      "defaultConfigurationName" : "Release",
+      "isa" : "XCConfigurationList"
+    },
+    "E4B69B580A3A1756003C02F2" : {
+      "buildActionMask" : "2147483647",
+      "files" : [
+        "E4B69E200A3A1BDC003C02F2",
+        "E4B69E210A3A1BDC003C02F2"
+      ],
+      "isa" : "PBXSourcesBuildPhase",
+      "runOnlyForDeploymentPostprocessing" : "0"
+    },
+    "E4B69B590A3A1756003C02F2" : {
+      "buildActionMask" : "2147483647",
+      "files" : [
+
+      ],
+      "isa" : "PBXFrameworksBuildPhase",
+      "runOnlyForDeploymentPostprocessing" : "0"
+    },
+    "E4B69B600A3A1757003C02F2" : {
+      "baseConfigurationReference" : "E4EB6923138AFD0F00A09F29",
+      "buildSettings" : {
+        "ARCHS" : "$(ARCHS_STANDARD)",
+        "COPY_PHASE_STRIP" : "NO",
+        "FRAMEWORK_SEARCH_PATHS" : "$(inherited)",
+        "GCC_DYNAMIC_NO_PIC" : "NO",
+        "HEADER_SEARCH_PATHS" : [
+          "$(OF_CORE_HEADERS)",
+          "src"
+        ],
+        "LIBRARY_SEARCH_PATHS" : "$(inherited)",
+        "OTHER_LDFLAGS" : [
+          "$(OF_CORE_LIBS)",
+          "$(OF_CORE_FRAMEWORKS)",
+          "$(LIB_OF_DEBUG)"
+        ]
+      },
+      "isa" : "XCBuildConfiguration",
+      "name" : "Debug"
+    },
+    "E4B69B610A3A1757003C02F2" : {
+      "baseConfigurationReference" : "E4EB6923138AFD0F00A09F29",
+      "buildSettings" : {
+        "ARCHS" : "$(ARCHS_STANDARD)",
+        "baseConfigurationReference" : "E4EB6923138AFD0F00A09F29",
+        "COPY_PHASE_STRIP" : "YES",
+        "FRAMEWORK_SEARCH_PATHS" : "$(inherited)",
+        "HEADER_SEARCH_PATHS" : [
+          "$(OF_CORE_HEADERS)",
+          "src"
+        ],
+        "LIBRARY_SEARCH_PATHS" : "$(inherited)",
+        "OTHER_LDFLAGS" : [
+          "$(OF_CORE_LIBS)",
+          "$(OF_CORE_FRAMEWORKS)",
+          "$(LIB_OF_RELEASE)"
+        ]
+      },
+      "isa" : "XCBuildConfiguration",
+      "name" : "Release"
+    },
+    "E4B69E1C0A3A1BDC003C02F2" : {
+      "children" : [
+        "E4B69E1D0A3A1BDC003C02F2",
+        "E4B69E1E0A3A1BDC003C02F2",
+        "E4B69E1F0A3A1BDC003C02F2"
+      ],
+      "isa" : "PBXGroup",
+      "path" : "src",
+      "sourceTree" : "SOURCE_ROOT"
+    },
+    "E4B69E1D0A3A1BDC003C02F2" : {
+      "fileEncoding" : "4",
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.cpp",
+      "name" : "main.cpp",
+      "path" : "src\/main.cpp",
+      "sourceTree" : "SOURCE_ROOT"
+    },
+    "E4B69E1E0A3A1BDC003C02F2" : {
+      "explicitFileType" : "sourcecode.cpp.cpp",
+      "fileEncoding" : "4",
+      "isa" : "PBXFileReference",
+      "name" : "ofApp.cpp",
+      "path" : "src\/ofApp.cpp",
+      "sourceTree" : "SOURCE_ROOT"
+    },
+    "E4B69E1F0A3A1BDC003C02F2" : {
+      "fileEncoding" : "4",
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "name" : "ofApp.h",
+      "path" : "src\/ofApp.h",
+      "sourceTree" : "SOURCE_ROOT"
+    },
+    "E4B69E200A3A1BDC003C02F2" : {
+      "fileRef" : "E4B69E1D0A3A1BDC003C02F2",
+      "isa" : "PBXBuildFile"
+    },
+    "E4B69E210A3A1BDC003C02F2" : {
+      "fileRef" : "E4B69E1E0A3A1BDC003C02F2",
+      "isa" : "PBXBuildFile"
+    },
+    "E4C2427710CC5ABF004149E2" : {
+      "buildActionMask" : "2147483647",
+      "dstPath" : "",
+      "dstSubfolderSpec" : "10",
+      "files" : [
+
+      ],
+      "isa" : "PBXCopyFilesBuildPhase",
+      "runOnlyForDeploymentPostprocessing" : "0"
+    },
+    "E4EB6923138AFD0F00A09F29" : {
+      "fileEncoding" : "4",
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "text.xcconfig",
+      "path" : "Project.xcconfig",
+      "sourceTree" : "<group>"
+    },
+    "E42962A92163ECCD00A6A9E2" : {
+      "alwaysOutOfDate" : "1",
+      "buildActionMask" : "2147483647",
+      "files" : [
+
+      ],
+      "inputPaths" : [
+
+      ],
+      "isa" : "PBXShellScriptBuildPhase",
+      "name" : "Run Script — Compile OF",
+      "outputPaths" : [
+
+      ],
+      "runOnlyForDeploymentPostprocessing" : "0",
+      "shellPath" : "\/bin\/sh",
+      "shellScript" : "$OF_CORE_BUILD_COMMAND\n",
+      "showEnvVarsInLog" : "0"
+    }
+  },
+  "objectVersion" : "54",
+  "rootObject" : "E4B69B4C0A3A1720003C02F2"
 }
