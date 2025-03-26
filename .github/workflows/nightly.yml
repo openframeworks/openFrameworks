@@ -66,4 +66,6 @@ jobs:
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
         tag_name: "nightly"
-        files: out/of_v*.{tar.gz,zip}
+        files: |
+          out/of_v*.tar.gz
+          out/of_v*.zip
