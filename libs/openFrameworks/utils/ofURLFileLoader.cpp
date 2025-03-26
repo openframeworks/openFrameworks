@@ -442,9 +442,7 @@ void ofURLFileLoaderImpl::update(ofEventArgs & args) {
 			std::lock_guard<std::mutex> lock(responseMutex);
 			if (response.request.done) {
 				response.request.done(response);
-			} else {
-				ofLogWarning("ofURLFileLoader") << "No callback set for request: " << response.request.url;
-			}
+			} 
 		} catch (...) {
 		}
 
