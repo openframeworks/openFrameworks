@@ -63,7 +63,9 @@ public:
 	static bool hasActiveCubeMap();
 	static std::shared_ptr<ofCubeMap::Data> getActiveData();
 	static void clearTextureData(std::shared_ptr<ofCubeMap::Data> adata);
+	#ifdef TARGET_ANDROID
 	static void regenerateAllTextures();
+	#endif
 	static const ofTexture & getBrdfLutTexture();
 
 	ofCubeMap();
