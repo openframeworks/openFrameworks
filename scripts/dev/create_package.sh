@@ -458,6 +458,7 @@ function createPackage {
         tar -xzvf projectGenerator-linux-gui.gz
         mv $(find . -maxdepth 1 -type d -name "projectGenerator-*") projectGenerator
         rm -rf apps/projectGenerator
+        rm projectGenerator-linux-gui.gz
     fi
 
     if [ "$PKG_PLATFORM" = "android" ]; then
@@ -479,6 +480,7 @@ function createPackage {
             mv $(find . -maxdepth 1 -type d -name "projectGenerator-*") projectGenerator
             #mv projectGenerator-linux-gui projectGenerator
             rm -rf apps/projectGenerator
+            rm projectGenerator-linux-gui.gz
         fi
 
     fi
