@@ -60,12 +60,22 @@ jobs:
       id: createpackage
     - name: List output directory
       run: ls -lah out/
-
     - name: Upload to GitHub Release
-      uses: softprops/action-gh-release@v2.1.0
+      uses: ncipollo/release-action@v1.12.1
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
-        tag_name: "nightly"
-        files: |
+        tag: "nightly"
+        artifacts: |
           out/of_v*.tar.gz
           out/of_v*.zip
+        allowUpdates: true
+        removeArtifacts: true
+        replacesArtifacts: true
+    # - name: Upload to GitHub Release
+    #   uses: softprops/action-gh-release@v2.1.0
+    #   with:
+    #     token: ${{ secrets.GITHUB_TOKEN }}
+    #     tag_name: "nightly"
+    #     files: |
+    #       out/of_v*.tar.gz
+    #       out/of_v*.zip
