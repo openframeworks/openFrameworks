@@ -60,17 +60,6 @@ jobs:
       id: createpackage
     - name: List output directory
       run: ls -lah out/
-    - name: Upload to GitHub Release
-      uses: ncipollo/release-action@v1.12.1
-      with:
-        token: ${{ secrets.GITHUB_TOKEN }}
-        tag: "nightly"
-        artifacts: |
-          out/of_v*.tar.gz
-          out/of_v*.zip
-        allowUpdates: true
-        removeArtifacts: true
-        replacesArtifacts: true
     # - name: Upload to GitHub Release
     #   uses: softprops/action-gh-release@v2.1.0
     #   with:
@@ -79,3 +68,23 @@ jobs:
     #     files: |
     #       out/of_v*.tar.gz
     #       out/of_v*.zip
+    # Delete the existing release (but NOT the tag)
+    - name: Delete existing nightly release if exists
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        gh release delete nightly --yes || true
+    # Recreate nightly release associated with existing tag
+    - name: Create new nightly release and upload assets
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        gh release create nightly \
+          --title "Nightly Release" \
+          --notes "Auto-generated nightly build." \
+          out/of_v*.tar.gz out/of_v*.zip || \
+        gh release create nightly \
+          --title "Nightly Release" \
+          --notes "Auto-generated nightly build." \
+          --target ${{ github.sha }} \
+          out/of_v*.tar.gz out/of_v*.zip
