@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -e
-VER=master
+VER=latest
 PLATFORM=""
 ARCH=""
 OVERWRITE=1
@@ -213,8 +213,6 @@ cd "$SCRIPT_DIR"
 
 if [[ $BLEEDING_EDGE = 1 ]] ; then
     VER=latest
-else
-    VER=master
 fi
 
 if [[ $TAG != "" ]] && [[ $TAG != "nightly" ]] ; then

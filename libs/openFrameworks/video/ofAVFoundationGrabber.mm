@@ -58,6 +58,27 @@
 		devices = [AVCaptureDevice devicesWithMediaType:AVMediaTypeVideo];
 #pragma clang diagnostic pop
 	}
+	
+	if([devices count] > 1) {
+		// Sort devices: "FaceTime" devices first, then alphabetically
+		devices = [devices sortedArrayUsingComparator:^NSComparisonResult(AVCaptureDevice *d1, AVCaptureDevice *d2) {
+			NSString *name1 = d1.localizedName;
+			NSString *name2 = d2.localizedName;
+
+			BOOL isFaceTime1 = [name1 hasPrefix:@"FaceTime"];
+			BOOL isFaceTime2 = [name2 hasPrefix:@"FaceTime"];
+
+			if (isFaceTime1 && !isFaceTime2) {
+				return NSOrderedAscending; // FaceTime first
+			} else if (!isFaceTime1 && isFaceTime2) {
+				return NSOrderedDescending; // FaceTime first
+			} else {
+				// Otherwise alphabetical
+				return [name1 compare:name2];
+			}
+		}];
+	}
+	
 	if([devices count] > 0) {
 		if(deviceID>[devices count]-1)
 			deviceID = [devices count]-1;
@@ -282,6 +303,26 @@
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
 		devices = [AVCaptureDevice devicesWithMediaType:AVMediaTypeVideo];
 #pragma clang diagnostic pop
+	}
+
+	if([devices count] > 1) {
+		// Sort devices: "FaceTime" devices first, then alphabetically
+		devices = [devices sortedArrayUsingComparator:^NSComparisonResult(AVCaptureDevice *d1, AVCaptureDevice *d2) {
+			NSString *name1 = d1.localizedName;
+			NSString *name2 = d2.localizedName;
+
+			BOOL isFaceTime1 = [name1 hasPrefix:@"FaceTime"];
+			BOOL isFaceTime2 = [name2 hasPrefix:@"FaceTime"];
+
+			if (isFaceTime1 && !isFaceTime2) {
+				return NSOrderedAscending; // FaceTime first
+			} else if (!isFaceTime1 && isFaceTime2) {
+				return NSOrderedDescending; // FaceTime first
+			} else {
+				// Otherwise alphabetical
+				return [name1 compare:name2];
+			}
+		}];
 	}
 
 	int i=0;

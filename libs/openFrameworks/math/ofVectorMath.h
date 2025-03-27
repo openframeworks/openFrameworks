@@ -1,6 +1,6 @@
 #pragma once
 
-class ofMatrix3x3;
+#include "ofMatrix3x3.h"
 #include "ofMatrix4x4.h"
 #include "ofQuaternion.h"
 

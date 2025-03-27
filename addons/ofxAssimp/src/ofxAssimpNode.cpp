@@ -50,10 +50,14 @@ void Node::update( const std::shared_ptr<ofxAssimp::AnimationMixer>& aAnimMixer 
 			bool bHasSomeKeys = false;
 			int clipWithKeysIndex = 0;
 			for( auto& animClip : mixer->getAnimationClips() ) {
-				auto& keyCollection = mSrcNode->getKeyCollection(animClip.animation.getUid());
+				
+				auto animation = animClip.animationWeak.lock();
+				if( !animation ) {continue;}
+				
+				auto& keyCollection = mSrcNode->getKeyCollection(animation->getUid());
 				
 				if( keyCollection.hasKeys() ) {
-					auto animTime = animClip.animation.getPositionInTicks() + animClip.animation.getStartTick();
+					auto animTime = animation->getPositionInTicks() + animation->getStartTick();
 					tempPos += animClip.weight * keyCollection.getPosition( animTime );
 					tempScale += animClip.weight * keyCollection.getScale( animTime );
 					// TODO: Keep an eye on this :O
