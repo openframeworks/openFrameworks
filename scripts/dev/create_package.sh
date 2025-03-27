@@ -455,8 +455,9 @@ function createPackage {
 
     if [ "$PKG_PLATFORM" = "linux64" ]; then
         downloader https://github.com/openframeworks/projectGenerator/releases/download/nightly/projectGenerator-linux-gui.gz 2> /dev/null
-        gunzip projectGenerator-linux-gui.gz
-        mv projectGenerator-linux-gui projectGenerator
+        mkdir -p projectGenerator
+        tar -xzvf projectGenerator-linux-gui.gz --strip-components=1 -C projectGenerator-linux-gui
+        #mv projectGenerator-linux-gui projectGenerator
         rm -rf apps/projectGenerator
     fi
 
@@ -475,8 +476,9 @@ function createPackage {
             rm -rf apps/projectGenerator
         elif [ "${LIBS_ABI}" == "linux64" ]; then
             downloader https://github.com/openframeworks/projectGenerator/releases/download/nightly/projectGenerator-linux-gui.gz 2> /dev/null
-            gunzip projectGenerator-linux-gui.gz
-            mv projectGenerator-linux-gui projectGenerator
+            mkdir -p projectGenerator
+            tar -xzvf projectGenerator-linux-gui.gz --strip-components=1 -C projectGenerator-linux-gui
+            #mv projectGenerator-linux-gui projectGenerator
             rm -rf apps/projectGenerator
         fi
 
