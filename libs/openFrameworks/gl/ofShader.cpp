@@ -1066,6 +1066,11 @@ void ofShader::setUniform4f(const string & name, const glm::vec4 & v) const {
 }
 
 //--------------------------------------------------------------
+void ofShader::setUniform3f(const string & name, const ofFloatColor & v) const {
+	setUniform3f(name, v.r, v.g, v.b);
+}
+
+//--------------------------------------------------------------
 void ofShader::setUniform4f(const string & name, const ofFloatColor & v) const {
     setUniform4f(name, v.r, v.g, v.b, v.a);
 }

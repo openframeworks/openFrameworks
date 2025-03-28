@@ -20,8 +20,12 @@
 #include "ofAppAndroidWindow.h"
 #endif
 
-#define GLM_FORCE_CTOR_INIT
-#define GLM_ENABLE_EXPERIMENTAL
+#if !defined(GLM_FORCE_CTOR_INIT)
+	#define GLM_FORCE_CTOR_INIT
+#endif
+#if !defined(GLM_ENABLE_EXPERIMENTAL)
+	#define GLM_ENABLE_EXPERIMENTAL
+#endif
 #include <glm/gtx/transform.hpp>
 #include <glm/gtc/quaternion.hpp>
 #include <map>
@@ -851,7 +855,7 @@ void ofCubeMap::_createIrradianceMap(GLuint aSrcCubeFid, bool aBMakeCache, const
 	std::vector<glm::mat4> views = _getViewMatrices( glm::vec3(0,0,0) );
 	
 	if( !shaderIrradianceMap.isLoaded() ) {
-		auto isource = ofCubeMapShaders::irriadianceCubeMap();
+		auto isource = ofCubeMapShaders::irradianceCubeMap();
 		shaderIrradianceMap.setupShaderFromSource(GL_VERTEX_SHADER, isource.vertShader );
 		shaderIrradianceMap.setupShaderFromSource(GL_FRAGMENT_SHADER, isource.fragShader );
 		shaderIrradianceMap.bindDefaults();

@@ -26,6 +26,8 @@
 	<true/>
 	<key>NSCameraUsageDescription</key>
 	<string>This app needs to access the camera</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>This app makes use of your Location</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>This app needs to access the microphone</string>
 	<key>UIApplicationExitsOnSuspend</key>

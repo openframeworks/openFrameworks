@@ -2,7 +2,7 @@
 
 static unsigned int sUniqueIdCounter = 0;
 
-using namespace ofx::assimp;
+using namespace ofxAssimp;
 
 //--------------------------------------------------------------
 std::string SrcNode::sGetNodeTypeAsString( const NodeType& atype ) {
@@ -12,8 +12,8 @@ std::string SrcNode::sGetNodeTypeAsString( const NodeType& atype ) {
 		return "OFX_ASSIMP_BONE";
 	} else if(atype == OFX_ASSIMP_SKELETON ) {
 		return "OFX_ASSIMP_SKELETON";
-	} else if(atype == OFX_ASSIMP_MODEL ) {
-		return "OFX_ASSIMP_MODEL";
+	} else if(atype == OFX_ASSIMP_SCENE ) {
+		return "OFX_ASSIMP_SCENE";
 	}
 	return "OFX_ASSIMP_NODE";
 }
@@ -26,8 +26,8 @@ std::string SrcNode::sGetNodeTypeShortAsString( const NodeType& atype ) {
 		return "BONE";
 	} else if(atype == OFX_ASSIMP_SKELETON ) {
 		return "SKELETON";
-	} else if(atype == OFX_ASSIMP_MODEL ) {
-		return "MODEL";
+	} else if(atype == OFX_ASSIMP_SCENE ) {
+		return "SCENE";
 	}
 	return "NODE";
 }
@@ -53,8 +53,8 @@ std::string SrcNode::getName() {
 }
 
 //----------------------------------------
-std::shared_ptr<ofx::assimp::SrcNode> SrcNode::getNode( aiNode* aAiNode ) {
-	std::shared_ptr<ofx::assimp::SrcNode> tnode;
+std::shared_ptr<ofxAssimp::SrcNode> SrcNode::getNode( aiNode* aAiNode ) {
+	std::shared_ptr<ofxAssimp::SrcNode> tnode;
 	findNodeRecursive( aAiNode, tnode );
 	return tnode;
 }
@@ -73,8 +73,8 @@ void SrcNode::findNodeRecursive( aiNode* aAiNode, std::shared_ptr<SrcNode>& aRet
 }
 
 //----------------------------------------
-std::shared_ptr<ofx::assimp::SrcNode> SrcNode::getNode( const std::string& aAiNodeName ) {
-	std::shared_ptr<ofx::assimp::SrcNode> tnode;
+std::shared_ptr<ofxAssimp::SrcNode> SrcNode::getNode( const std::string& aAiNodeName ) {
+	std::shared_ptr<ofxAssimp::SrcNode> tnode;
 	findNodeRecursive( aAiNodeName, tnode );
 	return tnode;
 }
@@ -151,7 +151,7 @@ std::string SrcNode::getAsString( int aLevel ) {
 
 // animation functions
 //--------------------------------------------------------------
-ofx::assimp::SrcAnimKeyCollection& SrcNode::getKeyCollection(unsigned int aAnimUId){
+ofxAssimp::SrcAnimKeyCollection& SrcNode::getKeyCollection(unsigned int aAnimUId){
 	if( mKeyCollections.count(aAnimUId) < 1 ) {
 		SrcAnimKeyCollection temp;
 		temp.uId = aAnimUId;

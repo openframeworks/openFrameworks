@@ -68,7 +68,7 @@ void ofApp::setup(){
 //--------------------------------------------------------------
 void ofApp::loadModel(string filename){
 	
-	ofx::assimp::ImportSettings tsettings;
+	ofxAssimp::ImportSettings tsettings;
 	tsettings.filePath = filename;
 	// we don't have any animations in this model
 	tsettings.importAnimations = false;
@@ -76,15 +76,15 @@ void ofApp::loadModel(string filename){
 	// the z-axis is flipped and the text on the camera body appears backwards
 	tsettings.convertToLeftHanded = false;
     
-	if( model.load(tsettings)) {
-		model.centerAndScaleToWindow();
+	if( scene.load(tsettings)) {
+		scene.centerAndScaleToWindow();
 		cout << endl << endl << endl << endl;
 		stringstream ss;
-		ss << "Num Meshes: " << model.getNumMeshes() << endl;
-		ss << "Num Vertices: " << model.getNumVertices() << endl;
+		ss << "Num Meshes: " << scene.getNumMeshes() << endl;
+		ss << "Num Vertices: " << scene.getNumVertices() << endl;
 		ss << endl;
 		mSceneString = ss.str();
-		mSceneString += model.getHierarchyAsString();
+		mSceneString += scene.getHierarchyAsString();
 		cout << mSceneString << endl;
 		
     } else {
@@ -116,16 +116,16 @@ void ofApp::update(){
 	ofShadow::setAllShadowNormalBias(shadowNormalBias);
 	
 	
-	model.calculateDimensions();
+	scene.calculateDimensions();
 
-	auto meshMountNode = model.getNode("security_camera_02_mount", true);
+	auto meshMountNode = scene.getNode("security_camera_02_mount", true);
 	if( meshMountNode ) {
 		auto tpos = meshMountNode->getPosition();
 		meshMountNode->setPosition( tpos.x, bottomOffsetY, bottomOffsetZ+cameraOffsetZ );
 	}
 	// Notice that we pass true for the second argument which strictly searches for the string
 	// because the string security_camera_02 is also contained in security_camera_02_mount
-	auto meshCameraNode = model.getNode("security_camera_02", true);
+	auto meshCameraNode = scene.getNode("security_camera_02", true);
 	if( meshCameraNode ) {
 		auto tpos = meshCameraNode->getPosition();
 		meshCameraNode->setPosition( tpos.x, tpos.y, cameraOffsetZ );
@@ -134,8 +134,8 @@ void ofApp::update(){
 		meshCameraNode->tiltDeg( tiltDeg );
 	}
 	
-	if( model.getNumMeshes() > 1 ) {
-		auto camMesh = model.getMesh(1);
+	if( scene.getNumMeshes() > 1 ) {
+		auto camMesh = scene.getMesh(1);
 		auto camBounds = camMesh->getLocalBounds();
 		// local bounds do not have transforms applied
 		// this will provide us with a more accurate size of the mesh
@@ -192,7 +192,7 @@ void ofApp::draw(){
 	renderScene();
 	
 	if( bDebug && bDrawBounds ) {
-		for( auto& mesh : model.getMeshes() ) {
+		for( auto& mesh : scene.getMeshes() ) {
 			mesh->getGlobalBounds().draw();
 		}
 	}
@@ -215,8 +215,8 @@ void ofApp::draw(){
 	float texWidth = (mTextRect.getWidth() - texPadding*3.0f) * 0.5;
 	// now lets grab the textures from the meshes //
 	ofRectangle meshTexRect( mTextRect.x + texPadding, 150.0f, texWidth, texWidth );
-	if( model.getNumMeshes() > 0 ) {
-		auto mesh = model.getMesh(0);
+	if( scene.getNumMeshes() > 0 ) {
+		auto mesh = scene.getMesh(0);
 		if( mesh->getNumTextures() > 0 ) {
 			for( unsigned int i = 0; i < mesh->getNumTextures(); i++ ) {
 				auto texture = mesh->getTexture(i);
@@ -255,9 +255,9 @@ void ofApp::renderScene() {
 	wallMaterial.end();
 	if( bDrawMeshes) {
 		if( bDrawWireframe ) {
-			model.drawWireframe();
+			scene.drawWireframe();
 		} else {
-			model.drawFaces();
+			scene.drawFaces();
 		}
 	}
 }

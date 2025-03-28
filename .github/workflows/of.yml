@@ -32,7 +32,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Docker Step
-        run: "docker run -di --name emscripten -v $PWD:/src emscripten/emsdk:3.1.74 bash"
+        run: "docker run -di --name emscripten -v $PWD:/src emscripten/emsdk:4.0.4 bash"
       # - name: Determine Release
       #   id: vars
       #   shell: bash
@@ -149,6 +149,7 @@ jobs:
         run: ./scripts/ci/vs/install.sh
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v2
+
       - name: Build DEBUG and RELEASE emptyExample
         working-directory: ${{env.GITHUB_WORKSPACE}}
         run: |
@@ -159,6 +160,62 @@ jobs:
         run: |
           msbuild examples/templates/allAddonsExample/allAddonsExample.vcxproj /p:configuration=debug /p:platform=${{ matrix.platform }} /p:PlatformToolset=v143
           msbuild examples/templates/allAddonsExample/allAddonsExample.vcxproj /p:configuration=release /p:platform=${{ matrix.platform }} /p:PlatformToolset=v143
+
+  build-vs2019:
+    runs-on: windows-2019
+    strategy:
+      matrix:
+        platform: [x64]
+    env:
+      BITS: ${{ matrix.bits }}
+    steps:
+      - name: Clone repository
+        uses: actions/checkout@v4
+        
+      - uses: msys2/setup-msys2@v2.24.1
+        with:
+          update: true
+          install: >-
+            git
+            unzip
+
+      - name: Setup MSBuild (VS2019 - 16.11)
+        uses: microsoft/setup-msbuild@v2
+        with:
+          vs-version: '16.11'
+          msbuild-architecture: x64
+
+      - name: Verify MSBuild Version
+        run: msbuild -version
+
+      - name: Download libs
+        run: ./scripts/vs/download_libs_2019_x64.sh -t $RELEASE
+
+      - name: Download projectGenerator
+        shell: bash
+        run: ./scripts/vs/download_projectGenerator.sh
+
+      - name: Debug projectGenerator Directory
+        shell: bash
+        run: |
+          echo "Checking projectGenerator directory:"
+          ls -la projectGenerator/
+
+      # - name: run projectGenerator on examples
+      #   shell: bash
+      #   run: ./scripts/ci/vs/pg_projects.sh
+
+      # - name: Build DEBUG and RELEASE emptyExample
+      #   working-directory: ${{env.GITHUB_WORKSPACE}}
+      #   run: |
+      #     msbuild examples/templates/emptyExample/emptyExample.vcxproj /p:configuration=debug /p:platform=${{ matrix.platform }} /p:PlatformToolset=v142
+      #     msbuild examples/templates/emptyExample/emptyExample.vcxproj /p:configuration=release /p:platform=${{ matrix.platform }} /p:PlatformToolset=v142
+      # - name: Build DEBUG and RELEASE allAddonsExample
+      #   working-directory: ${{env.GITHUB_WORKSPACE}}
+      #   run: |
+      #     msbuild examples/templates/allAddonsExample/allAddonsExample.vcxproj /p:configuration=debug /p:platform=${{ matrix.platform }} /p:PlatformToolset=v142
+      #     msbuild examples/templates/allAddonsExample/allAddonsExample.vcxproj /p:configuration=release /p:platform=${{ matrix.platform }} /p:PlatformToolset=v142
+
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -274,10 +331,11 @@ jobs:
     env:
       TARGET: ${{matrix.cfg.target}}
     steps:
-      - name: Remove Old lib-unwind
-        run: if [ "$TARGET" = "linux64" ]; then
-          sudo apt-get remove libunwind-14 -y;
-          fi
+# handled by the install script now 
+#      - name: Remove Old lib-unwind
+#        run: if [ "$TARGET" = "linux64" ]; then
+#          sudo apt-get remove libunwind-14 -y;
+#          fi
       - name: Cache Packages
         uses: awalsh128/cache-apt-pkgs-action@latest
         with:
@@ -395,4 +453,55 @@ jobs:
         env:
           DEVELOPER_DIR: "/Applications/Xcode.app/Contents/Developer"
           SDKROOT: "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk"
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  build-android:
+    runs-on: ubuntu-24.04
+    strategy:
+      matrix:
+        cfg:
+          - { target: android, opt: arm64-v8a }
+          - { target: android, opt: x86_64 }
+          - { target: android, opt: armeabi-v7a }
+
+    env:
+      TARGET: ${{ matrix.cfg.target }}
+      ARCH: ${{ matrix.cfg.opt }}
+      ANDROID_SDK_ROOT: $ANDROID_HOME
+      ANDROID_NDK_ROOT: $ANDROID_NDK_LATEST_HOME
+
+    steps:
+      - name: checkout openFrameworks
+        uses: actions/checkout@v4
+
+      - name: Set Up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Download Libraries
+        run: ./of update libs android
+
+      - name: Build openFrameworks Core - Debug
+        run: |
+          cd libs/openFrameworksCompiled/project/android/
+          gradle wrapper
+          chmod +x gradlew
+          ./gradlew assembleDebug
+
+      - name: Build openFrameworks Core - CMake
+        run: |
+          cd libs/openFrameworksCompiled/project/android/
+          ./cmake.sh ${ARCH}
+
+      - name: Check if openFrameworks output Exists
+        run: |
+          LIB_PATH="libs/openFrameworksCompiled/lib/android/${ARCH}/libopenFrameworksAndroid.so"
+          if [ -f "$LIB_PATH" ]; then
+            echo "Build Success - [$LIB_PATH]"
+          else
+            echo "ERROR: Build Failed not found: [$LIB_PATH]"
+            exit 1
+          fi
+

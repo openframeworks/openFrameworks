@@ -267,9 +267,6 @@ ifneq ($(USE_GST),1)
 	PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofGstVideoPlayer.cpp
 endif
 
-# third party
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/boost/%
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/fmod/%
 
 ##########################################################################################
 # PLATFORM HEADER SEARCH PATHS

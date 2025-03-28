@@ -30,7 +30,7 @@ void ofApp::setup(){
 	//if you uncomment the appropriate line in main.cpp
 	
 	img.setUseTexture(false);
-	img.load("nyc-small.exr");
+	img.load("nyc-small.hdr");
 
 	material.setShininess(120);
 	material.setSpecularColor(ofColor(255, 255, 255, 255));

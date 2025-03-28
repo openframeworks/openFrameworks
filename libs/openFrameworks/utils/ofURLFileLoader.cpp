@@ -13,6 +13,7 @@ using std::string;
 #include "ofThreadChannel.h"
 #include "ofThread.h"
 static bool curlInited = false;
+#define MAX_POSTFIELDS_SIZE (1024 * 1024)
 #if !defined(NO_OPENSSL)
 #include <openssl/evp.h>
 #include <openssl/pem.h>
@@ -34,6 +35,7 @@ ofEvent<ofHttpResponse> & ofURLResponseEvent() {
 }
 
 #if !defined(TARGET_IMPLEMENTS_URL_LOADER)
+std::mutex responseMutex;
 class ofURLFileLoaderImpl : public ofThread, public ofBaseURLFileLoader {
 public:
 	ofURLFileLoaderImpl();
@@ -129,82 +131,104 @@ void ofURLFileLoaderImpl::stop() {
 }
 
 #if !defined(NO_OPENSSL)
-bool ofURLFileLoaderImpl::checkValidCertifcate(const std::string& cert_file) {
-	FILE *fp = fopen(cert_file.c_str(), "r");
-	if (!fp) return false;
-	X509 *cert = PEM_read_X509(fp, NULL, NULL, NULL);
-	fclose(fp);
-	if (!cert) return false;
-	time_t current_time = time(NULL);
-	int notBefore = X509_cmp_time(X509_get0_notBefore(cert), &current_time);
-	int notAfter = X509_cmp_time(X509_get0_notAfter(cert), &current_time);
-	X509_free(cert);
-	return (notBefore <= 0 && notAfter >= 0);
+bool ofURLFileLoaderImpl::checkValidCertifcate(const std::string & cert_file) {
+	try {
+		FILE * fp = fopen(cert_file.c_str(), "r");
+		if (!fp) return false;
+		X509 * cert = PEM_read_X509(fp, NULL, NULL, NULL);
+		fclose(fp);
+		if (!cert) return false;
+		time_t current_time = time(NULL);
+		int notBefore = X509_cmp_time(X509_get0_notBefore(cert), &current_time);
+		int notAfter = X509_cmp_time(X509_get0_notAfter(cert), &current_time);
+		X509_free(cert);
+		return (notBefore <= 0 && notAfter >= 0);
+	} catch (const std::exception & e) {
+		ofLogError("ofURLFileLoader") << "Exception in checkValidCertifcate: " << e.what();
+		return false;
+	} catch (...) {
+		ofLogError("ofURLFileLoader") << "Unknown error occurred in checkValidCertifcate.";
+		return false;
+	}
 }
 
+
 void ofURLFileLoaderImpl::createSSLCertificate() {
-	EVP_PKEY *pkey = nullptr;
-	X509 *x509 = nullptr;
-	EVP_PKEY_CTX *pkey_ctx = EVP_PKEY_CTX_new_id(EVP_PKEY_RSA, NULL);
-	if (!pkey_ctx) {
-		ofLogError("ofURLFileLoader") << "Error initializing key generation context";
-		return;
-	}
-	if (EVP_PKEY_keygen_init(pkey_ctx) <= 0 ||
-		EVP_PKEY_CTX_set_rsa_keygen_bits(pkey_ctx, 2048) <= 0 ||
-		EVP_PKEY_keygen(pkey_ctx, &pkey) <= 0) {
-		ofLogError("ofURLFileLoader") << "Error generating RSA key";
+	try {
+		EVP_PKEY * pkey = nullptr;
+		X509 * x509 = nullptr;
+		EVP_PKEY_CTX * pkey_ctx = EVP_PKEY_CTX_new_from_name(NULL, "RSA", NULL);
+		if (!pkey_ctx) {
+			throw std::runtime_error("Error initializing key generation context");
+		}
+		if (EVP_PKEY_keygen_init(pkey_ctx) <= 0 || EVP_PKEY_CTX_set_rsa_keygen_bits(pkey_ctx, 2048) <= 0 || EVP_PKEY_keygen(pkey_ctx, &pkey) <= 0) {
+			EVP_PKEY_CTX_free(pkey_ctx);
+			throw std::runtime_error("Error generating RSA key");
+		}
 		EVP_PKEY_CTX_free(pkey_ctx);
-		return;
-	}
-	EVP_PKEY_CTX_free(pkey_ctx);
-	x509 = X509_new();
-	ASN1_INTEGER_set(X509_get_serialNumber(x509), 1);
-	X509_gmtime_adj(X509_get_notBefore(x509), 0);
-	X509_gmtime_adj(X509_get_notAfter(x509), 31536000L); // 1 year == 31536000L
-	X509_set_pubkey(x509, pkey);
-	X509_NAME *name = X509_get_subject_name(x509);
-	X509_NAME_add_entry_by_txt(name, "C",  MBSTRING_ASC, (unsigned char *)"US", -1, -1, 0);
-	X509_NAME_add_entry_by_txt(name, "O",  MBSTRING_ASC, (unsigned char *)"Local Machine", -1, -1, 0);
-	X509_NAME_add_entry_by_txt(name, "CN", MBSTRING_ASC, (unsigned char *)"Local Root CA", -1, -1, 0);
-	X509_set_issuer_name(x509, name);
-	if (X509_sign(x509, pkey, EVP_sha256()) == 0) {
-		ofLogError("ofURLFileLoader") << "Error signing the certificate";
+		x509 = X509_new();
+		if (!x509) {
+			EVP_PKEY_free(pkey);
+			throw std::runtime_error("Failed to create new X509 certificate");
+		}
+		ASN1_INTEGER_set(X509_get_serialNumber(x509), 1);
+		X509_gmtime_adj(X509_get_notBefore(x509), 0);
+		X509_gmtime_adj(X509_get_notAfter(x509), 31536000L); // 1 year
+		X509_set_pubkey(x509, pkey);
+		X509_NAME * name = X509_get_subject_name(x509);
+		if (!name) {
+			X509_free(x509);
+			EVP_PKEY_free(pkey);
+			throw std::runtime_error("Failed to get subject name from X509 certificate");
+		}
+		X509_NAME_add_entry_by_txt(name, "C", MBSTRING_ASC, (unsigned char *)"US", -1, -1, 0);
+		X509_NAME_add_entry_by_txt(name, "O", MBSTRING_ASC, (unsigned char *)"Local Machine", -1, -1, 0);
+		X509_NAME_add_entry_by_txt(name, "CN", MBSTRING_ASC, (unsigned char *)"Local Root CA", -1, -1, 0);
+		X509_set_issuer_name(x509, name);
+		if (X509_sign(x509, pkey, EVP_sha256()) == 0) {
+			X509_free(x509);
+			EVP_PKEY_free(pkey);
+			throw std::runtime_error("Error signing the certificate");
+		}
+		BIO * keyBio = BIO_new(BIO_s_mem());
+		BIO * certBio = BIO_new(BIO_s_mem());
+		if (!keyBio || !certBio) {
+			if (keyBio) BIO_free(keyBio);
+			if (certBio) BIO_free(certBio);
+			X509_free(x509);
+			EVP_PKEY_free(pkey);
+			throw std::runtime_error("Failed to create BIO objects for key/cert storage");
+		}
+		PEM_write_bio_PrivateKey(keyBio, pkey, nullptr, nullptr, 0, nullptr, nullptr);
+		PEM_write_bio_X509(certBio, x509);
+		char * keyData = nullptr;
+		long keyLen = BIO_get_mem_data(keyBio, &keyData);
+		std::string keyStr(keyData, keyLen);
+		char * certData = nullptr;
+		long certLen = BIO_get_mem_data(certBio, &certData);
+		std::string certStr(certData, certLen);
+		ofBuffer keyBuffer, certBuffer;
+		keyBuffer.set(keyStr.c_str(), keyLen);
+		certBuffer.set(certStr.c_str(), certLen);
+		if (!ofDirectory::createDirectory("ssl")) {
+			ofLogWarning("ofURLFileLoader") << "Could not create ssl directory";
+		}
+		if (!ofBufferToFile(ofToDataPath(PRIVATE_KEY_FILE), keyBuffer)) {
+			throw std::runtime_error("Failed to save private key to file");
+		}
+		if (!ofBufferToFile(ofToDataPath(CERTIFICATE_FILE), certBuffer)) {
+			throw std::runtime_error("Failed to save certificate to file");
+		}
+		BIO_free(keyBio);
+		BIO_free(certBio);
 		EVP_PKEY_free(pkey);
 		X509_free(x509);
-		return;
+		ofLogNotice("ofURLFileLoader") << "Root certificate and private key generated and saved";
+	} catch (const std::exception & e) {
+		ofLogError("ofURLFileLoader") << "Exception in createSSLCertificate: " << e.what();
+	} catch (...) {
+		ofLogError("ofURLFileLoader") << "Unknown error occurred in createSSLCertificate.";
 	}
-	BIO *keyBio = BIO_new(BIO_s_mem());
-	BIO *certBio = BIO_new(BIO_s_mem());
-	PEM_write_bio_PrivateKey(keyBio, pkey, nullptr, nullptr, 0, nullptr, nullptr);
-	PEM_write_bio_X509(certBio, x509);
-	char *keyData = nullptr;
-	long keyLen = BIO_get_mem_data(keyBio, &keyData);
-	std::string keyStr(keyData, keyLen);
-	char *certData = nullptr;
-	long certLen = BIO_get_mem_data(certBio, &certData);
-	std::string certStr(certData, certLen);
-	ofBuffer keyBuffer;
-	ofBuffer certBuffer;
-	keyBuffer.set(keyStr.c_str(), keyLen);
-	certBuffer.set(certStr.c_str(), certLen);
-	
-	if(!ofDirectory::createDirectory( "ssl" )) {
-		ofLogWarning("ofURLFileLoader") << "ssl dir could not create";
-	}
-	if(!ofBufferToFile(ofToDataPath(PRIVATE_KEY_FILE), keyBuffer)) {
-		ofLogError("ofURLFileLoader") << "createSSLCertificate. could not save keyBuffer";
-	}
-	if(!ofBufferToFile(ofToDataPath(CERTIFICATE_FILE), certBuffer)) {
-		ofLogError("ofURLFileLoader") << "createSSLCertificate. could not save certBuffer";
-	}
-
-	BIO_free(keyBio);
-	BIO_free(certBio);
-	EVP_PKEY_free(pkey);
-	X509_free(x509);
-	
-	ofLogNotice("ofURLFileLoader") << "Root certificate and private key generated and saved";
 }
 #endif
 
@@ -239,41 +263,48 @@ void ofURLFileLoaderImpl::threadedFunction() {
 
 namespace {
 size_t saveToFile_cb(void * buffer, size_t size, size_t nmemb, void * userdata) {
+	std::lock_guard<std::mutex> lock(responseMutex);
 	auto saveTo = (ofFile *)userdata;
 	saveTo->write((const char *)buffer, size * nmemb);
 	return size * nmemb;
 }
 
 size_t saveToMemory_cb(void * buffer, size_t size, size_t nmemb, void * userdata) {
+	std::lock_guard<std::mutex> lock(responseMutex);
 	auto response = (ofHttpResponse *)userdata;
 	response->data.append((const char *)buffer, size * nmemb);
 	return size * nmemb;
 }
 
 size_t readBody_cb(void * ptr, size_t size, size_t nmemb, void * userdata) {
+	std::lock_guard<std::mutex> lock(responseMutex);
 	auto body = (std::string *)userdata;
-
 	if (size * nmemb < 1) {
 		return 0;
 	}
-
 	if (!body->empty()) {
 		auto sent = std::min(size * nmemb, body->size());
 		memcpy(ptr, body->c_str(), sent);
 		*body = body->substr(sent);
 		return sent;
 	}
-
 	return 0; /* no more data left to deliver */
 }
 }
 
 ofHttpResponse ofURLFileLoaderImpl::handleRequest(const ofHttpRequest & request) {
 	std::unique_ptr<CURL, void (*)(CURL *)> curl = std::unique_ptr<CURL, void (*)(CURL *)>(curl_easy_init(), curl_easy_cleanup);
+	if (!curl) {
+		ofLogError("ofURLFileLoader") << "curl_easy_init() failed!";
+		return ofHttpResponse(request, -1, "CURL initialization failed");
+	}
 	curl_slist * headers = nullptr;
 	curl_version_info_data *version = curl_version_info( CURLVERSION_NOW );
 	if(request.verbose) {
 		CURLcode ret = curl_easy_setopt(curl.get(), CURLOPT_VERBOSE, 1L);
+		if (ret != CURLE_OK) {
+			ofLogWarning() << "cURL error: " << curl_easy_strerror(ret);
+		}
 		if (version) {
 			std::string userAgent = std::string("curl/") + version->version;
 			curl_easy_setopt(curl.get(), CURLOPT_USERAGENT, userAgent.c_str());
@@ -282,7 +313,7 @@ ofHttpResponse ofURLFileLoaderImpl::handleRequest(const ofHttpRequest & request)
 		}
 	}
 	if(version->features & CURL_VERSION_SSL) {
-#if defined(TARGET_OSX) && !defined(NO_OPENSSL)
+#if !defined(NO_OPENSSL)
 		const std::string caPath = "ssl";
 		const std::string caFile = "ssl/cacert.pem";
 		if (ofFile::doesFileExist(ofToDataPath(CERTIFICATE_FILE)) && checkValidCertifcate(ofToDataPath(CERTIFICATE_FILE))) {
@@ -297,11 +328,11 @@ ofHttpResponse ofURLFileLoaderImpl::handleRequest(const ofHttpRequest & request)
 #else
 		curl_easy_setopt(curl.get(), CURLOPT_SSL_VERIFYPEER, 1L);
 #endif
-		curl_easy_setopt(curl.get(), CURLOPT_MAXREDIRS, 50L);
 		curl_easy_setopt(curl.get(), CURLOPT_SSL_VERIFYHOST, 2);
 	}
 	curl_easy_setopt(curl.get(), CURLOPT_URL, request.url.c_str());
 	curl_easy_setopt(curl.get(), CURLOPT_FOLLOWLOCATION, 1L);
+	curl_easy_setopt(curl.get(), CURLOPT_MAXREDIRS, 20L);
 
 	if (request.contentType != "") {
 		headers = curl_slist_append(headers, ("Content-Type: " + request.contentType).c_str());
@@ -318,43 +349,47 @@ ofHttpResponse ofURLFileLoaderImpl::handleRequest(const ofHttpRequest & request)
 		headers = curl_slist_append(headers, (it->first + ": " + it->second).c_str());
 	}
 
-	curl_easy_setopt(curl.get(), CURLOPT_HTTPHEADER, headers);
+	if (headers) {
+		curl_easy_setopt(curl.get(), CURLOPT_HTTPHEADER, headers);
+	}
 	std::string body = request.body;
-	// set body if there's any
-	if (request.body != "") {
-		//		curl_easy_setopt(curl.get(), CURLOPT_UPLOAD, 1L); // Tis does PUT instead of POST
-		curl_easy_setopt(curl.get(), CURLOPT_POSTFIELDSIZE, request.body.size());
-		curl_easy_setopt(curl.get(), CURLOPT_POSTFIELDS, nullptr);
-		//curl_easy_setopt(curl.get(), CURLOPT_POSTFIELDS, request.body.c_str());
-		curl_easy_setopt(curl.get(), CURLOPT_READFUNCTION, readBody_cb);
-		curl_easy_setopt(curl.get(), CURLOPT_READDATA, &body);
+	if (!request.body.empty()) {
+		if (request.method == ofHttpRequest::PUT || request.body.size() > MAX_POSTFIELDS_SIZE) { // If request is an upload (e.g., file upload)
+			curl_easy_setopt(curl.get(), CURLOPT_UPLOAD, 1L);
+			curl_easy_setopt(curl.get(), CURLOPT_READFUNCTION, readBody_cb);
+			curl_easy_setopt(curl.get(), CURLOPT_READDATA, &body);
+			curl_easy_setopt(curl.get(), CURLOPT_POSTFIELDSIZE, 0L);
+		} else { // If request is a normal POST
+			curl_easy_setopt(curl.get(), CURLOPT_POSTFIELDSIZE, request.body.size());
+			curl_easy_setopt(curl.get(), CURLOPT_POSTFIELDS, request.body.c_str());
+		}
 	} else {
-		//		curl_easy_setopt(curl.get(), CURLOPT_UPLOAD, 0L);
-		curl_easy_setopt(curl.get(), CURLOPT_POSTFIELDSIZE, 0);
-		//curl_easy_setopt(curl.get(), CURLOPT_POSTFIELDS, nullptr);
+		curl_easy_setopt(curl.get(), CURLOPT_POSTFIELDSIZE, 0L);
+		curl_easy_setopt(curl.get(), CURLOPT_POSTFIELDS, "");
 		curl_easy_setopt(curl.get(), CURLOPT_READFUNCTION, nullptr);
 		curl_easy_setopt(curl.get(), CURLOPT_READDATA, nullptr);
 	}
 	if (request.method == ofHttpRequest::GET) {
-		curl_easy_setopt(curl.get(), CURLOPT_HTTPGET, 1);
-		curl_easy_setopt(curl.get(), CURLOPT_POST, 0);
-		curl_easy_setopt(curl.get(), CURLOPT_PUT, 0);
+		curl_easy_setopt(curl.get(), CURLOPT_HTTPGET, 1L);
+		curl_easy_setopt(curl.get(), CURLOPT_POST, 0L);
+		curl_easy_setopt(curl.get(), CURLOPT_UPLOAD, 0L);
 	}
 	else if (request.method == ofHttpRequest::PUT) {
-		curl_easy_setopt(curl.get(), CURLOPT_UPLOAD, 1);
-		curl_easy_setopt(curl.get(), CURLOPT_PUT, 1);
-		curl_easy_setopt(curl.get(), CURLOPT_POST, 0);
-		curl_easy_setopt(curl.get(), CURLOPT_HTTPGET, 0);
+		curl_easy_setopt(curl.get(), CURLOPT_UPLOAD, 1L);
+		curl_easy_setopt(curl.get(), CURLOPT_POST, 0L);
+		curl_easy_setopt(curl.get(), CURLOPT_HTTPGET, 0L);
 	}
 	else if (request.method == ofHttpRequest::POST) {
-	} else {
-		curl_easy_setopt(curl.get(), CURLOPT_POST, 1);
-		curl_easy_setopt(curl.get(), CURLOPT_PUT, 0);
-		curl_easy_setopt(curl.get(), CURLOPT_HTTPGET, 0);
+		curl_easy_setopt(curl.get(), CURLOPT_POST, 1L);
+		curl_easy_setopt(curl.get(), CURLOPT_UPLOAD, 0L);
+		curl_easy_setopt(curl.get(), CURLOPT_HTTPGET, 0L);
 	}
 
 	if (request.timeoutSeconds > 0) {
 		curl_easy_setopt(curl.get(), CURLOPT_TIMEOUT, request.timeoutSeconds);
+	}
+	if (request.headerOnly) {
+		curl_easy_setopt(curl.get(), CURLOPT_NOBODY, 1L);
 	}
 
 	// start request and receive response
@@ -396,7 +431,10 @@ void ofURLFileLoaderImpl::update(ofEventArgs & args) {
 	ofHttpResponse response;
 	while (responses.tryReceive(response)) {
 		try {
-			response.request.done(response);
+			std::lock_guard<std::mutex> lock(responseMutex);
+			if (response.request.done) {
+				response.request.done(response);
+			} 
 		} catch (...) {
 		}
 

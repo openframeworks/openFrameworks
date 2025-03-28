@@ -55,9 +55,6 @@ ICON_FILE = $(OF_PATH)/libs/openFrameworksCompiled/project/osx/$(ICON_NAME)
 //OF_BUNDLE_DATA_FOLDER = 1
 //OF_BUNDLE_DYLIBS = 1
 
-// Retina resolution
-HIGH_RESOLUTION_CAPABLE = NO
-
 // Optional include to keep any permanent settings as CODE_SIGN_IDENTITY. 
 #include? "App.xcconfig"
 
