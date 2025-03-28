@@ -8,7 +8,7 @@ OF_PATH = ../../..
 //UNCOMMENT BELOW TO ENABLE C++ 17 and std::filesystem
 CLANG_CXX_LANGUAGE_STANDARD = c++23
 CLANG_C_LANGUAGE_STANDARD = c17
-MACOSX_DEPLOYMENT_TARGET = 10.15
+MACOSX_DEPLOYMENT_TARGET = 11.5
 
 // App Settings
 PRODUCT_NAME = $(TARGET_NAME)
@@ -30,7 +30,7 @@ INFOPLIST_KEY_LSApplicationCategoryType = public.app-category.games
 // suggested to use semantic versioning format ala #.#.#
 MARKETING_VERSION = 0.1.0
 
-// If users upgrade project to recommended settings it enables script sandboxing which breaks our post build script 
+// If users upgrade project to recommended settings it enables script sandboxing which breaks our post build script
 ENABLE_USER_SCRIPT_SANDBOXING=NO
 
 // this is "Build" in the Xcode target Identity UI, an incremental build number
@@ -65,7 +65,7 @@ ICON_FILE = $(OF_PATH)/libs/openFrameworksCompiled/project/osx/$(ICON_NAME)
 
 HIGH_RESOLUTION_CAPABLE = NO
 
-// Optional include to keep any permanent settings as CODE_SIGN_IDENTITY. 
+// Optional include to keep any permanent settings as CODE_SIGN_IDENTITY.
 #include? "App.xcconfig"
 
 //FOR AV ENGINE SOUND PLAYER UNCOMMENT THREE LINES BELOW
