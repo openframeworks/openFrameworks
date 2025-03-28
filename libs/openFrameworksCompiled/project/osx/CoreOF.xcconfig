@@ -51,14 +51,11 @@ OF_CORE_HEADERS = $(HEADER_OF) $(HEADER_FREETYPE) $(HEADER_FREETYPE2) $(HEADER_G
 
 OF_CORE_FRAMEWORKS = -framework Accelerate -framework AGL -framework AppKit -framework ApplicationServices -framework AudioToolbox -framework AVFoundation -framework Cocoa -framework CoreAudio -framework CoreFoundation -framework CoreMedia -framework CoreServices -framework CoreVideo -framework Foundation -framework IOKit -framework OpenGL -framework QuartzCore -framework Security -framework SystemConfiguration -framework Metal
 
-<<<<<<< HEAD
 // FMOD can be enabled in OF Core by uncommenting this block
 //USE_FMOD=1
 //USER_PREPROCESSOR_DEFINITIONS=USE_FMOD=1 $(inherited)
 //OF_CORE_HEADERS = $(OF_PATH)/libs/fmod/include $(inherited)
 //OF_CORE_LIBS=$(OF_PATH)/libs/fmod/lib/macos/libfmod.dylib $(inherited)
-=======
->>>>>>> master
 
 
 ALWAYS_SEARCH_USER_PATHS = NO
