@@ -168,7 +168,7 @@ void Node::addChild( std::shared_ptr<Node> akiddo ) {
 
 //----------------------------------------
 int Node::getNumChildren() {
-	return mKids.size();
+	return (int)mKids.size();
 }
 
 //----------------------------------------

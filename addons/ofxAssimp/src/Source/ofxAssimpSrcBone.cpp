@@ -49,7 +49,7 @@ void SrcBone::findBoneRecursive( aiNode* aAiNode, std::shared_ptr<SrcBone>& retu
 
 //--------------------------------------------------------------
 unsigned int SrcBone::getNumBones() {
-	unsigned int ttotal = childBones.size();
+	unsigned int ttotal = (unsigned int)childBones.size();
 	for(auto& kid : childBones ) {
 		ttotal += kid->getNumBones();
 	}

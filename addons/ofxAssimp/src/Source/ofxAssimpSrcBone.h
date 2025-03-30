@@ -9,7 +9,7 @@
 namespace ofxAssimp {
 class SrcBone : public ofxAssimp::SrcNode {
 public:
-	virtual NodeType getType() override { return OFX_ASSIMP_BONE; }
+	NodeType getType() override { return OFX_ASSIMP_BONE; }
 	
 	void setAiBone(aiBone* aAiBone, aiNode* aAiNode);
 //	void update();
@@ -17,7 +17,7 @@ public:
 	std::shared_ptr<ofxAssimp::SrcBone> getBone( aiNode* aAiNode );
 	void findBoneRecursive( aiNode* aAiNode, std::shared_ptr<SrcBone>& returnBone );
 	
-	std::string getAsString( unsigned int aLevel=0 );
+	std::string getAsString( unsigned int aLevel=0 ) override;
 	
 	unsigned int getNumBones();
 	
