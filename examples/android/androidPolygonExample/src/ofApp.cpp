@@ -3,15 +3,15 @@
 //--------------------------------------------------------------
 void ofApp::setup(){
 	//ofSetOrientation(OF_ORIENTATION_90_RIGHT);
-	
+
 	//this is to scale down the example for the iphone screen
 	appIphoneScale = 0.5;
 
-	ofBackground(255,255,255);	
+	ofBackground(255,255,255);
 	ofSetFrameRate(60);
-	
+
 	nCurveVertices = 7;
-	
+
 	curveVertices[0].x = 326;
 	curveVertices[0].y = 209;
 	curveVertices[1].x = 306;
@@ -26,7 +26,7 @@ void ofApp::setup(){
 	curveVertices[5].y = 309;
 	curveVertices[6].x = 345;
 	curveVertices[6].y = 279;
-	
+
 	for (int i = 0; i < nCurveVertices; i++){
 		curveVertices[i].bOver 			= false;
 		curveVertices[i].bBeingDragged 	= false;
@@ -51,14 +51,14 @@ void ofApp::draw(){
 	ofSetHexColor(0xe0be21);
 
 	//------(a)--------------------------------------
-	// 
+	//
 	// 		draw a star
 	//
 	// 		use poly winding odd, the default rule
 	//
 	// 		info about the winding rules is here:
 	//		http://glprogramming.com/red/images/Image128.gif
-	// 
+	//
 	ofSetPolyMode(OF_POLY_WINDING_ODD);	// this is the normal mode
 	ofBeginShape();
 		ofVertex(200,135);
@@ -67,17 +67,17 @@ void ofApp::draw(){
 		ofVertex(105,200);
 		ofVertex(50,25);
 	ofEndShape();
-	
-	
+
+
 	//------(b)--------------------------------------
-	// 
+	//
 	// 		draw a star
 	//
 	// 		use poly winding nonzero
 	//
 	// 		info about the winding rules is here:
 	//		http://glprogramming.com/red/images/Image128.gif
-	// 
+	//
 	ofSetHexColor(0xb5de10);
 	ofSetPolyMode(OF_POLY_WINDING_NONZERO);
 	ofBeginShape();
@@ -88,11 +88,11 @@ void ofApp::draw(){
 		ofVertex(250,25);
 	ofEndShape();
 	//-------------------------------------
-	
-	
-	
+
+
+
 	//------(c)--------------------------------------
-	// 
+	//
 	// 		draw a star dynamically
 	//
 	// 		use the mouse position as a pct
@@ -108,7 +108,7 @@ void ofApp::draw(){
 	float origx = 525;
 	float origy = 100;
 	float angle = 0;
-	
+
 	ofSetHexColor(0xa16bca);
 	ofBeginShape();
 	for (int i = 0; i < nStarPts; i++){
@@ -127,14 +127,14 @@ void ofApp::draw(){
 	}
 	ofEndShape();
 	//-------------------------------------
-	
+
 	//------(d)--------------------------------------
-	// 
+	//
 	// 		poylgon of random points
 	//
 	// 		lots of self intersection, 500 pts is a good stress test
-	// 
-	// 
+	//
+	//
 	ofSetHexColor(0x0cb0b6);
 	ofSetPolyMode(OF_POLY_WINDING_ODD);
 	ofBeginShape();
@@ -143,10 +143,10 @@ void ofApp::draw(){
 	}
 	ofEndShape();
 	//-------------------------------------
-	
-	
+
+
 	//------(e)--------------------------------------
-	// 
+	//
 	// 		use sin cos and time to make some spirally shape
 	//
 	ofPushMatrix();
@@ -155,42 +155,42 @@ void ofApp::draw(){
 		ofFill();
 		ofSetPolyMode(OF_POLY_WINDING_ODD);
 		ofBeginShape();
-		float angleStep 	= glm::two_pi<float>()/(100.0f + std::sin(ofGetElapsedTimef()/5.0f) * 60); 
+		float angleStep 	= glm::two_pi<float>()/(100.0f + std::sin(ofGetElapsedTimef()/5.0f) * 60);
 		float radiusAdder 	= 0.5f;
 		float radius 		= 0;
 		for (int i = 0; i < 200; i++){
 			float anglef = (i) * angleStep;
 			float x = radius * std::cos(anglef);
-			float y = radius * std::sin(anglef); 
+			float y = radius * std::sin(anglef);
 			ofVertex(x,y);
-			radius 	+= radiusAdder; 
+			radius 	+= radiusAdder;
 		}
 		ofEndShape(OF_CLOSE);
 	ofPopMatrix();
 	//-------------------------------------
-	
+
 	//------(f)--------------------------------------
-	// 
+	//
 	// 		ofCurveVertex
-	// 
-	// 		because it uses catmul rom splines, we need to repeat the first and last 
+	//
+	// 		because it uses catmul rom splines, we need to repeat the first and last
 	// 		items so the curve actually goes through those points
 	//
 
 	ofSetHexColor(0x2bdbe6);
 	ofBeginShape();
-	
+
 		for (int i = 0; i < nCurveVertices; i++){
-			
-			
+
+
 			// sorry about all the if/states here, but to do catmull rom curves
-			// we need to duplicate the start and end points so the curve acutally 
+			// we need to duplicate the start and end points so the curve acutally
 			// goes through them.
-			
+
 			// for i == 0, we just call the vertex twice
 			// for i == nCurveVertices-1 (last point) we call vertex 0 twice
 			// otherwise just normal ofCurveVertex call
-			
+
 			if (i == 0){
 				ofCurveVertex(curveVertices[0].x, curveVertices[0].y); // we need to duplicate 0 for the curve to start at point 0
 				ofCurveVertex(curveVertices[0].x, curveVertices[0].y); // we need to duplicate 0 for the curve to start at point 0
@@ -202,10 +202,10 @@ void ofApp::draw(){
 				ofCurveVertex(curveVertices[i].x, curveVertices[i].y);
 			}
 		}
-		
+
 	ofEndShape();
-	
-	
+
+
 	// show a faint the non-curve version of the same polygon:
 	ofEnableAlphaBlending();
 		ofNoFill();
@@ -215,8 +215,8 @@ void ofApp::draw(){
 				ofVertex(curveVertices[i].x, curveVertices[i].y);
 			}
 		ofEndShape(true);
-		
-		
+
+
 		ofSetColor(0,0,0,80);
 		for (int i = 0; i < nCurveVertices; i++){
 			if (curveVertices[i].bOver == true) ofFill();
@@ -225,17 +225,17 @@ void ofApp::draw(){
 		}
 	ofDisableAlphaBlending();
 	//-------------------------------------
-	
-	
+
+
 	//------(g)--------------------------------------
-	// 
+	//
 	// 		ofBezierVertex
-	// 
+	//
 	// 		with ofBezierVertex we can draw a curve from the current vertex
 	//		through the the next three vertices we pass in.
 	//		(two control points and the final bezier point)
-	//		
-	
+	//
+
 	float x0 = 500;
 	float y0 = 300;
 	float x1 = 550+50*cos(ofGetElapsedTimef()*1.0f);
@@ -244,17 +244,17 @@ void ofApp::draw(){
 	float y2 = 300+100*sin(ofGetElapsedTimef());
 	float x3 = 650;
 	float y3 = 300;
-	
-	
-	
+
+
+
 	ofFill();
 	ofSetHexColor(0xFF9933);
 	ofBeginShape();
 	ofVertex(x0,y0);
 	ofBezierVertex(x1,y1,x2,y2,x3,y3);
 	ofEndShape();
-	
-	
+
+
 	ofEnableAlphaBlending();
 		ofFill();
 		ofSetColor(0,0,0,40);
@@ -263,99 +263,99 @@ void ofApp::draw(){
 		ofCircle(x2,y2,4);
 		ofCircle(x3,y3,4);
 	ofDisableAlphaBlending();
-	
-	
-	
+
+
+
 	//------(h)--------------------------------------
-	// 
+	//
 	// 		holes / ofNextContour
-	// 
+	//
 	// 		with ofNextContour we can create multi-contour shapes
-	// 		this allows us to draw holes, for example... 
+	// 		this allows us to draw holes, for example...
 	//
 	ofFill();
 	ofSetHexColor(0xd3ffd3);
 	ofDrawRectangle(80,480,140,70);
 	ofSetHexColor(0xff00ff);
-	
+
 	ofBeginShape();
-		
+
 		ofVertex(100,500);
 		ofVertex(180,550);
 		ofVertex(100,600);
-		
+
 		ofNextContour(true);
-		
+
 		ofVertex(120,520);
 		ofVertex(160,550);
 		ofVertex(120,580);
-		
+
 	ofEndShape(true);
 	//-------------------------------------
-	
-	
+
+
 	//------(i)--------------------------------------
-	// 
+	//
 	// 		CSG / ofNextContour
-	// 
-	// 		with different winding rules, you can even use ofNextContour to 
-	// 		perform constructive solid geometry 
-	// 		
+	//
+	// 		with different winding rules, you can even use ofNextContour to
+	// 		perform constructive solid geometry
+	//
 	// 		be careful, the clockwiseness or counter clockwisenss of your multiple
 	// 		contours matters with these winding rules.
 	//
 	// 		for csg ideas, see : http://glprogramming.com/red/chapter11.html
-	// 
+	//
 	// 		info about the winding rules is here:
 	//		http://glprogramming.com/red/images/Image128.gif
-	// 
+	//
 	ofNoFill();
-	
-	
+
+
 	ofPushMatrix();
-	
+
 	ofSetPolyMode(OF_POLY_WINDING_ODD);
-	
+
 	ofBeginShape();
-		
+
 		ofVertex(300,500);
 		ofVertex(380,550);
 		ofVertex(300,600);
-		
+
 		ofNextContour(true);
-		
+
 		for (int i = 0; i < 20; i++){
 			float anglef = ((float)i / 19.0f) * glm::two_pi<float>();
 			float x = 340 + 30 * std::cos(anglef);
-			float y = 550 + 30 * std::sin(anglef); 
+			float y = 550 + 30 * std::sin(anglef);
 			ofVertex(x,y);
-			radius 	+= radiusAdder; 
+			radius 	+= radiusAdder;
 		}
-		
+
 
 	ofEndShape(true);
-	
+
 	ofTranslate(100,0,0);
-	
-	ofSetPolyMode(OF_POLY_WINDING_NONZERO);	
+
+	ofSetPolyMode(OF_POLY_WINDING_NONZERO);
 	ofBeginShape();
-		
+
 		ofVertex(300,500);
 		ofVertex(380,550);
 		ofVertex(300,600);
-		
+
 		ofNextContour(true);
-		
+
 		for (int i = 0; i < 20; i++){
 			float anglef = ((float)i / 19.0f) * glm::two_pi<float>();
 			float x = 340 + 30 * std::cos(anglef);
-			float y = 550 + 30 * std::sin(anglef); 
+			float y = 550 + 30 * std::sin(anglef);
 			ofVertex(x,y);
-			radius 	+= radiusAdder; 
+			radius 	+= radiusAdder;
 		}
-		
+
 	ofEndShape(true);
-	
+
 	ofTranslate(100,0,0);
 	ofSetPolyMode(OF_POLY_WINDING_ABS_GEQ_TWO);
 	ofBeginShape();
@@ -363,50 +363,50 @@ void ofApp::draw(){
 		ofVertex(380,550);
 		ofVertex(300,600);
 		ofNextContour(true);
-		
+
 		for (int i = 0; i < 20; i++){
 			float anglef = ((float)i / 19.0f) * glm::two_pi<float>();
 			float x = 340 + 30 * cos(anglef);
-			float y = 550 + 30 * sin(anglef); 
+			float y = 550 + 30 * sin(anglef);
 			ofVertex(x,y);
-			radius 	+= radiusAdder; 
+			radius 	+= radiusAdder;
 		}
-		
-		
+
+
 	ofEndShape(true);
-	
+
 	ofPopMatrix();
 	//-------------------------------------
-	
-	
+
+
 	ofSetHexColor(0x000000);
 	ofDrawBitmapString("(a) star\nwinding rule odd", 20,210);
-	
+
 	ofSetHexColor(0x000000);
 	ofDrawBitmapString("(b) star\nwinding rule nonzero", 220,210);
-	
+
 	ofSetHexColor(0x000000);
 	ofDrawBitmapString("(c) dynamically\ncreated shape", 420,210);
-	
+
 	ofSetHexColor(0x000000);
 	ofDrawBitmapString("(d) random points\npoly", 670,210);
-	
+
 	ofSetHexColor(0x000000);
 	ofDrawBitmapString("(e) fun with sin/cos", 20,410);
-	
+
 	ofSetHexColor(0x000000);
 	ofDrawBitmapString("(f) ofCurveVertex\nuses catmull rom\nto make curved shapes", 220,410);
-	
+
 	ofSetHexColor(0x000000);
 	ofDrawBitmapString("(g) ofBezierVertex\nuses bezier to draw curves", 460,410);
-	
-	
+
+
 	ofSetHexColor(0x000000);
 	ofDrawBitmapString("(h) ofNextContour\nallows for holes", 20,610);
-	
+
 	ofSetHexColor(0x000000);
 	ofDrawBitmapString("(i) ofNextContour\ncan even be used for CSG operations\nsuch as union and intersection", 260,620);
-		
+
 }
 
 //--------------------------------------------------------------
@@ -510,3 +510,25 @@ void ofApp::okPressed(){
 void ofApp::cancelPressed(){
 
 }
+
+//--------------------------------------------------------------
+void ofApp::deviceRefreshRateChanged(int refreshRate) {
+}
+
+//--------------------------------------------------------------
+void ofApp::deviceHighestRefreshRateChanged(int refreshRate) {
+}
+
+//--------------------------------------------------------------
+void ofApp::deviceRefreshRateChangedEvent(int &refreshRate) {
+}
+
+//--------------------------------------------------------------
+void ofApp::deviceHighestRefreshRateChangedEvent(int &refreshRate) {
+}
+
+//--------------------------------------------------------------
+void ofApp::exit(){
+
+}
+
