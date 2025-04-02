@@ -457,7 +457,8 @@ function createPackage {
         downloader https://github.com/openframeworks/projectGenerator/releases/download/nightly/projectGenerator-linux-gui.gz 2> /dev/null
         tar -xzvf projectGenerator-linux-gui.gz
         mv $(find . -maxdepth 1 -type d -name "projectGenerator-*") projectGenerator
-        rm -rf apps/projectGenerator
+        #keep PG as it is needed to compile 
+        #rm -rf apps/projectGenerator
         rm projectGenerator-linux-gui.gz
     fi
 
