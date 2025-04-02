@@ -24,6 +24,7 @@ public:
 	std::string contentType; ///< POST data mime type
 	std::function<void(const ofHttpResponse &)> done;
 	size_t timeoutSeconds = 0;
+	bool headerOnly = false;
 
 	/// \return the unique id for this request
 	int getId() const;
