@@ -4,6 +4,9 @@
 //  http://julapy.com/blog
 //
 
+#include "ofxiOSConstants.h"
+#ifdef TARGET_OF_IOS
+
 #include "ofxiOSSoundStream.h"
 #include "ofxiOSSoundStreamDelegate.h"
 #include "ofSoundStream.h"
@@ -210,3 +213,4 @@ bool ofxiOSSoundStream::setMixWithOtherApps(bool bMix){
 	
 	return success;
 }
+#endif

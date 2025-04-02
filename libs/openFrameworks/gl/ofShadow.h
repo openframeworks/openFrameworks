@@ -126,9 +126,9 @@ public:
 	void setNearClip( float anear ) { data->nearClip = anear; }
 	void setFarClip( float afar ) { data->farClip = afar; }
 	
-	const bool isMultiCubeFacePass() const;
-	const bool isSingleOmniPass() const;
-	const int getNumShadowDepthPasses() const;
+	bool isMultiCubeFacePass() const;
+	bool isSingleOmniPass() const;
+	int getNumShadowDepthPasses() const;
 	void setSingleOmniPass( bool ab );
 	int getDepthMapWidth();
 	int getDepthMapHeight();
@@ -148,13 +148,13 @@ public:
 	const float& getStrength() { return data->strength; }
 	void setStrength(float astrength) { data->strength = astrength; }
 	
-	const float getBias() { return data->bias; }
+	float getBias() const { return data->bias; }
 	void setBias( float abias ) { data->bias = abias; }
 	
-	const float getNormalBias() { return data->normalBias; }
+	float getNormalBias() const { return data->normalBias; }
 	void setNormalBias( float abias ) { data->normalBias = abias; }
 	
-	const float getSampleRadius() { return data->sampleRadius; }
+	float getSampleRadius() const { return data->sampleRadius; }
 	void setSampleRadius( float aradius ) { data->sampleRadius = aradius; }
 	
 	void setAreaLightSize( float awidth, float aheight ) {mAreaLightWidth=awidth;mAreaLightHeight=aheight;};
@@ -165,8 +165,8 @@ public:
 	std::string getShadowTypeAsString();
 		
 	const ofShader & getDepthShader(ofGLProgrammableRenderer & renderer) const;
-	const bool setupShadowDepthShader(ofShader& ashader, const std::string aShaderMain) const;
-	const bool setupShadowDepthShader(ofShader& ashader, int aLightType, const std::string aShaderMain, bool abSinglePass) const;
+	bool setupShadowDepthShader(ofShader& ashader, const std::string aShaderMain) const;
+	bool setupShadowDepthShader(ofShader& ashader, int aLightType, const std::string aShaderMain, bool abSinglePass) const;
 	void updateDepth(const ofShader & shader,ofGLProgrammableRenderer & renderer) const;
 	void updateDepth(const ofShader & shader,GLenum aCubeFace,ofGLProgrammableRenderer & renderer) const;
 	

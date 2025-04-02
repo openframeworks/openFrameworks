@@ -4,7 +4,6 @@
 		"OF_LIBS_ROOT": "${OF_ROOT}/libs",
 		"OF_INCLUDE": ["${OF_LIBS_ROOT}/openFrameworks/**"],
 		"OF_LIBS_INCLUDE": [
-			"${OF_LIBS_ROOT}/boost/include",
 			"${OF_LIBS_ROOT}/cairo/include/cairo",
 			"${OF_LIBS_ROOT}/curl/include",
 			"${OF_LIBS_ROOT}/fmod/include",

@@ -101,7 +101,7 @@ bool ofMediaFoundationPlayer::MEDXDeviceManager::createDX11Device() {
     );
 
     if (FAILED(hr)) {
-        ofLogError("ofMEDXDeviceManager::CreateDX11Device()") << " unable to use hw accel.";
+        ofLogError("ofMEDXDeviceManager::CreateDX11Device()") << "unable to use hw accel.";
         mBUseDX = false;
         return mBUseDX;
     }
@@ -110,7 +110,7 @@ bool ofMediaFoundationPlayer::MEDXDeviceManager::createDX11Device() {
     if (SUCCEEDED(m_spDX11Device.Get()->QueryInterface(IID_PPV_ARGS(&spMultithread)))) {
         spMultithread->SetMultithreadProtected(TRUE);
     } else {
-        ofLogError("ofMEDXDeviceManager :: CreateDX11Device") << " unable to set multi thread.";
+        ofLogError("ofMEDXDeviceManager::CreateDX11Device") << "unable to set multi thread.";
         mBUseDX = false;
         return mBUseDX;
     }
@@ -118,14 +118,14 @@ bool ofMediaFoundationPlayer::MEDXDeviceManager::createDX11Device() {
 
     hr = MFCreateDXGIDeviceManager(&mResetToken, &m_spDXGIManager);
     if (FAILED(hr)) {
-        ofLogError("ofMEDXDeviceManager :: CreateDX11Device") << " unable to create DXGIDeviceManager.";
+        ofLogError("ofMEDXDeviceManager::CreateDX11Device") << "unable to create DXGIDeviceManager.";
         mBUseDX = false;
         return mBUseDX;
     }
 
     hr = m_spDXGIManager->ResetDevice(m_spDX11Device.Get(), mResetToken);
     if (FAILED(hr)) {
-        ofLogError("ofMEDXDeviceManager :: CreateDX11Device") << " unable to ResetDevice.";
+        ofLogError("ofMEDXDeviceManager::CreateDX11Device") << "unable to ResetDevice.";
         mBUseDX = false;
         return mBUseDX;
     }
@@ -137,7 +137,7 @@ bool ofMediaFoundationPlayer::MEDXDeviceManager::createDX11Device() {
     }
 
     if (gl_handleD3D == nullptr) {
-        ofLogError("ofMEDXDeviceManager :: CreateDX11Device") << " error creating GL D3D Handle.";
+        ofLogError("ofMEDXDeviceManager::CreateDX11Device") << "error creating GL D3D Handle.";
         mBUseDX = false;
     }
 
@@ -146,8 +146,9 @@ bool ofMediaFoundationPlayer::MEDXDeviceManager::createDX11Device() {
 
 class BstrURL {
 public:
-    BstrURL(std::string aurl) {
-        std::wstring ws = std::wstring(aurl.begin(), aurl.end());
+    BstrURL(const of::filesystem::path & aurl) {
+//        std::wstring ws = std::wstring(aurl.begin(), aurl.end());
+		std::wstring ws { aurl.wstring() };
         assert(!ws.empty());
         _bstrStr = SysAllocStringLen(ws.data(), ws.size());
     }
@@ -312,13 +313,13 @@ bool SharedDXGLTexture::create(DXGI_FORMAT aDxFormat) {
 
         HRESULT hr = dxMan->getD11Device()->CreateTexture2D(&desc2, nullptr, stagingTexture.GetAddressOf());
         if (FAILED(hr)) {
-            ofLogError("ofMEVideoPlayer :: SharedDXGLTexture :: create") << " Failed to create staging texture";
+            ofLogError("ofMEVideoPlayer::SharedDXGLTexture::create") << "Failed to create staging texture";
             return false;
         }
 
         mBValid = (mGLDX_Handle != nullptr);
     } else {
-        ofLogError("SharedDXGLTexture :: createSharedTexture") << " ERROR Creating shared texture.";
+        ofLogError("SharedDXGLTexture::createSharedTexture") << "ERROR Creating shared texture.";
         mBValid = false;
     }
     return mBValid;
@@ -390,7 +391,7 @@ bool SharedDXGLTexture::updatePixels(ofTexture& aSrcTex, ofPixels& apix, ofPixel
     immediateContext->CopyResource(stagingTexture.Get(), lDestImage);
     // copy the texture to a staging resource
     if (!stagingTexture) {
-        ofLogError("ofMediaFoundationPlayer :: SharedDXGLTexture :: updatePixels") << " ERROR copying staging texture.";
+        ofLogError("ofMediaFoundationPlayer :: SharedDXGLTexture :: updatePixels") << "ERROR copying staging texture.";
         return false;
     }
 
@@ -402,13 +403,13 @@ bool SharedDXGLTexture::updatePixels(ofTexture& aSrcTex, ofPixels& apix, ofPixel
         0,
         &mapInfo);
     if (hr != S_OK) {
-        ofLogError("ofMediaFoundationPlayer :: SharedDXGLTexture :: updatePixels") << " Failed to map staging texture.";
+        ofLogError("ofMediaFoundationPlayer :: SharedDXGLTexture :: updatePixels") << "Failed to map staging texture.";
         return false;
     }
     immediateContext->Unmap(stagingTexture.Get(), 0);
 
     if (FAILED(hr)) {
-        ofLogVerbose("ofMediaFoundationPlayer :: SharedDXGLTexture :: updatePixels") << " unable to map hw dx texture.";
+        ofLogVerbose("ofMediaFoundationPlayer :: SharedDXGLTexture :: updatePixels") << "unable to map hw dx texture.";
         aSrcTex.readToPixels(apix);
         return apix.getWidth() > 0;
     }
@@ -657,19 +658,20 @@ std::shared_ptr<ofMediaFoundationPlayer::MEDXDeviceManager> ofMediaFoundationPla
 }
 
 //----------------------------------------------
-bool ofMediaFoundationPlayer::load(std::string name) {
-    return _load(name, false);
+bool ofMediaFoundationPlayer::load(const of::filesystem::path & fileName) {
+    return _load(fileName, false);
 }
 
 //----------------------------------------------
-void ofMediaFoundationPlayer::loadAsync(std::string name) {
-    _load(name, true);
+void ofMediaFoundationPlayer::loadAsync(const of::filesystem::path & fileName) {
+    _load(fileName, true);
 }
 
 //----------------------------------------------
-bool ofMediaFoundationPlayer::_load(std::string name, bool abAsync) {
+bool ofMediaFoundationPlayer::_load(const of::filesystem::path & fileName, bool abAsync) {
     close();
 
+    std::string name = ofPathToString(fileName);
     mBLoadAsync = abAsync;
 
     bool bStream = false;
@@ -678,7 +680,7 @@ bool ofMediaFoundationPlayer::_load(std::string name, bool abAsync) {
     bStream = bStream || ofIsStringInString(name, "rtsp://");
     bStream = bStream || ofIsStringInString(name, "rtmp://");
 
-    std::string absPath = name;
+    of::filesystem::path absPath = fileName;
 
     if (!bStream) {
         if (ofFile::doesFileExist(absPath)) {
@@ -1084,11 +1086,17 @@ void ofMediaFoundationPlayer::setSpeed(float speed) {
 
 //----------------------------------------------
 void ofMediaFoundationPlayer::setVolume(float volume) {
-    if (m_spMediaEngine) {
-        ofMediaFoundationUtils::CallAsyncBlocking(
-            [&] {m_spMediaEngine->SetVolume(static_cast<double>(volume)); 
-        });
-    }
+	if (m_spMediaEngine) {
+		double cvolume = ofClamp(volume, 0.0f, 1.0f);
+		HRESULT hr = m_spMediaEngine->SetVolume(cvolume);
+		if (hr != S_OK) {
+			ofLogVerbose("ofMediaFoundationPlayer :: setVolume : Unable to set volume to ") << volume << ".";
+		}
+		//ofMediaFoundationUtils::CallAsyncBlocking(
+		//[&] {m_spMediaEngine->SetVolume(static_cast<double>(volume));
+		//[&] {m_spMediaEngine->SetVolume(cvolume);
+		//});
+	}
 }
 
 //----------------------------------------------

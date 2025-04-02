@@ -2,7 +2,6 @@
 #ifdef OF_SOUND_PLAYER_FMOD
 
 #include "ofUtils.h"
-#include "ofMath.h"
 #include "ofLog.h"
 
 
@@ -177,7 +176,7 @@ void ofFmodSoundPlayer::closeFmod(){
 }
 
 //------------------------------------------------------------
-bool ofFmodSoundPlayer::load(const of::filesystem::path& _fileName, bool stream){
+bool ofFmodSoundPlayer::load(const of::filesystem::path & _fileName, bool stream){
 
 	auto fileName = ofToDataPath(_fileName);
 
@@ -206,7 +205,7 @@ bool ofFmodSoundPlayer::load(const of::filesystem::path& _fileName, bool stream)
 	int fmodFlags =  FMOD_DEFAULT;
 	if(stream)fmodFlags =  FMOD_DEFAULT | FMOD_CREATESTREAM;
 
-    result = FMOD_System_CreateSound(sys, fileName.c_str(),  fmodFlags, nullptr, &sound);
+    result = FMOD_System_CreateSound(sys, ofPathToString(fileName).c_str(),  fmodFlags, nullptr, &sound);
 
 	if (result != FMOD_OK){
 		bLoadedOk = false;
@@ -214,6 +213,7 @@ bool ofFmodSoundPlayer::load(const of::filesystem::path& _fileName, bool stream)
 	} else {
 		bLoadedOk = true;
 		FMOD_Sound_GetLength(sound, &length, FMOD_TIMEUNIT_PCM);
+		FMOD_Sound_GetLength(sound, &durationMS, FMOD_TIMEUNIT_MS);
 		isStreaming = stream;
 	}
 
@@ -222,6 +222,7 @@ bool ofFmodSoundPlayer::load(const of::filesystem::path& _fileName, bool stream)
 
 //------------------------------------------------------------
 void ofFmodSoundPlayer::unload(){
+	durationMS = 0;
 	if (bLoadedOk){
 		stop();						// try to stop the sound
 		FMOD_Sound_Release(sound);
@@ -257,6 +258,16 @@ float ofFmodSoundPlayer::getVolume() const{
 //------------------------------------------------------------
 bool ofFmodSoundPlayer::isLoaded() const{
 	return bLoadedOk;
+}
+
+//------------------------------------------------------------
+float ofFmodSoundPlayer::getDuration() const {
+	return (float)durationMS / 1000.f;
+}
+
+//------------------------------------------------------------
+unsigned int ofFmodSoundPlayer::getDurationMS() const {
+	return durationMS;
 }
 
 //------------------------------------------------------------

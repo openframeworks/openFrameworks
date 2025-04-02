@@ -51,7 +51,7 @@ void ofApp::draw(){
 
 		//Lets get a unique height for our 'wave'
 		//using sine
-		float height = sin(counter + k);
+		float height = std::sin(counter + k);
 
 		//sine produces -1 to 1 values
 		//lets add 1 to make sure the height
@@ -79,7 +79,7 @@ void ofApp::draw(){
 	k = 0;
 	for(int i = 0; i < ofGetWidth(); i+= 50)
 	{
-		ofDrawRectangle(i+5, ofGetHeight(), 50, -50 * (sin(1.4 * counter - k) + 1.0));
+		ofDrawRectangle(i+5, ofGetHeight(), 50, -50 * (std::sin(1.4 * counter - k) + 1.0));
 		k += 0.4;
 	}
 

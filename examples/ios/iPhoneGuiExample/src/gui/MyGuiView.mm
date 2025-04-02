@@ -15,6 +15,11 @@
 // called automatically after the view is loaded, can be treated like the constructor or setup() of this class
 -(void)viewDidLoad {
 	myApp = (ofApp*)ofGetAppPtr();
+    // change view size for enable touch event on ofApp
+    CGRect newFrame = self.view.frame;
+    newFrame.size.width = self.view.frame.size.width;
+    newFrame.size.height = 200;
+    self.view.frame = newFrame;
 }
 
 //----------------------------------------------------------------

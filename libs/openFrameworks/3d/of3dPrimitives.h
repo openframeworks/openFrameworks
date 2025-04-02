@@ -2,7 +2,6 @@
 
 #include "ofMesh.h"
 #include "ofNode.h"
-#include <map>
 
 class ofTexture;
 class ofVboMesh;
@@ -60,6 +59,7 @@ public:
 
     void setUseVbo(bool useVbo);
     bool isUsingVbo() const;
+    ofBoundingBox getBoundingBox() const;
 protected:
 
     // useful when creating a new model, since it uses normalized tex coords //
@@ -359,7 +359,6 @@ protected:
     float height;
     bool bCapped;
     int strides[3][2];
-    int vertices[3][2];
 	glm::vec3 resolution;
 };
 
@@ -382,7 +381,7 @@ protected:
 ///     cone.rotate(spinX, 1.0, 0.0, 0.0);
 ///     cone.rotate(spinY, 0, 1.0, 0.0);
 /// 
-///     // get all the faces from the cpme, handy when you want to copy
+///     // get all the faces from the cone, handy when you want to copy
 ///     // individual vertices or tweak them a little ;)
 ///     vector<ofMeshFace> triangles = cone.getMesh().getUniqueFaces();
 /// 
@@ -463,7 +462,6 @@ protected:
 	glm::vec3 resolution;
 
     int strides[2][2];
-    int vertices[2][2];
 };
 
 
@@ -562,6 +560,4 @@ protected:
 	glm::vec3 resolution;
     // indices strides for faces //
     int strides[6][2];
-    int vertices[6][2];
-
 };

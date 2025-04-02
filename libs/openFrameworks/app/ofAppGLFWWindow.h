@@ -1,9 +1,12 @@
 #pragma once
 
 #include "ofAppBaseWindow.h"
-#include "ofConstants.h"
+// MARK: Optimize to Pointer
 #include "ofRectangle.h"
+// MARK: Target
+#include "ofConstants.h"
 
+#if defined(TARGET_GLFW_WINDOW)
 #if defined(TARGET_LINUX) && !defined(TARGET_RASPBERRY_PI_LEGACY)
 typedef struct _XIM * XIM;
 typedef struct _XIC * XIC;
@@ -49,8 +52,11 @@ public:
 	bool visible = true;
 	bool iconified = false;
 	bool decorated = true;
+    bool floating = false;
 	bool resizable = true;
 	bool transparent = false;
+    bool mousePassThrough = false;
+	bool maximized = false;
 	int monitor = 0;
 	bool multiMonitorFullScreen = false;
 	std::shared_ptr<ofAppBaseWindow> shareContextWith;
@@ -117,6 +123,7 @@ public:
 
 	void setFullscreen(bool fullscreen);
 	void toggleFullscreen();
+    void setWindowMousePassThrough(bool allowPassThrough);
 
 	void enableSetupScreen();
 	void disableSetupScreen();
@@ -142,20 +149,27 @@ public:
 
 	// window settings, this functions can only be called from main before calling ofSetupOpenGL
 	// TODO: remove specialized version of ofSetupOpenGL when these go away
-	OF_DEPRECATED_MSG("use ofGLFWWindowSettings to create the window instead", void setNumSamples(int samples));
-	OF_DEPRECATED_MSG("use ofGLFWWindowSettings to create the window instead", void setDoubleBuffering(bool doubleBuff));
-	OF_DEPRECATED_MSG("use ofGLFWWindowSettings to create the window instead", void setColorBits(int r, int g, int b));
-	OF_DEPRECATED_MSG("use ofGLFWWindowSettings to create the window instead", void setAlphaBits(int a));
-	OF_DEPRECATED_MSG("use ofGLFWWindowSettings to create the window instead", void setDepthBits(int depth));
-	OF_DEPRECATED_MSG("use ofGLFWWindowSettings to create the window instead", void setStencilBits(int stencil));
-	OF_DEPRECATED_MSG("use ofGLFWWindowSettings to create the window instead", void setMultiDisplayFullscreen(bool bMultiFullscreen)); //note this just enables the mode, you have to toggle fullscreen to activate it.
+	[[deprecated("use ofGLFWWindowSettings to create the window")]]
+	void setNumSamples(int samples);
+	[[deprecated("use ofGLFWWindowSettings to create the window")]]
+	void setDoubleBuffering(bool doubleBuff);
+	[[deprecated("use ofGLFWWindowSettings to create the window")]]
+	void setColorBits(int r, int g, int b);
+	[[deprecated("use ofGLFWWindowSettings to create the window")]]
+	void setAlphaBits(int a);
+	[[deprecated("use ofGLFWWindowSettings to create the window")]]
+	void setDepthBits(int depth);
+	[[deprecated("use ofGLFWWindowSettings to create the window")]]
+	void setStencilBits(int stencil);
+	[[deprecated("use ofGLFWWindowSettings to create the window")]]
+	void setMultiDisplayFullscreen(bool bMultiFullscreen); //note this just enables the mode, you have to toggle fullscreen to activate it.
 
 #if defined(TARGET_LINUX) && !defined(TARGET_RASPBERRY_PI_LEGACY)
 	Display * getX11Display();
 	Window getX11Window();
 	XIC getX11XIC();
 
-	void setWindowIcon(const std::string & path);
+	void setWindowIcon(const of::filesystem::path & path);
 	void setWindowIcon(const ofPixels & iconPixels);
 #endif
 
@@ -187,7 +201,7 @@ private:
 	static void 	keyboard_cb(GLFWwindow* windowP_, int key, int scancode, int action, int mods);
 	static void 	char_cb(GLFWwindow* windowP_, uint32_t key);
 	static void 	resize_cb(GLFWwindow* windowP_, int w, int h);
-  static void   position_cb(GLFWwindow* windowP_, int x, int y);
+    static void   position_cb(GLFWwindow* windowP_, int x, int y);
 	static void 	framebuffer_size_cb(GLFWwindow* windowP_, int w, int h);
 	static void 	exit_cb(GLFWwindow* windowP_);
 	static void		scroll_cb(GLFWwindow* windowP_, double x, double y);
@@ -240,4 +254,4 @@ private:
 #endif // TARGET_WIN32
 };
 
-//#endif
+#endif

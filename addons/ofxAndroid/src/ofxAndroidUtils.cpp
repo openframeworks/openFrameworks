@@ -445,13 +445,13 @@ void ofxAndroidSetViewItemChecked(string item_name, bool checked){
 	jclass javaClass = ofGetJavaOFAndroid();
 
 	if(javaClass==0){
-		ofLog(OF_LOG_ERROR,"ofxAndroidSetViewItemChecked: cannot find OFAndroid java class");
+		ofLogError("ofxAndroidUtils") <<"ofxAndroidSetViewItemChecked: cannot find OFAndroid java class";
 		return;
 	}
 
 	jmethodID setViewItemChecked = ofGetJNIEnv()->GetStaticMethodID(javaClass,"setViewItemChecked","(Ljava/lang/String;Z)V");
 	if(!setViewItemChecked){
-		ofLog(OF_LOG_ERROR,"cannot find OFAndroid setViewItemChecked method");
+		ofLogError("ofxAndroidUtils") <<"cannot find OFAndroid setViewItemChecked method";
 		return;
 	}
 	ofGetJNIEnv()->CallStaticVoidMethod(javaClass,setViewItemChecked,ofGetJNIEnv()->NewStringUTF(item_name.c_str()),checked);

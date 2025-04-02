@@ -9,7 +9,7 @@ void ofApp::setup(){
         vidGrabber.setVerbose(true);
         vidGrabber.setup(1280,720);
 	#else
-        vidPlayer.load("Hand3s.mov");
+        vidPlayer.load("Hand3s.mp4");
         vidPlayer.play();
         vidPlayer.setLoopState(OF_LOOP_NORMAL);
 	#endif
@@ -265,9 +265,8 @@ void ofApp::draw(){
 	float deltaTime = ofClamp( ofGetLastFrameTime(), 1.f / 5000.f, 1.f / 5.f );
 	
 	ofSetColor( 255 );
-	float scale = grayImage.getWidth() / MAX(1,currentImage.getWidth());
-	
-	
+	float scale = grayImage.getWidth() / std::max(1.f,currentImage.getWidth());
+		
 	if(grayImage.bAllocated){
 		if( mode == MODE_SPIN_CUBES ){
 			ofEnableDepthTest();

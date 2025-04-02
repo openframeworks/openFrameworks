@@ -150,7 +150,7 @@ ofxVectorGraphics::ofxVectorGraphics(){
 }
 
 //----------------------------------------------------------			
-void ofxVectorGraphics::beginEPS(string fileName, int x, int y, int w, int h){
+void ofxVectorGraphics::beginEPS(std::string fileName, int x, int y, int w, int h){
 	creeps.newFile(ofToDataPath(fileName).c_str(), x, y, x+w, y+h);
 	bRecord = true;
 	

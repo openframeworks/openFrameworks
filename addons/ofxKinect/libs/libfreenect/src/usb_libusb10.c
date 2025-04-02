@@ -585,7 +585,8 @@ FN_INTERNAL int fnusb_open_subdevices(freenect_device *dev, int index)
 			}
 			else
 			{
-				res = upload_firmware(&dev->usb_audio, "audios.bin");
+				char audiosBin[11] = "audios.bin";
+				res = upload_firmware(&dev->usb_audio, audiosBin);
 			}
 
 			if (res < 0) {

@@ -1,23 +1,20 @@
 #pragma once
 
-// this must be included before the TARGET_MINGW test
+// MARK: TARGET_MINGW test
 #include "ofConstants.h"
 
 #if !defined(TARGET_MINGW)
-	#include "utf8.h"
+	#include <utf8.h>
 #else
-	#include "utf8cpp/utf8.h" // MSYS2 : use of system-installed include
+	#include <utf8cpp/utf8.h> // MSYS2 : use of system-installed include
 #endif
 
 #include <algorithm>
 #include <bitset> // For ofToBinary.
 #include <chrono>
-#include <iomanip>  //for setprecision
+#include <iomanip> //for setprecision
 #include <optional>
-
-#include <random>
 #include <sstream>
-#include <type_traits>
 
 #include "ofRandomDistributions.h"
 #include "ofRandomEngine.h"
@@ -93,7 +90,8 @@ uint64_t ofGetUnixTime();
 
 /// \brief Get the system time in milliseconds (system uptime).
 /// \returns the system time in milliseconds.
-OF_DEPRECATED_MSG("Use ofGetSystemTimeMillis() instead", uint64_t ofGetSystemTime());
+[[deprecated("Use ofGetSystemTimeMillis()")]]
+uint64_t ofGetSystemTime();
 
 /// \brief Get the system time in milliseconds (system uptime).
 /// \returns the system time in milliseconds.
@@ -255,7 +253,8 @@ void ofShuffle(Args &&... args) {
 /// \param values The vector of values to modify.
 
 template <class T>
-[[deprecated("use ofShuffle or of::shuffle")]] void ofRandomize(std::vector<T> & values) {
+[[deprecated("use ofShuffle or of::shuffle")]]
+void ofRandomize(std::vector<T> & values) {
 	of::shuffle(values);
 }
 
@@ -542,7 +541,8 @@ std::string ofTrimBack(const std::string & src, const std::string & locale = "")
 /// \returns a front-trimmed std::string.
 std::string ofTrim(const std::string & src, const std::string & locale = "");
 
-OF_DEPRECATED_MSG("Use ofUTF8Append instead", void ofAppendUTF8(std::string & str, uint32_t utf8));
+[[deprecated("Use ofUTF8Append")]]
+void ofAppendUTF8(std::string & str, uint32_t utf8);
 
 /// \brief Append a Unicode codepoint to a UTF8-encoded std::string.
 ///
@@ -622,31 +622,6 @@ std::string ofUTF8ToString(uint32_t codepoint);
 ///          string is an invalid UTF8 string.
 size_t ofUTF8Length(const std::string & utf8);
 
-/// \brief Convert a variable length argument to a string.
-/// \param format A printf-style format string.
-/// \param args A variable argument list.
-/// \returns A string representation of the argument list.
-///
-template <typename... Args>
-//__attribute__((__format__ (__printf__, 2, 0)))
-std::string ofVAArgsToString(const char * format, Args &&... args) {
-	char buf[256];
-	size_t n = std::snprintf(buf, sizeof(buf), format, std::forward<Args>(args)...);
-
-	//	std::string str = format;
-	//	size_t n = std::snprintf(buf, sizeof(buf), str, std::forward<Args>(args)...);
-
-	// Static buffer large enough?
-	if (n < sizeof(buf)) {
-		return { buf, n };
-	}
-
-	// Static buffer too small
-	std::string s(n + 1, 0);
-	std::snprintf(const_cast<char *>(s.data()), s.size(), format, std::forward<Args>(args)...);
-
-	return s;
-}
 
 /// \section String Conversion
 /// \brief Convert a value to a string.
@@ -1046,7 +1021,7 @@ std::string ofGetVersionPreRelease();
 /// The output file type will be deduced from the given file name.
 ///
 /// \param filename The image output file.
-void ofSaveScreen(const std::string & filename);
+void ofSaveScreen(const of::filesystem::path & fileName);
 
 /// \brief Saves the current frame as a PNG image.
 ///
@@ -1061,7 +1036,7 @@ void ofSaveFrame(bool bUseViewport = false);
 /// The output file type will be deduced from the given file name.
 ///
 /// \param filename The image output file.
-void ofSaveViewport(const std::string & filename);
+void ofSaveViewport(const of::filesystem::path & filename);
 
 /// \section System
 

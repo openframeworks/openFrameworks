@@ -1,6 +1,7 @@
 
 #include "ofxiOSCoreMotion.h"
-
+#include "ofxiOSConstants.h"
+#if defined(OF_CORE_MOTION) && !TARGET_OS_SIMULATOR
 ofxiOSCoreMotion::ofxiOSCoreMotion() {
     
     motionManager = [[CMMotionManager alloc] init];
@@ -241,3 +242,4 @@ glm::vec3 ofxiOSCoreMotion::getUserAcceleration() {
 glm::vec3 ofxiOSCoreMotion::getMagneticField() {
     return magneticField;
 }
+#endif

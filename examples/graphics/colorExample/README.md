@@ -1,6 +1,6 @@
 #level1_color
 --
-![Screenshot of Example, stored in the Level1_ExampleName/readme_assets/ folder](color.png)
+![Screenshot of Example, stored in the Level1_ExampleName/readme_assets/ folder](colorExample.png)
 
 ### Learning Objectives
 

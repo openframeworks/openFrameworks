@@ -12,8 +12,8 @@ void ofApp::setup() {
 	// ------------------------- Particles 2d Vbo
 	particleCount = 0;
 	for(int i=0; i<NUM_PARTICLES; i++) {
-		particlePos[i] = 0;
-		particleVel[i] = 0;
+		particlePos[i] = ofVec2f{0.0f};
+		particleVel[i] = ofVec2f{0.0f};
 		particleColor[i].set(1, 0);
 		particleTime[i] = ofRandom(1.0);
 	}

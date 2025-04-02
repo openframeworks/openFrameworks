@@ -5,6 +5,8 @@
 
 #pragma once
 
+#include "ofxiOSConstants.h"
+#if defined(TARGET_OF_TVOS) && defined(OF_UI_KIT) &&  defined(OF_GL_KIT) && defined(TARGET_OF_IOS) && !defined(TARGET_OF_WATCHOS) && !defined(TARGET_OF_XROS)
 #ifndef ofxtvOSGLKViewController_h
 #define ofxtvOSGLKViewController_h
 
@@ -27,3 +29,4 @@ class ofxiOSApp;
 @end
 
 #endif /* ofxtvOSViewController_h */
+#endif

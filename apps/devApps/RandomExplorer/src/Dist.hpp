@@ -6,7 +6,7 @@
 
 struct Dist {
 
-	inline static std::string base_url_ { "https://en.cppreference.com/w/cpp/numeric/random/" };
+	inline static const std::string base_url_ { "https://en.cppreference.com/w/cpp/numeric/random/" };
 	std::optional<std::string> url_;
 	ofParameterGroup parameters_;
 	ofColor color_ { 128, 128, 128 };
@@ -21,7 +21,7 @@ struct Dist {
 	virtual auto gen() -> void = 0;
 	virtual auto clear() -> void = 0;
 	virtual auto compile() -> void = 0;
-	virtual auto draw(float x, float y, float w, float h) -> void = 0;
+	virtual auto draw(float x, float y, float w, float h, bool graph = true) -> void = 0;
 	virtual ~Dist() = default;
 
 	Dist() {};
@@ -94,7 +94,7 @@ struct ConcreteDist : public Dist {
 		}
 	}
 
-	auto draw(float x, float y, float w, float h) -> void override {
+	auto draw(float x, float y, float w, float h, bool graph = true) -> void override {
 		ofPushStyle();
 		ofPushMatrix();
 		{
@@ -102,69 +102,79 @@ struct ConcreteDist : public Dist {
 			ofSetColor(color_);
 			ofDrawRectangle(0, 0, w, h);
 
-			ofSetColor(ofColor::darkRed);
-			if (underflow_) ofDrawBitmapString("undershoot: " + ofToString(underflow_), w + 5, 58);
-			if (overflow_) ofDrawBitmapString("overshoot: " + ofToString(overflow_), w + 5, 74);
 
 			ofSetColor(192, 192, 192, 255);
 			ofDrawBitmapString(info_, w + 5, 35);
 			ofSetColor(255, 255, 255, 255);
 			ofDrawBitmapStringHighlight(parameters_.getName() + " " + ofToString(cost_ * 1000, 2, 5) + "ms", w + 5, 12);
 
-			if constexpr (std::is_arithmetic_v<T>) {
-
-				auto p = 0.0f;
-				double incr = w / bins_.size();
-				auto fact = h / max_;
-				if (discrete_) {
-
-					// line bars for discrete
-					ofTranslate(incr / 2, 0);
-					for (auto y : bins_) {
-						ofDrawLine(0, h, 0, h - float(y) * fact);
-						if (y == 0) {
-							ofNoFill();
-							ofDrawCircle(0, h - float(y) * fact, 2.5);
-							ofFill();
-						} else {
-							ofDrawCircle(0, h - float(y) * fact, 3);
+			if (graph) {
+				if constexpr (std::is_arithmetic_v<T>) {
+					
+					auto p = 0.0f;
+					double incr = w / bins_.size();
+					auto fact = h / max_;
+					if (discrete_) {
+						
+						// line bars for discrete
+						ofTranslate(incr / 2, 0);
+						for (auto ypos : bins_) {
+							ofDrawLine(0, h, 0, h - float(ypos) * fact);
+							if (y == 0) {
+								ofNoFill();
+								ofDrawCircle(0, h - float(ypos) * fact, 2.5);
+								ofFill();
+							} else {
+								ofDrawCircle(0, h - float(ypos) * fact, 3);
+							}
+							ofTranslate(int(incr), 0);
 						}
-						ofTranslate(int(incr), 0);
+					} else {
+						
+						// integral for reals
+						ofPolyline line;
+						line.addVertex(0, h - bins_[0] * fact);
+						for (auto ypos : bins_)
+							line.lineTo(p += incr, h - float(ypos) * fact);
+						line.draw();
 					}
+					
+				} else if constexpr (std::is_same_v<T, glm::vec2>) {
+					
+					ofSetColor(255, 255, 255, 96);
+					for (const auto & d : data_) {
+						if (d.x > w || d.y > h) underflow_++;
+						if (d.x < 0 || d.y < 0) overflow_++;
+						ofDrawCircle(d, 0.5);
+					}
+					
+				} else if constexpr (std::is_same_v<T, glm::vec3>) {
+					
+					ofSetColor(255, 255, 255, 32);
+					of3dPrimitive prim;
+					for (const auto & d : data_) {
+						if (d.x > w || d.y > h) underflow_++;
+						if (d.x < 0 || d.y < 0) overflow_++;
+					}
+					prim.getMesh().getVertices() = data_;
+					prim.getMesh().setMode(OF_PRIMITIVE_POINTS);
+					prim.rotateDeg(70, { 0.2, 0.3, 0.5 }); // just some perspective
+					
+					ofPushMatrix();
+					{
+						ofTranslate(w * 0.2, h * 0.2);
+						prim.drawWireframe();
+						prim.drawAxes(w * 0.5);
+					}
+					ofPopMatrix();
 				} else {
-
-					// integral for reals
-					ofPolyline line;
-					line.addVertex(0, h - bins_[0] * fact);
-					for (auto y : bins_)
-						line.lineTo(p += incr, h - float(y) * fact);
-					line.draw();
+					ofDrawBitmapString("unsupported visualisation", 10, 10);
 				}
-
-			} else if constexpr (std::is_same_v<T, glm::vec2>) {
-
-				ofSetColor(255, 255, 255, 96);
-				for (const auto & d : data_)
-					ofDrawCircle(d, .5);
-
-			} else if constexpr (std::is_same_v<T, glm::vec3>) {
-
-				ofSetColor(255, 255, 255, 32);
-				of3dPrimitive prim;
-				prim.getMesh().getVertices() = data_;
-				prim.getMesh().setMode(OF_PRIMITIVE_POINTS);
-				prim.rotateDeg(70, { 0.2, 0.3, 0.5 }); // just some perspective
-
-				ofPushMatrix();
-				{
-					ofTranslate(w * 0.2, h * 0.2);
-					prim.drawWireframe();
-					prim.drawAxes(w * 0.5);
-				}
-				ofPopMatrix();
-			} else {
-				ofDrawBitmapString("unsupported visualisation", 10, 10);
 			}
+			ofSetColor(ofColor::deepPink);
+			if (underflow_) ofDrawBitmapString("undershoot: " + ofToString(underflow_), w + 5, 70);
+			if (overflow_) ofDrawBitmapString("overshoot: " + ofToString(overflow_), w + 5, 86);
+
 		}
 		ofPopMatrix();
 		ofPopStyle();
@@ -177,7 +187,7 @@ struct DistGroup {
 	DistGroup(std::vector<std::shared_ptr<Dist>> dists)
 		: dists_(dists) { }
 
-	auto draw(std::string label, int square, int gap) {
+	auto draw(std::string label, int square, int gap, bool graph = true) {
 		panel_.draw();
 		ofPushMatrix();
 		{
@@ -185,7 +195,7 @@ struct DistGroup {
 			ofDrawBitmapString(label, 0, -10);
 			ofTranslate(panel_.getWidth() + 20, 0);
 			for (const auto & dist : dists_) {
-				dist->draw(0, 0, square, square);
+				dist->draw(0, 0, square, square, graph);
 				ofTranslate(0, square + gap);
 			}
 		}

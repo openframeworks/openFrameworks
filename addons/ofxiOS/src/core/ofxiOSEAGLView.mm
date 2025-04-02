@@ -5,6 +5,8 @@
 //  Created by lukasz karluk on 5/07/12.
 //
 
+#include "ofxiOSConstants.h"
+#if defined(OF_UI_KIT) && defined(TARGET_OF_IOS)
 #include "ofxiOSEAGLView.h"
 #include "ofxiOSApp.h"
 #include "ofAppiOSWindow.h"
@@ -389,3 +391,4 @@ static ofxiOSEAGLView * _instanceRef = nil;
 
 
 @end
+#endif

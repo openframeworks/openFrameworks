@@ -7,6 +7,8 @@
 //
 
 #pragma once
+#include "ofxiOSConstants.h"
+#if defined(OF_HAPTICS)
 #import <CoreHaptics/CoreHaptics.h>
 
 class ofxiOSCoreHaptics {
@@ -21,3 +23,4 @@ private:
     CHHapticEngine * engine_;
     id<CHHapticAdvancedPatternPlayer> player_;
 };
+#endif

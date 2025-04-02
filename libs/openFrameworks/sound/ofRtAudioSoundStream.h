@@ -1,8 +1,8 @@
 #pragma once
-
+#include "ofConstants.h"
+#if defined(OF_RTAUDIO)
 #include "ofSoundBaseTypes.h"
 #include "ofSoundBuffer.h"
-#include "ofConstants.h"
 
 typedef unsigned int RtAudioStreamStatus;
 class RtAudio;
@@ -43,3 +43,4 @@ private:
 	static int rtAudioCallback(void *outputBuffer, void *inputBuffer, unsigned int bufferSize, double streamTime, RtAudioStreamStatus status, void *data);
 
 };
+#endif

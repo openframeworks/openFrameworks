@@ -3,10 +3,14 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 46;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
+		035324612BEFEF5D00B50A35 /* ofTimerFps.h in Headers */ = {isa = PBXBuildFile; fileRef = 0353245F2BEFEF5D00B50A35 /* ofTimerFps.h */; };
+		035324622BEFEF5D00B50A35 /* ofTimerFps.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 035324602BEFEF5D00B50A35 /* ofTimerFps.cpp */; };
+		037DF6522D77C8CE00BFFD5D /* AVFoundationVideoPlayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 037DF6512D77C8CE00BFFD5D /* AVFoundationVideoPlayer.m */; };
+		037DF6532D77C8CE00BFFD5D /* AVFoundationVideoPlayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 037DF6502D77C8CE00BFFD5D /* AVFoundationVideoPlayer.h */; };
 		15594F0C15C55AC900727FF2 /* EAGLView.m in Sources */ = {isa = PBXBuildFile; fileRef = 15594F0515C55AC900727FF2 /* EAGLView.m */; };
 		15594F0D15C55AC900727FF2 /* ES1Renderer.m in Sources */ = {isa = PBXBuildFile; fileRef = 15594F0615C55AC900727FF2 /* ES1Renderer.m */; };
 		15594F0E15C55AC900727FF2 /* ES2Renderer.m in Sources */ = {isa = PBXBuildFile; fileRef = 15594F0715C55AC900727FF2 /* ES2Renderer.m */; };
@@ -24,9 +28,7 @@
 		15594F9515C56A8A00727FF2 /* ofxiOSAppDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 15594F8F15C56A8A00727FF2 /* ofxiOSAppDelegate.h */; };
 		15594F9615C56A8A00727FF2 /* ofxiOSViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 15594F9015C56A8A00727FF2 /* ofxiOSViewController.h */; };
 		15594FA315C56BB700727FF2 /* AVFoundationVideoGrabber.mm in Sources */ = {isa = PBXBuildFile; fileRef = 15594F9F15C56BB700727FF2 /* AVFoundationVideoGrabber.mm */; };
-		15594FA415C56BB700727FF2 /* AVFoundationVideoPlayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 15594FA015C56BB700727FF2 /* AVFoundationVideoPlayer.m */; };
 		15594FA515C56BB700727FF2 /* AVFoundationVideoGrabber.h in Headers */ = {isa = PBXBuildFile; fileRef = 15594FA115C56BB700727FF2 /* AVFoundationVideoGrabber.h */; };
-		15594FA615C56BB700727FF2 /* AVFoundationVideoPlayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 15594FA215C56BB700727FF2 /* AVFoundationVideoPlayer.h */; };
 		15594FAC15C56C9500727FF2 /* ofxiOSAlerts.mm in Sources */ = {isa = PBXBuildFile; fileRef = 15594FA815C56C9500727FF2 /* ofxiOSAlerts.mm */; };
 		15594FAD15C56C9500727FF2 /* ofxiOSAlerts.h in Headers */ = {isa = PBXBuildFile; fileRef = 15594FA915C56C9500727FF2 /* ofxiOSAlerts.h */; };
 		15594FAE15C56C9500727FF2 /* ofxiOSAlertsListener.h in Headers */ = {isa = PBXBuildFile; fileRef = 15594FAA15C56C9500727FF2 /* ofxiOSAlertsListener.h */; };
@@ -123,6 +125,19 @@
 		BB24DECF10DA7A3F00E9C588 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 288765FC0DF74451002DB57D /* CoreGraphics.framework */; };
 		BB24DED010DA7A3F00E9C588 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5326AEA710A23A0500278DE6 /* CoreLocation.framework */; };
 		BB24DED110DA7A3F00E9C588 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB16EBD80F2B2AB500518274 /* QuartzCore.framework */; };
+		BF2B781A2C7E6CF000EAAD6E /* ES3Renderer.m in Sources */ = {isa = PBXBuildFile; fileRef = BF2B78182C7E6CF000EAAD6E /* ES3Renderer.m */; };
+		BF2B781B2C7E6CF000EAAD6E /* ES3Renderer.h in Headers */ = {isa = PBXBuildFile; fileRef = BF2B78192C7E6CF000EAAD6E /* ES3Renderer.h */; };
+		BFB0B4042C50E019008FB5A3 /* brotli.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BFEC5C022C4FFC5900728DEC /* brotli.xcframework */; };
+		BFB0B4052C50E019008FB5A3 /* openssl.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BFEC5C002C4FFC3A00728DEC /* openssl.xcframework */; };
+		BFB0B4062C50E019008FB5A3 /* curl.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF4730B02BA4056B00E6E3C6 /* curl.xcframework */; };
+		BFB0B4072C50E019008FB5A3 /* zlib.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF7E591D2BA2057900E5C52E /* zlib.xcframework */; };
+		BFB0B4082C50E019008FB5A3 /* uriparser.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF7E591B2BA2056600E5C52E /* uriparser.xcframework */; };
+		BFB0B4092C50E019008FB5A3 /* tess2.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF7E59192BA2054700E5C52E /* tess2.xcframework */; };
+		BFB0B40A2C50E019008FB5A3 /* pugixml.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF7E59172BA2052D00E5C52E /* pugixml.xcframework */; };
+		BFB0B40B2C50E019008FB5A3 /* libpng.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF7E59132BA2050B00E5C52E /* libpng.xcframework */; };
+		BFB0B40C2C50E019008FB5A3 /* freetype.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF7E590D2BA204D300E5C52E /* freetype.xcframework */; };
+		BFB0B40D2C50E019008FB5A3 /* fmt.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF7E590B2BA204BC00E5C52E /* fmt.xcframework */; };
+		BFB0B40E2C50E019008FB5A3 /* FreeImage.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF7E59052BA203BC00E5C52E /* FreeImage.xcframework */; };
 		E4F76E19176CB27200798745 /* of3dPrimitives.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F76D6F176CB27200798745 /* of3dPrimitives.cpp */; };
 		E4F76E1A176CB27200798745 /* of3dPrimitives.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F76D70176CB27200798745 /* of3dPrimitives.h */; };
 		E4F76E1B176CB27200798745 /* of3dUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F76D71176CB27200798745 /* of3dUtils.cpp */; };
@@ -232,10 +247,13 @@
 		E4F76EB8176CB27200798745 /* ofVideoPlayer.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F76E18176CB27200798745 /* ofVideoPlayer.h */; };
 		E999E70E299D53FC00649F18 /* ofxiOSCoreHaptics.h in Headers */ = {isa = PBXBuildFile; fileRef = E999E70C299D53FC00649F18 /* ofxiOSCoreHaptics.h */; };
 		E999E70F299D53FC00649F18 /* ofxiOSCoreHaptics.mm in Sources */ = {isa = PBXBuildFile; fileRef = E999E70D299D53FC00649F18 /* ofxiOSCoreHaptics.mm */; };
-		E9F39183299E892200280B58 /* CoreHaptics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E9F39182299E892200280B58 /* CoreHaptics.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0353245F2BEFEF5D00B50A35 /* ofTimerFps.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofTimerFps.h; sourceTree = "<group>"; };
+		035324602BEFEF5D00B50A35 /* ofTimerFps.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofTimerFps.cpp; sourceTree = "<group>"; };
+		037DF6502D77C8CE00BFFD5D /* AVFoundationVideoPlayer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AVFoundationVideoPlayer.h; sourceTree = "<group>"; };
+		037DF6512D77C8CE00BFFD5D /* AVFoundationVideoPlayer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AVFoundationVideoPlayer.m; sourceTree = "<group>"; };
 		15594F0515C55AC900727FF2 /* EAGLView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EAGLView.m; sourceTree = "<group>"; };
 		15594F0615C55AC900727FF2 /* ES1Renderer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ES1Renderer.m; sourceTree = "<group>"; };
 		15594F0715C55AC900727FF2 /* ES2Renderer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ES2Renderer.m; sourceTree = "<group>"; };
@@ -253,9 +271,7 @@
 		15594F8F15C56A8A00727FF2 /* ofxiOSAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxiOSAppDelegate.h; sourceTree = "<group>"; };
 		15594F9015C56A8A00727FF2 /* ofxiOSViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxiOSViewController.h; sourceTree = "<group>"; };
 		15594F9F15C56BB700727FF2 /* AVFoundationVideoGrabber.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AVFoundationVideoGrabber.mm; sourceTree = "<group>"; };
-		15594FA015C56BB700727FF2 /* AVFoundationVideoPlayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AVFoundationVideoPlayer.m; sourceTree = "<group>"; };
 		15594FA115C56BB700727FF2 /* AVFoundationVideoGrabber.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVFoundationVideoGrabber.h; sourceTree = "<group>"; };
-		15594FA215C56BB700727FF2 /* AVFoundationVideoPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVFoundationVideoPlayer.h; sourceTree = "<group>"; };
 		15594FA815C56C9500727FF2 /* ofxiOSAlerts.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ofxiOSAlerts.mm; sourceTree = "<group>"; };
 		15594FA915C56C9500727FF2 /* ofxiOSAlerts.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxiOSAlerts.h; sourceTree = "<group>"; };
 		15594FAA15C56C9500727FF2 /* ofxiOSAlertsListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxiOSAlertsListener.h; sourceTree = "<group>"; };
@@ -355,8 +371,21 @@
 		9979E8271A1CDBD4007E55D1 /* ofMainLoop.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofMainLoop.h; sourceTree = "<group>"; };
 		BB16EBD10F2B2A9500518274 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		BB16EBD80F2B2AB500518274 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
-		BB24DED610DA7A3F00E9C588 /* libofxiOS_iphoneos_Debug.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libofxiOS_iphoneos_Debug.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		BB24DED610DA7A3F00E9C588 /* openFrameworksiOSDebug.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = openFrameworksiOSDebug.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		BBE5EAB70F49AD8400F28951 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
+		BF2B78182C7E6CF000EAAD6E /* ES3Renderer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ES3Renderer.m; sourceTree = "<group>"; };
+		BF2B78192C7E6CF000EAAD6E /* ES3Renderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ES3Renderer.h; sourceTree = "<group>"; };
+		BF4730B02BA4056B00E6E3C6 /* curl.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = curl.xcframework; path = ../../../curl/lib/macos/curl.xcframework; sourceTree = "<group>"; };
+		BF7E59052BA203BC00E5C52E /* FreeImage.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = FreeImage.xcframework; path = ../../../FreeImage/lib/macos/FreeImage.xcframework; sourceTree = "<group>"; };
+		BF7E590B2BA204BC00E5C52E /* fmt.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = fmt.xcframework; path = ../../../fmt/lib/macos/fmt.xcframework; sourceTree = "<group>"; };
+		BF7E590D2BA204D300E5C52E /* freetype.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = freetype.xcframework; path = ../../../freetype/lib/macos/freetype.xcframework; sourceTree = "<group>"; };
+		BF7E59132BA2050B00E5C52E /* libpng.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = libpng.xcframework; path = ../../../libpng/lib/macos/libpng.xcframework; sourceTree = "<group>"; };
+		BF7E59172BA2052D00E5C52E /* pugixml.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = pugixml.xcframework; path = ../../../pugixml/lib/macos/pugixml.xcframework; sourceTree = "<group>"; };
+		BF7E59192BA2054700E5C52E /* tess2.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = tess2.xcframework; path = ../../../tess2/lib/macos/tess2.xcframework; sourceTree = "<group>"; };
+		BF7E591B2BA2056600E5C52E /* uriparser.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = uriparser.xcframework; path = ../../../uriparser/lib/macos/uriparser.xcframework; sourceTree = "<group>"; };
+		BF7E591D2BA2057900E5C52E /* zlib.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = zlib.xcframework; path = ../../../zlib/lib/macos/zlib.xcframework; sourceTree = "<group>"; };
+		BFEC5C002C4FFC3A00728DEC /* openssl.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = openssl.xcframework; path = ../../../openssl/lib/macos/openssl.xcframework; sourceTree = "<group>"; };
+		BFEC5C022C4FFC5900728DEC /* brotli.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = brotli.xcframework; path = ../../../brotli/lib/macos/brotli.xcframework; sourceTree = "<group>"; };
 		E41D3E9013B38BE900A75A5D /* CoreOF.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = CoreOF.xcconfig; sourceTree = SOURCE_ROOT; };
 		E41D3E9113B38BE900A75A5D /* Debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Debug.xcconfig; sourceTree = SOURCE_ROOT; };
 		E41D3E9213B38BE900A75A5D /* Release.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Release.xcconfig; sourceTree = SOURCE_ROOT; };
@@ -470,7 +499,6 @@
 		E4F76E18176CB27200798745 /* ofVideoPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofVideoPlayer.h; sourceTree = "<group>"; };
 		E999E70C299D53FC00649F18 /* ofxiOSCoreHaptics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxiOSCoreHaptics.h; sourceTree = "<group>"; };
 		E999E70D299D53FC00649F18 /* ofxiOSCoreHaptics.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ofxiOSCoreHaptics.mm; sourceTree = "<group>"; };
-		E9F39182299E892200280B58 /* CoreHaptics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreHaptics.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk/System/Library/Frameworks/CoreHaptics.framework; sourceTree = DEVELOPER_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -478,7 +506,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E9F39183299E892200280B58 /* CoreHaptics.framework in Frameworks */,
 				99752D331BF21EEE0026316A /* GameController.framework in Frameworks */,
 				67D48ED01C10399900F719BC /* CoreMotion.framework in Frameworks */,
 				BB24DECA10DA7A3F00E9C588 /* AudioToolbox.framework in Frameworks */,
@@ -495,6 +522,17 @@
 				53DA338E12DF8F5000C622CE /* CoreAudio.framework in Frameworks */,
 				53DA339012DF8F5000C622CE /* CoreMedia.framework in Frameworks */,
 				53DA339212DF8F5000C622CE /* CoreVideo.framework in Frameworks */,
+				BFB0B4042C50E019008FB5A3 /* brotli.xcframework in Frameworks */,
+				BFB0B4052C50E019008FB5A3 /* openssl.xcframework in Frameworks */,
+				BFB0B4062C50E019008FB5A3 /* curl.xcframework in Frameworks */,
+				BFB0B4072C50E019008FB5A3 /* zlib.xcframework in Frameworks */,
+				BFB0B4082C50E019008FB5A3 /* uriparser.xcframework in Frameworks */,
+				BFB0B4092C50E019008FB5A3 /* tess2.xcframework in Frameworks */,
+				BFB0B40A2C50E019008FB5A3 /* pugixml.xcframework in Frameworks */,
+				BFB0B40B2C50E019008FB5A3 /* libpng.xcframework in Frameworks */,
+				BFB0B40C2C50E019008FB5A3 /* freetype.xcframework in Frameworks */,
+				BFB0B40D2C50E019008FB5A3 /* fmt.xcframework in Frameworks */,
+				BFB0B40E2C50E019008FB5A3 /* FreeImage.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -524,6 +562,8 @@
 		15594F0015C55A5700727FF2 /* gl */ = {
 			isa = PBXGroup;
 			children = (
+				BF2B78192C7E6CF000EAAD6E /* ES3Renderer.h */,
+				BF2B78182C7E6CF000EAAD6E /* ES3Renderer.m */,
 				9008001C204EDC0F00DC786A /* EAGLKView.h */,
 				9008001B204EDC0E00DC786A /* EAGLKView.m */,
 				15594F0815C55AC900727FF2 /* EAGLView.h */,
@@ -593,10 +633,10 @@
 		15594F0315C55A5700727FF2 /* video */ = {
 			isa = PBXGroup;
 			children = (
-				15594FA215C56BB700727FF2 /* AVFoundationVideoPlayer.h */,
-				15594FA015C56BB700727FF2 /* AVFoundationVideoPlayer.m */,
 				15594FA115C56BB700727FF2 /* AVFoundationVideoGrabber.h */,
 				15594F9F15C56BB700727FF2 /* AVFoundationVideoGrabber.mm */,
+				037DF6502D77C8CE00BFFD5D /* AVFoundationVideoPlayer.h */,
+				037DF6512D77C8CE00BFFD5D /* AVFoundationVideoPlayer.m */,
 				1594366315CF5F420087B684 /* ofxiOSVideoPlayer.h */,
 				1594366115CF5F420087B684 /* ofxiOSVideoPlayer.mm */,
 				1594366215CF5F420087B684 /* ofxiOSVideoGrabber.h */,
@@ -625,7 +665,7 @@
 		19C28FACFE9D520D11CA2CBB /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				BB24DED610DA7A3F00E9C588 /* libofxiOS_iphoneos_Debug.a */,
+				BB24DED610DA7A3F00E9C588 /* openFrameworksiOSDebug.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -634,9 +674,9 @@
 			isa = PBXGroup;
 			children = (
 				E41D3E9013B38BE900A75A5D /* CoreOF.xcconfig */,
+				E41D3E9313B38BE900A75A5D /* Shared.xcconfig */,
 				E41D3E9113B38BE900A75A5D /* Debug.xcconfig */,
 				E41D3E9213B38BE900A75A5D /* Release.xcconfig */,
-				E41D3E9313B38BE900A75A5D /* Shared.xcconfig */,
 				BB16F26B0F2B646B00518274 /* addons */,
 				E4F76D69176CB27200798745 /* openFrameworks */,
 				BB16E9930F2B1E5900518274 /* libs */,
@@ -647,7 +687,7 @@
 			name = CustomTemplate;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		29B97323FDCFA39411CA2CEA /* core frameworks */ = {
 			isa = PBXGroup;
@@ -935,6 +975,8 @@
 				67833F8019F8990D00DBE7AA /* ofThreadChannel.h */,
 				67833F8119F8990D00DBE7AA /* ofTimer.cpp */,
 				67833F8219F8990D00DBE7AA /* ofTimer.h */,
+				035324602BEFEF5D00B50A35 /* ofTimerFps.cpp */,
+				0353245F2BEFEF5D00B50A35 /* ofTimerFps.h */,
 				E4F76DFC176CB27200798745 /* ofURLFileLoader.cpp */,
 				E4F76DFD176CB27200798745 /* ofURLFileLoader.h */,
 				E4F76DFE176CB27200798745 /* ofUtils.cpp */,
@@ -959,7 +1001,17 @@
 		E9F39181299E892200280B58 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				E9F39182299E892200280B58 /* CoreHaptics.framework */,
+				BFEC5C022C4FFC5900728DEC /* brotli.xcframework */,
+				BFEC5C002C4FFC3A00728DEC /* openssl.xcframework */,
+				BF4730B02BA4056B00E6E3C6 /* curl.xcframework */,
+				BF7E591D2BA2057900E5C52E /* zlib.xcframework */,
+				BF7E591B2BA2056600E5C52E /* uriparser.xcframework */,
+				BF7E59192BA2054700E5C52E /* tess2.xcframework */,
+				BF7E59172BA2052D00E5C52E /* pugixml.xcframework */,
+				BF7E59132BA2050B00E5C52E /* libpng.xcframework */,
+				BF7E590D2BA204D300E5C52E /* freetype.xcframework */,
+				BF7E590B2BA204BC00E5C52E /* fmt.xcframework */,
+				BF7E59052BA203BC00E5C52E /* FreeImage.xcframework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -1057,15 +1109,16 @@
 				15594F9415C56A8A00727FF2 /* ofxiOSEAGLView.h in Headers */,
 				15594F9515C56A8A00727FF2 /* ofxiOSAppDelegate.h in Headers */,
 				15594F9615C56A8A00727FF2 /* ofxiOSViewController.h in Headers */,
+				035324612BEFEF5D00B50A35 /* ofTimerFps.h in Headers */,
 				6678E97719FEB2DF00C00581 /* ofSoundBuffer.h in Headers */,
 				2E6E258328F73C2C00EC8E22 /* ofShadow.h in Headers */,
 				15594FA515C56BB700727FF2 /* AVFoundationVideoGrabber.h in Headers */,
-				15594FA615C56BB700727FF2 /* AVFoundationVideoPlayer.h in Headers */,
 				15594FAD15C56C9500727FF2 /* ofxiOSAlerts.h in Headers */,
 				15594FAE15C56C9500727FF2 /* ofxiOSAlertsListener.h in Headers */,
 				15594FC515C56D1E00727FF2 /* ofxiOSCoreLocation.h in Headers */,
 				15594FC615C56D1E00727FF2 /* ofxiOSExternalDisplay.h in Headers */,
 				15594FC715C56D1E00727FF2 /* ofxiOSExtras.h in Headers */,
+				037DF6532D77C8CE00BFFD5D /* AVFoundationVideoPlayer.h in Headers */,
 				15594FC815C56D1E00727FF2 /* ofxiOSImagePicker.h in Headers */,
 				15594FC915C56D1E00727FF2 /* ofxiOSKeyboard.h in Headers */,
 				15594FCA15C56D1E00727FF2 /* ofxiOSMapKit.h in Headers */,
@@ -1076,6 +1129,7 @@
 				1594366615CF5F420087B684 /* ofxiOSVideoGrabber.h in Headers */,
 				1594366715CF5F420087B684 /* ofxiOSVideoPlayer.h in Headers */,
 				678C3D23176F04F800D1CC68 /* ofxiOSSoundStream.h in Headers */,
+				BF2B781B2C7E6CF000EAAD6E /* ES3Renderer.h in Headers */,
 				678C3D25176F04F800D1CC68 /* ofxiOSSoundStreamDelegate.h in Headers */,
 				678C3D27176F04F800D1CC68 /* SoundInputStream.h in Headers */,
 				678C3D29176F04F800D1CC68 /* SoundOutputStream.h in Headers */,
@@ -1093,21 +1147,22 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		BB24DE5C10DA7A3F00E9C588 /* iPhone+OF Static Library */ = {
+		BB24DE5C10DA7A3F00E9C588 /* openFrameworks */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = BB24DED210DA7A3F00E9C588 /* Build configuration list for PBXNativeTarget "iPhone+OF Static Library" */;
+			buildConfigurationList = BB24DED210DA7A3F00E9C588 /* Build configuration list for PBXNativeTarget "openFrameworks" */;
 			buildPhases = (
 				BB24DE5D10DA7A3F00E9C588 /* Headers */,
 				BB24DEB110DA7A3F00E9C588 /* Sources */,
 				BB24DEC910DA7A3F00E9C588 /* Frameworks */,
+				BFF80A5C2C50B25B00784E74 /* Run Script */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
-			name = "iPhone+OF Static Library";
+			name = openFrameworks;
 			productName = "Static Library";
-			productReference = BB24DED610DA7A3F00E9C588 /* libofxiOS_iphoneos_Debug.a */;
+			productReference = BB24DED610DA7A3F00E9C588 /* openFrameworksiOSDebug.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 /* End PBXNativeTarget section */
@@ -1116,7 +1171,8 @@
 		29B97313FDCFA39411CA2CEA /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0920;
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1530;
 			};
 			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "iOS+OFLib" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -1130,10 +1186,32 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				BB24DE5C10DA7A3F00E9C588 /* iPhone+OF Static Library */,
+				BB24DE5C10DA7A3F00E9C588 /* openFrameworks */,
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		BFF80A5C2C50B25B00784E74 /* Run Script */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Run Script";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = "/usr/bin/env bash";
+			shellScript = "#!/usr/bin/env bash\nTARGET_DIR=\"$SRCROOT/../../lib/ios/\"\nATTRIBUTE_CHECK=$(xattr -p com.apple.xcode.CreatedByBuildSystem \"$TARGET_DIR\" 2>/dev/null)\nif [ -z \"$ATTRIBUTE_CHECK\" ]; then\n  xattr -w com.apple.xcode.CreatedByBuildSystem true \"$TARGET_DIR\"\n  echo \"Attribute com.apple.xcode.CreatedByBuildSystem set to true for [$TARGET_DIR]\"\nelse\n  echo \"Attribute com.apple.xcode.CreatedByBuildSystem already set for [$TARGET_DIR]\"\nfi\n\nTARGET_DIR=\"${SRCROOT}/../../lib/ios/\"\nTARGET_CONFIG_DIR=\"${SRCROOT}/../../lib/ios/build/output\"\n\nif [ \"${CONFIGURATION}\" == \"Release\" ]; then\n    STATIC_NAME=\"openFrameworksiOS\"\nelse\n    STATIC_NAME=\"openFrameworksiOS${CONFIGURATION}\"\nfi\n\nSOURCE_FILE=\"${TARGET_CONFIG_DIR}/${STATIC_NAME}.a\"\nDEST_FILE=\"${TARGET_DIR}/${STATIC_NAME}.a\"\n\necho \"Configuration: ${CONFIGURATION}\"\necho \"Source file: ${SOURCE_FILE}\"\necho \"Destination: ${DEST_FILE}\"\n\nmkdir -p \"${TARGET_DIR}\"\n\nif [ ! -w \"${TARGET_DIR}\" ]; then\n    echo \"ERROR: Target directory ${TARGET_DIR} is not writable.\"\n    ls -ld \"${TARGET_DIR}\"\n    exit 1\nfi\n\nif [ ! -f \"${SOURCE_FILE}\" ]; then\n    echo \"ERROR: Static library ${SOURCE_FILE} does not exist.\"\n    exit 1\nfi\n\necho \"Copying ${SOURCE_FILE} to ${DEST_FILE}...\"\ncp -v \"${SOURCE_FILE}\" \"${DEST_FILE}\"\n\nif [ $? -ne 0 ]; then\n    echo \"ERROR: Failed to copy ${SOURCE_FILE} to ${DEST_FILE}.\"\n    exit 1\nfi\n\necho \"openFramworks build successful.\"\n\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		BB24DEB110DA7A3F00E9C588 /* Sources */ = {
@@ -1142,6 +1220,7 @@
 			files = (
 				E4F76E19176CB27200798745 /* of3dPrimitives.cpp in Sources */,
 				2E6E258428F73C2C00EC8E22 /* ofShadow.cpp in Sources */,
+				BF2B781A2C7E6CF000EAAD6E /* ES3Renderer.m in Sources */,
 				E4F76E1B176CB27200798745 /* of3dUtils.cpp in Sources */,
 				E4F76E1D176CB27200798745 /* ofCamera.cpp in Sources */,
 				E4F76E1F176CB27200798745 /* ofEasyCam.cpp in Sources */,
@@ -1208,7 +1287,6 @@
 				15594F9315C56A8A00727FF2 /* ofxiOSViewController.mm in Sources */,
 				9008001D204EDC0F00DC786A /* EAGLKView.m in Sources */,
 				15594FA315C56BB700727FF2 /* AVFoundationVideoGrabber.mm in Sources */,
-				15594FA415C56BB700727FF2 /* AVFoundationVideoPlayer.m in Sources */,
 				15594FAC15C56C9500727FF2 /* ofxiOSAlerts.mm in Sources */,
 				15594FBE15C56D1E00727FF2 /* ofxiOSCoreLocation.mm in Sources */,
 				15594FBF15C56D1E00727FF2 /* ofxiOSExternalDisplay.mm in Sources */,
@@ -1216,6 +1294,7 @@
 				15594FC115C56D1E00727FF2 /* ofxiOSImagePicker.mm in Sources */,
 				15594FC215C56D1E00727FF2 /* ofxiOSKeyboard.mm in Sources */,
 				15594FC315C56D1E00727FF2 /* ofxiOSMapKit.mm in Sources */,
+				035324622BEFEF5D00B50A35 /* ofTimerFps.cpp in Sources */,
 				15594FC415C56D1E00727FF2 /* ofxiOSMapKitDelegate.mm in Sources */,
 				69433CC31FE45BAC004D5B73 /* ofBaseApp.cpp in Sources */,
 				67833F8A19F8996300DBE7AA /* ofBufferObject.cpp in Sources */,
@@ -1225,6 +1304,7 @@
 				678C3D26176F04F800D1CC68 /* ofxiOSSoundStreamDelegate.mm in Sources */,
 				678C3D28176F04F800D1CC68 /* SoundInputStream.m in Sources */,
 				678C3D2A176F04F800D1CC68 /* SoundOutputStream.m in Sources */,
+				037DF6522D77C8CE00BFFD5D /* AVFoundationVideoPlayer.m in Sources */,
 				678C3D2C176F04F800D1CC68 /* SoundStream.m in Sources */,
 				671C0AF51770246200DF03B3 /* AVSoundPlayer.m in Sources */,
 				671C0AF71770246200DF03B3 /* ofxiOSSoundPlayer.mm in Sources */,
@@ -1242,26 +1322,28 @@
 		BB24DED310DA7A3F00E9C588 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/../../lib/ios/";
+				BUILD_DIR = "~/Library/Developer/Xcode/DerivedData";
+				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/../../lib/ios/build/output/";
+				CONFIGURATION_TEMP_DIR = "$(SRCROOT)/../../lib/ios/build/temp/Debug/";
 				COPY_PHASE_STRIP = NO;
-				DEAD_CODE_STRIPPING = NO;
-				EXECUTABLE_PREFIX = lib;
+				DERIVED_DATA_PATH = "~/Library/Developer/Xcode/DerivedData";
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				EXECUTABLE_PREFIX = "";
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				GCC_WARN_HIDDEN_VIRTUAL_FUNCTIONS = YES;
 				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
+				LIBRARY_OUTPUT_DIRECTORY = "$(SRCROOT)/../../lib/ios/";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/kiss/lib/linux\"",
-					"\"$(SRCROOT)/kiss/lib/linux64\"",
-					"\"$(SRCROOT)/../../../tess2/lib/ios\"",
-					"\"$(SRCROOT)/../../../poco/lib/ios\"",
+					"$(SRCROOT)/../../lib/ios/build/output/",
 				);
-				OF_CORE_FRAMEWORKS = "-framework AudioToolbox -framework Accelerate -framework AVFoundation -framework CoreAudio -framework CoreGraphics -framework CoreLocation -framework CoreMotion -framework CoreMedia -framework CoreVideo -framework Foundation -framework GameController -framework GLKit -framework MapKit -framework OpenAL -framework OpenGLES -framework UIKit -framework Security -framework QuartzCore -framework CoreHaptics";
-				PRODUCT_NAME = "ofxiOS_${PLATFORM_NAME}_Debug";
+				OBJROOT = "$(SRCROOT)/../../lib/ios/build/obj/Debug/";
+				PRODUCT_NAME = openFrameworksiOSDebug;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
+				USE_HEADERMAP = NO;
 			};
 			name = Debug;
 		};
@@ -1269,25 +1351,27 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD)";
-				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/../../lib/ios/";
+				BUILD_DIR = "~/Library/Developer/Xcode/DerivedData";
+				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/../../lib/ios/build/output/";
+				CONFIGURATION_TEMP_DIR = "$(SRCROOT)/../../lib/ios/build/temp/Release/";
 				COPY_PHASE_STRIP = YES;
-				DEAD_CODE_STRIPPING = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				EXECUTABLE_PREFIX = lib;
+				DERIVED_DATA_PATH = "~/Library/Developer/Xcode/DerivedData";
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				EXECUTABLE_PREFIX = "";
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				GCC_WARN_HIDDEN_VIRTUAL_FUNCTIONS = YES;
 				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
+				LIBRARY_OUTPUT_DIRECTORY = "$(SRCROOT)/../../lib/ios/";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/kiss/lib/linux\"",
-					"\"$(SRCROOT)/kiss/lib/linux64\"",
-					"\"$(SRCROOT)/../../../tess2/lib/ios\"",
-					"\"$(SRCROOT)/../../../poco/lib/ios\"",
+					"$(SRCROOT)/../../lib/ios/build/output/",
 				);
-				OF_CORE_FRAMEWORKS = "-framework AudioToolbox -framework Accelerate -framework AVFoundation -framework CoreAudio -framework CoreGraphics -framework CoreLocation -framework CoreMotion -framework CoreMedia -framework CoreVideo -framework Foundation -framework GameController -framework GLKit -framework MapKit -framework OpenAL -framework OpenGLES -framework UIKit -framework Security -framework QuartzCore -framework CoreHaptics";
-				PRODUCT_NAME = "ofxiOS_${PLATFORM_NAME}_Release";
+				OBJROOT = "$(SRCROOT)/../../lib/ios/build/obj/Release/";
+				PRODUCT_NAME = openFrameworksiOS;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
+				USE_HEADERMAP = NO;
 				ZERO_LINK = NO;
 			};
 			name = Release;
@@ -1297,6 +1381,7 @@
 			baseConfigurationReference = E41D3E9113B38BE900A75A5D /* Debug.xcconfig */;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD)";
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_COMMA = YES;
@@ -1312,22 +1397,19 @@
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/../../lib/ios/";
-				CONFIGURATION_TEMP_DIR = "$(SRCROOT)/../../lib/ios/build/debug/";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_CHECK_SWITCH_STATEMENTS = NO;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
-				OBJROOT = "$(SRCROOT)/../../lib/ios/build/debug";
-				OF_CORE_FRAMEWORKS = "-framework AudioToolbox -framework Accelerate -framework AVFoundation -framework CoreAudio -framework CoreGraphics -framework CoreLocation -framework CoreMotion -framework CoreMedia -framework CoreVideo -framework Foundation -framework GameController -framework GLKit -framework MapKit -framework OpenAL -framework OpenGLES -framework UIKit -framework Security -framework QuartzCore -framework CoreHaptics";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				OBJROOT = "$(SRCROOT)/../../lib/ios/build/obj/Debug/";
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
-				SYMROOT = "$(SRCROOT)/../../lib/ios/";
-				VALID_ARCHS = "$(ARCHS_STANDARD)";
 				WARNING_CFLAGS = (
 					"-Wno-non-virtual-dtor",
 					"-Wno-overloaded-virtual",
@@ -1340,6 +1422,7 @@
 			baseConfigurationReference = E41D3E9213B38BE900A75A5D /* Release.xcconfig */;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD)";
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_COMMA = YES;
@@ -1355,21 +1438,17 @@
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/../../lib/ios/";
-				CONFIGURATION_TEMP_DIR = "$(SRCROOT)/../../lib/ios/build/release/";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_CHECK_SWITCH_STATEMENTS = NO;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
-				OBJROOT = "$(SRCROOT)/../../lib/ios/build/release";
-				OF_CORE_FRAMEWORKS = "-framework AudioToolbox -framework Accelerate -framework AVFoundation -framework CoreAudio -framework CoreGraphics -framework CoreLocation -framework CoreMotion -framework CoreMedia -framework CoreVideo -framework Foundation -framework GameController -framework GLKit -framework MapKit -framework OpenAL -framework OpenGLES -framework UIKit -framework Security -framework QuartzCore -framework CoreHaptics";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				OBJROOT = "$(SRCROOT)/../../lib/ios/build/obj/Release/";
 				ONLY_ACTIVE_ARCH = NO;
 				SDKROOT = iphoneos;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
-				SYMROOT = "$(SRCROOT)/../../lib/ios/";
-				VALID_ARCHS = "$(ARCHS_STANDARD)";
 				WARNING_CFLAGS = (
 					"-Wno-non-virtual-dtor",
 					"-Wno-overloaded-virtual",
@@ -1380,7 +1459,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		BB24DED210DA7A3F00E9C588 /* Build configuration list for PBXNativeTarget "iPhone+OF Static Library" */ = {
+		BB24DED210DA7A3F00E9C588 /* Build configuration list for PBXNativeTarget "openFrameworks" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				BB24DED310DA7A3F00E9C588 /* Debug */,

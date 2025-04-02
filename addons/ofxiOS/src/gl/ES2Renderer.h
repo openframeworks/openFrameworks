@@ -2,6 +2,8 @@
 #pragma once
 
 #import "ESRenderer.h"
+#include "ofxiOSConstants.h"
+#if defined(OF_UI_KIT) && defined(OF_GL_KIT)
 #import <OpenGLES/ES2/gl.h>
 #import <OpenGLES/ES2/glext.h>
 
@@ -42,4 +44,4 @@
 - (NSInteger)getHeight;
 
 @end
-
+#endif

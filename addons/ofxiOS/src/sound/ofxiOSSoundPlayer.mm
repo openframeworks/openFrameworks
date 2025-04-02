@@ -5,10 +5,13 @@
 //
 
 #include "ofxiOSSoundPlayer.h"
+#include "ofxiOSConstants.h"
+#if defined(TARGET_OF_IOS)
+
 #include "ofUtils.h"
 #include "ofLog.h"
 #import "AVSoundPlayer.h"
-
+#if defined(OF_IOS_AVSOUNDPLAYER)
 using std::string;
 
 ofxiOSSoundPlayer::ofxiOSSoundPlayer() {
@@ -23,10 +26,10 @@ bool ofxiOSSoundPlayer::load(const of::filesystem::path& fileName, bool stream) 
     if(soundPlayer != NULL) {
         unload();
     }
-
+    BOOL bOk = false;
     string filePath = ofToDataPath(fileName);
     __autoreleasing AVSoundPlayer *player = [[AVSoundPlayer alloc] init];
-    BOOL bOk = [player loadWithPath:[NSString stringWithUTF8String:filePath.c_str()]];
+    bOk = [player loadWithPath:[NSString stringWithUTF8String:filePath.c_str()]];
     if(bOk) {
         soundPlayer = (__bridge_retained void *)player;
     }
@@ -166,6 +169,21 @@ float ofxiOSSoundPlayer::getVolume()  const{
     return [(__bridge AVSoundPlayer *)soundPlayer volume];
 }
 
+float ofxiOSSoundPlayer::getDuration() const {
+	if(soundPlayer == NULL) {
+		return 0.f;
+	}
+	return [(__bridge AVSoundPlayer *)soundPlayer duration];
+}
+unsigned int ofxiOSSoundPlayer::getDurationMS() const {
+	if(soundPlayer == NULL) {
+		return 0;
+	}
+	return [(__bridge AVSoundPlayer *)soundPlayer duration] * 1000.0;
+}
+
 void * ofxiOSSoundPlayer::getAVSoundPlayer() {
     return soundPlayer;
 }
+#endif
+#endif

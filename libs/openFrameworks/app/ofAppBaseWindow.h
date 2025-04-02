@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ofWindowSettings.h"
+// MARK: Target
 #include "ofConstants.h"
 
 class ofBaseApp;
@@ -59,6 +60,7 @@ public:
 
 	virtual void setFullscreen(bool fullscreen){}
 	virtual void toggleFullscreen(){}
+	virtual void setWindowMousePassthrough(bool allowPassthrough){}
 
 	virtual void enableSetupScreen(){}
 	virtual void disableSetupScreen(){}

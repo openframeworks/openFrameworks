@@ -3,6 +3,7 @@ set TESTS_PLATFORM=%PLATFORM%
 set STATUS=0
 if "%PLATFORM%" equ "x86" set TESTS_PLATFORM=Win32
 FOR /D %%G IN (*) DO ( 
+    echo ##[group]%%G
     echo %APPVEYOR_BUILD_FOLDER%\tests\%%G
     cd %APPVEYOR_BUILD_FOLDER%\tests\%%G
     FOR /D %%E IN (*) DO ( 
@@ -18,6 +19,7 @@ FOR /D %%G IN (*) DO (
             if ERRORLEVEL 1 echo "Finished with error" & SET STATUS=1
         )
     )
+    echo ##[endgroup]
 )
 cd ..
 echo "Tests finished with status %STATUS%"

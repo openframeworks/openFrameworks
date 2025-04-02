@@ -1,19 +1,17 @@
 #pragma once
 
-#include "glm/fwd.hpp"
 #include "ofConstants.h"
 #include "ofGraphicsBaseTypes.h"
-#include "ofRectangle.h"
+
+#include <glm/detail/qualifier.hpp>
+namespace glm {
+	typedef vec<2, float, defaultp>		vec2;
+	typedef vec<3, float, defaultp>		vec3;
+}
 
 class ofVec3f;
 class ofVec2f;
 
-template <typename T>
-class ofColor_;
-
-typedef ofColor_<unsigned char> ofColor;
-typedef ofColor_<float> ofFloatColor;
-typedef ofColor_<unsigned short> ofShortColor;
 
 template <typename T>
 std::string ofToString(const T &);
@@ -67,11 +65,11 @@ void ofSetFloatColor(float gray);
 void ofSetFloatColor(const ofFloatColor & acolor, float a);
 void ofSetFloatColor(const ofFloatColor & acolor);
 
-template <typename T>
-void ofSetColor(const ofColor_<T> & acolor) {
-	float limit = ofColor_<T>::limit();
-	ofSetFloatColor(acolor.r / limit, acolor.g / limit, acolor.b / limit, acolor.a / limit);
-}
+
+void ofSetColor(const ofColor & acolor);
+void ofSetColor(const ofFloatColor & acolor);
+void ofSetColor(const ofShortColor & acolor);
+
 
 /// Sets the draw color with r,g,b, passed in as a hex. Hex is a conventient
 /// way to write colors.
@@ -112,7 +110,8 @@ ofFillFlag ofGetFill();
 
 /// \brief Returns the current background color as an ofColor.
 ofFloatColor ofGetBackgroundColor();
-OF_DEPRECATED_MSG("Use ofGetBackgroundColor instead", ofFloatColor ofGetBackground());
+[[deprecated("Use ofGetBackgroundColor")]]
+ofFloatColor ofGetBackground();
 
 /// \brief Sets the background color.
 ///
@@ -278,7 +277,8 @@ void ofClear(float r, float g, float b);
 /// }
 /// ~~~~
 void ofClear(float brightness, float a);
-OF_DEPRECATED_MSG("Use ofClear(brightness, alpha) instead", void ofClear(float brightness));
+[[deprecated("Use ofClear(brightness, alpha)")]]
+void ofClear(float brightness);
 
 /// \brief Clears the color and depth bits of current renderer and replaces it with
 /// an ofColor.
@@ -300,7 +300,8 @@ void ofClearFloat(float brightness, float a);
 void ofClearFloat(const ofFloatColor & c);
 
 // OF's access to settings (bgAuto, origin, corner mode):
-OF_DEPRECATED_MSG("Use ofGetBackgroundAuto instead", bool ofbClearBg());
+[[deprecated("Use ofGetBackgroundAuto")]]
+bool ofbClearBg();
 
 /// \}
 /// \name 2D Primitives Drawing
@@ -506,43 +507,70 @@ void ofDrawCurve(float x0, float y0, float z0, float x1, float y1, float z1, flo
 void ofDrawBezier(float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3);
 void ofDrawBezier(float x0, float y0, float z0, float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3);
 
-OF_DEPRECATED_MSG("Use ofDrawTriangle instead", void ofTriangle(float x1, float y1, float x2, float y2, float x3, float y3));
-OF_DEPRECATED_MSG("Use ofDrawTriangle instead", void ofTriangle(float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3));
-OF_DEPRECATED_MSG("Use ofDrawTriangle instead", void ofTriangle(const glm::vec3 & p1, const glm::vec3 & p2, const glm::vec3 & p3));
+[[deprecated("Use ofDrawTriangle")]]
+void ofTriangle(float x1, float y1, float x2, float y2, float x3, float y3);
+[[deprecated("Use ofDrawTriangle")]]
+void ofTriangle(float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3);
+[[deprecated("Use ofDrawTriangle")]]
+void ofTriangle(const glm::vec3 & p1, const glm::vec3 & p2, const glm::vec3 & p3);
 
-OF_DEPRECATED_MSG("Use ofDrawCircle instead", void ofCircle(float x, float y, float radius));
-OF_DEPRECATED_MSG("Use ofDrawCircle instead", void ofCircle(float x, float y, float z, float radius));
-OF_DEPRECATED_MSG("Use ofDrawCircle instead", void ofCircle(const glm::vec3 & p, float radius));
+[[deprecated("Use ofDrawCircle")]]
+void ofCircle(float x, float y, float radius);
+[[deprecated("Use ofDrawCircle")]]
+void ofCircle(float x, float y, float z, float radius);
+[[deprecated("Use ofDrawCircle")]]
+void ofCircle(const glm::vec3 & p, float radius);
 
-OF_DEPRECATED_MSG("Use ofDrawEllipse instead", void ofEllipse(float x, float y, float width, float height));
-OF_DEPRECATED_MSG("Use ofDrawEllipse instead", void ofEllipse(float x, float y, float z, float width, float height));
-OF_DEPRECATED_MSG("Use ofDrawEllipse instead", void ofEllipse(const glm::vec3 & p, float width, float height));
+[[deprecated("Use ofDrawEllipse")]]
+void ofEllipse(float x, float y, float width, float height);
+[[deprecated("Use ofDrawEllipse")]]
+void ofEllipse(float x, float y, float z, float width, float height);
+[[deprecated("Use ofDrawEllipse")]]
+void ofEllipse(const glm::vec3 & p, float width, float height);
 
-OF_DEPRECATED_MSG("Use ofDrawLine instead", void ofLine(float x1, float y1, float x2, float y2));
-OF_DEPRECATED_MSG("Use ofDrawLine instead", void ofLine(float x1, float y1, float z1, float x2, float y2, float z2));
-OF_DEPRECATED_MSG("Use ofDrawLine instead", void ofLine(const glm::vec3 & p1, const glm::vec3 & p2));
+[[deprecated("Use ofDrawLine")]]
+void ofLine(float x1, float y1, float x2, float y2);
+[[deprecated("Use ofDrawLine")]]
+void ofLine(float x1, float y1, float z1, float x2, float y2, float z2);
+[[deprecated("Use ofDrawLine")]]
+void ofLine(const glm::vec3 & p1, const glm::vec3 & p2);
 
-OF_DEPRECATED_MSG("Use ofDrawRectangle instead", void ofRect(float x1, float y1, float w, float h));
-OF_DEPRECATED_MSG("Use ofDrawRectangle instead", void ofRect(const ofRectangle & r));
-OF_DEPRECATED_MSG("Use ofDrawRectangle instead", void ofRect(const glm::vec3 & p, float w, float h));
-OF_DEPRECATED_MSG("Use ofDrawRectangle instead", void ofRect(float x, float y, float z, float w, float h));
+[[deprecated("Use ofDrawRectangle")]]
+void ofRect(float x1, float y1, float w, float h);
+[[deprecated("Use ofDrawRectangle")]]
+void ofRect(const ofRectangle & r);
+[[deprecated("Use ofDrawRectangle")]]
+void ofRect(const glm::vec3 & p, float w, float h);
+[[deprecated("Use ofDrawRectangle")]]
+void ofRect(float x, float y, float z, float w, float h);
 
-OF_DEPRECATED_MSG("Use ofDrawRectRounded instead", void ofRectRounded(const ofRectangle & b, float r));
-OF_DEPRECATED_MSG("Use ofDrawRectRounded instead", void ofRectRounded(const glm::vec3 & p, float w, float h, float r));
-OF_DEPRECATED_MSG("Use ofDrawRectRounded instead", void ofRectRounded(float x, float y, float w, float h, float r));
-OF_DEPRECATED_MSG("Use ofDrawRectRounded instead", void ofRectRounded(float x, float y, float z, float w, float h, float r));
+[[deprecated("Use ofDrawRectRounded")]]
+void ofRectRounded(const ofRectangle & b, float r);
+[[deprecated("Use ofDrawRectRounded")]]
+void ofRectRounded(const glm::vec3 & p, float w, float h, float r);
+[[deprecated("Use ofDrawRectRounded")]]
+void ofRectRounded(float x, float y, float w, float h, float r);
+[[deprecated("Use ofDrawRectRounded")]]
+void ofRectRounded(float x, float y, float z, float w, float h, float r);
 
 //----------------------------------------------------------
-OF_DEPRECATED_MSG("Use ofDrawRectRounded instead", void ofRectRounded(const glm::vec3 & p, float w, float h, float topLeftRadius, float topRightRadius, float bottomRightRadius, float bottomLeftRadius));
+[[deprecated("Use ofDrawRectRounded")]]
+void ofRectRounded(const glm::vec3 & p, float w, float h, float topLeftRadius, float topRightRadius, float bottomRightRadius, float bottomLeftRadius);
 
-OF_DEPRECATED_MSG("Use ofDrawRectRounded instead", void ofRectRounded(const ofRectangle & b, float topLeftRadius, float topRightRadius, float bottomRightRadius, float bottomLeftRadius));
+[[deprecated("Use ofDrawRectRounded")]]
+void ofRectRounded(const ofRectangle & b, float topLeftRadius, float topRightRadius, float bottomRightRadius, float bottomLeftRadius);
 
-OF_DEPRECATED_MSG("Use ofDrawRectRounded instead", void ofRectRounded(float x, float y, float z, float w, float h, float topLeftRadius, float topRightRadius, float bottomRightRadius, float bottomLeftRadius));
+[[deprecated("Use ofDrawRectRounded")]]
+void ofRectRounded(float x, float y, float z, float w, float h, float topLeftRadius, float topRightRadius, float bottomRightRadius, float bottomLeftRadius);
 
-OF_DEPRECATED_MSG("Use ofDrawCurve instead", void ofCurve(float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3));
-OF_DEPRECATED_MSG("Use ofDrawCurve instead", void ofCurve(float x0, float y0, float z0, float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3));
-OF_DEPRECATED_MSG("Use ofDrawBezier instead", void ofBezier(float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3));
-OF_DEPRECATED_MSG("Use ofDrawBezier instead", void ofBezier(float x0, float y0, float z0, float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3));
+[[deprecated("Use ofDrawCurve")]]
+void ofCurve(float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3);
+[[deprecated("Use ofDrawCurve")]]
+void ofCurve(float x0, float y0, float z0, float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3);
+[[deprecated("Use ofDrawBezier")]]
+void ofBezier(float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3);
+[[deprecated("Use ofDrawBezier")]]
+void ofBezier(float x0, float y0, float z0, float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3);
 
 /// \}
 /// \name Custom Shapes Drawing
@@ -748,6 +776,17 @@ void ofSetCurveResolution(int res);
 /// ~~~~
 void ofSetLineWidth(float lineWidth);
 
+/// \brief Sets the size of the points after mesh.drawVertices() called after.
+/// ~~~~{.cpp}
+/// void ofApp::draw(){
+///     ofSetPointSize(1);          // set point size to 1
+///     mesh.drawVertices(); 		 // draw small points
+///     ofSetPointSize(10);         // set point size to 10
+///     mesh.drawVertices();  		// draw fat points
+/// }
+/// ~~~~
+void ofSetPointSize(float pointSize);
+
 /// \brief Set depth testing on or off to either sort by z-depth (`true`)
 /// or draw order (`false`).
 void ofSetDepthTest(bool depthTest);
@@ -946,6 +985,24 @@ void ofPushMatrix();
 /// \sa ofPushMatrix()
 void ofPopMatrix();
 
+/// \brief Manages a an ofPush/Pop Matrix cycle with an anonymous scoped object
+///
+struct ofScopedMatrix {
+	ofScopedMatrix() { ofPushMatrix(); }
+	~ofScopedMatrix() { ofPopMatrix(); }
+};
+
+/// \brief Manages a an ofPush/Pop Style cycle with an anonymous scoped object
+///
+struct ofScopedStyle {
+	ofScopedStyle() { ofPushStyle(); }
+	~ofScopedStyle() { ofPopStyle(); }
+};
+
+/// \brief Combines ofScopeMatrix and Style
+///
+struct ofScopedMatrixStyle: public ofScopedMatrix, public ofScopedStyle { };
+
 /// \brief Query the current (oF internal) Transformation Matrix state.
 glm::mat4 ofGetCurrentMatrix(ofMatrixMode matrixMode);
 
@@ -1004,10 +1061,12 @@ void ofScale(const glm::vec3 & p);
 /// \param vecX specifies the x coordinates of a vector
 /// \param vecY specifies the y coordinates of a vector
 /// \param vecZ specifies the z coordinates of a vector
-OF_DEPRECATED_MSG("Use ofRotateDeg or ofRotateRad", void ofRotate(float degrees, float vecX, float vecY, float vecZ));
+[[deprecated("Use ofRotateDeg or ofRotateRad")]]
+	 void ofRotate(float degrees, float vecX, float vecY, float vecZ);
 
 /// \brief Rotate around the z-axis
-OF_DEPRECATED_MSG("Use ofRotateDeg or ofRotateRad", void ofRotate(float degrees));
+[[deprecated("Use ofRotateDeg or ofRotateRad")]]
+	 void ofRotate(float degrees);
 
 /// \brief Produces a rotation around the X-axis of our coordinate
 /// system represented by the vector (1,0,0).
@@ -1018,7 +1077,8 @@ OF_DEPRECATED_MSG("Use ofRotateDeg or ofRotateRad", void ofRotate(float degrees)
 /// }
 /// ~~~~
 /// \param degrees Specifies the angle of rotation, in degrees.
-OF_DEPRECATED_MSG("Use ofRotateXDeg or ofRotateXRad", void ofRotateX(float degrees));
+[[deprecated("Use ofRotateXDeg or ofRotateXRad")]]
+	 void ofRotateX(float degrees);
 
 /// \brief Produces a rotation around the Y-axis of our coordinate
 /// system represented by the vector (0,1,0).
@@ -1029,7 +1089,8 @@ OF_DEPRECATED_MSG("Use ofRotateXDeg or ofRotateXRad", void ofRotateX(float degre
 /// }
 /// ~~~~
 /// \param degrees Specifies the angle of rotation, in degrees.
-OF_DEPRECATED_MSG("Use ofRotateYDeg or ofRotateYRad", void ofRotateY(float degrees));
+[[deprecated("Use ofRotateYDeg or ofRotateYRad")]]
+	 void ofRotateY(float degrees);
 
 /// \brief Produces a rotation around the Z-axis of our coordinate
 /// system represented by the vector (0,0,1).
@@ -1040,7 +1101,8 @@ OF_DEPRECATED_MSG("Use ofRotateYDeg or ofRotateYRad", void ofRotateY(float degre
 /// }
 /// ~~~~
 /// \param degrees Specifies the angle of rotation, in degrees.
-OF_DEPRECATED_MSG("Use ofRotateZDeg or ofRotateZRad", void ofRotateZ(float degrees));
+[[deprecated("Use ofRotateZDeg or ofRotateZRad")]]
+	 void ofRotateZ(float degrees);
 
 /// \brief Produces a rotation around the vector (vecX,vecY,vecZ).
 ///
@@ -1208,10 +1270,10 @@ int ofGetViewportHeight();
 void ofSetupScreenPerspective(float width = -1, float height = -1, float fov = 60, float nearDist = 0, float farDist = 0);
 void ofSetupScreenOrtho(float width = -1, float height = -1, float nearDist = -1, float farDist = 1);
 
-OF_DEPRECATED_MSG("ofSetupScreenPerspective() doesn't accept orientation and vflip parameters anymore, use ofSetOrientation() to specify them",
-	void ofSetupScreenPerspective(float width, float height, ofOrientation orientation, bool vFlip = ofIsVFlipped(), float fov = 60, float nearDist = 0, float farDist = 0));
-OF_DEPRECATED_MSG("ofSetupScreenOrtho() doesn't accept orientation and vflip parameters anymore, use ofSetOrientation() to specify them",
-	void ofSetupScreenOrtho(float width, float height, ofOrientation orientation, bool vFlip = ofIsVFlipped(), float nearDist = -1, float farDist = 1));
+[[deprecated("ofSetupScreenPerspective() doesn't accept orientation and vflip parameters anymore, use ofSetOrientation() to specify them")]]
+void ofSetupScreenPerspective(float width, float height, ofOrientation orientation, bool vFlip = ofIsVFlipped(), float fov = 60, float nearDist = 0, float farDist = 0);
+[[deprecated("ofSetupScreenOrtho() doesn't accept orientation and vflip parameters anymore, use ofSetOrientation() to specify them")]]
+void ofSetupScreenOrtho(float width, float height, ofOrientation orientation, bool vFlip = ofIsVFlipped(), float nearDist = -1, float farDist = 1);
 
 int ofOrientationToDegrees(ofOrientation orientation);
 

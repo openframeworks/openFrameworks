@@ -44,6 +44,19 @@ enum ofFboMode : short;
 enum ofLoopType : short;
 enum ofOrientation : short;
 
+struct ofBoundingBox{
+	glm::vec3 min { 0, 0, 0 };
+	glm::vec3 max { 0, 0, 0 };
+};
+
+#if !defined(GLM_FORCE_CTOR_INIT)
+	#define GLM_FORCE_CTOR_INIT
+#endif
+#if !defined(GLM_ENABLE_EXPERIMENTAL)
+	#define GLM_ENABLE_EXPERIMENTAL
+#endif
+#include <glm/mat4x4.hpp>
+
 /// \brief Contains general information about the style of ofGraphics
 /// elements such as color, line width and others.
 class ofStyle {
@@ -57,6 +70,7 @@ public:
 		sphereResolution = 20;
 		curveResolution = 20;
 		lineWidth = 1.0;
+		pointSize = 1.0;
 		polyMode = OF_POLY_WINDING_ODD;
 		rectMode = OF_RECTMODE_CORNER;
 #ifdef TARGET_OPENGLES
@@ -127,6 +141,9 @@ public:
 	/// \warning This is not currently implemented in modern OF renderers.
 	float lineWidth;
 
+	/// \brief The size of rendered points.
+	float pointSize;
+
 	//bool depthTest; removed since it'll break old projects setting depth test through glEnable
 };
 
@@ -189,6 +206,11 @@ public:
 	///
 	/// \return the width.
 	virtual float getWidth() const = 0;
+	
+	// TODO: Implement correctly for texture, videos, etc.
+	virtual glm::vec2 getSize() {
+		return { getWidth(), getHeight() };
+	}
 
 	/// \brief Set the anchor point the item is drawn around as a percentage.
 	///
@@ -834,6 +856,11 @@ public:
 	///
 	/// \param lineWidth The line width to request this renderer to use.
 	virtual void setLineWidth(float lineWidth) = 0;
+	
+	/// \brief Set the point size this renderer should use when drawing points.
+	///
+	/// \param pointSize The points size to request this renderer to use.
+	virtual void setPointSize(float pointSize) = 0;
 
 	/// \brief Enable/disable depth testing with this renderer.
 	///
