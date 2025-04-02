@@ -3,17 +3,12 @@
 #include "ofMain.h"
 #include "ofxAndroid.h"
 
-// This example and in general ofVideoPlayer on
-// android will only work with ice cream sandwich
-// or later versions since the calls required to get
-// an openGL texture from the video frames are only
-// available from that version
-
 class ofApp : public ofxAndroidApp{
 	
 	public:
 		
 		void setup();
+		void exit();
 		void update();
 		void draw();
 		
@@ -37,6 +32,8 @@ class ofApp : public ofxAndroidApp{
 		void okPressed();
 		void cancelPressed();
 
-		ofVideoPlayer player;
-
+        void deviceRefreshRateChanged(int refreshRate);
+        void deviceHighestRefreshRateChanged(int refreshRate);
+        void deviceRefreshRateChangedEvent(int &refreshRate);
+        void deviceHighestRefreshRateChangedEvent(int & refreshRate);
 };

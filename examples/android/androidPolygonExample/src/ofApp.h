@@ -10,17 +10,17 @@ typedef struct {
 	bool 	bBeingDragged;
 	bool 	bOver;
 	float 	radius;
-	
+
 }	draggableVertex;
 
 
 class ofApp : public ofxAndroidApp {
-	
+
 public:
 	void setup();
 	void update();
 	void draw();
-
+    void exit();
 	void keyPressed(int key);
 	void keyReleased(int key);
 	void windowResized(int w, int h);
@@ -41,7 +41,13 @@ public:
 	void okPressed();
 	void cancelPressed();
 
-	int nCurveVertices;
+    void deviceRefreshRateChanged(int refreshRate);
+    void deviceHighestRefreshRateChanged(int refreshRate);
+    void deviceRefreshRateChangedEvent(int &refreshRate);
+    void deviceHighestRefreshRateChangedEvent(int & refreshRate);
+
+
+    int nCurveVertices;
 	draggableVertex curveVertices[7];
 	draggableVertex bezierVertices[4];
 
