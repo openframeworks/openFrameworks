@@ -479,7 +479,7 @@ bool Scene::hasAnimations() {
 }
 
 unsigned int Scene::getNumAnimations(){
-	return mAnimations.size();
+	return (unsigned int) mAnimations.size();
 }
 
 unsigned int Scene::getCurrentAnimationIndex() {
@@ -879,7 +879,7 @@ void Scene::_drawMesh( const shared_ptr<ofxAssimp::Mesh>& amesh, ofPolyRenderMod
 	ofEnableBlendMode(amesh->blendMode);
 	
 #ifndef TARGET_OPENGLES
-	amesh->vbo->drawElements(GL_TRIANGLES,amesh->getNumIndices());
+	amesh->vbo->drawElements(GL_TRIANGLES,(int)amesh->getNumIndices());
 #else
 	switch(aRenderType){
 		case OF_MESH_FILL:
