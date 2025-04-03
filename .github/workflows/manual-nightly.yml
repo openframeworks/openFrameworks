@@ -1,6 +1,6 @@
 # This one was created to make it work whil
 
-name: manual-nightly-ok
+name: manual-nightly
 
 on:
   workflow_dispatch:
