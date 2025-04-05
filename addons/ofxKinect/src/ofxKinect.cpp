@@ -44,7 +44,7 @@ float ofxKinect::reconnectWaitTime = 3.0;
 
 //--------------------------------------------------------------------
 ofxKinect::ofxKinect() {
-	ofLogVerbose("ofxKinect") <<" creating ofxKinect";
+	ofLogVerbose("ofxKinect") << "creating ofxKinect";
 
 	deviceId = -1;
 	serial = "";

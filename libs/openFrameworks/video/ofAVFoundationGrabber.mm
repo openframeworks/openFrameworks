@@ -124,13 +124,13 @@
 					bestFormat = format;
 				}
 
-				ofLogVerbose("ofAvFoundationGrabber") << " supported dimensions are: " << dimensions.width << " " << dimensions.height;
+				ofLogVerbose("ofAvFoundationGrabber") << "supported dimensions are: " << dimensions.width << " " << dimensions.height;
 			}
 
 			// Set the new dimensions and format
 			if( bestFormat != nullptr && bestW != 0 && bestH != 0 ){
 				if( bestW != width || bestH != height ){
-					ofLogWarning("ofAvFoundationGrabber") << " requested width and height aren't supported. Setting capture size to closest match: " << bestW << " by " << bestH<< std::endl;
+					ofLogWarning("ofAvFoundationGrabber") << "requested width and height aren't supported. Setting capture size to closest match: " << bestW << " by " << bestH<< std::endl;
 				}
 
 				[device setActiveFormat:bestFormat];
@@ -159,7 +159,7 @@
 					device.activeVideoMinFrameDuration = desiredRange.minFrameDuration;
 					device.activeVideoMaxFrameDuration = desiredRange.maxFrameDuration;
 				}else{
-					ofLogError("ofAvFoundationGrabber") << " could not set framerate to: " << framerate << ". Device supports: ";
+					ofLogError("ofAvFoundationGrabber") << "could not set framerate to: " << framerate << ". Device supports: ";
 					for(AVFrameRateRange * range in supportedFrameRates){
 						ofLogError() << "  framerate range of: " << range.minFrameRate <<
 					 " to " << range.maxFrameRate;
@@ -357,7 +357,7 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
 				size_t heightIn	= CVPixelBufferGetHeight(imageBuffer);
 
 				if( widthIn != grabberPtr->getWidth() || heightIn != grabberPtr->getHeight() ){
-					ofLogError("ofAVFoundationGrabber") << " incoming image dimensions " << widthIn << " by " << heightIn << " don't match. This shouldn't happen! Returning.";
+					ofLogError("ofAVFoundationGrabber") << "incoming image dimensions " << widthIn << " by " << heightIn << " don't match. This shouldn't happen! Returning.";
 					return;
 				}
 
