@@ -1,9 +1,3 @@
-//
-//  ofCubeMap.cpp
-//
-//  Created by Nick Hardeman on 10/16/22.
-//
-
 #include "ofShader.h"
 #include "ofCubeMap.h"
 #include "ofImage.h"
@@ -15,6 +9,7 @@
 #include "ofFbo.h"
 #include "ofTexture.h"
 #include "ofFileUtils.h"
+#include "ofMaterial.h"
 
 #ifdef TARGET_ANDROID
 #include "ofAppAndroidWindow.h"
@@ -90,9 +85,9 @@ static void release(GLuint id){
 #ifdef TARGET_ANDROID
 // TODO: Hook this up to an event
 void ofCubeMap::regenerateAllTextures() {
-	for(size_t i=0; i<ofCubeMapsData().size(); i++) {
-		if(!ofCubeMapsData()[i].expired()) {
-			std::shared_ptr<ofCubeMap::Data> cubeMap = ofCubeMapsData()[i].lock();
+	for(size_t i=0; i<of::priv::ofCubeMapsData().size(); i++) {
+		if(!of::priv::ofCubeMapsData()[i].expired()) {
+			std::shared_ptr<of::priv::ofCubeMapData> cubeMap = of::priv::ofCubeMapsData()[i].lock();
 			ofCubeMap::clearTextureData(cubeMap);
 		}
 	}
@@ -103,15 +98,15 @@ void ofCubeMap::regenerateAllTextures() {
 
 
 //----------------------------------------
-vector<weak_ptr<ofCubeMap::Data> > & ofCubeMapsData(){
-	static vector<weak_ptr<ofCubeMap::Data> > * cubeMapsActive = new vector<weak_ptr<ofCubeMap::Data> >;
+vector<weak_ptr<of::priv::ofCubeMapData> > & of::priv::ofCubeMapsData(){
+	static vector<weak_ptr<of::priv::ofCubeMapData> > * cubeMapsActive = new vector<weak_ptr<of::priv::ofCubeMapData> >;
 	return *cubeMapsActive;
 }
 
 //--------------------------------------------------------------
 bool ofCubeMap::hasActiveCubeMap() {
-	for(size_t i=0;i< ofCubeMapsData().size();i++){
-		std::shared_ptr<ofCubeMap::Data> cubeMap = ofCubeMapsData()[i].lock();
+	for(size_t i=0;i< of::priv::ofCubeMapsData().size();i++){
+		std::shared_ptr<of::priv::ofCubeMapData> cubeMap = of::priv::ofCubeMapsData()[i].lock();
 		if(cubeMap && cubeMap->isEnabled && cubeMap->index > -1 ){
 			return true;
 			break;
@@ -121,18 +116,18 @@ bool ofCubeMap::hasActiveCubeMap() {
 }
 
 //--------------------------------------------------------------
-std::shared_ptr<ofCubeMap::Data> ofCubeMap::getActiveData() {
-	for(size_t i=0;i< ofCubeMapsData().size();i++){
-		std::shared_ptr<ofCubeMap::Data> cubeMap = ofCubeMapsData()[i].lock();
+std::shared_ptr<of::priv::ofCubeMapData> ofCubeMap::getActiveData() {
+	for(size_t i=0;i< of::priv::ofCubeMapsData().size();i++){
+		std::shared_ptr<of::priv::ofCubeMapData> cubeMap = of::priv::ofCubeMapsData()[i].lock();
 		if(cubeMap && cubeMap->isEnabled && cubeMap->index > -1 ){
 			return cubeMap;
 		}
 	}
-	return std::shared_ptr<ofCubeMap::Data>();
+	return std::shared_ptr<of::priv::ofCubeMapData>();
 }
 
 //--------------------------------------------------------------
-void ofCubeMap::clearTextureData(std::shared_ptr<ofCubeMap::Data> adata) {
+void ofCubeMap::clearTextureData(std::shared_ptr<of::priv::ofCubeMapData> adata) {
 	if( adata ) {
 		if( adata->bPreFilteredMapAllocated ) {
 			adata->bPreFilteredMapAllocated=false;
@@ -155,17 +150,17 @@ void ofCubeMap::_checkSetup() {
 	if( data->index < 0 ) {
 		bool bFound = false;
 		// search for the first free block
-		for(size_t i=0; i<ofCubeMapsData().size(); i++) {
-			if(ofCubeMapsData()[i].expired()) {
+		for(size_t i=0; i<of::priv::ofCubeMapsData().size(); i++) {
+			if(of::priv::ofCubeMapsData()[i].expired()) {
 				data->index = i;
-				ofCubeMapsData()[i] = data;
+				of::priv::ofCubeMapsData()[i] = data;
 				bFound = true;
 				break;
 			}
 		}
 		if(!bFound && ofIsGLProgrammableRenderer()){
-			ofCubeMapsData().push_back(data);
-			data->index = ofCubeMapsData().size() - 1;
+			of::priv::ofCubeMapsData().push_back(data);
+			data->index = of::priv::ofCubeMapsData().size() - 1;
 			bFound = true;
 		}
 	}
@@ -179,7 +174,7 @@ const ofTexture& ofCubeMap::getBrdfLutTexture() {
 
 //----------------------------------------
 ofCubeMap::ofCubeMap() {
-	data = std::make_shared<ofCubeMap::Data>();
+	data = std::make_shared<of::priv::ofCubeMapData>();
 	_checkSetup();
 	projectionMat = glm::perspective(glm::radians(90.0f), 1.0f, 0.1f, 10.0f );
 }
@@ -192,7 +187,7 @@ ofCubeMap::ofCubeMap(const ofCubeMap & mom) {
 		data.reset();
 	}
 	if( mom.data ) {
-		data = std::make_shared<ofCubeMap::Data>(*mom.data);
+		data = std::make_shared<of::priv::ofCubeMapData>(*mom.data);
 		if( data->bCubeMapAllocated ) {
 			retain(data->cubeMapId);
 		}
@@ -204,7 +199,7 @@ ofCubeMap::ofCubeMap(const ofCubeMap & mom) {
 		}
 	}
 	if( !data ) {
-		data = std::make_shared<ofCubeMap::Data>();
+		data = std::make_shared<of::priv::ofCubeMapData>();
 	}
 	data->index = -1;
 	if( mom.data ) {
@@ -236,7 +231,7 @@ ofCubeMap & ofCubeMap::operator=(const ofCubeMap & mom){
 		data.reset();
 	}
 	if( mom.data ) {
-		data = std::make_shared<ofCubeMap::Data>(*mom.data);
+		data = std::make_shared<of::priv::ofCubeMapData>(*mom.data);
 		if( data->bCubeMapAllocated ) {
 			retain(data->cubeMapId);
 		}
@@ -248,7 +243,7 @@ ofCubeMap & ofCubeMap::operator=(const ofCubeMap & mom){
 		}
 	}
 	if( !data ) {
-		data = std::make_shared<ofCubeMap::Data>();
+		data = std::make_shared<of::priv::ofCubeMapData>();
 	}
 	if( mom.data ) {
 		data->settings = mom.data->settings;
