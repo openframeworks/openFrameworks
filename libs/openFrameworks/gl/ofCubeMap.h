@@ -35,45 +35,48 @@ struct ofCubeMapSettings {
 #endif
 };
 
-/// \class ofCubeMapData
-///
-/// \brief Data class structure for storing GL texture ids and other data regarding cube maps
-/// Used internally for access to cube map data in the rendering pipeline, ie. ofMaterial.
-/// A Data class is created for each instance of ofCubeMap and all of them can be accessed by ofCubeMapsData().
-/// Which is declared towards the bottom of this file.
-namespace of{
-namespace priv{
-class ofCubeMapData {
-public:
-	GLuint cubeMapId = 0; ///< GL texture id of the cube map
-	bool bCubeMapAllocated = false;
-	GLuint irradianceMapId = 0; ///< GL texture id of the irradiance map
-	bool bIrradianceAllocated = false;
-	GLuint preFilteredMapId = 0; ///< GL texture id of the pre filter map
-	bool bPreFilteredMapAllocated = false;
-	
-	int index = -1;
-	bool isEnabled = true;
-	
-	ofCubeMapSettings settings; ///< settings associated with this cube map
-	
-	int maxMipLevels = 5; ///< number of mip map levels for generating the prefilted map
-	float exposure = 1.0; ///< used for storing the exposure of the cube map, which is set with ofCubeMap::setExposure()
-};
-}
-}
-
 class ofCubeMap {
 protected:
+	
+	/// \class ofCubeMap::Data
+	///
+	/// \brief Data class structure for storing GL texture ids and other data regarding cube maps
+	/// Used internally for access to cube map data in the rendering pipeline, ie. ofMaterial.
+	/// A Data class is created for each instance of ofCubeMap and all of them can be accessed by ofCubeMapsData().
+	/// Which is declared towards the bottom of this file.
+	class Data {
+	public:
+		GLuint cubeMapId = 0; ///< GL texture id of the cube map
+		bool bCubeMapAllocated = false;
+		GLuint irradianceMapId = 0; ///< GL texture id of the irradiance map
+		bool bIrradianceAllocated = false;
+		GLuint preFilteredMapId = 0; ///< GL texture id of the pre filter map
+		bool bPreFilteredMapAllocated = false;
+		
+		int index = -1;
+		bool isEnabled = true;
+		
+		ofCubeMapSettings settings; ///< settings associated with this cube map
+		
+		int maxMipLevels = 5; ///< number of mip map levels for generating the prefilted map
+		float exposure = 1.0; ///< used for storing the exposure of the cube map, which is set with ofCubeMap::setExposure()
+	};
+	
+	/// \brief Global storage for all cube maps created. The Data class holds infomation about textures and other information
+	/// relevant for rendering. This function is utilized internally.
+	/// More about the Data class above.
+	/// \return std::vector<std::weak_ptr<ofCubeMap::Data>>&.
+	static std::vector<std::weak_ptr<ofCubeMap::Data>>& getCubeMapsData();
+	
 	/// \brief Is there any active cube map.
 	/// \return true if there is any active cube map.
 	static bool hasActiveCubeMap();
 	/// \brief Get the first cube map data that is enabled.
 	/// \return std::shared_ptr<ofCubeMap::Data> of the active cube map data.
-	static std::shared_ptr<of::priv::ofCubeMapData> getActiveData();
+	static std::shared_ptr<ofCubeMap::Data> getActiveData();
 	/// \brief Internal function for releasing the GL texture memory.
 	/// \param std::shared_ptr<ofCubeMap::Data> cube map data holding texture ids to clear.
-	static void clearTextureData(std::shared_ptr<of::priv::ofCubeMapData> adata);
+	static void clearTextureData(std::shared_ptr<ofCubeMap::Data> adata);
 	#ifdef TARGET_ANDROID
 	static void regenerateAllTextures();
 	#endif
@@ -168,7 +171,7 @@ public:
 	GLuint getPrefilterMapId() { return data->preFilteredMapId; }
 
 protected:
-	std::shared_ptr<of::priv::ofCubeMapData> data;
+	std::shared_ptr<ofCubeMap::Data> data;
 
 	void _drawCubeStart(GLuint aCubeMapId);
 	void _drawCubeEnd();
@@ -220,12 +223,3 @@ protected:
 	static ofShader shaderBrdfLUT;
 };
 
-/// \brief Global storage for all cube maps created. The Data class holds infomation about textures and other information
-/// relevant for rendering. This function is utilized internally, but has been left exposed for advanced users.
-/// More about the class above, adjacent to the ofCubeMap::Data class declaration.
-/// \return std::vector<std::weak_ptr<ofCubeMap::Data>>.
-namespace of{
-namespace priv{
-std::vector<std::weak_ptr<ofCubeMapData>> & ofCubeMapsData();
-}
-}

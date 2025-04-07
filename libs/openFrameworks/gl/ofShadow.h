@@ -15,45 +15,6 @@ class ofLight;
 class ofGLProgrammableRenderer;
 class ofMaterial;
 
-/// \class ofShadowData
-/// Used for holding information for rendering, accessed by other classes like ofShader.
-namespace of{
-namespace priv{
-class ofShadowData{
-public:
-	// position, direction, up and right are in world space
-	glm::vec3 position = {0,0,0};
-	glm::vec3 direction = {1,0,0};
-	
-	glm::vec3 up = {0,1,0};
-	glm::vec3 right = {1,0,0};
-	
-	int lightType = 0;
-#if defined(TARGET_OPENGLES)
-	ofShadowType shadowType = OF_SHADOW_TYPE_HARD;
-#else
-	ofShadowType shadowType = OF_SHADOW_TYPE_PCF_LOW;
-#endif
-	
-	glm::mat4 shadowMatrix;
-	float strength = 0.5;
-	
-	int texIndex = 0;
-	
-	bool isEnabled = false;
-	float bias = 0.005f;
-	float normalBias = 0.0;
-	
-	int numDepthPasses = 1;
-	
-	int index = -1;
-	float nearClip = 1;
-	float farClip = 1500;
-	float sampleRadius = 1.f;
-};
-}
-}
-
 /// \class ofShadow
 /// Used for determining the amount of light blocked, emanating from ofLights.
 /// Intended use as class inside ofLight.
@@ -229,7 +190,44 @@ public:
 	
 	
 protected:
-	const std::shared_ptr<of::priv::ofShadowData>& getData() const { return data; }
+	/// \class ofShadowData
+	/// Used for holding information for rendering, accessed by other classes like ofShader.
+	class Data{
+	public:
+		// position, direction, up and right are in world space
+		glm::vec3 position = {0,0,0};
+		glm::vec3 direction = {1,0,0};
+		
+		glm::vec3 up = {0,1,0};
+		glm::vec3 right = {1,0,0};
+		
+		int lightType = 0;
+#if defined(TARGET_OPENGLES)
+		ofShadowType shadowType = OF_SHADOW_TYPE_HARD;
+#else
+		ofShadowType shadowType = OF_SHADOW_TYPE_PCF_LOW;
+#endif
+		
+		glm::mat4 shadowMatrix;
+		float strength = 0.5;
+		
+		int texIndex = 0;
+		
+		bool isEnabled = false;
+		float bias = 0.005f;
+		float normalBias = 0.0;
+		
+		int numDepthPasses = 1;
+		
+		int index = -1;
+		float nearClip = 1;
+		float farClip = 1500;
+		float sampleRadius = 1.f;
+	};
+	
+	static std::vector<std::weak_ptr<ofShadow::Data> > & getShadowsData();
+	
+	const std::shared_ptr<ofShadow::Data>& getData() const { return data; }
 	
 	/// \note: These protected functions are called from ofLight.
 	void setLightType( int atype );
@@ -246,6 +244,7 @@ protected:
 	friend class ofLight;
 	friend class ofGLProgrammableRenderer;
 	friend class ofMaterial;
+	friend class ofShader;
 	
 	static std::string getShaderDefinesAsString();
 	
@@ -267,7 +266,7 @@ protected:
 	void _checkFbos();
 	void _updateNumShadows();
 	
-	std::shared_ptr<of::priv::ofShadowData> data;
+	std::shared_ptr<ofShadow::Data> data;
 	
 	bool mBSinglePass = true;
 	
@@ -308,11 +307,11 @@ private:
 	
 };
 
-namespace of{
-namespace priv{
-/// \brief Function for storing all of the ofShadows data.
-std::vector<std::weak_ptr<ofShadowData> > & ofShadowsData();
-}
-}
+//namespace of{
+//namespace priv{
+///// \brief Function for storing all of the ofShadows data.
+//std::vector<std::weak_ptr<ofShadowData> > & ofShadowsData();
+//}
+//}
 
 

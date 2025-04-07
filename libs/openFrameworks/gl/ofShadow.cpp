@@ -40,8 +40,8 @@ struct ofShadowGLData {
 
 
 //----------------------------------------
-vector<weak_ptr<of::priv::ofShadowData> > & of::priv::ofShadowsData(){
-	static vector<weak_ptr<of::priv::ofShadowData> > * shadowsActive = ofIsGLProgrammableRenderer()?new vector<weak_ptr<of::priv::ofShadowData> >:new vector<weak_ptr<of::priv::ofShadowData> >(8);
+vector<weak_ptr<ofShadow::Data> > & ofShadow::getShadowsData(){
+	static vector<weak_ptr<ofShadow::Data> > * shadowsActive = ofIsGLProgrammableRenderer() ? new vector<weak_ptr<ofShadow::Data> > : new vector<weak_ptr<ofShadow::Data> >(8);
 	return *shadowsActive;
 }
 
@@ -211,8 +211,8 @@ std::string ofShadow::getShadowTypeAsString( ofShadowType atype ) {
 
 //--------------------------------------------------------------
 bool ofShadow::hasActiveShadows() {
-	for(size_t i=0;i< of::priv::ofShadowsData().size();i++){
-		std::shared_ptr<of::priv::ofShadowData> shadow = of::priv::ofShadowsData()[i].lock();
+	for(size_t i=0;i<getShadowsData().size();i++){
+		auto shadow = getShadowsData()[i].lock();
 		if(shadow && shadow->isEnabled && shadow->index > -1 ){
 			return true;
 			break;
@@ -228,8 +228,8 @@ void ofShadow::enableAllShadows() {
 		return;
 	}
 	
-	for(size_t i=0;i<of::priv::ofShadowsData().size();i++){
-		std::shared_ptr<of::priv::ofShadowData> shadow = of::priv::ofShadowsData()[i].lock();
+	for(size_t i=0;i<getShadowsData().size();i++){
+		auto shadow = getShadowsData()[i].lock();
 		if(!shadow || shadow->index < 0 ){
 			continue;
 		}
@@ -239,8 +239,8 @@ void ofShadow::enableAllShadows() {
 
 //--------------------------------------------------------------
 void ofShadow::disableAllShadows() {
-	for(size_t i=0;i<of::priv::ofShadowsData().size();i++){
-		std::shared_ptr<of::priv::ofShadowData> shadow = of::priv::ofShadowsData()[i].lock();
+	for(size_t i=0;i<getShadowsData().size();i++){
+		auto shadow = getShadowsData()[i].lock();
 		if(!shadow || shadow->index < 0 ){
 			continue;
 		}
@@ -254,8 +254,8 @@ void ofShadow::setAllShadowTypes( ofShadowType atype ) {
 		ofLogWarning("ofShadow :: setAllShadowTypes : only works with programmable renderer.");
 		return;
 	}
-	for(size_t i=0;i<of::priv::ofShadowsData().size();i++){
-		std::shared_ptr<of::priv::ofShadowData> shadow = of::priv::ofShadowsData()[i].lock();
+	for(size_t i=0;i<getShadowsData().size();i++){
+		auto shadow = getShadowsData()[i].lock();
 		if(!shadow || shadow->index < 0 ){
 			continue;
 		}
@@ -281,8 +281,8 @@ void ofShadow::setAllShadowBias( float bias ) {
 		ofLogWarning("ofShadow :: setAllShadowBias : only works with programmable renderer.");
 		return;
 	}
-	for(size_t i=0;i<of::priv::ofShadowsData().size();i++){
-		std::shared_ptr<of::priv::ofShadowData> shadow = of::priv::ofShadowsData()[i].lock();
+	for(size_t i=0;i<getShadowsData().size();i++){
+		auto shadow = getShadowsData()[i].lock();
 		if(!shadow || shadow->index < 0 ){
 			continue;
 		}
@@ -296,8 +296,8 @@ void ofShadow::setAllShadowNormalBias( float normalBias ) {
 		ofLogWarning("ofShadow :: setAllShadowNormalBias : only works with programmable renderer.");
 		return;
 	}
-	for(size_t i=0;i<of::priv::ofShadowsData().size();i++){
-		std::shared_ptr<of::priv::ofShadowData> shadow = of::priv::ofShadowsData()[i].lock();
+	for(size_t i=0;i<getShadowsData().size();i++){
+		auto shadow = getShadowsData()[i].lock();
 		if(!shadow || shadow->index < 0 ){
 			continue;
 		}
@@ -311,8 +311,8 @@ void ofShadow::setAllShadowSampleRadius( float sampleRadius ) {
 		ofLogWarning("ofShadow :: enableAllShadows : only works with programmable renderer.");
 		return;
 	}
-	for(size_t i=0;i<of::priv::ofShadowsData().size();i++){
-		std::shared_ptr<of::priv::ofShadowData> shadow = of::priv::ofShadowsData()[i].lock();
+	for(size_t i=0;i<getShadowsData().size();i++){
+		auto shadow = getShadowsData()[i].lock();
 		if(!shadow || shadow->index < 0 ){
 			continue;
 		}
@@ -324,7 +324,7 @@ void ofShadow::setAllShadowSampleRadius( float sampleRadius ) {
 std::string ofShadow::getShaderDefinesAsString() {
 	std::string definesString = "";
 	if( areShadowsSupported() ) {
-		if( of::priv::ofShadowsData().size() > 0 && ofLightsData().size() > 0) {
+		if( getShadowsData().size() > 0 && ofLightsData().size() > 0) {
 			definesString += "#define HAS_SHADOWS 1\n";
 		}
 		
@@ -355,8 +355,8 @@ bool ofShadow::areShadowsSupported() {
 void ofShadow::_updateTexDataIds() {
 	std::map<int, int> texIdMap;
 	
-	for(size_t i=0;i<of::priv::ofShadowsData().size();i++){
-		std::shared_ptr<of::priv::ofShadowData> shadow = of::priv::ofShadowsData()[i].lock();
+	for(size_t i=0;i<getShadowsData().size();i++){
+		auto shadow = getShadowsData()[i].lock();
 		if(!shadow || !shadow->isEnabled || shadow->index < 0 ){
 			continue;
 		}
@@ -372,7 +372,7 @@ void ofShadow::_updateTexDataIds() {
 
 //--------------------------------------------------------------
 ofShadow::ofShadow() {
-	data = std::make_shared<of::priv::ofShadowData>();
+	data = std::make_shared<ofShadow::Data>();
 	data->shadowMatrix = glm::mat4(1.0f);
 	setSingleOmniPass(true);
 #if defined(TARGET_OPENGLES)
@@ -953,18 +953,18 @@ void ofShadow::_checkSetup() {
 	if( data->index < 0 ) {
 		bool bShadowFound = false;
 		// search for the first free block
-		for(size_t i=0; i<of::priv::ofShadowsData().size(); i++) {
-			if(of::priv::ofShadowsData()[i].expired()) {
+		for(size_t i=0; i<getShadowsData().size(); i++) {
+			if(getShadowsData()[i].expired()) {
 				data->index = i;
 				data->isEnabled = false;
-				of::priv::ofShadowsData()[i] = data;
+				getShadowsData()[i] = data;
 				bShadowFound = true;
 				break;
 			}
 		}
 		if(!bShadowFound && ofIsGLProgrammableRenderer()){
-			of::priv::ofShadowsData().push_back(data);
-			data->index = of::priv::ofShadowsData().size() - 1;
+			getShadowsData().push_back(data);
+			data->index = getShadowsData().size() - 1;
 			data->isEnabled = false;
 			bShadowFound = true;
 		}
@@ -1143,9 +1143,9 @@ void ofShadow::_updateNumShadows() {
 	getGLData(OF_LIGHT_SPOT).totalShadows = 0;
 	getGLData(OF_LIGHT_AREA).totalShadows = 0;
 	
-	for(size_t i=0; i < of::priv::ofShadowsData().size(); i++){
-		if(!of::priv::ofShadowsData()[i].expired()) {
-			auto shadow = of::priv::ofShadowsData()[i].lock();
+	for(size_t i=0;i<getShadowsData().size();i++){
+		if(!getShadowsData()[i].expired()) {
+			auto shadow = getShadowsData()[i].lock();
 			if( shadow ) {
 				getGLData(shadow->lightType).totalShadows++;
 			}

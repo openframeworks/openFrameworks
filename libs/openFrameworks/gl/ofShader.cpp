@@ -1469,9 +1469,9 @@ bool ofShader::setShadowUniforms(int textureLocation) const {
     setUniformTexture("uShadowMapSpot", ofShadow::getTextureTarget(OF_LIGHT_SPOT), ofShadow::getSpotTexId(), textureLocation + 2);
     setUniformTexture("uShadowMapArea", ofShadow::getTextureTarget(OF_LIGHT_AREA), ofShadow::getAreaTexId(), textureLocation + 3);
 
-    for (size_t i = 0; i < of::priv::ofShadowsData().size(); i++) {
+    for (size_t i = 0; i < ofShadow::getShadowsData().size(); i++) {
         std::string idx = ofToString(i, 0);
-        std::shared_ptr<of::priv::ofShadowData> shadow = of::priv::ofShadowsData()[i].lock();
+        auto shadow = ofShadow::getShadowsData()[i].lock();
         std::string shadowAddress = "shadows[" + idx + "]";
         if (!shadow || !shadow->isEnabled || shadow->index < 0) {
             setUniform1f(shadowAddress + ".enabled", 0);
