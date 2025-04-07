@@ -870,7 +870,7 @@ void ofMaterial::initShaders(ofGLProgrammableRenderer & renderer) const{
 	
 	size_t numLights = ofLightsData().size();
 	// only support for a single cube map at a time
-	size_t numCubeMaps = ofCubeMapsData().size() > 0 ? 1 : 0;
+	size_t numCubeMaps = ofCubeMap::getCubeMapsData().size() > 0 ? 1 : 0;
 	const std::string shaderId = getShaderStringId();
 	
 	if(rendererShaders == shaders.end() ||
@@ -1077,7 +1077,7 @@ void ofMaterial::updateMaterial(const ofShader & shader,ofGLProgrammableRenderer
 			shader.setUniform1f("mat_normal_mix", data.normalGeomToNormalMapMix );
 		}
 		
-		std::shared_ptr<ofCubeMap::Data> cubeMapData = ofCubeMap::getActiveData();
+		auto cubeMapData = ofCubeMap::getActiveData();
 		if( cubeMapData ) {
 			shader.setUniform1f("mat_ibl_exposure", cubeMapData->exposure );
 			shader.setUniform1f("uCubeMapEnabled", 1.0f );
@@ -1446,7 +1446,7 @@ const std::string ofMaterial::getDefinesString() const {
 		#endif
 	}
 	
-	if(isPBR() && ofCubeMapsData().size() > 0 && ofIsGLProgrammableRenderer() ) {
+	if(isPBR() && ofCubeMap::getCubeMapsData().size() > 0 && ofIsGLProgrammableRenderer() ) {
 //		const auto& cubeMapData = ofCubeMap::getActiveData();
 		
 		definesString += "#define HAS_CUBE_MAP 1\n";
@@ -1454,7 +1454,7 @@ const std::string ofMaterial::getDefinesString() const {
 		bool bHasIrradiance = false;
 		bool bPreFilteredMap = false;
 		bool bBrdfLutTex = false;
-		for( auto cmdWeak : ofCubeMapsData() ) {
+		for( auto cmdWeak : ofCubeMap::getCubeMapsData() ) {
 			auto cmd = cmdWeak.lock();
 			if( !cmd ) continue;
 			if( cmd->bIrradianceAllocated ) {
