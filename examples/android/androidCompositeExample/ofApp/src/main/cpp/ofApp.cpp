@@ -58,10 +58,10 @@ void ofApp::setup(){
     volume				= 0.1f;
     bNoise 				= false;
 	initialBufferSize = 256;
-		
+
 	lAudio = new float[initialBufferSize];
 	rAudio = new float[initialBufferSize];
-	
+
 	memset(lAudio, 0, initialBufferSize * sizeof(float));
 	memset(rAudio, 0, initialBufferSize * sizeof(float));
 
@@ -95,7 +95,7 @@ void ofApp::draw(){
     int b = 128 + 50 * sinf(ofGetElapsedTimef());
 
     ofBackground(r,g,b);
-	
+
 	if( doShader ){
 		shader.begin();
 		//we want to pass in some varrying values to animate our type / color
@@ -122,7 +122,7 @@ void ofApp::draw(){
         ofVertex(20+i*10,ofGetHeight() / 2 + 250 + rAudio[i]*500.0f);
     }
     ofEndShape(false);
-    
+
     //finally draw our text
     text.draw();
 
@@ -133,13 +133,13 @@ void ofApp::draw(){
 }
 
 //--------------------------------------------------------------
-void ofApp::keyPressed  (int key){ 
-	
+void ofApp::keyPressed  (int key){
+
 }
 
 //--------------------------------------------------------------
-void ofApp::keyReleased(int key){ 
-	
+void ofApp::keyReleased(int key){
+
 }
 
 //--------------------------------------------------------------
@@ -182,7 +182,7 @@ void ofApp::touchMoved(int x, int y, int id){
 	float height = (float)ofGetHeight();
 	float heightPct = ((height-y) / height);
 	targetFrequency = 2000.0f * heightPct;
-	phaseAdderTarget = (targetFrequency / (float) sampleRate) * TWO_PI;
+	phaseAdderTarget = (targetFrequency / (float) sampleRate) * glm::two_pi<float>();
 }
 
 //--------------------------------------------------------------
@@ -248,8 +248,8 @@ void ofApp::audioOut(ofSoundBuffer & buffer){
 
 	// sin (n) seems to have trouble when n is very large, so we
 	// keep phase in the range of 0-TWO_PI like this:
-	while (phase > TWO_PI){
-		phase -= TWO_PI;
+	while (phase > glm::two_pi<float>()){
+		phase -= glm::two_pi<float>();
 	}
 
 	if ( bNoise == true){

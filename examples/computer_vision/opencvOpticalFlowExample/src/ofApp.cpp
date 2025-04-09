@@ -2,7 +2,7 @@
 
 //--------------------------------------------------------------
 void ofApp::setup(){
-	
+
 	ofSetFrameRate(60);
 
 	#ifdef _USE_LIVE_VIDEO
@@ -13,7 +13,7 @@ void ofApp::setup(){
         vidPlayer.play();
         vidPlayer.setLoopState(OF_LOOP_NORMAL);
 	#endif
-	
+
 	blurAmount = 11;
 	bMirror = true;
 	cvDownScale = 8;
@@ -22,35 +22,35 @@ void ofApp::setup(){
 	minLengthSquared = 0.5 * 0.5;
 	mode = MODE_SPIN_CUBES;
 	bDrawOptiFlowVectors = false;
-	
+
 	// lets make a mesh that's an arrow
 	arrowMesh.setMode(OF_PRIMITIVE_TRIANGLES);
-	
+
 	// these 4 vertices will be the rectangle
 	arrowMesh.addVertex( glm::vec3(0.0, -0.22, 0.0 ));
 	arrowMesh.addVertex( glm::vec3(1.0, -0.22, 0.0 ));
 	arrowMesh.addVertex( glm::vec3(1.0, 0.22, 0.0 ));
 	arrowMesh.addVertex( glm::vec3(0.0, 0.22, 0.0 ));
-	
+
 	arrowMesh.addIndex(1);
 	arrowMesh.addIndex(0);
 	arrowMesh.addIndex(3);
-	
+
 	arrowMesh.addIndex(1);
 	arrowMesh.addIndex(3);
 	arrowMesh.addIndex(2);
-	
+
 	// these 3 vertices will be the arrow head
 	arrowMesh.addVertex( glm::vec3(1.0, -0.6, 0.0 )); // 4
 	arrowMesh.addVertex( glm::vec3(1.5, 0.0, 0.0 )); // 5
 	arrowMesh.addVertex( glm::vec3(1.0, 0.6, 0.0 )); // 6
-	
+
 	arrowMesh.addIndex(6);
 	arrowMesh.addIndex(5);
 	arrowMesh.addIndex(4);
-	
+
 	arrowMesh.setUsage(GL_STATIC_DRAW);
-	
+
 	ofSetWindowTitle("Spin Cubes");
 }
 
@@ -73,11 +73,11 @@ void ofApp::update(){
 		sourceWidth = vidPlayer.getWidth();
 		sourceHeight = vidPlayer.getHeight();
 	#endif
-	
+
 	// divide the source width by cvDownScale to create a smaller image to use for opencv
 	int scaledWidth = sourceWidth / cvDownScale;
 	int scaledHeight = sourceHeight / cvDownScale;
-	
+
 	if( currentImage.getWidth() != scaledWidth || currentImage.getHeight() != scaledHeight ){
 		ofLogNotice() << "Allocating current image to: " << scaledWidth << " x " << scaledHeight << " | " << ofGetFrameNum() << endl;
 		currentImage.clear();
@@ -94,21 +94,21 @@ void ofApp::update(){
 		// notice that the argument order is height and then width
 		// store as floats
 		flowMat = cv::Mat(scaledHeight, scaledWidth, CV_32FC2);
-		
+
 		ofSetWindowShape(MIN(sourceWidth, 1920), MIN(sourceHeight, 1200));
-		
+
 		// clear the previous vectors
 		spinCubes.clear();
 		particles.clear();
 		flowLines.clear();
-		
+
 		float spacing = 30;
 		int numx = sourceWidth / spacing;
 		int numy = sourceHeight / spacing;
-		
+
 		// store a mesh for drawing on the face of cubes in the draw function
 		planeMesh = ofMesh::plane( spacing, spacing );
-		
+
 		for( int x = 0; x < numx; x++ ){
 			for( int y = 0; y < numy; y++ ){
 				glm::vec2 pos(spacing * 0.5f + (float)x * spacing, spacing * 0.5f + (float)y * spacing );
@@ -116,24 +116,24 @@ void ofApp::update(){
 				cube.pos = pos;
 				cube.size = spacing;
 				spinCubes.push_back(cube);
-				
+
 				Particle particle;
 				particle.pos = pos;
 				particle.size = spacing;
 				particle.basePos = particle.pos;
 				particles.push_back( particle );
-				
+
 				FlowLine line;
 				line.pos = pos;
 				line.size = spacing;
-				line.targetAngle = ofRandom(-PI, PI);
+				line.targetAngle = ofRandom(-glm::pi<float>(), glm::pi<float>());
 				line.angle = atan2(y, x);
 				flowLines.push_back(line);
 			}
 		}
 	}
-	
-	
+
+
 
 	if (bNewFrame){
 
@@ -143,25 +143,25 @@ void ofApp::update(){
             colorImg.setFromPixels(vidPlayer.getPixels());
         #endif
 		grayImage = colorImg;
-		
+
 		if(bMirror) {
 			// flip the image horizontally
 			grayImage.mirror(false, true);
 		}
 		// call this function if you would like to use the texture
 //		grayImage.updateTexture();
-		
+
 		// scale down the grayImage into the smaller sized currentImage
 		currentImage.scaleIntoMe(grayImage);
-		
+
 		if(bContrastStretch) {
 			currentImage.contrastStretch();
 		}
-		
+
 		if(blurAmount > 0 ) {
 			currentImage.blurGaussian(blurAmount);
 		}
-		
+
 		// to perform the optical flow, we will be using cv::Mat
 		// so grab the cv::Mat from the current image and store in currentMat
 		cv::Mat currentMat = currentImage.getCvMat();
@@ -177,14 +177,14 @@ void ofApp::update(){
 									 7, // poly_n
 									 1.5, // poly_sigma
 									 cv::OPTFLOW_FARNEBACK_GAUSSIAN);
-		
+
 		// copy over the current mat into the previous mat
 		// so that the optical flow function can calculate the difference
 		currentMat.copyTo(previousMat);
 	}
-	
+
 	float deltaTime = ofClamp( ofGetLastFrameTime(), 1.f / 5000.f, 1.f / 5.f );
-	
+
 	if( mode == MODE_SPIN_CUBES ){
 		for( size_t i = 0; i < spinCubes.size(); i++ ){
 			auto& cube = spinCubes[i];
@@ -199,13 +199,13 @@ void ofApp::update(){
 			cube.yAngleAcc += flowForce.x * 20.0 * deltaTime;
 			cube.yAxisAngle += cube.yAngleAcc;
 			cube.yAxisAngle = ofWrapDegrees(cube.yAxisAngle);
-			
+
 			cube.xAxisAngle /= 1.f + deltaTime;
 			cube.xAngleAcc /= (1.f+deltaTime);
 			cube.xAngleAcc += -flowForce.y * 20.0 * deltaTime;
 			cube.xAxisAngle += cube.xAngleAcc;
 			cube.xAxisAngle = ofWrapDegrees(cube.xAxisAngle);
-			
+
 		}
 	} else if( mode == MODE_PARTICLES ){
 		size_t numParticles = particles.size();
@@ -215,7 +215,7 @@ void ofApp::update(){
 			float percentY = particle.pos.y / sourceHeight;
 			glm::vec2 flowForce = getOpticalFlowValueForPercent(percentX, percentY);
 			float len2 = glm::length2( flowForce );
-			
+
 			particle.vel /= 1.f + deltaTime;
 			if( len2 > minLengthSquared ){
 				// ok lets add some velocity
@@ -224,7 +224,7 @@ void ofApp::update(){
 					particle.timeNotTouched = 0.0f;
 				}
 				particle.bAtBasePos = false;
-				
+
 			} else {
 				particle.timeNotTouched += deltaTime;
 			}
@@ -237,7 +237,7 @@ void ofApp::update(){
 				particle.bAtBasePos = true;
 			}
 			particle.pos += particle.vel * (10.0f * deltaTime);
-			
+
 		}
 	}else if( mode == MODE_LINES ){
 		size_t numFlowLines = flowLines.size();
@@ -246,11 +246,11 @@ void ofApp::update(){
 			float percentX = line.pos.x / sourceWidth;
 			float percentY = line.pos.y / sourceHeight;
 			glm::vec2 flowForce = getOpticalFlowValueForPercent(percentX, percentY);
-			
+
 			if( glm::length2(flowForce) > minLengthSquared ){
 				line.target = glm::normalize(flowForce);
 				line.targetAngle = atan2(line.target.y, line.target.x );
-				
+
 			}
 			line.flow = glm::mix( line.flow, glm::normalize(line.target), deltaTime );
 			line.angle = ofLerpRadians(line.angle, line.targetAngle, deltaTime * 4.0 );
@@ -263,10 +263,10 @@ void ofApp::update(){
 void ofApp::draw(){
 	ofBackgroundGradient(ofColor(0), ofColor(40));
 	float deltaTime = ofClamp( ofGetLastFrameTime(), 1.f / 5000.f, 1.f / 5.f );
-	
+
 	ofSetColor( 255 );
 	float scale = grayImage.getWidth() / std::max(1.f,currentImage.getWidth());
-		
+
 	if(grayImage.bAllocated){
 		if( mode == MODE_SPIN_CUBES ){
 			ofEnableDepthTest();
@@ -296,10 +296,10 @@ void ofApp::draw(){
 		} else if( mode == MODE_PARTICLES ){
 			ofSetColor(80);
 			currentImage.draw(0, 0, grayImage.getWidth(), grayImage.getHeight() );
-			
+
 			size_t numParticles = particles.size();
 			const ofPixels& vpix = colorImg.getPixels();
-			
+
 			for( size_t i = 0; i < numParticles; i++ ) {
 				auto& particle = particles[i];
 				int samplex = particle.pos.x;
@@ -314,7 +314,7 @@ void ofApp::draw(){
 				ofTranslate( particle.pos );
 				ofDrawCircle(0,0, particle.size * 0.5 * (vcolor.getBrightness() * 0.7f + 0.3f) );
 				ofPopMatrix();
-				
+
 			}
 		} else if( mode == MODE_LINES ){
 			ofSetColor(80);
@@ -339,18 +339,18 @@ void ofApp::draw(){
 			}
 		}
 	}
-	
+
 	ofSetColor( 255 );
 	if(currentImage.bAllocated ){
 		currentImage.draw(20, 120);
 	}
-	
+
 	ofSetColor(230, 40, 210 );
-	
+
 	int numCols = flowMat.cols;
 	int numRows = flowMat.rows;
-	
-	
+
+
 	if(bDrawOptiFlowVectors){
 		ofPushMatrix();
 		ofScale( scale, scale );
@@ -372,7 +372,7 @@ void ofApp::draw(){
 		drawMesh.draw();
 		ofPopMatrix();
 	}
-	
+
 	string outString = "Downscale (up / down): " + ofToString(cvDownScale, 0);
 	outString += "\nBlur (left / right): " + ofToString(blurAmount);
 	outString += "\nMirror (m): " + ofToString(bMirror);
@@ -386,11 +386,11 @@ void ofApp::draw(){
 //--------------------------------------------------------------
 glm::vec2 ofApp::getOpticalFlowValueForPercent( float xpct, float ypct ){
 	glm::vec2 flowVector(0,0);
-	
+
 	if( flowMat.empty() || !grayImage.bAllocated) {
 		return flowVector;
 	}
-	
+
 	int tx = xpct * (float)flowMat.cols;
 	int ty = ypct * (float)flowMat.rows;
 	// make sure to clamp the values to the width and height of the image
@@ -398,14 +398,14 @@ glm::vec2 ofApp::getOpticalFlowValueForPercent( float xpct, float ypct ){
 	if( tx >= flowMat.cols ){
 		tx = flowMat.cols-1;
 	}
-	
+
 	// note that flowMat.rows == height
 	if( ty >= flowMat.rows ){
 		ty = flowMat.rows-1;
 	}
 	if( tx < 0 ) tx = 0;
 	if( ty < 0 ) ty = 0;
-	
+
 	const cv::Point2f& fxy = flowMat.at<cv::Point2f>(ty, tx);
 	flowVector = glm::vec2(fxy.x, fxy.y);
 	if( glm::length2(flowVector) > minLengthSquared ){
@@ -505,6 +505,6 @@ void ofApp::gotMessage(ofMessage msg){
 }
 
 //--------------------------------------------------------------
-void ofApp::dragEvent(ofDragInfo dragInfo){ 
+void ofApp::dragEvent(ofDragInfo dragInfo){
 
 }
