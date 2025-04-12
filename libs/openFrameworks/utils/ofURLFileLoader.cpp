@@ -9,22 +9,26 @@ using std::set;
 using std::string;
 
 #if !defined(TARGET_IMPLEMENTS_URL_LOADER)
-#include <curl/curl.h>
-#include "ofThreadChannel.h"
-#include "ofThread.h"
-static bool curlInited = false;
-#define MAX_POSTFIELDS_SIZE (1024 * 1024)
-#if !defined(NO_OPENSSL)
-#include <openssl/evp.h>
-#include <openssl/pem.h>
-#include <openssl/x509.h>
-#include <openssl/x509v3.h>
-#include <openssl/err.h>
-#include <iostream>
-#include <fstream>
-#define CERTIFICATE_FILE "ssl/cacert.pem"
-#define PRIVATE_KEY_FILE "ssl/cacert.key"
-#endif
+	#include <curl/curl.h>
+	#include "ofThreadChannel.h"
+	#include "ofThread.h"
+	static bool curlInited = false;
+
+	#define MAX_POSTFIELDS_SIZE (1024 * 1024)
+
+	#define NO_OPENSSL 1
+	#include <openssl/evp.h>
+	#include <openssl/pem.h>
+	#include <openssl/x509.h>
+	#include <openssl/x509v3.h>
+	#include <openssl/err.h>
+	#include <iostream>
+	#include <fstream>
+
+	#if !defined(NO_OPENSSL)
+		#define CERTIFICATE_FILE "ssl/cacert.pem"
+		#define PRIVATE_KEY_FILE "ssl/cacert.key"
+	#endif
 #endif
 
 int ofHttpRequest::nextID = 0;
@@ -324,11 +328,9 @@ ofHttpResponse ofURLFileLoaderImpl::handleRequest(const ofHttpRequest & request)
 		}
 		curl_easy_setopt(curl.get(), CURLOPT_CAPATH, ofToDataPath(caPath, true).c_str());
 		curl_easy_setopt(curl.get(), CURLOPT_CAINFO, ofToDataPath(caFile, true).c_str());
-		curl_easy_setopt(curl.get(), CURLOPT_SSL_VERIFYPEER, false);
-#else
-		curl_easy_setopt(curl.get(), CURLOPT_SSL_VERIFYPEER, 1L);
 #endif
-		curl_easy_setopt(curl.get(), CURLOPT_SSL_VERIFYHOST, 2);
+		curl_easy_setopt(curl.get(), CURLOPT_SSL_VERIFYPEER, false);
+		curl_easy_setopt(curl.get(), CURLOPT_SSL_VERIFYHOST, 2L);
 	}
 	curl_easy_setopt(curl.get(), CURLOPT_URL, request.url.c_str());
 	curl_easy_setopt(curl.get(), CURLOPT_FOLLOWLOCATION, 1L);
