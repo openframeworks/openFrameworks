@@ -354,23 +354,6 @@ ofHttpResponse ofURLFileLoaderImpl::handleRequest(const ofHttpRequest & request)
 	if (headers) {
 		curl_easy_setopt(curl.get(), CURLOPT_HTTPHEADER, headers);
 	}
-	std::string body = request.body;
-	if (!request.body.empty()) {
-		if (request.method == ofHttpRequest::PUT || request.body.size() > MAX_POSTFIELDS_SIZE) { // If request is an upload (e.g., file upload)
-			curl_easy_setopt(curl.get(), CURLOPT_UPLOAD, 1L);
-			curl_easy_setopt(curl.get(), CURLOPT_READFUNCTION, readBody_cb);
-			curl_easy_setopt(curl.get(), CURLOPT_READDATA, &body);
-			curl_easy_setopt(curl.get(), CURLOPT_POSTFIELDSIZE, 0L);
-		} else { // If request is a normal POST
-			curl_easy_setopt(curl.get(), CURLOPT_POSTFIELDSIZE, request.body.size());
-			curl_easy_setopt(curl.get(), CURLOPT_POSTFIELDS, request.body.c_str());
-		}
-	} else {
-		curl_easy_setopt(curl.get(), CURLOPT_POSTFIELDSIZE, 0L);
-		curl_easy_setopt(curl.get(), CURLOPT_POSTFIELDS, "");
-		curl_easy_setopt(curl.get(), CURLOPT_READFUNCTION, nullptr);
-		curl_easy_setopt(curl.get(), CURLOPT_READDATA, nullptr);
-	}
 	if (request.method == ofHttpRequest::GET) {
 		curl_easy_setopt(curl.get(), CURLOPT_HTTPGET, 1L);
 		curl_easy_setopt(curl.get(), CURLOPT_POST, 0L);
@@ -385,6 +368,25 @@ ofHttpResponse ofURLFileLoaderImpl::handleRequest(const ofHttpRequest & request)
 		curl_easy_setopt(curl.get(), CURLOPT_POST, 1L);
 		curl_easy_setopt(curl.get(), CURLOPT_UPLOAD, 0L);
 		curl_easy_setopt(curl.get(), CURLOPT_HTTPGET, 0L);
+	}
+	if (request.method != ofHttpRequest::GET) {
+		std::string body = request.body;
+		if (!request.body.empty()) {
+			if (request.method == ofHttpRequest::PUT || request.body.size() > MAX_POSTFIELDS_SIZE) { // If request is an upload (e.g., file upload)
+				curl_easy_setopt(curl.get(), CURLOPT_UPLOAD, 1L);
+				curl_easy_setopt(curl.get(), CURLOPT_READFUNCTION, readBody_cb);
+				curl_easy_setopt(curl.get(), CURLOPT_READDATA, &body);
+				curl_easy_setopt(curl.get(), CURLOPT_POSTFIELDSIZE, 0L);
+			} else { // If request is a normal POST
+				curl_easy_setopt(curl.get(), CURLOPT_POSTFIELDSIZE, request.body.size());
+				curl_easy_setopt(curl.get(), CURLOPT_POSTFIELDS, request.body.c_str());
+			}
+		} else {
+			curl_easy_setopt(curl.get(), CURLOPT_POSTFIELDSIZE, 0L);
+			curl_easy_setopt(curl.get(), CURLOPT_POSTFIELDS, "");
+			curl_easy_setopt(curl.get(), CURLOPT_READFUNCTION, nullptr);
+			curl_easy_setopt(curl.get(), CURLOPT_READDATA, nullptr);
+		}
 	}
 
 	if (request.timeoutSeconds > 0) {
