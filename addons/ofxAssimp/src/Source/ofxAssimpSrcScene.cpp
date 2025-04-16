@@ -821,7 +821,7 @@ void SrcScene::loadGLResources(std::shared_ptr<ofxAssimp::SrcMesh> aSrcMesh, aiM
 				aSrcMesh->indices[j++] = amesh->mFaces[x].mIndices[a];
 			}
 		}
-		aSrcMesh->vbo->setIndexData(&aSrcMesh->indices[0],aSrcMesh->indices.size(),GL_STATIC_DRAW);
+		aSrcMesh->vbo->setIndexData(&aSrcMesh->indices[0],(int)aSrcMesh->indices.size(),GL_STATIC_DRAW);
 	}
 	ofLogVerbose("ofxAssimp::SrcScene") << "loadGLResource(): finished";
 }

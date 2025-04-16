@@ -1,6 +1,6 @@
 # This one was created to make it work whil
 
-name: manual-nightly-ok
+name: manual-release
 
 on:
   workflow_dispatch:
@@ -67,8 +67,7 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           tag: ${{ github.event.inputs.release }}
-          # release: ${{ github.event.inputs.release }}
-          release: nightly
+          release: ${{ github.event.inputs.release }}
           prerelease: false
           replace: true
           files: ${{ steps.createpackage.outputs.FILES_OUT }}

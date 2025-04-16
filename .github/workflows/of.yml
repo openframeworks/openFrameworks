@@ -77,11 +77,11 @@ jobs:
         run: gcc -v
       - uses: actions/checkout@v4
       - name: ccache
-        uses: hendrikmuhs/ccache-action@v1.2.14
+        uses: hendrikmuhs/ccache-action@v1.2.17
         with:
           # key: ${{ matrix.os }}-${{ matrix.type }}
           key: ${{ matrix.msystem }}
-      - uses: msys2/setup-msys2@v2.24.1
+      - uses: msys2/setup-msys2@v2.27.0
         with:
           cache: true
           release: true
@@ -125,7 +125,7 @@ jobs:
     steps:
       - name: Clone repository
         uses: actions/checkout@v4
-      - uses: msys2/setup-msys2@v2.24.1
+      - uses: msys2/setup-msys2@v2.27.0
         with:
           update: true
           install: >-
@@ -171,8 +171,8 @@ jobs:
     steps:
       - name: Clone repository
         uses: actions/checkout@v4
-        
-      - uses: msys2/setup-msys2@v2.24.1
+
+      - uses: msys2/setup-msys2@v2.27.0
         with:
           update: true
           install: >-
@@ -182,7 +182,7 @@ jobs:
       - name: Setup MSBuild (VS2019 - 16.11)
         uses: microsoft/setup-msbuild@v2
         with:
-          vs-version: '16.11'
+          vs-version: "16.11"
           msbuild-architecture: x64
 
       - name: Verify MSBuild Version
@@ -215,7 +215,6 @@ jobs:
       #   run: |
       #     msbuild examples/templates/allAddonsExample/allAddonsExample.vcxproj /p:configuration=debug /p:platform=${{ matrix.platform }} /p:PlatformToolset=v142
       #     msbuild examples/templates/allAddonsExample/allAddonsExample.vcxproj /p:configuration=release /p:platform=${{ matrix.platform }} /p:PlatformToolset=v142
-
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -254,7 +253,7 @@ jobs:
           version: 1.0
       - uses: actions/checkout@v4
       - name: ccache
-        uses: hendrikmuhs/ccache-action@v1.2.14
+        uses: hendrikmuhs/ccache-action@v1.2.17
         with:
           key: ${{ matrix.cfg.libs }}
       # - name: Determine Release
@@ -294,7 +293,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: ccache
-        uses: hendrikmuhs/ccache-action@v1.2.14
+        uses: hendrikmuhs/ccache-action@v1.2.17
         with:
           key: ${{ matrix.cfg.target }}-${{ matrix.cfg.libs }}
       # - name: Determine Release
@@ -331,11 +330,11 @@ jobs:
     env:
       TARGET: ${{matrix.cfg.target}}
     steps:
-# handled by the install script now 
-#      - name: Remove Old lib-unwind
-#        run: if [ "$TARGET" = "linux64" ]; then
-#          sudo apt-get remove libunwind-14 -y;
-#          fi
+      # handled by the install script now
+      #      - name: Remove Old lib-unwind
+      #        run: if [ "$TARGET" = "linux64" ]; then
+      #          sudo apt-get remove libunwind-14 -y;
+      #          fi
       - name: Cache Packages
         uses: awalsh128/cache-apt-pkgs-action@latest
         with:
@@ -356,7 +355,7 @@ jobs:
       #     fi
       - uses: actions/checkout@v4
       - name: ccache
-        uses: hendrikmuhs/ccache-action@v1.2.14
+        uses: hendrikmuhs/ccache-action@v1.2.17
         with:
           key: ${{ matrix.cfg.target }}-${{ matrix.cfg.libs }}
 
@@ -395,7 +394,7 @@ jobs:
 
   #   - uses: actions/checkout@v4
   #   - name: ccache
-  #     uses: hendrikmuhs/ccache-action@v1.2.14
+  #     uses: hendrikmuhs/ccache-action@v1.2.17
   #     with:
   #       key: ${{ matrix.cfg.target }}-${{ matrix.cfg.libs }}
 
@@ -423,7 +422,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: ccache
-        uses: hendrikmuhs/ccache-action@v1.2.14
+        uses: hendrikmuhs/ccache-action@v1.2.17
         with:
           key: ${{ matrix.cfg.target }}-${{ matrix.cfg.opt }}
 
@@ -477,8 +476,8 @@ jobs:
       - name: Set Up JDK 17
         uses: actions/setup-java@v3
         with:
-          distribution: 'temurin'
-          java-version: '17'
+          distribution: "temurin"
+          java-version: "17"
 
       - name: Download Libraries
         run: ./of update libs android
@@ -504,4 +503,3 @@ jobs:
             echo "ERROR: Build Failed not found: [$LIB_PATH]"
             exit 1
           fi
-

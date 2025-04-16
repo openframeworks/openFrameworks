@@ -175,7 +175,7 @@ void ofApp::draw(){
 //			// Shadows have the following gl culling enabled by default
 //			// this helps reduce z fighting by only rendering the rear facing triangles to the depth map
 //			// the culling can be disabled by calling
-//			light.getShadow().setGlCullingEnabled(false);
+//			light.getShadow().setCullingEnabled(false);
 //			// or the culling winding order can be changed by calling
 //			light.getShadow().setFrontFaceWindingOrder(GL_CCW); // default is GL_CW
 			renderScene();

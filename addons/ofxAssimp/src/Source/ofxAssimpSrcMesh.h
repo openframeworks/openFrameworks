@@ -15,7 +15,7 @@ namespace ofxAssimp {
 class SrcMesh : public ofxAssimp::SrcNode {
 public:
 	static ofTexture sDummyTex;
-	virtual NodeType getType() override { return OFX_ASSIMP_MESH; }
+	NodeType getType() override { return OFX_ASSIMP_MESH; }
 	
 	void addTexture(std::shared_ptr<ofxAssimp::Texture> aAssimpTex);
 	bool hasTexture();
