@@ -344,44 +344,47 @@ function createPackage {
     rm -Rf $PKG_OFROOT/tutorials
 
     RELEASE="${RELEASE:-latest}"
+    #for now we force latest as we don't have releases in Apothecary for RC etc 
+    #prob should have a way to detect if the release exists and if it doesn't downgrade to latest
+    LIBS_VERSION=latest
 
     cd $PKG_OFROOT/
     echo " Location: {$PKG_OFROOT}"
     if [ "$PKG_PLATFORM" = "osx" ]; then
-        scripts/osx/download_libs.sh -t $RELEASE
-        scripts/emscripten/download_libs.sh -n -t $RELEASE
+        scripts/osx/download_libs.sh -t $LIBS_VERSION
+        scripts/emscripten/download_libs.sh -n -t $LIBS_VERSION
     elif [ "$PKG_PLATFORM" = "linux64" ]; then
         scripts/linux/download_libs.sh -a 64$LIBS_ABI
-        scripts/emscripten/download_libs.sh -n -t $RELEASE
+        scripts/emscripten/download_libs.sh -n -t $LIBS_VERSION
     elif [ "$PKG_PLATFORM" = "linuxarmv6l" ]; then
-        scripts/linux/download_libs.sh -a armv6l -t $RELEASE
+        scripts/linux/download_libs.sh -a armv6l -t $LIBS_VERSION
     elif [ "$PKG_PLATFORM" = "linuxarmv7l" ]; then
-        scripts/linux/download_libs.sh -a armv7l -t $RELEASE
+        scripts/linux/download_libs.sh -a armv7l -t $LIBS_VERSION
     elif [ "$PKG_PLATFORM" = "linuxaarch64" ]; then
-        scripts/linux/download_libs.sh -a aarch64 -t $RELEASE
+        scripts/linux/download_libs.sh -a aarch64 -t $LIBS_VERSION
     elif [ "$PKG_PLATFORM" = "msys2" ]; then
-        scripts/msys2/download_libs.sh -a $LIBS_ABI -t $RELEASE
-        scripts/emscripten/download_libs.sh -n -t $RELEASE
+        scripts/msys2/download_libs.sh -a $LIBS_ABI -t $LIBS_VERSION
+        scripts/emscripten/download_libs.sh -n -t $LIBS_VERSION
     elif [ "$PKG_PLATFORM" = "vs2019" ]; then
-        scripts/vs/download_libs.sh -a $LIBS_ABI -t $RELEASE
-        scripts/emscripten/download_libs.sh -n -t $RELEASE
+        scripts/vs/download_libs.sh -a $LIBS_ABI -t $LIBS_VERSION
+        scripts/emscripten/download_libs.sh -n -t $LIBS_VERSION
     elif [ "$PKG_PLATFORM" = "vs" ]; then
         if [ "$LIBS_ABI" = "" ]; then
-            scripts/vs/download_libs_2019_x64.sh -t $RELEASE
+            scripts/vs/download_libs_2019_x64.sh -t $LIBS_VERSION
         else
-            scripts/vs/download_libs.sh -a $LIBS_ABI -t $RELEASE
+            scripts/vs/download_libs.sh -a $LIBS_ABI -t $LIBS_VERSION
         fi
-        scripts/emscripten/download_libs.sh -n -t $RELEASE
+        scripts/emscripten/download_libs.sh -n -t $LIBS_VERSION
     elif [ "$PKG_PLATFORM" = "android" ]; then
-        scripts/android/download_libs.sh -t $RELEASE
+        scripts/android/download_libs.sh -t $LIBS_VERSION
     elif [ "$PKG_PLATFORM" = "ios" ]; then
-        scripts/macos/download_libs.sh -t $RELEASE
+        scripts/macos/download_libs.sh -t $LIBS_VERSION
      elif [ "$PKG_PLATFORM" = "emscripten" ]; then
-       scripts/emscripten/download_libs.sh -n -t $RELEASE
+       scripts/emscripten/download_libs.sh -n -t $LIBS_VERSION
     elif [ "$PKG_PLATFORM" = "macos" ]; then
-        scripts/osx/download_libs.sh -t $RELEASE
-        scripts/macos/download_libs.sh -t $RELEASE
-        scripts/emscripten/download_libs.sh -n -t $RELEASE
+        scripts/osx/download_libs.sh -t $LIBS_VERSION
+        scripts/macos/download_libs.sh -t $LIBS_VERSION
+        scripts/emscripten/download_libs.sh -n -t $LIBS_VERSION
     fi
 
     createProjectFiles $PKG_PLATFORM $PKG_OFROOT
