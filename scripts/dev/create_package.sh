@@ -433,15 +433,15 @@ function createPackage {
     mkdir -p $HOME/.tmp
     export TMPDIR=$HOME/.tmp
 
-    # FIXME: Temporary fix for latest projectGenerator
+    # FIXME: 
     # there is no "latest" release so we use nightly. feel free to remove this when PG/Apothecary releases are in sync
-    if [ "$RELEASE" = "latest" ]; then
-        RELEASE="nightly"
-    fi
+    # if [ "$RELEASE" = "latest" ]; then
+    #     RELEASE="nightly"
+    # fi
 
 
     if [ "$PKG_PLATFORM" = "vs" ] || [ "$PKG_PLATFORM" = "vs2019" ] || [ "$PKG_PLATFORM" = "msys2" ]; then
-        downloader https://github.com/openframeworks/projectGenerator/releases/download/$RELEASE/projectGenerator-vs-gui.zip 2> /dev/null
+        downloader https://github.com/openframeworks/projectGenerator/releases/download/nightly/projectGenerator-vs-gui.zip 2> /dev/null
         mkdir -p projectGenerator
         unzip -q projectGenerator-vs-gui.zip -d "projectGenerator" 2> /dev/null
         rm projectGenerator-vs-gui.zip
@@ -449,7 +449,7 @@ function createPackage {
     fi
 
     if [ "$PKG_PLATFORM" = "osx" ] || [ "$PKG_PLATFORM" = "ios" ] || [ "$PKG_PLATFORM" = "macos" ]; then
-        downloader https://github.com/openframeworks/projectGenerator/releases/download/$RELEASE/projectGenerator-osx.zip 2> /dev/null
+        downloader https://github.com/openframeworks/projectGenerator/releases/download/nightly/projectGenerator-osx.zip 2> /dev/null
         unzip -q projectGenerator-osx.zip
         mv projectGenerator-osx/ projectGenerator
         rm projectGenerator-osx.zip
@@ -468,12 +468,12 @@ function createPackage {
     if [ "$PKG_PLATFORM" = "android" ]; then
 
         if [ "${LIBS_ABI}" == "windows" ]; then
-            downloader https://github.com/openframeworks/projectGenerator/releases/download/$RELEASE/projectGenerator-vs-gui.zip 2> /dev/null
+            downloader https://github.com/openframeworks/projectGenerator/releases/download/nightly/projectGenerator-vs-gui.zip 2> /dev/null
             unzip -q -d "projectGenerator" projectGenerator-vs-gui.zip 2> /dev/null
             rm projectGenerator-vs-gui.zip
             cd ${PKG_OFROOT}
         elif [ "${LIBS_ABI}" == "macos" ]; then
-            downloader https://github.com/openframeworks/projectGenerator/releases/download/$RELEASE/projectGenerator-osx.zip 2> /dev/null
+            downloader https://github.com/openframeworks/projectGenerator/releases/download/nightly/projectGenerator-osx.zip 2> /dev/null
             unzip -q projectGenerator-osx.zip
             mv projectGenerator-osx/ projectGenerator
             rm projectGenerator-osx.zip
