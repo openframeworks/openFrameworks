@@ -1183,7 +1183,7 @@ void ofMaterial::updateLights(const ofShader & shader,ofGLProgrammableRenderer &
 			glm::vec3 direction = light->direction;
 			if( !isPBR() ) {
 				direction = glm::vec3(light->position) + light->direction;
-				glm::vec4 direction4 = renderer.getCurrentViewMatrix() * glm::vec4(direction,1.0);
+				glm::vec4 direction4 = renderer.getCurrentViewMatrix() * glm::vec4(direction, 1.0f);
 				direction = glm::vec3(direction4) / direction4.w;
 				direction = direction - glm::vec3(lightEyePosition);
 				shader.setUniform3f("lights["+idx+"].spotDirection", glm::normalize(direction));
@@ -1203,7 +1203,7 @@ void ofMaterial::updateLights(const ofShader & shader,ofGLProgrammableRenderer &
 			glm::vec3 direction = light->direction;
 			if( !isPBR() ) {
 				direction = glm::vec3(light->position) + light->direction;
-				glm::vec4 direction4 = renderer.getCurrentViewMatrix() * glm::vec4(direction, 1.0);
+				glm::vec4 direction4 = renderer.getCurrentViewMatrix() * glm::vec4(direction, 1.0f);
 				direction = glm::vec3(direction4) / direction4.w;
 				direction = direction - glm::vec3(lightEyePosition);
 				shader.setUniform3f("lights["+idx+"].spotDirection", glm::normalize(direction));
@@ -1213,12 +1213,12 @@ void ofMaterial::updateLights(const ofShader & shader,ofGLProgrammableRenderer &
 			auto up = light->up;
 			if( !isPBR() ) {
 				right = glm::vec3(light->position) + light->right;
-				glm::vec4 right4 = renderer.getCurrentViewMatrix() * glm::vec4(right, 1.0);
+				glm::vec4 right4 = renderer.getCurrentViewMatrix() * glm::vec4(right, 1.0f);
 				right = glm::vec3(right4) / right4.w;
 				right = right - glm::vec3(lightEyePosition);
 				up = glm::cross(right, direction);
 			}
-			shader.setUniform3f("lights["+idx+"].right", glm::normalize(toGlm(right)));
+			shader.setUniform3f("lights["+idx+"].right", glm::normalize(right));
 			shader.setUniform3f("lights["+idx+"].up", glm::normalize(up));
 		}
 	}
