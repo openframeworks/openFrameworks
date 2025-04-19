@@ -1000,7 +1000,7 @@ void ofTrueTypeFont::drawChar(uint32_t c, float x, float y, bool vFlipped) const
 	ymin += y;
 	ymax += y;
 
-	auto firstIndex { (unsigned int)stringQuads.getVertices().size() };
+	auto firstIndex { (ofIndexType)stringQuads.getVertices().size() };
 
 	stringQuads.addVertices({
 		{ xmin, ymin, 0.f },
