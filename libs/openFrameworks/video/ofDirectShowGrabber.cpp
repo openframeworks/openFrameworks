@@ -1,6 +1,17 @@
 #include "ofDirectShowGrabber.h"
 #include "ofUtils.h"
 #ifdef TARGET_WIN32
+
+//--------------------------------------------------------------------
+//Static members / functions 
+
+int ofDirectShowGrabber::preferredFormat = -1; 
+
+void ofDirectShowGrabber::setPreferredFormat(int aPreferredFormat) {
+	preferredFormat = aPreferredFormat;
+}
+
+
 //--------------------------------------------------------------------
 ofDirectShowGrabber::ofDirectShowGrabber(){
 
