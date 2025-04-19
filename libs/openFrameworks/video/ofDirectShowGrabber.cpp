@@ -62,6 +62,9 @@ bool ofDirectShowGrabber::setup(int w, int h){
 		height = h;
 		bGrabberInited = false;
 
+		if (preferredFormat >= 0) {
+			VI.setRequestedMediaSubType(preferredFormat);
+		}
 		if( attemptFramerate >= 0){
 			VI.setIdealFramerate(device, attemptFramerate);
 		}
