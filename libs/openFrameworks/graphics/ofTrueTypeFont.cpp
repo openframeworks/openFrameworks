@@ -1016,7 +1016,8 @@ void ofTrueTypeFont::drawChar(uint32_t c, float x, float y, bool vFlipped) const
 		{ props.t1, props.v2 }
 	});
 
-	stringQuads.addIndices({
+	stringQuads.addIndices(
+	vector<ofIndexType>{
 		firstIndex,
 		firstIndex + 1,
 		firstIndex + 2,
