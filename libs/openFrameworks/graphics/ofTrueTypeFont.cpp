@@ -1018,14 +1018,10 @@ void ofTrueTypeFont::drawChar(uint32_t c, float x, float y, bool vFlipped) const
 
 	stringQuads.addIndices({
 		firstIndex,
-//		static_cast<ofIndexType>(firstIndex + 1),
-//		static_cast<ofIndexType>(firstIndex + 2),
-//		static_cast<ofIndexType>(firstIndex + 2),
-//		static_cast<ofIndexType>(firstIndex + 3),
-		firstIndex + 1,
-		firstIndex + 2,
-		firstIndex + 2,
-		firstIndex + 3,
+		static_cast<ofIndexType>(firstIndex + 1),
+		static_cast<ofIndexType>(firstIndex + 2),
+		static_cast<ofIndexType>(firstIndex + 2),
+		static_cast<ofIndexType>(firstIndex + 3),
 		firstIndex
 	});
 }
