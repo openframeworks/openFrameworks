@@ -339,14 +339,34 @@ ofHttpResponse ofURLFileLoaderImpl::handleRequest(const ofHttpRequest & request)
 	if (request.contentType != "") {
 		headers = curl_slist_append(headers, ("Content-Type: " + request.contentType).c_str());
 	}
-	if(request.close)
+	if(request.close) {
 		headers = curl_slist_append(headers, "Connection: close");
-	if(version->features & CURL_VERSION_BROTLI) {
-		headers = curl_slist_append(headers, "Accept-Encoding: br");
 	}
-	if(version->features & CURL_VERSION_LIBZ) {
-		headers = curl_slist_append(headers, "Accept-Encoding: gzip");
-	}
+	// https://curl.se/libcurl/c/CURLOPT_ACCEPT_ENCODING.html
+	// the following is used for requesting specific compression encodings
+	// if the headers are set with the encodings, then curl will not decompress the received data
+	// leaving this here for future reference
+	//	std::string encodings = "Accept-Encoding: ";
+	//	bool first = true;
+	//
+	//	if (version->features & CURL_VERSION_BROTLI) {
+	//		encodings += "br";
+	//		first = false;
+	//	}
+	//	if (version->features & CURL_VERSION_LIBZ) {
+	//		if (!first) {encodings += ", ";}
+	//		encodings += "gzip";
+	//		first = false;
+	//	}
+	//	if( !first) {
+	//		ofLogVerbose("ofURLFileLoader :: encodings") << encodings;
+	//		headers = curl_slist_append(headers, encodings.c_str());
+	//	} else {
+	//		curl_easy_setopt(curl.get(), CURLOPT_ACCEPT_ENCODING, "");
+	//	}
+	/* enable all supported built-in compressions */
+	curl_easy_setopt(curl.get(), CURLOPT_ACCEPT_ENCODING, "");
+	
 	for (map<string, string>::const_iterator it = request.headers.cbegin(); it != request.headers.cend(); it++) {
 		headers = curl_slist_append(headers, (it->first + ": " + it->second).c_str());
 	}
