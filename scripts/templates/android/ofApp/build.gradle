@@ -29,7 +29,7 @@ def addonFile = new File(projectRoot, "addons.make")
 def addonPaths = []
 if (addonFile.exists()) {
 	addonFile.eachLine { line ->
-		def addonPath = ofRoot + "addons/" + line
+		def addonPath = ofRoot() + "addons/" + line
 		if (new File(addonPath).exists()) {
 			addonPaths.add(addonPath)
 		}
