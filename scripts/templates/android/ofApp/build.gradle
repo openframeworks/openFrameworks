@@ -237,15 +237,9 @@ task checkAndBuildOF {
         knownABIs.each { arch ->
             if (!doesOFSoFileExist(arch)) {
                 println "openFrameworks library missing for $arch! Running CMake build..."
-                if(isWindows) {
-                    exec {
-                        commandLine '"C:\\Program Files\\Git\\bin\\bash.exe"'
-                        args cmakeScriptPath
-                    }
-                } else {
-                    exec {
-                        commandLine 'bash', cmakeScriptPath
-                    }
+                exec {
+                    commandLine gitBashPath
+                    args cmakeScriptPath
                 }
             } else {
                 println "openFrameworks library exists for $arch"
