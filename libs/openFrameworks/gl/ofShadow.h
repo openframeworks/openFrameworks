@@ -307,11 +307,4 @@ private:
 	
 };
 
-//namespace of{
-//namespace priv{
-///// \brief Function for storing all of the ofShadows data.
-//std::vector<std::weak_ptr<ofShadowData> > & ofShadowsData();
-//}
-//}
-
 
