@@ -4,7 +4,7 @@
 #define OF_VERSION_MAJOR 0
 #define OF_VERSION_MINOR 12
 #define OF_VERSION_PATCH 1
-#define OF_VERSION_PRE_RELEASE "rc1"
+#define OF_VERSION_PRE_RELEASE ""
 
 // core: ---------------------------
 #include <stdint.h>
