@@ -343,6 +343,9 @@ function createPackage {
     #delete tutorials by now
     rm -Rf $PKG_OFROOT/tutorials
 
+    #remove of script until after 0.12.1 
+    rm $PKG_OFROOT/of
+
     RELEASE="${RELEASE:-latest}"
     #for now we force latest as we don't have releases in Apothecary for RC etc 
     #prob should have a way to detect if the release exists and if it doesn't downgrade to latest
