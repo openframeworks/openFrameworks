@@ -61,10 +61,12 @@ void ofApp::exit() {
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
-	if(loading == false) {
-		img.clear();
-		ofLoadURLAsync("https://openframeworks.cc/about/0.jpg","about");
-		loading = true;
+	if( key == ' '){
+		if(loading == false) {
+			img.clear();
+			ofLoadURLAsync("https://openframeworks.cc/about/0.jpg","about");
+			loading = true;
+		}
 	}
 }
 

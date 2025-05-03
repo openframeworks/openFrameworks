@@ -9,17 +9,27 @@
 #include "ofLog.h"
 #include "ofUtils.h"
 
-using namespace ofx::assimp;
+using namespace ofxAssimp;
 
-std::unordered_map< int, ofMaterialTextureType > ofx::assimp::Texture::sAiTexTypeToOfTexTypeMap;
+std::unordered_map< int, ofMaterialTextureType > ofxAssimp::Texture::sAiTexTypeToOfTexTypeMap;
 
 //-------------------------------------------
-void ofx::assimp::Texture::setup(const of::filesystem::path & texturePath, bool bTexRepeat) {
+void ofxAssimp::Texture::setTexture( std::shared_ptr<ofTexture> atexture ) {
+	if( texture ) {
+		texture.reset();
+	}
+	texture = atexture;
+}
+
+//-------------------------------------------
+void ofxAssimp::Texture::setup(const of::filesystem::path & texturePath, bool bTexRepeat) {
 //	this->texture = texture;
-	if( bTexRepeat ){
-		this->texture.setTextureWrap(GL_REPEAT, GL_REPEAT);
-	}else{
-		this->texture.setTextureWrap(GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE);
+	if(texture && texture->isAllocated()) {
+		if( bTexRepeat ){
+			texture->setTextureWrap(GL_REPEAT, GL_REPEAT);
+		}else{
+			texture->setTextureWrap(GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE);
+		}
 	}
 	this->texturePath = texturePath;
 }
@@ -30,7 +40,7 @@ const char *aiTextureTypeToString(enum aiTextureType in)__attribute__((weak));
 #endif
 
 //-------------------------------------------
-void ofx::assimp::Texture::setAiTextureType(aiTextureType aTexType){
+void ofxAssimp::Texture::setAiTextureType(aiTextureType aTexType){
 	textureType = aTexType;
 
 	if( textureType >= 0 && textureType < AI_TEXTURE_TYPE_MAX){
@@ -46,8 +56,11 @@ void ofx::assimp::Texture::setAiTextureType(aiTextureType aTexType){
 }
 
 //-------------------------------------------
-ofTexture & Texture::getTextureRef() {
-	return texture;
+ofTexture& Texture::getTextureRef() {
+	if( !texture ) {
+		texture = std::make_shared<ofTexture>();
+	}
+	return *texture;
 }
 
 //-------------------------------------------
@@ -57,7 +70,7 @@ of::filesystem::path Texture::getTexturePath() {
 
 //-------------------------------------------
 bool Texture::hasTexture() {
-	return texture.isAllocated();
+	return (texture && texture->isAllocated());
 }
 
 //-------------------------------------------

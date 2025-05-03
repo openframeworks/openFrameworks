@@ -73,6 +73,8 @@ public:
 
 	void setSinkListener(ofGstAppSink * appsink);
 
+	bool updated_in_frame { false };
+
 	// callbacks to get called from gstreamer
 #if GST_VERSION_MAJOR==0
 	virtual GstFlowReturn preroll_cb(std::shared_ptr<GstBuffer> buffer);
@@ -111,6 +113,7 @@ private:
 	std::condition_variable		eosCondition;
 	std::mutex			eosMutex;
 	guint				busWatchID;
+
 
 	class ofGstMainLoopThread: public ofThread{
 	public:

@@ -1,16 +1,5 @@
-// openFrameworks-relative root directories (don't touch)
-
-def ofRoot = '../../../'
-
-// Load common functions
-apply from: ofRoot+"libs/openFrameworksCompiled/project/android/common-functions.gradle"
-
-javaDependencies( ofRoot ).each { dep ->
-    include(dep[1])
-    project(dep[1]).projectDir = new File(dep[0])
-}
-
-addonJavaDependencies( ofRoot ).each { dep ->
-    include(dep[1])
-    project(dep[1]).projectDir = new File(dep[0])
-}
+include ':ofApp'
+def openFrameworksProjectPath = '../../../../libs/openFrameworksCompiled/project'
+def openFrameworksProjectAbsolutePath = new File(rootDir, openFrameworksProjectPath).absolutePath
+include ':openFrameworksProject'
+project(':openFrameworksProject').projectDir = new File(openFrameworksProjectAbsolutePath)

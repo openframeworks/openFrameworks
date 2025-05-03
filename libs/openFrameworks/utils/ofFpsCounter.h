@@ -1,12 +1,12 @@
 #pragma once
 
-#include <queue>
+#include <deque>
 #include <chrono>
 
 class ofFpsCounter {
 public:
 	ofFpsCounter();
-	ofFpsCounter(double targetFps);
+	ofFpsCounter(double targetFps, int mode = 0);
 	void newFrame();
 
 	// no need to call it usually, useful if
@@ -22,17 +22,22 @@ public:
 	uint64_t getLastFrameFilteredNanos() const;
 	double getLastFrameFilteredSecs() const;
 	void setFilterAlpha(float alpha);
+	void setTimeMode(int mode);
+	void setTargetFPS(double fps);
 
 private:
 	void update(std::chrono::time_point<std::chrono::steady_clock> now);
 	uint64_t nFrameCount = 0;
-	double fps = 0;
+	double fps = 0.0;
+	double targetFPS = 60.0;
 
 	using space = std::chrono::duration<long long, std::nano>;
 	std::chrono::time_point<std::chrono::steady_clock> now = std::chrono::steady_clock::now();
 	std::chrono::time_point<std::chrono::steady_clock> then = std::chrono::steady_clock::now();
 	space lastFrameTime;
-	double filteredTime = 0;
+	space diff;
+	double filteredTime = 0.0;
 	double filterAlpha = 0.9;
-	std::queue<std::chrono::time_point<std::chrono::steady_clock>> timestamps;
+	std::deque<std::chrono::time_point<std::chrono::steady_clock>> timestamps;
+	int timeMode = 0;
 };

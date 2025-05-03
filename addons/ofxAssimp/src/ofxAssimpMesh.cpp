@@ -11,14 +11,14 @@
 using std::make_shared;
 using std::shared_ptr;
 
-using namespace ofx::assimp;
+using namespace ofxAssimp;
 
 //-------------------------------------------
 bool Mesh::hasTexture() {
 	if(mSrcMesh) {
 		return mSrcMesh->hasTexture();
 	}
-	ofLogWarning("ofx::assimp::Mesh::getTexture") << "SrcMesh is not set.";
+	ofLogWarning("ofxAssimp::Mesh::getTexture") << "SrcMesh is not set.";
 	return false;
 }
 
@@ -27,7 +27,7 @@ bool Mesh::hasTexture(ofMaterialTextureType aType){
 	if(mSrcMesh) {
 		return mSrcMesh->hasTexture(aType);
 	}
-	ofLogWarning("ofx::assimp::Mesh::getTexture") << "SrcMesh is not set.";
+	ofLogWarning("ofxAssimp::Mesh::getTexture") << "SrcMesh is not set.";
 	return false;
 }
 
@@ -36,7 +36,7 @@ std::size_t Mesh::getNumTextures() {
 	if(mSrcMesh) {
 		return mSrcMesh->getNumTextures();
 	}
-	ofLogWarning("ofx::assimp::Mesh::getTexture") << "SrcMesh is not set.";
+	ofLogWarning("ofxAssimp::Mesh::getTexture") << "SrcMesh is not set.";
 	return 0;
 }
 
@@ -45,8 +45,8 @@ ofTexture& Mesh::getTexture() {
 	if(mSrcMesh) {
 		return mSrcMesh->getTexture();
 	}
-	ofLogWarning("ofx::assimp::Mesh::getTexture") << "SrcMesh is not set.";
-	return ofx::assimp::SrcMesh::sDummyTex;
+	ofLogWarning("ofxAssimp::Mesh::getTexture") << "SrcMesh is not set.";
+	return ofxAssimp::SrcMesh::sDummyTex;
 }
 
 //-------------------------------------------
@@ -54,20 +54,20 @@ ofTexture& Mesh::getTexture(ofMaterialTextureType aType){
 	if(mSrcMesh) {
 		return mSrcMesh->getTexture( aType );
 	}
-	ofLogWarning("ofx::assimp::Mesh::getTexture") << "SrcMesh is not set.";
-	return ofx::assimp::SrcMesh::sDummyTex;
+	ofLogWarning("ofxAssimp::Mesh::getTexture") << "SrcMesh is not set.";
+	return ofxAssimp::SrcMesh::sDummyTex;
 }
 
 //-------------------------------------------
-std::shared_ptr<ofx::assimp::Texture> Mesh::getTexture( unsigned int aindex ) {
+std::shared_ptr<ofxAssimp::Texture> Mesh::getTexture( unsigned int aindex ) {
 	if(mSrcMesh) {
 		if( aindex < 0 || aindex >= getNumTextures() ) {
-			ofLogWarning("ofx::assimp::Mesh::getTexture") << "out of bounds: " << aindex << " - " << getNumTextures();
+			ofLogWarning("ofxAssimp::Mesh::getTexture") << "out of bounds: " << aindex << " - " << getNumTextures();
 		}
 		return mSrcMesh->getAllMeshTextures()[aindex];
 	}
-	ofLogWarning("ofx::assimp::Mesh::getTexture") << "SrcMesh is not set.";
-	return std::shared_ptr<ofx::assimp::Texture>();
+	ofLogWarning("ofxAssimp::Mesh::getTexture") << "SrcMesh is not set.";
+	return std::shared_ptr<ofxAssimp::Texture>();
 }
 
 //-------------------------------------------
@@ -103,7 +103,7 @@ std::size_t Mesh::getNumIndices() {
 }
 
 //-------------------------------------------
-void Mesh::setSrcMesh( std::shared_ptr<ofx::assimp::SrcMesh> aSrcMesh ) {
+void Mesh::setSrcMesh( std::shared_ptr<ofxAssimp::SrcMesh> aSrcMesh ) {
 	mSrcMesh = aSrcMesh;
 	
 	// if we have bones, no offset, since we are controlled by the bones //
@@ -117,9 +117,6 @@ void Mesh::setSrcMesh( std::shared_ptr<ofx::assimp::SrcMesh> aSrcMesh ) {
 		blendMode = mSrcMesh->blendMode;
 		vbo = make_shared<ofVbo>();
 		mSrcMesh->setupVbo(vbo);
-//		ofVbo temp = *mSrcMesh->vbo;
-//		vbo = std::make_shared<ofVbo>(temp);
-//		vbo = make_shared<ofVbo>();
 		
 		mLocalBounds = mSrcMesh->getLocalBounds();
 		bConvertedToLeftHand = mSrcMesh->bConvertedToLeftHand;
@@ -130,9 +127,9 @@ void Mesh::setSrcMesh( std::shared_ptr<ofx::assimp::SrcMesh> aSrcMesh ) {
 ofMesh& Mesh::getStaticMesh() {
 	if( mSrcMesh && mSrcMesh->getAiMesh() && mMesh.getNumVertices() < 1 ) {
 		if( hasTexture() ) {
-			aiMeshToOfMesh(mSrcMesh->getAiMesh(), mMesh, !bConvertedToLeftHand, &getTexture() );
+			ofxAssimp::Utils::aiMeshToOfMesh(mSrcMesh->getAiMesh(), mMesh, !bConvertedToLeftHand, &getTexture() );
 		} else {
-			aiMeshToOfMesh(mSrcMesh->getAiMesh(), mMesh, !bConvertedToLeftHand, nullptr);
+			ofxAssimp::Utils::aiMeshToOfMesh(mSrcMesh->getAiMesh(), mMesh, !bConvertedToLeftHand, nullptr);
 		}
 	}
 	return mMesh;
@@ -146,19 +143,19 @@ ofMesh& Mesh::getMesh() {
 				mBInitedAnimatedMesh=true;
 				if(mSrcMesh && mSrcMesh->getAiMesh()) {
 					if( hasTexture() ) {
-						aiMeshToOfMesh(mSrcMesh->getAiMesh(), mAnimatedMesh, !bConvertedToLeftHand, &getTexture() );
+						ofxAssimp::Utils::aiMeshToOfMesh(mSrcMesh->getAiMesh(), mAnimatedMesh, !bConvertedToLeftHand, &getTexture() );
 					} else {
-						aiMeshToOfMesh(mSrcMesh->getAiMesh(), mAnimatedMesh, !bConvertedToLeftHand, nullptr);
+						ofxAssimp::Utils::aiMeshToOfMesh(mSrcMesh->getAiMesh(), mAnimatedMesh, !bConvertedToLeftHand, nullptr);
 					}
 				}
 			}
 			
 			mAnimatedMesh.clearVertices();
 			mAnimatedMesh.clearNormals();
-			mAnimatedMesh.addVertices(aiVecVecToOfVecVec(animatedVertices));
+			mAnimatedMesh.addVertices(ofxAssimp::Utils::aiVecVecToOfVecVec(animatedVertices));
 //			mAnimatedMesh.addVertices(animatedVertices);
 			if(animatedNormals.size() == animatedVertices.size() ) {
-				mAnimatedMesh.addNormals(aiVecVecToOfVecVec(animatedNormals));
+				mAnimatedMesh.addNormals(ofxAssimp::Utils::aiVecVecToOfVecVec(animatedNormals));
 //				mAnimatedMesh.addNormals(animatedNormals);
 			}
 			validCache = true;

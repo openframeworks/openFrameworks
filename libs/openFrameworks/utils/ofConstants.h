@@ -3,8 +3,8 @@
 // version: ------------------------
 #define OF_VERSION_MAJOR 0
 #define OF_VERSION_MINOR 12
-#define OF_VERSION_PATCH 0
-#define OF_VERSION_PRE_RELEASE "master"
+#define OF_VERSION_PATCH 1
+#define OF_VERSION_PRE_RELEASE ""
 
 // core: ---------------------------
 #include <stdint.h>
@@ -23,7 +23,9 @@
 #endif
 
 // This enables glm's old behavior of initializing with non garbage values
-#define GLM_FORCE_CTOR_INIT
+#if !defined(GLM_FORCE_CTOR_INIT)
+	#define GLM_FORCE_CTOR_INIT
+#endif
 
 //-------------------------------
 
@@ -134,7 +136,9 @@ enum ofTargetPlatform{
 	#define TARGET_OPENGLES
 	#define TARGET_LINUX_ARM
 #elif defined(__EMSCRIPTEN__)
+#ifndef TARGET_EMSCRIPTEN
 	#define TARGET_EMSCRIPTEN
+#endif
 	#define TARGET_OPENGLES
 	#define TARGET_PROGRAMMABLE_GL
 	#define TARGET_IMPLEMENTS_URL_LOADER
@@ -150,11 +154,13 @@ enum ofTargetPlatform{
 	#define GLEW_NO_GLU
     #define TARGET_GLFW_WINDOW
     #define OF_CAIRO
-    #define OF_RTAUDIO
 	#include "GL/glew.h"
 	#include "GL/wglew.h"
+	#define OF_RTAUDIO
 	#define __WINDOWS_DS__
-	#define __WINDOWS_MM__
+	#define __WINDOWS_WASAPI__
+	#define __WINDOWS_ASIO__
+	#define __WINDOWS_MM__ // rtMidi?
 	#if (_MSC_VER)       // microsoft visual studio
 		//TODO: Fix this in the code instead of disabling the warnings
 		#define _CRT_SECURE_NO_WARNINGS
@@ -200,18 +206,15 @@ enum ofTargetPlatform{
 #endif
 
 #if defined(TARGET_OS_OSX) && !defined(TARGET_OF_IOS)
-	#ifndef __MACOSX_CORE__
-		#define __MACOSX_CORE__
-	#endif
     #define TARGET_GLFW_WINDOW
     #define OF_CAIRO
     #define OF_RTAUDIO
-    
+	#ifndef __MACOSX_CORE__
+		#define __MACOSX_CORE__ // rtAudio
+	#endif
 	#ifndef OF_NO_FMOD
 		#define OF_NO_FMOD
 	#endif
-
-    
 	#include "GL/glew.h"
     #include "OpenGL/OpenGL.h"
 
@@ -245,6 +248,13 @@ enum ofTargetPlatform{
 	#else // desktop linux
         #define TARGET_GLFW_WINDOW
         #define OF_RTAUDIO
+		#ifndef __LINUX_PULSE__
+			#define __LINUX_PULSE__
+		#endif
+		#ifndef __LINUX_ALSA__
+			#define __LINUX_ALSA__
+		#endif
+		#define __LINUX_OSS__
 		#include <GL/glew.h>
 	#endif
 
@@ -401,11 +411,11 @@ typedef TESSindex ofIndexType;
     #elif __has_include(<filesystem>)
         // If we're compiling on Visual Studio and are not compiling with C++17, we need to use experimental
         #ifdef _MSC_VER
-        
+
             // Check and include header that defines "_HAS_CXX17"
             #if __has_include(<yvals_core.h>)
                 #include <yvals_core.h>
-                
+
                 // Check for enabled C++17 support
                 #if defined(_HAS_CXX17) && _HAS_CXX17
                 // We're using C++17, so let's use the normal version
@@ -428,37 +438,23 @@ typedef TESSindex ofIndexType;
 #endif
 
 
-#if defined(OF_USING_STD_FS)
-    #if defined(OF_USE_EXPERIMENTAL_FS)
-        // C++17 experimental fs support
-        #include <experimental/filesystem>
-		namespace std {
-			namespace experimental{
-				namespace filesystem {
-					using path = v1::path;
-				}
+#if defined(OF_USE_EXPERIMENTAL_FS)
+	// C++17 experimental fs support
+	#include <experimental/filesystem>
+	namespace std {
+		namespace experimental{
+			namespace filesystem {
+				using path = v1::path;
 			}
 		}
-
-		namespace of {
-			namespace filesystem = std::experimental::filesystem;
-		}
-    #else
-		#include <filesystem>
-		namespace of {
-			namespace filesystem = std::filesystem;
-		}
-    #endif
-#else //not OF_USING_STD_FS
-    // No experimental or c++17 filesytem support use boost
-    #if !_MSC_VER
-        #define BOOST_NO_CXX11_SCOPED_ENUMS
-        #define BOOST_NO_SCOPED_ENUMS
-    #endif
-
-    #include <boost/filesystem.hpp>
-	namespace of {
-		namespace filesystem = boost::filesystem;
 	}
 
+	namespace of {
+		namespace filesystem = std::experimental::filesystem;
+	}
+#else
+	#include <filesystem>
+	namespace of {
+		namespace filesystem = std::filesystem;
+	}
 #endif

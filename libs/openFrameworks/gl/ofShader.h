@@ -174,6 +174,7 @@ public:
 	void setUniform2f(const std::string & name, const glm::vec2 & v) const;
 	void setUniform3f(const std::string & name, const glm::vec3 & v) const;
 	void setUniform4f(const std::string & name, const glm::vec4 & v) const;
+	void setUniform3f(const std::string & name, const ofFloatColor & v) const;
 	void setUniform4f(const std::string & name, const ofFloatColor & v) const;
 
 	// set an array of uniform values
