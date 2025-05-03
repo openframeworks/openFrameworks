@@ -6,7 +6,7 @@ ARCH=""
 OVERWRITE=1
 SILENT_ARGS=""
 BLEEDING_EDGE=0
-DL_VERSION=2.6.0
+DL_VERSION=2.8.0
 TAG=""
 
 printHelp(){
@@ -214,16 +214,24 @@ if [ "$PLATFORM" == "msys2" ] || [ "$PLATFORM" == "vs" ]; then
     else
         rsync -avzp "${OUTDIR}/${OUTPUT}/resources/app/app/projectGenerator.exe" "${OUTDIR}/${OUTPUT}/projectGeneratorCmd.exe"
     fi
-    chmod +x "${OUTDIR}/${OUTPUT}/projectGeneratorCMD.exe"
-    chmod +x "${OUTDIR}/${OUTPUT}/resources/app/projectGenerator.exe"
+    # if command -v chmod &> /dev/null; then
+        chmod +x "${OUTDIR}/${OUTPUT}/projectGeneratorCmd.exe"
+        chmod +x "${OUTDIR}/${OUTPUT}/resources/app/app/projectGenerator.exe"
+    # else
+    #     echo "Warning: chmod command not found, skipping permission adjustment."
+    # fi
 else
     if ! command -v rsync &> /dev/null; then      
         cp -arX "${OUTDIR}/${OUTPUT}/projectGenerator$EXT/Contents/Resources/app/app/projectGenerator" "${OUTDIR}/${OUTPUT}/projectGenerator"
     else
         rsync -avzp "${OUTDIR}/${OUTPUT}/projectGenerator$EXT/Contents/Resources/app/app/projectGenerator" "${OUTDIR}/${OUTPUT}/projectGenerator"
     fi
-    chmod +x "${OUTDIR}/${OUTPUT}/projectGenerator"
-    chmod +x "${OUTDIR}/${OUTPUT}/projectGenerator$EXT/Contents/MacOS/projectGenerator"
+    # if command -v chmod &> /dev/null; then
+        chmod +x "${OUTDIR}/${OUTPUT}/projectGenerator"
+        chmod +x "${OUTDIR}/${OUTPUT}/projectGenerator$EXT/Contents/MacOS/projectGenerator"
+    # else
+    #     echo "Warning: chmod command not found, skipping permission adjustment."
+    # fi
 fi
 
 echo " ------ "

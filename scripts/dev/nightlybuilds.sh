@@ -62,6 +62,7 @@ fi
 ./create_package.sh msys2 $lastversion master ucrt64
 ./create_package.sh vs $lastversion master
 ./create_package.sh vs $lastversion master 64
+# ./create_package.sh vs2019 $lastversion master 64
 ./create_package.sh ios $lastversion master
 ./create_package.sh osx $lastversion master
 # ./create_package.sh macos $lastversion master
@@ -86,6 +87,7 @@ mv /var/www/versions/nightly/of_v${lastversion}_msys2_clang64_release.zip /var/w
 mv /var/www/versions/nightly/of_v${lastversion}_msys2_ucrt64_release.zip /var/www/versions/nightly/of_v${lastversion}_msys2_ucrt64_nightly.zip
 mv /var/www/versions/nightly/of_v${lastversion}_vs_release.zip /var/www/versions/nightly/of_v${lastversion}_vs_nightly.zip
 mv /var/www/versions/nightly/of_v${lastversion}_vs_x64_release.zip /var/www/versions/nightly/of_v${lastversion}_vs_x64_nightly.zip
+mv /var/www/versions/nightly/of_v${lastversion}_vs2019_x64_release.zip /var/www/versions/nightly/of_v${lastversion}_vs2019_x64_nightly.zip
 mv /var/www/versions/nightly/of_v${lastversion}_ios_release.zip /var/www/versions/nightly/of_v${lastversion}_ios_nightly.tar.gz
 mv /var/www/versions/nightly/of_v${lastversion}_osx_release.zip /var/www/versions/nightly/of_v${lastversion}_osx_nightly.tar.gz
 mv /var/www/versions/nightly/of_v${lastversion}_macos_release.zip /var/www/versions/nightly/of_v${lastversion}_macos_nightly.tar.gz

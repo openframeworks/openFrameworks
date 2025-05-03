@@ -17,7 +17,7 @@ void ofApp::setup(){
 	// comment out the loading of the cube map image to see added cube map lighting without image
 	// fake environment lighting is added in the pbr shader
 	
-	ofCubeMap::ofCubeMapSettings csettings;
+	ofCubeMapSettings csettings;
 	csettings.filePath = "modern_buildings_2_1k.hdr";
 	// uncomment to load from a cache or make one if it doesn't exist
 //	csettings.useCache = true;

@@ -228,10 +228,23 @@ static bool loadImage(ofPixels_<PixelType> & pix, const of::filesystem::path & _
 		return ofLoadImage(pix, ofLoadURL(ofPathToString(_fileName)).data);
 	}
 
+
+	ofFile file(_fileName);
+	if (!file.exists()) {
+		ofLogError("loadImage") << "File not found: " << _fileName;
+		return false;
+	}
+
+	std::uint64_t fileSize = file.getSize();
+	if (fileSize == 0) {
+		ofLogError("loadImage") << "File is empty: " << _fileName;
+		return false;
+	}
 	
 	bool bLoaded = false;
 	FIBITMAP * bmp = nullptr;
 
+	try {
 	FREE_IMAGE_FORMAT fif = FIF_UNKNOWN;
 #ifdef OF_OS_WINDOWS
 	fif = FreeImage_GetFileTypeU(_fileName.c_str(), 0);
@@ -251,7 +264,11 @@ static bool loadImage(ofPixels_<PixelType> & pix, const of::filesystem::path & _
 		if(fif == FIF_JPEG) {
 			option = getJpegOptionFromImageLoadSetting(settings);
 		}
+		if (!FreeImage_FIFSupportsReading(fif)) {
+			std::cerr << "Error: FreeImage does not support reading this format." << std::endl;
+		}
 		auto fileName = ofToDataPathFS(_fileName);
+
 
 #ifdef OF_OS_WINDOWS
 		bmp = FreeImage_LoadU(fif, fileName.c_str(), option | settings.freeImageFlags);
@@ -263,6 +280,16 @@ static bool loadImage(ofPixels_<PixelType> & pix, const of::filesystem::path & _
 			bLoaded = true;
 		}
 	}
+
+	}
+catch (const std::exception & e) {
+	std::cerr << "Exception caught in FreeImage_Load: " << e.what() << std::endl;
+	return false;
+}
+catch (...) {
+	std::cerr << "Unknown exception caught in FreeImage_Load." << std::endl;
+	return false;
+}
 
 	//-----------------------------
 

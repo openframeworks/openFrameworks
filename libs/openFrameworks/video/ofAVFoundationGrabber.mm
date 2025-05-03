@@ -38,33 +38,50 @@
 - (BOOL)initCapture:(int)framerate capWidth:(int)w capHeight:(int)h{
 	NSArray * devices;
 	if (@available(macOS 10.15, *)) {
-        if (@available(macOS 14.0, *)) {
-            AVCaptureDeviceDiscoverySession *session = [AVCaptureDeviceDiscoverySession discoverySessionWithDeviceTypes:@[
-                AVCaptureDeviceTypeBuiltInWideAngleCamera,
-                AVCaptureDeviceTypeExternal
-            ] mediaType:AVMediaTypeVideo position:AVCaptureDevicePositionUnspecified];
-            devices = [session devices];
-        } else {
-            AVCaptureDeviceDiscoverySession *session = [AVCaptureDeviceDiscoverySession
-                discoverySessionWithDeviceTypes:@[AVCaptureDeviceTypeBuiltInWideAngleCamera]
-                mediaType:AVMediaTypeVideo
-                position:AVCaptureDevicePositionUnspecified];
-            devices = [session devices];
-        }
+		NSMutableArray *deviceTypes = [NSMutableArray arrayWithObject:AVCaptureDeviceTypeBuiltInWideAngleCamera];
+#if __MAC_OS_X_VERSION_MAX_ALLOWED >= 140000
+		if (@available(macOS 14.0, *)) {
+			if (&AVCaptureDeviceTypeExternal != nil) {
+				[deviceTypes addObject:AVCaptureDeviceTypeExternal];
+				[deviceTypes addObject:AVCaptureDeviceTypeContinuityCamera];
+			}
+		}
+#endif
+		AVCaptureDeviceDiscoverySession *session = [AVCaptureDeviceDiscoverySession
+			discoverySessionWithDeviceTypes:deviceTypes
+			mediaType:AVMediaTypeVideo
+			position:AVCaptureDevicePositionUnspecified];
+		devices = [session devices];
 	} else {
-        AVCaptureDeviceDiscoverySession *session = [AVCaptureDeviceDiscoverySession
-            discoverySessionWithDeviceTypes:@[AVCaptureDeviceTypeBuiltInWideAngleCamera]
-            mediaType:AVMediaTypeVideo
-            position:AVCaptureDevicePositionUnspecified];
-        devices = [session devices];
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+		devices = [AVCaptureDevice devicesWithMediaType:AVMediaTypeVideo];
+#pragma clang diagnostic pop
+	}
+	
+	if([devices count] > 1) {
+		// Sort devices: "FaceTime" devices first, then alphabetically
+		devices = [devices sortedArrayUsingComparator:^NSComparisonResult(AVCaptureDevice *d1, AVCaptureDevice *d2) {
+			NSString *name1 = d1.localizedName;
+			NSString *name2 = d2.localizedName;
 
+			BOOL isFaceTime1 = [name1 hasPrefix:@"FaceTime"];
+			BOOL isFaceTime2 = [name2 hasPrefix:@"FaceTime"];
+
+			if (isFaceTime1 && !isFaceTime2) {
+				return NSOrderedAscending; // FaceTime first
+			} else if (!isFaceTime1 && isFaceTime2) {
+				return NSOrderedDescending; // FaceTime first
+			} else {
+				// Otherwise alphabetical
+				return [name1 compare:name2];
+			}
+		}];
 	}
 	
 	if([devices count] > 0) {
 		if(deviceID>[devices count]-1)
 			deviceID = [devices count]-1;
-
-
 		// We set the device
 		device = [devices objectAtIndex:deviceID];
 
@@ -267,24 +284,45 @@
     std::vector <std::string> deviceNames;
 	NSArray * devices;
 	if (@available(macOS 10.15, *)) {
-        if (@available(macOS 14.0, *)) {
-            AVCaptureDeviceDiscoverySession *session = [AVCaptureDeviceDiscoverySession discoverySessionWithDeviceTypes:@[
-                AVCaptureDeviceTypeBuiltInWideAngleCamera,
-                AVCaptureDeviceTypeExternal
-            ] mediaType:AVMediaTypeVideo position:AVCaptureDevicePositionUnspecified];
-            devices = [session devices];
-        } else {
-            AVCaptureDeviceDiscoverySession *session = [AVCaptureDeviceDiscoverySession discoverySessionWithDeviceTypes:@[
-                AVCaptureDeviceTypeBuiltInWideAngleCamera
-            ] mediaType:AVMediaTypeVideo position:AVCaptureDevicePositionUnspecified];
-            devices = [session devices];
-        }
+		NSMutableArray *deviceTypes = [NSMutableArray arrayWithObject:AVCaptureDeviceTypeBuiltInWideAngleCamera];
+#if __MAC_OS_X_VERSION_MAX_ALLOWED >= 140000
+		if (@available(macOS 14.0, *)) {
+			if (&AVCaptureDeviceTypeExternal != nil) {
+				[deviceTypes addObject:AVCaptureDeviceTypeExternal];
+				[deviceTypes addObject:AVCaptureDeviceTypeContinuityCamera];
+			}
+		}
+#endif
+		AVCaptureDeviceDiscoverySession *session = [AVCaptureDeviceDiscoverySession
+			discoverySessionWithDeviceTypes:deviceTypes
+			mediaType:AVMediaTypeVideo
+			position:AVCaptureDevicePositionUnspecified];
+		devices = [session devices];
 	} else {
-        AVCaptureDeviceDiscoverySession *session = [AVCaptureDeviceDiscoverySession
-            discoverySessionWithDeviceTypes:@[AVCaptureDeviceTypeBuiltInWideAngleCamera]
-            mediaType:AVMediaTypeVideo
-            position:AVCaptureDevicePositionUnspecified];
-        devices = [session devices];
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+		devices = [AVCaptureDevice devicesWithMediaType:AVMediaTypeVideo];
+#pragma clang diagnostic pop
+	}
+
+	if([devices count] > 1) {
+		// Sort devices: "FaceTime" devices first, then alphabetically
+		devices = [devices sortedArrayUsingComparator:^NSComparisonResult(AVCaptureDevice *d1, AVCaptureDevice *d2) {
+			NSString *name1 = d1.localizedName;
+			NSString *name2 = d2.localizedName;
+
+			BOOL isFaceTime1 = [name1 hasPrefix:@"FaceTime"];
+			BOOL isFaceTime2 = [name2 hasPrefix:@"FaceTime"];
+
+			if (isFaceTime1 && !isFaceTime2) {
+				return NSOrderedAscending; // FaceTime first
+			} else if (!isFaceTime1 && isFaceTime2) {
+				return NSOrderedDescending; // FaceTime first
+			} else {
+				// Otherwise alphabetical
+				return [name1 compare:name2];
+			}
+		}];
 	}
 
 	int i=0;

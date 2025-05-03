@@ -18,7 +18,6 @@
 // https://rovdownloads.com/blog/quick-overview-of-probability-distributions/
 
 namespace of::random {
-
 // Trait to check if T is a random engine --
 // poor man's concept; simply based on the
 // fact that it's callable(), with min() & max()
@@ -78,7 +77,7 @@ T make_vector(D d, G & g = of::random::gen()) {
 /// \returns a new vector or color T
 template <typename T, typename D, typename G, typename = std::enable_if_t<is_random_engine_v<G>>>
 T make_vector(G & g = of::random::gen()) {
-
+	
 	if constexpr (std::is_same_v<T, glm::vec2>) {
 		return T {
 			D{}(g), D{}(g)
@@ -284,7 +283,7 @@ uniform(T min, T max, G & g = of::random::gen()) {
 
 // better to cast params as double (otherwise casual ints produce unexpected results)
 
-/// \brief Generates a real normal random number 
+/// \brief Generates a real normal random number
 /// /// according to the Normal (or Gaussian) random number distribution
 /// https://en.cppreference.com/w/cpp/numeric/random/normal_distribution
 /// (note that this is aliased to 'gaussian' too)
@@ -297,7 +296,7 @@ uniform(T min, T max, G & g = of::random::gen()) {
 template <typename T = float, typename G = decltype(of::random::gen()), typename = std::enable_if_t<is_random_engine_v<G>>>
 std::enable_if_t<std::is_floating_point_v<T>, T>
 normal(double mean, double stddev, G & g = of::random::gen()) {
-	return std::normal_distribution<T>(mean, stddev)(g); // parentheses allow narrowing (¿ good or bad ?)
+	return T(std::normal_distribution<T>(mean, stddev)(g)); // parentheses allow narrowing (¿ good or bad ?)
 }
 
 /// \brief Generates an integer random number
@@ -323,8 +322,8 @@ normal(double mean, double stddev, G & g = of::random::gen()) {
 /// (note that this is aliased to 'gaussian' too)
 /// \tparam T the desired vector type
 /// \tparam G the type of random engine
-/// \param min the mean values
-/// \param max the stddev values
+/// \param mean the mean values
+/// \param stddev the stddev values
 /// \param g the random engine (default: OF internal of::random::gen())
 /// \return a T vec of normally-distributed random floats with homogenous parameters
 template <typename T, typename G = decltype(of::random::gen()), typename = std::enable_if_t<is_random_engine_v<G>>>
@@ -333,15 +332,15 @@ normal(float mean, float stddev, G & g = of::random::gen()) {
 	return make_vector<T, std::normal_distribution<float>>(mean, stddev, g);
 }
 
-/// \brief Generates a glm::vec of random numbers 
+/// \brief Generates a glm::vec of random numbers
 /// according to the Normal (or Gaussian) random number distribution
 /// https://en.cppreference.com/w/cpp/numeric/random/normal_distribution
 /// with specialized parameters (different params for members of the vector)
 /// where T, mean and stdev must be of the same type
 /// \tparam T the desired vector type
 /// \tparam G the type of random engine
-/// \param min the mean values
-/// \param max the stddev values
+/// \param mean the mean values
+/// \param stddev the stddev values
 /// \param g the random engine (default: OF internal of::random::gen())
 /// \return a T vec of normally-distributed random floats with distinct parameters
 template <typename T, typename G = decltype(of::random::gen()), typename = std::enable_if_t<is_random_engine_v<G>>>
@@ -452,8 +451,8 @@ gamma(T alpha, T beta, G & g = of::random::gen()) {
 /// \return a gamma random value ot type T
 template <typename T = int, typename G = decltype(of::random::gen()), typename = std::enable_if_t<is_random_engine_v<G>>>
 std::enable_if_t<std::is_arithmetic_v<T>, T>
-poisson(double mean, G & gen = of::random::gen()) {
-	return std::poisson_distribution<T>{mean}(gen);
+poisson(double mean, G & g = of::random::gen()) {
+	return std::poisson_distribution<T>{mean}(g);
 }
 
 /// \brief Generates a vector of random non-negative integer values according to poisson distribution
@@ -502,7 +501,6 @@ exponential(T lambda, G & g = of::random::gen()) {
 
 /// \brief Generates a vector of random non-negative values according to exponential distribution
 /// https://en.cppreference.com/w/cpp/numeric/random/exponential_distribution
-/// \param mean the lambda
 /// \tparam T the desired vector output type
 /// \tparam G the type of random engine
 /// \param lambda the lambda values
@@ -517,7 +515,6 @@ exponential(float lambda, G & g = of::random::gen()) {
 /// \brief Generates a vector of random non-negative values according to exponential distribution
 /// https://en.cppreference.com/w/cpp/numeric/random/exponential_distribution
 /// with specialized parameters (different params for members of the vector)
-/// \param mean the vector of lambdas (double)
 /// \tparam T the desired vector output type
 /// \tparam G the type of random engine
 /// \param lambda the lambda values
@@ -583,12 +580,12 @@ chi_squared(T freedom, G & g = of::random::gen()) {
 /// \return a binomial random value ot type T
 template <typename T = int, typename G = decltype(of::random::gen()), typename = std::enable_if_t<is_random_engine_v<G>>>
 std::enable_if_t<std::is_arithmetic_v<T>, T>
-binomial(int p, double t, G & gen = of::random::gen()) {
+binomial(int p, double t, G & g = of::random::gen()) {
 	if (t >= 1) {
 		std::cout << "of::random::binomial(): t must be < 1.0\n";
 		return 0;
 	} else {
-		return std::binomial_distribution{p, t}(gen);
+		return std::binomial_distribution{p, t}(g);
 	}
 }
 
@@ -619,10 +616,10 @@ binomial(int p, double t, G & g = of::random::gen()) {
 /// \return a glm::vec2 of binomial random values (int cast to float)
 template <typename T, typename G = decltype(of::random::gen()), typename = std::enable_if_t<is_random_engine_v<G>>>
 std::enable_if_t<std::is_same_v<T, glm::vec2>, T>
-binomial(T p, T t, G & gen = of::random::gen()) {
+binomial(T p, T t, G & g = of::random::gen()) {
 	return {
-		std::binomial_distribution { int(p.x), t.x }(gen),
-		std::binomial_distribution { int(p.y), t.y }(gen)
+		std::binomial_distribution { int(p.x), t.x }(g),
+		std::binomial_distribution { int(p.y), t.y }(g)
 	};
 }
 
@@ -639,11 +636,11 @@ binomial(T p, T t, G & gen = of::random::gen()) {
 /// \return a glm::vec3 of binomial random values (int cast to float)
 template <typename T = int, typename G = decltype(of::random::gen()), typename = std::enable_if_t<is_random_engine_v<G>>>
 std::enable_if_t<std::is_same_v<T, glm::vec3>, T>
-binomial(T p, T t, G & gen = of::random::gen()) {
+binomial(T p, T t, G & g = of::random::gen()) {
 	return {
-		std::binomial_distribution { int(p.x), t.x }(gen),
-		std::binomial_distribution { int(p.y), t.y }(gen),
-		std::binomial_distribution { int(p.z), t.z }(gen)
+		std::binomial_distribution { int(p.x), t.x }(g),
+		std::binomial_distribution { int(p.y), t.y }(g),
+		std::binomial_distribution { int(p.z), t.z }(g)
 	};
 }
 
@@ -660,12 +657,12 @@ binomial(T p, T t, G & gen = of::random::gen()) {
 /// \return a glm::vec4 of binomial random values (int cast to float)template <typename T = int>
 template <typename T = int, typename G = decltype(of::random::gen()), typename = std::enable_if_t<is_random_engine_v<G>>>
 std::enable_if_t<std::is_same_v<T, glm::vec4>, T>
-binomial(T p, T t, G & gen = of::random::gen()) {
+binomial(T p, T t, G & g = of::random::gen()) {
 	return {
-		std::binomial_distribution { int(p.x), t.x }(gen),
-		std::binomial_distribution { int(p.y), t.y }(gen),
-		std::binomial_distribution { int(p.z), t.z }(gen),
-		std::binomial_distribution { int(p.w), t.w }(gen)
+		std::binomial_distribution { int(p.x), t.x }(g),
+		std::binomial_distribution { int(p.y), t.y }(g),
+		std::binomial_distribution { int(p.z), t.z }(g),
+		std::binomial_distribution { int(p.w), t.w }(g)
 	};
 }
 
@@ -774,7 +771,7 @@ bound_normal(float min, float max, float focus = 4.0f, G & g = of::random::gen()
 		} else {
 			T v;
 			do {
-				v = of::random::normal<T>((max + min) / 2.0f, (max - min) / (2 * focus), g); 
+				v = of::random::normal<T>((max + min) / 2.0f, (max - min) / (2 * focus), g);
 			} while (v < min || v > max);
 			return v;
 		}
@@ -835,7 +832,7 @@ bound_normal(T min, T max, std::optional<T> focus = std::nullopt, G & g = of::ra
 template <typename T, typename G = decltype(of::random::gen()), typename = std::enable_if_t<is_random_engine_v<G>>>
 std::enable_if_t<std::is_same_v<T, glm::vec2> or std::is_same_v<T, glm::vec3> or std::is_same_v<T, glm::vec4>, T>
 bound_normal(float min, float max, float focus = 4.0f, G & g = of::random::gen()) {
-	return bound_normal<T>(T{min}, T{max}, T{focus});
+	return bound_normal<T>(T{min}, T{max}, T{focus}, g);
 }
 
 } // end namespace of::random
@@ -957,9 +954,9 @@ T ofRandomGamma(Args &&... args) { return of::random::gamma<T>(std::forward<Args
 /// \brief Generates random positive floating-point values x, distributed according to gamma distribution
 /// https://en.cppreference.com/w/cpp/numeric/random/gamma_distribution
 /// \tparam T the desired output type; defaults to float
-/// \param alpha the alpha
-/// \param beta the beta
-/// \return a  T of gamma random value
+/// \param a the alpha
+/// \param b the beta
+/// \return T of gamma random value
 template <class T>
 T ofRandomGamma(T a, T b) { return of::random::gamma<T>(a, b); }
 
@@ -981,8 +978,8 @@ T ofRandomBinomial(Args &&... args) { return of::random::binomial<T>(std::forwar
 /// \brief Generates a random non-negative integer value according to the binomial distribution
 /// https://en.cppreference.com/w/cpp/numeric/random/binomial_distribution
 /// \tparam T the desired output type; defaults to int
-/// \param p the first parameter
-/// \param t the second parameter
+/// \param mean the mean
+/// \param stddev the deviation
 /// \return a binomial random value ot type T
 template <class T>
 T ofRandomBinomial(T mean, T stddev) { return of::random::binomial<T>(mean, stddev); }
@@ -1004,8 +1001,8 @@ T ofRandomBoundNormal(float min, float max, float focus = 4.0f) {
 
 template <typename T>
 std::enable_if_t<std::is_same_v<T, glm::vec2> or std::is_same_v<T, glm::vec3> or std::is_same_v<T, glm::vec4>, T>
-ofRandomBoundNormal(T min, T max, std::optional<T> focus = std::nullopt) {
-	return of::random::bound_normal<T>(min, max, focus.value_or(T{4.0}));
+ofRandomBoundNormal(T min, T max, T focus = T{4.0}) {
+	return of::random::bound_normal<T>(min, max, focus);
 }
 
 } // end anonymous namespace

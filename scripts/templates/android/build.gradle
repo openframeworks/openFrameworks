@@ -1,140 +1,94 @@
-def ofRoot(){ return '../../../' }
-
-// Load common functions
-apply from: ofRoot()+"libs/openFrameworksCompiled/project/android/common-functions.gradle"
-
+ext {
+    //var = 'signExample.keystore'
+}// Top-level build file where you can add configuration options common to all sub-projects/modules.
 buildscript {
-    apply from: "../../../libs/openFrameworksCompiled/project/android/ndk-verify.gradle"
-
     repositories {
-        jcenter()
+        google()
+        mavenCentral()
     }
     dependencies {
-        // Using the gradle-experimental version that supports c++
-        classpath 'com.android.tools.build:gradle-experimental:0.9.3'
+        classpath 'com.android.tools.build:gradle:8.9.0'
     }
 }
 
 allprojects {
     repositories {
-        jcenter()
-        maven{ url "https://maven.google.com" }
+        google()
+        mavenCentral()
+    }
+    ext {
+
     }
 }
 
-apply plugin: 'com.android.model.application'
+evaluationDependsOn(':openFrameworksProject')
 
-model {
-    android {
-        // openFrameworks currently only supports compiling against SDK 19 or nweer
-        compileSdkVersion = 25
-        buildToolsVersion = "25.0.3"
+def ofMainRoot(){ return '../../../' }
+final ofSource = ofMainRoot() + 'libs/openFrameworks'
+final ofLibProject = ofMainRoot() + 'libs/openFrameworksCompiled/project/android'
 
-        defaultConfig.with {
-            minSdkVersion.apiLevel    = 19
-            targetSdkVersion.apiLevel = 25
-            versionCode     =  1
-            versionName     = "1.0"
-        }
-    }
 
-    android.ndk {
-        moduleName = ofAppModuleName()
-        toolchain  = buildToolchain()
-        stl        = compilerStl()
-        platformVersion = "21"
-    }
+task printPaths {
+	doLast {
+		println "🔍 Checking Paths..."
+		println "OF Source: ${file(ofSource).absolutePath}"
+		println "OF Lib Output: ${file(ofLibProject).absolutePath}"
+		println "Current Working Directory: ${projectDir.absolutePath}"
+	}
+}
 
-    android.sources {
-        main {
-            jni {
-                source {
-                    srcDirs= appSrcDirs(ofRoot())
-
-                    includes = srcIncludes(ofRoot())
-                    excludes = srcExcludes(ofRoot())
-                }
-
-                // Link to openFrameworks
-                dependencies {
-                    project ":openFrameworksProject"  linkage "static"
-                }
-            }
-
-            manifest {
-                source {
-                    srcDirs = [ "." ]
-                }
-            }
-            res {
-                source {
-                    srcDirs = [ "res" ]
-                }
-            }
-            java {
-                source {
-                    srcDirs = [ "srcJava" ]
-                }
-            }
-            aidl {
-                source{
-                    srcDirs = ['srcJava']
-                }
-            }
-            renderscript{
-                source{
-                    srcDirs = ['srcJava']
-                }
-            }
-            jniLibs {
-                source {
-                    srcDirs = ['libs']
-                }
-            }
-            assets {
-                source {
-                    srcDirs = ['bin/data'] + addonData(ofRoot())
-                }
-            }
-        }
-    }
-
-    android.lintOptions {
-        abortOnError  = false
-    }
-
-    android.buildTypes {
-        release {
-            minifyEnabled = false
-        }
-    }
-
-    // Setup the different types of flavors (arm / x86),
-    // and add linker flags based on that
-    android.productFlavors {
-        getAbis().each { abi ->
-            create(getFlavorName(abi)) {
-                ndk {
-                    abiFilters.add(abi)
-
-                    cppFlags.addAll(coreCppFlags(abi, ofRoot()))
-                    cppFlags.addAll(addonCppFlags(abi, ofRoot()))
-
-                    ldLibs.addAll(coreLdLibs(abi, ofRoot()))
-                    ldLibs.addAll(addonLdLibs(abi, ofRoot()))
-
-                    ldFlags.addAll(coreLdFlags(abi, ofRoot()))
-                    ldFlags.addAll(addonLdFlags(abi, ofRoot()))
-                }
-            }
-        }
-    }
+task checkGradleDir {
+	doLast {
+		def gradleDir = file(ofLibProject).absoluteFile
+		println "🔍 Checking directory: ${gradleDir}"
+		println "✅ Exists? ${gradleDir.exists()}"
+		println "📂 List contents: ${gradleDir.listFiles()}"
+	}
 }
 
 
-dependencies {
-    addonJavaDependencies(ofRoot()).each { dep ->
-        compile(project(path: dep[1] ))
-    }
-    compile project(path: ':ofAndroidLib')
+task setupGradle {
+	doLast {
+		println "🔍 Checking Gradle setup..."
+		def gradleDir = file(ofLibProject).absoluteFile
+		def gradleWrapper = new File(gradleDir, "gradlew")
+
+		println "Directory: ${gradleDir}"
+		if (!gradleWrapper.exists()) {
+			println "Gradle wrapper not found! Initializing Gradle..."
+			exec {
+				workingDir gradleDir
+				commandLine 'gradle', 'init'
+			}
+			exec {
+				workingDir gradleDir
+				commandLine 'gradle', 'wrapper'
+			}
+		} else {
+			println "Gradle wrapper found: ${gradleWrapper.absolutePath}"
+		}
+	}
+}
+
+task buildOF {
+	dependsOn setupGradle
+	doLast {
+		println "Building openFrameworks..."
+		exec {
+			workingDir file(ofLibProject)
+			commandLine "./gradlew", "assembleDebug"
+		}
+	}
+}
+
+// Clean OpenFrameworks build
+task cleanOF {
+	dependsOn setupGradle
+	doLast {
+		println "Cleaning openFrameworks build..."
+		exec {
+			workingDir file(ofLibProject)
+			commandLine "./gradlew", "clean"
+		}
+	}
 }

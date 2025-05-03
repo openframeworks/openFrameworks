@@ -5,6 +5,7 @@
  *      Author: arturo
  */
 
+
 #include <jni.h>
 #include "ofxAccelerometer.h"
 #include "ofxAndroidUtils.h"

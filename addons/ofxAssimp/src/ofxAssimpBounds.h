@@ -1,6 +1,5 @@
 //
 //  ofxAssimpBounds.h
-//  AssimpModelLoaderGlow
 //
 //  Created by Nick Hardeman on 10/18/23.
 //
@@ -11,7 +10,7 @@
 #include <assimp/postprocess.h>
 #include "ofNode.h"
 
-namespace ofx::assimp {
+namespace ofxAssimp {
 
 class Bounds {
 protected:
@@ -78,4 +77,4 @@ protected:
 };
 }
 
-std::ostream& operator<<(std::ostream& os, const ofx::assimp::Bounds& ab);
+std::ostream& operator<<(std::ostream& os, const ofxAssimp::Bounds& ab);

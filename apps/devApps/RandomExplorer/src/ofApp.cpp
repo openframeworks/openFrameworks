@@ -12,6 +12,7 @@ void ofApp::setup() {
 	panel_.add(size_);
 	panel_.add(seed_);
 	panel_.add(reinit_);
+	panel_.add(draw_graphs_);
 
 	//	panel_.add(ok_color_);
 	//	panel_.add(saturation_);
@@ -79,12 +80,13 @@ void ofApp::draw() {
 	} else {
 		ofDrawBitmapStringHighlight("engine is non-deterministic", x, 20, ofColor::black, ofColor::white);
 	}
-
+	
 	panel_.draw();
-	dists_["core"]->draw("C++ fundamental distributions", square_, gap_);
-	dists_["special"]->draw("more specialized distributions", square_, gap_);
-	dists_["of"]->draw("OF/art-centric wrappers/utils", square_, gap_);
-	dists_["old"]->draw("Previous implementation (reference)", square_, gap_);
+	dists_["core"]->draw("C++ fundamental distributions", square_, gap_, draw_graphs_);
+	dists_["special"]->draw("more specialized distributions", square_, gap_, draw_graphs_);
+	dists_["of"]->draw("OF/art-centric wrappers/utils", square_, gap_, draw_graphs_);
+	dists_["old"]->draw("Previous implementation (reference)", square_, gap_, draw_graphs_);
+	
 
 	ofDrawBitmapStringHighlight("Performance: on M1/M2 processors, the old srand is faster\nthan uniform<float> in Debug, but slower in Release...\nPlease make sure to evaluate performance in Release!",
 		dists_["old"]->panel_.getPosition() + glm::vec2(0, square_ + gap_), ofColor(50, 0, 0), ofColor(ofColor::white));
