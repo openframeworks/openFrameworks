@@ -1,12 +1,23 @@
 name: nightly-linux64
 
+# #used for testing the nightly
+# on:
+#   push:
+#     paths-ignore:
+#       - "**/*.md"
+#       - "examples/**"
+#   pull_request:
+#     paths-ignore:
+#       - "**/*.md"
+#       - "examples/**"
+
 on:
  schedule:
   - cron: "0 6 * * *"
  workflow_dispatch:
     inputs:
       release:
-        description: 'release'     
+        description: 'release'
         required: true
         default: 'latest'
 env:
@@ -16,7 +27,7 @@ env:
 jobs:
   build-nightly-ok:
     runs-on: ubuntu-24.04
-    if: github.repository == 'openframeworks/openFrameworks' && github.ref == 'refs/heads/master'
+    # if: github.repository == 'openframeworks/openFrameworks' && github.ref == 'refs/heads/master'
     strategy:
       matrix:
         cfg:
@@ -49,12 +60,31 @@ jobs:
       id: createpackage
     - name: List output directory
       run: ls -lah out/
-    - name: Update Release
-      uses: IsaacShelton/update-existing-release@v1.3.4
-      with:
-        token: ${{ secrets.GITHUB_TOKEN }}
-        tag: nightly
-        release: nightly
-        prerelease: false
-        replace: true
-        files: ${{ steps.createpackage.outputs.FILES_OUT }}
+    # - name: Upload to GitHub Release
+    #   uses: softprops/action-gh-release@v2.1.0
+    #   with:
+    #     token: ${{ secrets.GITHUB_TOKEN }}
+    #     tag_name: "nightly"
+    #     files: |
+    #       out/of_v*.tar.gz
+    #       out/of_v*.zip
+    # Delete the existing release (but NOT the tag)
+    - name: Delete existing nightly release if exists
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        gh release delete nightly --yes || true
+    # Recreate nightly release associated with existing tag
+    - name: Create new nightly release and upload assets
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        gh release create nightly \
+          --title "Nightly Release" \
+          --notes "Auto-generated nightly build." \
+          out/of_v*.tar.gz out/of_v*.zip || \
+        gh release create nightly \
+          --title "Nightly Release" \
+          --notes "Auto-generated nightly build." \
+          --target ${{ github.sha }} \
+          out/of_v*.tar.gz out/of_v*.zip

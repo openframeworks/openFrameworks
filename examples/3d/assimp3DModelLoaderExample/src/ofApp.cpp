@@ -263,6 +263,6 @@ void ofApp::gotMessage(ofMessage msg){
 
 //--------------------------------------------------------------
 void ofApp::dragEvent(ofDragInfo dragInfo){
-    loadModel(dragInfo.files[0]);
+	loadModel(dragInfo.files[0].string());
 }
 

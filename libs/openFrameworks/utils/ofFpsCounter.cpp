@@ -23,9 +23,9 @@ ofFpsCounter::ofFpsCounter(double targetFPS, int mode)
 
 void ofFpsCounter::newFrame(){
 	now = steady_clock::now();
+	update(now);
 	timestamps.push_back(now);
 	lastFrameTime = now - then;
-	update(now);	
 	// std::lerp from c++20 on
 	if (timeMode == 2) { // Filtered
 		filterAlpha = std::clamp(filterAlpha, 0.0, 1.0);
