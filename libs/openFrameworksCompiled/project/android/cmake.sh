@@ -116,7 +116,7 @@ for ARCHE in $ARCH; do
     -DCONFIGURATION_BUILD_DIR="$OUTPUT_DIR" \
     "$CMAKELISTS_DIR"
 
-  ninja -j "$NUM_CORES"
+  $NINJA_PATH -j "$NUM_CORES"
 
   cd "$SCRIPT_DIR"
 done
