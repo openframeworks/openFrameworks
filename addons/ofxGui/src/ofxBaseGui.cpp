@@ -239,7 +239,7 @@ void ofxBaseGui::saveToFile(const of::filesystem::path & filename){
 		xml.save(filename);
     }else
     if(extension == ".json"){
-        ofJson json = ofLoadJson(filename);
+        ofJson json;
 		saveTo(json);
         ofSavePrettyJson(filename, json);
 	}else{
