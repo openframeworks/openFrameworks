@@ -16,7 +16,6 @@ using std::string;
 
 	#define MAX_POSTFIELDS_SIZE (1024 * 1024)
 
-	#define NO_OPENSSL 1
 	#include <openssl/evp.h>
 	#include <openssl/pem.h>
 	#include <openssl/x509.h>
@@ -25,10 +24,9 @@ using std::string;
 	#include <iostream>
 	#include <fstream>
 
-	#if !defined(NO_OPENSSL)
-		#define CERTIFICATE_FILE "cacert.pem"
-		#define PRIVATE_KEY_FILE "cacert.key"
-	#endif
+	#define CERTIFICATE_FILE "cacert.pem"
+	#define PRIVATE_KEY_FILE "cacert.key"
+	
 #endif
 
 int ofHttpRequest::nextID = 0;
@@ -51,10 +49,8 @@ public:
 	void remove(int id);
 	void clear();
 	void stop();
-#if !defined(NO_OPENSSL)
 	bool checkValidCertifcate(const std::string& cert_file);
 	void createSSLCertificate();
-#endif
 	ofHttpResponse handleRequest(const ofHttpRequest & request);
 	int handleRequestAsync(const ofHttpRequest & request); // returns id
 
@@ -134,8 +130,9 @@ void ofURLFileLoaderImpl::stop() {
 	curl_global_cleanup();
 }
 
-#if !defined(NO_OPENSSL)
+
 bool ofURLFileLoaderImpl::checkValidCertifcate(const std::string & cert_file) {
+#if !defined(NO_OPENSSL)
 	try {
 		FILE * fp = fopen(cert_file.c_str(), "r");
 		if (!fp) return false;
@@ -154,10 +151,12 @@ bool ofURLFileLoaderImpl::checkValidCertifcate(const std::string & cert_file) {
 		ofLogError("ofURLFileLoader") << "Unknown error occurred in checkValidCertifcate.";
 		return false;
 	}
+#endif
 }
 
 
 void ofURLFileLoaderImpl::createSSLCertificate() {
+#if !defined(NO_OPENSSL)
 	try {
 		EVP_PKEY * pkey = nullptr;
 		X509 * x509 = nullptr;
@@ -233,8 +232,9 @@ void ofURLFileLoaderImpl::createSSLCertificate() {
 	} catch (...) {
 		ofLogError("ofURLFileLoader") << "Unknown error occurred in createSSLCertificate.";
 	}
-}
 #endif
+}
+
 
 
 void ofURLFileLoaderImpl::threadedFunction() {
@@ -317,19 +317,13 @@ ofHttpResponse ofURLFileLoaderImpl::handleRequest(const ofHttpRequest & request)
 		}
 	}
 	if(version->features & CURL_VERSION_SSL) {
-#if !defined(NO_OPENSSL)
 		const std::string certPath = ofToDataPath(CERTIFICATE_FILE, true);
 		if (ofFile::doesFileExist(certPath) && checkValidCertifcate(certPath)) {
-			ofLogVerbose("ofURLFileLoader") << "SSL valid certificate found at " << certPath;
-		} else {
-			ofLogVerbose("ofURLFileLoader") << "SSL certificate not found - generating";
-			createSSLCertificate();
+			curl_easy_setopt(curl.get(), CURLOPT_CAINFO, certPath.c_str());
 		}
-		curl_easy_setopt(curl.get(), CURLOPT_CAINFO, certPath.c_str());
 		#ifndef TARGET_WIN32
 			curl_easy_setopt(curl.get(), CURLOPT_CAPATH, ofToDataPath("./", true).c_str());
 		#endif
-#endif
 		curl_easy_setopt(curl.get(), CURLOPT_SSL_VERIFYPEER, false);
 		curl_easy_setopt(curl.get(), CURLOPT_SSL_VERIFYHOST, 2L);
 	}
