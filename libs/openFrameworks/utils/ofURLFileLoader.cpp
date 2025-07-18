@@ -317,13 +317,6 @@ ofHttpResponse ofURLFileLoaderImpl::handleRequest(const ofHttpRequest & request)
 		}
 	}
 	if(version->features & CURL_VERSION_SSL) {
-		const std::string certPath = ofToDataPath(CERTIFICATE_FILE, true);
-		if (ofFile::doesFileExist(certPath) && checkValidCertifcate(certPath)) {
-			curl_easy_setopt(curl.get(), CURLOPT_CAINFO, certPath.c_str());
-		}
-		#ifndef TARGET_WIN32
-			curl_easy_setopt(curl.get(), CURLOPT_CAPATH, ofToDataPath("./", true).c_str());
-		#endif
 		curl_easy_setopt(curl.get(), CURLOPT_SSL_VERIFYPEER, false);
 		curl_easy_setopt(curl.get(), CURLOPT_SSL_VERIFYHOST, 2L);
 	}
