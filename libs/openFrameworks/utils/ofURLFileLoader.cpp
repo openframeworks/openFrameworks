@@ -26,8 +26,8 @@ using std::string;
 	#include <fstream>
 
 	#if !defined(NO_OPENSSL)
-		#define CERTIFICATE_FILE "ssl/cacert.pem"
-		#define PRIVATE_KEY_FILE "ssl/cacert.key"
+		#define CERTIFICATE_FILE "cacert.pem"
+		#define PRIVATE_KEY_FILE "cacert.key"
 	#endif
 #endif
 
@@ -318,16 +318,17 @@ ofHttpResponse ofURLFileLoaderImpl::handleRequest(const ofHttpRequest & request)
 	}
 	if(version->features & CURL_VERSION_SSL) {
 #if !defined(NO_OPENSSL)
-		const std::string caPath = "ssl";
-		const std::string caFile = "ssl/cacert.pem";
-		if (ofFile::doesFileExist(ofToDataPath(CERTIFICATE_FILE)) && checkValidCertifcate(ofToDataPath(CERTIFICATE_FILE))) {
-			ofLogVerbose("ofURLFileLoader") << "SSL valid certificate found";
+		const std::string certPath = ofToDataPath(CERTIFICATE_FILE, true);
+		if (ofFile::doesFileExist(certPath) && checkValidCertifcate(certPath)) {
+			ofLogVerbose("ofURLFileLoader") << "SSL valid certificate found at " << certPath;
 		} else {
 			ofLogVerbose("ofURLFileLoader") << "SSL certificate not found - generating";
 			createSSLCertificate();
 		}
-		curl_easy_setopt(curl.get(), CURLOPT_CAPATH, ofToDataPath(caPath, true).c_str());
-		curl_easy_setopt(curl.get(), CURLOPT_CAINFO, ofToDataPath(caFile, true).c_str());
+		curl_easy_setopt(curl.get(), CURLOPT_CAINFO, certPath.c_str());
+		#ifndef TARGET_WIN32
+			curl_easy_setopt(curl.get(), CURLOPT_CAPATH, ofToDataPath("./", true).c_str());
+		#endif
 #endif
 		curl_easy_setopt(curl.get(), CURLOPT_SSL_VERIFYPEER, false);
 		curl_easy_setopt(curl.get(), CURLOPT_SSL_VERIFYHOST, 2L);
