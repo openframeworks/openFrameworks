@@ -107,6 +107,7 @@ for ARCHE in $ARCH; do
     -DANDROID_TOOLCHAIN=clang \
     -DANDROID_NDK_ROOT=$ANDROID_NDK_ROOT \
     -DANDROID_ABI=${ARCHE} \
+    -DANDROID=TRUE \
     -DANDROID_API=${ANDROID_API} \
     -DCMAKE_MAKE_PROGRAM="${NINJA_PATH}" \
     -DCMAKE_CXX_FLAGS="-DUSE_PTHREADS=1 -fvisibility-inlines-hidden -std=c++${CPP_STANDARD} -frtti" \
