@@ -164,9 +164,9 @@ android {
             java.srcDirs = ["${PRJ_SRC_ROOT}/java",
                             "${OFX_ANDROID}/Java"]
             res.srcDirs = ["${PRJ_SRC_ROOT}/res"]
-            assets {
-                srcDirs 'src/main/assets', 'src/main/bin/data'
-            }
+			assets {
+				srcDirs 'src/main/assets', '../bin/data'
+			}
         }
     }
     externalNativeBuild {
