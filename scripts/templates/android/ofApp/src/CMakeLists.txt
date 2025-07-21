@@ -69,6 +69,9 @@ add_library( ${PROJECT_NAME}
         ${OF_APP_SRC_PATH}/ofApp.cpp
 )
 
+file(GLOB_RECURSE APP_SRC CONFIGURE_DEPENDS "${OF_APP_SRC_PATH}/*.cpp")
+target_sources(${PROJECT_NAME} PRIVATE ${APP_SRC})
+
 include_directories(
         ${PRJ_SOURCE_PATH}/3d
         ${PRJ_SOURCE_PATH}/app
