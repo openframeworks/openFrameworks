@@ -2,6 +2,9 @@
 
 //--------------------------------------------------------------
 void ofApp::setup(){
+	image.load("images/bikers.jpg");
+	ofBackground(255,255,255);
+	ofSetColor(255,255,255);
 }
 
 //--------------------------------------------------------------
@@ -10,15 +13,16 @@ void ofApp::update(){
 
 //--------------------------------------------------------------
 void ofApp::draw(){
+    image.draw(20,20);
 }
 
 //--------------------------------------------------------------
-void ofApp::keyPressed(int key){ 
+void ofApp::keyPressed(int key){
 
 }
 
 //--------------------------------------------------------------
-void ofApp::keyReleased(int key){ 
+void ofApp::keyReleased(int key){
 }
 
 //--------------------------------------------------------------
@@ -98,4 +102,5 @@ void ofApp::deviceHighestRefreshRateChangedEvent(int &refreshRate) {
 void ofApp::exit(){
 
 }
+
 

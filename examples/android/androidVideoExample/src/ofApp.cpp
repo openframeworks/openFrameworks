@@ -3,7 +3,18 @@
 //--------------------------------------------------------------
 void ofApp::setup(){
 
-	player.load("hands.mp4");
+    ofLogNotice() << "Resolved path: " << ofToDataPath("hands.mp4", true);
+
+
+    ofDirectory dir(ofToDataPath("", true));
+    dir.listDir();
+
+    ofLogNotice() << "Listing of: " << dir.getAbsolutePath();
+    for (size_t i = 0; i < dir.size(); ++i) {
+        ofLogNotice() << "  " << dir.getFile(i).getFileName();
+    }
+
+    player.load("hands.m4v");
 	player.play();
 
 }
@@ -23,13 +34,13 @@ void ofApp::draw(){
 }
 
 //--------------------------------------------------------------
-void ofApp::keyPressed  (int key){ 
-	
+void ofApp::keyPressed  (int key){
+
 }
 
 //--------------------------------------------------------------
-void ofApp::keyReleased(int key){ 
-	
+void ofApp::keyReleased(int key){
+
 }
 
 //--------------------------------------------------------------

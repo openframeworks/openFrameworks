@@ -4,14 +4,14 @@
 #include "ofxAndroid.h"
 
 class ofApp : public ofxAndroidApp{
-	
+
 	public:
-		
+
 		void setup();
 		void exit();
 		void update();
 		void draw();
-		
+
 		void keyPressed(int key);
 		void keyReleased(int key);
 		void windowResized(int w, int h);
@@ -36,4 +36,6 @@ class ofApp : public ofxAndroidApp{
 		void deviceHighestRefreshRateChanged(int refreshRate);
 		void deviceRefreshRateChangedEvent(int &refreshRate);
 		void deviceHighestRefreshRateChangedEvent(int & refreshRate);
+
+        ofImage image;
 };
