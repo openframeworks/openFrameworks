@@ -18,7 +18,7 @@ def enableProguardInReleaseBuilds = true
 def enableProguardInDebugBuilds = false
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '8.9.0'
+    gradleVersion = '8.14.3'
 }
 tasks.register("prepareKotlinBuildScriptModel"){
 }
@@ -75,7 +75,7 @@ android {
     compileSdkVersion 34
     buildToolsVersion '35.0.0'
     //ndkPath "/Users/x/android-ndk-r21e"  // Point to your own NDK if needed
-    ndkVersion '28.0.13004108' // use android studio side loaded ndk
+    ndkVersion '28.2.13676358' // use android studio side loaded ndk
     buildFeatures {
         prefab true
     }
