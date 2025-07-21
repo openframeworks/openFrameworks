@@ -13,7 +13,7 @@ std::shared_ptr<ofAppBaseWindow> baseWindow;
 int main(int argc, char **argv) {
     baseWindow = std::make_shared<ofAppAndroidWindow>();
     ofxAndroidWindowSettings settings;
-    settings.glesVersion = 2;
+    settings.glesVersion = 1;
     settings.setSize(1920, 1080);
     settings.windowMode = OF_WINDOW;
     settings.preserveContextOnPause = true;
