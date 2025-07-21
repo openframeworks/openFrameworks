@@ -14,7 +14,7 @@ void ofApp::setup(){
         ofLogNotice() << "  " << dir.getFile(i).getFileName();
     }
 
-    player.load("hands.m4v");
+    player.load("hands.mp4");
 	player.play();
 
 }
