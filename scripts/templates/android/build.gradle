@@ -7,7 +7,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.9.0'
+        classpath 'com.android.tools.build:gradle:8.9.3'
     }
 }
 
@@ -30,7 +30,7 @@ final ofLibProject = ofMainRoot() + 'libs/openFrameworksCompiled/project/android
 
 task printPaths {
 	doLast {
-		println "🔍 Checking Paths..."
+		println "Checking Paths..."
 		println "OF Source: ${file(ofSource).absolutePath}"
 		println "OF Lib Output: ${file(ofLibProject).absolutePath}"
 		println "Current Working Directory: ${projectDir.absolutePath}"
@@ -40,16 +40,16 @@ task printPaths {
 task checkGradleDir {
 	doLast {
 		def gradleDir = file(ofLibProject).absoluteFile
-		println "🔍 Checking directory: ${gradleDir}"
-		println "✅ Exists? ${gradleDir.exists()}"
-		println "📂 List contents: ${gradleDir.listFiles()}"
+		println "Checking directory: ${gradleDir}"
+		println "Exists? ${gradleDir.exists()}"
+		println "List contents: ${gradleDir.listFiles()}"
 	}
 }
 
 
 task setupGradle {
 	doLast {
-		println "🔍 Checking Gradle setup..."
+		println "Checking Gradle setup..."
 		def gradleDir = file(ofLibProject).absoluteFile
 		def gradleWrapper = new File(gradleDir, "gradlew")
 

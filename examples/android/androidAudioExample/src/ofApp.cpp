@@ -182,3 +182,25 @@ void ofApp::audioIn(ofSoundBuffer & buffer){
 	}
 
 }
+
+
+//--------------------------------------------------------------
+void ofApp::deviceRefreshRateChanged(int refreshRate) {
+}
+
+//--------------------------------------------------------------
+void ofApp::deviceHighestRefreshRateChanged(int refreshRate) {
+}
+
+//--------------------------------------------------------------
+void ofApp::deviceRefreshRateChangedEvent(int &refreshRate) {
+}
+
+//--------------------------------------------------------------
+void ofApp::deviceHighestRefreshRateChangedEvent(int &refreshRate) {
+}
+
+//--------------------------------------------------------------
+void ofApp::exit(){
+
+}

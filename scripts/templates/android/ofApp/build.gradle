@@ -18,64 +18,161 @@ def enableProguardInReleaseBuilds = true
 def enableProguardInDebugBuilds = false
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '8.9.0'
+    gradleVersion = '8.14.3'
 }
 tasks.register("prepareKotlinBuildScriptModel"){
 }
 def projectRoot = rootProject.projectDir.absolutePath
 def addonFile = new File(projectRoot, "addons.make")
 
+println "projectRoot = ${projectRoot}"
+println "addonFile = ${addonFile.absolutePath}"
+
+
 // Get all addon paths from addons.make
+
+def ofRoot = "/../../../"
+
 def addonPaths = []
 if (addonFile.exists()) {
 	addonFile.eachLine { line ->
-		def addonPath = ofRoot + "addons/" + line
-		if (new File(addonPath).exists()) {
+		def addonRelPath = ofRoot + "/addons/" + line.trim()
+		def addonPath = new File(projectRoot, addonRelPath).canonicalFile
+		println "Resolved addon path: ${addonPath}"
+		if (addonPath.exists()) {
 			addonPaths.add(addonPath)
+		} else {
+			println "Missing addon path: ${addonPath}"
 		}
 	}
 }
 
+println "Checking path: ${addonPaths}"
+
+
 def addonIncludeDirs = []
+def addonSourceFiles = []
 def addonLibs = []
 
 // Collect include directories and libraries for each addon
 addonPaths.each { addon ->
+	// Add addon/src
 	def includePath = new File(addon, "src")
 	if (includePath.exists()) {
 		addonIncludeDirs.add(includePath.absolutePath)
+		includePath.eachFileRecurse { file ->
+			if (file.name.endsWith(".cpp") || file.name.endsWith(".c")) {
+				println "Found C/CPP source: ${file}"
+				addonSourceFiles.add(file.absolutePath)
+			}
+		}
+		def javaDirs = [
+			new File(addon, "java"),
+			new File(addon, "kotlin"),
+			new File(addon, "srcJava"),
+			new File(addon, "src")
+		]
+		javaDirs.each { dir ->
+			if (dir.exists()) {
+				dir.eachFileRecurse { file ->
+					if (file.name.endsWith(".java") || file.name.endsWith(".kt")) {
+						println "Found Java/Kotlin source: ${file}"
+						addonSourceFiles.add(file.absolutePath)
+					}
+				}
+			}
+		}
 	}
-}
-
-// Define supported Android ABIs
-def supportedAbis = ["arm64-v8a", "armeabi-v7a", "x86_64"]
-
-addonPaths.each { addon ->
-	supportedAbis.each { abi ->
-		def libPath = new File(addon, "libs/android/${abi}")
-		if (libPath.exists()) {
-			def libFiles = libPath.listFiles()?.findAll { it.name.endsWith(".so") || it.name.endsWith(".a") }
-			if (libFiles) {
-				addonLibs.addAll(libFiles*.absolutePath)
+	// Add libs/*/include/
+	def libsDir = new File(addon, "libs")
+	if (libsDir.exists()) {
+		libsDir.eachDir { subLib ->
+			def includeDir = new File(subLib, "include").canonicalFile
+			if (includeDir.exists()) {
+				println "Found sublib include: ${includeDir}"
+				addonIncludeDirs.add(includeDir.absolutePath)
 			}
 		}
 	}
 }
-println "Addon Libraries found: ${addonLibs}"
+// Define supported Android ABIs
+def supportedAbis = ["arm64-v8a", "armeabi-v7a", "x86_64"]
+def currentAbis = []
+if (android.defaultConfig.ndk.abiFilters != null && !android.defaultConfig.ndk.abiFilters.isEmpty()) {
+	currentAbis = android.defaultConfig.ndk.abiFilters.toList()
+} else {
+	currentAbis = supportedAbis
+}
+println "abiFilters type: ${android.defaultConfig.ndk.abiFilters?.getClass()}"
+println "abiFilters value: ${android.defaultConfig.ndk.abiFilters}"
+println "currentAbis value: ${currentAbis}"
+
+def addonLibMap = [:].withDefault { [] }
+
+supportedAbis.each { abi -> addonLibMap[abi] = [] }
+addonPaths.each { addon ->
+	def libsDir = new File(addon, "libs")
+	if (libsDir.exists() && libsDir.isDirectory()) {
+		libsDir.eachDir { subLib ->
+			def libRoot = new File(subLib, "lib/android")
+			supportedAbis.each { abi ->
+				def archDir = new File(libRoot, abi).canonicalFile
+				if (archDir.exists() && archDir.isDirectory()) {
+					def libFiles = archDir.listFiles()?.findAll {
+						it.name.endsWith(".so") || it.name.endsWith(".a")
+					}
+					if (libFiles) {
+						addonLibMap[abi].addAll(libFiles*.absolutePath)
+					}
+				}
+			}
+		}
+	}
+}
+
+addonPaths.each { addon ->
+	def libsDir = new File(addon, "libs")
+	if (libsDir.exists() && libsDir.isDirectory()) {
+		libsDir.eachDir { subLib ->
+			def libRoot = new File(subLib, "lib/android")
+			supportedAbis.each { abi ->
+				def archDir = new File(libRoot, abi).canonicalFile
+				println "Checking: ${archDir}"
+				if (archDir.exists() && archDir.isDirectory()) {
+					def libFiles = archDir.listFiles()?.findAll {
+						it.name.endsWith(".so") || it.name.endsWith(".a")
+					}
+					if (libFiles && !libFiles.isEmpty()) {
+						println "Found ${libFiles.size()} libraries in ${archDir}:"
+						libFiles.each { lib -> println "    - ${lib.absolutePath}" }
+						addonLibs.addAll(libFiles*.absolutePath)
+					} else {
+						println "No libs found in ${archDir}"
+					}
+				}
+			}
+		}
+	} else {
+		println "No 'libs/' folder in ${addon.name}"
+	}
+}
+println "Addon Libraries found: [${addonLibs}]"
 
 // Convert lists to CMake arguments
-def cmakeIncludeArgs = "-DADDON_INCLUDE_DIRS=" + addonIncludeDirs.join(";")
-def cmakeLibArgs = "-DADDON_LIBS=" + addonLibs.join(";")
+def cmakeIncludeArgs = "-DADDON_INCLUDE_DIRS=\"" + addonIncludeDirs.join(";") + "\""
+def cmakeLibArgs = "-DADDON_LIBS=\"" + addonLibs.join(";") + "\""
+def cmakeSrcArgs = "-DADDON_SOURCES=" + addonSourceFiles.join(";")
 
 println "Found addons: " + addonPaths
 println "Include directories: " + addonIncludeDirs
-println "Libraries: " + addonLibs
+
+
 
 android {
     compileSdkVersion 34
     buildToolsVersion '35.0.0'
     //ndkPath "/Users/x/android-ndk-r21e"  // Point to your own NDK if needed
-    ndkVersion '28.0.13004108' // use android studio side loaded ndk
+    ndkVersion '28.2.13676358' // use android studio side loaded ndk
     buildFeatures {
         prefab true
     }
@@ -91,30 +188,27 @@ android {
         }
     }
     defaultConfig {
-        applicationId "cc.openframeworks.emptyExample"  // IMPORTANT : THIS DEFINES THE ID OF THE APK
+        applicationId "cc.openframeworks.androidAssimpExample"  // IMPORTANT : THIS DEFINES THE ID OF THE APK
         minSdkVersion 24
         targetSdkVersion 34
         versionCode 12
         versionName '12.0'
         ndk.abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86_64'
 
+		def androidSTL = "-DANDROID_STL=c++_shared"
+		if (project.hasProperty("OF_STATIC") && project.OF_STATIC.toBoolean()) {
+			androidSTL "-DANDROID_STL=c++_static"
+		}
+
         externalNativeBuild {
 			cmake {
 				arguments "-DANDROID_TOOLCHAIN=clang",
-					"-DTARGET_OPENGLES=TRUE"
-
-				// Use c++_static if building OpenFrameworks as a STATIC library
-				if (project.hasProperty("OF_STATIC") && project.OF_STATIC.toBoolean()) {
-					arguments "-DANDROID_STL=c++_static"
-				} else {
-					arguments "-DANDROID_STL=c++_shared"
-				}
-
-				// Enable NEON only for ARM architectures
-				if (android.defaultConfig.ndk.abiFilters.contains("armeabi-v7a") || android.defaultConfig.ndk.abiFilters.contains("arm64-v8a")) {
-					arguments "-DANDROID_ARM_NEON=TRUE"
-				}
-
+					"-DTARGET_OPENGLES=TRUE",
+					"-DCMAKE_VERBOSE_MAKEFILE=ON",
+					cmakeIncludeArgs,
+					cmakeLibArgs,
+					cmakeSrcArgs,
+					androidSTL
 				abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86_64'
 				version '3.22.1'
 			}
@@ -164,16 +258,15 @@ android {
             java.srcDirs = ["${PRJ_SRC_ROOT}/java",
                             "${OFX_ANDROID}/Java"]
             res.srcDirs = ["${PRJ_SRC_ROOT}/res"]
-            assets {
-                srcDirs 'src/main/assets', 'src/main/bin/data'
-            }
+			assets {
+				srcDirs 'src/main/assets', '../bin/data'
+			}
         }
     }
     externalNativeBuild {
 		cmake {
 			path "${CMAKELIST_PATH}/CMakeLists.txt"
 		}
-
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8

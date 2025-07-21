@@ -9,39 +9,45 @@
 
 class ofApp : public ofxAndroidApp {
 	
-public:
-	void setup();
-	void update();
-	void draw();
-	
-	void keyPressed(int key);
-	void keyReleased(int key);
-	void windowResized(int w, int h);
+	public:
+		void setup();
+		void exit();
+		void update();
+		void draw();
+		
+		void keyPressed(int key);
+		void keyReleased(int key);
+		void windowResized(int w, int h);
 
-	void touchDown(int x, int y, int id);
-	void touchMoved(int x, int y, int id);
-	void touchUp(int x, int y, int id);
-	void touchDoubleTap(int x, int y, int id);
-	void touchCancelled(int x, int y, int id);
-	void swipe(ofxAndroidSwipeDir swipeDir, int id);
+		void touchDown(int x, int y, int id);
+		void touchMoved(int x, int y, int id);
+		void touchUp(int x, int y, int id);
+		void touchDoubleTap(int x, int y, int id);
+		void touchCancelled(int x, int y, int id);
+		void swipe(ofxAndroidSwipeDir swipeDir, int id);
 
-	void pause();
-	void stop();
-	void resume();
-	void reloadTextures();
+		void pause();
+		void stop();
+		void resume();
+		void reloadTextures();
 
-	bool backPressed();
-	void okPressed();
-	void cancelPressed();
+		bool backPressed();
+		void okPressed();
+		void cancelPressed();
 
-	ofVbo	vbo;
-	glm::vec3 pos[GRID_WIDTH*GRID_HEIGHT*LENGTH];
-	glm::vec3 center;
+		void deviceRefreshRateChanged(int refreshRate);
+		void deviceHighestRefreshRateChanged(int refreshRate);
+		void deviceRefreshRateChangedEvent(int &refreshRate);
+		void deviceHighestRefreshRateChangedEvent(int & refreshRate);
 
-	float   restLength;
-	int		total;
-	int		space;
-	int		count;
-	bool	bPause;
-	int		zoom, zoomTarget;
+		ofVbo	vbo;
+		glm::vec3 pos[GRID_WIDTH*GRID_HEIGHT*LENGTH];
+		glm::vec3 center;
+
+		float   restLength;
+		int		total;
+		int		space;
+		int		count;
+		bool	bPause;
+		int		zoom, zoomTarget;
 };

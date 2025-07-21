@@ -117,6 +117,8 @@ include_directories(
         ${PRJ_LIBS_ROOT}/curl/include
 )
 
+add_definitions(-DANDROID)
+
 find_library(ANDROID_LIB NAMES android)
 find_library(LOG_LIB NAMES log)
 find_library(GLES1_LIB NAMES GLESv1_CM)
@@ -131,6 +133,17 @@ target_link_libraries(openFrameworksAndroid
 		dl
 		)
 
+find_library(atomic_lib atomic)
+if(atomic_lib)
+  target_link_libraries(openFrameworksAndroid ${atomic_lib})
+endif()
+
+find_library(mediandk_lib mediandk)
+
+target_link_libraries(openFrameworksAndroid
+    ${mediandk_lib}
+)
+
 target_link_libraries(openFrameworksAndroid
         ${ANDROID_LIB}
         ${GLES2_LIB}
@@ -138,7 +151,6 @@ target_link_libraries(openFrameworksAndroid
         ${GLES1_LIB}
         ${LOG_LIB}
 )
-
 
 target_link_libraries(openFrameworksAndroid
         ${PRJ_LIBS_ROOT}/brotli/lib/android/${ANDROID_ABI}/libbrotlicommon.a
