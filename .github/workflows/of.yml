@@ -116,7 +116,7 @@ jobs:
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   build-vs2022:
-    runs-on: windows-2022
+    runs-on: windows-2025
     strategy:
       matrix:
         platform: [x64, ARM64, ARM64EC]
@@ -160,61 +160,6 @@ jobs:
         run: |
           msbuild examples/templates/allAddonsExample/allAddonsExample.vcxproj /p:configuration=debug /p:platform=${{ matrix.platform }} /p:PlatformToolset=v143
           msbuild examples/templates/allAddonsExample/allAddonsExample.vcxproj /p:configuration=release /p:platform=${{ matrix.platform }} /p:PlatformToolset=v143
-
-  build-vs2019:
-    runs-on: windows-2019
-    strategy:
-      matrix:
-        platform: [x64]
-    env:
-      BITS: ${{ matrix.bits }}
-    steps:
-      - name: Clone repository
-        uses: actions/checkout@v4
-
-      - uses: msys2/setup-msys2@v2.27.0
-        with:
-          update: true
-          install: >-
-            git
-            unzip
-
-      - name: Setup MSBuild (VS2019 - 16.11)
-        uses: microsoft/setup-msbuild@v2
-        with:
-          vs-version: "16.11"
-          msbuild-architecture: x64
-
-      - name: Verify MSBuild Version
-        run: msbuild -version
-
-      - name: Download libs
-        run: ./scripts/vs/download_libs_2019_x64.sh -t $RELEASE
-
-      - name: Download projectGenerator
-        shell: bash
-        run: ./scripts/vs/download_projectGenerator.sh
-
-      - name: Debug projectGenerator Directory
-        shell: bash
-        run: |
-          echo "Checking projectGenerator directory:"
-          ls -la projectGenerator/
-
-      # - name: run projectGenerator on examples
-      #   shell: bash
-      #   run: ./scripts/ci/vs/pg_projects.sh
-
-      # - name: Build DEBUG and RELEASE emptyExample
-      #   working-directory: ${{env.GITHUB_WORKSPACE}}
-      #   run: |
-      #     msbuild examples/templates/emptyExample/emptyExample.vcxproj /p:configuration=debug /p:platform=${{ matrix.platform }} /p:PlatformToolset=v142
-      #     msbuild examples/templates/emptyExample/emptyExample.vcxproj /p:configuration=release /p:platform=${{ matrix.platform }} /p:PlatformToolset=v142
-      # - name: Build DEBUG and RELEASE allAddonsExample
-      #   working-directory: ${{env.GITHUB_WORKSPACE}}
-      #   run: |
-      #     msbuild examples/templates/allAddonsExample/allAddonsExample.vcxproj /p:configuration=debug /p:platform=${{ matrix.platform }} /p:PlatformToolset=v142
-      #     msbuild examples/templates/allAddonsExample/allAddonsExample.vcxproj /p:configuration=release /p:platform=${{ matrix.platform }} /p:PlatformToolset=v142
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
