@@ -293,7 +293,3 @@ void ofApp::deviceRefreshRateChangedEvent(int &refreshRate) {
 void ofApp::deviceHighestRefreshRateChangedEvent(int &refreshRate) {
 }
 
-//--------------------------------------------------------------
-void ofApp::exit(){
-
-}
