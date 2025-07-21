@@ -26,8 +26,8 @@ set(PRJ_OFX_ANDROID_CPP_PATH ${PRJ_ADDONS_PATH}/ofxAndroid/src)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CONFIGURATION_BUILD_DIR ${OF_ANDROID_OUTPUT})
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -ferror-limit=0 -std=c17 -Oz -Wall -fno-short-enums -fPIE -fPIC -fexceptions -ffunction-sections -fdata-sections")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ferror-limit=0 -std=c++23 -Oz -stdlib=libc++ -Wall -fno-short-enums -fPIE -fPIC -fexceptions -ffunction-sections -fdata-sections")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O3 -Wall -fno-short-enums -fPIE -fPIC")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -Wall -fno-short-enums -fPIE -fPIC -fexceptions")
 set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -Wl,-export-dynamic")
 file(GLOB OF_SOURCES
         ${OF_SOURCE_DIR}/*.cpp
