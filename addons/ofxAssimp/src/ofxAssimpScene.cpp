@@ -166,7 +166,7 @@ void Scene::processSceneNodesRecursive( std::shared_ptr<ofxAssimp::SrcNode> aSrc
 	if( nodeType == ofxAssimp::NodeType::OFX_ASSIMP_MESH ) {
 		auto tmesh = make_shared<ofxAssimp::Mesh>();
 		auto srcMesh = std::dynamic_pointer_cast<ofxAssimp::SrcMesh>(aSrcNode);
-		tmesh->setSrcMesh( srcMesh );
+		tmesh->setSrcMesh( srcMesh, mSrcScene->getImportSettings().applyTransformsToMeshesWithoutBones );
 		mMeshes.push_back(tmesh);
 		newNode = tmesh;
 	} else if( nodeType == ofxAssimp::NodeType::OFX_ASSIMP_BONE ) {

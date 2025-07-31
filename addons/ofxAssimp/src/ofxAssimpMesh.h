@@ -38,7 +38,7 @@ public:
 	aiMesh* getAiMesh();
 	std::size_t getNumIndices();
 	
-	void setSrcMesh( std::shared_ptr<ofxAssimp::SrcMesh> aSrcMesh );
+	void setSrcMesh( std::shared_ptr<ofxAssimp::SrcMesh> aSrcMesh, bool bApplyTransform );
 	
 	ofMesh& getStaticMesh();
 	ofMesh& getMesh();

@@ -42,6 +42,7 @@ struct ImportSettings {
 //	bool importLights = false;
 	bool convertToLeftHanded = true; // aiProcess_ConvertToLeftHanded
 	bool transformRootNode = true; // orient based on src scene root node, helps with correct orientation
+	bool applyTransformsToMeshesWithoutBones = false; // apply offset transforms to meshes without bones. 
 	std::vector<std::string> excludeNodesContainingStrings;
 	unsigned int aiFlags = 0; // ai process flags, ie. aiProcess_FixInfacingNormals
 };
