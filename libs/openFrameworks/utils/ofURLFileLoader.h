@@ -17,8 +17,8 @@ public:
 	std::string url; ///< request url
 	std::string name; ///< optional name key for sorting
 	bool saveTo; ///< save to a file once the request is finished?
-	bool close; // auto close connection at each request - default true 
-	bool verbose; // verbose packet logs
+	bool close; ///< auto close connection at each request - default true 
+	bool verbose; ///< verbose packet logs
 	std::map<std::string, std::string> headers; ///< HTTP header keys & values
 	std::string body; ///< POST body data
 	std::string contentType; ///< POST data mime type
