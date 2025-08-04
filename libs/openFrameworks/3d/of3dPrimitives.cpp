@@ -102,6 +102,7 @@ const glm::vec4& of3dPrimitive::getTexCoords() const{
 
 //----------------------------------------------------------
 vector<ofIndexType> of3dPrimitive::getIndices( int startIndex, int endIndex ) const {
+	
     vector<ofIndexType> indices;
     indices.assign( getMesh().getIndices().begin()+startIndex, getMesh().getIndices().begin()+endIndex );
     return indices;
