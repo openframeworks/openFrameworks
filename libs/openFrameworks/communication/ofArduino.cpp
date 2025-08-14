@@ -667,7 +667,7 @@ void ofArduino::processSysExData(vector <unsigned char> data) {
 	// act on reserved sysEx messages (extended commands) or trigger SysEx event...
 	switch (data.front()) {  //first byte in buffer is command
 	case REPORT_FIRMWARE:
-		ofLogVerbose("ofArduino") << "Recieved Firmware Report";
+		ofLogVerbose("ofArduino") << "Received Firmware Report";
 		it = data.begin();
 		it++;    // skip the first byte, which is the firmware version command
 		_majorFirmwareVersion = *it;
@@ -694,7 +694,7 @@ void ofArduino::processSysExData(vector <unsigned char> data) {
 		break;
 
 	case STRING_DATA:
-		ofLogVerbose("ofArduino") << "Recieved Firamta String";
+		ofLogVerbose("ofArduino") << "Received Firmata String";
 		it = data.begin();
 		it++;    // skip the first byte, which is the string command
 		while (it != data.end()) {
@@ -713,7 +713,7 @@ void ofArduino::processSysExData(vector <unsigned char> data) {
 		ofNotifyEvent(EStringReceived, str, this);
 		break;
 	case I2C_REPLY:
-		ofLogVerbose("ofArduino") << "Recieved I2C Reply";
+		ofLogVerbose("ofArduino") << "Received I2C Reply";
 		if (data.size() > 7 && (data.size() - 5) % 2 == 0) {
 			Firmata_I2C_Data i2creply;
 			it = data.begin();
@@ -727,15 +727,15 @@ void ofArduino::processSysExData(vector <unsigned char> data) {
 				it++;
 			}
 			i2creply.data = str;
-			ofNotifyEvent(EI2CDataRecieved, i2creply, this);
+			ofNotifyEvent(EI2CDataReceived, i2creply, this);
 		}
 		else {
-			ofLogError("Arduino I2C") << "Incorrect Number of Bytes recieved, possible buffer overflow";
+			ofLogError("Arduino I2C") << "Incorrect Number of Bytes received, possible buffer overflow";
 			purge();
 		}
 		break;
 	case ENCODER_DATA:
-		ofLogVerbose("ofArduino") << "Recieved Encoder Data";
+		ofLogVerbose("ofArduino") << "Received Encoder Data";
 		if (data.size() % 5 == 1) {
 
 			vector<Firmata_Encoder_Data> encoderReply;
@@ -771,14 +771,14 @@ void ofArduino::processSysExData(vector <unsigned char> data) {
 			ofNotifyEvent(EEncoderDataReceived, encoderReply, this);
 		}
 		else {
-			ofLogError("Arduino Encoder") << "Incorrect Number of Bytes recieved, possible buffer overflow";
+			ofLogError("Arduino Encoder") << "Incorrect Number of Bytes received, possible buffer overflow";
 			purge();
 		}
 
 		break;
 	case SERIAL_MESSAGE:
 	{
-		ofLogVerbose("ofArduino") << "Recieved Serial Message";
+		ofLogVerbose("ofArduino") << "Received Serial Message";
 		Firmata_Serial_Data reply;
 
 		it = data.begin();
@@ -827,7 +827,7 @@ void ofArduino::processSysExData(vector <unsigned char> data) {
 	break;
 	case CAPABILITY_RESPONSE:
 	{
-		ofLogVerbose("ofArduino") << "Recieved Capability Response";
+		ofLogVerbose("ofArduino") << "Received Capability Response";
 		it = data.begin();
 		it += 2; // skip the first byte, which is the string command
 
@@ -912,7 +912,7 @@ void ofArduino::processSysExData(vector <unsigned char> data) {
 	break;
 	case ANALOG_MAPPING_RESPONSE:
 	{
-		ofLogVerbose("ofArduino") << "Recieved Analog Map Query Response";
+		ofLogVerbose("ofArduino") << "Received Analog Map Query Response";
 		it = data.begin();
 		int pin = 0;
 		bool fAPin = false;
@@ -947,7 +947,7 @@ void ofArduino::processSysExData(vector <unsigned char> data) {
 	break;
 	case PIN_STATE_RESPONSE:
 	{
-		ofLogVerbose("ofArduino") << "Recieved Pin State Query Response";
+		ofLogVerbose("ofArduino") << "Received Pin State Query Response";
 		it = data.begin();
 		it++;    // skip the first byte, which is the string command
 		int pin = *it++;
