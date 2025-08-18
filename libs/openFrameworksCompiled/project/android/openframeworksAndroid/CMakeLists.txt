@@ -26,8 +26,8 @@ set(PRJ_OFX_ANDROID_CPP_PATH ${PRJ_ADDONS_PATH}/ofxAndroid/src)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CONFIGURATION_BUILD_DIR ${OF_ANDROID_OUTPUT})
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -ferror-limit=0 -std=c17 -Oz -Wall -fno-short-enums -fPIE -fPIC -fexceptions -ffunction-sections -fdata-sections")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ferror-limit=0 -std=c++23 -Oz -stdlib=libc++ -Wall -fno-short-enums -fPIE -fPIC -fexceptions -ffunction-sections -fdata-sections")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O3 -Wall -fno-short-enums -fPIE -fPIC")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -Wall -fno-short-enums -fPIE -fPIC -fexceptions")
 set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -Wl,-export-dynamic")
 file(GLOB OF_SOURCES
         ${OF_SOURCE_DIR}/*.cpp
@@ -117,6 +117,8 @@ include_directories(
         ${PRJ_LIBS_ROOT}/curl/include
 )
 
+add_definitions(-DANDROID)
+
 find_library(ANDROID_LIB NAMES android)
 find_library(LOG_LIB NAMES log)
 find_library(GLES1_LIB NAMES GLESv1_CM)
@@ -131,6 +133,17 @@ target_link_libraries(openFrameworksAndroid
 		dl
 		)
 
+find_library(atomic_lib atomic)
+if(atomic_lib)
+  target_link_libraries(openFrameworksAndroid ${atomic_lib})
+endif()
+
+find_library(mediandk_lib mediandk)
+
+target_link_libraries(openFrameworksAndroid
+    ${mediandk_lib}
+)
+
 target_link_libraries(openFrameworksAndroid
         ${ANDROID_LIB}
         ${GLES2_LIB}
@@ -138,7 +151,6 @@ target_link_libraries(openFrameworksAndroid
         ${GLES1_LIB}
         ${LOG_LIB}
 )
-
 
 target_link_libraries(openFrameworksAndroid
         ${PRJ_LIBS_ROOT}/brotli/lib/android/${ANDROID_ABI}/libbrotlicommon.a

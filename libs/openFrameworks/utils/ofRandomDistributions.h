@@ -494,7 +494,7 @@ poisson(T mean, G & g = of::random::gen()) {
 /// \param g the random engine (default: OF internal of::random::gen())
 /// \return an exponential random value ot type T
 template <typename T = float, typename G = decltype(of::random::gen()), typename = std::enable_if_t<is_random_engine_v<G>>>
-std::enable_if_t<std::is_arithmetic_v<T>, T>
+std::enable_if_t<std::is_floating_point_v<T>, T>
 exponential(T lambda, G & g = of::random::gen()) {
 	return std::exponential_distribution<T>{lambda}(g);
 }

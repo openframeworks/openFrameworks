@@ -2,7 +2,7 @@
 
 //--------------------------------------------------------------
 void ofApp::setup(){
-	font.load("frabk.ttf",14);
+	font.load("frabk.ttf",58);
 	ofBackground(255,255,255);
 	ofSetColor(0,0,0);
 }
@@ -15,18 +15,18 @@ void ofApp::update(){
 //--------------------------------------------------------------
 void ofApp::draw(){
 
-	font.drawString("hello world!!",20,20);
+	font.drawString("hello world!!",128,128);
 	//ofDrawBitmapString(ofToString(ofGetFrameRate()),20,30);
 }
 
 //--------------------------------------------------------------
-void ofApp::keyPressed  (int key){ 
-	
+void ofApp::keyPressed  (int key){
+
 }
 
 //--------------------------------------------------------------
-void ofApp::keyReleased(int key){ 
-	
+void ofApp::keyReleased(int key){
+
 }
 
 //--------------------------------------------------------------
@@ -96,5 +96,26 @@ void ofApp::okPressed(){
 
 //--------------------------------------------------------------
 void ofApp::cancelPressed(){
+
+}
+
+//--------------------------------------------------------------
+void ofApp::deviceRefreshRateChanged(int refreshRate) {
+}
+
+//--------------------------------------------------------------
+void ofApp::deviceHighestRefreshRateChanged(int refreshRate) {
+}
+
+//--------------------------------------------------------------
+void ofApp::deviceRefreshRateChangedEvent(int &refreshRate) {
+}
+
+//--------------------------------------------------------------
+void ofApp::deviceHighestRefreshRateChangedEvent(int &refreshRate) {
+}
+
+//--------------------------------------------------------------
+void ofApp::exit(){
 
 }

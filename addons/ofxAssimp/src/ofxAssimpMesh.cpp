@@ -103,13 +103,13 @@ std::size_t Mesh::getNumIndices() {
 }
 
 //-------------------------------------------
-void Mesh::setSrcMesh( std::shared_ptr<ofxAssimp::SrcMesh> aSrcMesh ) {
+void Mesh::setSrcMesh( std::shared_ptr<ofxAssimp::SrcMesh> aSrcMesh, bool bApplyTransform ) {
 	mSrcMesh = aSrcMesh;
 	
 	// if we have bones, no offset, since we are controlled by the bones //
-//	if( mSrcMesh->getAiMesh() && mSrcMesh->getAiMesh()->mNumBones < 1 ) {
-//		setOfNodeFromAiMatrix(mSrcMesh->getAiNode()->mTransformation, this );
-//	}
+	if( bApplyTransform && mSrcMesh->getAiMesh() && mSrcMesh->getAiMesh()->mNumBones < 1 ) {
+		ofxAssimp::Utils::setOfNodeFromAiMatrix(mSrcMesh->getAiNode()->mTransformation, this );
+	}
 	
 	if( mSrcMesh ) {
 		material = mSrcMesh->material;
