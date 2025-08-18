@@ -1,10 +1,3 @@
-//
-//  ofxSvg2Css.h
-//  Example
-//
-//  Created by Nick Hardeman on 8/22/24.
-//
-
 #pragma once
 #include <unordered_map>
 #include "ofColor.h"
@@ -14,7 +7,7 @@
 class ofxSvgCssClass {
 public:
 	
-	// adding this Optional class since std::optional is not a part of all std:: distributions at the moment, looking at you gcc < 10
+	// adding this Optional class since std::optional is not a part of all std:: distributions at the moment, looking at you gcc < 10 nh
 	template<typename T>
 	class Optional {
 	public:
@@ -40,7 +33,7 @@ public:
 		T& value() {
 //			if (!hasValue) throw std::runtime_error("No value present");
 			if (!hasValue) {
-				ofLogError("ofx::svg::CssClass") << "No value present";
+				ofLogError("ofxSvgCssClass") << "No value present";
 			}
 			return data;
 		}
@@ -48,7 +41,7 @@ public:
 		const T& value() const {
 //			if (!hasValue) throw std::runtime_error("No value present");
 			if (!hasValue) {
-				ofLogError("ofx::svg::CssClass") << "No value present";
+				ofLogError("ofxSvgCssClass") << "No value present";
 			}
 			return data;
 		}
@@ -74,12 +67,16 @@ public:
 	std::string name = "default";
 	
 	void clear();
+	void scaleNumericalValues( float ascale );
 	
 	static std::string sRgbaToHexString(unsigned char r, unsigned char g, unsigned char b, unsigned char a);
 	static std::string sRgbToHexString(unsigned char r, unsigned char g, unsigned char b);
 	static bool sIsNone( const std::string& astr );
 	static ofColor sGetColor(const std::string& astr);
 	static float sGetFloat(const std::string& astr);
+	
+	bool addMissingClassProperties( const ofxSvgCssClass& aclass );
+	bool setClassProperties( const ofxSvgCssClass& aclass );
 	
 	bool addProperties( std::string aPropertiesString );
 	bool addProperty( std::string aPropString );
@@ -96,6 +93,15 @@ public:
 	bool setStrokeWidth( const float& awidth );
 	bool setNoStroke();
 	bool hasStroke();
+	
+	bool setFontSize( int asize );
+	int getFontSize(int adefault);
+	
+	bool setFontFamily( std::string aFontFamily );
+	std::string getFontFamily( std::string aDefaultFontFamily );
+	
+	bool isFontBold();
+	bool isFontItalic();
 	
 	bool hasProperty( const std::string& akey );
 	Property& getProperty( const std::string& akey );
@@ -118,6 +124,8 @@ public:
 	
 	bool parse( std::string aCssString );
 	void clear();
+	
+	void scaleNumericalValues( float ascale );
 	
 	ofxSvgCssClass& addClass( std::string aname );
 	bool hasClass( const std::string& aname );

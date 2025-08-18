@@ -1,9 +1,3 @@
-//
-//  ofxSvgParser.h
-//
-//  Created by Nick Hardeman on 8/31/24.
-//
-
 #pragma once
 #include "ofxSvgGroup.h"
 #include "ofXml.h"
@@ -11,23 +5,22 @@
 #include <stack>
 
 /// \file
-/// ofxSVG is used for loading, manipulating, rendering and saving of SVG files.
+/// ofxSvg is used for loading, manipulating, rendering and saving of SVG files.
 /// Based on this spec: https://www.w3.org/TR/SVG/Overview.html
 
-class ofxSvg : public ofxSvgGroup {	
+class ofxSvg : public ofxSvgGroup {
 protected:
-	std::shared_ptr<ofxSvgElement> clone( const std::shared_ptr<ofxSvgElement>& aele );
 	std::vector<std::shared_ptr<ofxSvgElement>> deepCopyVector(const std::vector<std::shared_ptr<ofxSvgElement>>& original);
 	void deepCopyFrom( const ofxSvg & mom );
 	void moveFrom( ofxSvg&& mom );
 	
 public:
-	virtual ofxSvgType getType() override {return ofxSvgType::TYPE_DOCUMENT;}
+	virtual ofxSvgType getType() override {return OFXSVG_TYPE_DOCUMENT;}
 	
 	// Default constructor
 	ofxSvg() = default;
 	// Copy constructor (deep copy)
-	ofxSvg(const ofxSvg & mom);// = default;
+	ofxSvg(const ofxSvg & mom);
 	// Copy assignment operator (deep copy)
 	ofxSvg& operator=(const ofxSvg& mom);
 	// Move constructor
@@ -90,7 +83,7 @@ public:
 	/// The elements pos, scale and rotation is set.
 	/// \param aStr svg transform string.
 	/// \param aele ofx::svg::Element to be updated.
-	bool setTransformFromSvgMatrixString( std::string aStr, std::shared_ptr<ofxSvgElement> aele );
+	glm::mat4 setTransformFromSvgMatrixString( std::string aStr, std::shared_ptr<ofxSvgElement> aele );
 	/// \brief Return a string used to represent matrix transforms in svg
 	/// The matrix can be represented as an array of values like :
 	/// Or using individual components like tranform(translateX translateY), scale(scaleX scaleY) and rotate(degrees <optional>ptx <optional>pty )
@@ -177,11 +170,13 @@ public:
 	/// \return int of the circle resolution.
 	int getCurveResolution() { return mCurveResolution; };
 	/// \brief Get the current css used for items.
-	/// \return ofx::svg::CssClass.
+	/// \return ofxSvgCssClass.
 	ofxSvgCssClass& getCurrentCss() { return mCurrentCss;}
+	
+	ofxSvgCssStyleSheet& getCssStyleSheet() {return mSvgCss; }
 	/// \brief Add a group to the document. This will also push back the group as current.
 	/// \param aname is the name of the group.
-	/// \return std::shared_ptr<ofx::svg::Group> as the group that was created.
+	/// \return std::shared_ptr<ofxSvgGroup> as the group that was created.
 	std::shared_ptr<ofxSvgGroup> addGroup(std::string aname);
 	
 	std::shared_ptr<ofxSvgPath> add( const ofPath& apath );
@@ -205,6 +200,7 @@ public:
 	
 	std::shared_ptr<ofxSvgImage> addImage( const of::filesystem::path& apath, const ofTexture& atex );
 	std::shared_ptr<ofxSvgImage> addImage( const glm::vec2& apos, const of::filesystem::path& apath, const ofTexture& atex );
+	std::shared_ptr<ofxSvgImage> addEmbeddedImage( const ofPixels& apixels );
 	
 	// adapted from ofGLProgrammableRenderer for some sort of conformity
 	void pushMatrix();
@@ -237,13 +233,11 @@ protected:
 	ofxSvgCssClass _parseStyle( ofXml& tnode );
 	void _applyStyleToElement( ofXml& tnode, std::shared_ptr<ofxSvgElement> aEle );
 	void _applyStyleToPath( ofXml& tnode, std::shared_ptr<ofxSvgPath> aSvgPath );
-	void _applyStyleToPath( ofxSvgCssClass& aclass, std::shared_ptr<ofxSvgPath> aSvgPath );
 	void _applyStyleToText( ofXml& tnode, std::shared_ptr<ofxSvgText::TextSpan> aTextSpan );
-	void _applyStyleToText( ofxSvgCssClass& aclass, std::shared_ptr<ofxSvgText::TextSpan> aTextSpan );
 	
 	glm::vec3 _parseMatrixString(const std::string& input, const std::string& aprefix, bool abDefaultZero );
 	
-	std::shared_ptr<ofxSvgText::TextSpan> _getTextSpanFromXmlNode( ofXml& anode );
+	void _getTextSpanFromXmlNode( ofXml& anode, std::vector< std::shared_ptr<ofxSvgText::TextSpan> >& aspans );
 	
 	ofxSvgGroup* _getPushedGroup();
 	bool _hasPushedMatrix();
@@ -257,18 +251,22 @@ protected:
 	void _addCssClassFromImage( std::shared_ptr<ofxSvgImage> aSvgImage, ofXml& anode );
 	bool _toXml( ofXml& aParentNode, std::shared_ptr<ofxSvgElement> aele );
 	
+	void _pushCssClass( const ofxSvgCssClass& acss );
+	void _popCssClass();
+	void _buildCurrentSvgCssFromStack();
+	
 	unsigned int mCurrentLayer = 0;
 	
 	std::string mUnitStr = "px";
 	
 	ofxSvgCssStyleSheet mSvgCss;
-	ofxSvgCssClass mCurrentCss;
+	ofxSvgCssClass mCurrentCss, mDocumentCss;
+	std::vector<ofxSvgCssClass> mCssClassStack;
+	
+	
 	ofColor mFillColor, mStrokeColor;
 	
 	std::vector< std::shared_ptr<ofxSvgGroup> > mGroupStack;
-	
-	std::shared_ptr<ofxSvgCssClass> mCurrentSvgCss;
-	
 	std::vector< std::shared_ptr<ofxSvgElement> > mDefElements;
 	
 	// just used for debugging
@@ -284,6 +282,7 @@ protected:
 	// for legacy purposes //
 	static ofPath sDummyPath;
 	mutable std::vector<ofPath> mPaths;
+	
 };
 
 

@@ -1,10 +1,3 @@
-//
-//  ofxSvg2Css.cp
-//  Example
-//
-//  Created by Nick Hardeman on 8/22/24.
-//
-
 #include "ofxSvgCss.h"
 #include "ofUtils.h"
 #include "ofLog.h"
@@ -73,6 +66,18 @@ void ofxSvgCssClass::clear() {
 }
 
 //--------------------------------------------------------------
+void ofxSvgCssClass::scaleNumericalValues( float ascale ) {
+	for( auto& piter : properties ) {
+		if(piter.second.fvalue.has_value()) {
+			piter.second.fvalue = piter.second.fvalue.value() * ascale;
+		}
+		if( piter.second.ivalue.has_value() ) {
+			piter.second.ivalue = piter.second.ivalue.value() * ascale;
+		}
+	}
+}
+
+//--------------------------------------------------------------
 std::string ofxSvgCssClass::sRgbaToHexString(unsigned char r, unsigned char g, unsigned char b, unsigned char a) {
 	std::stringstream ss;
 	ss << std::hex << std::setfill('0') << std::uppercase;
@@ -113,11 +118,33 @@ ofColor ofxSvgCssClass::sGetColor(const std::string& astr ) {
 		bHasHash = true;
 	}
 	cstr = ofToLower(cstr);
+	// if this is only 3 chars, it is short hand and needs to be expanded to 6 characters
+	if( cstr.size() == 3 ) {
+		std::string fullHex;
+		for( char c : cstr ) {
+			fullHex += c;
+			fullHex += c;
+		}
+		cstr = fullHex;
+	}
 	
 	if( bHasHash ) {
 		ofColor tcolor(255);
-		int hint = ofHexToInt(cstr);
-		tcolor.setHex(hint);
+		if( cstr.size() == 8 ) { 
+			ofLogVerbose("SvgCss") << "going to try to get the hex from: " << cstr;
+			unsigned long hexValue = std::stoul(cstr, nullptr, 16);
+			// Manually extract components from the 8-digit hex value (RRGGBBAA)
+			int r = (hexValue >> 24) & 0xFF; // Extract the red component
+			int g = (hexValue >> 16) & 0xFF; // Extract the green component
+			int b = (hexValue >> 8) & 0xFF;  // Extract the blue component
+			int a = hexValue & 0xFF;         // Extract the alpha component
+			
+			// Create the color using the extracted components
+			tcolor.set(r, g, b, a);
+		} else {
+			int hint = ofHexToInt(cstr);
+			tcolor.setHex(hint);
+		}
 //		ofLogNotice("ofxSvgCssClass") << "color: " << cstr << " ofColor: " << tcolor;
 		return tcolor;
 	} else if( !astr.empty() ) {
@@ -139,6 +166,24 @@ float ofxSvgCssClass::sGetFloat(const std::string& astr) {
 		ofStringReplace(cstr, "px", "");
 	}
 	return ofToFloat( cstr );
+}
+
+//--------------------------------------------------------------
+bool ofxSvgCssClass::addMissingClassProperties( const ofxSvgCssClass& aclass ) {
+	for( auto& propI : aclass.properties ) {
+		if( properties.count(propI.first) < 1 ) {
+			properties[propI.first] = propI.second;
+		}
+	}
+	return properties.size() > 0;
+}
+
+//--------------------------------------------------------------
+bool ofxSvgCssClass::setClassProperties( const ofxSvgCssClass& aclass ) {
+	for( auto& propI : aclass.properties ) {
+		properties[propI.first] = propI.second;
+	}
+	return properties.size() > 0;
 }
 
 //--------------------------------------------------------------
@@ -239,6 +284,44 @@ bool ofxSvgCssClass::hasStroke() {
 }
 
 //--------------------------------------------------
+bool ofxSvgCssClass::setFontSize( int asize ) {
+	return addProperty("font-size", asize);
+}
+
+//--------------------------------------------------
+int ofxSvgCssClass::getFontSize(int adefault) {
+	return getIntValue("font-size", adefault);
+}
+
+//--------------------------------------------------
+bool ofxSvgCssClass::setFontFamily( std::string aFontFamily ) {
+	return addProperty("font-family", aFontFamily);
+}
+
+//--------------------------------------------------
+std::string ofxSvgCssClass::getFontFamily( std::string aDefaultFontFamily ) {
+	return getValue("font-family", aDefaultFontFamily);
+}
+
+//--------------------------------------------------
+bool ofxSvgCssClass::isFontBold() {
+	bool bold = false;
+	if( ofIsStringInString(getValue("font-weight", "" ), "bold")) {
+		bold = true;
+	}
+	return bold;
+}
+
+//--------------------------------------------------
+bool ofxSvgCssClass::isFontItalic() {
+	bool italic = false;
+	if( ofIsStringInString(getValue("font-style", "" ), "italic")) {
+		italic = true;
+	}
+	return italic;
+}
+
+//--------------------------------------------------
 bool ofxSvgCssClass::hasProperty( const std::string& akey ) {
 	return (properties.count(akey) > 0);
 }
@@ -306,7 +389,7 @@ float ofxSvgCssClass::getFloatValue(const std::string& akey, const float& adefau
 //--------------------------------------------------
 ofColor ofxSvgCssClass::getColor(const std::string& akey) {
 	if( properties.count(akey) < 1 ) {
-		return ofColor(255);
+		return ofColor(0);
 	}
 	auto& prop = properties[akey];
 	if( !prop.cvalue.has_value() ) {
@@ -401,6 +484,13 @@ bool ofxSvgCssStyleSheet::parse( std::string aCssString ) {
 //--------------------------------------------------
 void ofxSvgCssStyleSheet::clear() {
 	classes.clear();
+}
+
+//--------------------------------------------------
+void ofxSvgCssStyleSheet::scaleNumericalValues( float ascale ) {
+	for( auto& tclass : classes ) {
+		tclass.second.scaleNumericalValues(ascale);
+	}
 }
 
 //--------------------------------------------------

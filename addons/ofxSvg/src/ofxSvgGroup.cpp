@@ -1,9 +1,3 @@
-//
-//  ofxSvgGroup.cpp
-//
-//  Created by Nick Hardeman on 7/31/15.
-//
-
 #include "ofxSvgGroup.h"
 #include "ofGraphics.h"
 
@@ -13,11 +7,14 @@ using std::string;
 
 //--------------------------------------------------------------
 void ofxSvgGroup::draw() {
+	if( !isVisible() ) return;
     std::size_t numElements = mChildren.size();
-    bool bTrans = pos.x != 0 || pos.y != 0.0;
+	bool bTrans = (pos.x != 0 || pos.y != 0.0 || rotation != 0.f || scale.x != 0.f || scale.y != 0.f);
     if( bTrans ) {
         ofPushMatrix();
         ofTranslate(pos.x, pos.y);
+		if( rotation != 0.0 ) ofRotateZDeg( rotation );
+		ofScale( scale.x, scale.y );
     }
     for( std::size_t i = 0; i < numElements; i++ ) {
 		mChildren[i]->draw();
@@ -38,7 +35,7 @@ vector< shared_ptr<ofxSvgElement> >& ofxSvgGroup::getChildren() {
 }
 
 //--------------------------------------------------------------
-vector< shared_ptr<ofxSvgElement> > ofxSvgGroup::getAllChildren(bool aBIncludeGroups) {
+vector< shared_ptr<ofxSvgElement> > ofxSvgGroup::getAllElements(bool aBIncludeGroups) {
     vector< shared_ptr<ofxSvgElement> > retElements;
     
     for( auto ele : mChildren ) {
@@ -49,7 +46,7 @@ vector< shared_ptr<ofxSvgElement> > ofxSvgGroup::getAllChildren(bool aBIncludeGr
 }
 
 //--------------------------------------------------------------
-std::vector< std::shared_ptr<ofxSvgGroup> > ofxSvgGroup::getAllChildGroups() {
+std::vector< std::shared_ptr<ofxSvgGroup> > ofxSvgGroup::getAllGroups() {
 	vector< shared_ptr<ofxSvgGroup> > retGroups;
 	for( auto ele : mChildren ) {
 		_getAllGroupsRecursive( retGroups, ele );
@@ -62,7 +59,7 @@ std::vector< std::shared_ptr<ofxSvgGroup> > ofxSvgGroup::getAllChildGroups() {
 void ofxSvgGroup::_getAllElementsRecursive( vector< shared_ptr<ofxSvgElement> >& aElesToReturn, shared_ptr<ofxSvgElement> aele, bool aBIncludeGroups ) {
     if( aele ) {
         if( aele->isGroup() ) {
-            shared_ptr<ofxSvgGroup> tgroup = std::dynamic_pointer_cast<ofxSvgGroup>(aele);
+            auto tgroup = std::dynamic_pointer_cast<ofxSvgGroup>(aele);
 			if(aBIncludeGroups) {aElesToReturn.push_back(tgroup);}
             for( auto ele : tgroup->getChildren() ) {
                 _getAllElementsRecursive( aElesToReturn, ele, aBIncludeGroups );
@@ -77,7 +74,7 @@ void ofxSvgGroup::_getAllElementsRecursive( vector< shared_ptr<ofxSvgElement> >&
 void ofxSvgGroup::_getAllGroupsRecursive( std::vector< std::shared_ptr<ofxSvgGroup> >& aGroupsToReturn, std::shared_ptr<ofxSvgElement> aele ) {
 	if( aele ) {
 		if( aele->isGroup() ) {
-			shared_ptr<ofxSvgGroup> tgroup = std::dynamic_pointer_cast<ofxSvgGroup>(aele);
+			auto tgroup = std::dynamic_pointer_cast<ofxSvgGroup>(aele);
 			aGroupsToReturn.push_back(tgroup);
 			for( auto ele : tgroup->getChildren() ) {
 				if( ele->isGroup() ) {
@@ -90,16 +87,16 @@ void ofxSvgGroup::_getAllGroupsRecursive( std::vector< std::shared_ptr<ofxSvgGro
 
 //--------------------------------------------------------------
 std::vector< std::shared_ptr<ofxSvgPath> > ofxSvgGroup::getAllElementsWithPath() {
-	auto allKids = getAllChildren(false);
+	auto allKids = getAllElements(false);
 	std::vector< std::shared_ptr<ofxSvgPath> > rpaths;
 	for( auto kid : allKids ) {
-		if( kid->getType() == ofxSvgType::TYPE_RECTANGLE ) {
+		if( kid->getType() == OFXSVG_TYPE_RECTANGLE ) {
 			rpaths.push_back(std::dynamic_pointer_cast<ofxSvgRectangle>(kid));
-		} else if( kid->getType() == ofxSvgType::TYPE_PATH ) {
+		} else if( kid->getType() == OFXSVG_TYPE_PATH ) {
 			rpaths.push_back(std::dynamic_pointer_cast<ofxSvgPath>(kid));
-		} else if( kid->getType() == ofxSvgType::TYPE_CIRCLE ) {
+		} else if( kid->getType() == OFXSVG_TYPE_CIRCLE ) {
 			rpaths.push_back(std::dynamic_pointer_cast<ofxSvgCircle>(kid));
-		} else if( kid->getType() == ofxSvgType::TYPE_ELLIPSE ) {
+		} else if( kid->getType() == OFXSVG_TYPE_ELLIPSE ) {
 			rpaths.push_back(std::dynamic_pointer_cast<ofxSvgEllipse>(kid));
 		}
 	}
@@ -108,7 +105,7 @@ std::vector< std::shared_ptr<ofxSvgPath> > ofxSvgGroup::getAllElementsWithPath()
 }
 
 //--------------------------------------------------------------
-shared_ptr<ofxSvgElement> ofxSvgGroup::getElementForName( std::string aPath, bool bStrict ) {
+shared_ptr<ofxSvgElement> ofxSvgGroup::getElement( std::string aPath, bool bStrict ) {
     
     vector< std::string > tsearches;
     if( ofIsStringInString( aPath, ":" ) ) {
@@ -123,15 +120,33 @@ shared_ptr<ofxSvgElement> ofxSvgGroup::getElementForName( std::string aPath, boo
 }
 
 //--------------------------------------------------------------
+std::vector< std::shared_ptr<ofxSvgElement> > ofxSvgGroup::getAllElementsForName( const std::string& aname, bool bStrict ) {
+	std::vector< std::shared_ptr<ofxSvgElement> > relements;
+	auto allElements = getAllElements(true);
+	for( auto& ele : allElements ) {
+		if( bStrict ) {
+			if( ele->getCleanName() == aname ) {
+				relements.push_back(ele);
+			}
+		} else {
+			if( ofIsStringInString( ele->getCleanName(), aname )) {
+				relements.push_back(ele);
+			}
+		}
+	}
+	return relements;
+}
+
+//--------------------------------------------------------------
 std::vector< std::shared_ptr<ofxSvgElement> > ofxSvgGroup::getChildrenForName( const std::string& aname, bool bStrict ) {
 	std::vector< std::shared_ptr<ofxSvgElement> > relements;
 	for( auto& kid : mChildren ) {
 		if( bStrict ) {
-			if( kid->getName() == aname ) {
+			if( kid->getCleanName() == aname ) {
 				relements.push_back(kid);
 			}
 		} else {
-			if( ofIsStringInString( kid->getName(), aname )) {
+			if( ofIsStringInString( kid->getCleanName(), aname )) {
 				relements.push_back(kid);
 			}
 		}
@@ -152,8 +167,10 @@ void ofxSvgGroup::_getElementForNameRecursive( vector<string>& aNamesToFind, sha
 	bool bKeepGoing = false;
 	std::string nameToFind = aNamesToFind[0];
 	if( aNamesToFind.size() > 1 ) {
-		bKeepGoing = (aNamesToFind[0] == "*");
-		nameToFind = aNamesToFind[1];
+		if( aNamesToFind[0] == "*" ) {
+			bKeepGoing = true;
+			nameToFind = aNamesToFind[1];
+		}
 	}
 	for( std::size_t i = 0; i < aElements.size(); i++ ) {
 		bool bFound = false;
@@ -167,7 +184,7 @@ void ofxSvgGroup::_getElementForNameRecursive( vector<string>& aNamesToFind, sha
 				bFound = true;
 			}
 			
-			if (!bFound && aElements[i]->getType() == ofxSvgType::TYPE_TEXT) {
+			if (!bFound && aElements[i]->getType() == OFXSVG_TYPE_TEXT) {
 				
 				if (aElements[i]->getName() == "No Name") {
 					// the ids for text block in illustrator are weird,
@@ -193,7 +210,7 @@ void ofxSvgGroup::_getElementForNameRecursive( vector<string>& aNamesToFind, sha
 				aTarget = aElements[i];
 				break;
 			} else {
-				if( aElements[i]->getType() == ofxSvgType::TYPE_GROUP ) {
+				if( aElements[i]->getType() == OFXSVG_TYPE_GROUP ) {
 					auto tgroup = std::dynamic_pointer_cast<ofxSvgGroup>( aElements[i] );
 					_getElementForNameRecursive( aNamesToFind, aTarget, tgroup->getChildren(), bStrict );
 					break;
@@ -207,7 +224,7 @@ void ofxSvgGroup::_getElementForNameRecursive( vector<string>& aNamesToFind, sha
 				aTarget = aElements[i];
 				break;
 			} else {
-				if( aElements[i]->getType() == ofxSvgType::TYPE_GROUP ) {
+				if( aElements[i]->getType() == OFXSVG_TYPE_GROUP ) {
 //					std::cout << "Group::_getElementForNameRecursive: FOUND A GROUP, But still going: " << aElements[i]->getName() << " keep going: " << bKeepGoing << std::endl;
 					auto tgroup = std::dynamic_pointer_cast<ofxSvgGroup>( aElements[i] );
 					_getElementForNameRecursive( aNamesToFind, aTarget, tgroup->getChildren(), bStrict );
@@ -236,7 +253,7 @@ void ofxSvgGroup::_replaceElementRecursive( shared_ptr<ofxSvgElement> aTarget, s
             break;
         }
         if( !bFound ) {
-            if( aElements[i]->getType() == ofxSvgType::TYPE_GROUP ) {
+            if( aElements[i]->getType() == OFXSVG_TYPE_GROUP ) {
                 auto tgroup = std::dynamic_pointer_cast<ofxSvgGroup>( aElements[i] );
                 _replaceElementRecursive(aTarget, aNew, tgroup->mChildren, aBSuccessful );
             }
@@ -265,7 +282,7 @@ string ofxSvgGroup::toString(int nlevel) {
 
 //--------------------------------------------------------------
 void ofxSvgGroup::disableColors() {
-    auto telements = getAllChildren(false);
+    auto telements = getAllElements(false);
     for( auto& ele : telements ) {
         ele->setUseShapeColor(false);
     }
@@ -273,7 +290,7 @@ void ofxSvgGroup::disableColors() {
 
 //--------------------------------------------------------------
 void ofxSvgGroup::enableColors() {
-    auto telements = getAllChildren(false);
+    auto telements = getAllElements(false);
     for( auto& ele : telements ) {
         ele->setUseShapeColor(true);
     }
