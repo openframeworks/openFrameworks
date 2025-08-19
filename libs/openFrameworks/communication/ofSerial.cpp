@@ -446,7 +446,7 @@ bool ofSerial::setup(string portName, int baud){
 		swprintf(buf, 80, L"baud=%d parity=N data=8 stop=1", bps);
 
 		if(!BuildCommDCBW(buf, &cfg.dcb)){
-			ofLogError("ofSerial") << "setup(): unable to build comm dcb, (" << buf << ")";
+			ofLogError("ofSerial") << "setup(): unable to build comm dcb";
 		}
 
 		// Set baudrate and bits etc.
