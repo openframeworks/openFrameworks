@@ -869,7 +869,7 @@ bool ofxSvg::_addElementFromXmlNode( ofXml& tnode, vector< shared_ptr<ofxSvgElem
     return true;
 }
 
-std::vector<glm::vec3> parsePoints(const std::string& input) {
+std::vector<float> parseToFloats(const std::string& input) {
 	std::vector<glm::vec3> points;
 	std::regex regex("[-]?\\d*\\.?\\d+");  // Matches positive/negative floats
 	std::sregex_iterator begin(input.begin(), input.end(), regex), end;
@@ -885,7 +885,29 @@ std::vector<glm::vec3> parsePoints(const std::string& input) {
 		}
 	}
 	
-	// Create vec2 pairs from the values
+	return values;
+}
+
+std::vector<glm::vec3> parsePoints(const std::string& input) {
+//	std::vector<glm::vec3> points;
+//	std::regex regex("[-]?\\d*\\.?\\d+");  // Matches positive/negative floats
+//	std::sregex_iterator begin(input.begin(), input.end(), regex), end;
+//	
+//	std::vector<float> values;
+//	
+//	// Extract all floating-point values using regex
+//	for (std::sregex_iterator i = begin; i != end; ++i) {
+//		try {
+//			values.push_back(std::stof((*i).str()));
+//		} catch (const std::invalid_argument&) {
+//			std::cerr << "Invalid number found: " << (*i).str() << std::endl;
+//		}
+//	}
+	
+	std::vector<glm::vec3> points;
+	auto values = parseToFloats( input );
+	
+	// Create vec3 pairs from the values
 	for (size_t i = 0; i < values.size(); i += 2) {
 		if (i + 1 < values.size()) {
 			glm::vec3 point(values[i], values[i + 1], 0.f);
@@ -900,6 +922,44 @@ std::vector<glm::vec3> parsePoints(const std::string& input) {
 	
 	return points;
 }
+
+
+std::vector<glm::vec3> parsePointsDefaultY(const std::string& input, float aYpos ) {
+	std::vector<glm::vec3> points;
+	auto values = parseToFloats( input );
+	
+	// Create vec3 pairs from the values
+	for (size_t i = 0; i < values.size(); i++) {
+		glm::vec3 point(values[i], aYpos, 0.f);
+		points.push_back(point);
+	}
+	
+	if( values.size() == 1 && points.size() < 1) {
+		glm::vec3 point(values[0], aYpos, 0.f);
+		points.push_back(point);
+	}
+	
+	return points;
+}
+
+std::vector<glm::vec3> parsePointsDefaultX(const std::string& input, float aXpos ) {
+	std::vector<glm::vec3> points;
+	auto values = parseToFloats( input );
+	
+	// Create vec3 pairs from the values
+	for (size_t i = 0; i < values.size(); i++) {
+		glm::vec3 point(aXpos, values[i], 0.f);
+		points.push_back(point);
+	}
+	
+	if( values.size() == 1 && points.size() < 1) {
+		glm::vec3 point(aXpos, values[0], 0.f);
+		points.push_back(point);
+	}
+	
+	return points;
+}
+
 
 
 //----------------------------------------------------
@@ -1027,8 +1087,7 @@ void ofxSvg::_parsePolylinePolygon( ofXml& tnode, std::shared_ptr<ofxSvgPath> aS
 // reference: https://www.w3.org/TR/SVG2/paths.html#PathData
 //--------------------------------------------------------------
 void ofxSvg::_parsePath( ofXml& tnode, std::shared_ptr<ofxSvgPath> aSvgPath ) {
-	// path4160
-	
+//	path27340-8
 	
 	aSvgPath->path.clear();
 	
@@ -1107,14 +1166,13 @@ void ofxSvg::_parsePath( ofXml& tnode, std::shared_ptr<ofxSvgPath> aSvgPath ) {
 		return aCurrentPos;
 	};
 	
-	auto lineToRelativeRecursive = [](glm::vec3& aStartPos, glm::vec3& acurrentPos, std::vector<glm::vec3>& aposes, std::shared_ptr<ofxSvgPath> aPath )  {
-//			int ncounter = 0;
+	auto lineToRelativeFromAbsoluteRecursive = [](glm::vec3& aStartPos, glm::vec3& acurrentPos, std::vector<glm::vec3>& aposes, std::shared_ptr<ofxSvgPath> aPath )  {
+	//			int ncounter = 0;
 		auto cp = aStartPos;
 		for( auto& np : aposes ) {
 			auto relativePos = np-aStartPos;
+//			auto relativePos = np;
 			auto newPos = relativePos + cp;
-//							ofLogNotice("ofxSvg::_parsePath") << ncounter << " - l: " << prevPos << " cp: " << cp << " np: " << np;
-//							ofLogVerbose("ofxSvg::_parsePath") << ncounter << " - l: " << prevPos << " np: " << np << " relative: " << relativePos << " newPos: " << newPos << " currentPos: " << currentPos;
 			aPath->path.lineTo(newPos);
 			cp = newPos;//relativePos+prevPos;
 //				ncounter++;
@@ -1130,6 +1188,8 @@ void ofxSvg::_parsePath( ofXml& tnode, std::shared_ptr<ofxSvgPath> aSvgPath ) {
 	ofLogVerbose("ofxSvg::_parsePath") << " ------ PARSE-" << tname << "-----------------------" ;
 	
 	aSvgPath->path.clear();
+	
+//	auto prevCmd = ofPath::Command::close;
 	
 	unsigned int justInCase = 0;
 //	std::vector<ofPath::Command> commands;
@@ -1212,31 +1272,37 @@ void ofxSvg::_parsePath( ofXml& tnode, std::shared_ptr<ofxSvgPath> aSvgPath ) {
 			}
 			npositions = parsePoints(currentString);
 			for( int ni = 0; ni < npositions.size(); ni++ ) {
-				ofLogVerbose("ofxSvg::_parsePath") << ni << "-" << npositions[ni];
+				ofLogVerbose("ofxSvg::_parsePath") << ni << "->" << npositions[ni];
 			}
 //			if( npositions.size() > 0 && bRelative ) {
 //				mCurrentPathPos = npositions[0];
 //			}
 			ctype = ofPath::Command::moveTo;
 		} else if( cchar == 'v' || cchar == 'V' ) {
+			
+			float xvalue = 0.f;
 			if( cchar == 'v' ) {
 				bRelative = true;
-				npositions[0].x = 0.f;
+//				npositions[0].x = 0.f;
 			} else {
-				npositions[0].x = currentPos.x;
+//				npositions[0].x = currentPos.x;
+				xvalue = currentPos.x;
 			}
-			
-			npositions[0].y = ofToFloat(currentString);
+			npositions = parsePointsDefaultX(currentString,xvalue);
+//			npositions[0].y = ofToFloat(currentString);
 			//ofLogVerbose("ofxSvg") << cchar << " line to: " << npositions[0] << " current pos: " << currentPos;
 			ctype = ofPath::Command::lineTo;
 		} else if( cchar == 'H' || cchar == 'h' ) {
+			float yvalue = 0.f;
 			if( cchar == 'h' ) {
 				bRelative = true;
-				npositions[0].y = 0.f;
+//				npositions[0].y = 0.f;
 			} else {
-				npositions[0].y = currentPos.y;
+//				npositions[0].y = currentPos.y;
+				yvalue = currentPos.y;
 			}
-			npositions[0].x = ofToFloat(currentString);
+			npositions = parsePointsDefaultY(currentString,yvalue);
+//			npositions[0].x = ofToFloat(currentString);
 			
 			ctype = ofPath::Command::lineTo;
 		} else if( cchar == 'L' || cchar == 'l' ) {
@@ -1300,12 +1366,7 @@ void ofxSvg::_parsePath( ofXml& tnode, std::shared_ptr<ofxSvgPath> aSvgPath ) {
 		
 		if( ctype.has_value() ) {
 			
-//			for( auto& np : npositions ) {
-//				ofLogNotice("ofxSvg") << cchar << " position: " << np;
-//			}
-			
 			auto prevPos = currentPos;
-			
 			auto commandT = ctype.value();
 			
 			if( commandT == ofPath::Command::arc ) {
@@ -1326,21 +1387,16 @@ void ofxSvg::_parsePath( ofXml& tnode, std::shared_ptr<ofxSvgPath> aSvgPath ) {
 				// TODO: Check quad bezier for poly bezier like cubic bezier
 				
 			} else {
-//				if( commandT == ofPath::Command::moveTo ) {
-//					ofLogNotice("ofxSvg") << "before current pos is altered: move to: " << npositions[0] << " current Pos: " << currentPos << " relative: " << bRelative;
-//				}
 				if( npositions.size() > 0 && commandT != ofPath::Command::close ) {
-					if( commandT != ofPath::Command::moveTo ) {
-						//currentPos = {0.f, 0.f, 0.f};
-					}
+					if( commandT == ofPath::Command::moveTo ) {
+						// going to handle this below;
+						// inside the if( commandT == ofPath::Command::moveTo ) { check.
+					} else {
 //					currentPos = convertToAbsolute(bRelative, currentPos, npositions );
-					currentPos = convertToAbsolute(bRelative, currentPos, npositions );
+						currentPos = convertToAbsolute(bRelative, currentPos, npositions );
+					}
 				}
 			}
-			
-//			if( npositions.size() > 0 ) {
-//				ofLogNotice("ofxSvg") << "before current pos is altered: move to: " << npositions[0] << " current Pos: " << currentPos << " relative: " << bRelative;
-//			}
 			
 			if( commandT != ofPath::Command::bezierTo ) {
 				secondControlPoint = currentPos;
@@ -1348,55 +1404,74 @@ void ofxSvg::_parsePath( ofXml& tnode, std::shared_ptr<ofxSvgPath> aSvgPath ) {
 			if( commandT != ofPath::Command::quadBezierTo ) {
 				qControlPoint = currentPos;
 			}
-			
+						
 			if( commandT == ofPath::Command::moveTo ) {
-				aSvgPath->path.moveTo(currentPos);
+				
+				if( cchar == 'm' ) {
+					if(npositions.size() > 0 ) {
+						if(cindex == 0 ) {
+							// this is the first m, so the moveTo is absolute but the subsequent points are relative
+							currentPos = npositions[0];
+						} else {
+							currentPos += npositions[0];
+						}
+					}
+				} else {
+					if(npositions.size() > 0 ) {
+						currentPos = npositions[0];
+					}
+				}
+				
+				if( npositions.size() > 0 ) {
+					ofLogVerbose("ofxSvg::moveTo") << npositions[0] << " currentPos: " << currentPos;// << " path pos: " << aSvgPath->pos;
+					aSvgPath->path.moveTo(currentPos);
+//					mCenterPoints.push_back(npositions[0] + pathOffset);
+				}
+				
 				if(npositions.size() > 1 ) {
-					
 					bool bLineToRelative = bRelative;
 					// determine if these points started with m and is the first character
-					if( cchar == 'm' && cindex == 0 ) {
+					if( cchar == 'm') {
 						bLineToRelative = true;
 					}
 					
 					if( bLineToRelative ) {
-						auto newPoses = npositions;
-						newPoses.erase(newPoses.begin());
-						lineToRelativeRecursive(prevPos, currentPos, newPoses, aSvgPath);
+						for( int ki = 1; ki < npositions.size(); ki++ ) {
+//							auto newPos = npositions[ki] + cp;
+							currentPos += npositions[ki];
+							aSvgPath->path.lineTo(currentPos);
+//							cp = newPos;
+						}
+//						currentPos = cp;
+						
 					} else {
 						for( int ki = 1; ki < npositions.size(); ki++ ) {
+//							mCPoints.push_back(npositions[ki]);
+//							ofLogVerbose("ofxSvg::lineTo") << ki << "--->" << npositions[ki];
 							aSvgPath->path.lineTo(npositions[ki]);
+//							mCenterPoints.push_back(npositions[ki] + pathOffset);
+						}
+						if(npositions.size() > 0 ) {
+							currentPos = npositions.back();
 						}
 					}
 				}
+				
+				secondControlPoint = currentPos;
+				qControlPoint = currentPos;
+				
 			} else if( commandT == ofPath::Command::lineTo ) {
 				if( npositions.size() > 0 ) {
 					// current pos is already set above
 					// so just worry about adding paths
 					if( bRelative ) {
-						
-						lineToRelativeRecursive(prevPos, currentPos, npositions, aSvgPath );
-//						mCenterPoints.clear();
-//						int ncounter = 0;
-//						auto cp = prevPos;
-//						for( auto& np : npositions ) {
-//							auto relativePos = np-prevPos;
-//							auto newPos = relativePos + cp;
-////							ofLogNotice("ofxSvg::_parsePath") << ncounter << " - l: " << prevPos << " cp: " << cp << " np: " << np;
-////							ofLogVerbose("ofxSvg::_parsePath") << ncounter << " - l: " << prevPos << " np: " << np << " relative: " << relativePos << " newPos: " << newPos << " currentPos: " << currentPos;
-//							aSvgPath->path.lineTo(newPos);
-//							mCenterPoints.push_back(newPos);
-//							cp = newPos;//relativePos+prevPos;
-//							ncounter++;
-//						}
-//						currentPos = cp;
-//						//					}
+						lineToRelativeFromAbsoluteRecursive(prevPos, currentPos, npositions, aSvgPath );
 					} else {
-//						int ncounter = 0;
+						int ncounter = 0;
 						for( auto& np : npositions ) {
-//							ofLogVerbose("ofxSvg::_parsePath") << ncounter << " - l: " << prevPos << " np: " << np;
+							ofLogVerbose("ofxSvg::lineTo") << ncounter << "--->"<< np << " prevPos:" << prevPos;
 							aSvgPath->path.lineTo(np);
-//							ncounter++;
+							ncounter++;
 						}
 					}
 				}
@@ -1404,6 +1479,7 @@ void ofxSvg::_parsePath( ofXml& tnode, std::shared_ptr<ofxSvgPath> aSvgPath ) {
 //				aSvgPath->path.lineTo(currentPos);
 			} else if( commandT == ofPath::Command::close ) {
 //				ofLogNotice("ofxSvg") << "Closing the path";
+				// TODO: Not sure if we need to draw a line to the start point here
 				aSvgPath->path.close();
 			} else if( commandT == ofPath::Command::bezierTo ) {
 				
@@ -1595,6 +1671,7 @@ void ofxSvg::_parsePath( ofXml& tnode, std::shared_ptr<ofxSvgPath> aSvgPath ) {
 				}
 			}
 			
+//			prevCmd = commandT;
 //			mCenterPoints.push_back(currentPos);
 //			mCPoints.insert( mCPoints.end(), npositions.begin(), npositions.end() );
 		}
@@ -1859,7 +1936,7 @@ glm::mat4 ofxSvg::setTransformFromSvgMatrixString( string aStr, std::shared_ptr<
 		vector<float> matrixF;
 		for(std::size_t i = 0; i < matrixNum.size(); i++){
 			matrixF.push_back(ofToFloat(matrixNum[i]));
-			std::cout << aele->getCleanName() << " matrix[" << i << "] = " << matrixF[i] << " string version is " << matrixNum[i] << std::endl;
+			ofLogVerbose("ofxSvg::setTransformFromSvgMatrixString") << aele->getCleanName() << " matrix[" << i << "] = " << matrixF[i] << " string version is " << matrixNum[i];
 		}
 		
 		if( matrixNum.size() == 6 ) {
@@ -1867,13 +1944,25 @@ glm::mat4 ofxSvg::setTransformFromSvgMatrixString( string aStr, std::shared_ptr<
 			mat = glm::translate(glm::mat4(1.0f), glm::vec3(matrixF[4], matrixF[5], 0.0f));
 			
 			aele->rotation = glm::degrees( atan2f(matrixF[1],matrixF[0]) );
+			
+			
+			aele->scale.x = glm::sqrt(matrixF[0] * matrixF[0] + matrixF[1] * matrixF[1]);
+			aele->scale.y = glm::sqrt(matrixF[2] * matrixF[2] + matrixF[3] * matrixF[3]);
+			
+			if (matrixF[0] < 0) aele->scale.x *= -1.f;
+			if (matrixF[3] < 0) aele->scale.y *= -1.f;
+			
+			// Avoid double-rotating when both scale = -1 and rotation = 180
+			if (aele->scale.x < 0 && aele->scale.y < 0 && glm::abs(aele->rotation - 180.0f) < 0.01f) {
+				aele->rotation = 0.f;
+			}
+			
 			if( aele->rotation != 0.f ) {
 //				mat = mat * glm::toMat4((const glm::quat&)glm::angleAxis(glm::radians(aele->rotation), glm::vec3(0.f, 0.f, 1.f)));
 				mat = glm::rotate(mat, glm::radians(aele->rotation), glm::vec3(0.f, 0.f, 1.f));
 			}
 			
-			aele->scale.x = glm::sqrt(matrixF[0] * matrixF[0] + matrixF[1] * matrixF[1]);
-			aele->scale.y = glm::sqrt(matrixF[2] * matrixF[2] + matrixF[3] * matrixF[3]);
+			
 			
 			mat = glm::scale(mat, glm::vec3(aele->scale.x, aele->scale.y, 1.f));
 			
@@ -1881,6 +1970,8 @@ glm::mat4 ofxSvg::setTransformFromSvgMatrixString( string aStr, std::shared_ptr<
 			
 			aele->pos.x = pos3.x;
 			aele->pos.y = pos3.y;
+			
+			ofLogNotice("ofxSvg::setTransformFromSvgMatrixString") << "pos: " << aele->pos << " rotation: " << aele->rotation << " scale: " << aele->scale;
 			
 //			apos.x = matrixF[4];
 //			apos.y = matrixF[5];
@@ -2383,7 +2474,7 @@ void ofxSvg::drawDebug() {
 //		cindex ++;
 //	}
 //	ofFill();
-	
+		
 	for( std::size_t k = 0; k < mCPoints.size(); k += 3 ) {
 		ofSetColor( ofColor::orange );
 		ofDrawCircle( mCPoints[k+0], 6.f );

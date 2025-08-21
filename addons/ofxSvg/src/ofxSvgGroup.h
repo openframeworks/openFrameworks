@@ -10,6 +10,7 @@ public:
 	
 	/// \brief Deep-copy constructor. Clone the children so that the new group does not have references to the children in this class.
 	ofxSvgGroup(const ofxSvgGroup& other) {
+		ofLogVerbose("ofxSvgGroup") << "ofxSvgGroup(const ofxSvgGroup& other)";
 		mChildren.reserve(other.mChildren.size());
 		for (const auto& ptr : other.mChildren) {
 			// Create a new shared_ptr to a new item copy.
@@ -22,6 +23,7 @@ public:
 	/// \brief Deep-copy assignment. Clone / create copies of the children from other.
 	ofxSvgGroup& operator=(const ofxSvgGroup& other) {
 		if (this != &other) {
+			ofLogVerbose("ofxSvgGroup") << "operator=(const ofxSvgGroup& other)";
 			mChildren.clear();
 			mChildren.reserve(other.mChildren.size());
 			for (const auto& ptr : other.mChildren) {

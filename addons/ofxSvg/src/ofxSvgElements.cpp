@@ -266,7 +266,7 @@ void ofxSvgPath::draw() {
 //--------------------------------------------------------------
 void ofxSvgImage::draw() {
 	if( !bTryLoad ) {
-		if( getFilePath().empty() ) {
+		if( !getFilePath().empty() ) {
 			img.load( getFilePath() );
 			bTryLoad = true;
 		}
