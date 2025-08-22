@@ -55,7 +55,7 @@ public:
 	
 	// override this in ofxSvgGroup 
 	virtual void setVisible( bool ab ) { bVisible = ab; }
-	bool isVisible() { return bVisible; }
+	bool isVisible() const { return bVisible; }
 	
 	virtual void setAlpha( float aAlpha ) {
 		alpha = aAlpha;
@@ -72,7 +72,8 @@ public:
 	float layer = -1.f;
 	bool bVisible=true;
 	
-	virtual void draw() {}
+	/// \brief Override the function in ofNode meant for drawing
+	virtual void customDraw() override {};
 	
 	virtual void applyStyle(ofxSvgCssClass& aclass) {};
 	
@@ -144,7 +145,7 @@ public:
 	
 	virtual void applyStyle(ofxSvgCssClass& aclass) override;
 	
-	virtual void draw() override;
+	virtual void customDraw() override;
 	
 	bool isFilled() { return path.isFilled(); }
 	ofColor getFillColor() { return path.getFillColor(); }
@@ -269,7 +270,7 @@ public:
 		return (img.isAllocated() && img.getWidth() > 0 && img.getHeight() > 0);
 	}
 	
-	virtual void draw() override;
+	virtual void customDraw() override;
 //	glm::vec2 getAnchorPointForPercent( float ax, float ay );
 	
 	const std::filesystem::path& getFilePath() { return filepath; }
@@ -504,14 +505,14 @@ public:
 
 	void setText( const std::string& astring, std::string aFontFamily, int aFontSize, float aMaxWidth );
 	void create();
-	void draw() override;
+	void customDraw() override;
 	void draw(const std::string &astring, bool abCentered );
 	void draw(const std::string &astring, const ofColor& acolor, bool abCentered );
 	
 	void setFontDirectory( std::string aPath ) {
 		fdirectory = aPath;
 	}
-	of::filesystem::path getFontDirectory() {
+	std::string getFontDirectory() {
 		return fdirectory;
 	}
 	
@@ -549,7 +550,7 @@ public:
 	bool bCentered = false;
 	
 protected:
-	of::filesystem::path fdirectory;
+	std::string fdirectory;
 	
 	ofxSvgCssClass mSvgCssClass;
 	

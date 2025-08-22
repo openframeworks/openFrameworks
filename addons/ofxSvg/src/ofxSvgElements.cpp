@@ -220,9 +220,9 @@ void ofxSvgPath::applyStyle(ofxSvgCssClass& aclass) {
 }
 
 //--------------------------------------------------------------
-void ofxSvgPath::draw() {
+void ofxSvgPath::customDraw() {
 //	ofPushMatrix(); {
-	transformGL(); {
+//	transformGL(); {
 		ofSetColor( ofColor::orange );
 		//		ofDrawCircle(0, 0, 15);
 		
@@ -255,7 +255,7 @@ void ofxSvgPath::draw() {
 				}
 			}
 		}
-	} restoreTransformGL();
+//	} restoreTransformGL();
 //	} ofPopMatrix();
 }
 
@@ -276,7 +276,7 @@ void ofxSvgImage::load() {
 }
 
 //--------------------------------------------------------------
-void ofxSvgImage::draw() {
+void ofxSvgImage::customDraw() {
 	if( !bTryLoad ) {
 		load();
 	}
@@ -284,14 +284,14 @@ void ofxSvgImage::draw() {
 	if( isVisible() ) {
 		if( img.isAllocated() ) {
 //			ofPushMatrix(); {
-			transformGL(); {
+//			transformGL(); {
 //				ofTranslate( pos.x, pos.y );
 //				if( rotation != 0.0 ) ofRotateZDeg( rotation );
 //				ofScale( scale.x, scale.y );
 				if(bUseShapeColor) ofSetColor( getColor() );
 				img.draw( 0, 0 );
 				//			} ofPopMatrix();
-			} restoreTransformGL();
+//			} restoreTransformGL();
 		}
 	}
 }
@@ -738,7 +738,7 @@ void ofxSvgText::create() {
 }
 
 //--------------------------------------------------------------
-void ofxSvgText::draw() {
+void ofxSvgText::customDraw() {
     if( !isVisible() ) return;
 
 	if(bUseShapeColor) {
@@ -751,7 +751,7 @@ void ofxSvgText::draw() {
 		create();
 	}
     
-	transformGL(); {
+//	transformGL(); {
 		ofTexture* tex = NULL;
 		for( mainIt = meshes.begin(); mainIt != meshes.end(); ++mainIt ) {
 			string fontKey = mainIt->first;
@@ -788,7 +788,7 @@ void ofxSvgText::draw() {
 				tMeshMesh.enableColors();
 			}
 		}
-	} restoreTransformGL();
+//	} restoreTransformGL();
 }
 
 //--------------------------------------------------------------

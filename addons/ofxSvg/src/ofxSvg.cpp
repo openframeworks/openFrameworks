@@ -2016,7 +2016,7 @@ glm::mat4 ofxSvg::setTransformFromSvgMatrixString( string aStr, std::shared_ptr<
 //			aele->pos.x = pos3.x;
 //			aele->pos.y = pos3.y;
 			
-			ofLogNotice("ofxSvg::setTransformFromSvgMatrixString") << "pos: " << aele->getPosition() << " rotation: " << trotation << " scale: " << aele->getScale();
+			ofLogVerbose("ofxSvg::setTransformFromSvgMatrixString") << "pos: " << aele->getPosition() << " rotation: " << trotation << " scale: " << aele->getScale();
 			
 //			apos.x = matrixF[4];
 //			apos.y = matrixF[5];

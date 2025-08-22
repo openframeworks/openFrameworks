@@ -58,8 +58,9 @@ public:
 		return *this;
 	}
 	
-	
-	virtual void draw() override;
+	// we need to override this so that we can draw the children correctly
+	// without this transform getting applied to the children
+	virtual void draw() const override;
 	
 	/// \brief Set the visibility of the group. Does not set visibility of each child. The group only draws its children if the group is visible.
 	/// \param bool aBVisible set to true for visible.

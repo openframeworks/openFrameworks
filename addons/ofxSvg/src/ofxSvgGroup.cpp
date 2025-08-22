@@ -6,8 +6,9 @@ using std::shared_ptr;
 using std::string;
 
 //--------------------------------------------------------------
-void ofxSvgGroup::draw() {
+void ofxSvgGroup::draw() const {
 	if( !isVisible() ) return;
+	
     std::size_t numElements = mChildren.size();
 	for( std::size_t i = 0; i < numElements; i++ ) {
 		mChildren[i]->draw();

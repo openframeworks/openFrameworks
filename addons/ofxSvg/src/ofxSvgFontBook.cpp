@@ -34,7 +34,7 @@ bool ofxSvgFontBook::loadFont( const std::string& aDirectory, const std::string&
 		bool bHasFontDirectory = false;
 	//    cout << "checking directory: " << fdirectory+"/fonts/" << endl;
 		std::string fontsDirectory = "";// = ofToDataPath("", true);
-		if( aDirectory != "" ) {
+		if( !aDirectory.empty() ) {
 			fontsDirectory = aDirectory;
 		}
 		
