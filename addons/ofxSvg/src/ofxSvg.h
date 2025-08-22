@@ -224,7 +224,7 @@ protected:
 	void validateXmlSvgRoot( ofXml& aRootSvgNode );
 	std::string cleanString( std::string aStr, std::string aReplace );
 	void _parseXmlNode( ofXml& aParentNode, std::vector< std::shared_ptr<ofxSvgElement> >& aElements );
-	bool _addElementFromXmlNode( ofXml& tnode, std::vector< std::shared_ptr<ofxSvgElement> >& aElements );
+	std::shared_ptr<ofxSvgElement> _addElementFromXmlNode( ofXml& tnode, std::vector< std::shared_ptr<ofxSvgElement> >& aElements );
 	
 	void _parsePolylinePolygon( ofXml& tnode, std::shared_ptr<ofxSvgPath> aSvgPath );
 	// reference: https://www.w3.org/TR/SVG/paths.html
@@ -238,6 +238,8 @@ protected:
 	glm::vec3 _parseMatrixString(const std::string& input, const std::string& aprefix, bool abDefaultZero );
 	
 	void _getTextSpanFromXmlNode( ofXml& anode, std::vector< std::shared_ptr<ofxSvgText::TextSpan> >& aspans );
+	
+	void _setNodeParentGroupStack( std::shared_ptr<ofxSvgElement> aele );
 	
 	ofxSvgGroup* _getPushedGroup();
 	bool _hasPushedMatrix();

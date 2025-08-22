@@ -85,6 +85,8 @@ public:
 	bool addProperty( const std::string& aName, const float& avalue );
 	bool addProperty( const std::string& aName, const ofColor& acolor );
 	
+	bool setColor(const ofColor& acolor);
+	
 	bool setFillColor(const ofColor& acolor);
 	bool setNoFill();
 	bool isFilled();
@@ -112,6 +114,7 @@ public:
 	int getIntValue(const std::string& akey, const int& adefault);
 	float getFloatValue(const std::string& akey, const float& adefault);
 	ofColor getColor(const std::string& akey);
+	ofColor getColor(const std::string& akey, const ofColor& adefault);
 	
 	std::string toString(bool aBPrettyPrint=true);
 	

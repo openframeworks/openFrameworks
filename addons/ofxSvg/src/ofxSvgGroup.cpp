@@ -9,19 +9,9 @@ using std::string;
 void ofxSvgGroup::draw() {
 	if( !isVisible() ) return;
     std::size_t numElements = mChildren.size();
-	bool bTrans = (pos.x != 0 || pos.y != 0.0 || rotation != 0.f || scale.x != 0.f || scale.y != 0.f);
-    if( bTrans ) {
-        ofPushMatrix();
-        ofTranslate(pos.x, pos.y);
-		if( rotation != 0.0 ) ofRotateZDeg( rotation );
-		ofScale( scale.x, scale.y );
-    }
-    for( std::size_t i = 0; i < numElements; i++ ) {
+	for( std::size_t i = 0; i < numElements; i++ ) {
 		mChildren[i]->draw();
-    }
-    if( bTrans ) {
-        ofPopMatrix();
-    }
+	}
 }
 
 //--------------------------------------------------------------
@@ -192,8 +182,7 @@ void ofxSvgGroup::_getElementForNameRecursive( vector<string>& aNamesToFind, sha
 					auto etext = std::dynamic_pointer_cast<ofxSvgText>(aElements[i]);
 					if (etext) {
 						if (etext->textSpans.size()) {
-//                            cout << "Searching for " << aNamesToFind[0] << " in " << etext->textSpans.front().text << endl;
-							if(ofIsStringInString( etext->textSpans.front()->text, aNamesToFind[0] )) {
+							if(ofIsStringInString( etext->textSpans.front()->getText(), aNamesToFind[0] )) {
 								bFound = true;
 							}
 						}

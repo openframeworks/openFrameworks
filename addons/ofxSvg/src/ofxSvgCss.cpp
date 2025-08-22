@@ -249,6 +249,11 @@ bool ofxSvgCssClass::addProperty( const std::string& aName, const ofColor& acolo
 }
 
 //--------------------------------------------------
+bool ofxSvgCssClass::setColor(const ofColor& acolor) {
+	return addProperty("color", acolor);
+}
+
+//--------------------------------------------------
 bool ofxSvgCssClass::setFillColor(const ofColor& acolor) {
 	return addProperty("fill", acolor);
 }
@@ -388,8 +393,13 @@ float ofxSvgCssClass::getFloatValue(const std::string& akey, const float& adefau
 
 //--------------------------------------------------
 ofColor ofxSvgCssClass::getColor(const std::string& akey) {
+	return getColor(akey, ofColor(0));
+}
+
+//--------------------------------------------------
+ofColor ofxSvgCssClass::getColor(const std::string& akey, const ofColor& adefault) {
 	if( properties.count(akey) < 1 ) {
-		return ofColor(0);
+		return adefault;
 	}
 	auto& prop = properties[akey];
 	if( !prop.cvalue.has_value() ) {

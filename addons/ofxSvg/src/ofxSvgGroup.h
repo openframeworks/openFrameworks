@@ -12,10 +12,21 @@ public:
 	ofxSvgGroup(const ofxSvgGroup& other) {
 		ofLogVerbose("ofxSvgGroup") << "ofxSvgGroup(const ofxSvgGroup& other)";
 		mChildren.reserve(other.mChildren.size());
+		
+		setPosition(other.getPosition());
+		setOrientation(other.getOrientationQuat());
+		setScale(other.getScale());
+		
+		bVisible = other.bVisible;
+		alpha = other.alpha;
+		layer = other.layer;
+		name = other.name;
 		for (const auto& ptr : other.mChildren) {
 			// Create a new shared_ptr to a new item copy.
 			if( ptr ) {
-				mChildren.push_back(ptr->clone());
+				auto newKid = ptr->clone();
+				newKid->setParent(*this);
+				mChildren.push_back(newKid);
 			}
 		}
 	}
@@ -24,12 +35,23 @@ public:
 	ofxSvgGroup& operator=(const ofxSvgGroup& other) {
 		if (this != &other) {
 			ofLogVerbose("ofxSvgGroup") << "operator=(const ofxSvgGroup& other)";
+			
+			setPosition(other.getPosition());
+			setOrientation(other.getOrientationQuat());
+			setScale(other.getScale());
+			
+			bVisible = other.bVisible;
+			alpha = other.alpha;
+			layer = other.layer;
+			name = other.name;
 			mChildren.clear();
 			mChildren.reserve(other.mChildren.size());
 			for (const auto& ptr : other.mChildren) {
 				// Create a new shared_ptr to a new item copy.
 				if( ptr ) {
-					mChildren.push_back(ptr->clone());
+					auto newKid = ptr->clone();
+					newKid->setParent(*this);
+					mChildren.push_back(newKid);
 				}
 			}
 		}
@@ -341,7 +363,9 @@ protected:
 		newEle->mChildren.reserve(mChildren.size());
 		for( const auto& ptr : mChildren ) {
 			if( ptr ) {
-				newEle->mChildren.push_back(ptr->clone());
+				auto newKid = ptr->clone();
+				newKid->setParent(*this);
+				newEle->mChildren.push_back(newKid);
 			}
 		}
 		return newEle;

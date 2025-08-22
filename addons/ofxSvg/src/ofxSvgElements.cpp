@@ -125,34 +125,34 @@ string ofxSvgElement::toString( int nlevel ) {
     return tstr;
 }
 
-//--------------------------------------------------------------
-glm::mat4 ofxSvgElement::getTransformMatrix() {
-    glm::mat4 rmat = glm::translate(glm::mat4(1.0f), glm::vec3(pos.x, pos.y, 0.0f));
-    if( rotation != 0.0f ) {
+////--------------------------------------------------------------
+//glm::mat4 ofxSvgElement::getTransformMatrix() {
+//    glm::mat4 rmat = glm::translate(glm::mat4(1.0f), glm::vec3(pos.x, pos.y, 0.0f));
+//    if( rotation != 0.0f ) {
+////        glm::quat rq = glm::angleAxis(ofDegToRad(rotation), glm::vec3(0.f, 0.f, 1.0f ));
+////        rmat = rmat * glm::toMat4((const glm::quat&)rq);
+//		rmat = glm::rotate(rmat, glm::radians(rotation), glm::vec3(0.f, 0.f, 1.f));
+//    }
+//    if( scale.x != 1.0f || scale.y != 1.0f ) {
+//        rmat = glm::scale(rmat, glm::vec3(scale.x, scale.y, 1.0f));
+//    }
+//    return rmat;
+//};
+//
+////--------------------------------------------------------------
+//ofNode ofxSvgElement::getNodeTransform() {
+//	ofNode tnode;// = ofxSvgBase::getNodeTransform();
+//	tnode.setPosition(pos.x, pos.y, 0.0f);
+//    if( rotation != 0.0f ) {
 //        glm::quat rq = glm::angleAxis(ofDegToRad(rotation), glm::vec3(0.f, 0.f, 1.0f ));
-//        rmat = rmat * glm::toMat4((const glm::quat&)rq);
-		rmat = glm::rotate(rmat, glm::radians(rotation), glm::vec3(0.f, 0.f, 1.f));
-    }
-    if( scale.x != 1.0f || scale.y != 1.0f ) {
-        rmat = glm::scale(rmat, glm::vec3(scale.x, scale.y, 1.0f));
-    }
-    return rmat;
-};
-
-//--------------------------------------------------------------
-ofNode ofxSvgElement::getNodeTransform() {
-	ofNode tnode;// = ofxSvgBase::getNodeTransform();
-	tnode.setPosition(pos.x, pos.y, 0.0f);
-    if( rotation != 0.0f ) {
-        glm::quat rq = glm::angleAxis(ofDegToRad(rotation), glm::vec3(0.f, 0.f, 1.0f ));
-        tnode.setOrientation(rq);
-    }
-    tnode.setScale(1.0f);
-    if( scale.x != 1.0f || scale.y != 1.0f ) {
-        tnode.setScale(scale.x, scale.y, 1.f );
-    }
-    return tnode;
-}
+//        tnode.setOrientation(rq);
+//    }
+//    tnode.setScale(1.0f);
+//    if( scale.x != 1.0f || scale.y != 1.0f ) {
+//        tnode.setScale(scale.x, scale.y, 1.f );
+//    }
+//    return tnode;
+//}
 
 //--------------------------------------------------------------
 void ofxSvgPath::applyStyle(ofxSvgCssClass& aclass) {
@@ -221,17 +221,18 @@ void ofxSvgPath::applyStyle(ofxSvgCssClass& aclass) {
 
 //--------------------------------------------------------------
 void ofxSvgPath::draw() {
-	ofPushMatrix(); {
+//	ofPushMatrix(); {
+	transformGL(); {
 		ofSetColor( ofColor::orange );
-//		ofDrawCircle(0, 0, 15);
+		//		ofDrawCircle(0, 0, 15);
 		
-		ofTranslate(pos.x, pos.y);
+//		ofTranslate(pos.x, pos.y);
 		
 		ofSetColor( ofColor::green );
-//		ofDrawCircle(0, 0, 10);
+		//		ofDrawCircle(0, 0, 10);
 		
-		if( rotation != 0.0 ) ofRotateZDeg( rotation );
-		ofScale( scale.x, scale.y );
+//		if( rotation != 0.0 ) ofRotateZDeg( rotation );
+//		ofScale( scale.x, scale.y );
 		if(isVisible()) {
 			ofColor fillColor = getFillColor();
 			ofColor strokeColor = getStrokeColor();
@@ -254,7 +255,8 @@ void ofxSvgPath::draw() {
 				}
 			}
 		}
-	} ofPopMatrix();
+	} restoreTransformGL();
+//	} ofPopMatrix();
 }
 
 #pragma mark - Image
@@ -264,33 +266,43 @@ void ofxSvgPath::draw() {
 //}
 
 //--------------------------------------------------------------
-void ofxSvgImage::draw() {
+void ofxSvgImage::load() {
 	if( !bTryLoad ) {
 		if( !getFilePath().empty() ) {
 			img.load( getFilePath() );
 			bTryLoad = true;
 		}
 	}
+}
+
+//--------------------------------------------------------------
+void ofxSvgImage::draw() {
+	if( !bTryLoad ) {
+		load();
+	}
 	
 	if( isVisible() ) {
 		if( img.isAllocated() ) {
-			ofPushMatrix(); {
-				ofTranslate( pos.x, pos.y );
-				if( rotation != 0.0 ) ofRotateZDeg( rotation );
-				ofScale( scale.x, scale.y );
+//			ofPushMatrix(); {
+			transformGL(); {
+//				ofTranslate( pos.x, pos.y );
+//				if( rotation != 0.0 ) ofRotateZDeg( rotation );
+//				ofScale( scale.x, scale.y );
 				if(bUseShapeColor) ofSetColor( getColor() );
 				img.draw( 0, 0 );
-			} ofPopMatrix();
+				//			} ofPopMatrix();
+			} restoreTransformGL();
 		}
 	}
 }
 
-//--------------------------------------------------------------
-glm::vec2 ofxSvgImage::getAnchorPointForPercent( float ax, float ay ) {
-	glm::vec2 ap = glm::vec2( width * ax * scale.x, height * ay * scale.y );
-	ap = glm::rotate(ap, glm::radians(rotation));
-	return ap;
-}
+////--------------------------------------------------------------
+//glm::vec2 ofxSvgImage::getAnchorPointForPercent( float ax, float ay ) {
+//	glm::vec2 ap = glm::vec2( width * ax * getScale().x, height * ay * getScale().y );
+////	ap = glm::rotate(ap, glm::radians(rotation));
+//	ap = glm::rotate(ap, atan2f(getSideDir().y, getSideDir().x));
+//	return ap;
+//}
 
 
 #pragma mark - Text
@@ -401,7 +413,7 @@ void ofxSvgText::setText( const std::string& astring, std::string aFontFamily, i
 		ofxSvgCssClass css;
 		css.addProperty("font-family", aFontFamily);
 		css.addProperty("font-size", aFontSize);
-		css.addProperty("color", getFillColor() );
+		css.addProperty("color", getColor() );
 		if (spanString.find("<span") != std::string::npos) {
             SpanData data = extractSpanData(spanString);
 //            std::cout << "Found <span> tag.\n";
@@ -691,7 +703,7 @@ void ofxSvgText::create() {
                     tsIndices[k] = tsIndices[k] + offsetIndex;
                 }
                 
-                ofFloatColor tcolor = cspan->color;
+                ofFloatColor tcolor = cspan->getColor();
                 vector< ofFloatColor > tcolors;
                 tcolors.assign( stringMesh.getVertices().size(), tcolor );
                 
@@ -706,11 +718,16 @@ void ofxSvgText::create() {
     // now loop through and set the width and height of the text spans //
     for( std::size_t i = 0; i < textSpans.size(); i++ ) {
         auto& tempSpan = textSpans[i];
+		
         ofTrueTypeFont& tfont = tempSpan->getFont();
         if( tfont.isLoaded() ) {
-            ofRectangle tempBounds  = tfont.getStringBoundingBox( tempSpan->text, 0, 0 );
-            tempSpan->rect.width     = tempBounds.width;
-            tempSpan->rect.height    = tempBounds.height;
+			tempSpan->mBTextDirty = false;
+            tempSpan->fontRect  = tfont.getStringBoundingBox( tempSpan->text, 0, 0 );
+//			ofLogNotice("ofxSvgText::create") << getCleanName() << "-Updating text span with text: " << tempSpan->text << " width: " << tempSpan->fontRect.getWidth() << " | " << ofGetFrameNum();
+			// rect is used for drawing the font. tempSpan->fontRect is used for calculating bounding box.
+            tempSpan->rect.width     = tempSpan->fontRect.width;
+            tempSpan->rect.height    = tempSpan->fontRect.height;
+//			ofRectangle()
 //            tempSpan->lineHeight     = tfont.getStringBoundingBox("M", 0, 0).height;
 			tempSpan->lineHeight 	= tfont.getLineHeight();
 //            tempSpan.rect.x         = tempSpan.rect.x - ogPos.x;
@@ -723,67 +740,63 @@ void ofxSvgText::create() {
 //--------------------------------------------------------------
 void ofxSvgText::draw() {
     if( !isVisible() ) return;
-//    map< string, map<int, ofMesh> > meshes;
-    if(bUseShapeColor) {
+
+	if(bUseShapeColor) {
         ofSetColor( 255, 255, 255, 255.f * alpha );
     }
 	std::map< string, std::map<int, ofMesh> >::iterator mainIt;
+	
+	if(areTextSpansDirty()) {
+		// sets textSpan->mBTextDirty to false;
+		create();
+	}
     
-    ofPushMatrix(); {
-        
-        ofTranslate( pos.x, pos.y );
-        
-//        ofSetColor( 255, 255, 255, 255.f * alpha );
-		if( rotation != 0 ) {ofRotateZDeg( rotation );}
-        ofTexture* tex = NULL;
-        for( mainIt = meshes.begin(); mainIt != meshes.end(); ++mainIt ) {
-            string fontKey = mainIt->first;
+	transformGL(); {
+		ofTexture* tex = NULL;
+		for( mainIt = meshes.begin(); mainIt != meshes.end(); ++mainIt ) {
+			string fontKey = mainIt->first;
 			std::map< int, ofMesh >::iterator mIt;
-            for( mIt = meshes[ fontKey ].begin(); mIt != meshes[ fontKey ].end(); ++mIt ) {
-                int fontSize = mIt->first;
-                // let's check to make sure that the texture is there, so that we can bind it //
-                bool bHasTexture = false;
-                // static map< string, Font > fonts;
-                // if( fonts.count( fontKey ) ) {
+			for( mIt = meshes[ fontKey ].begin(); mIt != meshes[ fontKey ].end(); ++mIt ) {
+				int fontSize = mIt->first;
+				// let's check to make sure that the texture is there, so that we can bind it //
+				bool bHasTexture = false;
+				// if( fonts.count( fontKey ) ) {
 				if( ofxSvgFontBook::hasBookFont(fontKey)) {
 					auto& fbook = ofxSvgFontBook::getBookFont(fontKey);
-                    if( fbook.textures.count( fontSize ) ) {
-                        bHasTexture = true;
-                        tex = &fbook.textures[ fontSize ];
-                    }
-                }
-                
-                if( bHasTexture ) tex->bind();
-                ofMesh& tMeshMesh = mIt->second;
-                if( bUseShapeColor ) {
-                    vector< ofFloatColor >& tcolors = tMeshMesh.getColors();
-                    for( auto& tc : tcolors ) {
-                        if( bOverrideColor ) {
-                            tc = _overrideColor;
-                        } else {
-                            tc.a = alpha;
-                        }
-                    }
-                } else {
-                    tMeshMesh.disableColors();
-                }
-                tMeshMesh.draw();
-                if( bHasTexture ) tex->unbind();
-                tMeshMesh.enableColors();
-            }
-        }
-    } ofPopMatrix();
-    
+					if( fbook.textures.count( fontSize ) ) {
+						bHasTexture = true;
+						tex = &fbook.textures[ fontSize ];
+					}
+				}
+				
+				if( bHasTexture ) tex->bind();
+				ofMesh& tMeshMesh = mIt->second;
+				if( bUseShapeColor ) {
+					vector< ofFloatColor >& tcolors = tMeshMesh.getColors();
+					for( auto& tc : tcolors ) {
+//						if( bOverrideColor ) {
+//							tc = _overrideColor;
+//						} else {
+							tc.a = alpha;
+//						}
+					}
+				} else {
+					tMeshMesh.disableColors();
+				}
+				tMeshMesh.draw();
+				if( bHasTexture ) tex->unbind();
+				tMeshMesh.enableColors();
+			}
+		}
+	} restoreTransformGL();
 }
 
 //--------------------------------------------------------------
 void ofxSvgText::draw(const std::string &astring, bool abCentered ) {
 	if( textSpans.size() > 0 ) {
-		ofPushMatrix(); {
-			ofTranslate( pos.x, pos.y );
-			if( rotation > 0 ) ofRotateZDeg( rotation );
+		transformGL(); {
 			textSpans[0]->draw(astring, abCentered );
-		} ofPopMatrix();
+		} restoreTransformGL();
 	} else {
 		ofLogVerbose("ofxSvgText") << __FUNCTION__ << " : no text spans to draw with.";
 	}
@@ -792,11 +805,9 @@ void ofxSvgText::draw(const std::string &astring, bool abCentered ) {
 //--------------------------------------------------------------
 void ofxSvgText::draw(const std::string& astring, const ofColor& acolor, bool abCentered ) {
 	if( textSpans.size() > 0 ) {
-		ofPushMatrix(); {
-			ofTranslate( pos.x, pos.y );
-			if( rotation > 0 ) ofRotateZDeg( rotation );
+		transformGL(); {
 			textSpans[0]->draw(astring, acolor, abCentered );
-		} ofPopMatrix();
+		} restoreTransformGL();
 	} else {
 		ofLogVerbose("ofxSvgText") << __FUNCTION__ << " : no text spans to draw with.";
 	}
@@ -806,39 +817,21 @@ void ofxSvgText::draw(const std::string& astring, const ofColor& acolor, bool ab
 void ofxSvgText::TextSpan::applyStyle(ofxSvgCssClass& aclass) {
 	mSvgCssClass = aclass;
 	
-//	fontFamily   	= aclass.getValue("font-family", "Arial");
-//	fontFamily = mSvgCssClass.getFontFamily("Arial");
-//	fontSize      	= aclass.getIntValue("font-size", 18 );
-//	fontSize = mSvgCssClass.getFontSize(18);
-	color 			= ofColor(0);
-	if( aclass.hasProperty("color")) {
-		color = aclass.getColor("color");
-	} else if( aclass.hasProperty("fill")) {
-		color = aclass.getColor("fill");
+	if( !aclass.hasProperty("color") ) {
+		if( aclass.hasProperty("fill")) {
+			aclass.addProperty("color", aclass.getColor("fill") );
+		} else {
+			aclass.addProperty("color", ofColor(0));
+		}
 	}
 	
+	alpha = 1.f;
 	if( aclass.hasProperty("opacity")) {
-		color.a *= aclass.getFloatValue("opacity", 1.f);
+		alpha = aclass.getFloatValue("opacity", 1.f);
 	}
-	
-
-//	bold = false;
-//	if( ofIsStringInString(aclass.getValue("font-weight", "" ), "bold")) {
-//		bold = true;
-//	}
-	
-//	bold = mSvgCssClass.isFontBold();
-	
-//	italic = false;
-//	if( ofIsStringInString(aclass.getValue("font-style", "" ), "italic")) {
-//		italic = true;
-//	}
-	
-//	italic = mSvgCssClass.isFontItalic();
-	
 	
 	ofLogVerbose("ofxSvgText::TextSpan::applyStyle") << "text: " << text;
-	ofLogVerbose("ofxSvgText::TextSpan::applyStyle") << " css class: " << aclass.toString() << std::endl << " color: " << color;
+	ofLogVerbose("ofxSvgText::TextSpan::applyStyle") << " css class: " << aclass.toString() << std::endl;// << " color: " << color;
 	
 }
 
@@ -850,7 +843,7 @@ ofTrueTypeFont& ofxSvgText::TextSpan::getFont() {
 
 //--------------------------------------------------------------
 void ofxSvgText::TextSpan::draw(const std::string &astring, bool abCentered ) {
-	draw( astring, color, abCentered );
+	draw( astring, getColor(), abCentered );
 }
 
 //--------------------------------------------------------------
@@ -873,25 +866,28 @@ ofTrueTypeFont& ofxSvgText::getFont() {
 	return ofxSvgFontBook::defaultFont;
 }
 
-//--------------------------------------------------------------
-ofColor ofxSvgText::getColor() {
-	if( textSpans.size() > 0 ) {
-		return textSpans[0]->color;
-	}
-	ofLogWarning("ofxSvgText") << __FUNCTION__ << " : no font detected from text spans, returning path fill color.";
-	return path.getFillColor();
-}
+////--------------------------------------------------------------
+//ofColor ofxSvgText::getColor() {
+//	if( textSpans.size() > 0 ) {
+//		return textSpans[0]->getColor();
+//	}
+//	ofLogWarning("ofxSvgText") << __FUNCTION__ << " : no font detected from text spans, returning black.";
+//	return ofColor(0,255);
+//}
 
-// get the bounding rect for all of the text spans in this svg'ness
+// get the bounding rect for all of the text spans in this text element
 // should be called after create //
 //--------------------------------------------------------------
 ofRectangle ofxSvgText::getBoundingBox() {
+	if(areTextSpansDirty()) {
+		create();
+	}
+	
     ofRectangle temp( 0, 0, 1, 1 );
     for( std::size_t i = 0; i < textSpans.size(); i++ ) {
-        ofRectangle trect = textSpans[i]->rect;
-        trect.x = trect.x;// - ogPos.x;
-        trect.y = trect.y;// - ogPos.y;
-        trect.y -= textSpans[i]->lineHeight;
+        ofRectangle trect = textSpans[i]->fontRect;
+		trect.x += textSpans[i]->rect.x;
+		trect.y += textSpans[i]->rect.y;
         if( i == 0 ) {
             temp = trect;
         } else {
@@ -899,11 +895,21 @@ ofRectangle ofxSvgText::getBoundingBox() {
         }
     }
     
-    temp.x += pos.x;
-    temp.y += pos.y;
+	// we want a local rect
     return temp;
 }
 
+//--------------------------------------------------------------
+bool ofxSvgText::areTextSpansDirty() {
+	bool bDirty = false;
+	for( auto& tspan : textSpans ) {
+		if( tspan->mBTextDirty ) {
+			bDirty=true;
+			break;
+		}
+	}
+	return bDirty;
+}
 
 
 
