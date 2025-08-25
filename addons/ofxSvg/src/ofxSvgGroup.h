@@ -64,9 +64,9 @@ public:
 	
 	/// \brief Set the visibility of the group. Does not set visibility of each child. The group only draws its children if the group is visible.
 	/// \param bool aBVisible set to true for visible.
-	virtual void setVisible( bool aBVisible ) override {
-		ofxSvgElement::setVisible(aBVisible);
-	}
+//	virtual void setVisible( bool aBVisible ) override {
+//		ofxSvgElement::setVisible(aBVisible);
+//	}
 	
 	/// \brief Set the alpha of the group and call setAlpha(aAlpha) on its children.
 	/// \param float aAlpha in range from 0-1 where 0 is transparent and 1 is full opacity.

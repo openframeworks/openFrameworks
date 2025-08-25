@@ -33,27 +33,42 @@ public:
 	std::string getTypeAsString();
 	
 	std::string getName() { return name; }
+	
+	/// \brief Get name with escaped characters and attempts to remove added naming patterns.
+	/// Removes the numbers added to the name by illustrator
+	/// ie. lelbow_00000070086365269320197030000010368508730034196876_ becomes lelbow
 	std::string getCleanName();
 	
 	bool isGroup() {
 		return (getType() == OFXSVG_TYPE_GROUP);
 	}
 	
+	/// \brief Set the rotation around the z-axis.
+	/// \param adegrees rotation in degrees.
 	void setRotationDeg( float adegrees ) {
 		setRotationRad(glm::radians(adegrees));
 	}
+	
+	/// \brief Set the rotation around the z-axis.
+	/// \param aradians rotation in radians.
 	void setRotationRad( float aradians ) {
 		setOrientation(glm::angleAxis(aradians, glm::vec3(0.f, 0.f, 1.f) ));
 	}
 	
+	/// \brief Convenience function that wraps getRollDeg() from ofNode.
+	/// \return Rotation around the z-axis in degrees.
 	float getRotationDeg() {
 		return getRollDeg();
 	}
+	
+	/// \brief Convenience function that wraps getRollRad() from ofNode.
+	/// \return Rotation around the z-axis in radians.
 	float getRotationRad() {
 		return getRollRad();
 	}
 	
-	// override this in ofxSvgGroup 
+	/// \brief Set the visibility of the element, will not draw if not visible.
+	/// \param bool aBVisible set to true for visible.
 	virtual void setVisible( bool ab ) { bVisible = ab; }
 	bool isVisible() const { return bVisible; }
 	
@@ -84,7 +99,7 @@ public:
 		return bUseShapeColor;
 	}
 	
-	/// \brief Get the bounding box of the element without transforms applied.
+	/// \brief Get the local axis aligned bounding box of the element without transforms applied.
 	virtual ofRectangle getBoundingBox() { return ofRectangle( 0.0f, 0.0f, 1.f, 1.f ); };
 	
 	/// \brief Get the axis aligned bounding box of the element, taking into account
@@ -163,6 +178,8 @@ public:
 		path.setStrokeColor( acolor );
 	}
 	
+	/// \brief Get the first polyline if available.
+	/// \return ofPolyline returned from path.getOutline()[0];
 	ofPolyline getFirstPolyline() override {
 		if( path.getOutline().size() > 0 ) {
 			return path.getOutline()[0];
@@ -171,7 +188,7 @@ public:
 		return ofPolyline();
 	}
 	
-	/// \brief Get the local bounding box of the path, no transforms applied.
+	/// \brief Get the local axis aligned bounding box of the path, no transforms applied.
 	virtual ofRectangle getBoundingBox() override {
 		if(mBBoxNeedsRecalc) {
 			mBBoxNeedsRecalc = false;
@@ -180,17 +197,34 @@ public:
 			if( outlines.size() > 0 ) {
 				bool bFirst = true;
 				for( auto& outline : outlines ) {
+					auto bbox = outline.getBoundingBox();
+					bbox.x += mOffsetPos.x;
+					bbox.y += mOffsetPos.y;
+					
 					if( bFirst ) {
 						bFirst = false;
-						mBounds = outline.getBoundingBox();
+						mBounds = bbox;
+//						mBounds = outline.getBoundingBox();
 					} else {
-						mBounds.growToInclude( outline.getBoundingBox() );
+						mBounds.growToInclude( bbox );
+//						mBounds.growToInclude( outline.getBoundingBox() );
 					}
 				}
 			}
 		}
 		return mBounds;
 	};
+	
+	/// \brief Offset the local shape position. Helpful with offset rotations.
+	void setOffsetPathPosition( float ax, float ay ) {
+		if( ax != mOffsetPos.x || ay != mOffsetPos.y ) {
+			mBBoxNeedsRecalc=true;
+		}
+		mOffsetPos = {ax, ay, 0.f};
+	}
+	glm::vec3& getOffsetPathPosition() {
+		return mOffsetPos;
+	}
 	
 	ofPath& getPath() {
 		mBBoxNeedsRecalc = true;
@@ -201,6 +235,8 @@ protected:
 	ofPath path;
 	bool mBBoxNeedsRecalc = true;
 	ofRectangle mBounds;
+	
+	glm::vec3 mOffsetPos = {0.f, 0.f, 0.f};
 	
 	virtual std::shared_ptr<ofxSvgElement> clone() override {
 		return std::make_shared<ofxSvgPath>(*this);
@@ -220,9 +256,11 @@ public:
 	
 	/// \brief Get the local bounding box of the rectangle, no transforms applied.
 	virtual ofRectangle getBoundingBox() override {
-		return ofRectangle(0.f, 0.f, getWidth(), getHeight());
+		return ofRectangle(mOffsetPos.x, mOffsetPos.y, getWidth(), getHeight());
 	};
 	
+	/// \brief Set the radius for rounded corners.
+	/// \param aRoundAmount the curve radius
 	void setRoundRadius( float aRoundAmount ) {
 		if( aRoundAmount != roundRadius ) {
 			roundRadius = aRoundAmount;
@@ -249,6 +287,68 @@ protected:
 	};
 };
 
+
+class ofxSvgCircle : public ofxSvgPath {
+	friend class ofxSvg;
+public:
+	virtual ofxSvgType getType() override {return OFXSVG_TYPE_CIRCLE;}
+	float getRadius() {return radius;}
+	float getGlobalRadius() {return radius * getGlobalScale().x;}
+	
+	/// \brief Get the local bounding box of the circle, no transforms applied.
+	virtual ofRectangle getBoundingBox() override {
+		return ofRectangle(-getRadius()+mOffsetPos.x, -getRadius()+mOffsetPos.y, getRadius()*2.f, getRadius()*2.f );
+	};
+	
+	void setRadius( float aradius ) {
+		if( aradius != radius ) {
+			radius = aradius;
+			path.clear();
+			path.circle(0.f, 0.f, radius);
+		}
+	}
+	
+protected:
+	float radius = 0.0;
+	
+	virtual std::shared_ptr<ofxSvgElement> clone() override {
+		return std::make_shared<ofxSvgCircle>(*this);
+	};
+};
+
+class ofxSvgEllipse : public ofxSvgPath {
+	friend class ofxSvg;
+public:
+	virtual ofxSvgType getType() override {return OFXSVG_TYPE_ELLIPSE;}
+	float getRadiusX() {return radiusX;}
+	float getRadiusY() {return radiusY;}
+	
+	float getGlobalRadiusX() {return radiusX * getGlobalScale().x;}
+	float getGlobalRadiusY() {return radiusY * getGlobalScale().x;}
+	
+	/// \brief Get the local bounding box of the circle, no transforms applied.
+	virtual ofRectangle getBoundingBox() override {
+		return ofRectangle(-getRadiusX()+mOffsetPos.x, -getRadiusY()+mOffsetPos.y, getRadiusX()*2.f, getRadiusY()*2.f );
+	};
+	
+	void setRadius( float aRadiusX, float aRadiusY ) {
+		if( aRadiusX != radiusX ||  aRadiusY != radiusY ) {
+			path.clear();
+			radiusX = aRadiusX;
+			radiusY = aRadiusY;
+			path.ellipse({0.f,0.f}, radiusX * 2.0f, radiusY * 2.0f );
+		}
+	}
+	
+protected:
+	float radiusX, radiusY = 10.0f;
+	
+	virtual std::shared_ptr<ofxSvgElement> clone() override {
+		return std::make_shared<ofxSvgEllipse>(*this);
+	};
+};
+
+
 class ofxSvgImage : public ofxSvgElement {
 	friend class ofxSvg;
 public:
@@ -271,7 +371,7 @@ public:
 	}
 	
 	virtual void customDraw() override;
-//	glm::vec2 getAnchorPointForPercent( float ax, float ay );
+	//	glm::vec2 getAnchorPointForPercent( float ax, float ay );
 	
 	const std::filesystem::path& getFilePath() { return filepath; }
 	ofImage& getImage() { return img; }
@@ -295,58 +395,6 @@ protected:
 	
 	virtual std::shared_ptr<ofxSvgElement> clone() override {
 		return std::make_shared<ofxSvgImage>(*this);
-	};
-	
-};
-
-class ofxSvgCircle : public ofxSvgPath {
-	friend class ofxSvg;
-public:
-	virtual ofxSvgType getType() override {return OFXSVG_TYPE_CIRCLE;}
-	float getRadius() {return radius;}
-	float getGlobalRadius() {return radius * getGlobalScale().x;}
-	
-	/// \brief Get the local bounding box of the circle, no transforms applied.
-	virtual ofRectangle getBoundingBox() override {
-		return ofRectangle(-getRadius(), -getRadius(), getRadius()*2.f, getRadius()*2.f );
-	};
-	
-	void setRadius( float aradius ) {
-		if( aradius != radius ) {
-			radius = aradius;
-			path.clear();
-			path.circle(0, 0, radius);
-		}
-	}
-	
-protected:
-	float radius = 10.0;
-	
-	virtual std::shared_ptr<ofxSvgElement> clone() override {
-		return std::make_shared<ofxSvgCircle>(*this);
-	};
-};
-
-class ofxSvgEllipse : public ofxSvgPath {
-	friend class ofxSvg;
-public:
-	virtual ofxSvgType getType() override {return OFXSVG_TYPE_ELLIPSE;}
-	float getRadiusX() {return radiusX;}
-	float getRadiusY() {return radiusY;}
-	
-	float getGlobalRadiusX() {return radiusX * getGlobalScale().x;}
-	float getGlobalRadiusY() {return radiusY * getGlobalScale().x;}
-	
-	/// \brief Get the local bounding box of the circle, no transforms applied.
-	virtual ofRectangle getBoundingBox() override {
-		return ofRectangle(-getRadiusX(), -getRadiusY(), getRadiusX()*2.f, getRadiusY()*2.f );
-	};
-	
-protected:
-	float radiusX, radiusY = 10.0f;
-	
-	virtual std::shared_ptr<ofxSvgElement> clone() override {
-		return std::make_shared<ofxSvgEllipse>(*this);
 	};
 };
 
@@ -426,7 +474,7 @@ public:
 		float alpha = 1.f;
 
 		void applyStyle(ofxSvgCssClass& aclass);
-		ofxSvgCssClass& getCss() { return mSvgCssClass; }
+		ofxSvgCssClass& getCssClass() { return mSvgCssClass; }
 
 		ofTrueTypeFont& getFont();
 		void draw( const std::string& astring, bool abCentered );

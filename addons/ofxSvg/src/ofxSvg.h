@@ -251,6 +251,7 @@ protected:
 	ofxSvgCssClass& _addCssClassFromPath( std::shared_ptr<ofxSvgPath> aSvgPath );
 	void _addCssClassFromPath( std::shared_ptr<ofxSvgPath> aSvgPath, ofXml& anode );
 	void _addCssClassFromImage( std::shared_ptr<ofxSvgImage> aSvgImage, ofXml& anode );
+	void _addCssClassFromTextSpan( std::shared_ptr<ofxSvgText::TextSpan> aSvgTextSpan, ofXml& anode );
 	bool _toXml( ofXml& aParentNode, std::shared_ptr<ofxSvgElement> aele );
 	
 	void _pushCssClass( const ofxSvgCssClass& acss );

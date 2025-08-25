@@ -223,6 +223,13 @@ void ofxSvgPath::applyStyle(ofxSvgCssClass& aclass) {
 void ofxSvgPath::customDraw() {
 //	ofPushMatrix(); {
 //	transformGL(); {
+	
+	bool bHasOffset = mOffsetPos.x != 0.f || mOffsetPos.y != 0.f;
+	if(bHasOffset) {
+		ofPushMatrix();
+		ofTranslate(mOffsetPos.x, mOffsetPos.y);
+	}
+	
 		ofSetColor( ofColor::orange );
 		//		ofDrawCircle(0, 0, 15);
 		
@@ -233,28 +240,33 @@ void ofxSvgPath::customDraw() {
 		
 //		if( rotation != 0.0 ) ofRotateZDeg( rotation );
 //		ofScale( scale.x, scale.y );
-		if(isVisible()) {
-			ofColor fillColor = getFillColor();
-			ofColor strokeColor = getStrokeColor();
-			if( alpha != 1.f ) {
-				if( isFilled() ) {
-					path.setFillColor(ofColor(fillColor.r, fillColor.g, fillColor.b, alpha * (float)fillColor.a ));
-				}
-				if( hasStroke() ) {
-					path.setStrokeColor(ofColor(strokeColor.r, strokeColor.g, strokeColor.b, alpha * (float)strokeColor.a ));
-				}
+	if(isVisible()) {
+		ofColor fillColor = getFillColor();
+		ofColor strokeColor = getStrokeColor();
+		if( alpha != 1.f ) {
+			if( isFilled() ) {
+				path.setFillColor(ofColor(fillColor.r, fillColor.g, fillColor.b, alpha * (float)fillColor.a ));
 			}
-			path.draw();
-			
-			if( alpha != 1.f ) {
-				if( isFilled() ) {
-					path.setFillColor(fillColor);
-				}
-				if( hasStroke() ) {
-					path.setStrokeColor(strokeColor);
-				}
+			if( hasStroke() ) {
+				path.setStrokeColor(ofColor(strokeColor.r, strokeColor.g, strokeColor.b, alpha * (float)strokeColor.a ));
 			}
 		}
+		path.draw();
+		
+		if( alpha != 1.f ) {
+			if( isFilled() ) {
+				path.setFillColor(fillColor);
+			}
+			if( hasStroke() ) {
+				path.setStrokeColor(strokeColor);
+			}
+		}
+	}
+	
+	if(bHasOffset) {
+		ofPopMatrix();
+	}
+	
 //	} restoreTransformGL();
 //	} ofPopMatrix();
 }
