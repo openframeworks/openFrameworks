@@ -1323,7 +1323,8 @@ void ofxSvg::_parsePath( ofXml& tnode, std::shared_ptr<ofxSvgPath> aSvgPath ) {
 		
 		bool bRelative = false;
 		std::vector<glm::vec3> npositions= {glm::vec3(0.f, 0.f, 0.f)};
-		std::optional<ofPath::Command::Type> ctype;
+		/// \note: ofxSvgOptional is declared in ofxSvgUtils
+		ofxSvgOptional<ofPath::Command::Type> ctype;
 		
 		// check if we are looking for a position
 		if( cchar == 'm' || cchar == 'M' ) {

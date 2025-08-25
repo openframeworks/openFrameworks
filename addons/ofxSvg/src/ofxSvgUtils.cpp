@@ -260,3 +260,4 @@ ofPixels ofxSvgUtils::base64_decode(std::string const& encoded_string ) {
 //	ofLogNotice("ofxSvgUtils::base64_decode") << "pixels ok: " << bok << " pixels: " << rpix.getWidth() << " x " << rpix.getHeight();
 	return rpix;
 }
+

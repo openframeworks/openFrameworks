@@ -803,27 +803,27 @@ void ofxSvgText::customDraw() {
 //	} restoreTransformGL();
 }
 
-//--------------------------------------------------------------
-void ofxSvgText::draw(const std::string &astring, bool abCentered ) {
-	if( textSpans.size() > 0 ) {
-		transformGL(); {
-			textSpans[0]->draw(astring, abCentered );
-		} restoreTransformGL();
-	} else {
-		ofLogVerbose("ofxSvgText") << __FUNCTION__ << " : no text spans to draw with.";
-	}
-}
-
-//--------------------------------------------------------------
-void ofxSvgText::draw(const std::string& astring, const ofColor& acolor, bool abCentered ) {
-	if( textSpans.size() > 0 ) {
-		transformGL(); {
-			textSpans[0]->draw(astring, acolor, abCentered );
-		} restoreTransformGL();
-	} else {
-		ofLogVerbose("ofxSvgText") << __FUNCTION__ << " : no text spans to draw with.";
-	}
-}
+////--------------------------------------------------------------
+//void ofxSvgText::draw(const std::string &astring, bool abCentered ) {
+//	if( textSpans.size() > 0 ) {
+//		transformGL(); {
+//			textSpans[0]->draw(astring, abCentered );
+//		} restoreTransformGL();
+//	} else {
+//		ofLogVerbose("ofxSvgText") << __FUNCTION__ << " : no text spans to draw with.";
+//	}
+//}
+//
+////--------------------------------------------------------------
+//void ofxSvgText::draw(const std::string& astring, const ofColor& acolor, bool abCentered ) {
+//	if( textSpans.size() > 0 ) {
+//		transformGL(); {
+//			textSpans[0]->draw(astring, acolor, abCentered );
+//		} restoreTransformGL();
+//	} else {
+//		ofLogVerbose("ofxSvgText") << __FUNCTION__ << " : no text spans to draw with.";
+//	}
+//}
 
 //--------------------------------------------------------------
 void ofxSvgText::TextSpan::applyStyle(ofxSvgCssClass& aclass) {

@@ -554,8 +554,9 @@ public:
 	void setText( const std::string& astring, std::string aFontFamily, int aFontSize, float aMaxWidth );
 	void create();
 	void customDraw() override;
-	void draw(const std::string &astring, bool abCentered );
-	void draw(const std::string &astring, const ofColor& acolor, bool abCentered );
+	// going to override
+//	void draw(const std::string &astring, bool abCentered );
+//	void draw(const std::string &astring, const ofColor& acolor, bool abCentered );
 	
 	void setFontDirectory( std::string aPath ) {
 		fdirectory = aPath;

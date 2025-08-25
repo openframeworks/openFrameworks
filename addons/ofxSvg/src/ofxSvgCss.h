@@ -3,64 +3,19 @@
 #include "ofColor.h"
 #include "ofLog.h"
 #include "ofXml.h"
+#include "ofxSvgUtils.h"
 
 class ofxSvgCssClass {
 public:
 	
-	// adding this Optional class since std::optional is not a part of all std:: distributions at the moment, looking at you gcc < 10 nh
-	template<typename T>
-	class Optional {
-	public:
-		Optional() : hasValue(false) {}  // Default constructor, no value
-		Optional(const T& value) : hasValue(true), data(value) {}  // Construct with a value
-		Optional(T&& value) : hasValue(true), data(std::move(value)) {}  // Move constructor
-		
-		// Copy and move constructors
-		Optional(const Optional& other) = default;
-		Optional(Optional&& other) noexcept = default;
-		
-		// Assignment operators
-		Optional& operator=(const Optional& other) = default;
-		Optional& operator=(Optional&& other) noexcept = default;
-		
-		// Destructor
-		~Optional() = default;
-		
-		// Check if there's a value
-		bool has_value() const { return hasValue; }
-		
-		// Accessors for the value
-		T& value() {
-//			if (!hasValue) throw std::runtime_error("No value present");
-			if (!hasValue) {
-				ofLogError("ofxSvgCssClass") << "No value present";
-			}
-			return data;
-		}
-		
-		const T& value() const {
-//			if (!hasValue) throw std::runtime_error("No value present");
-			if (!hasValue) {
-				ofLogError("ofxSvgCssClass") << "No value present";
-			}
-			return data;
-		}
-		
-		// Reset to an empty state
-		void reset() { hasValue = false; }
-		
-	private:
-		bool hasValue;
-		T data;
-	};
-	
+	/// \note: ofxSvgOptional is declared in ofxSvgUtils
 	class Property {
 	public:
 		std::string srcString;
-		Optional<float> fvalue;
-		Optional<int> ivalue;
-		Optional<std::string> svalue;
-		Optional<ofColor> cvalue;
+		ofxSvgOptional<float> fvalue;
+		ofxSvgOptional<int> ivalue;
+		ofxSvgOptional<std::string> svalue;
+		ofxSvgOptional<ofColor> cvalue;
 	};
 	
 	std::unordered_map<std::string, Property> properties;
