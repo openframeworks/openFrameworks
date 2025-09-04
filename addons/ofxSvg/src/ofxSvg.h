@@ -174,47 +174,121 @@ public:
 	ofxSvgCssClass& getCurrentCss() { return mCurrentCss;}
 	
 	ofxSvgCssStyleSheet& getCssStyleSheet() {return mSvgCss; }
-	/// \brief Add a group to the document. This will also push back the group as current.
+	/// \brief Add a ofxSvgGroup to the document. This will also push back the group as current.
 	/// \param aname is the name of the group.
 	/// \return std::shared_ptr<ofxSvgGroup> as the group that was created.
 	std::shared_ptr<ofxSvgGroup> addGroup(std::string aname);
 	
+	/// \brief Add a ofxSvgPath to the document. The ofxSvgPath will be added to the current group.
+	/// \param ofPath apath is the path to be added.
+	/// \return std::shared_ptr<ofxSvgPath> as the path that was created and added to the document.
 	std::shared_ptr<ofxSvgPath> add( const ofPath& apath );
+	/// \brief Add multiple ofxSvgPaths to the document. The ofxSvgPaths will be added to the current group.
+	/// \param std::vector<ofPath> apaths are the paths to be added.
+	/// \return std::vector< std::shared_ptr<ofxSvgPath> > the paths that were created and added to the document.
 	std::vector< std::shared_ptr<ofxSvgPath> > add( const std::vector<ofPath>& apaths );
-	
+	/// \brief Add a ofxSvgPath to the document. The ofxSvgPath will be added to the current group.
+	/// \param ofPolyline apoly is the polyline that will create an ofxSvgPath and added.
+	/// \return std::shared_ptr<ofxSvgPath> as the path that was created and added to the document.
 	std::shared_ptr<ofxSvgPath> add( const ofPolyline& apoly );
+	/// \brief Add multiple ofxSvgPaths to the document. The ofxSvgPaths will be added to the current group.
+	/// \param std::vector<ofPolyline> apolys are the polylines used to create and add ofxSvgPaths to the document.
+	/// \return std::vector< std::shared_ptr<ofxSvgPath> > the paths that were created and added to the document.
 	std::vector< std::shared_ptr<ofxSvgPath> > add( const std::vector<ofPolyline>& apolys );
 	
+	/// \brief Add a ofxSvgRectangle to the document. The ofxSvgRectangle will be added to the current group.
+	/// \param ofRectangle arect is the rectangle that will create an ofxSvgRectangle.
+	/// \return std::shared_ptr<ofxSvgRectangle> as the rectangle that was created and added to the document.
 	std::shared_ptr<ofxSvgRectangle> add( const ofRectangle& arect );
+	/// \brief Add a ofxSvgRectangle to the document. The ofxSvgRectangle will be added to the current group.
+	/// \param ofRectangle arect is the rectangle that will create an ofxSvgRectangle.
+	/// \param float aRoundRadius is the corner radius used to round the corners.
+	/// \return std::shared_ptr<ofxSvgRectangle> as the rectangle that was created and added to the document.
 	std::shared_ptr<ofxSvgRectangle> add( const ofRectangle& arect, float aRoundRadius );
 	
+	/// \brief Add a ofxSvgCircle to the document. The ofxSvgCircle will be added to the current group.
+	/// The default position is 0,0. Use the returned ofxSvgCircle to set properties directly.
+	/// \param float aradius is the radius used to create an ofxSvgCircle.
+	/// \return std::shared_ptr<ofxSvgCircle> as the circle that was created and added to the document.
 	std::shared_ptr<ofxSvgCircle> addCircle( float aradius );
+	/// \brief Add a ofxSvgCircle to the document. The ofxSvgCircle will be added to the current group.
+	/// \param glm::vec2 apos is the center position of the circle.
+	/// \param float aradius is the radius used to create an ofxSvgCircle.
+	/// \return std::shared_ptr<ofxSvgCircle> as the circle that was created and added to the document.
 	std::shared_ptr<ofxSvgCircle> addCircle( const glm::vec2& apos, float aradius );
+	/// \brief Add a ofxSvgCircle to the document. The ofxSvgCircle will be added to the current group.
+	/// \param glm::vec3 apos is the center position of the circle. Note: z is not used.
+	/// \param float aradius is the radius used to create an ofxSvgCircle.
+	/// \return std::shared_ptr<ofxSvgCircle> as the circle that was created and added to the document.
 	std::shared_ptr<ofxSvgCircle> addCircle( const glm::vec3& apos, float aradius );
+	/// \brief Add a ofxSvgCircle to the document. The ofxSvgCircle will be added to the current group.
+	/// \param float ax is the x center position of the circle.
+	/// \param float ay is the y center position of the circle.
+	/// \param float aradius is the radius used to create an ofxSvgCircle.
+	/// \return std::shared_ptr<ofxSvgCircle> as the circle that was created and added to the document.
 	std::shared_ptr<ofxSvgCircle> addCircle( const float& ax, const float& ay, float aradius );
 	
+	/// \brief Add a ofxSvgEllipse to the document. The ofxSvgEllipse will be added to the current group.
+	/// The default position is 0,0. Use the returned ofxSvgEllipse to set properties directly.
+	/// \param float aradiusX is the horizontal radius used to create an ofxSvgEllipse.
+	/// \param float aradiusY is the vertical radius used to create an ofxSvgEllipse.
+	/// \return std::shared_ptr<ofxSvgEllipse> as the ellipse that was created and added to the document.
 	std::shared_ptr<ofxSvgEllipse> addEllipse( float aradiusX, float aradiusY );
+	/// \brief Add a ofxSvgEllipse to the document. The ofxSvgEllipse will be added to the current group.
+	/// The default position is 0,0. Use the returned ofxSvgEllipse to set properties directly.
+	/// \param glm::vec2 apos is the center position of the ellipse.
+	/// \param float aradiusX is the horizontal radius used to create an ofxSvgEllipse.
+	/// \param float aradiusY is the vertical radius used to create an ofxSvgEllipse.
+	/// \return std::shared_ptr<ofxSvgEllipse> as the ellipse that was created and added to the document.
 	std::shared_ptr<ofxSvgEllipse> addEllipse( const glm::vec2& apos, float aradiusX, float aradiusY );
+	/// \brief Add a ofxSvgEllipse to the document. The ofxSvgEllipse will be added to the current group.
+	/// The default position is 0,0. Use the returned ofxSvgEllipse to set properties directly.
+	/// \param glm::vec3 apos is the center position of the ellipse. Note: z is not used.
+	/// \param float aradiusX is the horizontal radius used to create an ofxSvgEllipse.
+	/// \param float aradiusY is the vertical radius used to create an ofxSvgEllipse.
+	/// \return std::shared_ptr<ofxSvgEllipse> as the ellipse that was created and added to the document.
 	std::shared_ptr<ofxSvgEllipse> addEllipse( const glm::vec3& apos, float aradiusX, float aradiusY );
+	/// \brief Add a ofxSvgEllipse to the document. The ofxSvgEllipse will be added to the current group.
+	/// The default position is 0,0. Use the returned ofxSvgEllipse to set properties directly.
+	/// \param float ax is the x center position of the ellipse.
+	/// \param float ay is the y center position of the ellipse.
+	/// \param float aradiusX is the horizontal radius used to create an ofxSvgEllipse.
+	/// \param float aradiusY is the vertical radius used to create an ofxSvgEllipse.
+	/// \return std::shared_ptr<ofxSvgEllipse> as the ellipse that was created and added to the document.
 	std::shared_ptr<ofxSvgEllipse> addEllipse( const float& ax, const float& ay, float aradiusX, float aradiusY );
 	
+	/// \brief Add a ofxSvgImage to the document. The ofxSvgImage will be added to the current group.
+	/// The default position is 0,0. Use the returned ofxSvgImage to set properties directly.
+	/// \param of::filesystem::path apath is the path to the linked image file.
+	/// \param ofTexture atex provides the width and height of the image.
+	/// \return std::shared_ptr<ofxSvgImage> as the image that was created and added to the document.
 	std::shared_ptr<ofxSvgImage> addImage( const of::filesystem::path& apath, const ofTexture& atex );
+	/// \brief Add a ofxSvgImage to the document. The ofxSvgImage will be added to the current group.
+	/// \param glm::vec2 apos is the position; anchored to the top left.
+	/// \param of::filesystem::path apath is the path to the linked image file.
+	/// \param ofTexture atex provides the width and height of the image.
+	/// \return std::shared_ptr<ofxSvgImage> as the image that was created and added to the document.
 	std::shared_ptr<ofxSvgImage> addImage( const glm::vec2& apos, const of::filesystem::path& apath, const ofTexture& atex );
+	/// \brief Add a ofxSvgImage to the document. The ofxSvgImage will be added to the current group.
+	/// \param of::filesystem::path apath is the path to the linked image file.
+	/// \param float awidth provides the width of the image.
+	/// \param float aheight provides the height of the image.
+	/// \return std::shared_ptr<ofxSvgImage> as the image that was created and added to the document.
+	std::shared_ptr<ofxSvgImage> addImage( const of::filesystem::path& apath, const float& awidth, const float& aheight );
+	/// \brief Add a ofxSvgImage to the document. The ofxSvgImage will be added to the current group.
+	/// \param glm::vec2 apos is the position; anchored to the top left.
+	/// \param of::filesystem::path apath is the path to the linked image file.
+	/// \param float awidth provides the width of the image.
+	/// \param float aheight provides the height of the image.
+	/// \return std::shared_ptr<ofxSvgImage> as the image that was created and added to the document.
+	std::shared_ptr<ofxSvgImage> addImage( const glm::vec2& apos, const of::filesystem::path& apath, const float& awidth, const float& aheight );
+	/// \brief Add a ofxSvgImage to the document. The ofxSvgImage will be added to the current group.
+	/// \param glm::vec2 apos is the position; anchored to the top left.
+	/// \param ofPixels apixels is the pixels to embed in the svg document. Note: This can increase file size dramatically.
+	/// \return std::shared_ptr<ofxSvgImage> as the image that was created and added to the document.
 	std::shared_ptr<ofxSvgImage> addEmbeddedImage( const glm::vec2& apos, const ofPixels& apixels );
 	
-	// adapted from ofGLProgrammableRenderer for some sort of conformity
-	// this will be handled by the ofNode functionality
-//	void pushMatrix();
-//	bool popMatrix();
-//	void translate(float x, float y);
-//	void translate(const glm::vec2 & p);
-//	void scale(float xAmnt, float yAmnt);
-//	void rotateRadians(float radians);
-//	void rotateDegrees(float adegrees);
-//	void multMatrix(const glm::mat4 & m);
-//	void loadMatrix(const glm::mat4 & m);
-//	void loadIdentityMatrix();
-	
+	/// \brief Used for development to provide insight into anchor point / control point placements.
 	virtual void drawDebug();
 	
 protected:
@@ -243,11 +317,6 @@ protected:
 	void _setNodeParentGroupStack( std::shared_ptr<ofxSvgElement> aele );
 	
 	ofxSvgGroup* _getPushedGroup();
-//	bool _hasPushedMatrix();
-//	void _applyModelMatrixToElement( std::shared_ptr<ofxSvgElement> aele, glm::vec2 aDefaultPos );
-//	glm::vec2 _getPos2d(const glm::mat4& amat);
-//	glm::vec2 _getScale2d(const glm::mat4& amat);
-//	float _getZRotationRadians( const glm::mat4& amat );
 	
 	ofxSvgCssClass& _addCssClassFromPath( std::shared_ptr<ofxSvgPath> aSvgPath );
 	void _addCssClassFromPath( std::shared_ptr<ofxSvgPath> aSvgPath, ofXml& anode );
