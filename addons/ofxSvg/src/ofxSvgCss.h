@@ -40,6 +40,8 @@ public:
 	bool addProperty( const std::string& aName, const float& avalue );
 	bool addProperty( const std::string& aName, const ofColor& acolor );
 	
+	bool removeProperty( std::string aPropString );
+	
 	bool setColor(const ofColor& acolor);
 	
 	bool setFillColor(const ofColor& acolor);

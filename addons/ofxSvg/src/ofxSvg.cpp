@@ -868,53 +868,10 @@ shared_ptr<ofxSvgElement> ofxSvg::_addElementFromXmlNode( ofXml& tnode, vector< 
 //            getTransformFromSvgMatrix( transAttr.getValue(), telement->pos, telement->scale.x, telement->scale.y, telement->rotation );
 			setTransformFromSvgMatrixString( transAttr.getValue(), telement );
         }
-		
-//		std::vector<ofxSvgType> typesToApplyTransformToPath = {
-//			OFXSVG_TYPE_RECTANGLE,
-//			OFXSVG_TYPE_CIRCLE,
-//			OFXSVG_TYPE_ELLIPSE
-//		};
-		
-//		bool bApplyTransformToPath = false;
-//		for( auto & etype : typesToApplyTransformToPath ) {
-//			if( etype == telement->getType() ) {
-//				bApplyTransformToPath = true;
-//				break;
-//			}
-//		}
-		
-//		if( bApplyTransformToPath ) {
-//			auto epath = std::dynamic_pointer_cast<ofxSvgPath>( telement );
-//			auto outlines = epath->path.getOutline();
-////			auto transform = epath->getTransformMatrix();
-//			auto transform = epath->getGlobalTransformMatrix();
-//			for( auto& outline : outlines ) {
-//				for( auto& v : outline ) {
-//					v = transform * glm::vec4(v, 1.0f);
-//				}
-//			}
-//			// now we have new outlines, what do we do?
-//			epath->path.clear();
-//			bool bFirstOne = true;
-//			for( auto& outline : outlines ) {
-//				for( auto& v : outline ) {
-//					if(bFirstOne) {
-//						bFirstOne = false;
-//						epath->path.moveTo(v);
-//					} else {
-//						epath->path.lineTo(v);
-//					}
-//				}
-//				if( outline.isClosed() ) {
-//					epath->path.close();
-//				}
-//			}
-//		}
     }
     
     if( telement->getType() == OFXSVG_TYPE_TEXT ) {
         auto text = std::dynamic_pointer_cast<ofxSvgText>( telement );
-//        text->ogPos = text->pos;
         text->create();
     }
 	
@@ -931,9 +888,7 @@ shared_ptr<ofxSvgElement> ofxSvg::_addElementFromXmlNode( ofXml& tnode, vector< 
 	if( mGroupStack.size() > 0 ) {
 		auto pgroup = mGroupStack.back();
 		ofLogVerbose("ofxSvg::_addElementFromXmlNode") << "element: " << telement->getTypeAsString() << " -" << telement->getCleanName() << "- pos: " << telement->getPosition() << "- parent: " << pgroup->getCleanName();
-//		telement->setParent(*pgroup.get(), false);
 		telement->setParent(*_getPushedGroup(), false);
-		//ofLogNotice("");
 	}
 	
     return telement;
@@ -959,21 +914,6 @@ std::vector<float> parseToFloats(const std::string& input) {
 }
 
 std::vector<glm::vec3> parsePoints(const std::string& input) {
-//	std::vector<glm::vec3> points;
-//	std::regex regex("[-]?\\d*\\.?\\d+");  // Matches positive/negative floats
-//	std::sregex_iterator begin(input.begin(), input.end(), regex), end;
-//	
-//	std::vector<float> values;
-//	
-//	// Extract all floating-point values using regex
-//	for (std::sregex_iterator i = begin; i != end; ++i) {
-//		try {
-//			values.push_back(std::stof((*i).str()));
-//		} catch (const std::invalid_argument&) {
-//			std::cerr << "Invalid number found: " << (*i).str() << std::endl;
-//		}
-//	}
-	
 	std::vector<glm::vec3> points;
 	auto values = parseToFloats( input );
 	
@@ -1739,19 +1679,12 @@ void ofxSvg::_parsePath( ofXml& tnode, std::shared_ptr<ofxSvgPath> aSvgPath ) {
 					ofLogWarning("ofxSvg") << "unable to parse arc segment.";
 				}
 			}
-			
-//			prevCmd = commandT;
-//			mCenterPoints.push_back(currentPos);
-//			mCPoints.insert( mCPoints.end(), npositions.begin(), npositions.end() );
 		}
 		
 //		ofLogNotice("ofxSvg") << "["<<cchar<<"]: " << currentString;
 		
-		
 		justInCase++;
 	}
-	
-//	mCurrentPathPos = currentPos;
 }
 
 //--------------------------------------------------------------
@@ -2029,23 +1962,6 @@ glm::mat4 ofxSvg::setTransformFromSvgMatrixString( string aStr, std::shared_ptr<
 //			aele->pos.y = pos3.y;
 			
 			ofLogVerbose("ofxSvg::setTransformFromSvgMatrixString") << "pos: " << aele->getPosition() << " rotation: " << trotation << " scale: " << aele->getScale();
-			
-//			apos.x = matrixF[4];
-//			apos.y = matrixF[5];
-//			
-//			scaleX = std::sqrtf(matrixF[0] * matrixF[0] + matrixF[1] * matrixF[1]) * (float)ofSign(matrixF[0]);
-//			scaleY = std::sqrtf(matrixF[2] * matrixF[2] + matrixF[3] * matrixF[3]) * (float)ofSign(matrixF[3]);
-//			
-//			arotation = glm::degrees( std::atan2f(matrixF[2],matrixF[3]) );
-//			if( scaleX < 0 && scaleY < 0 ){
-//				
-//			}else{
-//				arotation *= -1.0f;
-//			}
-			//        cout << " rotation is " << arotation << endl;
-//			std::cout << "matrix rotation is " << arotation << " ScaleX: " << scaleX << " scaleY: " << scaleY << " apos: " << apos << std::endl;
-			
-//			return true;
 		}
 	}
 	
@@ -2339,6 +2255,8 @@ std::shared_ptr<ofxSvgRectangle> ofxSvg::add( const ofRectangle& arect ) {
 std::shared_ptr<ofxSvgRectangle> ofxSvg::add( const ofRectangle& arect, float aRoundRadius ) {
 	auto rect = std::make_shared<ofxSvgRectangle>();
 	rect->setPosition(arect.x, arect.y, 0.0f);
+	rect->width = arect.getWidth();
+	rect->height = arect.getHeight();
 	rect->roundRadius = -1; // force setting round
 	rect->setRoundRadius(std::max(0.f,aRoundRadius));
 	rect->applyStyle(mCurrentCss);
@@ -2853,7 +2771,6 @@ bool ofxSvg::_toXml( ofXml& aParentNode, std::shared_ptr<ofxSvgElement> aele ) {
 		
 		
 	} else if( aele->getType() == OFXSVG_TYPE_TEXT ) {
-		// TODO: Maybe at some point ;/
 		auto ttext = std::dynamic_pointer_cast<ofxSvgText>(aele);
 		for( auto tspan : ttext->textSpans ) {
 			if( auto spanXml = txml.appendChild("tspan")) {
@@ -2870,17 +2787,12 @@ bool ofxSvg::_toXml( ofXml& aParentNode, std::shared_ptr<ofxSvgElement> aele ) {
 	}
 	
 	// figure out if we need a transform attribute
-//	if( aele->getType() == OFXSVG_TYPE_IMAGE  || aele->getRotationDeg() != 0.0f || aele->getScale().x != 1.0f || aele->getScale().y != 1.0f ) {
-		auto matrixString = getSvgMatrixStringFromElement(aele);
-		if( !matrixString.empty() ) {
-			if( auto xattr = txml.appendAttribute("transform")) {
-				xattr.set(matrixString);
-			}
+	auto matrixString = getSvgMatrixStringFromElement(aele);
+	if( !matrixString.empty() ) {
+		if( auto xattr = txml.appendAttribute("transform")) {
+			xattr.set(matrixString);
 		}
-//		if( auto xattr = txml.appendAttribute("transform")) {
-//			xattr.set( getSvgMatrixStringFromElement(aele) );
-//		}
-//	}
+	}
 	return txml;
 }
 

@@ -43,6 +43,11 @@ public:
 	/// \brief Get the name of the element; or the id attribute from the xml node.
 	/// \return std::string name of element.
 	std::string getName() { return name; }
+	/// \brief Set the name of the element; or the id attribute of the xml node.
+	/// \param aname string; name to be used for the element
+	void setName( const std::string& aname ) {
+		name = aname;
+	}
 	/// \brief Get name with escaped characters and attempts to remove added naming patterns.
 	/// Removes the numbers added to the name by illustrator
 	/// ie. lelbow_00000070086365269320197030000010368508730034196876_ becomes lelbow

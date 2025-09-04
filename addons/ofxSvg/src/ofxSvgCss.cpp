@@ -196,10 +196,6 @@ bool ofxSvgCssClass::addProperties( std::string aPropertiesString ) {
 			addProperty(propStr);
 //			pindex++;
 		}
-		
-//		for( auto& prop : properties ) {
-//			ofLogNotice("ofx::svg2::CssClass") << " prop: " << prop.first << " : " << prop.second.srcString;
-//		}
 	}
 	return properties.size() > 0;
 }
@@ -249,6 +245,13 @@ bool ofxSvgCssClass::addProperty( const std::string& aName, const ofColor& acolo
 }
 
 //--------------------------------------------------
+bool ofxSvgCssClass::removeProperty( std::string aPropString ) {
+	bool bHas = hasProperty(aPropString);
+	properties.erase(aPropString);
+	return bHas;
+}
+
+//--------------------------------------------------
 bool ofxSvgCssClass::setColor(const ofColor& acolor) {
 	return addProperty("color", acolor);
 }
@@ -280,7 +283,10 @@ bool ofxSvgCssClass::setStrokeWidth( const float& awidth ) {
 
 //--------------------------------------------------
 bool ofxSvgCssClass::setNoStroke() {
-	return addProperty("stroke", "none" );
+//	return addProperty("stroke", "none" );
+	bool bstroke = removeProperty("stroke");
+	bool bstrokeW = removeProperty("stroke-width");
+	return bstroke || bstrokeW;
 }
 
 //--------------------------------------------------
