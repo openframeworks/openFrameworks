@@ -26,19 +26,28 @@ class ofxSvgElement : public ofNode {
 	friend class ofxSvgGroup;
 public:
 	
+	/// \brief Get the ofxSvgType as a string.
+	/// \param ofxSvgType atype.
+	/// \return std::string as readable type.
 	static std::string sGetTypeAsString(ofxSvgType atype);
+	/// \brief Get the xml name from the ofxSvgType.
+	/// \param ofxSvgType atype.
+	/// \return std::string as readable type.
 	static std::string sGetSvgXmlName(ofxSvgType atype);
-	
+	/// \brief Get the ofxSvgType for this element.
+	/// \return ofxSvgType.
 	virtual ofxSvgType getType() {return OFXSVG_TYPE_ELEMENT;}
+	/// \brief Get the ofxSvgType as a string.
+	/// \return std::string as readable type.
 	std::string getTypeAsString();
-	
+	/// \brief Get the name of the element; or the id attribute from the xml node.
+	/// \return std::string name of element.
 	std::string getName() { return name; }
-	
 	/// \brief Get name with escaped characters and attempts to remove added naming patterns.
 	/// Removes the numbers added to the name by illustrator
 	/// ie. lelbow_00000070086365269320197030000010368508730034196876_ becomes lelbow
 	std::string getCleanName();
-	
+	/// \return bool if this element is a group or not.
 	bool isGroup() {
 		return (getType() == OFXSVG_TYPE_GROUP);
 	}
@@ -70,34 +79,39 @@ public:
 	/// \brief Set the visibility of the element, will not draw if not visible.
 	/// \param bool aBVisible set to true for visible.
 	virtual void setVisible( bool ab ) { bVisible = ab; }
+	/// \return bool if this element is visible.
 	bool isVisible() const { return bVisible; }
-	
+	/// \brief Set the drawing alpha value of the element.
+	/// \param float aAlpha from 0-1; transparent to full opacity.
 	virtual void setAlpha( float aAlpha ) {
 		alpha = aAlpha;
 	}
+	/// \return float alpha value of the element.
 	float getAlpha() {
 		return alpha;
 	}
+	/// \brief The layer order of the element in the document hierarchy.
+	/// \return float layer of the element.
+	float getLayer() {
+		return layer;
+	}
+	/// \brief Enable or disable using colors from paths or text spans.
+	/// Set to false so ofSetColor() outside of this class will have effect/
+	/// \param bool Enable or disable the shape colors.
+	virtual void setUseColors( bool ab ) {
+		bUseShapeColor = ab;
+	}
+
 	
 	/// \brief Output a string description
 	/// \param nlevel (optional) is the indentation amount.
 	/// \return string with type and name.
 	virtual std::string toString(int nlevel = 0);
 	
-	float layer = -1.f;
-	bool bVisible=true;
-	
 	/// \brief Override the function in ofNode meant for drawing
 	virtual void customDraw() override {};
-	
+	/// \brief Apply css class to the element. Meant to be overridden in subsequent classes.
 	virtual void applyStyle(ofxSvgCssClass& aclass) {};
-	
-	virtual void setUseShapeColor( bool ab ) {
-		bUseShapeColor = ab;
-	}
-	bool isUsingShapeColor() {
-		return bUseShapeColor;
-	}
 	
 	/// \brief Get the local axis aligned bounding box of the element without transforms applied.
 	virtual ofRectangle getBoundingBox() { return ofRectangle( 0.0f, 0.0f, 1.f, 1.f ); };
@@ -139,8 +153,10 @@ protected:
 	
 	float alpha = 1.f;
 	std::string name = "";
-	// used for saving to set the model position of the current mat4 //
-	glm::vec2 mModelPos = glm::vec2(0.f, 0.f);
+	float layer = -1.f;
+	bool bVisible=true;
+	
+	// used for storing the offset model rotation point //
 	glm::vec2 mModelRotationPoint = glm::vec2(0.f, 0.f);
 	
 	virtual std::shared_ptr<ofxSvgElement> clone() {
@@ -153,8 +169,8 @@ class ofxSvgPath : public ofxSvgElement {
 public:
 	virtual ofxSvgType getType() override {return OFXSVG_TYPE_PATH;}
 	
-	virtual void setUseShapeColor( bool ab ) override {
-		ofxSvgElement::setUseShapeColor(ab);
+	virtual void setUseColors( bool ab ) override {
+		ofxSvgElement::setUseColors(ab);
 		path.setUseShapeColor(ab);
 	}
 	
@@ -300,6 +316,8 @@ public:
 		return ofRectangle(-getRadius()+mOffsetPos.x, -getRadius()+mOffsetPos.y, getRadius()*2.f, getRadius()*2.f );
 	};
 	
+	/// \brief Set the radius of the circle. Only updates if the stored radius differs from the radius argument.
+	/// \param float desired radius of the circle.
 	void setRadius( float aradius ) {
 		if( aradius != radius ) {
 			radius = aradius;
@@ -331,6 +349,9 @@ public:
 		return ofRectangle(-getRadiusX()+mOffsetPos.x, -getRadiusY()+mOffsetPos.y, getRadiusX()*2.f, getRadiusY()*2.f );
 	};
 	
+	/// \brief Set the radius X and radius Y of the ellipse. Only updates if the stored radius X or radius Y differs from the radius arguments.
+	/// \param float aRadiusX desired radius X of the ellipse.
+	/// \param float aRadiusY desired radius Y of the ellipse.
 	void setRadius( float aRadiusX, float aRadiusY ) {
 		if( aRadiusX != radiusX ||  aRadiusY != radiusY ) {
 			path.clear();
@@ -442,22 +463,14 @@ public:
 			return mSvgCssClass.isFontBold();
 		}
 		void setBold( bool ab ) {
-			if( ab ) {
-				mSvgCssClass.addProperty("font-weight", "bold");
-			} else {
-				mSvgCssClass.addProperty("font-weight", "regular");
-			}
+			mSvgCssClass.setFontBold(ab);
 		}
 		
 		bool isItalic() {
 			return mSvgCssClass.isFontItalic();
 		}
 		void setItalic( bool ab ) {
-			if( ab ) {
-				mSvgCssClass.addProperty("font-style", "italic");
-			} else {
-				mSvgCssClass.addProperty("font-style", "regular");
-			}
+			mSvgCssClass.setFontItalic(ab);
 		}
 		
 		std::string getText() {
@@ -499,11 +512,11 @@ public:
 		layer = other.layer;
 		bVisible = other.bVisible;
 		alpha = other.alpha;
+		name = other.name;
+		bUseShapeColor = other.bUseShapeColor;
 		
 		fdirectory = other.fdirectory;
 		bCentered = other.bCentered;
-//		_overrideColor = other._overrideColor;
-//		bOverrideColor = other.bOverrideColor;
 		mSvgCssClass = other.mSvgCssClass;
 		
 		textSpans.reserve(other.textSpans.size());
@@ -526,11 +539,10 @@ public:
 			bVisible = other.bVisible;
 			alpha = other.alpha;
 			name = other.name;
+			bUseShapeColor = other.bUseShapeColor;
 			
 			fdirectory = other.fdirectory;
 			bCentered = other.bCentered;
-//			_overrideColor = other._overrideColor;
-//			bOverrideColor = other.bOverrideColor;
 			mSvgCssClass = other.mSvgCssClass;
 			
 			textSpans.clear();
@@ -549,19 +561,19 @@ public:
 	virtual ofxSvgType getType() override {return OFXSVG_TYPE_TEXT;}
 	
 	ofTrueTypeFont& getFont();
-//	ofColor getColor();
-
+	
 	void setText( const std::string& astring, std::string aFontFamily, int aFontSize, float aMaxWidth );
+	void setText( const std::string& astring, const ofxSvgCssClass& aSvgCssClass, float aMaxWidth );
 	void create();
 	void customDraw() override;
 	// going to override
 //	void draw(const std::string &astring, bool abCentered );
 //	void draw(const std::string &astring, const ofColor& acolor, bool abCentered );
 	
-	void setFontDirectory( std::string aPath ) {
+	void setFontDirectory( const of::filesystem::path& aPath ) {
 		fdirectory = aPath;
 	}
-	std::string getFontDirectory() {
+	of::filesystem::path getFontDirectory() {
 		return fdirectory;
 	}
 	
@@ -573,19 +585,26 @@ public:
 		return ttext;
 	}
 	
-//	void overrideColor( ofColor aColor ) {
-//		bOverrideColor = true;
-//		_overrideColor = aColor;
-//	}
-	
 	void setColor( ofColor acolor ) {
 		mSvgCssClass.setColor(acolor);
 	}
 	
+	/// \brief Apply css class to the element. Text spans will use this style unless overridden by their css.
+	virtual void applyStyle(ofxSvgCssClass& aclass) override {
+		mSvgCssClass = aclass;
+	}
+	
 	ofColor getColor() {
-		auto tcolor = mSvgCssClass.getColor("color", ofColor(255));
+		auto tcolor = mSvgCssClass.getColor("color", ofColor(0));
 		tcolor.a *= alpha;
 		return tcolor;
+	}
+	
+	void setCentered(bool ab) {
+		if( ab != bCentered ) {
+			bCentered = ab;
+			create();
+		}
 	}
 	
 /// \brief Get the local bounding box of all of the text spans.
@@ -596,13 +615,12 @@ public:
 	
 	bool areTextSpansDirty();
 	
+protected:
+	of::filesystem::path fdirectory;
+	
 	bool bCentered = false;
 	
-protected:
-	std::string fdirectory;
-	
 	ofxSvgCssClass mSvgCssClass;
-	
 	
 	virtual std::shared_ptr<ofxSvgElement> clone() override {
 		auto newEle = std::make_shared<ofxSvgText>(*this);
@@ -628,8 +646,6 @@ protected:
 	bool endsWithLineEnding(const std::string& astr);
 	std::vector<std::string> splitWordsAndLineEndings(const std::string& input);
 	
-//	ofFloatColor _overrideColor;
-//	bool bOverrideColor = false;
 };
 
 

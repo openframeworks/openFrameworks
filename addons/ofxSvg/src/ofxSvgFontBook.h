@@ -1,6 +1,7 @@
 #pragma once
 #include "ofTrueTypeFont.h"
 #include <map>
+#include "ofxSvgCss.h"
 
 /// @brief  This class is mostly for internal use. 
 /// Used by the ofxSvgText elements for managing fonts
@@ -19,9 +20,10 @@ public:
     static void setFontDirectory( std::string adir ) {
         mFontDirectory = adir;
     }
-
-    static bool loadFont(const std::string& aFontFamily, int aFontSize, bool aBBold, bool aBItalic );
-    static bool loadFont( const std::string& aDirectory, const std::string& aFontFamily, int aFontSize, bool aBBold, bool aBItalic );
+	
+	static bool loadFont(const std::string& aFontFamily, int aFontSize, bool aBBold, bool aBItalic );
+    static bool loadFont(const of::filesystem::path& aDirectory, ofxSvgCssClass& aCssClass );
+    static bool loadFont(const of::filesystem::path& aDirectory, const std::string& aFontFamily, int aFontSize, bool aBBold, bool aBItalic );
 
     static std::string getFontKey( const std::string& aFontFamily, bool aBBold, bool aBItalic ) {
         auto fkey = aFontFamily;

@@ -3,7 +3,7 @@
 #include "ofPixels.h"
 
 // adding this Optional class since std::optional is not a part of all std:: distributions at the moment, looking at you gcc < 10 nh
-// and not included in older versions of OF on Windows.
+// and not included in older versions of OF on Windows, ie. 12.0.
 template<typename T>
 class ofxSvgOptional {
 public:

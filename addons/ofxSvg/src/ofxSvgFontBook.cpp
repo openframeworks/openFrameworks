@@ -14,28 +14,43 @@ bool ofxSvgFontBook::loadFont(const std::string& aFontFamily, int aFontSize, boo
 }
 
 //--------------------------------------------------------------
-bool ofxSvgFontBook::loadFont( const std::string& aDirectory, const std::string& aFontFamily, int aFontSize, bool aBBold, bool aBItalic ) {
-	ofLogVerbose("ofxFontBook") << "checking font: " << aFontFamily << " bold: " << aBBold << " italic: " << aBItalic << " fkey: ";
-	auto fkey = ofxSvgFontBook::getFontKey(aFontFamily, aBBold, aBItalic );
+bool ofxSvgFontBook::loadFont(const of::filesystem::path& aDirectory, const std::string& aFontFamily, int aFontSize, bool aBBold, bool aBItalic ) {
+	ofxSvgCssClass css;
+	css.setFontFamily(aFontFamily);
+	css.setFontSize(aFontSize);
+	css.setFontBold(aBBold);
+	css.setFontItalic(aBItalic);
+	return loadFont( aDirectory, css );
+}
+
+//--------------------------------------------------------------
+bool ofxSvgFontBook::loadFont(const of::filesystem::path& aDirectory, ofxSvgCssClass& aCssClass ) {
+	auto fontFamily = aCssClass.getFontFamily("Arial");
+	auto fontSize = aCssClass.getFontSize(12);
+	bool bBold = aCssClass.isFontBold();
+	bool bItalic = aCssClass.isFontItalic();
 	
-	ofLogVerbose("ofxFontBook") << "checking font: " << aFontFamily << " bold: " << aBBold << " italic: " << aBItalic;
+	ofLogVerbose("ofxFontBook") << "checking font: " << fontFamily << " bold: " << bBold << " italic: " << bItalic << " fkey: ";
+	auto fkey = ofxSvgFontBook::getFontKey(fontFamily, bBold, bItalic );
+	
+	ofLogVerbose("ofxFontBook") << "checking font: " << fontFamily << " bold: " << bBold << " italic: " << bItalic;
 	
 	if( fonts.count(fkey) == 0 ) {
 		Font tafont;
-		tafont.fontFamily = aFontFamily;
-		tafont.bold = aBBold;
-		tafont.italic = aBItalic;
+		tafont.fontFamily = fontFamily;
+		tafont.bold = bBold;
+		tafont.italic = bItalic;
 		fonts[fkey] = tafont;
 	}
 	bool bFontLoadOk = true;
 
 	Font& tfont = fonts[ fkey ];
-	if (tfont.sizes.count(aFontSize) == 0) {
+	if (tfont.sizes.count(fontSize) == 0) {
 		bool bHasFontDirectory = false;
 	//    cout << "checking directory: " << fdirectory+"/fonts/" << endl;
 		std::string fontsDirectory = "";// = ofToDataPath("", true);
 		if( !aDirectory.empty() ) {
-			fontsDirectory = aDirectory;
+			fontsDirectory = aDirectory.string();
 		}
 		
 		if( !ofFile::doesFileExist(fontsDirectory)) {
@@ -61,10 +76,10 @@ bool ofxSvgFontBook::loadFont( const std::string& aDirectory, const std::string&
 			bHasFontDirectory = true;
 		}
 		
-		std::vector<std::string> fontNamesToSearch = {aFontFamily};
+		std::vector<std::string> fontNamesToSearch = {fontFamily};
 		// sometimes there are fallback fonts included with a comma separator
-		if( ofIsStringInString(aFontFamily, ",")) {
-			std::vector<std::string> splitNames = ofSplitString(aFontFamily, ",", true, true);
+		if( ofIsStringInString(fontFamily, ",")) {
+			std::vector<std::string> splitNames = ofSplitString(fontFamily, ",", true, true);
 			for( auto& sname : splitNames ) {
 				// remove spaces
 				ofStringReplace(sname, " ", "" );
@@ -95,19 +110,19 @@ bool ofxSvgFontBook::loadFont( const std::string& aDirectory, const std::string&
 
 			std::vector<std::string> subStrs;
 			std::vector<std::string> excludeStrs;
-			if( aBBold ) {
+			if( bBold ) {
 				subStrs.push_back("bold");
 			} else {
 				excludeStrs.push_back("bold");
 			}
-			if( aBItalic ) {
+			if( bItalic ) {
 				subStrs.push_back("italic");
 			} else {
 				excludeStrs.push_back("italic");
 			}
 			
 			bool bMightHaveFoundTheFont = false;
-            ofLogVerbose("ofxSvgFontBook") << "trying to load font: " << tfont.fontFamily << " bold: " << aBBold << " italic: " << aBItalic;
+            ofLogVerbose("ofxSvgFontBook") << "trying to load font: " << tfont.fontFamily << " bold: " << bBold << " italic: " << bItalic;
 //			bool bFoundTheFont = _recursiveFontDirSearch(fontsDirectory, tfont.fontFamily, tNewFontPath, subStrs, excludeStrs, 0);
 			for( auto& fontFam : fontNamesToSearch ) {
 				bool bFoundTheFont = _recursiveFontDirSearch(fontsDirectory, fontFam, tNewFontPath, subStrs, excludeStrs, 0);
@@ -184,7 +199,7 @@ bool ofxSvgFontBook::loadFont( const std::string& aDirectory, const std::string&
 			bFontLoadOk = false;
 		} else {
 			// load(const std::string& _filename, int _fontSize, bool _bAntiAliased, bool _bFullCharacterSet, bool _makeContours, float _simplifyAmt, int _dpi)
-			bFontLoadOk = tfont.sizes[aFontSize].load(tfontPath, aFontSize, true, true, false, 0.5, 72);
+			bFontLoadOk = tfont.sizes[fontSize].load(tfontPath, fontSize, true, true, false, 0.5, 72);
 			if( bFontLoadOk && tfont.pathToFont.empty() ) {
 				tfont.pathToFont = tfontPath;
 			}
@@ -192,21 +207,20 @@ bool ofxSvgFontBook::loadFont( const std::string& aDirectory, const std::string&
 		if(bFontLoadOk) {
 //                    tfont.sizes[ vIt->first ].setSpaceSize( 0.57 );
 //                    tfont.sizes[ vIt->first ]       = datFontTho;
-			tfont.textures[ aFontSize ] = tfont.sizes[ aFontSize ].getFontTexture();
+			tfont.textures[ fontSize ] = tfont.sizes[ fontSize ].getFontTexture();
 		} else {
-			ofLogError("ofxSvgFontBook") << __FUNCTION__ << " : error loading font family: " << tfont.fontFamily << " size: " << aFontSize;
-			tfont.sizes.erase(aFontSize);
+			ofLogError("ofxSvgFontBook") << __FUNCTION__ << " : error loading font family: " << tfont.fontFamily << " size: " << fontSize;
+			tfont.sizes.erase(fontSize);
 		}
 	}
 	return bFontLoadOk;
 }
 
 //--------------------------------------------------------------
-bool ofxSvgFontBook::_recursiveFontDirSearch(	
-											const string& afile, const string& aFontFamToLookFor, string& fontpath,
-											const std::vector<std::string>& aAddNames,
-											const std::vector<std::string>& aExcludeNames,
-											int aNumRecursions) {
+bool ofxSvgFontBook::_recursiveFontDirSearch(const string& afile, const string& aFontFamToLookFor, string& fontpath,
+											 const std::vector<std::string>& aAddNames,
+											 const std::vector<std::string>& aExcludeNames,
+											 int aNumRecursions) {
 	if (fontpath != "") {
 		return true;
 	}
@@ -222,8 +236,8 @@ bool ofxSvgFontBook::_recursiveFontDirSearch(
 		tdir.listDir(afile);
 		tdir.sort();
 		for (std::size_t i = 0; i < tdir.size(); i++) {
-			bool youGoodOrWhat = _recursiveFontDirSearch(tdir.getPath(i), aFontFamToLookFor, fontpath, aAddNames, aExcludeNames, numRecursions);
-            if( youGoodOrWhat ) {
+			bool bFontFound = _recursiveFontDirSearch(tdir.getPath(i), aFontFamToLookFor, fontpath, aAddNames, aExcludeNames, numRecursions);
+            if( bFontFound ) {
                 return true;
             }
 		}

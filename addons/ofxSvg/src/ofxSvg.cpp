@@ -369,7 +369,7 @@ void ofxSvg::clear() {
 	mGroupStack.clear();
 	mModelMatrix = glm::mat4(1.f);
 	mModelMatrixStack = std::stack<glm::mat4>();
-	loadIdentityMatrix();
+//	loadIdentityMatrix();
 	
 	mFillColor = ofColor(0);
 	mStrokeColor = ofColor(0);
@@ -925,7 +925,7 @@ shared_ptr<ofxSvgElement> ofxSvg::_addElementFromXmlNode( ofXml& tnode, vector< 
 	
 	if( telement->getType() == OFXSVG_TYPE_RECTANGLE ) {
 		auto rect = std::dynamic_pointer_cast<ofxSvgRectangle>( telement );
-		ofLogNotice("ofxSvg::_addElementFromXmlNode") << "rect->pos: " << rect->getGlobalPosition() << " shape: " << rect->getOffsetPathPosition();
+		ofLogVerbose("ofxSvg::_addElementFromXmlNode") << "rect->pos: " << rect->getGlobalPosition() << " shape: " << rect->getOffsetPathPosition();
 	}
 	
 	if( mGroupStack.size() > 0 ) {
@@ -1157,7 +1157,6 @@ void ofxSvg::_parsePolylinePolygon( ofXml& tnode, std::shared_ptr<ofxSvgPath> aS
 // reference: https://www.w3.org/TR/SVG2/paths.html#PathData
 //--------------------------------------------------------------
 void ofxSvg::_parsePath( ofXml& tnode, std::shared_ptr<ofxSvgPath> aSvgPath ) {
-//	path27340-8
 	
 	aSvgPath->path.clear();
 	
@@ -1259,8 +1258,6 @@ void ofxSvg::_parsePath( ofXml& tnode, std::shared_ptr<ofxSvgPath> aSvgPath ) {
 	
 	aSvgPath->path.clear();
 	
-//	auto prevCmd = ofPath::Command::close;
-	
 	unsigned int justInCase = 0;
 //	std::vector<ofPath::Command> commands;
 	bool breakMe = false;
@@ -1324,12 +1321,13 @@ void ofxSvg::_parsePath( ofXml& tnode, std::shared_ptr<ofxSvgPath> aSvgPath ) {
 		bool bRelative = false;
 		std::vector<glm::vec3> npositions= {glm::vec3(0.f, 0.f, 0.f)};
 		/// \note: ofxSvgOptional is declared in ofxSvgUtils
+		/// Using a custom class because older versions of OF did not include std::optional.
 		ofxSvgOptional<ofPath::Command::Type> ctype;
 		
 		// check if we are looking for a position
 		if( cchar == 'm' || cchar == 'M' ) {
 			/* ------------------------------------------------
-//			https://www.w3.org/TR/SVG/paths.html
+//			Reference: https://www.w3.org/TR/SVG/paths.html
 			"Start a new sub-path at the given (x,y) coordinates. M (uppercase) indicates that absolute coordinates will follow;
 			m (lowercase) indicates that relative coordinates will follow.
 			If a moveto is followed by multiple pairs of coordinates, the subsequent pairs are treated as implicit lineto commands.
@@ -1760,15 +1758,13 @@ void ofxSvg::_parsePath( ofXml& tnode, std::shared_ptr<ofxSvgPath> aSvgPath ) {
 ofxSvgCssClass ofxSvg::_parseStyle( ofXml& anode ) {
 	ofxSvgCssClass css;
 	
-//	if( mCurrentSvgCss ) {
-		// apply first if we have a global style //
-		for( auto& tprop : mCurrentCss.properties ) {
-			if( tprop.first.empty() ) {
-				ofLogNotice("ofxSvg") << "First prop is empty";
-			}
-			css.addProperty(tprop.first, tprop.second);
+	// apply first if we have a global style //
+	for( auto& tprop : mCurrentCss.properties ) {
+		if( tprop.first.empty() ) {
+			ofLogNotice("ofxSvg") << "First prop is empty";
 		}
-//	}
+		css.addProperty(tprop.first, tprop.second);
+	}
 	
 	// now apply all of the other via css classes //
 	// now lets figure out if there is any css applied //
@@ -1850,8 +1846,6 @@ void ofxSvg::_applyStyleToText( ofXml& anode, std::shared_ptr<ofxSvgText::TextSp
 
 //--------------------------------------------------------------
 glm::vec3 ofxSvg::_parseMatrixString(const std::string& input, const std::string& aprefix, bool abDefaultZero ) {
-//	std::string prefix = aprefix+"(";
-//	std::string suffix = ")";
 	ofLogVerbose("ofxSvg") << __FUNCTION__ << " input: " << input;;
 	std::string searchStr = aprefix + "(";
 	size_t startPos = input.find(searchStr);
@@ -1896,14 +1890,13 @@ glm::vec3 ofxSvg::_parseMatrixString(const std::string& input, const std::string
 }
 
 //--------------------------------------------------------------
-//bool Parser::getTransformFromSvgMatrix( string aStr, glm::vec2& apos, float& scaleX, float& scaleY, float& arotation ) {
 glm::mat4 ofxSvg::setTransformFromSvgMatrixString( string aStr, std::shared_ptr<ofxSvgElement> aele ) {
 	ofLogVerbose("-----------ofxSvg::setTransformFromSvgMatrixString") << aele->getTypeAsString() << " name: " << aele->getName() +"----------------";
 //	aele->scale = glm::vec2(1.0f, 1.0f);
 //	aele->rotation = 0.0;
 	aele->setScale(1.f);
 	aele->mModelRotationPoint = glm::vec2(0.0f, 0.0f);
-	//TODO: implement matrix push and pop structure, similar to renderers
+	// TODO: Should a matrix push and pop structure, similar to renderers, be implemented?
 	ofLogVerbose("ofxSvg") << __FUNCTION__ << " name: " << aele->getName() << " going to parse string: " << aStr << " pos: " << aele->getPosition();
 	
 	float trotation = 0.f;
@@ -1918,8 +1911,6 @@ glm::mat4 ofxSvg::setTransformFromSvgMatrixString( string aStr, std::shared_ptr<
 //		apos += tp;
 		mat = glm::translate(glm::mat4(1.0f), glm::vec3(tp.x, tp.y, 0.0f));
 //		gmat = glm::translate(gmat, glm::vec3(tp.x, tp.y, 0.0f));
-//		aele->pos.x = tp.x;
-//		aele->pos.y = tp.y;
 		aele->setPosition(tp.x, tp.y, 0.0f);
 	} else {
 		mat = glm::translate(glm::mat4(1.0f), glm::vec3(0.f, 0.f, 0.0f));
@@ -1982,30 +1973,9 @@ glm::mat4 ofxSvg::setTransformFromSvgMatrixString( string aStr, std::shared_ptr<
 //	aele->pos.y = pos3.y;
 //	aele->setPosition( pos3.x, pos3.y, 0.0f);
 	
-//	aele
-	
-//	aele->mMat = mat;
-	
-//	glm::vec3 skew;
-//	glm::vec4 perspective;
-//	glm::quat orientation;
-//	glm::vec3 translation, scale;
-	
-//	decompose( ofVec3f& translation,
-//			  ofQuaternion& rotation,
-//			  ofVec3f& scale,
-//			  ofQuaternion& so )
-//	glm::decompose(mat, scale, orientation, translation, skew, perspective);
-	
-//	aele->pos = glm::vec2(translation);
-//	aele->scale = glm::vec2(scale);
-//	aele->rotation = glm::degrees(glm::eulerAngles(orientation).z);
-	
-	
-	
 	if( ofIsStringInString(aStr, "matrix")) {
 		
-		// g3978-7
+		// example transform string for matrix form.
 		// transform="matrix(-1,0,0,-1,358.9498,1564.4744)"
 		
 		auto matrix = aStr;
@@ -2084,18 +2054,15 @@ glm::mat4 ofxSvg::setTransformFromSvgMatrixString( string aStr, std::shared_ptr<
 
 //--------------------------------------------------------------
 std::string ofxSvg::getSvgMatrixStringFromElement( std::shared_ptr<ofxSvgElement> aele ) {
-	// matrix(1 0 0 1 352.4516 349.0799)">
-	
 	std::ostringstream matrixStream;
 	matrixStream << std::fixed << std::setprecision(1);
 	bool bFirst = true;
 	
-//	if( aele->getType() != OFXSVG_TYPE_RECTANGLE && aele->getType() != OFXSVG_TYPE_CIRCLE && aele->getType() != OFXSVG_TYPE_ELLIPSE ) {
-		if( aele->getPosition().x != 0.f || aele->getPosition().y != 0.f ) {
-			bFirst = false;
-			matrixStream << "translate(" << aele->getPosition().x << "," << aele->getPosition().y << ")";
-		}
-//	}
+	if( aele->getPosition().x != 0.f || aele->getPosition().y != 0.f ) {
+		bFirst = false;
+		matrixStream << "translate(" << aele->getPosition().x << "," << aele->getPosition().y << ")";
+	}
+	
 	if( aele->getRotationDeg() != 0.f ) {
 		if(!bFirst) {
 			matrixStream << " ";
@@ -2120,53 +2087,6 @@ std::string ofxSvg::getSvgMatrixStringFromElement( std::shared_ptr<ofxSvgElement
 		return matrixStream.str();
 	}
 	
-
-	// there's probably a better way to determine if this should be rotated in a certain way
-//	if( aele->mModelRotationPoint.x != 0.0f || aele->mModelRotationPoint.y != 0.0f ) {
-//		glm::vec2 rcenter(0.f, 0.f);
-//		rcenter.x = aele->mModelRotationPoint.x;
-//		rcenter.y = aele->mModelRotationPoint.y;
-//		
-////		float rotationZDeg = glm::degrees(glm::eulerAngles(aele->getOrientationQuat()).z);
-//		
-//		// if we are a group, path or image, then save position
-//		// rect and circle / ellipse pull their position
-//		
-//		
-//		// TODO: SAVE POSITION!
-//		std::ostringstream matrixStream;
-//		matrixStream << std::fixed << std::setprecision(6) << "rotate(" << aele->getRotationDeg() << " " << rcenter.x << " " << rcenter.y <<")";
-//		if( aele->getScale().x != 1.f || aele->getScale().y != 1.f ) {
-//			matrixStream << " scale(" << aele->getScale().x << " " << aele->getScale().y <<")";
-//		}
-//		return matrixStream.str();
-//		
-//	} else {
-//		
-//		
-////		// Create the transformation matrix
-//////		glm::mat4 transform = glm::mat4(1.0f); // Identity matrix
-////											   //	transform = glm::translate(transform, glm::vec3(aele->pos, 0.0f) );
-//////		transform = glm::translate(transform, glm::vec3(aele->mModelPos, 0.0f) );
-//////		transform = glm::rotate(transform, glm::radians(aele->rotation), glm::vec3( 0.0f, 0.0f, 1.f));
-//////		transform = glm::scale(transform, glm::vec3(aele->scale, 1.0f) );
-////		
-////		auto transform = aele->getLocalTransformMatrix();
-////		
-////		// Extract the 2D matrix values (first two rows and three columns)
-////		float a = transform[0][0]; // m00
-////		float b = transform[0][1]; // m01
-////		float c = transform[1][0]; // m10
-////		float d = transform[1][1]; // m11
-////		float e = transform[3][0]; // m20 (translation x)
-////		float f = transform[3][1]; // m21 (translation y)
-////		
-////		// Create the SVG transform matrix string
-////		std::ostringstream matrixStream;
-////		matrixStream << std::fixed << std::setprecision(6)
-////		<< "matrix(" << a << " " << b << " " << c << " " << d << " " << e << " " << f << ")";
-////		return matrixStream.str();
-//	}
 	return "";
 	
 }
@@ -2364,9 +2284,6 @@ std::shared_ptr<ofxSvgGroup> ofxSvg::addGroup(std::string aname) {
 std::shared_ptr<ofxSvgPath> ofxSvg::add( const ofPath& apath ) {
 	auto path = std::make_shared<ofxSvgPath>();
 	path->path = apath;
-//	_config(path);
-	_applyModelMatrixToElement( path, glm::vec2(0.f, 0.f) );
-//	_applyStyleToPath( mCurrentCss, path );
 	path->applyStyle(mCurrentCss);
 	_getPushedGroup()->add(path);
 	recalculateLayers();
@@ -2386,7 +2303,7 @@ std::vector< std::shared_ptr<ofxSvgPath> > ofxSvg::add( const std::vector<ofPath
 //--------------------------------------------------------------
 std::shared_ptr<ofxSvgPath> ofxSvg::add( const ofPolyline& apoly ) {
 	if( apoly.size() < 2 ) {
-		return std::shared_ptr<ofxSvgPath>();
+		ofLogWarning("ofxSvg::add") << "polyline has less than 2 vertices.";
 	}
 	
 	ofPath opath;
@@ -2421,16 +2338,9 @@ std::shared_ptr<ofxSvgRectangle> ofxSvg::add( const ofRectangle& arect ) {
 //--------------------------------------------------------------
 std::shared_ptr<ofxSvgRectangle> ofxSvg::add( const ofRectangle& arect, float aRoundRadius ) {
 	auto rect = std::make_shared<ofxSvgRectangle>();
-//	rect->rectangle = arect;
-//	rect->pos = arect.getPosition();
-	_applyModelMatrixToElement( rect, arect.getPosition() );
-//	rect->round = aRoundRadius;
-//	rect->path.rectangle(arect);
+	rect->setPosition(arect.x, arect.y, 0.0f);
 	rect->roundRadius = -1; // force setting round
 	rect->setRoundRadius(std::max(0.f,aRoundRadius));
-	
-//	_config(rect);
-//	_applyStyleToPath( mCurrentCss, rect );
 	rect->applyStyle(mCurrentCss);
 	_getPushedGroup()->add(rect);
 	recalculateLayers();
@@ -2446,16 +2356,11 @@ std::shared_ptr<ofxSvgCircle> ofxSvg::addCircle( float aradius ) {
 //--------------------------------------------------------------
 std::shared_ptr<ofxSvgCircle> ofxSvg::addCircle( const glm::vec2& apos, float aradius ) {
 	auto circle = std::make_shared<ofxSvgCircle>();
-//	circle->pos = apos;
-	_applyModelMatrixToElement( circle, apos );
-//	circle->radius = aradius;
+	circle->setPosition( apos.x, apos.y, 0.f);
 	circle->path.setCircleResolution(mCircleResolution);
 	circle->radius = -1.f;
 	circle->setRadius(std::max(0.f,aradius));
-//	circle->path.circle(apos, aradius);
 	circle->setPosition( apos.x, apos.y, 0.0f);
-//	_config(circle);
-//	_applyStyleToPath( mCurrentCss, circle );
 	circle->applyStyle(mCurrentCss);
 	_getPushedGroup()->add(circle);
 	recalculateLayers();
@@ -2481,14 +2386,13 @@ std::shared_ptr<ofxSvgEllipse> ofxSvg::addEllipse( float aradiusX, float aradius
 //--------------------------------------------------------------
 std::shared_ptr<ofxSvgEllipse> ofxSvg::addEllipse( const glm::vec2& apos, float aradiusX, float aradiusY ) {
 	auto ellipse = std::make_shared<ofxSvgEllipse>();
-	_applyModelMatrixToElement( ellipse, apos );
+	ellipse->setPosition(apos.x, apos.y, 0.f);
 	
 	ellipse->radiusX = aradiusX;
 	ellipse->radiusY = aradiusY;
 	ellipse->path.setCircleResolution(mCircleResolution);
 	ellipse->path.ellipse(apos, aradiusX, aradiusY);
 	
-//	_applyStyleToPath( mCurrentCss, ellipse );
 	ellipse->applyStyle(mCurrentCss);
 	_getPushedGroup()->add(ellipse);
 	recalculateLayers();
@@ -2517,80 +2421,82 @@ std::shared_ptr<ofxSvgImage> ofxSvg::addImage( const glm::vec2& apos, const of::
 	img->filepath = apath;
 	img->width = atex.getWidth();
 	img->height = atex.getHeight();
-	_applyModelMatrixToElement( img, apos );
+//	_applyModelMatrixToElement( img, apos );
+	img->setPosition(apos.x, apos.y, 0.0f);
 	_getPushedGroup()->add(img);
 	recalculateLayers();
 	return img;
 }
 
 //--------------------------------------------------------------
-std::shared_ptr<ofxSvgImage> ofxSvg::addEmbeddedImage( const ofPixels& apixels ) {
+std::shared_ptr<ofxSvgImage> ofxSvg::addEmbeddedImage(const glm::vec2& apos, const ofPixels& apixels ) {
 	auto img = std::make_shared<ofxSvgImage>();
 	img->img.setFromPixels(apixels);
 	img->width = apixels.getWidth();
 	img->height = apixels.getHeight();
-	_applyModelMatrixToElement( img, glm::vec2(0.f, 0.f) );
+//	_applyModelMatrixToElement( img, glm::vec2(0.f, 0.f) );
+	img->setPosition(apos.x, apos.y, 0.0f);
 	_getPushedGroup()->add(img);
 	recalculateLayers();
 	return img;
 }
 
-//----------------------------------------------------------
-void ofxSvg::pushMatrix() {
-	mModelMatrixStack.push(mModelMatrix);
-}
-
-//----------------------------------------------------------
-bool ofxSvg::popMatrix() {
-	if( !mModelMatrixStack.empty() ) {
-		mModelMatrix = mModelMatrixStack.top();
-		mModelMatrixStack.pop();
-		return true;
-	} else {
-		loadIdentityMatrix();
-	}
-	return false;
-}
-
-//----------------------------------------------------------
-void ofxSvg::translate(const glm::vec2 & p) {
-	translate(p.x, p.y);
-}
-
-//----------------------------------------------------------
-void ofxSvg::translate(float x, float y) {
-	mModelMatrix = glm::translate(mModelMatrix, glm::vec3(x, y, 0.0f));
-}
-
-//----------------------------------------------------------
-void ofxSvg::scale(float xAmnt, float yAmnt) {
-	mModelMatrix = glm::scale(mModelMatrix, glm::vec3(xAmnt, yAmnt, 1.f));
-}
-
-//----------------------------------------------------------
-void ofxSvg::rotateRadians(float aradians) {
-	mModelMatrix = glm::rotate(mModelMatrix, aradians, glm::vec3(0.f, 0.f, 1.f));
-}
-
-//----------------------------------------------------------
-void ofxSvg::rotateDegrees(float adegrees) {
-	rotateRadians( ofDegToRad(adegrees));
-}
-
-//----------------------------------------------------------
-void ofxSvg::multMatrix(const glm::mat4 & m) {
-	mModelMatrix = mModelMatrix * m;
-}
-
-//----------------------------------------------------------
-void ofxSvg::loadMatrix(const glm::mat4 & m) {
-	mModelMatrix = m;
-}
-
-//----------------------------------------------------------
-void ofxSvg::loadIdentityMatrix() {
-	mModelMatrix = glm::mat4(1.f);
-}
+////----------------------------------------------------------
+//void ofxSvg::pushMatrix() {
+//	mModelMatrixStack.push(mModelMatrix);
+//}
+//
+////----------------------------------------------------------
+//bool ofxSvg::popMatrix() {
+//	if( !mModelMatrixStack.empty() ) {
+//		mModelMatrix = mModelMatrixStack.top();
+//		mModelMatrixStack.pop();
+//		return true;
+//	} else {
+//		loadIdentityMatrix();
+//	}
+//	return false;
+//}
+//
+////----------------------------------------------------------
+//void ofxSvg::translate(const glm::vec2 & p) {
+//	translate(p.x, p.y);
+//}
+//
+////----------------------------------------------------------
+//void ofxSvg::translate(float x, float y) {
+//	mModelMatrix = glm::translate(mModelMatrix, glm::vec3(x, y, 0.0f));
+//}
+//
+////----------------------------------------------------------
+//void ofxSvg::scale(float xAmnt, float yAmnt) {
+//	mModelMatrix = glm::scale(mModelMatrix, glm::vec3(xAmnt, yAmnt, 1.f));
+//}
+//
+////----------------------------------------------------------
+//void ofxSvg::rotateRadians(float aradians) {
+//	mModelMatrix = glm::rotate(mModelMatrix, aradians, glm::vec3(0.f, 0.f, 1.f));
+//}
+//
+////----------------------------------------------------------
+//void ofxSvg::rotateDegrees(float adegrees) {
+//	rotateRadians( ofDegToRad(adegrees));
+//}
+//
+////----------------------------------------------------------
+//void ofxSvg::multMatrix(const glm::mat4 & m) {
+//	mModelMatrix = mModelMatrix * m;
+//}
+//
+////----------------------------------------------------------
+//void ofxSvg::loadMatrix(const glm::mat4 & m) {
+//	mModelMatrix = m;
+//}
+//
+////----------------------------------------------------------
+//void ofxSvg::loadIdentityMatrix() {
+//	mModelMatrix = glm::mat4(1.f);
+//}
 
 
 //--------------------------------------------------------------
@@ -2642,55 +2548,55 @@ ofxSvgGroup* ofxSvg::_getPushedGroup() {
 	return this;
 }
 
-//--------------------------------------------------------------
-bool ofxSvg::_hasPushedMatrix() {
-	return mModelMatrix != glm::mat4(1.0f);
-}
+////--------------------------------------------------------------
+//bool ofxSvg::_hasPushedMatrix() {
+//	return mModelMatrix != glm::mat4(1.0f);
+//}
 
 //--------------------------------------------------------------
 // TODO: CHECK ON THIS AFTER ofNode is implemented
-void ofxSvg::_applyModelMatrixToElement( std::shared_ptr<ofxSvgElement> aele, glm::vec2 aDefaultPos ) {
-	if(_hasPushedMatrix() ) {
-//		aele->pos = aDefaultPos;
-		aele->mModelPos = _getPos2d(mModelMatrix);
-//		aele->rotation = glm::degrees(_getZRotationRadians(mModelMatrix));
-//		aele->scale = _getScale2d(mModelMatrix);
-		
-	} else {
-		aele->mModelPos = glm::vec2(0.f, 0.f);
-//		aele->pos = aDefaultPos;
-	}
-}
+//void ofxSvg::_applyModelMatrixToElement( std::shared_ptr<ofxSvgElement> aele, glm::vec2 aDefaultPos ) {
+//	if(_hasPushedMatrix() ) {
+////		aele->pos = aDefaultPos;
+////		aele->mModelPos = _getPos2d(mModelMatrix);
+////		aele->rotation = glm::degrees(_getZRotationRadians(mModelMatrix));
+////		aele->scale = _getScale2d(mModelMatrix);
+//		
+//	} else {
+////		aele->mModelPos = glm::vec2(0.f, 0.f);
+////		aele->pos = aDefaultPos;
+//	}
+//}
 
-//--------------------------------------------------------------
-glm::vec2 ofxSvg::_getPos2d(const glm::mat4& amat) {
-	// Extract translation (position)
-	return glm::vec2(amat[3][0], amat[3][1]);
-}
-
-//--------------------------------------------------------------
-glm::vec2 ofxSvg::_getScale2d(const glm::mat4& amat) {
-	// Extract scale (length of column vectors)
-	return glm::vec2(glm::length(glm::vec2(amat[0][0], amat[0][1])), // Length of first column
-					 glm::length(glm::vec2(amat[1][0], amat[1][1])) // Length of second column
-					 );
-}
-
-// Function to extract Z-axis rotation (in degrees) from a glm::mat4
-//--------------------------------------------------------------
-float ofxSvg::_getZRotationRadians(const glm::mat4& amat) {
-	// Normalize the first column (remove scale effect)
-	glm::vec2 xAxis = glm::vec2(amat[0][0], amat[0][1]);
-	if( glm::length2(xAxis) > 0.0f ) {
-		xAxis = glm::normalize(xAxis);
-	} else {
-		return 0.0f;
-	}
-	
-	// Compute rotation angle using atan2
-	float angleRadians = atan2f(xAxis.y, xAxis.x);
-	return angleRadians;
-}
+////--------------------------------------------------------------
+//glm::vec2 ofxSvg::_getPos2d(const glm::mat4& amat) {
+//	// Extract translation (position)
+//	return glm::vec2(amat[3][0], amat[3][1]);
+//}
+//
+////--------------------------------------------------------------
+//glm::vec2 ofxSvg::_getScale2d(const glm::mat4& amat) {
+//	// Extract scale (length of column vectors)
+//	return glm::vec2(glm::length(glm::vec2(amat[0][0], amat[0][1])), // Length of first column
+//					 glm::length(glm::vec2(amat[1][0], amat[1][1])) // Length of second column
+//					 );
+//}
+//
+//// Function to extract Z-axis rotation (in degrees) from a glm::mat4
+////--------------------------------------------------------------
+//float ofxSvg::_getZRotationRadians(const glm::mat4& amat) {
+//	// Normalize the first column (remove scale effect)
+//	glm::vec2 xAxis = glm::vec2(amat[0][0], amat[0][1]);
+//	if( glm::length2(xAxis) > 0.0f ) {
+//		xAxis = glm::normalize(xAxis);
+//	} else {
+//		return 0.0f;
+//	}
+//	
+//	// Compute rotation angle using atan2
+//	float angleRadians = atan2f(xAxis.y, xAxis.x);
+//	return angleRadians;
+//}
 
 //--------------------------------------------------------------
 ofxSvgCssClass& ofxSvg::_addCssClassFromPath( std::shared_ptr<ofxSvgPath> aSvgPath ) {
@@ -2832,19 +2738,6 @@ bool ofxSvg::_toXml( ofXml& aParentNode, std::shared_ptr<ofxSvgElement> aele ) {
 			if( timage->img.getPixels().isAllocated() ) {
 				// embed the pixels //
 				if( auto xattr = txml.appendAttribute("xlink:href")) {
-//					ofPixels& pix = timage->img.getPixels();
-//					size_t ilen = pix.getWidth() * pix.getHeight() * pix.getNumChannels();
-//					
-//					ofBuffer tbuffer;
-//					ofSaveImage(pix, tbuffer);
-//					
-////					auto base64String = base64_encode( pix.getData(), ilen, false );
-////					std::string base64String = encode( pix.getData(), ilen );
-//					auto buffStr = tbuffer.getText();
-//					const unsigned char* data = reinterpret_cast<const unsigned char*>(buffStr.data());
-////					std::string base64String = encode(data, tbuffer.size());
-//					auto base64String = ofxSvgUtils::base64_encode( data, tbuffer.size(), false );
-////					std::string str = pix.getData();
 					auto base64String = ofxSvgUtils::base64_encode( timage->img.getPixels() );
 					std::string encString = "data:image/png;base64,"+base64String;
 					xattr.set(encString);

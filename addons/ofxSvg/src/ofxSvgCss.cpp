@@ -309,12 +309,22 @@ std::string ofxSvgCssClass::getFontFamily( std::string aDefaultFontFamily ) {
 }
 
 //--------------------------------------------------
+bool ofxSvgCssClass::setFontBold( bool ab ) {
+	return addProperty("font-weight", ab ? "bold" : "regular" );
+}
+
+//--------------------------------------------------
 bool ofxSvgCssClass::isFontBold() {
 	bool bold = false;
 	if( ofIsStringInString(getValue("font-weight", "" ), "bold")) {
 		bold = true;
 	}
 	return bold;
+}
+
+//--------------------------------------------------
+bool ofxSvgCssClass::setFontItalic(bool ab) {
+	return addProperty("font-style", ab ? "italic" : "regular" );
 }
 
 //--------------------------------------------------

@@ -57,7 +57,10 @@ public:
 	bool setFontFamily( std::string aFontFamily );
 	std::string getFontFamily( std::string aDefaultFontFamily );
 	
+	bool setFontBold( bool ab );
 	bool isFontBold();
+	
+	bool setFontItalic( bool ab );
 	bool isFontItalic();
 	
 	bool hasProperty( const std::string& akey );

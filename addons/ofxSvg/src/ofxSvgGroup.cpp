@@ -274,7 +274,7 @@ string ofxSvgGroup::toString(int nlevel) {
 void ofxSvgGroup::disableColors() {
     auto telements = getAllElements(false);
     for( auto& ele : telements ) {
-        ele->setUseShapeColor(false);
+        ele->setUseColors(false);
     }
 }
 
@@ -282,7 +282,7 @@ void ofxSvgGroup::disableColors() {
 void ofxSvgGroup::enableColors() {
     auto telements = getAllElements(false);
     for( auto& ele : telements ) {
-        ele->setUseShapeColor(true);
+        ele->setUseColors(true);
     }
 }
 

@@ -200,19 +200,20 @@ public:
 	
 	std::shared_ptr<ofxSvgImage> addImage( const of::filesystem::path& apath, const ofTexture& atex );
 	std::shared_ptr<ofxSvgImage> addImage( const glm::vec2& apos, const of::filesystem::path& apath, const ofTexture& atex );
-	std::shared_ptr<ofxSvgImage> addEmbeddedImage( const ofPixels& apixels );
+	std::shared_ptr<ofxSvgImage> addEmbeddedImage( const glm::vec2& apos, const ofPixels& apixels );
 	
 	// adapted from ofGLProgrammableRenderer for some sort of conformity
-	void pushMatrix();
-	bool popMatrix();
-	void translate(float x, float y);
-	void translate(const glm::vec2 & p);
-	void scale(float xAmnt, float yAmnt);
-	void rotateRadians(float radians);
-	void rotateDegrees(float adegrees);
-	void multMatrix(const glm::mat4 & m);
-	void loadMatrix(const glm::mat4 & m);
-	void loadIdentityMatrix();
+	// this will be handled by the ofNode functionality
+//	void pushMatrix();
+//	bool popMatrix();
+//	void translate(float x, float y);
+//	void translate(const glm::vec2 & p);
+//	void scale(float xAmnt, float yAmnt);
+//	void rotateRadians(float radians);
+//	void rotateDegrees(float adegrees);
+//	void multMatrix(const glm::mat4 & m);
+//	void loadMatrix(const glm::mat4 & m);
+//	void loadIdentityMatrix();
 	
 	virtual void drawDebug();
 	
@@ -242,11 +243,11 @@ protected:
 	void _setNodeParentGroupStack( std::shared_ptr<ofxSvgElement> aele );
 	
 	ofxSvgGroup* _getPushedGroup();
-	bool _hasPushedMatrix();
-	void _applyModelMatrixToElement( std::shared_ptr<ofxSvgElement> aele, glm::vec2 aDefaultPos );
-	glm::vec2 _getPos2d(const glm::mat4& amat);
-	glm::vec2 _getScale2d(const glm::mat4& amat);
-	float _getZRotationRadians( const glm::mat4& amat );
+//	bool _hasPushedMatrix();
+//	void _applyModelMatrixToElement( std::shared_ptr<ofxSvgElement> aele, glm::vec2 aDefaultPos );
+//	glm::vec2 _getPos2d(const glm::mat4& amat);
+//	glm::vec2 _getScale2d(const glm::mat4& amat);
+//	float _getZRotationRadians( const glm::mat4& amat );
 	
 	ofxSvgCssClass& _addCssClassFromPath( std::shared_ptr<ofxSvgPath> aSvgPath );
 	void _addCssClassFromPath( std::shared_ptr<ofxSvgPath> aSvgPath, ofXml& anode );
