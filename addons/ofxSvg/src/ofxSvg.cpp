@@ -2369,6 +2369,26 @@ std::shared_ptr<ofxSvgImage> ofxSvg::addEmbeddedImage(const glm::vec2& apos, con
 }
 
 //--------------------------------------------------------------
+bool ofxSvg::remove( std::shared_ptr<ofxSvgElement> aelement ) {
+	bool bRemoved = ofxSvgGroup::remove(aelement);
+	if( bRemoved ) {
+		recalculateLayers();
+	}
+	return bRemoved;
+}
+
+////--------------------------------------------------------------
+//bool ofxSvg::remove( std::vector<std::shared_ptr<ofxSvgElement> > aelements ) {
+//	bool bAllRemoved = ofxSvgGroup::remove(aelements);
+//	// we should just recalculate the layers if there was more than one element
+//	// since the function only returns true if all of the elements were found and removed.
+//	if( aelements.size() > 0 ) {
+//		recalculateLayers();
+//	}
+//	return bAllRemoved;
+//}
+
+//--------------------------------------------------------------
 void ofxSvg::drawDebug() {
 //	Group::draw();
 	ofSetColor( ofColor::limeGreen );

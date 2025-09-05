@@ -120,7 +120,7 @@ string ofxSvgElement::toString( int nlevel ) {
     for( int k = 0; k < nlevel; k++ ) {
         tstr += "   ";
     }
-    tstr += getTypeAsString() + " - " + getName() + "\n";
+    tstr += ofToString(layer)+": " + getTypeAsString() + " - " + getName() + "\n";
     
     return tstr;
 }

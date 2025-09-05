@@ -240,6 +240,10 @@ void ofxSvgGroup::_replaceElementRecursive( shared_ptr<ofxSvgElement> aTarget, s
             aBSuccessful = true;
             aElements[i] = aNew;
 			aNew->layer = aTarget->layer;
+			if( aTarget->getParent() ) {
+				aNew->setParent(*aTarget->getParent(), true);
+				aTarget->clearParent();
+			}
             break;
         }
         if( !bFound ) {
@@ -249,6 +253,59 @@ void ofxSvgGroup::_replaceElementRecursive( shared_ptr<ofxSvgElement> aTarget, s
             }
         }
     }
+}
+
+//--------------------------------------------------------------
+bool ofxSvgGroup::remove( std::shared_ptr<ofxSvgElement> aelement ) {
+	if( !aelement ) {
+		ofLogWarning("ofxSvgGroup::remove") << "element is invalid.";
+		return false;
+	}
+	bool bRemoved = false;
+	_removeElementRecursive( aelement, mChildren, bRemoved );
+	return bRemoved;
+}
+
+////--------------------------------------------------------------
+//bool ofxSvgGroup::remove( std::vector<std::shared_ptr<ofxSvgElement> > aelements ) {
+//	if( aelements.size() < 1 ) {
+//		return false;
+//	}
+//	
+//	bool bAllRemoved = true;
+//	for( auto& aele : aelements ) {
+//		if( !aele ) {
+//			ofLogWarning("ofxSvgGroup::remove") << "element is invalid.";
+//			bAllRemoved = false;
+//			continue;
+//		}
+//		bool bEleRemoved = remove( aele );
+//		if( !bEleRemoved ) {
+//			bAllRemoved = false;
+//		}
+//	}
+//	return bAllRemoved;
+//}
+
+//--------------------------------------------------------------
+void ofxSvgGroup::_removeElementRecursive( shared_ptr<ofxSvgElement> aTarget, vector< shared_ptr<ofxSvgElement> >& aElements, bool& aBSuccessful ) {
+	
+	for( std::size_t i = 0; i < aElements.size(); i++ ) {
+		bool bFound = false;
+		if( aTarget == aElements[i] ) {
+			bFound = true;
+			aBSuccessful = true;
+			aElements.erase(aElements.begin() + i);
+			// make sure to break here since the size() will change
+			break;
+		}
+		if( !bFound ) {
+			if( aElements[i]->getType() == OFXSVG_TYPE_GROUP ) {
+				auto tgroup = std::dynamic_pointer_cast<ofxSvgGroup>( aElements[i] );
+				_removeElementRecursive(aTarget, tgroup->mChildren, aBSuccessful );
+			}
+		}
+	}
 }
 
 //--------------------------------------------------------------

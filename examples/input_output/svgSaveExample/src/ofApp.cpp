@@ -32,6 +32,8 @@ void ofApp::draw(){
 		ss << std::endl << "Click and drag mouse to add points.";
 	}
 	ss << std::endl << "Size (up/down): " << size;
+	ss << std::endl << "Remove circles (c)";
+	ss << std::endl << "Remove rectangles (r)";
 	ss << std::endl << "Save (s)";
 	ss << std::endl << "Clear (delete)";
 	ofDrawBitmapStringHighlight(ss.str(), 40, 40);
@@ -52,6 +54,28 @@ void ofApp::keyPressed(int key){
 		ofLogNotice("ofApp") << "saving svg to file: " << filename;
 		svg.save(filename);
 	}
+	
+	if( key == 'c' ) {
+		// get all of the circles
+		auto circles = svg.getAllElementsForType<ofxSvgCircle>();
+		// now lets remove all of them.
+		svg.removeElements( circles );
+		// another option would be to loop through the circles and call remove on each one.
+//		for( auto& circle : circles ) {
+//			svg.remove(circle);
+//		}
+	}
+	if( key == 'r' ) {
+		// our original document contains rectangles
+		// or maybe paths since Illustrator sometimes converts them.
+		// lets try grabbing them by name.
+		// The second argument of this function determines if the name is strictly matched or not.
+		// We pass in false because we name our rectangles with myrect + frame num.
+		// So we want to get all of the rects that contain the string "myrect" in their name.
+		auto myRects = svg.getAllElementsForTypeForName<ofxSvgRectangle>("myrect", false);
+		svg.removeElements(myRects);
+	}
+	
 	if( key == OF_KEY_RIGHT ) {
 		svgTypeIndex++;
 		svgTypeIndex %= svgAddTypes.size();
@@ -100,11 +124,11 @@ void ofApp::mousePressed(int x, int y, int button){
 		rect.setFromCenter(x, y, size, size);
 		svg.setFillColor(ofColor(255, x%255, (y*10) % 255));
 		auto svgRect = svg.add( rect );
-		svgRect->setName("r-"+ofToString(ofGetFrameNum()));
+		svgRect->setName("myrect-"+ofToString(ofGetFrameNum()));
 	} else if( svgAddTypes[svgTypeIndex] == OFXSVG_TYPE_CIRCLE ) {
 		svg.setFillColor(ofColor(x%255, 205, (y*10) % 255));
 		auto svgCircle = svg.addCircle( glm::vec2(x,y), size );
-		svgCircle->setName("c-"+ofToString(ofGetFrameNum()));
+		svgCircle->setName("mycircle-"+ofToString(ofGetFrameNum()));
 	} else if( svgAddTypes[svgTypeIndex] == OFXSVG_TYPE_PATH ) {
 		svg.setFilled(false);
 		svg.setStrokeColor(ofColor::magenta);

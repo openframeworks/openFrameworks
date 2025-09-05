@@ -288,6 +288,15 @@ public:
 	/// \return std::shared_ptr<ofxSvgImage> as the image that was created and added to the document.
 	std::shared_ptr<ofxSvgImage> addEmbeddedImage( const glm::vec2& apos, const ofPixels& apixels );
 	
+	/// \brief Remove an element from this document or child groups.
+	/// \param shared_ptr<ofxSvgElement> aelement to be removed.
+	/// \return bool true if element was found and removed.
+	bool remove( std::shared_ptr<ofxSvgElement> aelement ) override;
+	/// \brief Remove elements in a vector from this document or child groups.
+	/// \param vector<shared_ptr<ofxSvgElement> > aelements Elements to be removed.
+	/// \return bool true if all of the elements were found and removed.
+//	bool remove( std::vector<std::shared_ptr<ofxSvgElement> > aelements ) override;
+	
 	/// \brief Used for development to provide insight into anchor point / control point placements.
 	virtual void drawDebug();
 	

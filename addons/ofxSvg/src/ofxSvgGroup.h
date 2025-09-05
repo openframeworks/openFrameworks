@@ -308,7 +308,39 @@ public:
 		return getFirstElementForType<ofxSvg_T>("");
 	}
 	
+	/// \brief Replace an item with a new item.
+	/// \param shared_ptr<ofxSvgElement> aOriginal Element to be replaced.
+	/// \param shared_ptr<ofxSvgElement> aNew Element used to replace aOriginal.
+	/// \return bool true if aOriginal was replaced.
 	bool replace( std::shared_ptr<ofxSvgElement> aOriginal, std::shared_ptr<ofxSvgElement> aNew );
+	
+	/// \brief Remove an element from this group or child groups.
+	/// \param shared_ptr<ofxSvgElement> aelement to be removed.
+	/// \return bool true if element was found and removed.
+	virtual bool remove( std::shared_ptr<ofxSvgElement> aelement );
+	/// \brief Remove elements in a vector from this group or child groups. Example: svg.remove<ofxSvgCircle>();
+	/// \param vector<shared_ptr<ofxSvgElement> > aelements to be removed.
+	/// \return bool true if all of the elements were found and removed.
+	template<typename ofxSvg_T>
+	bool removeElements( std::vector<std::shared_ptr<ofxSvg_T> > aelements ) {
+		if( aelements.size() < 1 ) {
+			return false;
+		}
+		
+		bool bAllRemoved = true;
+		for( auto& aele : aelements ) {
+			if( !aele ) {
+				ofLogWarning("ofxSvgGroup::remove") << "element is invalid.";
+				bAllRemoved = false;
+				continue;
+			}
+			bool bEleRemoved = remove( aele );
+			if( !bEleRemoved ) {
+				bAllRemoved = false;
+			}
+		}
+		return bAllRemoved;
+	}
 	
 	/// \brief Add a child element of provided type.
 	/// \param std::string aname Name to give the created element.
@@ -353,6 +385,11 @@ protected:
 								  std::vector< std::shared_ptr<ofxSvgElement> >& aElements,
 								  bool& aBSuccessful
 								  );
+	
+	void _removeElementRecursive(std::shared_ptr<ofxSvgElement> aTarget,
+								 std::vector<std::shared_ptr<ofxSvgElement> >& aElements,
+								 bool& aBSuccessful
+								 );
 	
 	std::vector< std::shared_ptr<ofxSvgElement> > mChildren;
 	
