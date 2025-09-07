@@ -1106,6 +1106,15 @@ void ofxSvg::_parsePath( ofXml& tnode, std::shared_ptr<ofxSvgPath> aSvgPath ) {
 		return;
 	}
 	
+//	OF_POLY_WINDING_ODD
+	///     OF_POLY_WINDING_NONZERO
+	///     OF_POLY_WINDING_POSITIVE
+	///     OF_POLY_WINDING_NEGATIVE
+	///     OF_POLY_WINDING_ABS_GEQ_TWO
+//	aSvgPath->path.setPolyWindingMode(OF_POLY_WINDING_POSITIVE);
+//	aSvgPath->path.setPolyWindingMode(mDefaultPathWindingMode);
+	
+	
 	aSvgPath->path.setCircleResolution(mCircleResolution);
 	aSvgPath->path.setCurveResolution(mCurveResolution);
 	
@@ -1136,6 +1145,9 @@ void ofxSvg::_parsePath( ofXml& tnode, std::shared_ptr<ofxSvgPath> aSvgPath ) {
 	glm::vec3 currentPos = {0.f, 0.f, 0.f};
 	glm::vec3 secondControlPoint = currentPos;
 	glm::vec3 qControlPoint = currentPos;
+	
+	int numSubPathsClosed = 0;
+	int numSubPaths = 0;
 	
 	auto convertToAbsolute = [](bool aBRelative, glm::vec3& aCurrentPos, std::vector<glm::vec3>& aposes) -> glm::vec3 {
 		for(auto& apos : aposes ) {
@@ -1283,36 +1295,27 @@ void ofxSvg::_parsePath( ofXml& tnode, std::shared_ptr<ofxSvgPath> aSvgPath ) {
 			for( int ni = 0; ni < npositions.size(); ni++ ) {
 				ofLogVerbose("ofxSvg::_parsePath") << ni << "->" << npositions[ni];
 			}
-//			if( npositions.size() > 0 && bRelative ) {
-//				mCurrentPathPos = npositions[0];
-//			}
 			ctype = ofPath::Command::moveTo;
+			numSubPaths++;
 		} else if( cchar == 'v' || cchar == 'V' ) {
 			
 			float xvalue = 0.f;
 			if( cchar == 'v' ) {
 				bRelative = true;
-//				npositions[0].x = 0.f;
 			} else {
-//				npositions[0].x = currentPos.x;
 				xvalue = currentPos.x;
 			}
 			npositions = parsePointsDefaultX(currentString,xvalue);
-//			npositions[0].y = ofToFloat(currentString);
 			//ofLogVerbose("ofxSvg") << cchar << " line to: " << npositions[0] << " current pos: " << currentPos;
 			ctype = ofPath::Command::lineTo;
 		} else if( cchar == 'H' || cchar == 'h' ) {
 			float yvalue = 0.f;
 			if( cchar == 'h' ) {
 				bRelative = true;
-//				npositions[0].y = 0.f;
 			} else {
-//				npositions[0].y = currentPos.y;
 				yvalue = currentPos.y;
 			}
 			npositions = parsePointsDefaultY(currentString,yvalue);
-//			npositions[0].x = ofToFloat(currentString);
-			
 			ctype = ofPath::Command::lineTo;
 		} else if( cchar == 'L' || cchar == 'l' ) {
 			if( cchar == 'l' ) {
@@ -1401,7 +1404,6 @@ void ofxSvg::_parsePath( ofXml& tnode, std::shared_ptr<ofxSvgPath> aSvgPath ) {
 						// going to handle this below;
 						// inside the if( commandT == ofPath::Command::moveTo ) { check.
 					} else {
-//					currentPos = convertToAbsolute(bRelative, currentPos, npositions );
 						currentPos = convertToAbsolute(bRelative, currentPos, npositions );
 					}
 				}
@@ -1434,7 +1436,6 @@ void ofxSvg::_parsePath( ofXml& tnode, std::shared_ptr<ofxSvgPath> aSvgPath ) {
 				if( npositions.size() > 0 ) {
 					ofLogVerbose("ofxSvg::moveTo") << npositions[0] << " currentPos: " << currentPos;// << " path pos: " << aSvgPath->pos;
 					aSvgPath->path.moveTo(currentPos);
-//					mCenterPoints.push_back(npositions[0] + pathOffset);
 				}
 				
 				if(npositions.size() > 1 ) {
@@ -1446,19 +1447,12 @@ void ofxSvg::_parsePath( ofXml& tnode, std::shared_ptr<ofxSvgPath> aSvgPath ) {
 					
 					if( bLineToRelative ) {
 						for( int ki = 1; ki < npositions.size(); ki++ ) {
-//							auto newPos = npositions[ki] + cp;
 							currentPos += npositions[ki];
 							aSvgPath->path.lineTo(currentPos);
-//							cp = newPos;
 						}
-//						currentPos = cp;
-						
 					} else {
 						for( int ki = 1; ki < npositions.size(); ki++ ) {
-//							mCPoints.push_back(npositions[ki]);
-//							ofLogVerbose("ofxSvg::lineTo") << ki << "--->" << npositions[ki];
 							aSvgPath->path.lineTo(npositions[ki]);
-//							mCenterPoints.push_back(npositions[ki] + pathOffset);
 						}
 						if(npositions.size() > 0 ) {
 							currentPos = npositions.back();
@@ -1484,12 +1478,11 @@ void ofxSvg::_parsePath( ofXml& tnode, std::shared_ptr<ofxSvgPath> aSvgPath ) {
 						}
 					}
 				}
-//				aSvgPath->path.moveTo(currentPos);
-//				aSvgPath->path.lineTo(currentPos);
 			} else if( commandT == ofPath::Command::close ) {
 //				ofLogNotice("ofxSvg") << "Closing the path";
 				// TODO: Not sure if we need to draw a line to the start point here
 				aSvgPath->path.close();
+				numSubPathsClosed++;
 			} else if( commandT == ofPath::Command::bezierTo ) {
 				
 				if( cchar == 'S' || cchar == 's' ) {
@@ -1507,12 +1500,6 @@ void ofxSvg::_parsePath( ofXml& tnode, std::shared_ptr<ofxSvgPath> aSvgPath ) {
 					}
 					
 					npositions = ppositions;
-					
-//					if( npositions.size() == 2 ) {
-//						auto cp2 = (secondControlPoint - prevPos) * -1.f;
-//						cp2 += prevPos;
-//						npositions.insert(npositions.begin(), cp2 );
-//					}
 				}
 				
 				auto tcpos = prevPos;
@@ -1525,19 +1512,7 @@ void ofxSvg::_parsePath( ofXml& tnode, std::shared_ptr<ofxSvgPath> aSvgPath ) {
 					mCPoints.push_back(npositions[k+0]);
 					mCPoints.push_back(npositions[k+1]);
 					tcpos = npositions[k+2];
-					
-//					mCPoints.push_back(npositions[k+0]);
-//					mCPoints.push_back(npositions[k+1]);
-//					mCenterPoints.push_back(npositions[k+2]);
 				}
-				
-//				mCPoints.insert( mCPoints.end(), npositions.begin(), npositions.end() );
-				
-//				if( npositions.size() == 3 ) {
-//					aSvgPath->path.bezierTo(npositions[0], npositions[1], npositions[2]);
-//				}
-//				
-//				secondControlPoint = npositions[1];
 			} else if( commandT == ofPath::Command::quadBezierTo ) {
 				if( cchar == 'T' || cchar == 't' ) {
 					if( npositions.size() == 1 ) {
@@ -1564,9 +1539,7 @@ void ofxSvg::_parsePath( ofXml& tnode, std::shared_ptr<ofxSvgPath> aSvgPath ) {
 					
 					glm::vec3 spt = prevPos;
 					glm::vec3 ept = npositions[3];
-					
-					
-//					glm::vec3 cpt(spt.x, ept.y, 0.0f);
+										
 					auto cpt = glm::vec3(findArcCenter(spt, ept, radii.x, radii.y, xAxisRotation, largeArcFlag, sweepFlag ), 0.f);
 					auto windingOrder = _getWindingOrderOnArc( spt, cpt, ept );
 					
@@ -1629,19 +1602,12 @@ void ofxSvg::_parsePath( ofXml& tnode, std::shared_ptr<ofxSvgPath> aSvgPath ) {
 					ofPolyline tline;
 										
 					if( windingOrder < 0 ) {
-//						aSvgPath->path.arcNegative(cpt, radii.x, radii.y, glm::degrees(startAngle), glm::degrees(endAngle) );
 						tline.arcNegative(cpt, radii.x, radii.y, glm::degrees(startAngle-xrotRad), glm::degrees(endAngle-xrotRad), mCircleResolution );
-//						tline.arcNegative(cpt, radii.x, radii.y, glm::degrees(startAngle), glm::degrees(endAngle) );
-//						aSvgPath->path.arcNegative(cpt, radii.x, radii.y, glm::degrees(startAngle-xrotRad), glm::degrees(endAngle-xrotRad) );
 					} else {
 						tline.arc(cpt, radii.x, radii.y, glm::degrees(startAngle-xrotRad), glm::degrees(endAngle-xrotRad), mCircleResolution );
-//						tline.arc(cpt, radii.x, radii.y, glm::degrees(startAngle), glm::degrees(endAngle) );
-//						aSvgPath->path.arc(cpt, radii.x, radii.y, glm::degrees(startAngle-xrotRad), glm::degrees(endAngle-xrotRad) );
-//						aSvgPath->path.arc(cpt, radii.x, radii.y, glm::degrees(startAngle), glm::degrees(endAngle) );
 					}
 					
 					// rotate based on x-axis rotation //
-					
 //					aSvgPath->path.rotateRad(xrotRad, glm::vec3(0.0f, 0.0f, 1.f));
 					
 					for( auto& pv : tline.getVertices() ) {
@@ -1666,11 +1632,6 @@ void ofxSvg::_parsePath( ofXml& tnode, std::shared_ptr<ofxSvgPath> aSvgPath ) {
 						}
 					}
 					
-//					auto centers = findEllipseCenter( spt, ept, radii.x, radii.y );
-					
-//					ofLogNotice("centers: ") << std::get<0>(centers) << " and " << std::get<1>(centers) << " spt: " << spt << " ept: " << ept << " radii: " << radii;
-					
-					
 					mCenterPoints.push_back(cpt);
 //					mCenterPoints.push_back(cpt);
 					npositions.clear();
@@ -1682,6 +1643,14 @@ void ofxSvg::_parsePath( ofXml& tnode, std::shared_ptr<ofxSvgPath> aSvgPath ) {
 		}
 		
 //		ofLogNotice("ofxSvg") << "["<<cchar<<"]: " << currentString;
+//		ofLogNotice("ofxSvg::_parsepath") << " num closed: " << numSubPathsClosed << " / " << numSubPaths;
+		
+		// If all of the paths are closed, then set the winding mode.
+		// We only set it on closed paths because other winding modes can force close the paths
+		// which is incorrect with open paths / polylines.
+		if( numSubPaths == numSubPathsClosed ) {
+			aSvgPath->path.setPolyWindingMode(mDefaultClosedPathWindingMode);
+		}
 		
 		justInCase++;
 	}
@@ -1711,6 +1680,7 @@ ofxSvgCssClass ofxSvg::_parseStyle( ofXml& anode ) {
 				// now lets try to apply it to the path
 				auto& tCss = mSvgCss.getClass(className);
 				for( auto& tprop : tCss.properties ) {
+//					ofLogNotice("ofxSvg") << " adding property " << tprop.first << " value: " << tprop.second.srcString;
 					css.addProperty(tprop.first, tprop.second);
 				}
 			}
@@ -1723,7 +1693,7 @@ ofxSvgCssClass ofxSvg::_parseStyle( ofXml& anode ) {
 	// avoid the following
 	std::vector<std::string> reservedAtts = {
 		"d", "id", "xlink:href", "width", "height", "rx", "ry", "cx", "cy", "r", "style", "font-family",
-		"x","y","x1","y1","x2","y2"
+		"x","y","x1","y1","x2","y2","transform"
 	};
 	
 	// lets try to do this a better way
@@ -1825,7 +1795,6 @@ glm::vec3 ofxSvg::_parseMatrixString(const std::string& input, const std::string
 //--------------------------------------------------------------
 glm::mat4 ofxSvg::setTransformFromSvgMatrixString( string aStr, std::shared_ptr<ofxSvgElement> aele ) {
 	ofLogVerbose("-----------ofxSvg::setTransformFromSvgMatrixString") << aele->getTypeAsString() << " name: " << aele->getName() +"----------------";
-//	aele->scale = glm::vec2(1.0f, 1.0f);
 //	aele->rotation = 0.0;
 	aele->setScale(1.f);
 	aele->mModelRotationPoint = glm::vec2(0.0f, 0.0f);
@@ -1834,7 +1803,6 @@ glm::mat4 ofxSvg::setTransformFromSvgMatrixString( string aStr, std::shared_ptr<
 	
 	float trotation = 0.f;
 	glm::mat4 mat = glm::mat4(1.f);
-//	glm::mat4 gmat = mModelMatrix;
 	
 	if( ofIsStringInString(aStr, "translate")) {
 		auto transStr = aStr;
@@ -1900,7 +1868,7 @@ glm::mat4 ofxSvg::setTransformFromSvgMatrixString( string aStr, std::shared_ptr<
 //		gmat = glm::scale(gmat, glm::vec3(aele->getScale().x, aele->getScale().y, 1.f));
 	}
 	
-	glm::vec3 pos3 = mat * glm::vec4( aele->getPosition().x, aele->getPosition().y, 0.0f, 1.f );
+//	glm::vec3 pos3 = mat * glm::vec4( aele->getPosition().x, aele->getPosition().y, 0.0f, 1.f );
 //	pos3 = gmat * glm::vec4( aele->pos.x, aele->pos.y, 0.0f, 1.f );
 //	aele->pos.x = pos3.x;
 //	aele->pos.y = pos3.y;
@@ -1928,9 +1896,7 @@ glm::mat4 ofxSvg::setTransformFromSvgMatrixString( string aStr, std::shared_ptr<
 			
 			aele->setPosition(matrixF[4], matrixF[5], 0.f);
 			
-			
 			float trotation = glm::degrees( atan2f(matrixF[1],matrixF[0]) );
-			
 			
 //			aele->scale.x = glm::sqrt(matrixF[0] * matrixF[0] + matrixF[1] * matrixF[1]);
 //			aele->scale.y = glm::sqrt(matrixF[2] * matrixF[2] + matrixF[3] * matrixF[3]);
@@ -1955,11 +1921,6 @@ glm::mat4 ofxSvg::setTransformFromSvgMatrixString( string aStr, std::shared_ptr<
 			}
 			
 			mat = glm::scale(mat, glm::vec3(aele->getScale().x, aele->getScale().y, 1.f));
-			
-//			pos3 = mat * glm::vec4( aele->getPosition().x, aele->getPosition().y, 0.0f, 1.f );
-//			aele->setPosition( pos3.x, pos3.y, 0.0f);
-//			aele->pos.x = pos3.x;
-//			aele->pos.y = pos3.y;
 			
 			ofLogVerbose("ofxSvg::setTransformFromSvgMatrixString") << "pos: " << aele->getPosition() << " rotation: " << trotation << " scale: " << aele->getScale();
 		}
@@ -2185,6 +2146,16 @@ void ofxSvg::setHasStroke(bool abStroke) {
 		mCurrentCss.setNoStroke();
 		mDocumentCss.setNoStroke();
 	}
+}
+
+//--------------------------------------------------------------
+void ofxSvg::setDefaultClosedPathWindingMode( ofPolyWindingMode aWindingMode ) {
+	mDefaultClosedPathWindingMode = aWindingMode;
+}
+
+//--------------------------------------------------------------
+ofPolyWindingMode ofxSvg::getDefaultClosedPathWindingMode() {
+	return mDefaultClosedPathWindingMode;
 }
 
 //--------------------------------------------------------------

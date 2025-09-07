@@ -105,7 +105,7 @@ bool ofxSvgFontBook::loadFont(const of::filesystem::path& aDirectory, ofxSvgCssC
 				bf = false;
 			}
 			
-			ofLogNotice("ofxSvgFontBook") << __FUNCTION__ << " : " << fs.str() << " : starting off searching directory : " << fontsDirectory;
+			ofLogVerbose("ofxSvgFontBook") << __FUNCTION__ << " : " << fs.str() << " : starting off searching directory : " << fontsDirectory;
 			string tNewFontPath = "";
 
 			std::vector<std::string> subStrs;
@@ -193,7 +193,7 @@ bool ofxSvgFontBook::loadFont(const of::filesystem::path& aDirectory, ofxSvgCssC
 		
 		
 
-		ofLogNotice("ofxSvgFontBook") << __FUNCTION__ << " : Trying to load font from: " << tfontPath;
+		ofLogVerbose("ofxSvgFontBook") << __FUNCTION__ << " : Trying to load font from: " << tfontPath;
 
 		if (tfontPath == "") {
 			bFontLoadOk = false;

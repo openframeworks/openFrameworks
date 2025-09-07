@@ -786,19 +786,19 @@ void ofxSvgText::TextSpan::applyStyle(ofxSvgCssClass& aclass) {
 	
 	if( !aclass.hasProperty("color") ) {
 		if( aclass.hasProperty("fill")) {
-			aclass.addProperty("color", aclass.getColor("fill") );
+			mSvgCssClass.addProperty("color", aclass.getColor("fill") );
 		} else {
-			aclass.addProperty("color", ofColor(0));
+			mSvgCssClass.addProperty("color", ofColor(0));
 		}
 	}
 	
 	alpha = 1.f;
-	if( aclass.hasProperty("opacity")) {
-		alpha = aclass.getFloatValue("opacity", 1.f);
+	if( mSvgCssClass.hasProperty("opacity")) {
+		alpha = mSvgCssClass.getFloatValue("opacity", 1.f);
 	}
 	
-	ofLogVerbose("ofxSvgText::TextSpan::applyStyle") << "text: " << text;
-	ofLogVerbose("ofxSvgText::TextSpan::applyStyle") << " css class: " << aclass.toString() << std::endl;// << " color: " << color;
+	ofLogVerbose("ofxSvgText::TextSpan::applyStyle") << "text: " << text << " has fill: " << mSvgCssClass.hasProperty("fill") << " color: " << getColor();
+	ofLogVerbose("ofxSvgText::TextSpan::applyStyle") << " css class: " << mSvgCssClass.toString() << std::endl;// << " color: " << color;
 	
 }
 

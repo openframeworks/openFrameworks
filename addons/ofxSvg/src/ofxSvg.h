@@ -172,6 +172,14 @@ public:
 	/// \brief Get the current css used for items.
 	/// \return ofxSvgCssClass.
 	ofxSvgCssClass& getCurrentCss() { return mCurrentCss;}
+	/// \brief Set the default winding mode of imported paths with all sub paths that are closed. The default is OF_POLY_WINDING_NONZERO.
+	/// If not all of the sub paths are closed, the winding mode is not set.
+	/// Must be called before load() to apply to newly imported paths.
+	/// \param ofPolyWindingMode to be used as default.
+	void setDefaultClosedPathWindingMode( ofPolyWindingMode aWindingMode );
+	/// \brief Get the default winding mode of imported paths.
+	/// \return ofPolyWindingMode.
+	ofPolyWindingMode getDefaultClosedPathWindingMode();
 	
 	ofxSvgCssStyleSheet& getCssStyleSheet() {return mSvgCss; }
 	/// \brief Add a ofxSvgGroup to the document. This will also push back the group as current.
@@ -292,10 +300,6 @@ public:
 	/// \param shared_ptr<ofxSvgElement> aelement to be removed.
 	/// \return bool true if element was found and removed.
 	bool remove( std::shared_ptr<ofxSvgElement> aelement ) override;
-	/// \brief Remove elements in a vector from this document or child groups.
-	/// \param vector<shared_ptr<ofxSvgElement> > aelements Elements to be removed.
-	/// \return bool true if all of the elements were found and removed.
-//	bool remove( std::vector<std::shared_ptr<ofxSvgElement> > aelements ) override;
 	
 	/// \brief Used for development to provide insight into anchor point / control point placements.
 	virtual void drawDebug();
@@ -364,6 +368,8 @@ protected:
 	// for legacy purposes //
 	static ofPath sDummyPath;
 	mutable std::vector<ofPath> mPaths;
+	
+	ofPolyWindingMode mDefaultClosedPathWindingMode = OF_POLY_WINDING_NONZERO;
 	
 };
 
