@@ -939,9 +939,9 @@ void ofBoxPrimitive::set( float width, float height, float depth, int resWidth, 
     
 	resolution = {resWidth, resHeight, resDepth};
     
-    int resX = getResolution().x;
-    int resY = getResolution().y;
-    int resZ = getResolution().z;
+    int resX = getResolution().x + 1;
+    int resY = getResolution().y + 1;
+    int resZ = getResolution().z + 1;
     
     //FRONT, resY, resX
     strides[ SIDE_FRONT ][0] = 0;
