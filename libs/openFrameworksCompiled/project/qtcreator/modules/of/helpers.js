@@ -116,6 +116,12 @@ function pkgExists(pkg){
     return pkgconfig.exitCode() === 0;
 }
 
+function commandExists(command) {
+    var commandProcess = new Process();
+    commandProcess.exec('command', ['-v', command]);
+    return commandProcess.exitCode() === 0;
+}
+
 function findLibsRecursive(dir, platform, exclude){
     var ret = []
     if(!File.exists(dir)){
