@@ -266,7 +266,7 @@ bool ofxUDPManager::ConnectMcast(char* pMcast, unsigned short usPort)
 	if (!Connect(pMcast, usPort))
 	{
 #ifdef _DEBUG
-		ofLogError("ofxUDPManager") << " ConnectMcast(): couldn't connect to socket";
+		ofLogError("ofxUDPManager") << "ConnectMcast(): couldn't connect to socket";
 		ofxNetworkLogLastError();
 #endif
 		return false;
