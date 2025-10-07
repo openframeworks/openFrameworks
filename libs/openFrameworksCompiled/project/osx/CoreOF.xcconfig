@@ -47,7 +47,7 @@ LIB_OF_DEBUG = "$(OF_PATH)/libs/openFrameworksCompiled/lib/osx/openFrameworksDeb
 
 OF_CORE_HEADERS = $(HEADER_OF) $(HEADER_FREETYPE) $(HEADER_FREETYPE2) $(HEADER_GLEW) $(HEADER_FREEIMAGE) $(HEADER_TESS2) $(HEADER_CAIRO) $(HEADER_RTAUDIO) $(HEADER_GLFW) $(HEADER_UTF8) $(HEADER_JSON) $(HEADER_GLM) $(HEADER_CURL) ${HEADER_SSL} $(HEADER_URIPARSER) $(HEADER_PUGIXML) ${HEADER_BROTLI}
 
-OF_CORE_FRAMEWORKS = -framework Accelerate -framework AGL -framework AppKit -framework ApplicationServices -framework AudioToolbox -framework AVFoundation -framework Cocoa -framework CoreAudio -framework CoreFoundation -framework CoreMedia -framework CoreServices -framework CoreVideo -framework Foundation -framework IOKit -framework OpenGL -framework QuartzCore -framework Security -framework SystemConfiguration -framework Metal
+OF_CORE_FRAMEWORKS = -framework Accelerate -framework AppKit -framework ApplicationServices -framework AudioToolbox -framework AVFoundation -framework Cocoa -framework CoreAudio -framework CoreFoundation -framework CoreMedia -framework CoreServices -framework CoreVideo -framework Foundation -framework IOKit -framework OpenGL -framework QuartzCore -framework Security -framework SystemConfiguration -framework Metal
 
 
 
