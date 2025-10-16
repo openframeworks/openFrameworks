@@ -48,20 +48,10 @@ apt-get install -y \
   libassimp-dev librtaudio-dev libglfw3-dev \
   liburiparser-dev libcurl4-openssl-dev libpugixml-dev libpoco-dev \
   libgconf-2-4 brotli liblapack-dev libblas-dev \
-  \
-  # ---- X11 bits used by GLFW (often missing) ----
   libxrandr-dev libxinerama-dev libxcursor-dev libxi-dev libxext-dev \
-  xorgproto \
-  \
-  # ---- Wayland stack for GLFW ----
-  libwayland-dev wayland-protocols libxkbcommon-dev libxkbcommon-x11-dev \
-  libdecor-0-dev \
-  \
-  # ---- GL loader/plumbing (recommended) ----
-  libglvnd-dev \
-  \
-  # ---- useful tools (optional) ----
-  mesa-utils
+  xorgproto libwayland-dev wayland-protocols libxkbcommon-dev libxkbcommon-x11-dev \
+  libdecor-0-dev libglvnd-dev mesa-utils
+
 exit_code=$?
 if [ $exit_code != 0 ]; then
   echo "error installing dependencies, there could be an error with your internet connection"

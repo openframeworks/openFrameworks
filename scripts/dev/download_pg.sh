@@ -161,6 +161,7 @@ cd "$SCRIPT_DIR"
 
 OUTDIR=../../
 
+ZIP="zip"
 if [[ $BLEEDING_EDGE = 1 ]] ; then
     VER=latest
 fi
@@ -169,19 +170,22 @@ if [[ $TAG != "" ]] ; then
     VER="$TAG"
 fi
 
+if [ "$PLATFORM" == "linux" ]; then
+    ZIP="tar.bz2"
+fi
 if [ "$PLATFORM" == "vs" ]; then
     EXT=".exe"
 else
     EXT=".app"
 fi
+
 OUTPUT=projectGenerator
 if [ "$PLATFORM" == "msys2" ] || [ "$PLATFORM" == "vs" ]; then
     GUI="-gui"
 else
     GUI=""
 fi
-PKG="projectGenerator-${PLATFORM}${GUI}.zip"
-
+PKG="projectGenerator-${PLATFORM}${GUI}.${ZIP}"
 echo " openFrameworks download_pg.sh"
 
 cd ../../
@@ -204,8 +208,10 @@ if [ "$PLATFORM" == "msys2" ] || [ "$PLATFORM" == "vs" ]; then
 else
     mkdir -p "${OUTDIR}${OUTPUT}"
     tar xjf "$PKG" -C "${OUTDIR}${OUTPUT}"
-    mv "${OUTDIR}/${OUTPUT}/projectGenerator-osx/projectGenerator$EXT" "${OUTDIR}/${OUTPUT}/projectGenerator$EXT"
-    rm -rf "${OUTDIR}/${OUTPUT}/projectGenerator-osx/"
+    if [ "$PLATFORM" == "osx" ]; then
+        mv "${OUTDIR}/${OUTPUT}/projectGenerator-osx/projectGenerator$EXT" "${OUTDIR}/${OUTPUT}/projectGenerator$EXT"
+        rm -rf "${OUTDIR}/${OUTPUT}/projectGenerator-osx/"
+    fi
 fi
 
 if [ "$PLATFORM" == "msys2" ] || [ "$PLATFORM" == "vs" ]; then
@@ -220,6 +226,8 @@ if [ "$PLATFORM" == "msys2" ] || [ "$PLATFORM" == "vs" ]; then
     # else
     #     echo "Warning: chmod command not found, skipping permission adjustment."
     # fi
+elif [ "$PLATFORM" == "linux" ]; then
+    chmod +x "${OUTDIR}/${OUTPUT}/projectGenerator"
 else
     if ! command -v rsync &> /dev/null; then      
         cp -arX "${OUTDIR}/${OUTPUT}/projectGenerator$EXT/Contents/Resources/app/app/projectGenerator" "${OUTDIR}/${OUTPUT}/projectGenerator"

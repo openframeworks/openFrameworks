@@ -23,17 +23,12 @@ dnf install -y \
   gtk2-devel libXrandr-devel libXi-devel opencv-devel libX11-devel \
   assimp-devel rtaudio-devel gtk3-devel glfw-devel uriparser-devel \
   curl-devel pugixml-devel poco-devel brotli \
-  \
-  # ---- Added for GLFW / X11 / Wayland completeness ----
   wayland-devel wayland-protocols-devel \
   libxkbcommon-devel libxkbcommon-x11-devel \
   libdecor-devel xorg-x11-proto-devel \
   mesa-libGL-devel mesa-libGLU-devel mesa-libEGL-devel mesa-libGLES-devel \
   libXcursor-devel libXinerama-devel libXext-devel \
-  fftw-devel \
-  \
-  # ---- Optional runtime components (for testing) ----
-  xorg-x11-server-Xwayland mesa-dri-drivers libdecor
+  fftw-devel xorg-x11-server-Xwayland mesa-dri-drivers libdecor
 
 exit_code=$?
 if [ $exit_code != 0 ]; then
