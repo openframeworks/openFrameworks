@@ -87,7 +87,7 @@ jobs:
           release: true
           update: true
           msystem: ${{matrix.msystem}}
-          pacboy: openssl:p python:p gcc:p assimp:p cairo:p curl:p freeglut:p FreeImage:p glew:p glfw:p glm:p libsndfile:p libusb:p libxml2:p mpg123:p nlohmann-json:p openal:p opencv:p pugixml:p rtaudio:p uriparser:p utf8cpp:p
+          pacboy: openssl:p python:p gcc:p assimp:p cairo:p curl:p freeglut:p freeimage:p glew:p glfw:p glm:p libsndfile:p libusb:p libxml2:p mpg123:p nlohmann-json:p openal:p opencv:p pugixml:p rtaudio:p uriparser:p utf8cpp:p
           install: >-
             unzip
             make
