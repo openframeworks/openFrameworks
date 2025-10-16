@@ -32,7 +32,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Docker Step
-        run: "docker run -di --name emscripten -v $PWD:/src emscripten/emsdk:4.0.4 bash"
+        run: "docker run -di --name emscripten -v $PWD:/src emscripten/emsdk:4.0.16 bash"
       # - name: Determine Release
       #   id: vars
       #   shell: bash
@@ -87,7 +87,7 @@ jobs:
           release: true
           update: true
           msystem: ${{matrix.msystem}}
-          pacboy: openssl:p python:p gcc:p assimp:p cairo:p curl:p freeglut:p FreeImage:p glew:p glfw:p glm:p libsndfile:p libusb:p libxml2:p mpg123:p nlohmann-json:p openal:p opencv:p pugixml:p rtaudio:p uriparser:p utf8cpp:p
+          pacboy: openssl:p python:p gcc:p assimp:p cairo:p curl:p freeglut:p freeimage:p glew:p glfw:p glm:p libsndfile:p libusb:p libxml2:p mpg123:p nlohmann-json:p openal:p opencv:p pugixml:p rtaudio:p uriparser:p utf8cpp:p
           install: >-
             unzip
             make
