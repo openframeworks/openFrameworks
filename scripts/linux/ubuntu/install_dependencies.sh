@@ -200,8 +200,6 @@ gstreamer${GSTREAMER_VERSION}-alsa gstreamer${GSTREAMER_VERSION}-plugins-base \
 gstreamer${GSTREAMER_VERSION}-plugins-good gdb ${GLFW_PKG} liburiparser-dev \
 libpugixml-dev libgtk2.0-0 libpoco-dev libxcursor-dev libxi-dev libxinerama-dev \
 libxml2-dev \
-\
-# --- NEW: Wayland + GLVND + proto headers ---
 libwayland-dev wayland-protocols libxkbcommon-dev libxkbcommon-x11-dev \
 libdecor-0-dev xorgproto libglvnd-dev libegl1-mesa-dev libgles2-mesa-dev \
 mesa-utils"
