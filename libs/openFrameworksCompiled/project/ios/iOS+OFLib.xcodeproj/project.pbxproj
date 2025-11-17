@@ -133,6 +133,7 @@
 		BFB0B4072C50E019008FB5A3 /* zlib.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF7E591D2BA2057900E5C52E /* zlib.xcframework */; };
 		BFB0B4082C50E019008FB5A3 /* uriparser.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF7E591B2BA2056600E5C52E /* uriparser.xcframework */; };
 		BFB0B4092C50E019008FB5A3 /* tess2.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF7E59192BA2054700E5C52E /* tess2.xcframework */; };
+		BFB0B40A2C50E019008FB5A3 /* pugixml.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF7E59172BA2052D00E5C52E /* pugixml.xcframework */; };
 		BFB0B40B2C50E019008FB5A3 /* libpng.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF7E59132BA2050B00E5C52E /* libpng.xcframework */; };
 		BFB0B40C2C50E019008FB5A3 /* freetype.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF7E590D2BA204D300E5C52E /* freetype.xcframework */; };
 		BFB0B40D2C50E019008FB5A3 /* fmt.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF7E590B2BA204BC00E5C52E /* fmt.xcframework */; };
@@ -379,6 +380,7 @@
 		BF7E590B2BA204BC00E5C52E /* fmt.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = fmt.xcframework; path = ../../../fmt/lib/macos/fmt.xcframework; sourceTree = "<group>"; };
 		BF7E590D2BA204D300E5C52E /* freetype.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = freetype.xcframework; path = ../../../freetype/lib/macos/freetype.xcframework; sourceTree = "<group>"; };
 		BF7E59132BA2050B00E5C52E /* libpng.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = libpng.xcframework; path = ../../../libpng/lib/macos/libpng.xcframework; sourceTree = "<group>"; };
+		BF7E59172BA2052D00E5C52E /* pugixml.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = pugixml.xcframework; path = ../../../pugixml/lib/macos/pugixml.xcframework; sourceTree = "<group>"; };
 		BF7E59192BA2054700E5C52E /* tess2.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = tess2.xcframework; path = ../../../tess2/lib/macos/tess2.xcframework; sourceTree = "<group>"; };
 		BF7E591B2BA2056600E5C52E /* uriparser.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = uriparser.xcframework; path = ../../../uriparser/lib/macos/uriparser.xcframework; sourceTree = "<group>"; };
 		BF7E591D2BA2057900E5C52E /* zlib.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = zlib.xcframework; path = ../../../zlib/lib/macos/zlib.xcframework; sourceTree = "<group>"; };
@@ -526,6 +528,7 @@
 				BFB0B4072C50E019008FB5A3 /* zlib.xcframework in Frameworks */,
 				BFB0B4082C50E019008FB5A3 /* uriparser.xcframework in Frameworks */,
 				BFB0B4092C50E019008FB5A3 /* tess2.xcframework in Frameworks */,
+				BFB0B40A2C50E019008FB5A3 /* pugixml.xcframework in Frameworks */,
 				BFB0B40B2C50E019008FB5A3 /* libpng.xcframework in Frameworks */,
 				BFB0B40C2C50E019008FB5A3 /* freetype.xcframework in Frameworks */,
 				BFB0B40D2C50E019008FB5A3 /* fmt.xcframework in Frameworks */,
@@ -1004,6 +1007,7 @@
 				BF7E591D2BA2057900E5C52E /* zlib.xcframework */,
 				BF7E591B2BA2056600E5C52E /* uriparser.xcframework */,
 				BF7E59192BA2054700E5C52E /* tess2.xcframework */,
+				BF7E59172BA2052D00E5C52E /* pugixml.xcframework */,
 				BF7E59132BA2050B00E5C52E /* libpng.xcframework */,
 				BF7E590D2BA204D300E5C52E /* freetype.xcframework */,
 				BF7E590B2BA204BC00E5C52E /* fmt.xcframework */,
