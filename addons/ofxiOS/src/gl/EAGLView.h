@@ -108,6 +108,8 @@
 - (void)notifyDraw;
 - (void)notifyResized;
 
+- (ESRendererVersion) getESVersion;
+
 @end
 
 #endif

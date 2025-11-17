@@ -103,7 +103,7 @@ public:
 		return rsource;
 	}
 	
-	static ShaderSource irriadianceCubeMap() {
+	static ShaderSource irradianceCubeMap() {
 		ShaderSource rsource;
 		rsource.vertShader = defaultVertShader();
 		

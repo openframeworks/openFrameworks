@@ -77,8 +77,12 @@ ifndef MAC_OS_STD_LIB
 	MAC_OS_STD_LIB = libc++
 endif
 
+ifndef MAC_OS_C_VER
+    MAC_OS_C_VER = -std=c17
+endif
+
 ifndef MAC_OS_CPP_VER
-    MAC_OS_CPP_VER = -std=c++17
+    MAC_OS_CPP_VER = -std=c++2b
 endif
 
 # Link against libstdc++ to silence tr1/memory errors on latest versions of osx
@@ -180,7 +184,9 @@ ifdef MAC_OS_SDK_ROOT
 endif
 
 PLATFORM_CFLAGS += -mmacosx-version-min=$(MAC_OS_MIN_VERSION)
+PLATFORM_CFLAGS += $(MAC_OS_C_VER)
 
+PLATFORM_CXXFLAGS += -mmacosx-version-min=$(MAC_OS_MIN_VERSION)
 PLATFORM_CXXFLAGS += -x objective-c++
 PLATFORM_CXXFLAGS += $(MAC_OS_CPP_VER)
 
@@ -203,7 +209,7 @@ endif
 
 PLATFORM_LDFLAGS = -stdlib=$(MAC_OS_STD_LIB)
 #PLATFORM_LDFLAGS += -arch i386
-PLATFORM_LDFLAGS += -lcurl
+# PLATFORM_LDFLAGS += -lcurl
 PLATFORM_LDFLAGS += -mmacosx-version-min=$(MAC_OS_MIN_VERSION) -v
 
 ##########################################################################################
@@ -261,14 +267,12 @@ PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/app/ofAppEGLWindow.cp
 
 
 # third party
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/boost/%
 
-
-ifeq ($(USE_FMOD),0)
-	PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/fmod/%
-	PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/sound/ofFmodSoundPlayer.cpp
-	PLATFORM_CFLAGS += -DUSE_FMOD=0
-endif
+# ifeq ($(USE_FMOD),0)
+PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/fmod/%
+PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/sound/ofFmodSoundPlayer.cpp
+PLATFORM_CFLAGS += -DUSE_FMOD=0
+# endif
 
 ##########################################################################################
 # PLATFORM HEADER SEARCH PATHS
@@ -333,7 +337,6 @@ PLATFORM_LIBRARY_SEARCH_PATHS =
 
 PLATFORM_FRAMEWORKS =
 PLATFORM_FRAMEWORKS += Accelerate
-PLATFORM_FRAMEWORKS += AGL
 PLATFORM_FRAMEWORKS += AppKit
 PLATFORM_FRAMEWORKS += ApplicationServices
 PLATFORM_FRAMEWORKS += AVFoundation
@@ -410,25 +413,25 @@ afterplatform: $(TARGET_NAME)
 # App icons
  ifeq ($(RUN_TARGET), RunRelease)
 	@if [ -f of.icns ]; then cp of.icns bin/$(BIN_NAME).app/Contents/Resources/; else cp $(OF_LIBS_PATH)/openFrameworksCompiled/project/osx/of.icns bin/$(BIN_NAME).app/Contents/Resources/; fi
-	@sed -i '' 's/\$$(ICON_NAME)/of.icns/g' bin/$(BIN_NAME).app/Contents/Info.plist
+	@sed -i '' 's/\$${ICON_NAME}/of.icns/g' bin/$(BIN_NAME).app/Contents/Info.plist
  else
 	@if [ -f of_debug.icns ]; then cp of_debug.icns bin/$(BIN_NAME).app/Contents/Resources/; else cp $(OF_LIBS_PATH)/openFrameworksCompiled/project/osx/of_debug.icns bin/$(BIN_NAME).app/Contents/Resources/; fi
-	@sed -i '' 's/\$$(ICON_NAME)/of_debug.icns/g' bin/$(BIN_NAME).app/Contents/Info.plist
+	@sed -i '' 's/\$${ICON_NAME}/of_debug.icns/g' bin/$(BIN_NAME).app/Contents/Info.plist
  endif
 
-	@sed -i '' 's/\$$(DEVELOPMENT_LANGUAGE)/English/g' bin/$(BIN_NAME).app/Contents/Info.plist
-	@sed -i '' 's/\$$(EXECUTABLE_NAME)/$(BIN_NAME)/g' bin/$(BIN_NAME).app/Contents/Info.plist
-	@sed -i '' 's/\$$(TARGET_NAME)/$(BIN_NAME)/g' bin/$(BIN_NAME).app/Contents/Info.plist
-	@sed -i '' 's/\$$(PRODUCT_BUNDLE_IDENTIFIER)/cc.openFrameworks.$(BIN_NAME)/g' bin/$(BIN_NAME).app/Contents/Info.plist
-	@sed -i '' 's/\$$(VERSION)/1.0/g' bin/$(BIN_NAME).app/Contents/Info.plist
+	@sed -i '' 's/\$${DEVELOPMENT_LANGUAGE}/English/g' bin/$(BIN_NAME).app/Contents/Info.plist
+	@sed -i '' 's/\$${EXECUTABLE_NAME}/$(BIN_NAME)/g' bin/$(BIN_NAME).app/Contents/Info.plist
+	@sed -i '' 's/\$${TARGET_NAME}/$(BIN_NAME)/g' bin/$(BIN_NAME).app/Contents/Info.plist
+	@sed -i '' 's/\$${PRODUCT_BUNDLE_IDENTIFIER}/cc.openFrameworks.$(BIN_NAME)/g' bin/$(BIN_NAME).app/Contents/Info.plist
+	@sed -i '' 's/\$${MARKETING_VERSION}/1.0/g' bin/$(BIN_NAME).app/Contents/Info.plist
 
 	@echo TARGET=$(TARGET)
 	@mv $(TARGET) bin/$(BIN_NAME).app/Contents/MacOS
 
-ifneq ($(USE_FMOD),0)
-	@mkdir -p bin/$(BIN_NAME).app/Contents/Frameworks
-	@cp $(OF_LIBS_PATH)/*/lib/$(PLATFORM_LIB_SUBPATH)/*.$(SHARED_LIB_EXTENSION) bin/$(BIN_NAME).app/Contents/Frameworks/;
-endif
+# ifneq ($(USE_FMOD),0)
+# 	@mkdir -p bin/$(BIN_NAME).app/Contents/Frameworks
+# 	@cp $(OF_LIBS_PATH)/*/lib/$(PLATFORM_LIB_SUBPATH)/*.$(SHARED_LIB_EXTENSION) bin/$(BIN_NAME).app/Contents/Frameworks/;
+# endif
 
 	@echo
 	@echo "     compiling done"

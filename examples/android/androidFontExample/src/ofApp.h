@@ -8,6 +8,7 @@ class ofApp : public ofxAndroidApp{
 	public:
 		
 		void setup();
+		void exit();
 		void update();
 		void draw();
 
@@ -26,6 +27,11 @@ class ofApp : public ofxAndroidApp{
 		void stop();
 		void resume();
 		void reloadTextures();
+
+		void deviceRefreshRateChanged(int refreshRate);
+		void deviceHighestRefreshRateChanged(int refreshRate);
+		void deviceRefreshRateChangedEvent(int &refreshRate);
+		void deviceHighestRefreshRateChangedEvent(int & refreshRate);
 
 		bool backPressed();
 		void okPressed();

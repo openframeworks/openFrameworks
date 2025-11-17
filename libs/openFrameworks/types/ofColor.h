@@ -1,10 +1,14 @@
 #pragma once
 
-#define GLM_FORCE_CTOR_INIT
-#define GLM_ENABLE_EXPERIMENTAL
-#include <glm/gtx/wrap.hpp>
+#if !defined(GLM_FORCE_CTOR_INIT)
+	#define GLM_FORCE_CTOR_INIT
+#endif
+#if !defined(GLM_ENABLE_EXPERIMENTAL)
+	#define GLM_ENABLE_EXPERIMENTAL
+#endif
+#include <glm/ext/scalar_common.hpp>
+#include <glm/vec3.hpp>
 #include <iostream>
-#include <limits>
 
 /// \class ofColor_
 ///
@@ -684,6 +688,7 @@ void ofColor_<PixelType>::copyFrom(const ofColor_<SrcType> & mom){
 	if(typeid(SrcType) == typeid(float) || typeid(SrcType) == typeid(double)) {
 		// coming from float we need a special case to clamp the values
 		for(int i = 0; i < 4; i++){
+			// FIXME: replace by std::clamp when it is exclusive C++17
 			v[i] = glm::clamp(float(mom[i]), 0.f, 1.f) * factor;
 		}
 	} else{

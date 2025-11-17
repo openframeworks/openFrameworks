@@ -12,7 +12,7 @@
 #include <algorithm>
 #include <bitset> // For ofToBinary.
 #include <chrono>
-#include <iomanip>  //for setprecision
+#include <iomanip> //for setprecision
 #include <optional>
 #include <sstream>
 
@@ -1021,7 +1021,7 @@ std::string ofGetVersionPreRelease();
 /// The output file type will be deduced from the given file name.
 ///
 /// \param filename The image output file.
-void ofSaveScreen(const std::string & filename);
+void ofSaveScreen(const of::filesystem::path & fileName);
 
 /// \brief Saves the current frame as a PNG image.
 ///
@@ -1036,7 +1036,7 @@ void ofSaveFrame(bool bUseViewport = false);
 /// The output file type will be deduced from the given file name.
 ///
 /// \param filename The image output file.
-void ofSaveViewport(const std::string & filename);
+void ofSaveViewport(const of::filesystem::path & filename);
 
 /// \section System
 

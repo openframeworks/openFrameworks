@@ -92,6 +92,7 @@ int ofGetGlFormat(const ofPixels_<T> & pixels) {
 	return ofGetGLFormatFromPixelFormat(pixels.getPixelFormat());
 }
 
+
 template<class T>
 int ofGetGLFormat(const ofPixels_<T> & pixels) {
     return ofGetGLFormatFromPixelFormat(pixels.getPixelFormat());
@@ -100,6 +101,9 @@ int ofGetGLFormat(const ofPixels_<T> & pixels) {
 std::string ofGLSLVersionFromGL(int major, int minor);
 std::string ofGLSLVersionFromGL();
 std::string ofGLSLGetDefaultHeader();
+#ifdef TARGET_OPENGLES
+int ofGLESVersionFromGL();
+#endif
 
 #ifndef TARGET_OPENGLES
 void ofEnableGLDebugLog();
@@ -107,9 +111,12 @@ void ofDisableGLDebugLog();
 #endif
 
 #ifndef TARGET_OPENGLES
-	#define GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS			GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS_EXT
-	#define GL_FRAMEBUFFER_INCOMPLETE_FORMATS				GL_FRAMEBUFFER_INCOMPLETE_FORMATS_EXT
-
+	#ifndef GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS
+		#define GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS			GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS_EXT
+	#endif
+	#ifndef GL_FRAMEBUFFER_INCOMPLETE_FORMATS
+		#define GL_FRAMEBUFFER_INCOMPLETE_FORMATS				GL_FRAMEBUFFER_INCOMPLETE_FORMATS_EXT
+	#endif
 	#ifndef GL_UNSIGNED_INT_24_8
 		#define GL_UNSIGNED_INT_24_8						GL_UNSIGNED_INT_24_8_EXT
 	#endif
@@ -148,12 +155,22 @@ void ofDisableGLDebugLog();
         #endif
     #endif
 
-	#define GL_FRAMEBUFFER_INCOMPLETE_FORMATS				GL_FRAMEBUFFER_INCOMPLETE_FORMATS_OES
-	#define GL_UNSIGNED_INT_24_8							GL_UNSIGNED_INT_24_8_OES
+	#ifndef GL_FRAMEBUFFER_INCOMPLETE_FORMATS
+		#define GL_FRAMEBUFFER_INCOMPLETE_FORMATS				GL_FRAMEBUFFER_INCOMPLETE_FORMATS_OES
+	#endif
+	#ifndef GL_UNSIGNED_INT_24_8
+		#define GL_UNSIGNED_INT_24_8							GL_UNSIGNED_INT_24_8_OES
+	#endif
 
-	#define GL_DEPTH24_STENCIL8								GL_DEPTH24_STENCIL8_OES
-	#define GL_DEPTH_STENCIL								GL_DEPTH24_STENCIL8_OES
-	#define GL_DEPTH_COMPONENT24							GL_DEPTH_COMPONENT24_OES
+	#ifndef GL_DEPTH24_STENCIL8
+		#define GL_DEPTH24_STENCIL8								GL_DEPTH24_STENCIL8_OES
+	#endif
+	#ifndef GL_DEPTH_STENCIL
+		#define GL_DEPTH_STENCIL								GL_DEPTH24_STENCIL8_OES
+	#endif
+	#ifndef GL_DEPTH_COMPONENT24
+		#define GL_DEPTH_COMPONENT24							GL_DEPTH_COMPONENT24_OES
+	#endif
 	#ifdef GL_DEPTH_COMPONENT32_OES
 		#ifndef GL_DEPTH_COMPONENT32
 			#define GL_DEPTH_COMPONENT32					GL_DEPTH_COMPONENT32_OES

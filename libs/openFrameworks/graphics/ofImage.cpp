@@ -1,6 +1,7 @@
 #include "ofImage.h"
 #include "ofAppRunner.h"
 #include "ofPixels.h"
+#include "ofFileUtils.h"
 
 #include <FreeImage.h>
 
@@ -227,10 +228,23 @@ static bool loadImage(ofPixels_<PixelType> & pix, const of::filesystem::path & _
 		return ofLoadImage(pix, ofLoadURL(ofPathToString(_fileName)).data);
 	}
 
+
+	ofFile file(_fileName);
+	if (!file.exists()) {
+		ofLogError("loadImage") << "File not found: " << _fileName;
+		return false;
+	}
+
+	std::uint64_t fileSize = file.getSize();
+	if (fileSize == 0) {
+		ofLogError("loadImage") << "File is empty: " << _fileName;
+		return false;
+	}
 	
 	bool bLoaded = false;
 	FIBITMAP * bmp = nullptr;
 
+	try {
 	FREE_IMAGE_FORMAT fif = FIF_UNKNOWN;
 #ifdef OF_OS_WINDOWS
 	fif = FreeImage_GetFileTypeU(_fileName.c_str(), 0);
@@ -250,7 +264,11 @@ static bool loadImage(ofPixels_<PixelType> & pix, const of::filesystem::path & _
 		if(fif == FIF_JPEG) {
 			option = getJpegOptionFromImageLoadSetting(settings);
 		}
-		auto fileName = ofToDataPath(_fileName);
+		if (!FreeImage_FIFSupportsReading(fif)) {
+			std::cerr << "Error: FreeImage does not support reading this format." << std::endl;
+		}
+		auto fileName = ofToDataPathFS(_fileName);
+
 
 #ifdef OF_OS_WINDOWS
 		bmp = FreeImage_LoadU(fif, fileName.c_str(), option | settings.freeImageFlags);
@@ -262,6 +280,16 @@ static bool loadImage(ofPixels_<PixelType> & pix, const of::filesystem::path & _
 			bLoaded = true;
 		}
 	}
+
+	}
+catch (const std::exception & e) {
+	std::cerr << "Exception caught in FreeImage_Load: " << e.what() << std::endl;
+	return false;
+}
+catch (...) {
+	std::cerr << "Unknown exception caught in FreeImage_Load." << std::endl;
+	return false;
+}
 
 	//-----------------------------
 
@@ -364,7 +392,8 @@ bool ofLoadImage(ofTexture & tex, const of::filesystem::path & path, const ofIma
 //----------------------------------------------------------------
 bool ofLoadImage(ofTexture & tex, const of::filesystem::path& path, bool bFlipInY, const ofImageLoadSettings &settings){
 	bool loaded = false;
-	std::string ext = ofToLower(path.extension().string());
+	auto ext = ofGetExtensionLower(path);
+
 	bool hdr = (ext == ".hdr" || ext == ".exr");
 	if( hdr ) {
 		ofFloatPixels pixels;
@@ -410,7 +439,7 @@ bool ofLoadImage(ofTexture & tex, const ofBuffer & buffer, const ofImageLoadSett
 
 //----------------------------------------------------------------
 template<typename PixelType>
-static bool saveImage(const ofPixels_<PixelType> & _pix, const of::filesystem::path& _fileName, ofImageQualityType qualityLevel) {
+static bool saveImage(const ofPixels_<PixelType> & _pix, const of::filesystem::path & _fileName, ofImageQualityType qualityLevel) {
 	ofInitFreeImage();
 	if (_pix.isAllocated() == false){
 		ofLogError("ofImage") << "saveImage(): couldn't save " << _fileName << ", pixels are not allocated";
@@ -418,7 +447,7 @@ static bool saveImage(const ofPixels_<PixelType> & _pix, const of::filesystem::p
 	}
 
 	ofFilePath::createEnclosingDirectory(_fileName);
-	auto fileName = ofToDataPath(_fileName);
+	auto fileName = ofToDataPathFS(_fileName);
 	FREE_IMAGE_FORMAT fif = FIF_UNKNOWN;
 #ifdef OF_OS_WINDOWS
 	fif = FreeImage_GetFileTypeU(fileName.c_str(), 0);
@@ -797,7 +826,7 @@ bool ofImage_<PixelType>::load(const of::filesystem::path & fileName, const ofIm
 
 //----------------------------------------------------------
 template<typename PixelType>
-bool ofImage_<PixelType>::loadImage(const std::string& fileName){
+bool ofImage_<PixelType>::loadImage(const of::filesystem::path & fileName){
 	return load(fileName);
 }
 
@@ -838,7 +867,7 @@ bool ofImage_<PixelType>::save(ofBuffer & buffer, ofImageFormat imageFormat, ofI
 
 //----------------------------------------------------------
 template<typename PixelType>
-void ofImage_<PixelType>::saveImage(const std::string& fileName, ofImageQualityType qualityLevel) const {
+void ofImage_<PixelType>::saveImage(const of::filesystem::path & fileName, ofImageQualityType qualityLevel) const {
 	save(fileName, qualityLevel);
 }
 

@@ -24,7 +24,7 @@ void ofApp::update(){
 	// "lastBuffer" is shared between update() and audioOut(), which are called
 	// on two different threads. This lock makes sure we don't use lastBuffer
 	// from both threads simultaneously (see the corresponding lock in audioOut())
-	unique_lock<mutex> lock(audioMutex);
+	std::unique_lock<std::mutex> lock(audioMutex);
 
 	// this loop is building up a polyline representing the audio contained in
 	// the left channel of the buffer
@@ -92,7 +92,7 @@ void ofApp::audioOut(ofSoundBuffer &outBuffer) {
 		pulsePhase += pulsePhaseStep;
 	}
 	
-	unique_lock<mutex> lock(audioMutex);
+	std::unique_lock<std::mutex> lock(audioMutex);
 	lastBuffer = outBuffer;
 }
 

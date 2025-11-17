@@ -90,9 +90,6 @@ msys2:
 	ADDON_LIBS_EXCLUDE = libs/assimp
 	ADDON_INCLUDES_EXCLUDE = libs/assimp/%
 
-osx:
-	ADDON_INCLUDES_EXCLUDE = libs/assimp/include/%
-
 android/armeabi-v7a:
 	ADDON_LIBS=
 	ADDON_LIBS+=libs/assimp/lib/android/armeabi-v7a/libassimp.a
@@ -102,7 +99,11 @@ android/x86:
 	ADDON_LIBS=
 	ADDON_LIBS+=libs/assimp/lib/android/x86/libassimp.a
 	ADDON_LIBS+=libs/assimp/lib/android/x86/libIrrXML.a
-
-ios:
+osx:
+	ADDON_INCLUDES_EXCLUDE = libs/assimp/include/%
 	ADDON_LIBS=
-	ADDON_LIBS=libs/assimp/lib/ios/assimp.a
+	ADDON_LIBS=libs/assimp/lib/macos/assimp.xcframework/macos-arm64_x86_64/assimp.a
+	
+emscripten:
+	ADDON_LIBS=
+	ADDON_LIBS=libs/assimp/lib/emscripten/%/libassimp.a

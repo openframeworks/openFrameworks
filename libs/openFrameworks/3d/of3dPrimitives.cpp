@@ -12,6 +12,7 @@
 #include "ofVboMesh.h"
 #include "ofTexture.h"
 #include "of3dUtils.h"
+#include "ofVectorMath.h"
 
 using std::vector;
 using std::shared_ptr;
@@ -212,6 +213,20 @@ void of3dPrimitive::draw() const{
 	draw(OF_MESH_FILL);
 }
 
+ofBoundingBox of3dPrimitive::getBoundingBox() const{
+    ofBoundingBox boundingBox;
+    const vector<glm::vec3>& vertices  = getMesh().getVertices();
+    for(auto v : vertices){
+        if (v.x < boundingBox.min.x) boundingBox.min.x = v.x;
+        if (v.y < boundingBox.min.y) boundingBox.min.y = v.y;
+        if (v.z < boundingBox.min.z) boundingBox.min.z = v.z;
+         if (v.x > boundingBox.max.x) boundingBox.max.x = v.x;
+        if (v.y > boundingBox.max.y) boundingBox.max.y = v.y;
+        if (v.z > boundingBox.max.z) boundingBox.max.z = v.z;
+    }
+    return boundingBox;
+}
+
 //--------------------------------------------------------------
 void of3dPrimitive::drawNormals(float length, bool bFaceNormals) const{
     ofNode::transformGL(ofGetCurrentRenderer().get());
@@ -228,11 +243,11 @@ void of3dPrimitive::drawNormals(float length, bool bFaceNormals) const{
         if(bFaceNormals) {
 			for(size_t i = 0; i < normals.size(); i++ ) {
                 if(i % 3 == 0) {
-                    vert = (vertices[i]+vertices[i+1]+vertices[i+2]) / 3;
+                    vert = (vertices[i]+vertices[i+1]+vertices[i+2]) / 3.0f;
                 } else if(i % 3 == 1) {
-                    vert = (vertices[i-1]+vertices[i]+vertices[i+1]) / 3;
+                    vert = (vertices[i-1]+vertices[i]+vertices[i+1]) / 3.0f;
                 } else if ( i % 3 == 2) {
-                    vert = (vertices[i-2]+vertices[i-1]+vertices[i]) / 3;
+                    vert = (vertices[i-2]+vertices[i-1]+vertices[i]) / 3.0f;
                 }
                 normalsMesh.setVertex(i*2, vert);
 				normal = glm::normalize(toGlm(normals[i]));

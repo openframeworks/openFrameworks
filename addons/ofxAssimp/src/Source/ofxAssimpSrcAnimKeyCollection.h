@@ -8,7 +8,7 @@
 #include "ofNode.h"
 
 
-namespace ofx::assimp {
+namespace ofxAssimp {
 
 struct AnimVectorKey {
 	float time = 0.0;
@@ -26,9 +26,9 @@ class SrcAnimKeyCollection {
 public:
 	unsigned int uId = 0;
 	std::string name = "";
-	std::vector<ofx::assimp::AnimVectorKey> positionKeys;
-	std::vector<ofx::assimp::AnimRotationKey> rotationKeys;
-	std::vector<ofx::assimp::AnimVectorKey> scaleKeys;
+	std::vector<ofxAssimp::AnimVectorKey> positionKeys;
+	std::vector<ofxAssimp::AnimRotationKey> rotationKeys;
+	std::vector<ofxAssimp::AnimVectorKey> scaleKeys;
 	
 	void clear() {
 		positionKeys.clear();
@@ -39,7 +39,7 @@ public:
 	void setup( aiNodeAnim* aNodeAnim, float aDurationInTicks );
 	bool hasKeys();
 	
-	glm::vec3 getVec3ForTime( const float& atime, const std::vector<ofx::assimp::AnimVectorKey>& akeys );
+	glm::vec3 getVec3ForTime( const float& atime, const std::vector<ofxAssimp::AnimVectorKey>& akeys );
 	
 	glm::vec3 getPosition( const float& atime );
 	glm::vec3 getScale( const float& atime );

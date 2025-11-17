@@ -47,9 +47,9 @@ public:
     ///
     /// \param fileName Path to the sound file, relative to your app's data folder.
     /// \param stream set "true" to enable streaming from disk (for large files).
-    bool load(const of::filesystem::path& fileName, bool stream = false);
+    bool load(const of::filesystem::path & fileName, bool stream = false);
     [[deprecated("Use load")]]
-	bool loadSound(std::string fileName, bool stream = false);
+	bool loadSound(const of::filesystem::path & fileName, bool stream = false);
 
     /// \brief Stops and unloads the current sound.
     void unload();

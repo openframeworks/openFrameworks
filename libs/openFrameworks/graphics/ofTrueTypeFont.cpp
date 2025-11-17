@@ -330,7 +330,7 @@ static of::filesystem::path winFontPathByName(const string & fontname) {
 #ifdef TARGET_LINUX
 //------------------------------------------------------------------
 static of::filesystem::path linuxFontPathByName(const string & fontname) {
-	string filename;
+	of::filesystem::path fontPath;
 	FcPattern * pattern = FcNameParse((const FcChar8*)fontname.c_str());
 	FcBool ret = FcConfigSubstitute(0,pattern,FcMatchPattern);
 	if(!ret){
@@ -346,20 +346,19 @@ static of::filesystem::path linuxFontPathByName(const string & fontname) {
 		ofLogError() << "linuxFontPathByName(): couldn't match font file or system font with name \"" << fontname << "\"";
 		FcPatternDestroy(fontMatch);
 		FcPatternDestroy(pattern);
-		return "";
+		return {};
 	}
 	FcChar8	*file;
 	if (FcPatternGetString (fontMatch, FC_FILE, 0, &file) == FcResultMatch){
-		filename = (const char*)file;
+		fontPath = (const char*)file;
 	}else{
 		ofLogError() << "linuxFontPathByName(): couldn't find font match for \"" << fontname << "\"";
 		FcPatternDestroy(fontMatch);
 		FcPatternDestroy(pattern);
-		return "";
+		return {};
 	}
 	FcPatternDestroy(fontMatch);
 	FcPatternDestroy(pattern);
-	of::filesystem::path fontPath = { filename };
 	return fontPath;
 }
 #endif
@@ -369,7 +368,7 @@ static of::filesystem::path linuxFontPathByName(const string & fontname) {
 static bool loadFontFace(const string & _fontname, FT_Face & face,
 						 of::filesystem::path & _filename, int index){
 	auto fontname = _fontname;
-	auto filename = ofToDataPath(fontname);
+	auto filename = ofToDataPathFS(fontname);
 	int fontID = index;
 	if(!of::filesystem::exists(filename)){
 #ifdef TARGET_LINUX
@@ -613,7 +612,7 @@ void ofTrueTypeFont::reloadTextures(){
 }
 
 //-----------------------------------------------------------
-bool ofTrueTypeFont::loadFont(string filename, int fontSize, bool bAntiAliased, bool bFullCharacterSet, bool makeContours, float simplifyAmt, int dpi) {
+bool ofTrueTypeFont::loadFont(const of::filesystem::path & filename, int fontSize, bool bAntiAliased, bool bFullCharacterSet, bool makeContours, float simplifyAmt, int dpi) {
 	return load(filename, fontSize, bAntiAliased, bFullCharacterSet, makeContours, simplifyAmt, dpi);
 }
 
@@ -689,7 +688,7 @@ ofTrueTypeFont::glyph ofTrueTypeFont::loadGlyph(uint32_t utf8) const{
 }
 
 //-----------------------------------------------------------
-bool ofTrueTypeFont::load(const of::filesystem::path& filename, int fontSize, bool antialiased, bool fullCharacterSet, bool makeContours, float simplifyAmt, int dpi) {
+bool ofTrueTypeFont::load(const of::filesystem::path & filename, int fontSize, bool antialiased, bool fullCharacterSet, bool makeContours, float simplifyAmt, int dpi) {
 	
 	ofTrueTypeFontSettings settings(filename,fontSize);
 	settings.antialiased = antialiased;

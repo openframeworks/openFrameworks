@@ -5,8 +5,12 @@
 #include "ofTimerFps.h"
 #include "ofConstants.h" // FS Only
 
-#define GLM_FORCE_CTOR_INIT
-#define GLM_ENABLE_EXPERIMENTAL
+#if !defined(GLM_FORCE_CTOR_INIT)
+	#define GLM_FORCE_CTOR_INIT
+#endif
+#if !defined(GLM_ENABLE_EXPERIMENTAL)
+	#define GLM_ENABLE_EXPERIMENTAL
+#endif
 #include <glm/vec2.hpp>
 
 #include <set>
@@ -44,6 +48,7 @@ enum ofKey{
 
 	OF_KEY_BACKSPACE =	8,
 	OF_KEY_DEL		 =	127,
+    OF_KEY_SPACE     = 32,
 
 
 	// For legacy reasons we are mixing up control keys
@@ -405,7 +410,7 @@ public:
 	bool notifyDragEvent(ofDragInfo info);
 
 private:
-	float targetRate;
+	float targetRate = 60.0f;
 	bool bFrameRateSet;
 	ofTimerFps timerFps;
 //	ofTimer timer;
@@ -419,7 +424,7 @@ private:
 	int modifiers = 0;
 
 	enum TimeMode {
-		System,
+		System = 0,
 		FixedRate,
 		Filtered,
 	} timeMode

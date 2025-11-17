@@ -1,26 +1,49 @@
 #include "ofMain.h"
 #include "ofApp.h"
 
-int main(){
-	ofSetupOpenGL(1024,768, OF_WINDOW);			// <-------- setup the GL context
+#ifdef TARGET_ANDROID
 
-	// this kicks off the running of my app
-	// can be OF_WINDOW or OF_FULLSCREEN
-	// pass in width and height too:
-	ofRunApp( new ofApp() );
-	return 0;
+#include "ofWindowSettings.h"
+#include "ofGLProgrammableRenderer.h"
+
+shared_ptr<ofApp> *ofapp;
+std::shared_ptr<ofAppBaseWindow> baseWindow;
+
+//--------------------------------------------------------------
+int main(int argc, char **argv) {
+    baseWindow = std::make_shared<ofAppAndroidWindow>();
+    ofxAndroidWindowSettings settings;
+    settings.glesVersion = 2;
+    settings.setSize(1920, 1080);
+    settings.windowMode = OF_WINDOW;
+    settings.preserveContextOnPause = true;
+    baseWindow = ofCreateWindow(settings);
+    ofapp = new shared_ptr<ofApp>(new ofApp());
+    ofRunApp(baseWindow, *ofapp);
+    return 0;
 }
 
-
-#ifdef TARGET_ANDROID
 void ofAndroidApplicationInit()
 {
-	//application scope init
+    //application scope init
 }
-
 void ofAndroidActivityInit()
 {
-	//activity scope init
-	main();
+    //activity scope init - call main
+    main(0, nullptr);
 }
+
+// Callbacks from Android Layer
+extern "C" JNIEXPORT void JNICALL
+Java_cc_openframeworks_OFAndroid_init( JNIEnv*  env, jclass  clazz)
+{
+    ofAndroidApplicationInit();
+}
+
+extern "C" JNIEXPORT void JNICALL
+Java_cc_openframeworks_OFAndroid_onCreate( JNIEnv*  env, jclass  clazz)
+{
+    ofAndroidActivityInit();
+}
+
 #endif

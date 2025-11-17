@@ -13,8 +13,8 @@ public:
 	bool 	setPixelFormat(ofPixelFormat pixelFormat);
 	ofPixelFormat	getPixelFormat() const;
 	
-	void	loadAsync(std::string name);
-	bool 	load(std::string uri);
+	void loadAsync(const of::filesystem::path & fileName) override;
+	bool load(const of::filesystem::path & fileName) override;
 
 	void 	update();
 

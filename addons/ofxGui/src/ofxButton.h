@@ -12,6 +12,7 @@ public:
 	~ofxButton();
 	ofxButton* setup(ofParameter<void> _bVal, float width = defaultWidth, float height = defaultHeight);
     ofxButton* setup(const std::string& toggleName, float width = defaultWidth, float height = defaultHeight);
+	void generateDraw();
 
 	virtual bool mouseReleased(ofMouseEventArgs & args);
 	virtual bool mouseMoved(ofMouseEventArgs & args);

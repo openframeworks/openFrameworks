@@ -1,13 +1,15 @@
 #!/usr/bin/env bash
 set -e
-VER=master
+VER=latest
 PLATFORM=""
 ARCH=""
 OVERWRITE=1
+LEGACY=0
 SILENT_ARGS=""
 NO_SSL=""
 BLEEDING_EDGE=0
-DL_VERSION=2.2
+DL_VERSION=2.6.7
+TAG=""
 
 printHelp(){
 cat << EOF
@@ -28,6 +30,7 @@ cat << EOF
     -s, --silent                Silent download progress
     -h, --help                  Shows this message
     -k, --no-ssl                Allow no SSL validation
+    -t, --tag                   tag release for libraries
 EOF
 }
 
@@ -41,9 +44,19 @@ download(){
     # downloader ci.openframeworks.cc/libs/$1 $SILENT_ARGS
 
     COMMAND=" "
-    REPO="nightly"
+
     if [[ $BLEEDING_EDGE = 1 ]] ; then
-        REPO="bleeding"
+        REPO="latest"
+    else
+        REPO="nightly"
+    fi
+
+    #FIXME: remove later, now forcing "latest"
+    REPO="latest"
+
+
+    if [[ $TAG != "" ]] ; then
+        REPO="$TAG"
     fi
 
     for PKG in $1; do
@@ -100,13 +113,19 @@ while [[ $# -gt 0 ]]; do
         -s|--silent)
         SILENT_ARGS=1
         ;;
-
         -k|--no-ssl)
         NO_SSL=1
         ;;
         -m|--msystem)
         MSYSTEM="$2"
         shift # past argument
+        ;;
+        -t|--tag)
+        TAG="$2"
+        shift # past argument
+        ;;
+        -l|--legacy)
+        LEGACY=1
         ;;
         -h|--help)
         printHelp
@@ -115,7 +134,7 @@ while [[ $# -gt 0 ]]; do
         *)
         echo "Error: invalid argument: $key"
         printHelp
-        exit 1
+        # exit 1
         ;;
     esac
     shift # past argument or value
@@ -143,7 +162,12 @@ if [ "$ARCH" == "" ]; then
     if [ "$PLATFORM" == "linux" ]; then
         ARCH=$(uname -m)
         if [ "$ARCH" == "x86_64" ]; then
-            GCC_VERSION=$(gcc -dumpversion | cut -f1 -d.)
+            if command -v gcc &> /dev/null
+            then
+                GCC_VERSION=$(gcc -dumpversion | cut -f1 -d.)
+            else
+                GCC_VERSION=6
+            fi
             if [ $GCC_VERSION -eq 4 ]; then
                 ARCH=64gcc6
             elif [ $GCC_VERSION -eq 5 ]; then
@@ -188,7 +212,11 @@ SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd "$SCRIPT_DIR"
 
 if [[ $BLEEDING_EDGE = 1 ]] ; then
-    VER=bleeding
+    VER=latest
+fi
+
+if [[ $TAG != "" ]] && [[ $TAG != "nightly" ]] ; then
+    VER="$TAG"
 fi
 
 if [ "$PLATFORM" == "linux" ] && [ "$ARCH" == "64" ]; then
@@ -199,7 +227,15 @@ if [ "$PLATFORM" == "linux" ] && [ "$ARCH" == "64" ]; then
     fi
 fi
 
-echo " openFrameworks download_libs.sh v$DL_VERSION"
+echo " openFrameworks download_libs.sh v$DL_VERSION args=$@"
+
+if [ "$PLATFORM" == "emscripten" ]; then
+    if [[ $BLEEDING_EDGE = 1 ]] ; then
+        if [[ $ARCH = "" ]] ; then
+            ARCH="32"
+        fi
+    fi
+fi
 
 if [ "$PLATFORM" == "msys2" ]; then
     if [[ $BLEEDING_EDGE = 1 ]] ; then
@@ -208,21 +244,40 @@ if [ "$PLATFORM" == "msys2" ]; then
         PKGS="openFrameworksLibs_${VER}_${PLATFORM}_${ARCH}.zip"
     fi
 elif [ "$ARCH" == "" ] && [ "$PLATFORM" == "vs" ]; then
-    PKGS="openFrameworksLibs_${VER}_${PLATFORM}_64_1.zip \
+    if [[ $BLEEDING_EDGE = 1 ]]; then
+        if [[ $LEGACY == 1 ]]; then
+            PKGS="openFrameworksLibs_${VER}_${PLATFORM}_2019_64_1.zip \
+                  openFrameworksLibs_${VER}_${PLATFORM}_2019_64_2.zip"
+        else
+            PKGS="openFrameworksLibs_${VER}_${PLATFORM}_64_1.zip \
+                  openFrameworksLibs_${VER}_${PLATFORM}_64_2.zip \
+                  openFrameworksLibs_${VER}_${PLATFORM}_arm64_1.zip \
+                  openFrameworksLibs_${VER}_${PLATFORM}_arm64_2.zip \
+                  openFrameworksLibs_${VER}_${PLATFORM}_arm64ec_1.zip \
+                  openFrameworksLibs_${VER}_${PLATFORM}_arm64ec_2.zip"
+        fi
+    else
+        PKGS="openFrameworksLibs_${VER}_${PLATFORM}_64_1.zip \
           openFrameworksLibs_${VER}_${PLATFORM}_64_2.zip \
           openFrameworksLibs_${VER}_${PLATFORM}_64_3.zip \
           openFrameworksLibs_${VER}_${PLATFORM}_64_4.zip"
+      fi
 elif [ "$PLATFORM" == "vs" ]; then
     if [[ $BLEEDING_EDGE = 1 ]] ; then
-        PKGS="openFrameworksLibs_${VER}_${PLATFORM}_${ARCH}_1.zip \
-              openFrameworksLibs_${VER}_${PLATFORM}_${ARCH}_2.zip"
+        if [[ $LEGACY == 1 ]]; then
+            PKGS="openFrameworksLibs_${VER}_${PLATFORM}_2019_64_1.zip \
+                  openFrameworksLibs_${VER}_${PLATFORM}_2019_64_2.zip"
+        else
+            PKGS="openFrameworksLibs_${VER}_${PLATFORM}_${ARCH}_1.zip \
+                  openFrameworksLibs_${VER}_${PLATFORM}_${ARCH}_2.zip"
+        fi
     else       
         PKGS="openFrameworksLibs_${VER}_${PLATFORM}_${ARCH}_1.zip \
               openFrameworksLibs_${VER}_${PLATFORM}_${ARCH}_2.zip \
               openFrameworksLibs_${VER}_${PLATFORM}_${ARCH}_3.zip \
               openFrameworksLibs_${VER}_${PLATFORM}_${ARCH}_4.zip"
     fi
-elif [[ "$PLATFORM" =~ ^(osx|ios|tvos|xros|catos|watchos)$ ]]; then
+elif [[ "$PLATFORM" =~ ^(osx|ios|tvos|xros|catos|watchos|macos)$ ]]; then
     if [[ $BLEEDING_EDGE = 1 ]] ; then
         PKGS="openFrameworksLibs_${VER}_${PLATFORM}_1.tar.bz2 \
               openFrameworksLibs_${VER}_${PLATFORM}_2.tar.bz2 \
@@ -237,12 +292,17 @@ elif [ "$ARCH" == "" ] && [ "$PLATFORM" == "android" ]; then
     if [[ $BLEEDING_EDGE = 1 ]] ; then
         PKGS="openFrameworksLibs_${VER}_${PLATFORM}_armv7.tar.bz2 \
               openFrameworksLibs_${VER}_${PLATFORM}_arm64.tar.bz2 \
-              openFrameworksLibs_${VER}_${PLATFORM}_x86_64.tar.bz2
-              openFrameworksLibs_${VER}_${PLATFORM}_x86.tar.bz2"
+              openFrameworksLibs_${VER}_${PLATFORM}_x86_64.tar.bz2"
     else
         PKGS="openFrameworksLibs_${VER}_${PLATFORM}armv7.tar.bz2 \
           openFrameworksLibs_${VER}_${PLATFORM}arm64.tar.bz2 \
           openFrameworksLibs_${VER}_${PLATFORM}x86.tar.bz2"
+    fi
+elif [ "$PLATFORM" == "emscripten" ]; then
+    if [[ $BLEEDING_EDGE = 1 ]] ; then
+        PKGS="openFrameworksLibs_${VER}_${PLATFORM}_${ARCH}.tar.bz2"
+    else
+        PKGS="openFrameworksLibs_${VER}_${PLATFORM}${ARCH}.tar.bz2"
     fi
 else # Linux
     if [[ $BLEEDING_EDGE = 1 ]] ; then
@@ -275,11 +335,10 @@ cd download
 download "${PKGS[@]}"
 
 cd ../ # back to libs
-
+libs=("cairo" "curl" "FreeImage" "brotli" "fmod" "freetype" "glew" "glfw" "json" "libpng" "openssl" "pixman" "poco" "rtAudio" "tess2" "uriparser" "utf8" "videoInput" "zlib" "opencv" "ippicv" "assimp" "libxml2" "svgtiny" "fmt")
 if [ $OVERWRITE -eq 1 ]; then
     echo " "
     echo " Overwrite - Removing prior libraries for [$PLATFORM]"
-    libs=("boost" "cairo" "curl" "FreeImage" "brotli" "fmod" "freetype" "glew" "glfw" "json" "libpng" "openssl" "pixman" "poco" "rtAudio" "tess2" "uriparser" "utf8" "videoInput" "zlib" "opencv" "ippicv" "assimp" "libxml2" "svgtiny" "fmt")
     for ((i=0;i<${#libs[@]};++i)); do
         if [ -e "${libs[i]}/lib/$PLATFORM" ]; then
             echo "  Removing: [${libs[i]}/lib/$PLATFORM]"
@@ -291,10 +350,30 @@ if [ $OVERWRITE -eq 1 ]; then
                 rm -rf "${libs[i]}/bin"
             fi
         fi
-        # if [ -e "${libs[i]}/include" ]; then
-        #     echo "  Removing: [${libs[i]}/include]"
-        #     rm -rf "${libs[i]}/include"
-        # fi
+        if [ -e "${libs[i]}/include" ]; then
+            echo "  Removing: [${libs[i]}/include]"
+            rm -rf "${libs[i]}/include"
+        fi
+
+    done
+fi
+
+if [ "$PLATFORM" == "osx" ]; then
+    echo " "
+    echo " Overwrite - Removing prior libraries for [$PLATFORM]"
+    for ((i=0;i<${#libs[@]};++i)); do
+        xcframework_path="${libs[i]}/lib/macos/${libs[i]}.xcframework/macos-arm64_x86_64"
+        if [ $OVERWRITE -eq 1 ]; then
+            if [ -e "$xcframework_path" ]; then
+                echo "  Removing: [$xcframework_path]"
+                rm -rf "$xcframework_path"
+            fi
+        fi
+        info_plist_path="${libs[i]}/lib/macos/${libs[i]}.xcframework/Info.plist"
+        if [ -e "$info_plist_path" ]; then
+            #echo "  Backing up: [${info_plist_path}] to [${info_plist_path}.bak]"
+            cp "$info_plist_path" "${info_plist_path}.bak"
+        fi
     done
 fi
 
@@ -305,11 +384,31 @@ for PKG in $PKGS; do
         unzip -qo download/$PKG
         # rm -r download/$PKG
     else
-        tar xjf download/$PKG
+
+        # FIXME: this if can be removed after this is fixed properly on apothecary, see:
+        # https://github.com/openframeworks/openFrameworks/issues/8206
+
+        if [ "$PLATFORM" == "linux" ] && { [ "$ARCH" == "aarch64" ] || [ "$ARCH" == "armv7l" ] || [ "$ARCH" == "armv6l" ]; }; then
+            echo "tar xjfv download/$PKG  --strip-components=1"
+            tar xf download/$PKG --strip-components=1 > /dev/null 2>&1
+        else
+            tar xf download/$PKG > /dev/null 2>&1
+        fi
         # rm -r download/$PKG
     fi
     echo " Deployed libraries from [download/$PKG] to [/libs]"
 done
+
+if [ "$PLATFORM" == "osx" ]; then
+    echo " "
+    for ((i=0;i<${#libs[@]};++i)); do
+        info_plist_path="${libs[i]}/lib/macos/${libs[i]}.xcframework/Info.plist"
+        if [ -e "${info_plist_path}.bak" ]; then
+            #echo "  Restoring: [${info_plist_path}.bak] to [${info_plist_path}]"
+            mv "${info_plist_path}.bak" "$info_plist_path" 2>/dev/null
+        fi
+    done
+fi
 
 if [[ $BLEEDING_EDGE = 1 ]] ; then
     if [ "$PLATFORM" == "osx" ]; then
@@ -342,9 +441,26 @@ else
 fi
 
 echo "   ------ "
+if [ "$PLATFORM" == "osx" ]; then
+    if [ $OVERWRITE -eq 1 ]; then
+        echo " Overwrite - addon xCFramework: [${addons[i]} - ${addonslibs[i]}]"
+        xcframework_path="../addons/${addons[i]}/libs/${addonslibs[i]}/lib/macos/${addonslibs[i]}.xcframework/macos-arm64_x86_64"
+        if [ -e "$xcframework_path" ]; then
+            echo "  Removing: [$xcframework_path]"
+            rm -rf "$xcframework_path"
+        fi
+    fi
+    info_plist_path="../addons/${addons[i]}/libs/${addonslibs[i]}/lib/macos/${addonslibs[i]}.xcframework/Info.plist"
+    if [ -e "$info_plist_path" ]; then
+        cp "$info_plist_path" "${info_plist_path}.bak"
+    fi
+fi
+
+
 if [ $OVERWRITE -eq 1 ]; then 
     for ((i=0;i<${#addonslibs[@]};++i)); do
         if [ -e ${addonslibs[i]} ] ; then
+
             echo " Overwrite - addon: [${addons[i]} - ${addonslibs[i]}]"
             if [ -e ../addons/${addons[i]}/libs/${addonslibs[i]}/lib/$PLATFORM ]; then
                 echo "   Remove binaries: [${addons[i]}/libs/${addonslibs[i]}/lib/$PLATFORM]"
@@ -354,10 +470,10 @@ if [ $OVERWRITE -eq 1 ]; then
                 echo "   Remove binaries: [${addons[i]}/libs/${addonslibs[i]}/bin]"
                 rm -rf ../addons/${addons[i]}/libs/${addonslibs[i]}/bin
             fi
-            # if [ -e ../addons/${addons[i]}/libs/${addonslibs[i]}/include ]; then
-            #     echo "   Remove include: [${addons[i]}/libs/include]"
-            #     rm -rf ../addons/${addons[i]}/libs/${addonslibs[i]}/include
-            # fi
+            if [ -e ../addons/${addons[i]}/libs/${addonslibs[i]}/include ]; then
+                echo "   Remove include: [${addons[i]}/libs/include]"
+                rm -rf ../addons/${addons[i]}/libs/${addonslibs[i]}/include
+            fi
         fi
     done
     echo "   ------ "
@@ -376,6 +492,18 @@ for ((i=0;i<${#addonslibs[@]};++i)); do
         rm -rf ${addonslibs[i]}
     fi
 done
+
+if [ "$PLATFORM" == "osx" ]; then
+    echo " "
+    for ((i=0;i<${#addonslibs[@]};++i)); do
+        if [ -e ${addonslibs[i]} ] ; then
+            info_plist_path="../addons/${addons[i]}/libs/${addonslibs[i]}/lib/macos/${addonslibs[i]}.xcframework/Info.plist"
+            if [ -e "${info_plist_path}.bak" ]; then
+                mv "${info_plist_path}.bak" "$info_plist_path" 2>/dev/null
+            fi
+        fi
+    done
+fi
 
 echo " ------ "
 echo " openFrameworks download_libs and install complete!"

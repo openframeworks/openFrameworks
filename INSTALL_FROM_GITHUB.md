@@ -23,7 +23,25 @@ it means you need a form of authentication into github. This implies you have a 
 
 ### Download dependencies
 
-As the external dependencies are not found in the repository, you need to download them. To make things simpler, use the bash script called `download_libs.sh` which can be found in the `scripts` folder. In this folder, there are several subfolders, one for each platform. Assuming you are, for example, using OSX, you need to run `/bin/bash scripts/osx/download_libs.sh`.
+As the external dependencies are not found in the repository, you need to download them. To make things simpler, use the bash script called `download_libs.sh` which can be found in the `scripts/dev/` folder. Assuming you are, for example, using OSX, you need to run 
+```
+scripts/dev/download_libs.sh -p osx
+```
+or for say Raspberry Pi 
+```
+scripts/dev/download_libs.sh -p linuxaarch64
+```
+
+Some of the platforms you can download: 
+```
+linux64 linuxarmv6l linuxarmv7l linuxaarch64 osx msys2 vs ios tvos android emscripten
+```
+
+there are additional flags you can pass to the script ie: 
+```
+scripts/dev/download_libs.sh -p osx -t latest -n
+```
+will get you the latest libs and the `-n` will add libs instead of replacing them.
 
 ### Get the Project Generator
 

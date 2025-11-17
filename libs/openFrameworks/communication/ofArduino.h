@@ -494,8 +494,9 @@ public:
 	/// stepper has complted its rotation
 	ofEvent<const Firmata_Stepper_Data> EStepperDataReceived;
 
-	/// \brief triggered when the I2C bus returns data after a read request
-	ofEvent<const Firmata_I2C_Data> EI2CDataRecieved;
+        /// \brief triggered when the I2C bus returns data after a read request
+        ofEvent<const Firmata_I2C_Data> EI2CDataReceived;
+        OF_DEPRECATED_MSG("Use EI2CDataReceived instead", ofEvent<const Firmata_I2C_Data>& EI2CDataRecieved) = EI2CDataReceived;
 
 	/// \brief triggered when the encoder returns data after a read request
 	ofEvent<const std::vector<Firmata_Encoder_Data> > EEncoderDataReceived;
