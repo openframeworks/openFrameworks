@@ -17,6 +17,7 @@
 #endif
 #include <glm/trigonometric.hpp>
 #include <limits>
+#include <cstring>
 
 using std::vector;
 using std::string;
@@ -223,7 +224,7 @@ void ofSoundBuffer::copyTo(float * outBuffer, std::size_t nFrames, std::size_t o
 	if ((fromFrame + nFrames) >= this->getNumFrames()){
 		nFramesToCopy = this->getNumFrames() - fromFrame;
 	}
-		
+
 	const float * buffPtr = &buffer[fromFrame * channels];
 	// if channels count matches we can just memcpy
 	if(channels == outChannels){
@@ -321,14 +322,14 @@ void ofSoundBuffer::append(ofSoundBuffer & other){
 
 static bool prepareBufferForResampling(const ofSoundBuffer &in, ofSoundBuffer &out, std::size_t numFrames) {
 	std::size_t totalOutBufferSize = numFrames * in.getNumChannels();
-	
+
 	if(totalOutBufferSize < out.getBuffer().max_size()) {
 		out.resize(totalOutBufferSize,0);
 	} else {
 		ofLogError("ofSoundUtils") << "resampling would create a buffer size of " << totalOutBufferSize << " (too large for std::vector)";
 		return false;
 	}
-	
+
 	out.setNumChannels(in.getNumChannels());
 	out.setSampleRate(in.getSampleRate());
 	return true;
@@ -337,16 +338,16 @@ static bool prepareBufferForResampling(const ofSoundBuffer &in, ofSoundBuffer &o
 // based on maximilian optimized for performance.
 // might lose 1 or 2 samples when it reaches the end of the buffer
 void ofSoundBuffer::linearResampleTo(ofSoundBuffer &outBuffer, std::size_t fromFrame, std::size_t numFrames, float speed, bool loop) const {
-	
+
 	std::size_t inChannels = getNumChannels();
 	std::size_t inFrames = getNumFrames();
 	bool bufferReady = prepareBufferForResampling(*this, outBuffer, numFrames);
-	
+
 	if(!bufferReady) {
 		outBuffer = *this;
 		return;
 	}
-	
+
 	std::size_t start = fromFrame;
 	std::size_t end = start*inChannels + double(numFrames*inChannels)*speed;
 	double position = start;
@@ -354,7 +355,7 @@ void ofSoundBuffer::linearResampleTo(ofSoundBuffer &outBuffer, std::size_t fromF
 	float increment = speed;
 	std::size_t copySize = inChannels*sizeof(float);
 	std::size_t to;
-	
+
 	if(end<size()-2*inChannels){
 		to = numFrames;
 	}else if(fromFrame+2>inFrames){
@@ -362,11 +363,11 @@ void ofSoundBuffer::linearResampleTo(ofSoundBuffer &outBuffer, std::size_t fromF
 	}else{
 		to = std::ceil(float(inFrames-2-fromFrame)/speed);
 	}
-	
+
 	float remainder = position - intPosition;
 	float * resBufferPtr = &outBuffer[0];
 	float a, b;
-	
+
 	for(std::size_t i=0;i<to;i++){
 		intPosition *= inChannels;
 		for(std::size_t j=0;j<inChannels;j++){
@@ -401,16 +402,16 @@ void ofSoundBuffer::linearResampleTo(ofSoundBuffer &outBuffer, std::size_t fromF
 // based on maximilian optimized for performance.
 // might lose 1 to 3 samples when it reaches the end of the buffer
 void ofSoundBuffer::hermiteResampleTo(ofSoundBuffer &outBuffer, std::size_t fromFrame, std::size_t numFrames, float speed, bool loop) const {
-	
+
 	std::size_t inChannels = getNumChannels();
 	std::size_t inFrames = getNumFrames();
 	bool bufferReady = prepareBufferForResampling(*this, outBuffer, numFrames);
-	
+
 	if(!bufferReady) {
 		outBuffer = *this;
 		return;
 	}
-	
+
 	std::size_t start = fromFrame;
 	std::size_t end = start*inChannels + double(numFrames*inChannels)*speed;
 	double position = start;
@@ -419,7 +420,7 @@ void ofSoundBuffer::hermiteResampleTo(ofSoundBuffer &outBuffer, std::size_t from
 	float increment = speed;
 	std::size_t copySize = inChannels*sizeof(float);
 	std::size_t to;
-	
+
 	if(end<size()-3*inChannels){
 		to = numFrames;
 	}else if(fromFrame+3>inFrames){
@@ -427,11 +428,11 @@ void ofSoundBuffer::hermiteResampleTo(ofSoundBuffer &outBuffer, std::size_t from
 	}else{
 		to = double(inFrames-3-fromFrame)/speed;
 	}
-	
+
 	float * resBufferPtr = &outBuffer[0];
 	float a,b,c,d;
 	std::size_t from = 0;
-	
+
 	while(intPosition==0){
 		intPosition *= inChannels;
 		for(std::size_t j=0;j<inChannels;++j){
@@ -446,7 +447,7 @@ void ofSoundBuffer::hermiteResampleTo(ofSoundBuffer &outBuffer, std::size_t from
 		remainder = position - intPosition;
 		from++;
 	}
-	
+
 	for(std::size_t i=from;i<to;++i){
 		intPosition *= inChannels;
 		for(std::size_t j=0;j<inChannels;++j){
@@ -460,7 +461,7 @@ void ofSoundBuffer::hermiteResampleTo(ofSoundBuffer &outBuffer, std::size_t from
 		intPosition = position;
 		remainder = position - intPosition;
 	}
-	
+
 	if(end>=size()-3*inChannels){
 		to = numFrames-to;
 		if(loop){
@@ -535,7 +536,7 @@ void ofSoundBuffer::setChannel(const ofSoundBuffer & inBuffer, std::size_t targe
 		*bufferPtr = *inBufferPtr;
 		bufferPtr += channels;
 		// inBuffer.getNumChannels() is probably 1 but let's be safe
-		inBufferPtr += inBuffer.getNumChannels(); 
+		inBufferPtr += inBuffer.getNumChannels();
 	}
 }
 
@@ -627,4 +628,3 @@ namespace std{
 		src.swap(dst);
 	}
 }
-
