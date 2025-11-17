@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		035324612BEFEF5D00B50A35 /* ofTimerFps.h in Headers */ = {isa = PBXBuildFile; fileRef = 0353245F2BEFEF5D00B50A35 /* ofTimerFps.h */; };
 		035324622BEFEF5D00B50A35 /* ofTimerFps.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 035324602BEFEF5D00B50A35 /* ofTimerFps.cpp */; };
+		037DF6522D77C8CE00BFFD5D /* AVFoundationVideoPlayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 037DF6512D77C8CE00BFFD5D /* AVFoundationVideoPlayer.m */; };
+		037DF6532D77C8CE00BFFD5D /* AVFoundationVideoPlayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 037DF6502D77C8CE00BFFD5D /* AVFoundationVideoPlayer.h */; };
 		15594F0C15C55AC900727FF2 /* EAGLView.m in Sources */ = {isa = PBXBuildFile; fileRef = 15594F0515C55AC900727FF2 /* EAGLView.m */; };
 		15594F0D15C55AC900727FF2 /* ES1Renderer.m in Sources */ = {isa = PBXBuildFile; fileRef = 15594F0615C55AC900727FF2 /* ES1Renderer.m */; };
 		15594F0E15C55AC900727FF2 /* ES2Renderer.m in Sources */ = {isa = PBXBuildFile; fileRef = 15594F0715C55AC900727FF2 /* ES2Renderer.m */; };
@@ -249,6 +251,8 @@
 /* Begin PBXFileReference section */
 		0353245F2BEFEF5D00B50A35 /* ofTimerFps.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofTimerFps.h; sourceTree = "<group>"; };
 		035324602BEFEF5D00B50A35 /* ofTimerFps.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofTimerFps.cpp; sourceTree = "<group>"; };
+		037DF6502D77C8CE00BFFD5D /* AVFoundationVideoPlayer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AVFoundationVideoPlayer.h; sourceTree = "<group>"; };
+		037DF6512D77C8CE00BFFD5D /* AVFoundationVideoPlayer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AVFoundationVideoPlayer.m; sourceTree = "<group>"; };
 		15594F0515C55AC900727FF2 /* EAGLView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EAGLView.m; sourceTree = "<group>"; };
 		15594F0615C55AC900727FF2 /* ES1Renderer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ES1Renderer.m; sourceTree = "<group>"; };
 		15594F0715C55AC900727FF2 /* ES2Renderer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ES2Renderer.m; sourceTree = "<group>"; };
@@ -366,7 +370,7 @@
 		9979E8271A1CDBD4007E55D1 /* ofMainLoop.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofMainLoop.h; sourceTree = "<group>"; };
 		BB16EBD10F2B2A9500518274 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		BB16EBD80F2B2AB500518274 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
-		BB24DED610DA7A3F00E9C588 /* libofxiOS_iphoneos_Debug.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libofxiOS_iphoneos_Debug.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		BB24DED610DA7A3F00E9C588 /* openFrameworksiOSDebug.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = openFrameworksiOSDebug.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		BBE5EAB70F49AD8400F28951 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		BF2B78182C7E6CF000EAAD6E /* ES3Renderer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ES3Renderer.m; sourceTree = "<group>"; };
 		BF2B78192C7E6CF000EAAD6E /* ES3Renderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ES3Renderer.h; sourceTree = "<group>"; };
@@ -628,6 +632,8 @@
 			children = (
 				15594FA115C56BB700727FF2 /* AVFoundationVideoGrabber.h */,
 				15594F9F15C56BB700727FF2 /* AVFoundationVideoGrabber.mm */,
+				037DF6502D77C8CE00BFFD5D /* AVFoundationVideoPlayer.h */,
+				037DF6512D77C8CE00BFFD5D /* AVFoundationVideoPlayer.m */,
 				1594366315CF5F420087B684 /* ofxiOSVideoPlayer.h */,
 				1594366115CF5F420087B684 /* ofxiOSVideoPlayer.mm */,
 				1594366215CF5F420087B684 /* ofxiOSVideoGrabber.h */,
@@ -656,7 +662,7 @@
 		19C28FACFE9D520D11CA2CBB /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				BB24DED610DA7A3F00E9C588 /* libofxiOS_iphoneos_Debug.a */,
+				BB24DED610DA7A3F00E9C588 /* openFrameworksiOSDebug.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1108,6 +1114,7 @@
 				15594FC515C56D1E00727FF2 /* ofxiOSCoreLocation.h in Headers */,
 				15594FC615C56D1E00727FF2 /* ofxiOSExternalDisplay.h in Headers */,
 				15594FC715C56D1E00727FF2 /* ofxiOSExtras.h in Headers */,
+				037DF6532D77C8CE00BFFD5D /* AVFoundationVideoPlayer.h in Headers */,
 				15594FC815C56D1E00727FF2 /* ofxiOSImagePicker.h in Headers */,
 				15594FC915C56D1E00727FF2 /* ofxiOSKeyboard.h in Headers */,
 				15594FCA15C56D1E00727FF2 /* ofxiOSMapKit.h in Headers */,
@@ -1136,23 +1143,22 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		BB24DE5C10DA7A3F00E9C588 /* iOS+OF Static Library */ = {
+		BB24DE5C10DA7A3F00E9C588 /* openFrameworks */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = BB24DED210DA7A3F00E9C588 /* Build configuration list for PBXNativeTarget "iOS+OF Static Library" */;
+			buildConfigurationList = BB24DED210DA7A3F00E9C588 /* Build configuration list for PBXNativeTarget "openFrameworks" */;
 			buildPhases = (
-				BFF80A492C50AF3300784E74 /* ShellScript */,
 				BB24DE5D10DA7A3F00E9C588 /* Headers */,
 				BB24DEB110DA7A3F00E9C588 /* Sources */,
 				BB24DEC910DA7A3F00E9C588 /* Frameworks */,
-				BFF80A5C2C50B25B00784E74 /* ShellScript */,
+				BFF80A5C2C50B25B00784E74 /* Run Script */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
-			name = "iOS+OF Static Library";
+			name = openFrameworks;
 			productName = "Static Library";
-			productReference = BB24DED610DA7A3F00E9C588 /* libofxiOS_iphoneos_Debug.a */;
+			productReference = BB24DED610DA7A3F00E9C588 /* openFrameworksiOSDebug.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 /* End PBXNativeTarget section */
@@ -1176,13 +1182,13 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				BB24DE5C10DA7A3F00E9C588 /* iOS+OF Static Library */,
+				BB24DE5C10DA7A3F00E9C588 /* openFrameworks */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		BFF80A492C50AF3300784E74 /* ShellScript */ = {
+		BFF80A5C2C50B25B00784E74 /* Run Script */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
@@ -1192,31 +1198,14 @@
 			);
 			inputPaths = (
 			);
+			name = "Run Script";
 			outputFileListPaths = (
 			);
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = "/usr/bin/env bash";
-			shellScript = "#!/usr/bin/env bash\nif [ ! -d \"${SRCROOT}/../../../freetype/lib/macos/freetype.xcframework\" ]; then\n\techo \"openFrameworks has missing xcFrameworks for iOS / macOS. Downloading libaries now via scripts/macos/download_libs.sh\"\n    ${SRCROOT}/../../../../scripts/macos/download_libs.sh\nelse\n\techo \"xcFrameworks found\"\nfi\n";
-		};
-		BFF80A5C2C50B25B00784E74 /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			alwaysOutOfDate = 1;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = "/usr/bin/env bash";
-			shellScript = "#!/usr/bin/env bash\nTARGET_DIR=\"$SRCROOT/../../lib/ios/\"\nATTRIBUTE_CHECK=$(xattr -p com.apple.xcode.CreatedByBuildSystem \"$TARGET_DIR\" 2>/dev/null)\nif [ -z \"$ATTRIBUTE_CHECK\" ]; then\n  xattr -w com.apple.xcode.CreatedByBuildSystem true \"$TARGET_DIR\"\n  echo \"Attribute com.apple.xcode.CreatedByBuildSystem set to true for [$TARGET_DIR]\"\nelse\n  echo \"Attribute com.apple.xcode.CreatedByBuildSystem already set for [$TARGET_DIR]\"\nfi\n";
+			shellScript = "#!/usr/bin/env bash\nTARGET_DIR=\"$SRCROOT/../../lib/ios/\"\nATTRIBUTE_CHECK=$(xattr -p com.apple.xcode.CreatedByBuildSystem \"$TARGET_DIR\" 2>/dev/null)\nif [ -z \"$ATTRIBUTE_CHECK\" ]; then\n  xattr -w com.apple.xcode.CreatedByBuildSystem true \"$TARGET_DIR\"\n  echo \"Attribute com.apple.xcode.CreatedByBuildSystem set to true for [$TARGET_DIR]\"\nelse\n  echo \"Attribute com.apple.xcode.CreatedByBuildSystem already set for [$TARGET_DIR]\"\nfi\n\nTARGET_DIR=\"${SRCROOT}/../../lib/ios/\"\nTARGET_CONFIG_DIR=\"${SRCROOT}/../../lib/ios/build/output\"\n\nif [ \"${CONFIGURATION}\" == \"Release\" ]; then\n    STATIC_NAME=\"openFrameworksiOS\"\nelse\n    STATIC_NAME=\"openFrameworksiOS${CONFIGURATION}\"\nfi\n\nSOURCE_FILE=\"${TARGET_CONFIG_DIR}/${STATIC_NAME}.a\"\nDEST_FILE=\"${TARGET_DIR}/${STATIC_NAME}.a\"\n\necho \"Configuration: ${CONFIGURATION}\"\necho \"Source file: ${SOURCE_FILE}\"\necho \"Destination: ${DEST_FILE}\"\n\nmkdir -p \"${TARGET_DIR}\"\n\nif [ ! -w \"${TARGET_DIR}\" ]; then\n    echo \"ERROR: Target directory ${TARGET_DIR} is not writable.\"\n    ls -ld \"${TARGET_DIR}\"\n    exit 1\nfi\n\nif [ ! -f \"${SOURCE_FILE}\" ]; then\n    echo \"ERROR: Static library ${SOURCE_FILE} does not exist.\"\n    exit 1\nfi\n\necho \"Copying ${SOURCE_FILE} to ${DEST_FILE}...\"\ncp -v \"${SOURCE_FILE}\" \"${DEST_FILE}\"\n\nif [ $? -ne 0 ]; then\n    echo \"ERROR: Failed to copy ${SOURCE_FILE} to ${DEST_FILE}.\"\n    exit 1\nfi\n\necho \"openFramworks build successful.\"\n\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -1311,6 +1300,7 @@
 				678C3D26176F04F800D1CC68 /* ofxiOSSoundStreamDelegate.mm in Sources */,
 				678C3D28176F04F800D1CC68 /* SoundInputStream.m in Sources */,
 				678C3D2A176F04F800D1CC68 /* SoundOutputStream.m in Sources */,
+				037DF6522D77C8CE00BFFD5D /* AVFoundationVideoPlayer.m in Sources */,
 				678C3D2C176F04F800D1CC68 /* SoundStream.m in Sources */,
 				671C0AF51770246200DF03B3 /* AVSoundPlayer.m in Sources */,
 				671C0AF71770246200DF03B3 /* ofxiOSSoundPlayer.mm in Sources */,
@@ -1328,23 +1318,25 @@
 		BB24DED310DA7A3F00E9C588 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/../../lib/ios/";
+				BUILD_DIR = "~/Library/Developer/Xcode/DerivedData";
+				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/../../lib/ios/build/output/";
+				CONFIGURATION_TEMP_DIR = "$(SRCROOT)/../../lib/ios/build/temp/Debug/";
 				COPY_PHASE_STRIP = NO;
+				DERIVED_DATA_PATH = "~/Library/Developer/Xcode/DerivedData";
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
-				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_PREFIX = "";
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				GCC_WARN_HIDDEN_VIRTUAL_FUNCTIONS = YES;
 				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
+				LIBRARY_OUTPUT_DIRECTORY = "$(SRCROOT)/../../lib/ios/";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/kiss/lib/linux\"",
-					"\"$(SRCROOT)/kiss/lib/linux64\"",
-					"\"$(SRCROOT)/../../../tess2/lib/ios\"",
-					"\"$(SRCROOT)/../../../poco/lib/ios\"",
+					"$(SRCROOT)/../../lib/ios/build/output/",
 				);
-				PRODUCT_NAME = "ofxiOS_${PLATFORM_NAME}_Debug";
+				OBJROOT = "$(SRCROOT)/../../lib/ios/build/obj/Debug/";
+				PRODUCT_NAME = openFrameworksiOSDebug;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
@@ -1355,22 +1347,24 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD)";
-				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/../../lib/ios/";
+				BUILD_DIR = "~/Library/Developer/Xcode/DerivedData";
+				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/../../lib/ios/build/output/";
+				CONFIGURATION_TEMP_DIR = "$(SRCROOT)/../../lib/ios/build/temp/Release/";
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DERIVED_DATA_PATH = "~/Library/Developer/Xcode/DerivedData";
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
-				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_PREFIX = "";
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				GCC_WARN_HIDDEN_VIRTUAL_FUNCTIONS = YES;
 				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
+				LIBRARY_OUTPUT_DIRECTORY = "$(SRCROOT)/../../lib/ios/";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/kiss/lib/linux\"",
-					"\"$(SRCROOT)/kiss/lib/linux64\"",
-					"\"$(SRCROOT)/../../../tess2/lib/ios\"",
-					"\"$(SRCROOT)/../../../poco/lib/ios\"",
+					"$(SRCROOT)/../../lib/ios/build/output/",
 				);
-				PRODUCT_NAME = "ofxiOS_${PLATFORM_NAME}_Release";
+				OBJROOT = "$(SRCROOT)/../../lib/ios/build/obj/Release/";
+				PRODUCT_NAME = openFrameworksiOS;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
@@ -1399,8 +1393,6 @@
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/../../lib/ios/";
-				CONFIGURATION_TEMP_DIR = "$(SRCROOT)/../../lib/ios/build/debug/";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
@@ -1410,11 +1402,10 @@
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
-				OBJROOT = "$(SRCROOT)/../../lib/ios/build/debug";
+				OBJROOT = "$(SRCROOT)/../../lib/ios/build/obj/Debug/";
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
-				SYMROOT = "$(SRCROOT)/../../lib/ios/";
 				WARNING_CFLAGS = (
 					"-Wno-non-virtual-dtor",
 					"-Wno-overloaded-virtual",
@@ -1443,8 +1434,6 @@
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/../../lib/ios/";
-				CONFIGURATION_TEMP_DIR = "$(SRCROOT)/../../lib/ios/build/release/";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -1453,11 +1442,9 @@
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
-				OBJROOT = "$(SRCROOT)/../../lib/ios/build/release";
+				OBJROOT = "$(SRCROOT)/../../lib/ios/build/obj/Release/";
 				ONLY_ACTIVE_ARCH = NO;
 				SDKROOT = iphoneos;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
-				SYMROOT = "$(SRCROOT)/../../lib/ios/";
 				WARNING_CFLAGS = (
 					"-Wno-non-virtual-dtor",
 					"-Wno-overloaded-virtual",
@@ -1468,7 +1455,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		BB24DED210DA7A3F00E9C588 /* Build configuration list for PBXNativeTarget "iOS+OF Static Library" */ = {
+		BB24DED210DA7A3F00E9C588 /* Build configuration list for PBXNativeTarget "openFrameworks" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				BB24DED310DA7A3F00E9C588 /* Debug */,

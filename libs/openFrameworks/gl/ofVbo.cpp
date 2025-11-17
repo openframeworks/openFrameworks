@@ -11,6 +11,7 @@
 #include "ofGLUtils.h"
 #include "ofMesh.h"
 #include "ofGLBaseTypes.h"
+#include "ofVec3f.h"
 
 #ifdef TARGET_ANDROID
 #include "ofAppAndroidWindow.h"

@@ -210,7 +210,9 @@ Module{
                 ldflags = Helpers.pkgconfig(configs, ["--libs-only-L"]);
                 if(platform === "msys2"){
                     ldflags.push("-L"+FileInfo.joinPaths(Helpers.msys2root(),"mingw32/lib"));
-                }else{
+                }else if (Helpers.commandExists("mold")) {
+                    ldflags.push("-fuse-ld=mold");
+                }else if (Helpers.commandExists("gold")) {
                     ldflags.push("-fuse-ld=gold");
                 }
             }else{

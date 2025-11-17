@@ -39,18 +39,13 @@
     NSError * err = nil;
     // need to configure set the audio category, and override to it route the audio to the speaker
     if([audioSession respondsToSelector:@selector(setCategory:withOptions:error:)]) {
-#if defined (TARGET_OS_TV) || defined (TARGET_OS_WATCH)
-        if(![audioSession setCategory:playbackCategory
-                                       withOptions:(AVAudioSessionCategoryOptionMixWithOthers)
-                                error:&err]) { err = nil; }
-#else
+
         if(![audioSession setCategory:playbackCategory
                                        withOptions:(AVAudioSessionCategoryOptionMixWithOthers |
                                                    AVAudioSessionCategoryOptionAllowAirPlay |
                                                    AVAudioSessionCategoryOptionAllowBluetooth |
                                                    AVAudioSessionCategoryOptionAllowBluetoothA2DP)
                                         error:&err]) { err = nil; }
-#endif
     }
 	[[AVAudioSession sharedInstance] setActive: YES error: nil];
 	audioSessionSetup = YES;
@@ -262,7 +257,7 @@
 
 - (void) audioPlayerEndInterruption:(AVAudioPlayer *)player withFlags:(NSUInteger)flags {
 #if TARGET_OS_IOS || (TARGET_OS_IPHONE && !TARGET_OS_TV)
-	if(flags == AVAudioSessionInterruptionFlags_ShouldResume) {
+    if(flags == AVAudioSessionInterruptionOptionShouldResume) {
 		[self.player play];
 	}
 #elif TARGET_OS_TV

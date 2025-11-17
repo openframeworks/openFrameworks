@@ -11,12 +11,12 @@
 
 enum of3dPrimitiveType {
 	OF_3D_PRIMITIVE_PLANE,
-    OF_3D_PRIMITIVE_SPHERE,
-    OF_3D_PRIMITIVE_ICO_SPHERE,
+	OF_3D_PRIMITIVE_SPHERE,
+	OF_3D_PRIMITIVE_ICO_SPHERE,
 	OF_3D_PRIMITIVE_BOX,
 	OF_3D_PRIMITIVE_CONE,
-    OF_3D_PRIMITIVE_CYLINDER,
-    OF_3D_PRIMITIVE_BOX_WIREFRAME
+	OF_3D_PRIMITIVE_CYLINDER,
+	OF_3D_PRIMITIVE_BOX_WIREFRAME
 };
 
 
@@ -32,7 +32,7 @@ of3dGraphics::of3dGraphics(ofBaseRenderer * renderer)
 ,axis(ofMesh::axis())
 {
 
-    ofMesh* boxWireframeMesh = boxWireframe.getMeshPtr();
+	ofMesh* boxWireframeMesh = boxWireframe.getMeshPtr();
 	boxWireframeMesh->clear();
 	boxWireframeMesh->setMode( OF_PRIMITIVE_LINES );
 
@@ -99,13 +99,13 @@ void of3dGraphics::renderCached3dPrimitive( const of3dPrimitive& model ) const{
 // Plane //
 //----------------------------------------------------------
 void of3dGraphics::setPlaneResolution( int columns, int rows ) {
-    plane.setResolution(columns, rows);
+	plane.setResolution(columns, rows);
 }
 
 // returns columns as x value of vector and rows as y value
 //----------------------------------------------------------
 glm::vec2 of3dGraphics::getPlaneResolution() const{
-    return plane.getResolution();
+	return plane.getResolution();
 }
 
 //----------------------------------------------------------
@@ -117,24 +117,24 @@ void of3dGraphics::drawPlane(float x, float y, float width, float height) const{
 void of3dGraphics::drawPlane(float x, float y, float z, float width, float height) const{
 	glm::mat4 m = glm::translate(glm::mat4(1.0), glm::vec3(x,y,z));
 	m = glm::scale(m, glm::vec3(width,height,1));
-    renderer->pushMatrix();
-    renderer->multMatrix(m);
-    renderCached3dPrimitive( plane );
-    renderer->popMatrix();
+	renderer->pushMatrix();
+	renderer->multMatrix(m);
+	renderCached3dPrimitive( plane );
+	renderer->popMatrix();
 }
 
 //----------------------------------------------------------
 void of3dGraphics::drawPlane(const glm::vec3& position, float width, float height) const{
-    drawPlane(position.x,position.y,position.z,width, height);
+	drawPlane(position.x,position.y,position.z,width, height);
 }
 
 //----------------------------------------------------------
 void of3dGraphics::drawPlane( float width, float height ) const{
 	glm::mat4 m = glm::scale(glm::mat4(1.0), glm::vec3(width,height,1));
-    renderer->pushMatrix();
-    renderer->multMatrix(m);
-    renderCached3dPrimitive( plane );
-    renderer->popMatrix();
+	renderer->pushMatrix();
+	renderer->multMatrix(m);
+	renderCached3dPrimitive( plane );
+	renderer->popMatrix();
 }
 
 
@@ -142,42 +142,42 @@ void of3dGraphics::drawPlane( float width, float height ) const{
 //----------------------------------------------------------
 void of3dGraphics::setSphereResolution(int res) {
 	if(getSphereResolution() != res) {
-       sphere.setResolution(res);
-    }
+	   sphere.setResolution(res);
+	}
 }
 
 //---------------------------------------------------------
 int of3dGraphics::getSphereResolution() const{
-    return sphere.getResolution();
+	return sphere.getResolution();
 }
 
 //----------------------------------------------------------
 void of3dGraphics::drawSphere(float x, float y, float z, float radius) const{
 	glm::mat4 m = glm::translate(glm::mat4(1.0), glm::vec3(x,y,z));
 	m = glm::scale(m, glm::vec3(radius,radius,radius));
-    renderer->pushMatrix();
-    renderer->multMatrix(m);
-    renderCached3dPrimitive( sphere );
-    renderer->popMatrix();
+	renderer->pushMatrix();
+	renderer->multMatrix(m);
+	renderCached3dPrimitive( sphere );
+	renderer->popMatrix();
 }
 
 //----------------------------------------------------------
 void of3dGraphics::drawSphere(float x, float y, float radius) const{
-    drawSphere(x, y, 0, radius);
+	drawSphere(x, y, 0, radius);
 }
 
 //----------------------------------------------------------
 void of3dGraphics::drawSphere(const glm::vec3& position, float radius) const{
-    drawSphere(position.x,position.y,position.z,radius);
+	drawSphere(position.x,position.y,position.z,radius);
 }
 
 //----------------------------------------------------------
 void of3dGraphics::drawSphere(float radius) const{
 	glm::mat4 m = glm::scale(glm::mat4(1.0), glm::vec3(radius,radius,radius));
-    renderer->pushMatrix();
-    renderer->multMatrix(m);
-    renderCached3dPrimitive( sphere );
-    renderer->popMatrix();
+	renderer->pushMatrix();
+	renderer->multMatrix(m);
+	renderCached3dPrimitive( sphere );
+	renderer->popMatrix();
 }
 
 
@@ -185,42 +185,42 @@ void of3dGraphics::drawSphere(float radius) const{
 //----------------------------------------------------------
 void of3dGraphics::setIcoSphereResolution( int res ) {
 	if(getIcoSphereResolution() != res) {
-        icoSphere.setResolution(res);
-    }
+		icoSphere.setResolution(res);
+	}
 }
 
 //----------------------------------------------------------
 int of3dGraphics::getIcoSphereResolution() const{
-    return icoSphere.getResolution();
+	return icoSphere.getResolution();
 }
 
 //----------------------------------------------------------
 void of3dGraphics::drawIcoSphere(float x, float y, float z, float radius) const{
 	glm::mat4 m = glm::translate(glm::mat4(1.0), glm::vec3(x,y,z));
 	m = glm::scale(m, glm::vec3(radius,radius,radius));
-    renderer->pushMatrix();
-    renderer->multMatrix(m);
-    renderCached3dPrimitive( icoSphere );
-    renderer->popMatrix();
+	renderer->pushMatrix();
+	renderer->multMatrix(m);
+	renderCached3dPrimitive( icoSphere );
+	renderer->popMatrix();
 }
 
 //----------------------------------------------------------
 void of3dGraphics::drawIcoSphere(float x, float y, float radius) const{
-    drawIcoSphere(x, y, 0, radius);
+	drawIcoSphere(x, y, 0, radius);
 }
 
 //----------------------------------------------------------
 void of3dGraphics::drawIcoSphere(const glm::vec3& position, float radius) const{
-    drawIcoSphere(position.x,position.y,position.z,radius);
+	drawIcoSphere(position.x,position.y,position.z,radius);
 }
 
 //----------------------------------------------------------
 void of3dGraphics::drawIcoSphere(float radius) const{
 	glm::mat4 m = glm::scale(glm::mat4(1.0), glm::vec3(radius,radius,radius));
-    renderer->pushMatrix();
-    renderer->multMatrix(m);
-    renderCached3dPrimitive( icoSphere );
-    renderer->popMatrix();
+	renderer->pushMatrix();
+	renderer->multMatrix(m);
+	renderCached3dPrimitive( icoSphere );
+	renderer->popMatrix();
 }
 
 
@@ -228,42 +228,42 @@ void of3dGraphics::drawIcoSphere(float radius) const{
 //----------------------------------------------------------
 void of3dGraphics::setCylinderResolution( int radiusSegments, int heightSegments, int capSegments ) {
 	if(getCylinderResolution() != glm::vec3{ radiusSegments, heightSegments, capSegments }) {
-        cylinder.setResolution(radiusSegments, heightSegments, capSegments);
-    }
+		cylinder.setResolution(radiusSegments, heightSegments, capSegments);
+	}
 }
 
 //----------------------------------------------------------
 glm::vec3 of3dGraphics::getCylinderResolution() const{
-    return cylinder.getResolution();
+	return cylinder.getResolution();
 }
 
 //----------------------------------------------------------
 void of3dGraphics::drawCylinder(float x, float y, float radius, float height) const{
-    drawCylinder( x, y, 0, radius, height );
+	drawCylinder( x, y, 0, radius, height );
 }
 
 //----------------------------------------------------------
 void of3dGraphics::drawCylinder(float x, float y, float z, float radius, float height) const{
 	glm::mat4 m = glm::translate(glm::mat4(1.0), glm::vec3(x,y,z));
 	m = glm::scale(m, glm::vec3(radius,height,radius));
-    renderer->pushMatrix();
-    renderer->multMatrix(m);
-    renderCached3dPrimitive( cylinder );
-    renderer->popMatrix();
+	renderer->pushMatrix();
+	renderer->multMatrix(m);
+	renderCached3dPrimitive( cylinder );
+	renderer->popMatrix();
 }
 
 //----------------------------------------------------------
 void of3dGraphics::drawCylinder(const glm::vec3& position, float radius, float height) const{
-    drawCylinder( position.x, position.y, position.z, radius, height );
+	drawCylinder( position.x, position.y, position.z, radius, height );
 }
 
 //----------------------------------------------------------
 void of3dGraphics::drawCylinder(float radius, float height) const{
 	glm::mat4 m = glm::scale(glm::mat4(1.0), glm::vec3(radius,height,radius));
-    renderer->pushMatrix();
-    renderer->multMatrix(m);
-    renderCached3dPrimitive( cylinder );
-    renderer->popMatrix();
+	renderer->pushMatrix();
+	renderer->multMatrix(m);
+	renderCached3dPrimitive( cylinder );
+	renderer->popMatrix();
 }
 
 
@@ -272,23 +272,23 @@ void of3dGraphics::drawCylinder(float radius, float height) const{
 //----------------------------------------------------------
 void of3dGraphics::setConeResolution( int radiusSegments, int heightSegments, int capSegments){
 	if(getConeResolution() != glm::vec3( radiusSegments, heightSegments, capSegments )) {
-        cone.setResolution(radiusSegments, heightSegments, capSegments);
-    }
+		cone.setResolution(radiusSegments, heightSegments, capSegments);
+	}
 }
 
 //----------------------------------------------------------
 glm::vec3 of3dGraphics::getConeResolution() const{
-    return cone.getResolution();
+	return cone.getResolution();
 }
 
 //----------------------------------------------------------
 void of3dGraphics::drawCone(float x, float y, float z, float radius, float height) const{
 	glm::mat4 m = glm::translate(glm::mat4(1.0), glm::vec3(x,y,z));
 	m = glm::scale(m, glm::vec3(radius,height,radius));
-    renderer->pushMatrix();
-    renderer->multMatrix(m);
-    renderCached3dPrimitive( cone );
-    renderer->popMatrix();
+	renderer->pushMatrix();
+	renderer->multMatrix(m);
+	renderCached3dPrimitive( cone );
+	renderer->popMatrix();
 }
 
 //----------------------------------------------------------
@@ -304,10 +304,10 @@ void of3dGraphics::drawCone(const glm::vec3& position, float radius, float heigh
 //----------------------------------------------------------
 void of3dGraphics::drawCone(float radius, float height) const{
 	glm::mat4 m = glm::scale(glm::mat4(1.0), glm::vec3(radius,height,radius));
-    renderer->pushMatrix();
-    renderer->multMatrix(m);
-    renderCached3dPrimitive( cone );
-    renderer->popMatrix();
+	renderer->pushMatrix();
+	renderer->multMatrix(m);
+	renderCached3dPrimitive( cone );
+	renderer->popMatrix();
 }
 
 
@@ -315,19 +315,19 @@ void of3dGraphics::drawCone(float radius, float height) const{
 // BOX //
 //----------------------------------------------------------
 void of3dGraphics::setBoxResolution( int res ) {
-    setBoxResolution(res, res, res);
+	setBoxResolution(res, res, res);
 }
 
 //----------------------------------------------------------
 void of3dGraphics::setBoxResolution( int resWidth, int resHeight, int resDepth ) {
 	if(getBoxResolution() != glm::vec3( resWidth, resHeight, resDepth )) {
-        box.setResolution(resWidth, resHeight, resDepth);
+		box.setResolution(resWidth, resHeight, resDepth);
 	}
 }
 
 //----------------------------------------------------------
 glm::vec3 of3dGraphics::getBoxResolution() const{
-    return box.getResolution();
+	return box.getResolution();
 }
 
 //----------------------------------------------------------
@@ -335,14 +335,14 @@ void of3dGraphics::drawBox( float x, float y, float z, float width, float height
 	glm::mat4 m = glm::translate(glm::mat4(1.0), glm::vec3(x,y,z));
 	m = glm::scale(m, glm::vec3(width,height,depth));
 
-    renderer->pushMatrix();
-    renderer->multMatrix(m);
+	renderer->pushMatrix();
+	renderer->multMatrix(m);
 	if(renderer->getFillMode() == OF_FILLED || box.getResolution() != glm::vec3(1,1,1)) {
-        renderCached3dPrimitive( box );
-    } else {
-        renderCached3dPrimitive( boxWireframe );
-    }
-    renderer->popMatrix();
+		renderCached3dPrimitive( box );
+	} else {
+		renderCached3dPrimitive( boxWireframe );
+	}
+	renderer->popMatrix();
 }
 
 //----------------------------------------------------------
@@ -374,9 +374,9 @@ void of3dGraphics::drawBox( float width, float height, float depth ) const{
 void of3dGraphics::drawAxis(float size) const{
 	glm::mat4 m = glm::scale(glm::mat4(1.0), glm::vec3(size,size,size));
 	renderer->pushMatrix();
-    renderer->multMatrix(m);
-    renderCached3dPrimitive( axis );
-    renderer->popMatrix();
+	renderer->multMatrix(m);
+	renderCached3dPrimitive( axis );
+	renderer->popMatrix();
 }
 
 //--------------------------------------------------------------
@@ -485,14 +485,15 @@ void of3dGraphics::drawArrow(const glm::vec3& start, const glm::vec3& end, float
 	renderer->drawLine(start.x,start.y,start.z, end.x,end.y,end.z);
 
 	// Note that `glm::rotation` requires its parameters to be normalized `glm::vec3`s
+	const glm::mat4 cone_height_offset = glm::translate(glm::vec3(0, headSize, 0));
 	const glm::mat4 cone_rotation    = glm::mat4_cast(glm::rotation(glm::vec3(0,1,0), glm::normalize(start-end)));
 	const glm::mat4 cone_translation = glm::translate(end);
-	const glm::mat4 cone_transform   = cone_translation * cone_rotation;
+	const glm::mat4 cone_transform   = cone_translation * cone_rotation * cone_height_offset;
 
 	renderer->pushMatrix();
 	renderer->multMatrix(cone_transform);
-    drawCone(headSize, headSize*2.);
-    renderer->popMatrix();
+	drawCone(headSize, headSize*2.);
+	renderer->popMatrix();
 }
 
 //--------------------------------------------------------------
@@ -737,42 +738,42 @@ void ofDrawBox( float width, float height, float depth ){
 // Deprecated methods - for compatability with previous versions of OF //
 //----------------------------------------------------------
 void ofSphere(float x, float y, float z, float radius) {
-    ofDrawSphere(x, y, z, radius);
+	ofDrawSphere(x, y, z, radius);
 }
 
 //----------------------------------------------------------
 void ofSphere(float x, float y, float radius) {
-    ofDrawSphere(x, y, 0, radius);
+	ofDrawSphere(x, y, 0, radius);
 }
 
 //----------------------------------------------------------
 void ofSphere(const glm::vec3& position, float radius) {
-    ofDrawSphere(position.x,position.y,position.z,radius);
+	ofDrawSphere(position.x,position.y,position.z,radius);
 }
 
 //----------------------------------------------------------
 void ofSphere(float radius) {
-    ofDrawSphere(radius);
+	ofDrawSphere(radius);
 }
 
 //----------------------------------------------------------
 void ofCone(float x, float y, float z, float radius, float height) {
-    ofDrawCone(x, y, z, radius, height);
+	ofDrawCone(x, y, z, radius, height);
 }
 
 //----------------------------------------------------------
 void ofCone(float x, float y, float radius, float height) {
-    ofDrawCone( x, y, 0, radius, height );
+	ofDrawCone( x, y, 0, radius, height );
 }
 
 //----------------------------------------------------------
 void ofCone(const glm::vec3& position, float radius, float height) {
-    ofDrawCone( position.x, position.y, position.z, radius, height );
+	ofDrawCone( position.x, position.y, position.z, radius, height );
 }
 
 //----------------------------------------------------------
 void ofCone(float radius, float height) {
-    ofDrawCone(radius, height );
+	ofDrawCone(radius, height );
 }
 
 
@@ -780,32 +781,32 @@ void ofCone(float radius, float height) {
 // deprecated methods //
 //----------------------------------------------------------
 void ofBox( float x, float y, float z, float width, float height, float depth) {
-    ofDrawBox(x,y,z,width,height,depth);
+	ofDrawBox(x,y,z,width,height,depth);
 }
 
 //----------------------------------------------------------
 void ofBox(float x, float y, float z, float size) {
-    ofDrawBox( x, y, z, size, size, size );
+	ofDrawBox( x, y, z, size, size, size );
 }
 
 //----------------------------------------------------------
 void ofBox(const glm::vec3& position, float width, float height, float depth) {
-    ofDrawBox( position.x, position.y, position.z, width, height, depth );
+	ofDrawBox( position.x, position.y, position.z, width, height, depth );
 }
 
 //----------------------------------------------------------
 void ofBox(const glm::vec3& position, float size) {
-    ofDrawBox( position.x, position.y, position.z, size, size, size );
+	ofDrawBox( position.x, position.y, position.z, size, size, size );
 }
 
 //----------------------------------------------------------
 void ofBox(float size) {
-    ofDrawBox( size, size, size );
+	ofDrawBox( size, size, size );
 }
 
 //----------------------------------------------------------
 void ofBox( float width, float height, float depth ) {
-    ofDrawBox(width,height,depth);
+	ofDrawBox(width,height,depth);
 }
 
 
