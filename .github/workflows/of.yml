@@ -32,7 +32,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Docker Step
-        run: "docker run -di --name emscripten -v $PWD:/src emscripten/emsdk:3.1.73 bash"
+        run: "docker run -di --name emscripten -v $PWD:/src emscripten/emsdk:4.0.16 bash"
       # - name: Determine Release
       #   id: vars
       #   shell: bash
@@ -77,17 +77,17 @@ jobs:
         run: gcc -v
       - uses: actions/checkout@v4
       - name: ccache
-        uses: hendrikmuhs/ccache-action@v1.2.14
+        uses: hendrikmuhs/ccache-action@v1.2.17
         with:
           # key: ${{ matrix.os }}-${{ matrix.type }}
           key: ${{ matrix.msystem }}
-      - uses: msys2/setup-msys2@v2.24.1
+      - uses: msys2/setup-msys2@v2.27.0
         with:
           cache: true
           release: true
           update: true
           msystem: ${{matrix.msystem}}
-          pacboy: openssl:p python:p gcc:p assimp:p cairo:p curl:p freeglut:p FreeImage:p glew:p glfw:p glm:p libsndfile:p libusb:p libxml2:p mpg123:p nlohmann-json:p openal:p opencv:p pugixml:p rtaudio:p uriparser:p utf8cpp:p
+          pacboy: openssl:p python:p gcc:p assimp:p cairo:p curl:p freeglut:p freeimage:p glew:p glfw:p glm:p libsndfile:p libusb:p libxml2:p mpg123:p nlohmann-json:p openal:p opencv:p pugixml:p rtaudio:p uriparser:p utf8cpp:p
           install: >-
             unzip
             make
@@ -116,7 +116,7 @@ jobs:
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   build-vs2022:
-    runs-on: windows-2022
+    runs-on: windows-2025
     strategy:
       matrix:
         platform: [x64, ARM64, ARM64EC]
@@ -125,7 +125,7 @@ jobs:
     steps:
       - name: Clone repository
         uses: actions/checkout@v4
-      - uses: msys2/setup-msys2@v2.24.1
+      - uses: msys2/setup-msys2@v2.27.0
         with:
           update: true
           install: >-
@@ -149,6 +149,7 @@ jobs:
         run: ./scripts/ci/vs/install.sh
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v2
+
       - name: Build DEBUG and RELEASE emptyExample
         working-directory: ${{env.GITHUB_WORKSPACE}}
         run: |
@@ -173,12 +174,12 @@ jobs:
               suffix: arm-linux-gnueabihf,
               alladdons: 1,
             }
-          - {
-              libs: armv7l,
-              multistrap_arch: armhf,
-              suffix: arm-linux-gnueabihf,
-              alladdons: 1,
-            }
+          # - {
+          #     libs: armv7l,
+          #     multistrap_arch: armhf,
+          #     suffix: arm-linux-gnueabihf,
+          #     alladdons: 1,
+          #   }
           - {
               libs: aarch64,
               multistrap_arch: arm64,
@@ -197,7 +198,7 @@ jobs:
           version: 1.0
       - uses: actions/checkout@v4
       - name: ccache
-        uses: hendrikmuhs/ccache-action@v1.2.14
+        uses: hendrikmuhs/ccache-action@v1.2.17
         with:
           key: ${{ matrix.cfg.libs }}
       # - name: Determine Release
@@ -237,7 +238,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: ccache
-        uses: hendrikmuhs/ccache-action@v1.2.14
+        uses: hendrikmuhs/ccache-action@v1.2.17
         with:
           key: ${{ matrix.cfg.target }}-${{ matrix.cfg.libs }}
       # - name: Determine Release
@@ -274,10 +275,11 @@ jobs:
     env:
       TARGET: ${{matrix.cfg.target}}
     steps:
-      - name: Remove Old lib-unwind
-        run: if [ "$TARGET" = "linux64" ]; then
-          sudo apt-get remove libunwind-14 -y;
-          fi
+      # handled by the install script now
+      #      - name: Remove Old lib-unwind
+      #        run: if [ "$TARGET" = "linux64" ]; then
+      #          sudo apt-get remove libunwind-14 -y;
+      #          fi
       - name: Cache Packages
         uses: awalsh128/cache-apt-pkgs-action@latest
         with:
@@ -298,7 +300,7 @@ jobs:
       #     fi
       - uses: actions/checkout@v4
       - name: ccache
-        uses: hendrikmuhs/ccache-action@v1.2.14
+        uses: hendrikmuhs/ccache-action@v1.2.17
         with:
           key: ${{ matrix.cfg.target }}-${{ matrix.cfg.libs }}
 
@@ -337,7 +339,7 @@ jobs:
 
   #   - uses: actions/checkout@v4
   #   - name: ccache
-  #     uses: hendrikmuhs/ccache-action@v1.2.14
+  #     uses: hendrikmuhs/ccache-action@v1.2.17
   #     with:
   #       key: ${{ matrix.cfg.target }}-${{ matrix.cfg.libs }}
 
@@ -365,7 +367,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: ccache
-        uses: hendrikmuhs/ccache-action@v1.2.14
+        uses: hendrikmuhs/ccache-action@v1.2.17
         with:
           key: ${{ matrix.cfg.target }}-${{ matrix.cfg.opt }}
 
@@ -395,4 +397,54 @@ jobs:
         env:
           DEVELOPER_DIR: "/Applications/Xcode.app/Contents/Developer"
           SDKROOT: "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk"
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  build-android:
+    runs-on: ubuntu-24.04
+    strategy:
+      matrix:
+        cfg:
+          - { target: android, opt: arm64-v8a }
+          - { target: android, opt: x86_64 }
+          - { target: android, opt: armeabi-v7a }
+
+    env:
+      TARGET: ${{ matrix.cfg.target }}
+      ARCH: ${{ matrix.cfg.opt }}
+      ANDROID_SDK_ROOT: $ANDROID_HOME
+      ANDROID_NDK_ROOT: $ANDROID_NDK_LATEST_HOME
+
+    steps:
+      - name: checkout openFrameworks
+        uses: actions/checkout@v4
+
+      - name: Set Up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          distribution: "temurin"
+          java-version: "17"
+
+      - name: Download Libraries
+        run: ./of update libs android
+
+      - name: Build openFrameworks Core - Debug
+        run: |
+          cd libs/openFrameworksCompiled/project/android/
+          gradle wrapper
+          chmod +x gradlew
+          ./gradlew assembleDebug
+
+      - name: Build openFrameworks Core - CMake
+        run: |
+          cd libs/openFrameworksCompiled/project/android/
+          ./cmake.sh ${ARCH}
+
+      - name: Check if openFrameworks output Exists
+        run: |
+          LIB_PATH="libs/openFrameworksCompiled/lib/android/${ARCH}/libopenFrameworksAndroid.so"
+          if [ -f "$LIB_PATH" ]; then
+            echo "Build Success - [$LIB_PATH]"
+          else
+            echo "ERROR: Build Failed not found: [$LIB_PATH]"
+            exit 1
+          fi

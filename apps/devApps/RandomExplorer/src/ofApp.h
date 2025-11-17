@@ -20,10 +20,11 @@ class ofApp : public ofBaseApp {
 	ofParameter<size_t> size_ { "size (cube root)", 25, 1, 50 };
 	ofParameter<unsigned long> seed_ { "seed", 0, 0, 1000 };
 	ofParameter<void> reinit_ { "re-init engine" };
+	ofParameter<bool> draw_graphs_ { "draw graphs", true };
 	ofParameter<bool> ok_color_ { "ok_color", true };
-	ofParameter<float> saturation_ { "saturation", 0.95 };
-	ofParameter<float> value_ { "value", .45 };
-	ofParameter<float> offset_ { "offset", 0 };
+	ofParameter<float> saturation_ { "saturation", 0.95f };
+	ofParameter<float> value_ { "value", .45f };
+	ofParameter<float> offset_ { "offset", 0.0f };
 
 	size_t col_w_ = 640;
 	size_t square_ = 110;

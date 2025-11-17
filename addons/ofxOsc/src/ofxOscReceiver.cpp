@@ -104,11 +104,11 @@ void ofxOscReceiver::stop() {
 	if (listenSocket) {
 		listenSocket->AsynchronousBreak();
 	} else {
-		ofLogNotice("socket already torn down ");
+		ofLogVerbose("socket already torn down ");
 	}
 	
 	if (!listenThread.joinable()) {
-		ofLogNotice("not joinable");
+		ofLogVerbose("not joinable");
 	} else {
 		listenThread.join();
 	}
