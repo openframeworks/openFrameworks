@@ -8,6 +8,8 @@
 #pragma once
 
 #include "ofConstants.h"
+#include <vector>
+
 
 #include <TargetConditionals.h>
 #if TARGET_OS_IOS || (TARGET_OS_IPHONE && !TARGET_OS_TV)
@@ -19,14 +21,14 @@ struct ofxiOSExternalDisplayMode{
 };
 
 class ofxiOSExternalDisplay {
-    
+
 public:
-    
+
     //-------------------------------------------------------
 	static void alertExternalDisplayConnected();
    	static void alertExternalDisplayDisconnected();
     static void alertExternalDisplayChanged();
-    
+
     //-------------------------------------------------------
     static std::vector<ofxiOSExternalDisplayMode> getExternalDisplayModes();
     static bool displayOnExternalScreen(ofxiOSExternalDisplayMode externalDisplayMode);
@@ -40,16 +42,16 @@ public:
     static bool isDisplayingOnDeviceScreen();
     static bool isExternalScreenConnected();
     static bool isMirroring();
- 
+
     //-------------------------------------------------------
     ofxiOSExternalDisplay();
     ~ofxiOSExternalDisplay();
-    
+
     //-------------------------------------------------------
 	virtual void externalDisplayConnected(){}
 	virtual void externalDisplayDisconnected(){}
     virtual void externalDisplayChanged(){}
-    
+
 };
 
 #define ofxiPhoneExternalDisplay ofxiOSExternalDisplay
