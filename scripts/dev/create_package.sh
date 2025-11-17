@@ -343,45 +343,51 @@ function createPackage {
     #delete tutorials by now
     rm -Rf $PKG_OFROOT/tutorials
 
+    #remove of script until after 0.12.1 
+    rm $PKG_OFROOT/of
+
     RELEASE="${RELEASE:-latest}"
+    #for now we force latest as we don't have releases in Apothecary for RC etc 
+    #prob should have a way to detect if the release exists and if it doesn't downgrade to latest
+    LIBS_VERSION=latest
 
     cd $PKG_OFROOT/
     echo " Location: {$PKG_OFROOT}"
     if [ "$PKG_PLATFORM" = "osx" ]; then
-        scripts/osx/download_libs.sh -t $RELEASE
-        scripts/emscripten/download_libs.sh -n -t $RELEASE
+        scripts/osx/download_libs.sh -t $LIBS_VERSION
+        scripts/emscripten/download_libs.sh -n -t $LIBS_VERSION
     elif [ "$PKG_PLATFORM" = "linux64" ]; then
         scripts/linux/download_libs.sh -a 64$LIBS_ABI
-        scripts/emscripten/download_libs.sh -n -t $RELEASE
+        scripts/emscripten/download_libs.sh -n -t $LIBS_VERSION
     elif [ "$PKG_PLATFORM" = "linuxarmv6l" ]; then
-        scripts/linux/download_libs.sh -a armv6l -t $RELEASE
+        scripts/linux/download_libs.sh -a armv6l -t $LIBS_VERSION
     elif [ "$PKG_PLATFORM" = "linuxarmv7l" ]; then
-        scripts/linux/download_libs.sh -a armv7l -t $RELEASE
+        scripts/linux/download_libs.sh -a armv7l -t $LIBS_VERSION
     elif [ "$PKG_PLATFORM" = "linuxaarch64" ]; then
-        scripts/linux/download_libs.sh -a aarch64 -t $RELEASE
+        scripts/linux/download_libs.sh -a aarch64 -t $LIBS_VERSION
     elif [ "$PKG_PLATFORM" = "msys2" ]; then
-        scripts/msys2/download_libs.sh -a $LIBS_ABI -t $RELEASE
-        scripts/emscripten/download_libs.sh -n -t $RELEASE
+        scripts/msys2/download_libs.sh -a $LIBS_ABI -t $LIBS_VERSION
+        scripts/emscripten/download_libs.sh -n -t $LIBS_VERSION
     elif [ "$PKG_PLATFORM" = "vs2019" ]; then
-        scripts/vs/download_libs.sh -a $LIBS_ABI -t $RELEASE
-        scripts/emscripten/download_libs.sh -n -t $RELEASE
+        scripts/vs/download_libs.sh -a $LIBS_ABI -t $LIBS_VERSION
+        scripts/emscripten/download_libs.sh -n -t $LIBS_VERSION
     elif [ "$PKG_PLATFORM" = "vs" ]; then
         if [ "$LIBS_ABI" = "" ]; then
-            scripts/vs/download_libs_2019_x64.sh -t $RELEASE
+            scripts/vs/download_libs_2019_x64.sh -t $LIBS_VERSION
         else
-            scripts/vs/download_libs.sh -a $LIBS_ABI -t $RELEASE
+            scripts/vs/download_libs.sh -a $LIBS_ABI -t $LIBS_VERSION
         fi
-        scripts/emscripten/download_libs.sh -n -t $RELEASE
+        scripts/emscripten/download_libs.sh -n -t $LIBS_VERSION
     elif [ "$PKG_PLATFORM" = "android" ]; then
-        scripts/android/download_libs.sh -t $RELEASE
+        scripts/android/download_libs.sh -t $LIBS_VERSION
     elif [ "$PKG_PLATFORM" = "ios" ]; then
-        scripts/macos/download_libs.sh -t $RELEASE
+        scripts/macos/download_libs.sh -t $LIBS_VERSION
      elif [ "$PKG_PLATFORM" = "emscripten" ]; then
-       scripts/emscripten/download_libs.sh -n -t $RELEASE
+       scripts/emscripten/download_libs.sh -n -t $LIBS_VERSION
     elif [ "$PKG_PLATFORM" = "macos" ]; then
-        scripts/osx/download_libs.sh -t $RELEASE
-        scripts/macos/download_libs.sh -t $RELEASE
-        scripts/emscripten/download_libs.sh -n -t $RELEASE
+        scripts/osx/download_libs.sh -t $LIBS_VERSION
+        scripts/macos/download_libs.sh -t $LIBS_VERSION
+        scripts/emscripten/download_libs.sh -n -t $LIBS_VERSION
     fi
 
     createProjectFiles $PKG_PLATFORM $PKG_OFROOT
@@ -430,15 +436,15 @@ function createPackage {
     mkdir -p $HOME/.tmp
     export TMPDIR=$HOME/.tmp
 
-    # FIXME: Temporary fix for latest projectGenerator
+    # FIXME: 
     # there is no "latest" release so we use nightly. feel free to remove this when PG/Apothecary releases are in sync
-    if [ "$RELEASE" = "latest" ]; then
-        RELEASE="nightly"
-    fi
+    # if [ "$RELEASE" = "latest" ]; then
+    #     RELEASE="nightly"
+    # fi
 
 
     if [ "$PKG_PLATFORM" = "vs" ] || [ "$PKG_PLATFORM" = "vs2019" ] || [ "$PKG_PLATFORM" = "msys2" ]; then
-        downloader https://github.com/openframeworks/projectGenerator/releases/download/$RELEASE/projectGenerator-vs-gui.zip 2> /dev/null
+        downloader https://github.com/openframeworks/projectGenerator/releases/download/nightly/projectGenerator-vs-gui.zip 2> /dev/null
         mkdir -p projectGenerator
         unzip -q projectGenerator-vs-gui.zip -d "projectGenerator" 2> /dev/null
         rm projectGenerator-vs-gui.zip
@@ -446,7 +452,7 @@ function createPackage {
     fi
 
     if [ "$PKG_PLATFORM" = "osx" ] || [ "$PKG_PLATFORM" = "ios" ] || [ "$PKG_PLATFORM" = "macos" ]; then
-        downloader https://github.com/openframeworks/projectGenerator/releases/download/$RELEASE/projectGenerator-osx.zip 2> /dev/null
+        downloader https://github.com/openframeworks/projectGenerator/releases/download/nightly/projectGenerator-osx.zip 2> /dev/null
         unzip -q projectGenerator-osx.zip
         mv projectGenerator-osx/ projectGenerator
         rm projectGenerator-osx.zip
@@ -457,19 +463,20 @@ function createPackage {
         downloader https://github.com/openframeworks/projectGenerator/releases/download/nightly/projectGenerator-linux-gui.gz 2> /dev/null
         tar -xzvf projectGenerator-linux-gui.gz
         mv $(find . -maxdepth 1 -type d -name "projectGenerator-*") projectGenerator
-        rm -rf apps/projectGenerator
+        #keep PG as it is needed to compile 
+        #rm -rf apps/projectGenerator
         rm projectGenerator-linux-gui.gz
     fi
 
     if [ "$PKG_PLATFORM" = "android" ]; then
 
         if [ "${LIBS_ABI}" == "windows" ]; then
-            downloader https://github.com/openframeworks/projectGenerator/releases/download/$RELEASE/projectGenerator-vs-gui.zip 2> /dev/null
+            downloader https://github.com/openframeworks/projectGenerator/releases/download/nightly/projectGenerator-vs-gui.zip 2> /dev/null
             unzip -q -d "projectGenerator" projectGenerator-vs-gui.zip 2> /dev/null
             rm projectGenerator-vs-gui.zip
             cd ${PKG_OFROOT}
         elif [ "${LIBS_ABI}" == "macos" ]; then
-            downloader https://github.com/openframeworks/projectGenerator/releases/download/$RELEASE/projectGenerator-osx.zip 2> /dev/null
+            downloader https://github.com/openframeworks/projectGenerator/releases/download/nightly/projectGenerator-osx.zip 2> /dev/null
             unzip -q projectGenerator-osx.zip
             mv projectGenerator-osx/ projectGenerator
             rm projectGenerator-osx.zip

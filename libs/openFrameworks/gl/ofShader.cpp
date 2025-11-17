@@ -1469,9 +1469,9 @@ bool ofShader::setShadowUniforms(int textureLocation) const {
     setUniformTexture("uShadowMapSpot", ofShadow::getTextureTarget(OF_LIGHT_SPOT), ofShadow::getSpotTexId(), textureLocation + 2);
     setUniformTexture("uShadowMapArea", ofShadow::getTextureTarget(OF_LIGHT_AREA), ofShadow::getAreaTexId(), textureLocation + 3);
 
-    for (size_t i = 0; i < ofShadowsData().size(); i++) {
+    for (size_t i = 0; i < ofShadow::getShadowsData().size(); i++) {
         std::string idx = ofToString(i, 0);
-        std::shared_ptr<ofShadow::Data> shadow = ofShadowsData()[i].lock();
+        auto shadow = ofShadow::getShadowsData()[i].lock();
         std::string shadowAddress = "shadows[" + idx + "]";
         if (!shadow || !shadow->isEnabled || shadow->index < 0) {
             setUniform1f(shadowAddress + ".enabled", 0);
@@ -1508,7 +1508,7 @@ bool ofShader::setPbrEnvironmentMapUniforms(int textureLocation) const {
         return false;
     }
 
-    std::shared_ptr<ofCubeMap::Data> cubeMapData = ofCubeMap::getActiveData();
+    auto cubeMapData = ofCubeMap::getActiveData();
     if (cubeMapData) {
         if (cubeMapData->bIrradianceAllocated) {
             setUniformTexture("tex_irradianceMap", GL_TEXTURE_CUBE_MAP, cubeMapData->irradianceMapId, textureLocation);

@@ -151,7 +151,7 @@ void ofApp::draw(){
 				//glCullFace(GL_FRONT);
 				
 				// the culling can be disabled by calling
-				//light->getShadow().setGlCullingEnabled(false);
+				//light->getShadow().setCullingEnabled(false);
 				// or the culling winding order can be changed by calling
 				//light->getShadow().setFrontFaceWindingOrder(GL_CCW); // default is GL_CW
 				renderScene();

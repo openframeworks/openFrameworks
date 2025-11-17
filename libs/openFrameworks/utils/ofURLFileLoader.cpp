@@ -9,22 +9,24 @@ using std::set;
 using std::string;
 
 #if !defined(TARGET_IMPLEMENTS_URL_LOADER)
-#include <curl/curl.h>
-#include "ofThreadChannel.h"
-#include "ofThread.h"
-static bool curlInited = false;
-#define MAX_POSTFIELDS_SIZE (1024 * 1024)
-#if !defined(NO_OPENSSL)
-#include <openssl/evp.h>
-#include <openssl/pem.h>
-#include <openssl/x509.h>
-#include <openssl/x509v3.h>
-#include <openssl/err.h>
-#include <iostream>
-#include <fstream>
-#define CERTIFICATE_FILE "ssl/cacert.pem"
-#define PRIVATE_KEY_FILE "ssl/cacert.key"
-#endif
+	#include <curl/curl.h>
+	#include "ofThreadChannel.h"
+	#include "ofThread.h"
+	static bool curlInited = false;
+
+	#define MAX_POSTFIELDS_SIZE (1024 * 1024)
+
+	#include <openssl/evp.h>
+	#include <openssl/pem.h>
+	#include <openssl/x509.h>
+	#include <openssl/x509v3.h>
+	#include <openssl/err.h>
+	#include <iostream>
+	#include <fstream>
+
+	#define CERTIFICATE_FILE "cacert.pem"
+	#define PRIVATE_KEY_FILE "cacert.key"
+	
 #endif
 
 int ofHttpRequest::nextID = 0;
@@ -47,10 +49,8 @@ public:
 	void remove(int id);
 	void clear();
 	void stop();
-#if !defined(NO_OPENSSL)
 	bool checkValidCertifcate(const std::string& cert_file);
 	void createSSLCertificate();
-#endif
 	ofHttpResponse handleRequest(const ofHttpRequest & request);
 	int handleRequestAsync(const ofHttpRequest & request); // returns id
 
@@ -130,8 +130,9 @@ void ofURLFileLoaderImpl::stop() {
 	curl_global_cleanup();
 }
 
-#if !defined(NO_OPENSSL)
+
 bool ofURLFileLoaderImpl::checkValidCertifcate(const std::string & cert_file) {
+#if !defined(NO_OPENSSL)
 	try {
 		FILE * fp = fopen(cert_file.c_str(), "r");
 		if (!fp) return false;
@@ -150,10 +151,12 @@ bool ofURLFileLoaderImpl::checkValidCertifcate(const std::string & cert_file) {
 		ofLogError("ofURLFileLoader") << "Unknown error occurred in checkValidCertifcate.";
 		return false;
 	}
+#endif
 }
 
 
 void ofURLFileLoaderImpl::createSSLCertificate() {
+#if !defined(NO_OPENSSL)
 	try {
 		EVP_PKEY * pkey = nullptr;
 		X509 * x509 = nullptr;
@@ -229,8 +232,9 @@ void ofURLFileLoaderImpl::createSSLCertificate() {
 	} catch (...) {
 		ofLogError("ofURLFileLoader") << "Unknown error occurred in createSSLCertificate.";
 	}
-}
 #endif
+}
+
 
 
 void ofURLFileLoaderImpl::threadedFunction() {
@@ -313,22 +317,8 @@ ofHttpResponse ofURLFileLoaderImpl::handleRequest(const ofHttpRequest & request)
 		}
 	}
 	if(version->features & CURL_VERSION_SSL) {
-#if !defined(NO_OPENSSL)
-		const std::string caPath = "ssl";
-		const std::string caFile = "ssl/cacert.pem";
-		if (ofFile::doesFileExist(ofToDataPath(CERTIFICATE_FILE)) && checkValidCertifcate(ofToDataPath(CERTIFICATE_FILE))) {
-			ofLogVerbose("ofURLFileLoader") << "SSL valid certificate found";
-		} else {
-			ofLogVerbose("ofURLFileLoader") << "SSL certificate not found - generating";
-			createSSLCertificate();
-		}
-		curl_easy_setopt(curl.get(), CURLOPT_CAPATH, ofToDataPath(caPath, true).c_str());
-		curl_easy_setopt(curl.get(), CURLOPT_CAINFO, ofToDataPath(caFile, true).c_str());
 		curl_easy_setopt(curl.get(), CURLOPT_SSL_VERIFYPEER, false);
-#else
-		curl_easy_setopt(curl.get(), CURLOPT_SSL_VERIFYPEER, 1L);
-#endif
-		curl_easy_setopt(curl.get(), CURLOPT_SSL_VERIFYHOST, 2);
+		curl_easy_setopt(curl.get(), CURLOPT_SSL_VERIFYHOST, 2L);
 	}
 	curl_easy_setopt(curl.get(), CURLOPT_URL, request.url.c_str());
 	curl_easy_setopt(curl.get(), CURLOPT_FOLLOWLOCATION, 1L);
@@ -337,37 +327,40 @@ ofHttpResponse ofURLFileLoaderImpl::handleRequest(const ofHttpRequest & request)
 	if (request.contentType != "") {
 		headers = curl_slist_append(headers, ("Content-Type: " + request.contentType).c_str());
 	}
-	if(request.close)
+	if(request.close) {
 		headers = curl_slist_append(headers, "Connection: close");
-	if(version->features & CURL_VERSION_BROTLI) {
-		headers = curl_slist_append(headers, "Accept-Encoding: br");
 	}
-	if(version->features & CURL_VERSION_LIBZ) {
-		headers = curl_slist_append(headers, "Accept-Encoding: gzip");
-	}
+	// https://curl.se/libcurl/c/CURLOPT_ACCEPT_ENCODING.html
+	// the following is used for requesting specific compression encodings
+	// if the headers are set with the encodings, then curl will not decompress the received data
+	// leaving this here for future reference
+	//	std::string encodings = "Accept-Encoding: ";
+	//	bool first = true;
+	//
+	//	if (version->features & CURL_VERSION_BROTLI) {
+	//		encodings += "br";
+	//		first = false;
+	//	}
+	//	if (version->features & CURL_VERSION_LIBZ) {
+	//		if (!first) {encodings += ", ";}
+	//		encodings += "gzip";
+	//		first = false;
+	//	}
+	//	if( !first) {
+	//		ofLogVerbose("ofURLFileLoader :: encodings") << encodings;
+	//		headers = curl_slist_append(headers, encodings.c_str());
+	//	} else {
+	//		curl_easy_setopt(curl.get(), CURLOPT_ACCEPT_ENCODING, "");
+	//	}
+	/* enable all supported built-in compressions */
+	curl_easy_setopt(curl.get(), CURLOPT_ACCEPT_ENCODING, "");
+	
 	for (map<string, string>::const_iterator it = request.headers.cbegin(); it != request.headers.cend(); it++) {
 		headers = curl_slist_append(headers, (it->first + ": " + it->second).c_str());
 	}
 
 	if (headers) {
 		curl_easy_setopt(curl.get(), CURLOPT_HTTPHEADER, headers);
-	}
-	std::string body = request.body;
-	if (!request.body.empty()) {
-		if (request.method == ofHttpRequest::PUT || request.body.size() > MAX_POSTFIELDS_SIZE) { // If request is an upload (e.g., file upload)
-			curl_easy_setopt(curl.get(), CURLOPT_UPLOAD, 1L);
-			curl_easy_setopt(curl.get(), CURLOPT_READFUNCTION, readBody_cb);
-			curl_easy_setopt(curl.get(), CURLOPT_READDATA, &body);
-			curl_easy_setopt(curl.get(), CURLOPT_POSTFIELDSIZE, 0L);
-		} else { // If request is a normal POST
-			curl_easy_setopt(curl.get(), CURLOPT_POSTFIELDSIZE, request.body.size());
-			curl_easy_setopt(curl.get(), CURLOPT_POSTFIELDS, request.body.c_str());
-		}
-	} else {
-		curl_easy_setopt(curl.get(), CURLOPT_POSTFIELDSIZE, 0L);
-		curl_easy_setopt(curl.get(), CURLOPT_POSTFIELDS, "");
-		curl_easy_setopt(curl.get(), CURLOPT_READFUNCTION, nullptr);
-		curl_easy_setopt(curl.get(), CURLOPT_READDATA, nullptr);
 	}
 	if (request.method == ofHttpRequest::GET) {
 		curl_easy_setopt(curl.get(), CURLOPT_HTTPGET, 1L);
@@ -383,6 +376,25 @@ ofHttpResponse ofURLFileLoaderImpl::handleRequest(const ofHttpRequest & request)
 		curl_easy_setopt(curl.get(), CURLOPT_POST, 1L);
 		curl_easy_setopt(curl.get(), CURLOPT_UPLOAD, 0L);
 		curl_easy_setopt(curl.get(), CURLOPT_HTTPGET, 0L);
+	}
+	if (request.method != ofHttpRequest::GET) {
+		std::string body = request.body;
+		if (!request.body.empty()) {
+			if (request.method == ofHttpRequest::PUT || request.body.size() > MAX_POSTFIELDS_SIZE) { // If request is an upload (e.g., file upload)
+				curl_easy_setopt(curl.get(), CURLOPT_UPLOAD, 1L);
+				curl_easy_setopt(curl.get(), CURLOPT_READFUNCTION, readBody_cb);
+				curl_easy_setopt(curl.get(), CURLOPT_READDATA, &body);
+				curl_easy_setopt(curl.get(), CURLOPT_POSTFIELDSIZE, 0L);
+			} else { // If request is a normal POST
+				curl_easy_setopt(curl.get(), CURLOPT_POSTFIELDSIZE, request.body.size());
+				curl_easy_setopt(curl.get(), CURLOPT_POSTFIELDS, request.body.c_str());
+			}
+		} else {
+			curl_easy_setopt(curl.get(), CURLOPT_POSTFIELDSIZE, 0L);
+			curl_easy_setopt(curl.get(), CURLOPT_POSTFIELDS, "");
+			curl_easy_setopt(curl.get(), CURLOPT_READFUNCTION, nullptr);
+			curl_easy_setopt(curl.get(), CURLOPT_READDATA, nullptr);
+		}
 	}
 
 	if (request.timeoutSeconds > 0) {

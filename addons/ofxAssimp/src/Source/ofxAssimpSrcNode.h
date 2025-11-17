@@ -42,7 +42,7 @@ public:
 	unsigned int getNumChildren();
 	std::vector< std::shared_ptr<ofxAssimp::SrcNode> >& getChildren();
 	
-	virtual std::string getAsString( int aLevel=0 );
+	virtual std::string getAsString( unsigned int aLevel=0 );
 	
 	// animation functions
 	ofxAssimp::SrcAnimKeyCollection& getKeyCollection( unsigned int aAnimUId );

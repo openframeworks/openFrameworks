@@ -43,7 +43,7 @@ done
 msyspackages="unzip make"
 
 # List of MINGW packages to be installed (without prefix)
-mingwPackages="assimp cairo curl FreeImage \
+mingwPackages="assimp cairo curl freeimage \
 	glew glfw glm fmt zlib brotli libpng \
 	harfbuzz libsndfile libusb libxml2 mpg123 \
 	nlohmann-json openal opencv \

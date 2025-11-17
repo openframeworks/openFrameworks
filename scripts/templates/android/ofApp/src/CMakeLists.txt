@@ -50,8 +50,9 @@ set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(TARGET_ANDROID ON)
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -ferror-limit=0 -std=c17 -Oz -Wall -fno-short-enums -fPIE -fPIC -fexceptions -ffunction-sections -fdata-sections")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ferror-limit=0 -std=c++23 -Oz -stdlib=libc++ -Wall -fno-short-enums -fPIE -fPIC -fexceptions -ffunction-sections -fdata-sections")
+add_definitions(-DANDROID)
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -ferror-limit=0 -std=c17 -O3 -Wall -fno-short-enums -fPIE -fPIC -ffunction-sections -fdata-sections")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ferror-limit=0 -std=c++23 -O3 -stdlib=libc++ -Wall -fno-short-enums -fPIE -fPIC -fexceptions -ffunction-sections -fdata-sections")
 set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -Wl,-export-dynamic")
 print_all_variables()
 set(OF_LIBRARY_TYPE "SHARED")  # or "STATIC"
@@ -67,6 +68,9 @@ add_library( ${PROJECT_NAME}
         ${OF_APP_SRC_PATH}/main.cpp
         ${OF_APP_SRC_PATH}/ofApp.cpp
 )
+
+file(GLOB_RECURSE APP_SRC CONFIGURE_DEPENDS "${OF_APP_SRC_PATH}/*.cpp")
+target_sources(${PROJECT_NAME} PRIVATE ${APP_SRC})
 
 include_directories(
         ${PRJ_SOURCE_PATH}/3d
@@ -110,16 +114,45 @@ include_directories(
 )
 
 # Load add-on include directories from Gradle
+
+if(DEFINED ADDON_SOURCES)
+    message(STATUS "Adding addon sources: ${ADDON_SOURCES}")
+    foreach(SRC ${ADDON_SOURCES})
+        message(STATUS " - ${SRC}")
+        list(APPEND ADDON_SRC_LIST ${SRC})
+    endforeach()
+    target_sources(${PROJECT_NAME} PRIVATE ${ADDON_SRC_LIST})
+endif()
+
+
+if(NOT DEFINED ADDON_INCLUDE_DIRS AND DEFINED ENV{ADDON_INCLUDE_DIRS})
+    set(ADDON_INCLUDE_DIRS $ENV{ADDON_INCLUDE_DIRS})
+    message(STATUS "ADDON_INCLUDE_DIRS not defined, falling back to ENV: ${ADDON_INCLUDE_DIRS}")
+endif()
+
 if(DEFINED ADDON_INCLUDE_DIRS)
+    message(STATUS "Adding addon include dirs: ${ADDON_INCLUDE_DIRS}")
     foreach(DIR ${ADDON_INCLUDE_DIRS})
+        message(STATUS "Adding addon include DIR: ${DIR}")
         include_directories(${DIR})
     endforeach()
 endif()
+
+if(NOT DEFINED ADDON_LIBS AND DEFINED ENV{ADDON_LIBS})
+    set(ADDON_LIBS $ENV{ADDON_LIBS})
+    message(STATUS "ADDON_LIBS not defined, falling back to ENV: ${ADDON_LIBS}")
+endif()
+
 if(DEFINED ADDON_LIBS)
-    message(STATUS "Adding addon libraries: ${ADDON_LIBS}")
+    message(STATUS "Original ADDON_LIBS: ${ADDON_LIBS}")
+    set(FILTERED_ADDON_LIBS "")
     foreach(LIB ${ADDON_LIBS})
-        target_link_libraries(${PROJECT_NAME} ${LIB})
+        if("${LIB}" MATCHES "${ANDROID_ABI}")
+            list(APPEND FILTERED_ADDON_LIBS ${LIB})
+        endif()
     endforeach()
+    message(STATUS "Filtered ADDON_LIBS for ABI '${ANDROID_ABI}': ${FILTERED_ADDON_LIBS}")
+    target_link_libraries(${PROJECT_NAME} ${FILTERED_ADDON_LIBS})
 endif()
 
 find_library(ANDROID_LIB NAMES android)

@@ -102,15 +102,14 @@ bool SrcScene::load( const ImportSettings& asettings ) {
 }
 
 unsigned int SrcScene::initImportProperties(int assimpOptimizeFlags, const ImportSettings& asettings ) {
-//	store.reset(aiCreatePropertyStore(), aiReleasePropertyStore);
-	
-	// only ever give us triangles.
-//	aiSetImportPropertyInteger(store.get(), AI_CONFIG_PP_SBP_REMOVE, aiPrimitiveType_LINE | aiPrimitiveType_POINT );
-//	aiSetImportPropertyInteger(store.get(), AI_CONFIG_PP_PTV_NORMALIZE, true);
-	
 	// only ever give us triangles; newer c++ api
 	importer.SetPropertyInteger(AI_CONFIG_PP_SBP_REMOVE, aiPrimitiveType_LINE | aiPrimitiveType_POINT );
 	importer.SetPropertyBool(AI_CONFIG_PP_PTV_NORMALIZE, true);
+	// when preserve fbx pivots is true, assimp splits pivots out into multiple, one for transform, rotation, etc.
+	// this causes incorrect parsing and transforms.
+	// we just want a single bone without extra added nodes.
+	// this is apparent in FBX Mixamo models, among others.
+	importer.SetPropertyBool(AI_CONFIG_IMPORT_FBX_PRESERVE_PIVOTS, false);
 	
 	unsigned int flags = assimpOptimizeFlags;
 	
@@ -161,9 +160,6 @@ unsigned int SrcScene::initImportProperties(int assimpOptimizeFlags, const Impor
 //-------------------------------------------
 void SrcScene::optimizeScene(){
 	if( scene ) {
-//		aiApplyPostProcessing(scene.get(),aiProcess_ImproveCacheLocality | aiProcess_OptimizeGraph |
-//							  aiProcess_OptimizeMeshes | aiProcess_JoinIdenticalVertices |
-//							  aiProcess_RemoveRedundantMaterials);
 		importer.ApplyPostProcessing(aiProcess_ImproveCacheLocality | aiProcess_OptimizeGraph |
 									 aiProcess_OptimizeMeshes | aiProcess_JoinIdenticalVertices |
 									 aiProcess_RemoveRedundantMaterials);
@@ -190,10 +186,6 @@ void SrcScene::clear(){
 //-------------------------------------------
 bool SrcScene::processScene(const ImportSettings& asettings) {
 	mSettings = asettings;
-	
-//	ofLogNotice( "PRINTING ALL SCENE NODES" );
-//	printAllNodeNames( scene->mRootNode, 0 );
-//	ofLogNotice( "DONE PRINTING ALL SCENE NODES" ) << std::endl << std::endl;
 	
 	if(scene){
 		processNodes();
@@ -821,7 +813,7 @@ void SrcScene::loadGLResources(std::shared_ptr<ofxAssimp::SrcMesh> aSrcMesh, aiM
 				aSrcMesh->indices[j++] = amesh->mFaces[x].mIndices[a];
 			}
 		}
-		aSrcMesh->vbo->setIndexData(&aSrcMesh->indices[0],aSrcMesh->indices.size(),GL_STATIC_DRAW);
+		aSrcMesh->vbo->setIndexData(&aSrcMesh->indices[0],(int)aSrcMesh->indices.size(),GL_STATIC_DRAW);
 	}
 	ofLogVerbose("ofxAssimp::SrcScene") << "loadGLResource(): finished";
 }

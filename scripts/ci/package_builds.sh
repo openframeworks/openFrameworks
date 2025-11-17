@@ -38,9 +38,9 @@ mkdir -p $OUTPUT_FOLDER
 RELEASE="${RELEASE:-latest}"
 
 lastversion=$(date +%Y%m%d)
-# if [ -n "$1" ] && [ "$1" != "nightly" ]; then
-	# lastversion=$1
-# fi
+if [ -n "$1" ] && [ "$1" != "nightly" ] && [ "$1" != "latest" ]; then
+	lastversion=$1
+fi
 echo "##[endgroup]"
 
 echo "##[endgroup]"

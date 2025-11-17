@@ -150,7 +150,7 @@ void SrcMesh::setupVbo( std::shared_ptr<ofVbo> avbo ) {
 		}
 	}
 	
-	avbo->setIndexData(&tempIndices[0],tempIndices.size(),GL_STATIC_DRAW);
+	avbo->setIndexData(&tempIndices[0], (int)tempIndices.size(),GL_STATIC_DRAW);
 }
 
 //-------------------------------------------

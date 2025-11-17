@@ -3,8 +3,8 @@
 // version: ------------------------
 #define OF_VERSION_MAJOR 0
 #define OF_VERSION_MINOR 12
-#define OF_VERSION_PATCH 0
-#define OF_VERSION_PRE_RELEASE "master"
+#define OF_VERSION_PATCH 1
+#define OF_VERSION_PRE_RELEASE ""
 
 // core: ---------------------------
 #include <stdint.h>

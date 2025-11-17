@@ -204,7 +204,9 @@ void ofRtAudioSoundStream::start() {
 	if (audio == nullptr) return;
 
 	try {
-		audio->startStream();
+		if (!audio->isStreamRunning()) {
+			audio->startStream();
+		}
 	}
 	catch (std::exception &error) {
 		ofLogError() << error.what();

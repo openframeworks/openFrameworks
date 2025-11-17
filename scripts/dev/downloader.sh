@@ -1,5 +1,5 @@
 #!/bin/bash
-VERSION=4.5.0
+VERSION=4.6.0
 printDownloaderHelp() {
     cat <<EOF
     
@@ -25,7 +25,7 @@ printDownloaderHelp() {
 
 EOF
 }
-
+VERBOSE=0
 validate_url() {
     if [[ $1 =~ ^https?://.+ ]]; then
         return 0
@@ -33,19 +33,16 @@ validate_url() {
         return 1
     fi
 }
-
 convert_bytes_to_mb() {
     bytes=$1
     mb=$((bytes / 1024 / 1024))
     echo "${mb}MB"
 }
-
 CHECK_RESULT=0
 MAX_REDIRECTS=20
 RETRY_MAX=20
 RETRY_DELAY_S=1
 EXTRA_ARGS=""
-
 # ansi console escape codes
 CON_DEFAULT="\033[0m"
 CON_WHITE="\033[37m"
@@ -55,7 +52,6 @@ CON_RED="\033[31m"
 CON_YELLOW="\033[33m"
 CON_YELLOW_GREEN="\033[33m"
 CON_GREEN="\033[32m"
-
 echoError() {
     echo -e "$CON_BOLD$CON_RED$1$CON_DEFAULT"
 }
@@ -70,15 +66,21 @@ check_remote_vs_local() {
     LOCAL_FILE="$1"
     REMOTE_URL="$2"
     USE_WGET2="$3"
-    echo "  [downloader] check if local == remote: [$REMOTE_URL]"
+    if [[ $VERBOSE == 1 ]]; then
+        echo "  [downloader] check if local == remote: [$REMOTE_URL]"
+    fi
     if [ ! -f "$LOCAL_FILE" ]; then
-        echo "  [downloader] No download cache"
-        echo "  [downloader] Proceeding with download. "
+        if [[ $VERBOSE == 1 ]]; then
+            echo "  [downloader] No download cache"
+        fi
+        echo "  [downloader] Downloading ..."
         CHECK_RESULT=0
         return
     else
-        echo "  [downloader] Found download cache."
-        echo "  [cache] [$LOCAL_FILE]"
+        if [[ $VERBOSE == 1 ]]; then
+            echo "  [downloader] Found download cache."
+            echo "  [cache] [$LOCAL_FILE]"
+        fi
     fi
     REMOTE_URL=$(echo "$REMOTE_URL" | sed 's/[[:space:]]*$//')
     LocalSize=$(wc -c <"$LOCAL_FILE" | tr -d '[:space:]')
@@ -90,7 +92,9 @@ check_remote_vs_local() {
     LocalSizeMB=$(convert_bytes_to_mb $LocalSize)
     RemoteSizeMB=$(convert_bytes_to_mb $RemoteSize)
 
-    echo "  [downloader] Remote size:[${RemoteSizeMB}] | Local size:[${LocalSizeMB}]"
+    if [[ $VERBOSE == 1 ]]; then
+        echo "  [downloader] Remote size:[${RemoteSizeMB}] | Local size:[${LocalSizeMB}]"
+    fi
     if [ -z "$modified" ]; then
         echo "  [downloader] failed to retrieve last-modified header from remote ["$REMOTE_URL"] ... Proceeding with download"
         CHECK_RESULT=0
@@ -104,7 +108,7 @@ check_remote_vs_local() {
     fi
     if [ $? -ne 0 ]; then
         echo "  [downloader] Error in converting Remote modification time [report this openFrameworks devs]."
-        echo "  [downloader] ... Proceeding with download"
+        echo "  [downloader] Downloading ... [$REMOTE_URL]"
         CHECK_RESULT=0
         rm -f $LOCAL_FILE
         return
@@ -119,28 +123,30 @@ check_remote_vs_local() {
     fi
     if [ $? -ne 0 ]; then
         echo "  [downloader] Error in converting Local modification time [report this openFrameworks devs]."
-        echo "  [downloader] ... Proceeding with download"
+        echo "  [downloader] Downloading: [$REMOTE_URL]"
         CHECK_RESULT=0
         rm -f $LOCAL_FILE
         return
     fi
     if [ "$LocalSize" != "$RemoteSize" ]; then
-        echo "  [downloader] Remote size bits:[${RemoteSize}] | Local size bits:[${LocalSize}]"
-        echo "  [downloader] File sizes differ between remote and local file."
-        echo "  [downloader] ... Proceeding with download"
+        if [[ $VERBOSE == 1 ]]; then
+            echo "  [downloader] Remote size bits:[${RemoteSize}] | Local size bits:[${LocalSize}]"
+        fi
+        echo "  [downloader] File sizes differ between remote and local file. Downloading: [$REMOTE_URL]"
         CHECK_RESULT=0
         rm -f $LOCAL_FILE
         return
     fi
     if [ "$local_ctime" -lt "$remote_ctime" ]; then
-        echo "  [downloader] Remote modification Time:[${remote_ctime}] | Local modification Time:[${local_ctime}]"
-        echo "  [downloader] Remote file is newer."
-        echo "  [downloader] ... Proceeding with download"
+        if [[ $VERBOSE == 1 ]]; then
+            echo "  [downloader] Remote modification Time:[${remote_ctime}] | Local modification Time:[${local_ctime}]"
+        fi
+        echo "  [downloader] Remote file is newer. Downloading: [$REMOTE_URL]"
         CHECK_RESULT=0
         rm -f $LOCAL_FILE
         return
     fi
-    echo "  [downloader] No need to download again. Every bit matters."
+    echo "  [downloader] Cached. No need to download again: [$REMOTE_URL]"
     CHECK_RESULT=1
     return
 }
@@ -311,7 +317,9 @@ downloader() {
     fi
     # [options]
     if [[ "$COMPRESSION" == "1" ]]; then
-        echo "  [downloader] enabled brotli/zlib losslesss compression response"
+        if [[ $VERBOSE == 1 ]]; then
+            echo "  [downloader] enabled brotli/zlib losslesss compression response"
+        fi
     elif [[ "$COMPRESSION" == "0" ]] && [[ $CURL == 1 && $CURL_INSTALLED == 1 ]] && [[ $WGET2 == 0 || $WGET2_INSTALLED == 0 ]]; then
         EXTRA_ARGS+="-Z "
     fi
@@ -389,7 +397,9 @@ downloader() {
     URLS_TO_DOWNLOAD=$(echo "$URLS_TO_DOWNLOAD" | sed 's/[[:space:]]*$//')
     echo
     if [ -z "$URLS_TO_DOWNLOAD" ]; then
-        echo "  [downloader] No URLS to download, continue..."
+        if [[ $VERBOSE == 1 ]]; then
+            echo "  [downloader] No URLS to download, continue..."
+        fi
     else
         if [[ "${SILENT}" == 1 ]]; then
             if [[ $WGET2 == 1 ]] && [[ $WGET2_INSTALLED == 1 ]]; then
@@ -407,16 +417,22 @@ downloader() {
             fi
         else
             if [[ $WGET2 == 1 ]] && [[ $WGET2_INSTALLED == 1 ]]; then
-                echo "  [downloader] [wget2] urls:[$URLS_TO_DOWNLOAD] args:[$EXTRA_ARGS $FINAL_EXTRA_ARGS"
+                if [[ $VERBOSE == 1 ]]; then
+                    echo "  [downloader] [wget2] urls:[$URLS_TO_DOWNLOAD] args:[$EXTRA_ARGS $FINAL_EXTRA_ARGS"
+                fi
                 echo ""
                 wget2 -N -c --no-tcp-fastopen --progress=bar --force-progress --tries=${RETRY_MAX} --max-redirect=${MAX_REDIRECTS} --retry-connrefused --waitretry=${RETRY_DELAY_S} --timeout=1500 ${EXTRA_ARGS} ${FINAL_EXTRA_ARGS} ${URLS_TO_DOWNLOAD}
             elif [[ $CURL == 1 ]] && [[ $CURL_INSTALLED == 1 ]]; then
-                echo "  [downloader] [cURL] urls:[$URLS_TO_DOWNLOAD] args:[$EXTRA_ARGS $FINAL_EXTRA_ARGS ${CONNECTION_EXTRA_ARGS[@]}]"
+                if [[ $VERBOSE == 1 ]]; then
+                    echo "  [downloader] [cURL] urls:[$URLS_TO_DOWNLOAD] args:[$EXTRA_ARGS $FINAL_EXTRA_ARGS ${CONNECTION_EXTRA_ARGS[@]}]"
+                fi
                 echo
                 curl -Z -L --retry ${RETRY_MAX} --retry-delay ${RETRY_DELAY_S} --max-redirs ${MAX_REDIRECTS} --progress-bar --header "Connection: close" ${EXTRA_ARGS} ${FINAL_EXTRA_ARGS} ${URLS_TO_DOWNLOAD}
 
             elif [[ $WGET == 1 ]] && [[ $WGET_INSTALLED == 1 ]]; then
-                echo "  [downloader] [wget] [$FILENAME] urls:[$URLS_TO_DOWNLOAD] args:[$EXTRA_ARGS $FINAL_EXTRA_ARGS]"
+                if [[ $VERBOSE == 1 ]]; then
+                    echo "  [downloader] [wget] [$FILENAME] urls:[$URLS_TO_DOWNLOAD] args:[$EXTRA_ARGS $FINAL_EXTRA_ARGS]"
+                fi
                 echo
                 wget -nv --progress=bar -N --tries=${RETRY_MAX} --retry-connrefused --waitretry=${RETRY_DELAY_S} ${EXTRA_ARGS} ${FINAL_EXTRA_ARGS} ${URLS_TO_DOWNLOAD}
             else
@@ -427,11 +443,15 @@ downloader() {
         if [[ "$CLOSE_CONNECTION" == "1" ]]; then
             if [[ $CURL == 1 ]] && [[ $CURL_INSTALLED == 1 ]] || [[ $CURL == 1 && $WGET2 == 1 ]]; then
                 if [[ ${#FORWARDED_URLS[@]} -eq 0 ]]; then
-                    echo "  [downloader] No active connections to close"
+                    if [[ $VERBOSE == 1 ]]; then
+                        echo "  [downloader] No active connections to close"
+                    fi
                 else
                     FIRST_URL="${FORWARDED_URLS[0]}"
                     FIRST_URL=$(echo "$FIRST_URL" | sed 's/[[:space:]]*$//')
-                    echo "  [downloader] Closing the ports yarr url:[$FIRST_URL]"
+                    if [[ $VERBOSE == 1 ]]; then
+                        echo "  [downloader] Closing the ports yarr url:[$FIRST_URL]"
+                    fi
                     curl -I -L --retry-connrefused --insecure --silent --head --max-time 1 --retry ${RETRY_MAX} ${CLOSE_EXTRA_ARGS} --no-keepalive --header "Connection: close" --retry-delay ${RETRY_DELAY_S} --max-redirs ${MAX_REDIRECTS} ${FIRST_URL}
                 fi
             fi

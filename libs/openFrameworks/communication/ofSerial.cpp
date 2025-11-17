@@ -43,9 +43,6 @@
 	#endif*/
 #endif
 
-// serial error codes
-#define OF_SERIAL_NO_DATA 	-2
-#define OF_SERIAL_ERROR		-1
 
 using std::vector;
 using std::string;
