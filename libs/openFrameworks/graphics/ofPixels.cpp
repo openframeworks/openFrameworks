@@ -2,6 +2,8 @@
 #include "ofPixels.h"
 #include "ofColor.h"
 #include <unordered_map>
+#include <string.h> // memcpy
+#include <functional> // std::function
 
 static ofImageType getImageTypeFromChannels(size_t channels){
 	switch(channels){
