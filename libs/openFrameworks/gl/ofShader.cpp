@@ -8,6 +8,7 @@
     #include "ofxAndroidUtils.h"
 #endif
 #include <regex>
+#include <vector>
 
 using std::endl;
 using std::ostringstream;
@@ -958,7 +959,7 @@ void ofShader::setUniformTexture(const string & name, const ofTexture & tex, int
 		setUniformTexture( name, texData, textureLocation);
 	}
 }
-	
+
 //--------------------------------------------------------------
 void ofShader::setUniformTexture(const string & name, const ofTextureData & texData, int textureLocation) const{
     if (bLoaded) {

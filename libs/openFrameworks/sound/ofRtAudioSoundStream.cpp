@@ -4,6 +4,7 @@
 #include "ofAppRunner.h"
 #include "ofLog.h"
 #include <RtAudio.h>
+#include <string.h>
 
 using std::vector;
 using std::shared_ptr;
@@ -146,7 +147,7 @@ bool ofRtAudioSoundStream::setup(const ofSoundStreamSettings & settings_)
 			ofLogNotice() << "Initialing RtAudio with UNSPECIFIED API";
 			audio = std::make_shared<RtAudio>();
 		}
-        //needs latest RtAudio - this breaks in slightly older linux 
+        //needs latest RtAudio - this breaks in slightly older linux
 		//ofLogNotice() << "Initialized RtAudio with API: " << RtAudio::getApiName(audio->getCurrentApi());
 	}
 	catch (std::exception &error) {
