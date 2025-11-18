@@ -12,6 +12,7 @@ ofVboMesh::ofVboMesh(){
 	vboNumColors = 0;
 	vboNumTexCoords = 0;
 	vboNumNormals = 0;
+	updateSet = false;
 }
 
 ofVboMesh::ofVboMesh(const ofMesh & mom)
@@ -23,6 +24,7 @@ ofVboMesh::ofVboMesh(const ofMesh & mom)
 	vboNumColors = 0;
 	vboNumTexCoords = 0;
 	vboNumNormals = 0;
+	updateSet = false;
 }
 
 void ofVboMesh::operator=(const ofMesh & mom)
@@ -47,34 +49,42 @@ void ofVboMesh::setUsage(int _usage){
 
 void ofVboMesh::enableColors(){
 	vbo.enableColors();
+    ofMesh::enableColors();
 }
 
 void ofVboMesh::enableTextures(){
 	vbo.enableTexCoords();
+	ofMesh::enableTextures();
 }
 
 void ofVboMesh::enableNormals(){
 	vbo.enableNormals();
+	ofMesh::enableNormals();
 }
 
 void ofVboMesh::enableIndices(){
 	vbo.enableIndices();
+	ofMesh::enableIndices();
 }
 
 void ofVboMesh::disableColors(){
 	vbo.disableColors();
+	ofMesh::disableColors();
 }
 
 void ofVboMesh::disableTextures(){
 	vbo.disableTexCoords();
+	ofMesh::disableTextures();
 }
 
 void ofVboMesh::disableNormals(){
 	vbo.disableNormals();
+	ofMesh::disableNormals();
 }
 
 void ofVboMesh::disableIndices(){
 	vbo.disableIndices();
+	ofMesh::disableIndices();
 }
 
 bool ofVboMesh::usingColors() const {
@@ -156,7 +166,7 @@ void ofVboMesh::updateVbo(){
 			if(getNumVertices()==0){
 				vbo.clearVertices();
 				vboNumVerts = getNumVertices();
-			}else if(vboNumVerts<getNumVertices()){
+			}else if(vboNumVerts<getNumVertices() || updateSet){
 				vbo.setVertexData(getVerticesPointer(),getNumVertices(),usage);
 				vboNumVerts = getNumVertices();
 			}else{
@@ -168,7 +178,7 @@ void ofVboMesh::updateVbo(){
 			if(getNumColors()==0){
 				vbo.clearColors();
 				vboNumColors = getNumColors();
-			}else if(vboNumColors<getNumColors()){
+			}else if(vboNumColors<getNumColors() || updateSet){
 				vbo.setColorData(getColorsPointer(),getNumColors(),usage);
 				vboNumColors = getNumColors();
 			}else{
@@ -180,7 +190,7 @@ void ofVboMesh::updateVbo(){
 			if(getNumNormals()==0){
 				vbo.clearNormals();
 				vboNumNormals = getNumNormals();
-			}else if(vboNumNormals<getNumNormals()){
+			}else if(vboNumNormals<getNumNormals() || updateSet){
 				vbo.setNormalData(getNormalsPointer(),getNumNormals(),usage);
 				vboNumNormals = getNumNormals();
 			}else{
@@ -192,7 +202,7 @@ void ofVboMesh::updateVbo(){
 			if(getNumTexCoords()==0){
 				vbo.clearTexCoords();
 				vboNumTexCoords = getNumTexCoords();
-			}else if(vboNumTexCoords<getNumTexCoords()){
+			}else if(vboNumTexCoords<getNumTexCoords() || updateSet){
 				vbo.setTexCoordData(getTexCoordsPointer(),getNumTexCoords(),usage);
 				vboNumTexCoords = getNumTexCoords();
 			}else{
@@ -204,12 +214,39 @@ void ofVboMesh::updateVbo(){
 			if(getNumIndices()==0){
 				vbo.clearIndices();
 				vboNumIndices = getNumIndices();
-			}else if(vboNumIndices<getNumIndices()){
+			}else if(vboNumIndices<getNumIndices() || updateSet){
 				vbo.setIndexData(getIndexPointer(),getNumIndices(),usage);
 				vboNumIndices = getNumIndices();
 			}else{
 				vbo.updateIndexData(getIndexPointer(),getNumIndices());
 			}
 		}
+		if(updateSet) updateSet = false;
 	}
 }
+
+void ofVboMesh::removeVertex(ofIndexType index) {
+    ofMesh::removeVertex(index);
+    vboNumVerts = getNumVertices();
+	updateSet = true;
+}
+
+void ofVboMesh::removeVertex(ofIndexType startIndex, ofIndexType endIndex) {
+    ofMesh::removeVertices(startIndex, endIndex);
+    vboNumVerts = getNumVertices();
+	updateSet = true;
+}
+
+void ofVboMesh::removeColor(ofIndexType index) {
+    ofMesh::removeColor(index);
+    vboNumColors = getNumColors();
+	updateSet = true;
+}
+
+void ofVboMesh::removeColor(ofIndexType startIndex, ofIndexType endIndex) {
+    ofMesh::removeColors(startIndex, endIndex);
+    vboNumColors = getNumColors();
+	updateSet = true;
+}
+
+

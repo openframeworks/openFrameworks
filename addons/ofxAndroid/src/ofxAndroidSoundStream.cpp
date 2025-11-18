@@ -19,12 +19,12 @@
 using namespace std;
 
 // Global pointer used to implement the singletomn pattern for ofxAndroidSoundStream class
-static ofxAndroidSoundStream* instance = NULL;
+static ofxAndroidSoundStream* instance = nullptr;
 static bool headphonesConnected = false;
 
 ofxAndroidSoundStream::ofxAndroidSoundStream(){
-	out_buffer = NULL;
-	in_buffer = NULL;
+	out_buffer = nullptr;
+	in_buffer = nullptr;
 
 	isPaused = false;
 	totalOutRequestedBufferSize = totalInRequestedBufferSize = 0;
@@ -37,7 +37,7 @@ ofxAndroidSoundStream::ofxAndroidSoundStream(){
 
 ofxAndroidSoundStream::~ofxAndroidSoundStream(){
 	if(instance==this){
-		instance = NULL;
+		instance = nullptr;
 	}
 
 	ofRemoveListener(ofxAndroidEvents().pause,this,&ofxAndroidSoundStream::pause);
@@ -62,7 +62,7 @@ void ofxAndroidSoundStream::setOutput(ofBaseSoundOutput * _soundOutput){
 }
 
 bool ofxAndroidSoundStream::setup(const ofSoundStreamSettings & settings){
-	if(instance!=NULL && instance!=this){
+	if(instance!=nullptr && instance!=this){
 		ofLogError("ofxAndroidSoundStream") << "setup(): multiple instances detected, only one instance allowed";
 		return false;
 	}
@@ -324,10 +324,22 @@ bool ofxAndroidSoundStream::isHeadPhonesConnected() const{
 	return headphonesConnected;
 }
 
+void ofxAndroidSoundStreamPause() {
+
+}
+
+void ofxAndroidSoundStreamResume() {
+
+}
+
+void ofxAndroidSoundStream::printDeviceList() const {
+
+}
+
 extern "C"{
 
 jint
-Java_cc_openframeworks_OFAndroidSoundStream_audioOut(JNIEnv*  env, jobject  thiz, jshortArray array, jint numChannels, jint bufferSize){
+Java_cc_openframeworks_OFAndroidSoundStream_audioOut(JNIEnv*  env, jclass thiz, jshortArray array, jint numChannels, jint bufferSize){
 	if(instance){
 		return instance->androidOutputAudioCallback(env,thiz,array,numChannels,bufferSize);
 	}else{
@@ -338,7 +350,7 @@ Java_cc_openframeworks_OFAndroidSoundStream_audioOut(JNIEnv*  env, jobject  thiz
 
 
 jint
-Java_cc_openframeworks_OFAndroidSoundStream_audioIn(JNIEnv*  env, jobject  thiz, jshortArray array, jint numChannels, jint bufferSize){
+Java_cc_openframeworks_OFAndroidSoundStream_audioIn(JNIEnv*  env, jclass thiz, jshortArray array, jint numChannels, jint bufferSize){
 	if(instance){
 		return instance->androidInputAudioCallback(env,thiz,array,numChannels,bufferSize);
 	}else{
@@ -347,7 +359,7 @@ Java_cc_openframeworks_OFAndroidSoundStream_audioIn(JNIEnv*  env, jobject  thiz,
 	return 0;
 }
 
-void Java_cc_openframeworks_OFAndroidSoundStream_headphonesConnected(JNIEnv*  env, jobject  thiz, jboolean connected){
+void Java_cc_openframeworks_OFAndroidSoundStream_headphonesConnected(JNIEnv*  env, jclass thiz, jboolean connected){
 	headphonesConnected = connected;
 	if(instance) ofNotifyEvent(instance->headphonesConnectedE,headphonesConnected);
 }

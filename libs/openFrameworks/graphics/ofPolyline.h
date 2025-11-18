@@ -3,9 +3,11 @@
 #ifndef OF_POLYLINE_H
 #define OF_POLYLINE_H
 
-#define GLM_FORCE_CTOR_INIT
-#define GLM_ENABLE_EXPERIMENTAL
-#include <glm/fwd.hpp>
+#include <glm/detail/qualifier.hpp>
+namespace glm {
+	typedef vec<2, float, defaultp>		vec2;
+	typedef vec<3, float, defaultp>		vec3;
+}
 
 #include <deque>
 #include <vector>

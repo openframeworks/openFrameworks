@@ -10,7 +10,6 @@
 #include "ofLog.h"
 #include <jni.h>
 
-using namespace std;
 
 ofxAndroidVibrator::ofxAndroidVibrator() {
 	// TODO Auto-generated constructor stub
@@ -25,7 +24,7 @@ jobject ofxAndroidVibrator::getVibratorService(){
 	jobject activity = ofGetOFActivityObject();
 	jclass contextClass = ofGetJNIEnv()->FindClass("android/content/Context");
 	if(!contextClass){
-		ofLogError("ofxAndroidVibrator") << "getVibratorService(): couldn't get Context class";
+        ofLog(OF_LOG_ERROR) << "getVibratorService(): couldn't get Context class";
 		return 0;
 	}
 	jmethodID method = ofGetJNIEnv()->GetMethodID(contextClass,"getSystemService","(Ljava/lang/String;)Ljava/lang/Object;");
@@ -52,7 +51,7 @@ jobject ofxAndroidVibrator::getVibratorService(){
 	return vibratorService;
 }
 
-jmethodID ofxAndroidVibrator::getVibratorMethodID(string name, string signature){
+jmethodID ofxAndroidVibrator::getVibratorMethodID(std::string name, std::string signature){
 	jclass vibratorClass = ofGetJNIEnv()->FindClass("android/os/Vibrator");
 	if(!vibratorClass){
 		ofLogError("ofxAndroidVibrator") << "getVibratorMethodID(): couldn't get Vibrator class";

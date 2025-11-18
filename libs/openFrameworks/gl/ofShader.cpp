@@ -8,6 +8,7 @@
     #include "ofxAndroidUtils.h"
 #endif
 #include <regex>
+#include <vector>
 
 using std::endl;
 using std::ostringstream;
@@ -958,7 +959,7 @@ void ofShader::setUniformTexture(const string & name, const ofTexture & tex, int
 		setUniformTexture( name, texData, textureLocation);
 	}
 }
-	
+
 //--------------------------------------------------------------
 void ofShader::setUniformTexture(const string & name, const ofTextureData & texData, int textureLocation) const{
     if (bLoaded) {
@@ -1072,6 +1073,11 @@ void ofShader::setUniform3f(const string & name, const glm::vec3 & v) const {
 //--------------------------------------------------------------
 void ofShader::setUniform4f(const string & name, const glm::vec4 & v) const {
     setUniform4f(name, v.x, v.y, v.z, v.w);
+}
+
+//--------------------------------------------------------------
+void ofShader::setUniform3f(const string & name, const ofFloatColor & v) const {
+	setUniform3f(name, v.r, v.g, v.b);
 }
 
 //--------------------------------------------------------------
@@ -1473,9 +1479,9 @@ bool ofShader::setShadowUniforms(int textureLocation) const {
     setUniformTexture("uShadowMapSpot", ofShadow::getTextureTarget(OF_LIGHT_SPOT), ofShadow::getSpotTexId(), textureLocation + 2);
     setUniformTexture("uShadowMapArea", ofShadow::getTextureTarget(OF_LIGHT_AREA), ofShadow::getAreaTexId(), textureLocation + 3);
 
-    for (size_t i = 0; i < ofShadowsData().size(); i++) {
+    for (size_t i = 0; i < ofShadow::getShadowsData().size(); i++) {
         std::string idx = ofToString(i, 0);
-        std::shared_ptr<ofShadow::Data> shadow = ofShadowsData()[i].lock();
+        auto shadow = ofShadow::getShadowsData()[i].lock();
         std::string shadowAddress = "shadows[" + idx + "]";
         if (!shadow || !shadow->isEnabled || shadow->index < 0) {
             setUniform1f(shadowAddress + ".enabled", 0);
@@ -1512,7 +1518,7 @@ bool ofShader::setPbrEnvironmentMapUniforms(int textureLocation) const {
         return false;
     }
 
-    std::shared_ptr<ofCubeMap::Data> cubeMapData = ofCubeMap::getActiveData();
+    auto cubeMapData = ofCubeMap::getActiveData();
     if (cubeMapData) {
         if (cubeMapData->bIrradianceAllocated) {
             setUniformTexture("tex_irradianceMap", GL_TEXTURE_CUBE_MAP, cubeMapData->irradianceMapId, textureLocation);

@@ -41,14 +41,14 @@ void ofxiOSVideoPlayer::disableTextureCache() {
 }
 
 //----------------------------------------
-bool ofxiOSVideoPlayer::load(string name) {
+bool ofxiOSVideoPlayer::load(const of::filesystem::path & fileName) {
 	
     if(!videoPlayer) {
         videoPlayer = (__bridge_retained void *)[[AVFoundationVideoPlayer alloc] init];
         [(__bridge AVFoundationVideoPlayer *)videoPlayer setWillBeUpdatedExternally:YES];
     }
     
-    NSString * videoPath = [NSString stringWithUTF8String:ofToDataPath(name).c_str()];
+    NSString * videoPath = [NSString stringWithUTF8String:ofToDataPath(fileName).c_str()];
     [(__bridge AVFoundationVideoPlayer*)videoPlayer loadWithPath:videoPath];
     
     bResetPixels = true;
@@ -589,8 +589,8 @@ void * ofxiOSVideoPlayer::getAVFoundationVideoPlayer() {
 }
 
 //---------------------------------------- DEPRECATED.
-bool ofxiOSVideoPlayer::loadMovie(string name) {
-    return load(name);
+bool ofxiOSVideoPlayer::loadMovie(const of::filesystem::path & fileName) {
+    return load(fileName);
 }
 
 ofPixels & ofxiOSVideoPlayer::getPixelsRef() {

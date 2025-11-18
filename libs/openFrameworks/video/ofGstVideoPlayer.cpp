@@ -187,13 +187,14 @@ bool ofGstVideoPlayer::createPipeline(std::string name){
 #endif
 }
 
-void ofGstVideoPlayer::loadAsync(std::string name){
+void ofGstVideoPlayer::loadAsync(const of::filesystem::path & fileName){
 	bAsyncLoad = true;
-	load(name);
+	load(fileName);
 }
 
 // FIXME: fs::path
-bool ofGstVideoPlayer::load(std::string name){
+bool ofGstVideoPlayer::load(const of::filesystem::path & fileName){
+	std::string name { ofPathToString(fileName) };
 	if( name.find( "file://",0 ) != std::string::npos){
 		bIsStream = bAsyncLoad;
 	}else if( name.find( "://",0 ) == std::string::npos){

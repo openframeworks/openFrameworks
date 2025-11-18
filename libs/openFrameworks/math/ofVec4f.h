@@ -1,11 +1,14 @@
 #pragma once
 
-#define GLM_FORCE_CTOR_INIT
-#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/detail/qualifier.hpp>
+namespace glm {
+	typedef vec<2, float, defaultp>		vec2;
+	typedef vec<3, float, defaultp>		vec3;
+}
+
 #include <glm/vec4.hpp>
-#include <glm/fwd.hpp>
 #include <iostream>
-#include <cmath>
+#include <cmath> // std::sqrt
 
 class ofVec2f;
 class ofVec3f;

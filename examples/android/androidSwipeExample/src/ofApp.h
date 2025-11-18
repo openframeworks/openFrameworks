@@ -8,8 +8,9 @@
 class ofApp : public ofxAndroidApp{
 	
 	public:
-		
+			
 		void setup();
+		void exit();
 		void update();
 		void draw();
 		
@@ -29,6 +30,20 @@ class ofApp : public ofxAndroidApp{
 		void touchDoubleTap(int x, int y, int id);
 		void touchCancelled(int x, int y, int id);
 		void swipe(ofxAndroidSwipeDir swipeDir, int id);
+
+		void pause();
+		void stop();
+		void resume();
+		void reloadTextures();
+
+		bool backPressed();
+		void okPressed();
+		void cancelPressed();
+
+		void deviceRefreshRateChanged(int refreshRate);
+		void deviceHighestRefreshRateChanged(int refreshRate);
+		void deviceRefreshRateChangedEvent(int &refreshRate);
+		void deviceHighestRefreshRateChangedEvent(int & refreshRate);
 };
 
 #endif	

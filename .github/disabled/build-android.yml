@@ -22,11 +22,13 @@ jobs:
         cfg:
         - {target: android, gradle_target: compileArm7DebugSources}
         - {target: android, gradle_target: compileX86DebugSources}
+        - {target: android, gradle_target: compileArm64DebugSources}
+        - {target: android, gradle_target: compileX8664DebugSources}
 
     env:
       TARGET: ${{matrix.cfg.target}}
       GRADLE_TARGET: ${{matrix.cfg.gradle_target}}
-      NDK_DIR: android-ndk-r15c
+      NDK_DIR: android-ndk-r23b
     steps:
     - uses: actions/checkout@v3
     - name: Cache projectGenerator folder
@@ -37,7 +39,7 @@ jobs:
     - name: Cache NDK
       uses: actions/cache@v3
       with:
-        path: '~/android-ndk-r15c'
+        path: '~/android-ndk-r23b'
         key: ${{ runner.os }}-android-ndk-${{matrix.cfg.gradle_target}}
     - name: install
       run: ./scripts/ci/$TARGET/install.sh

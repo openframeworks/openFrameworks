@@ -27,13 +27,13 @@ static void ofEndSaveScreen(){
 
 }
 
-static void ofBeginSaveScreen(std::string filename, ofCairoRenderer::Type type, bool bMultipage, bool b3D, ofRectangle outputsize){
+static void ofBeginSaveScreen(const of::filesystem::path & fileName, ofCairoRenderer::Type type, bool bMultipage, bool b3D, ofRectangle outputsize){
 	if( bScreenShotStarted ) ofEndSaveScreen();
 	
 	storedRenderer = ofGetCurrentRenderer();
 	
 	cairoScreenshot = std::make_unique<ofCairoRenderer>();
-	cairoScreenshot->setup(filename, type, bMultipage, b3D, outputsize);
+	cairoScreenshot->setup(fileName, type, bMultipage, b3D, outputsize);
 
 	rendererCollection = std::make_shared<ofRendererCollection>();
 	rendererCollection->renderers.push_back(storedRenderer);
@@ -45,8 +45,8 @@ static void ofBeginSaveScreen(std::string filename, ofCairoRenderer::Type type, 
 }
 
 //-----------------------------------------------------------------------------------
-void ofBeginSaveScreenAsPDF(std::string filename, bool bMultipage, bool b3D, ofRectangle outputsize){
-	ofBeginSaveScreen(filename, ofCairoRenderer::PDF, bMultipage, b3D, outputsize);
+void ofBeginSaveScreenAsPDF(const of::filesystem::path & fileName, bool bMultipage, bool b3D, ofRectangle outputsize){
+	ofBeginSaveScreen(fileName, ofCairoRenderer::PDF, bMultipage, b3D, outputsize);
 }
 
 //-----------------------------------------------------------------------------------
@@ -55,8 +55,8 @@ void ofEndSaveScreenAsPDF(){
 }
 
 //-----------------------------------------------------------------------------------
-void ofBeginSaveScreenAsSVG(std::string filename, bool bMultipage, bool b3D, ofRectangle outputsize){
-	ofBeginSaveScreen(filename, ofCairoRenderer::SVG, bMultipage, b3D, outputsize);
+void ofBeginSaveScreenAsSVG(const of::filesystem::path & fileName, bool bMultipage, bool b3D, ofRectangle outputsize){
+	ofBeginSaveScreen(fileName, ofCairoRenderer::SVG, bMultipage, b3D, outputsize);
 }
 
 //-----------------------------------------------------------------------------------

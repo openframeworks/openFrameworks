@@ -1,7 +1,12 @@
 #pragma once
 
+// serial error codes
+#define OF_SERIAL_NO_DATA -2
+#define OF_SERIAL_ERROR -1
+
 // MARK: ofConstants targets
 #include "ofConstants.h"
+#include <vector>
 
 class ofBuffer;
 

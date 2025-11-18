@@ -151,7 +151,7 @@
 		691108B31FE53CCF00BDBA78 /* ofSoundBaseTypes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofSoundBaseTypes.cpp; sourceTree = "<group>"; };
 		691108B41FE53CCF00BDBA78 /* ofSoundBaseTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofSoundBaseTypes.h; sourceTree = "<group>"; };
 		691108B61FE53CEB00BDBA78 /* ofVideoBaseTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofVideoBaseTypes.h; sourceTree = "<group>"; };
-		8446395C1BC343E000F24926 /* libtvOS+OFLib_Debug.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libtvOS+OFLib_Debug.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		8446395C1BC343E000F24926 /* openframeworksDebug.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = openframeworksDebug.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		844639681BC3442400F24926 /* CoreOF.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = CoreOF.xcconfig; sourceTree = "<group>"; };
 		844639691BC3442400F24926 /* Debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Debug.xcconfig; sourceTree = "<group>"; };
 		8446396A1BC3442400F24926 /* Release.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Release.xcconfig; sourceTree = "<group>"; };
@@ -440,12 +440,15 @@
 				8446395D1BC343E000F24926 /* Products */,
 				BFF80A4A2C50AFEB00784E74 /* Frameworks */,
 			);
+			indentWidth = 4;
 			sourceTree = "<group>";
+			tabWidth = 4;
+			usesTabs = 1;
 		};
 		8446395D1BC343E000F24926 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				8446395C1BC343E000F24926 /* libtvOS+OFLib_Debug.a */,
+				8446395C1BC343E000F24926 /* openframeworksDebug.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -937,7 +940,6 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 844639651BC343E000F24926 /* Build configuration list for PBXNativeTarget "tvOS+OFLib" */;
 			buildPhases = (
-				BFEF3F9F2C509EDD009B3CD8 /* ShellScript */,
 				844639581BC343E000F24926 /* Sources */,
 				844639591BC343E000F24926 /* Frameworks */,
 				8446395A1BC343E000F24926 /* Copy Files */,
@@ -949,7 +951,7 @@
 			);
 			name = "tvOS+OFLib";
 			productName = "tvOS+OFLib";
-			productReference = 8446395C1BC343E000F24926 /* libtvOS+OFLib_Debug.a */;
+			productReference = 8446395C1BC343E000F24926 /* openframeworksDebug.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 /* End PBXNativeTarget section */
@@ -986,24 +988,6 @@
 /* End PBXProject section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		BFEF3F9F2C509EDD009B3CD8 /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			alwaysOutOfDate = 1;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = "/usr/bin/env bash";
-			shellScript = "#!/usr/bin/env bash\nif [ ! -d \"${SRCROOT}/../../../freetype/lib/macos/freetype.xcframework\" ]; then\n\techo \"openFrameworks has missing xcFrameworks for tvOS / macOS. Downloading libaries now via scripts/macos/download_libs.sh\"\n    ${SRCROOT}/../../../../scripts/macos/download_libs.sh\nelse\n\techo \"xcFrameworks found\"\nfi\n";
-		};
 		BFF80A5B2C50B01B00784E74 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
@@ -1020,7 +1004,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "#!/bin/sh\nTARGET_DIR=\"$SRCROOT/../../lib/tvOS\"\nATTRIBUTE_CHECK=$(xattr -p com.apple.xcode.CreatedByBuildSystem \"$TARGET_DIR\" 2>/dev/null)\nif [ -z \"$ATTRIBUTE_CHECK\" ]; then\n  xattr -w com.apple.xcode.CreatedByBuildSystem true \"$TARGET_DIR\"\n  echo \"Attribute com.apple.xcode.CreatedByBuildSystem set to true for $TARGET_DIR\"\nelse\n  echo \"Attribute com.apple.xcode.CreatedByBuildSystem already set for $TARGET_DIR\"\nfi\n";
+			shellScript = "#!/bin/sh\nTARGET_DIR=\"$SRCROOT/../../lib/tvOS\"\nATTRIBUTE_CHECK=$(xattr -p com.apple.xcode.CreatedByBuildSystem \"$TARGET_DIR\" 2>/dev/null)\nif [ -z \"$ATTRIBUTE_CHECK\" ]; then\n  xattr -w com.apple.xcode.CreatedByBuildSystem true \"$TARGET_DIR\"\n  echo \"Attribute com.apple.xcode.CreatedByBuildSystem set to true for $TARGET_DIR\"\nelse\n  echo \"Attribute com.apple.xcode.CreatedByBuildSystem already set for $TARGET_DIR\"\nfi\n\n\nTARGET_DIR=\"${SRCROOT}/../../lib/tvos/\"\nTARGET_CONFIG_DIR=\"${SRCROOT}/../../lib/tvos/build/output\"\n\nif [ \"${CONFIGURATION}\" == \"Release\" ]; then\n    STATIC_NAME=\"openFrameworkstvOS\"\nelse\n    STATIC_NAME=\"openFrameworkstvOS${CONFIGURATION}\"\nfi\n\nSOURCE_FILE=\"${TARGET_CONFIG_DIR}/${STATIC_NAME}.a\"\nDEST_FILE=\"${TARGET_DIR}/${STATIC_NAME}.a\"\n\necho \"Configuration: ${CONFIGURATION}\"\necho \"Source file: ${SOURCE_FILE}\"\necho \"Destination: ${DEST_FILE}\"\n\nmkdir -p \"${TARGET_DIR}\"\n\nif [ ! -w \"${TARGET_DIR}\" ]; then\n    echo \"ERROR: Target directory ${TARGET_DIR} is not writable.\"\n    ls -ld \"${TARGET_DIR}\"\n    exit 1\nfi\n\nif [ ! -f \"${SOURCE_FILE}\" ]; then\n    echo \"ERROR: Static library ${SOURCE_FILE} does not exist.\"\n    exit 1\nfi\n\necho \"Copying ${SOURCE_FILE} to ${DEST_FILE}...\"\ncp -v \"${SOURCE_FILE}\" \"${DEST_FILE}\"\n\nif [ $? -ne 0 ]; then\n    echo \"ERROR: Failed to copy ${SOURCE_FILE} to ${DEST_FILE}.\"\n    exit 1\nfi\n\necho \"openFramworks build successful.\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -1159,8 +1143,6 @@
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/../../lib/tvOS";
-				CONFIGURATION_TEMP_DIR = "$(SRCROOT)/../../lib/tvos/build/debug/";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -1180,7 +1162,6 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MTL_ENABLE_DEBUG_INFO = YES;
-				OBJROOT = "$(SRCROOT)/../../lib/tvos/build/debug";
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = appletvos;
 				SYMROOT = "$(SRCROOT)/../../lib/tvos/";
@@ -1216,8 +1197,6 @@
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/../../lib/tvOS";
-				CONFIGURATION_TEMP_DIR = "$(SRCROOT)/../../lib/tvos/build/release/";
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
@@ -1231,7 +1210,6 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MTL_ENABLE_DEBUG_INFO = NO;
-				OBJROOT = "$(SRCROOT)/../../lib/tvos/build/release";
 				SDKROOT = appletvos;
 				SYMROOT = "$(SRCROOT)/../../lib/tvos/";
 				TVOS_DEPLOYMENT_TARGET = 17.2;
@@ -1242,16 +1220,20 @@
 		844639661BC343E000F24926 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CONFIGURATION_TEMP_DIR = "$(SRCROOT)/../../lib/tvos/build/debug/";
+				BUILD_DIR = "~/Library/Developer/Xcode/DerivedData";
+				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/../../lib/tvos/build/output/";
+				CONFIGURATION_TEMP_DIR = "$(SRCROOT)/../../lib/tvos/build/temp/Debug/";
+				EXECUTABLE_PREFIX = "";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
+					"$(SRCROOT)/../../lib/tvos/build/output/",
 					"$(PROJECT_DIR)",
 				);
 				LD_QUOTE_LINKER_ARGUMENTS_FOR_COMPILER_DRIVER = NO;
-				OBJROOT = "$(SRCROOT)/../../lib/tvos/build/debug";
+				OBJROOT = "$(SRCROOT)/../../lib/tvos/build/obj/Debug";
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = "$(TARGET_NAME)_Debug";
+				PRODUCT_NAME = "openframeworkstvOSDebug";
 				SKIP_INSTALL = YES;
 				SYMROOT = "$(SRCROOT)/../../lib/tvos/";
 				USE_HEADERMAP = NO;
@@ -1261,15 +1243,19 @@
 		844639671BC343E000F24926 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CONFIGURATION_TEMP_DIR = "$(SRCROOT)/../../lib/tvos/build/release/";
+				BUILD_DIR = "~/Library/Developer/Xcode/DerivedData";
+				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/../../lib/tvos/build/output/";
+				CONFIGURATION_TEMP_DIR = "$(SRCROOT)/../../lib/tvos/build/temp/Release/";
+				EXECUTABLE_PREFIX = "";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
+					"$(SRCROOT)/../../lib/tvos/build/output/",
 					"$(PROJECT_DIR)",
 				);
 				LD_QUOTE_LINKER_ARGUMENTS_FOR_COMPILER_DRIVER = NO;
-				OBJROOT = "$(SRCROOT)/../../lib/tvos/build/release";
+				OBJROOT = "$(SRCROOT)/../../lib/tvos/build/obj/Release/";
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = "$(TARGET_NAME)_Release";
+				PRODUCT_NAME = "openframeworkstvOS";
 				SKIP_INSTALL = YES;
 				SYMROOT = "$(SRCROOT)/../../lib/tvos/";
 				USE_HEADERMAP = NO;

@@ -82,8 +82,8 @@ void ofApp::keyPressed(int _key){
 }
 
 string ofApp::grepStringInRegex(string _str, string _reg){
-	smatch match;
-	regex regEx(_reg, regex_constants::icase);
+	std::smatch match;
+	std::regex regEx(_reg, std::regex_constants::icase);
 
 	stringstream buffer;
 	while (regex_search(_str,match,regEx)) {
@@ -96,15 +96,15 @@ string ofApp::grepStringInRegex(string _str, string _reg){
 }
 
 int ofApp::countOccurencesInRegex(string _str, string _reg){
-	regex regEx(_reg, regex_constants::icase);
-	auto wordsBegin = sregex_iterator(_str.begin(), _str.end(), regEx);
-	auto wordsEnd = sregex_iterator();
+	std::regex regEx(_reg, std::regex_constants::icase);
+	auto wordsBegin = std::sregex_iterator(_str.begin(), _str.end(), regEx);
+	auto wordsEnd = std::sregex_iterator();
 	return distance(wordsBegin, wordsEnd);
 };
 
 bool ofApp::isKeyInRegex(int keyPressed, string _reg){
 	string typedKey(1, keyPressed);
-	regex regEx(_reg, regex_constants::icase);
+	std::regex regEx(_reg, std::regex_constants::icase);
 	if (regex_match(typedKey, regEx)) {
 		return true;
 	} else {
@@ -113,13 +113,13 @@ bool ofApp::isKeyInRegex(int keyPressed, string _reg){
 }
 
 vector<string> ofApp::matchesInRegex(string _str, string _reg){
-	regex regEx(_reg, regex_constants::icase);
+	std::regex regEx(_reg, std::regex_constants::icase);
 	vector<string> results;
-	auto wordsBegin = sregex_iterator(_str.begin(), _str.end(), regEx);
-	auto wordsEnd = sregex_iterator();
+	auto wordsBegin = std::sregex_iterator(_str.begin(), _str.end(), regEx);
+	auto wordsEnd = std::sregex_iterator();
 
 	for(std::sregex_iterator i = wordsBegin; i != wordsEnd; ++i){
-		smatch m = *i;
+		std::smatch m = *i;
 		results.push_back(m.str());
 	}
 	return results;

@@ -11,9 +11,12 @@ using ofDefaultVec2 = ofVec2f;
 using ofDefaultVec3 = ofVec3f;
 using ofDefaultVec4 = ofVec4f;
 #else
-#define GLM_FORCE_CTOR_INIT
-#define GLM_ENABLE_EXPERIMENTAL
-#include <glm/fwd.hpp>
+#include <glm/detail/qualifier.hpp>
+namespace glm {
+	typedef vec<2, float, defaultp>		vec2;
+	typedef vec<3, float, defaultp>		vec3;
+	typedef vec<4, float, defaultp>		vec4;
+}
 using ofDefaultVec2 = glm::vec2;
 using ofDefaultVec3 = glm::vec3;
 using ofDefaultVec4 = glm::vec4;

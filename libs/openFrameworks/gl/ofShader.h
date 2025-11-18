@@ -9,10 +9,18 @@
 
 // MARK: ofConstants Targets
 #include "ofConstants.h"
+#include <vector>
 
-#define GLM_FORCE_CTOR_INIT
-#define GLM_ENABLE_EXPERIMENTAL
-#include <glm/fwd.hpp>
+#include <glm/detail/qualifier.hpp>
+namespace glm {
+	typedef vec<2, float, defaultp>		vec2;
+	typedef vec<3, float, defaultp>		vec3;
+	typedef vec<4, float, defaultp>		vec4;
+
+	typedef float					f32;
+	typedef mat<3, 3, f32, defaultp>	mat3;
+	typedef mat<4, 4, f32, defaultp>	mat4;
+}
 
 #include <unordered_map>
 
@@ -171,6 +179,7 @@ public:
 	void setUniform2f(const std::string & name, const glm::vec2 & v) const;
 	void setUniform3f(const std::string & name, const glm::vec3 & v) const;
 	void setUniform4f(const std::string & name, const glm::vec4 & v) const;
+	void setUniform3f(const std::string & name, const ofFloatColor & v) const;
 	void setUniform4f(const std::string & name, const ofFloatColor & v) const;
 
 	// set an array of uniform values

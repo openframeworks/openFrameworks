@@ -18,5 +18,6 @@ public:
 	space interval;
 	std::chrono::time_point<std::chrono::steady_clock> wakeTime;
 	std::chrono::time_point<std::chrono::steady_clock> lastWakeTime;
+	int currentFPS = 60;
 	
 };

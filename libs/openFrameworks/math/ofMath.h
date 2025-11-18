@@ -1,13 +1,16 @@
 #pragma once
 
-#define GLM_FORCE_CTOR_INIT
-#define GLM_ENABLE_EXPERIMENTAL
-#include <glm/fwd.hpp>
 #include <glm/gtc/constants.hpp>
+#include <glm/detail/qualifier.hpp>
+namespace glm {
+	typedef vec<2, float, defaultp>		vec2;
+	typedef vec<3, float, defaultp>		vec3;
+	typedef vec<4, float, defaultp>		vec4;
+}
 
 #include <cstdlib>
-#include <cmath>
 #include <algorithm>
+#include <cmath> //std::cos
 
 /// \file
 /// ofMath provides a collection of mathematical utilities and functions.
@@ -26,7 +29,7 @@
 /// ~~~~~
 ///
 /// \param max The maximum value of the random number.
-float ofRandom(float max);
+float ofRandom(float max = 1.0f);
 
 /// \brief Get a uniform random number between two values.
 ///

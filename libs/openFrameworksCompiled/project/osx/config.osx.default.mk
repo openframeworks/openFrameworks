@@ -82,7 +82,7 @@ ifndef MAC_OS_C_VER
 endif
 
 ifndef MAC_OS_CPP_VER
-    MAC_OS_CPP_VER = -std=c++23
+    MAC_OS_CPP_VER = -std=c++2b
 endif
 
 # Link against libstdc++ to silence tr1/memory errors on latest versions of osx
@@ -267,14 +267,12 @@ PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/app/ofAppEGLWindow.cp
 
 
 # third party
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/boost/%
 
-
-ifeq ($(USE_FMOD),0)
-	PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/fmod/%
-	PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/sound/ofFmodSoundPlayer.cpp
-	PLATFORM_CFLAGS += -DUSE_FMOD=0
-endif
+# ifeq ($(USE_FMOD),0)
+PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/fmod/%
+PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/sound/ofFmodSoundPlayer.cpp
+PLATFORM_CFLAGS += -DUSE_FMOD=0
+# endif
 
 ##########################################################################################
 # PLATFORM HEADER SEARCH PATHS
@@ -339,7 +337,6 @@ PLATFORM_LIBRARY_SEARCH_PATHS =
 
 PLATFORM_FRAMEWORKS =
 PLATFORM_FRAMEWORKS += Accelerate
-PLATFORM_FRAMEWORKS += AGL
 PLATFORM_FRAMEWORKS += AppKit
 PLATFORM_FRAMEWORKS += ApplicationServices
 PLATFORM_FRAMEWORKS += AVFoundation
@@ -431,10 +428,10 @@ afterplatform: $(TARGET_NAME)
 	@echo TARGET=$(TARGET)
 	@mv $(TARGET) bin/$(BIN_NAME).app/Contents/MacOS
 
-ifneq ($(USE_FMOD),0)
-	@mkdir -p bin/$(BIN_NAME).app/Contents/Frameworks
-	@cp $(OF_LIBS_PATH)/*/lib/$(PLATFORM_LIB_SUBPATH)/*.$(SHARED_LIB_EXTENSION) bin/$(BIN_NAME).app/Contents/Frameworks/;
-endif
+# ifneq ($(USE_FMOD),0)
+# 	@mkdir -p bin/$(BIN_NAME).app/Contents/Frameworks
+# 	@cp $(OF_LIBS_PATH)/*/lib/$(PLATFORM_LIB_SUBPATH)/*.$(SHARED_LIB_EXTENSION) bin/$(BIN_NAME).app/Contents/Frameworks/;
+# endif
 
 	@echo
 	@echo "     compiling done"

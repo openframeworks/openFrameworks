@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ofMain.h"
-#include "ofxAssimpModel.h"
+#include "ofxAssimp.h"
 #include "ofVboMesh.h"
 #include "ofxGui.h"
 
@@ -29,7 +29,7 @@ class ofApp : public ofBaseApp{
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
 
-		ofx::assimp::Model model;
+		ofxAssimp::Scene scene;
 
 		bool bDrawWireframe = false;
 		bool bDrawMeshes = true;
