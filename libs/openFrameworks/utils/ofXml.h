@@ -120,9 +120,9 @@ public:
 
 	ofXml();
 
-	bool load(const std::filesystem::path & file);
+	bool load(const of::filesystem::path & file);
 	bool load(const ofBuffer & buffer);
-  void setParsingOptions(unsigned int l_parsing_options);	
+    void setParsingOptions(unsigned int l_parsing_options);	
 	bool parse(const std::string & xmlStr);
 	bool save(const of::filesystem::path & file) const;
 	void clear();
