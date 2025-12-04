@@ -1,12 +1,9 @@
 #pragma once
 
-#include "ofConstants.h"
 #include "ofAppBaseWindow.h"
+#include "ofEvents.h"
 
 class ofBaseApp;
-class ofCoreEvents;
-class ofPath;
-class of3dGraphics;
 class ofBaseRenderer;
 
 class ofAppNoWindow : public ofAppBaseWindow {

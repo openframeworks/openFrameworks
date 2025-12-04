@@ -1,4 +1,5 @@
 #pragma once
+
 #include "ofMain.h"
 
 class ImgAnalysisThread: public ofThread {

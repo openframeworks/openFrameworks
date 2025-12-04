@@ -70,6 +70,11 @@ linuxarmv7l:
 	ADDON_LIBS_EXCLUDE = libs/assimp
 	ADDON_INCLUDES_EXCLUDE = libs/assimp/%
 
+linuxaarch64:
+	ADDON_PKG_CONFIG_LIBRARIES = assimp
+	ADDON_LIBS_EXCLUDE = libs/assimp
+	ADDON_INCLUDES_EXCLUDE = libs/assimp/%
+
 linux:
 	ADDON_PKG_CONFIG_LIBRARIES = assimp
 	ADDON_LIBS_EXCLUDE = libs/assimp
@@ -94,3 +99,11 @@ android/x86:
 	ADDON_LIBS=
 	ADDON_LIBS+=libs/assimp/lib/android/x86/libassimp.a
 	ADDON_LIBS+=libs/assimp/lib/android/x86/libIrrXML.a
+osx:
+	ADDON_INCLUDES_EXCLUDE = libs/assimp/include/%
+	ADDON_LIBS=
+	ADDON_LIBS=libs/assimp/lib/macos/assimp.xcframework/macos-arm64_x86_64/assimp.a
+	
+emscripten:
+	ADDON_LIBS=
+	ADDON_LIBS=libs/assimp/lib/emscripten/%/libassimp.a

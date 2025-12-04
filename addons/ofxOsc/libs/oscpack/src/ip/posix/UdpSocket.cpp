@@ -56,6 +56,7 @@
 #include <cstring> // for memset
 #include <stdexcept>
 #include <vector>
+#include <atomic>
 
 #include "ip/PacketListener.h"
 #include "ip/TimerListener.h"
@@ -356,7 +357,8 @@ class SocketReceiveMultiplexer::Implementation{
 	std::vector< std::pair< PacketListener*, UdpSocket* > > socketListeners_;
 	std::vector< AttachedTimerListener > timerListeners_;
 
-	volatile bool break_;
+	std::atomic<bool> break_ = false;
+
 	int breakPipe_[2]; // [0] is the reader descriptor and [1] the writer
 
 	double GetCurrentTimeMs() const
@@ -423,7 +425,6 @@ public:
 
     void Run()
 	{
-		break_ = false;
         char *data = 0;
         
         try{
@@ -540,11 +541,16 @@ public:
             }
 
             delete [] data;
+			break_ = false;
+
         }catch(...){
             if( data )
                 delete [] data;
+			break_ = false;
+
             throw;
         }
+		
 	}
 
     void Break()

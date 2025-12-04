@@ -5,11 +5,14 @@
 //
 
 #include "ofxiOSSoundPlayer.h"
+#include "ofxiOSConstants.h"
+#if defined(TARGET_OF_IOS)
+
 #include "ofUtils.h"
 #include "ofLog.h"
 #import "AVSoundPlayer.h"
-
-using namespace std;
+#if defined(OF_IOS_AVSOUNDPLAYER)
+using std::string;
 
 ofxiOSSoundPlayer::ofxiOSSoundPlayer() {
     soundPlayer = NULL;
@@ -19,22 +22,25 @@ ofxiOSSoundPlayer::~ofxiOSSoundPlayer() {
     unload();
 }
 
-bool ofxiOSSoundPlayer::load(const std::filesystem::path& fileName, bool stream) {
+bool ofxiOSSoundPlayer::load(const of::filesystem::path& fileName, bool stream) {
     if(soundPlayer != NULL) {
         unload();
     }
-
+    BOOL bOk = false;
     string filePath = ofToDataPath(fileName);
-    soundPlayer = [[AVSoundPlayer alloc] init];
-    BOOL bOk = [(AVSoundPlayer *)soundPlayer loadWithPath:[NSString stringWithUTF8String:filePath.c_str()]];
-    
+    __autoreleasing AVSoundPlayer *player = [[AVSoundPlayer alloc] init];
+    bOk = [player loadWithPath:[NSString stringWithUTF8String:filePath.c_str()]];
+    if(bOk) {
+        soundPlayer = (__bridge_retained void *)player;
+    }
+
     return bOk;
 }
 
 void ofxiOSSoundPlayer::unload() {
     if(soundPlayer != NULL) {
-        [(AVSoundPlayer *)soundPlayer unloadSound];
-        [(AVSoundPlayer *)soundPlayer release];
+        __autoreleasing AVSoundPlayer *player = (__bridge_transfer AVSoundPlayer *)soundPlayer;
+        [player unloadSound];
         soundPlayer = NULL;
     }
 }
@@ -43,35 +49,35 @@ void ofxiOSSoundPlayer::play() {
     if(soundPlayer == NULL) {
         return;
     }
-    [(AVSoundPlayer *)soundPlayer play];
+    [(__bridge AVSoundPlayer *)soundPlayer play];
 }
 
 void ofxiOSSoundPlayer::stop() {
     if(soundPlayer == NULL) {
         return;
     }
-    [(AVSoundPlayer *)soundPlayer stop];
+    [(__bridge AVSoundPlayer *)soundPlayer stop];
 }
 
 void ofxiOSSoundPlayer::setVolume(float value) {
     if(soundPlayer == NULL) {
         return;
     }
-    [(AVSoundPlayer *)soundPlayer volume:value];
+    [(__bridge AVSoundPlayer *)soundPlayer volume:value];
 }
 
 void ofxiOSSoundPlayer::setPan(float value) {
     if(soundPlayer == NULL) {
         return;
     }
-    [(AVSoundPlayer *)soundPlayer pan:value];
+    [(__bridge AVSoundPlayer *)soundPlayer pan:value];
 }
 
 void ofxiOSSoundPlayer::setSpeed(float value) {
     if(soundPlayer == NULL) {
         return;
     }
-    [(AVSoundPlayer *)soundPlayer speed:value];
+    [(__bridge AVSoundPlayer *)soundPlayer speed:value];
 }
 
 void ofxiOSSoundPlayer::setPaused(bool bPause) {
@@ -79,9 +85,9 @@ void ofxiOSSoundPlayer::setPaused(bool bPause) {
         return;
     }
     if(bPause) {
-        [(AVSoundPlayer *)soundPlayer pause];
+        [(__bridge AVSoundPlayer *)soundPlayer pause];
     } else {
-        [(AVSoundPlayer *)soundPlayer play];
+        [(__bridge AVSoundPlayer *)soundPlayer play];
     }
 }
 
@@ -89,7 +95,7 @@ void ofxiOSSoundPlayer::setLoop(bool bLoop) {
     if(soundPlayer == NULL) {
         return;
     }
-    [(AVSoundPlayer *)soundPlayer loop:bLoop];
+    [(__bridge AVSoundPlayer *)soundPlayer loop:bLoop];
 }
 
 void ofxiOSSoundPlayer::setMultiPlay(bool bMultiPlay) {
@@ -97,72 +103,87 @@ void ofxiOSSoundPlayer::setMultiPlay(bool bMultiPlay) {
     if(soundPlayer == NULL) {
         return;
     }
-    [(AVSoundPlayer *)soundPlayer multiPlay:bMultiPlay];
+    [(__bridge AVSoundPlayer *)soundPlayer multiPlay:bMultiPlay];
 }
 
 void ofxiOSSoundPlayer::setPosition(float position) {
     if(soundPlayer == NULL) {
         return;
     }
-    [(AVSoundPlayer *)soundPlayer position:position];
+    [(__bridge AVSoundPlayer *)soundPlayer position:position];
 }
 
 void ofxiOSSoundPlayer::setPositionMS(int positionMS) {
     if(soundPlayer == NULL) {
         return;
     }
-    [(AVSoundPlayer *)soundPlayer positionMs:positionMS];
+    [(__bridge AVSoundPlayer *)soundPlayer positionMs:positionMS];
 }
 
 float ofxiOSSoundPlayer::getPosition()  const{
     if(soundPlayer == NULL) {
         return 0;
     }
-    return [(AVSoundPlayer *)soundPlayer position];
+    return [(__bridge AVSoundPlayer *)soundPlayer position];
 }
 
 int ofxiOSSoundPlayer::getPositionMS() const {
     if(soundPlayer == NULL) {
         return 0;
     }
-    return [(AVSoundPlayer *)soundPlayer positionMs];
+    return [(__bridge AVSoundPlayer *)soundPlayer positionMs];
 }
 
 bool ofxiOSSoundPlayer::isPlaying()  const{
     if(soundPlayer == NULL) {
         return false;
     }
-    return [(AVSoundPlayer *)soundPlayer isPlaying];
+    return [(__bridge AVSoundPlayer *)soundPlayer isPlaying];
 }
 
 float ofxiOSSoundPlayer::getSpeed()  const{
     if(soundPlayer == NULL) {
         return 0;
     }
-    return [(AVSoundPlayer *)soundPlayer speed];
+    return [(__bridge AVSoundPlayer *)soundPlayer speed];
 }
 
 float ofxiOSSoundPlayer::getPan()  const{
     if(soundPlayer == NULL) {
         return 0;
     }
-    return [(AVSoundPlayer *)soundPlayer pan];
+    return [(__bridge AVSoundPlayer *)soundPlayer pan];
 }
 
 bool ofxiOSSoundPlayer::isLoaded()  const{
     if(soundPlayer == NULL) {
         return false;
     }
-    return [(AVSoundPlayer *)soundPlayer isLoaded];
+    return [(__bridge AVSoundPlayer *)soundPlayer isLoaded];
 }
 
 float ofxiOSSoundPlayer::getVolume()  const{
     if(soundPlayer == NULL) {
         return false;
     }
-    return [(AVSoundPlayer *)soundPlayer volume];
+    return [(__bridge AVSoundPlayer *)soundPlayer volume];
+}
+
+float ofxiOSSoundPlayer::getDuration() const {
+	if(soundPlayer == NULL) {
+		return 0.f;
+	}
+	return [(__bridge AVSoundPlayer *)soundPlayer duration];
+}
+unsigned int ofxiOSSoundPlayer::getDurationMS() const {
+	if(soundPlayer == NULL) {
+		return 0;
+	}
+	return [(__bridge AVSoundPlayer *)soundPlayer duration] * 1000.0;
 }
 
 void * ofxiOSSoundPlayer::getAVSoundPlayer() {
     return soundPlayer;
 }
+#endif
+#endif

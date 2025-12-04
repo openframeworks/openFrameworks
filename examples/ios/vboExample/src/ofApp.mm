@@ -58,8 +58,8 @@ void ofApp::update(){
 				int z     = (j * space) - center.y;
 				int index = (j*GRID_WIDTH+i) * LENGTH;
 				
-				pos[index].set(x, y, z);
-				pos[index+1].set(x+ofRandom(-r,r), y+ofRandom(-r,r), z+ofRandom(-r,r));
+				pos[index] = {x, y, z};
+				pos[index+1] = {x+ofRandom(-r,r), y+ofRandom(-r,r), z+ofRandom(-r,r)};
 				pos[index+1].y -= 1.0;
 				
 				for (int k=2; k<LENGTH; k++) {
@@ -85,8 +85,8 @@ void ofApp::draw() {
 	ofPushMatrix();
 	ofTranslate(ofGetWidth()/2, ofGetHeight()/2, zoom);
 	
-	ofRotate(mouseX, 1, 0, 0);
-	ofRotate(mouseY, 0, 1, 1);
+	ofRotateDeg(mouseX, 1, 0, 0);
+	ofRotateDeg(mouseY, 0, 1, 1);
 	
 	
 	// the lines
@@ -113,7 +113,7 @@ void ofApp::draw() {
 
 //--------------------------------------------------------------
 void ofApp::exit(){
-    
+	
 }
 
 //--------------------------------------------------------------
@@ -145,20 +145,20 @@ void ofApp::touchCancelled(ofTouchEventArgs & touch){
 
 //--------------------------------------------------------------
 void ofApp::lostFocus(){
-    
+	
 }
 
 //--------------------------------------------------------------
 void ofApp::gotFocus(){
-    
+	
 }
 
 //--------------------------------------------------------------
 void ofApp::gotMemoryWarning(){
-    
+	
 }
 
 //--------------------------------------------------------------
 void ofApp::deviceOrientationChanged(int newOrientation){
-    
+	
 }

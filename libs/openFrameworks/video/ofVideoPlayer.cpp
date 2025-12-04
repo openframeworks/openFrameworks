@@ -1,23 +1,107 @@
 #include "ofVideoPlayer.h"
-#include "ofUtils.h"
 #include "ofAppRunner.h"
 #include "ofGLUtils.h"
 #include "ofPixels.h"
 #include <algorithm>
 
-using namespace std;
+//------------------------------------------------  video player
+// check if any video player system is already defined from the compiler
+#if !defined(OF_VIDEO_PLAYER_GSTREAMER) && !defined(OF_VIDEO_PLAYER_IOS) && !defined(OF_VIDEO_PLAYER_DIRECTSHOW) && !defined(OF_VIDEO_PLAYER_MEDIA_FOUNDATION) && !defined(OF_VIDEO_PLAYER_QUICKTIME) && !defined(OF_VIDEO_PLAYER_AVFOUNDATION) && !defined(OF_VIDEO_PLAYER_EMSCRIPTEN)
+	#ifdef TARGET_LINUX
+		#define OF_VIDEO_PLAYER_GSTREAMER
+	#elif defined(TARGET_ANDROID)
+		#define OF_VIDEO_PLAYER_ANDROID
+	#elif defined(TARGET_OF_IOS)
+		#define OF_VIDEO_PLAYER_IOS
+	#elif defined(TARGET_WIN32)
+			#ifdef _MSC_VER //use MF Foundation player for VS as mingw doesn't have needed symbols
+			#define OF_VIDEO_PLAYER_MEDIA_FOUNDATION
+			#else
+			#define OF_VIDEO_PLAYER_DIRECTSHOW
+			#endif
+	#elif defined(TARGET_OSX)
+		//for 10.8 and 10.9 users we use AVFoundation, for 10.7 we use QTKit, for 10.6 users we use QuickTime
+		#ifndef MAC_OS_X_VERSION_10_7
+			#define OF_VIDEO_PLAYER_QUICKTIME
+		#elif !defined(MAC_OS_X_VERSION_10_8)
+			#define OF_VIDEO_PLAYER_QTKIT
+		#else
+			#define OF_VIDEO_PLAYER_AVFOUNDATION
+		#endif
+	#elif defined(TARGET_EMSCRIPTEN)
+		#define OF_VIDEO_PLAYER_EMSCRIPTEN
+	#else
+		#define OF_VIDEO_PLAYER_QUICKTIME
+	#endif
+#endif
+
+
+#ifdef OF_VIDEO_PLAYER_GSTREAMER
+	#include "ofGstVideoPlayer.h"
+	#define OF_VID_PLAYER_TYPE ofGstVideoPlayer
+#endif
+
+//#ifdef OF_VIDEO_PLAYER_QUICKTIME
+//	#include "ofQuickTimePlayer.h"
+//	#define OF_VID_PLAYER_TYPE ofQuickTimePlayer
+//#endif
+//
+//#ifdef OF_VIDEO_PLAYER_QTKIT
+//	#include "ofQTKitPlayer.h"
+//	#define OF_VID_PLAYER_TYPE ofQTKitPlayer
+//#endif
+
+#ifdef OF_VIDEO_PLAYER_AVFOUNDATION
+	#include "ofAVFoundationPlayer.h"
+	#define OF_VID_PLAYER_TYPE ofAVFoundationPlayer
+#endif
+
+#ifdef OF_VIDEO_PLAYER_DIRECTSHOW
+	#include "ofDirectShowPlayer.h"
+	#define OF_VID_PLAYER_TYPE ofDirectShowPlayer
+#endif
+
+#if defined(OF_VIDEO_PLAYER_MEDIA_FOUNDATION)
+	#include "ofMediaFoundationPlayer.h"
+	#define OF_VID_PLAYER_TYPE ofMediaFoundationPlayer
+#endif
+
+#ifdef OF_VIDEO_PLAYER_IOS
+	#include "ofxiOSVideoPlayer.h"
+	#define OF_VID_PLAYER_TYPE ofxiOSVideoPlayer
+#endif
+
+#ifdef OF_VIDEO_PLAYER_ANDROID
+	#include "ofxAndroidVideoPlayer.h"
+	#define OF_VID_PLAYER_TYPE ofxAndroidVideoPlayer
+#endif
+
+#ifdef OF_VIDEO_PLAYER_EMSCRIPTEN
+	#include "ofxEmscriptenVideoPlayer.h"
+	#define OF_VID_PLAYER_TYPE ofxEmscriptenVideoPlayer
+#endif
+
+
+using std::shared_ptr;
+using std::vector;
+using std::string;
 
 //---------------------------------------------------------------------------
-ofVideoPlayer::ofVideoPlayer (){
-	bUseTexture			= true;
-	playerTex			= nullptr;
+ofVideoPlayer::ofVideoPlayer() {
+	bUseTexture = true;
+	playerTex = nullptr;
 	internalPixelFormat = OF_PIXELS_RGB;
 	tex.resize(1);
 }
 
 //---------------------------------------------------------------------------
+ofVideoPlayer::ofVideoPlayer(const of::filesystem::path & fileName) : ofVideoPlayer() {
+	load(fileName);
+}
+
+//---------------------------------------------------------------------------
 void ofVideoPlayer::setPlayer(shared_ptr<ofBaseVideoPlayer> newPlayer){
-	player = newPlayer;
+	player = std::move(newPlayer);
 	setPixelFormat(internalPixelFormat);	//this means that it will try to set the pixel format you have been using before. 
 											//if the format is not supported ofVideoPlayer's internalPixelFormat will be updated to that of the player's
 }
@@ -67,16 +151,16 @@ ofPixelFormat ofVideoPlayer::getPixelFormat() const{
 }
 
 //---------------------------------------------------------------------------
-bool ofVideoPlayer::load(string name){
+bool ofVideoPlayer::load(const of::filesystem::path & fileName){
 	if( !player ){
 		setPlayer(std::make_shared<OF_VID_PLAYER_TYPE>());
 		player->setPixelFormat(internalPixelFormat);
 	}
 	
-	bool bOk = player->load(name);
+	bool bOk = player->load(fileName);
 
 	if( bOk){
-        moviePath = name;
+        moviePath = fileName;
         if(bUseTexture){
         	if(player->getTexturePtr()==nullptr){
 				if(tex.empty()) {
@@ -100,23 +184,23 @@ bool ofVideoPlayer::load(string name){
 }
 
 //---------------------------------------------------------------------------
-void ofVideoPlayer::loadAsync(string name){
+void ofVideoPlayer::loadAsync(const of::filesystem::path & fileName){
 	if( !player ){
 		setPlayer(std::make_shared<OF_VID_PLAYER_TYPE>());
 		player->setPixelFormat(internalPixelFormat);
 	}
 	
-	player->loadAsync(name);
-	moviePath = name;
+	player->loadAsync(fileName);
+	moviePath = fileName;
 }
 
 //---------------------------------------------------------------------------
-bool ofVideoPlayer::loadMovie(string name){
-	return load(name);
+bool ofVideoPlayer::loadMovie(const of::filesystem::path & fileName){
+	return load(fileName);
 }
 
 //---------------------------------------------------------------------------
-string ofVideoPlayer::getMoviePath() const{
+of::filesystem::path ofVideoPlayer::getMoviePath() const {
     return moviePath;	
 }
 

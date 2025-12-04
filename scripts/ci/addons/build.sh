@@ -37,7 +37,7 @@ elif [ "$TARGET" == "linuxarmv7l" ]; then
         export CXXFLAGS="${CXXFLAGS} -ftrack-macro-expansion=0";
         export GCCVER=7.1.1
         cd \$1
-        make DebugNoOF PLATFORM_VARIANT=raspberry2
+        make -j DebugNoOF PLATFORM_VARIANT=raspberry2
 EOF
     export PATH=~/.local/share/junest/bin:$PATH
     chmod 755 build_junest.sh
@@ -70,18 +70,18 @@ if ls example* 1> /dev/null 2>&1; then
         if [ "$TARGET" == "android" ]; then
             cd $example
             echo "ABIS_TO_COMPILE_DEBUG = $OPT" >> config.make
-            make DebugNoOF PLATFORM_OS=Android
+            make -j DebugNoOF PLATFORM_OS=Android
             cd ..
         elif [ "$TARGET" == "emscripten" ]; then
             cd $example
-            emmake make DebugNoOF
+            emmake make -j DebugNoOF
             cd ..
         elif [ "$TARGET" == "linuxarmv7l" ]; then
             #make DebugNoOF PLATFORM_VARIANT=raspberry2
             junest ./build_junest.sh $(cd $example; pwd -P)
         else
             cd $example
-            make DebugNoOF
+            make -j DebugNoOF
             cd ..
         fi
     done

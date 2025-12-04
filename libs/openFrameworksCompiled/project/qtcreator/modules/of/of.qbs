@@ -133,6 +133,7 @@ Module{
             var libsexceptions = [];
             if(platform === "linux"  || platform === "linux64"){
                 libsexceptions = [
+                    "fmod",
                     "glew",
                     "cairo",
                     "videoInput",
@@ -168,7 +169,7 @@ Module{
             }else if(platform==="android"){
                libsexceptions =  [
                     "glfw",
-                    "fmodex",
+                    "fmod",
                     "glew",
                     "kiss",
                     "rtAudio",
@@ -209,7 +210,9 @@ Module{
                 ldflags = Helpers.pkgconfig(configs, ["--libs-only-L"]);
                 if(platform === "msys2"){
                     ldflags.push("-L"+FileInfo.joinPaths(Helpers.msys2root(),"mingw32/lib"));
-                }else{
+                }else if (Helpers.commandExists("mold")) {
+                    ldflags.push("-fuse-ld=mold");
+                }else if (Helpers.commandExists("gold")) {
                     ldflags.push("-fuse-ld=gold");
                 }
             }else{
@@ -590,8 +593,6 @@ Module{
         name: "cpp"
     }
 
-    //cpp.cxxLanguageVersion: "c++14"
-
     property string coreWarningLevel: 'default'
     property stringList coreCFlags: {
         var flags = CORE.cflags
@@ -603,14 +604,23 @@ Module{
         }else{
             return flags.concat(ADDONS.cflags)
         }
-
     }
 
+    Properties{
+        coreCxxLanguageVersion: {
+            if(of.cxxLanguageVersion){
+                return of.cxxLanguageVersion;
+            } else {
+                return "c++17"
+            }
+        }
+    }
+    
     Properties{
         condition: of.platform === "linux" || of.platform === "linux64" || of.platform === "msys2"
         coreCxxFlags: {
             var flags = CORE.cflags
-                .concat(['-Wno-unused-parameter','-Werror=return-type','-std=gnu++14'])
+                .concat(['-Wno-unused-parameter','-Werror=return-type'])
                 .concat(cxxFlags);
             if(of.isCoreLibrary){
                 return flags
@@ -633,7 +643,6 @@ Module{
 
     Properties{
         condition: of.platform === "osx"
-        coreCxxLanguageVersion: "c++11"
         coreCxxStandardLibrary: "libc++"
 
         coreCxxFlags: {
@@ -699,7 +708,7 @@ Module{
         readonly property string abiPath: Android.ndk.abi
         coreSysroot: ndk_root + '/platforms/android-19/arch-arm'
         coreCxxFlags: {
-            var flags = ['-Wno-unused-parameter','-Werror=return-type','-std=gnu++14']
+            var flags = ['-Wno-unused-parameter','-Werror=return-type']
                 .concat('-I'+coreSysroot+'/usr/include')
                 .concat('-I'+ndk_root+'/sources/android/support/include')
                 .concat('-I'+ndk_root+'/sources/cxx-stl/llvm-libc++/libcxx/include')
@@ -743,6 +752,7 @@ Module{
     property stringList staticLibraries: []
     property stringList dynamicLibraries: []
     property stringList addons
+    property string cxxLanguageVersion
 
     property stringList coreIncludePaths: {
         var flags = CORE.includes

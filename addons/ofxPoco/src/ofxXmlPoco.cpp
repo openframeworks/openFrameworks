@@ -2,12 +2,12 @@
 #include "ofxXmlPoco.h"
 #include "Poco/AutoPtr.h"
 
-using namespace std;
+using std::string;
+using std::vector;
 
 ofxXmlPoco::~ofxXmlPoco(){
 	releaseAll();
 }
-
 
 ofxXmlPoco::ofxXmlPoco(const string & path){
 	document = new Poco::XML::Document(); // we create this so that they can be merged later
@@ -42,8 +42,8 @@ ofxXmlPoco::ofxXmlPoco(){
 }
 
 
-bool ofxXmlPoco::load(const std::filesystem::path & path){
-	ofFile file(path, ofFile::ReadOnly);
+bool ofxXmlPoco::load(const of::filesystem::path & filePath){
+	ofFile file(filePath, ofFile::ReadOnly);
 	if(!file.exists()){
 		ofLogError("ofxXmlPoco") << "couldn't load, \"" << file.getFileName() << "\" not found";
 		return false;
@@ -53,10 +53,10 @@ bool ofxXmlPoco::load(const std::filesystem::path & path){
 }
 
 
-bool ofxXmlPoco::save(const std::filesystem::path & path){
+bool ofxXmlPoco::save(const of::filesystem::path & filePath){
     ofBuffer buffer;
     buffer.set(toString());
-    ofFile file(path, ofFile::WriteOnly);
+    ofFile file(filePath, ofFile::WriteOnly);
     return file.writeFromBuffer(buffer);
 }
 
@@ -97,14 +97,14 @@ int ofxXmlPoco::getNumChildren(const string& path) const{
 }
 
 string ofxXmlPoco::toString() const{
-    ostringstream stream;
+    std::ostringstream stream;
 
     Poco::XML::DOMWriter writer;
     writer.setOptions(Poco::XML::XMLWriter::PRETTY_PRINT);
     if(document){
         try{
             writer.writeNode( stream, getPocoDocument() );
-        }catch( exception & e ){
+        }catch( std::exception & e ){
             ofLogError("ofxXmlPoco") << "toString(): " << e.what();
         }
     } else if(element){
@@ -604,8 +604,8 @@ bool ofxXmlPoco::exists(const string & path) const{ // works for both attributes
 	return false;
 }
 
-map<string, string> ofxXmlPoco::getAttributes() const{ // works for both attributes and tags
-    map<string, string> attrMap;
+std::map<string, string> ofxXmlPoco::getAttributes() const{ // works for both attributes and tags
+    std::map<string, string> attrMap;
 
     if(element){
         Poco::AutoPtr<Poco::XML::NamedNodeMap> attr = element->attributes();
@@ -724,7 +724,7 @@ bool ofxXmlPoco::loadFromBuffer(const string & buffer){
 		element = document->documentElement();
 		return false;
 	}
-	catch(const exception & e){
+	catch(const std::exception & e){
 		short msg = atoi(e.what());
 		ofLogError("ofxXmlPoco") << "parse error: " << DOMErrorMessage(msg);
 		document = new Poco::XML::Document;

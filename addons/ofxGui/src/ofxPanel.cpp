@@ -8,12 +8,11 @@
 #include "ofxPanel.h"
 #include "ofGraphics.h"
 #include "ofImage.h"
-using namespace std;
 
 ofxPanel::ofxPanel()
 :bGrabbed(false){}
 
-ofxPanel::ofxPanel(const ofParameterGroup & parameters, const std::string& filename, float x, float y)
+ofxPanel::ofxPanel(const ofParameterGroup & parameters, const of::filesystem::path & filename, float x, float y)
 : ofxGuiGroup(parameters, filename, x, y)
 , bGrabbed(false){
 	loadIcons();
@@ -25,13 +24,13 @@ ofxPanel::~ofxPanel(){
 	//
 }
 
-ofxPanel * ofxPanel::setup(const std::string& collectionName, const std::string& filename, float x, float y){
+ofxPanel * ofxPanel::setup(const std::string& collectionName, const of::filesystem::path & filename, float x, float y){
 	loadIcons();
 	registerMouseEvents();
 	return (ofxPanel*)ofxGuiGroup::setup(collectionName,filename,x,y);
 }
 
-ofxPanel * ofxPanel::setup(const ofParameterGroup & parameters, const std::string& filename, float x, float y){
+ofxPanel * ofxPanel::setup(const ofParameterGroup & parameters, const of::filesystem::path & filename, float x, float y){
 	loadIcons();
 	registerMouseEvents();
 	return (ofxPanel*)ofxGuiGroup::setup(parameters,filename,x,y);
@@ -55,7 +54,7 @@ void ofxPanel::generateDraw(){
 		float iconHeight = headerRect.height*.5;
 		float iconWidth = loadIcon.getWidth()/loadIcon.getHeight()*iconHeight;
 		int iconSpacing = iconWidth*.5;
-	
+
 		loadBox.x = minimizeRect.getX() - (iconWidth + iconSpacing) * 2;
 		loadBox.y = headerRect.y + headerRect.height / 2. - iconHeight / 2.;
 		loadBox.width = iconWidth;
@@ -67,7 +66,7 @@ void ofxPanel::generateDraw(){
 
 void ofxPanel::render(){
 	ofxGuiGroup::render();
-	
+
 	if(bHeaderEnabled){
 		ofBlendMode blendMode = ofGetStyle().blendingMode;
 		if(blendMode!=OF_BLENDMODE_ALPHA){
@@ -75,7 +74,7 @@ void ofxPanel::render(){
 		}
 		ofColor c = ofGetStyle().color;
 		ofSetColor(thisTextColor);
-				
+
 		bool texHackEnabled = ofIsTextureEdgeHackEnabled();
 		ofDisableTextureEdgeHack();
 		loadIcon.draw(loadBox);
@@ -84,7 +83,7 @@ void ofxPanel::render(){
 			ofEnableTextureEdgeHack();
 		}
 		ofSetColor(c);
-		
+
 		if(blendMode!=OF_BLENDMODE_ALPHA){
 			ofEnableBlendMode(blendMode);
 		}
@@ -134,7 +133,7 @@ bool ofxPanel::setValue(float mx, float my, bool bCheck){
 					}
 					return true;
 				}
-				
+
 				if(headerRect.inside(mx, my)){
 					bGrabbed = true;
 					grabPt = {mx-b.x, my-b.y, 0};

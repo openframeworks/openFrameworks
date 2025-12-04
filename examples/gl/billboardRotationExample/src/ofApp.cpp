@@ -18,11 +18,15 @@ void ofApp::setup() {
 	
 	// set the vertex data
 	vbo.setVertexData(pos, NUM_BILLBOARDS, GL_DYNAMIC_DRAW);
-	if(ofIsGLProgrammableRenderer()){
-		shader.load("shaderGL3/Billboard");
-	}else{
-		shader.load("shaderGL2/Billboard");
-	}
+	#ifdef TARGET_EMSCRIPTEN
+		shader.load("shaderGLES3/Billboard");
+	#else
+		if(ofIsGLProgrammableRenderer()){
+			shader.load("shaderGL3/Billboard");
+		}else{
+			shader.load("shaderGL2/Billboard");
+		}
+	#endif
 	
 	ofDisableArbTex();
 	texture.load("snow.png");
@@ -48,7 +52,7 @@ void ofApp::update() {
 
 	
 	for (int i=0; i<NUM_BILLBOARDS; i++) {
-		ofSeedRandom(i);
+		ofSetRandomSeed(i);
 		if(glm::distance(mouse,pos[i]) < ofRandom(100, 200)) {
 			vel[i] -= mouseVec; 
 		}
@@ -70,7 +74,7 @@ void ofApp::update() {
 		}
 		
 		// get the 2d heading
-		float angle = (float)atan2(-vel[i].y, vel[i].x) + PI;
+		float angle = std::atan2(-vel[i].y, vel[i].x) + glm::pi<float>();
 		rotations[i] = (angle * -1.0);
 	}
 }

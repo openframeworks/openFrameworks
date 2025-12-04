@@ -1,18 +1,19 @@
 #!/bin/bash
-set -ev
+# set -ev
 ROOT=$(pwd -P)
-source $ROOT/scripts/ci/ccache.sh
+# source $ROOT/scripts/ci/ccache.sh
 
-echo "**** Running unit tests ****"
+echo "##[group]**** Running unit tests ****"
 cd $ROOT/tests
 for group in *; do
 	if [ -d $group ]; then
+		echo "##[group] $group"
 		for test in $group/*; do
 			if [ -d $test ]; then
 				cd $test
 				cp ../../../scripts/templates/msys2/Makefile .
 				cp ../../../scripts/templates/msys2/config.make .
-				make USE_CCACHE=1 -j4 Debug
+				make -j2 Debug
 				cd bin
 				binname=$(basename ${test})
                 #gdb -batch -ex "run" -ex "bt" -ex "q \$_exitcode" ./${binname}_debug
@@ -24,5 +25,7 @@ for group in *; do
 				cd $ROOT/tests
 			fi
 		done
+		echo "##[endgroup]"
 	fi
 done
+echo "##[endgroup]"

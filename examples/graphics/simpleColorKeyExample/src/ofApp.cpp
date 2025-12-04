@@ -2,16 +2,16 @@
 
 //--------------------------------------------------------------
 void ofApp::setup(){
-    
-    //load the image object
-    original.load("myImage.jpg");
-    
-    //get the pixels from the image
+	
+	//load the image object
+	original.load("myImage.jpg");
+	
+	//get the pixels from the image
 	ofPixelsRef pixels = original.getPixels();
 	
 	//let's manipulate the pixels by iterating through them
-    //or a rough bluescreen
-    for(int y = 0; y < original.getHeight(); y++){
+	//or a rough bluescreen
+	for(int y = 0; y < original.getHeight(); y++){
 		for(int x = 0; x < original.getWidth(); x++){
 			
 			//if the blue is greater than the combination of  red and green together, delete that pixel
@@ -22,20 +22,20 @@ void ofApp::setup(){
 		}
 	}
 
-    //after we're done we need to put the pixels into the keyed image
-    keyed.setFromPixels(pixels);
+	//after we're done we need to put the pixels into the keyed image
+	keyed.setFromPixels(pixels);
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
-    //no need to use this
+	//no need to use this
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-    
-    //draw the image every frame, the changes you made in setup() will be there
-    original.draw(0,0);
+	
+	//draw the image every frame, the changes you made in setup() will be there
+	original.draw(0,0);
 	keyed.draw(original.getWidth(),0);
 	
 }

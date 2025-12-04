@@ -1,15 +1,8 @@
-#include "ofUtils.h"
-#include "ofGLUtils.h"
+#include "ofBaseTypes.h"
 #include "ofGLProgrammableRenderer.h"
 #include "of3dGraphics.h"
 #include "ofSoundBuffer.h"
 #include "ofMesh.h"
-#include "ofVideoPlayer.h"
-#include "ofSoundBaseTypes.h"
-#include "ofVideoBaseTypes.h"
-#include "ofGraphicsBaseTypes.h"
-
-using namespace std;
 
 //---------------------------------------------------------------------------
 ofBaseVideoGrabber::~ofBaseVideoGrabber(){
@@ -54,9 +47,26 @@ ofBaseVideoPlayer::~ofBaseVideoPlayer(){
 
 }
 
-void ofBaseVideoPlayer::loadAsync(string name){
+//---------------------------------------------------------------------------
+bool ofBaseVideoPlayer::load(const of::filesystem::path & fileName){
+	return load(ofPathToString(fileName));
+}
+
+//---------------------------------------------------------------------------
+bool ofBaseVideoPlayer::load(std::string fileName){
+	ofLogError("ofBaseVideoPlayer") << " One of the two load functions need to be implemented ";
+	return false;
+}
+
+//---------------------------------------------------------------------------
+void ofBaseVideoPlayer::loadAsync(const of::filesystem::path & fileName){
+	loadAsync(ofPathToString(fileName));
+}
+
+//---------------------------------------------------------------------------
+void ofBaseVideoPlayer::loadAsync(std::string fileName){
 	ofLogWarning("ofBaseVideoPlayer") << "loadAsync() not implemented, loading synchronously";
-	load(name);
+	load(fileName);
 }
 
 //---------------------------------------------------------------------------
@@ -334,6 +344,10 @@ void ofBaseRenderer::drawRotationAxes(float radius, float stripWidth, int circle
 
 void ofBaseMaterial::uploadMatrices(const ofShader & shader,ofGLProgrammableRenderer & renderer) const{
 	shader.setUniformMatrix4f("normalMatrix", renderer.getCurrentNormalMatrix());
+}
+
+bool ofBaseMaterial::isBound() const {
+	return mBound;
 }
 
 

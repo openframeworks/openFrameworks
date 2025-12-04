@@ -3,15 +3,15 @@
 #include "ofEvents.h"
 
 class eventsObject{
-    public:
-        eventsObject();
-        void enable();
-        void disable();
-        void update(ofEventArgs & args);
+	public:
+		eventsObject();
+		void enable();
+		void disable();
+		void update(ofEventArgs & args);
 
-        ofEvent<float> newFloatEvent;
-        ofEvent<int> newIntEvent;
+		ofEvent<float> newFloatEvent;
+		ofEvent<int> newIntEvent;
 
-    private:
-        float counter;
+	private:
+		float counter;
 };

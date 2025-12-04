@@ -1,3 +1,12 @@
+####
+# EMSCRIPTEN THREADING NOTE
+# To enable threading in your emscripten project uncomment the two PROJECT_LDFLAGS
+# and PROJECT_CFLAGS in the lines below ( PROJECT_CFLAGS=-pthread etc )
+# You will need to add a .htaccess file to your project directory if hosting online
+# With the following lines:
+# Header set Cross-Origin-Embedder-Policy "require-corp"
+# Header set Cross-Origin-Opener-Policy "same-origin"
+
 ################################################################################
 # CONFIGURE PROJECT MAKEFILE (optional)
 #   This file is where we make project specific configurations.
@@ -79,6 +88,9 @@
 # TODO: should this be a default setting?
 # PROJECT_LDFLAGS=-Wl,-rpath=./libs
 
+# To add threading support uncomment this line:
+# PROJECT_LDFLAGS=-pthread
+
 ################################################################################
 # PROJECT DEFINES
 #   Create a space-delimited list of DEFINES. The list will be converted into 
@@ -105,7 +117,10 @@
 #
 #   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
-# PROJECT_CFLAGS = 
+# PROJECT_CFLAGS =
+
+# To add threading support uncomment this line:
+# PROJECT_CFLAGS=-pthread
 
 ################################################################################
 # PROJECT OPTIMIZATION CFLAGS

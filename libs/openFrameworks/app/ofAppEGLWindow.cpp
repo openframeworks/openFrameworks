@@ -6,11 +6,10 @@
 #include "ofFileUtils.h"
 #include "ofGLProgrammableRenderer.h"
 #include "ofGLRenderer.h"
-#include "ofVectorMath.h"
+// #include "ofVectorMath.h"
 #include <assert.h>
 // x11
 #include <X11/Xutil.h>
-#include <EGL/egl.h>
 
 // include includes for both native and X11 possibilities
 #include <libudev.h>
@@ -22,20 +21,18 @@
 #include <unistd.h> // read close
 #include <linux/joystick.h>
 
-#include "linux/kd.h"	// keyboard stuff...
-#include "termios.h"
-#include "sys/ioctl.h"
+#include <linux/kd.h>	// keyboard stuff...
+#include <termios.h>
+#include <sys/ioctl.h>
 
 #include <string.h> // strlen
-
-using namespace std;
 
 // native events
 struct udev* udev;
 struct udev_monitor* mon;
 static int udev_fd = -1;
 
-typedef map<string, int> device;
+typedef std::map<std::string, int> device;
 static device inputDevices;
 
 // minimal map
@@ -78,12 +75,17 @@ typedef struct {
 	int mouseButtonState;
 } MouseState;
 
+typedef std::map<int, int> TouchState;
+typedef std::map<int, ofVec2f> TouchPosition;
+
 // TODO, make this match the upcoming additions to ofWindow
 #define MOUSE_BUTTON_LEFT_MASK		1
 #define MOUSE_BUTTON_MIDDLE_MASK 1 << 1
 #define MOUSE_BUTTON_RIGHT_MASK  2 << 1
 
 static MouseState mb;
+static TouchState mt;
+static TouchPosition mtp;
 ofAppEGLWindow* ofAppEGLWindow::instance = NULL;
 
 static int string_ends_with(const char *str, const char *suffix) {
@@ -146,27 +148,25 @@ static const struct {
 // from http://cantuna.googlecode.com/svn-history/r16/trunk/src/screen.cpp
 #define CASE_STR(x,y) case x: str = y; break
 
-static const char* eglErrorString(EGLint err) {
-	string str;
+static std::string eglErrorString(EGLint err) {
 	switch (err) {
-	CASE_STR(EGL_SUCCESS, "no error");
-	CASE_STR(EGL_NOT_INITIALIZED, "EGL not, or could not be, initialized");
-	CASE_STR(EGL_BAD_ACCESS, "access violation");
-	CASE_STR(EGL_BAD_ALLOC, "could not allocate resources");
-	CASE_STR(EGL_BAD_ATTRIBUTE, "invalid attribute");
-	CASE_STR(EGL_BAD_CONTEXT, "invalid context specified");
-	CASE_STR(EGL_BAD_CONFIG, "invald frame buffer configuration specified");
-	CASE_STR(EGL_BAD_CURRENT_SURFACE, "current window, pbuffer or pixmap surface is no longer valid");
-	CASE_STR(EGL_BAD_DISPLAY, "invalid display specified");
-	CASE_STR(EGL_BAD_SURFACE, "invalid surface specified");
-	CASE_STR(EGL_BAD_MATCH, "bad argument match");
-	CASE_STR(EGL_BAD_PARAMETER, "invalid paramater");
-	CASE_STR(EGL_BAD_NATIVE_PIXMAP, "invalid NativePixmap");
-	CASE_STR(EGL_BAD_NATIVE_WINDOW, "invalid NativeWindow");
-	CASE_STR(EGL_CONTEXT_LOST, "APM event caused context loss");
-	default: str = "unknown error " + err; break;
+			CASE_STR(EGL_SUCCESS, "no error");
+			CASE_STR(EGL_NOT_INITIALIZED, "EGL not, or could not be, initialized");
+			CASE_STR(EGL_BAD_ACCESS, "access violation");
+			CASE_STR(EGL_BAD_ALLOC, "could not allocate resources");
+			CASE_STR(EGL_BAD_ATTRIBUTE, "invalid attribute");
+			CASE_STR(EGL_BAD_CONTEXT, "invalid context specified");
+			CASE_STR(EGL_BAD_CONFIG, "invalid frame buffer configuration specified");
+			CASE_STR(EGL_BAD_CURRENT_SURFACE, "current window, pbuffer or pixmap surface is no longer valid");
+			CASE_STR(EGL_BAD_DISPLAY, "invalid display specified");
+			CASE_STR(EGL_BAD_SURFACE, "invalid surface specified");
+			CASE_STR(EGL_BAD_MATCH, "bad argument match");
+			CASE_STR(EGL_BAD_PARAMETER, "invalid parameter");
+			CASE_STR(EGL_BAD_NATIVE_PIXMAP, "invalid NativePixmap");
+			CASE_STR(EGL_BAD_NATIVE_WINDOW, "invalid NativeWindow");
+			CASE_STR(EGL_CONTEXT_LOST, "APM event caused context loss");
+			default: return "unknown error " + std::to_string(err);
 	}
-	return str.c_str();
 }
 
 
@@ -406,10 +406,10 @@ void ofAppEGLWindow::setup(const ofAppEGLWindowSettings & _settings) {
 
 	// X11 check
 	// char * pDisplay;
-	// pDisplay = getenv ("DISPLAY");
+	// pDisplay = ofGetEnv("DISPLAY");
 	// bool bIsX11Available = (pDisplay != NULL);
 
-	bool bIsX11Available = getenv("DISPLAY") != NULL;
+	bool bIsX11Available = !empty(ofGetEnv("DISPLAY"));
 
 	if(settings.eglWindowPreference == OF_APP_WINDOW_AUTO) {
 		if(bIsX11Available) {
@@ -470,9 +470,9 @@ void ofAppEGLWindow::setup(const ofAppEGLWindowSettings & _settings) {
 	nFramesSinceWindowResized = 0;
 
 	if(settings.glesVersion>1){
-		currentRenderer = make_shared<ofGLProgrammableRenderer>(this);
+		currentRenderer = std::make_shared<ofGLProgrammableRenderer>(this);
 	}else{
-		currentRenderer = make_shared<ofGLRenderer>(this);
+		currentRenderer = std::make_shared<ofGLRenderer>(this);
 	}
 
 	makeCurrent();
@@ -896,7 +896,7 @@ ofCoreEvents & ofAppEGLWindow::events(){
 }
 
 //------------------------------------------------------------
-shared_ptr<ofBaseRenderer> & ofAppEGLWindow::renderer(){
+std::shared_ptr<ofBaseRenderer> & ofAppEGLWindow::renderer(){
 	return currentRenderer;
 }
 
@@ -1030,7 +1030,7 @@ void ofAppEGLWindow::pollEvents(){
 			}
 		}
 	} else {
-		queue<ofMouseEventArgs> mouseEventsCopy;
+		std::queue<ofMouseEventArgs> mouseEventsCopy;
 		instance->lock();
 		mouseEventsCopy = instance->mouseEvents;
 		while(!instance->mouseEvents.empty()){
@@ -1043,7 +1043,7 @@ void ofAppEGLWindow::pollEvents(){
 		}
 
 		// KEYBOARD EVENTS
-		queue<ofKeyEventArgs> keyEventsCopy;
+		std::queue<ofKeyEventArgs> keyEventsCopy;
 		instance->lock();
 		keyEventsCopy = instance->keyEvents;
 		while(!instance->keyEvents.empty()){
@@ -1053,6 +1053,18 @@ void ofAppEGLWindow::pollEvents(){
 		while(!keyEventsCopy.empty()){
 			instance->coreEvents.notifyKeyEvent(keyEventsCopy.front());
 			keyEventsCopy.pop();
+		}
+
+		std::queue<ofTouchEventArgs> touchEventsCopy;
+		instance->lock();
+		touchEventsCopy = instance->touchEvents;
+		while(!instance->touchEvents.empty()){
+			instance->touchEvents.pop();
+		}
+		instance->unlock();
+		while(!touchEventsCopy.empty()){
+			instance->coreEvents.notifyTouchEvent(touchEventsCopy.front());
+			touchEventsCopy.pop();
 		}
 	}
 }
@@ -1068,7 +1080,7 @@ void ofAppEGLWindow::showCursor(){
 }
 
 //------------------------------------------------------------
-void ofAppEGLWindow::setWindowTitle(string title) {
+void ofAppEGLWindow::setWindowTitle(std::string title) {
 	ofLogNotice("ofAppEGLWindow") << "setWindowTitle(): not implemented";
 }
 
@@ -1364,6 +1376,7 @@ void ofAppEGLWindow::setupNativeInput(){
 		const char * driver = udev_device_get_driver(dev);
 		const char * prop_keyboard = udev_device_get_property_value(dev, "ID_INPUT_KEYBOARD");
 		const char * prop_mouse = udev_device_get_property_value(dev, "ID_INPUT_MOUSE");
+		const char * prop_touch = udev_device_get_property_value(dev, "ID_INPUT_TOUCHSCREEN");
 
 		ofLogNotice() << "Got device";
 		ofLogNotice() << " - node: " << devnode;
@@ -1374,20 +1387,21 @@ void ofAppEGLWindow::setupNativeInput(){
 		ofLogNotice() << " - devnum: " << devnum;
 		ofLogNotice() << " - ID_INPUT_KEYBOARD: " << prop_keyboard;
 		ofLogNotice() << " - ID_INPUT_MOUSE: " << prop_mouse;
+		ofLogNotice() << " - ID_INPUT_TOUCHSCREEN: " << prop_touch;
 
-		if(prop_mouse){
+		if(prop_mouse || prop_touch){
 			isMouse = true;
 		}else{
 			isMouse = false;
 		}
 
-		if(devnode && (prop_keyboard || prop_mouse) && string_begins_with(sysname, "event")){
+		if(devnode && (prop_keyboard || prop_mouse || prop_touch) && string_begins_with(sysname, "event")){
 			addInput(devnode, isMouse);
 		}
 		if(prop_keyboard){
 			keyboardDetected = true;
 		}
-		if(prop_mouse){
+		if(prop_mouse || prop_touch){
 			mouseDetected = true;
 		}
 
@@ -1495,20 +1509,23 @@ void ofAppEGLWindow::processInput(int fd, const char * node){
 	// http://www.diegm.uniud.it/loghi/CE2/kbd.pdf
 	// http://cgit.freedesktop.org/~whot/evtest/plain/evtest.c
 	// https://strcpy.net/b/archives/2010/11/17/abusing_the_linux_input_subsystem/index.html
+	static ofTouchEventArgs touchEvent;
 	static ofKeyEventArgs keyEvent;
 	static ofMouseEventArgs mouseEvent;
 	struct input_event ev;
 	char key = 0;
-
+	
 	bool pushKeyEvent = false;
 	bool pushMouseEvent = false;
+	bool pushTouchEvent = false;
 	bool axisValuePending = false;
+	bool touchAxisValuePending = false;
 
 	int nBytesRead = read(fd, &ev, sizeof(struct input_event));
 	while(nBytesRead >= 0){
-		// ofLogNotice("Input event ") << "dev: " << node << " ,type: " << ev.type << " ,code: " << ev.code << " ,value: " << ev.value << " ,pending: " << axisValuePending;
 		if(ev.type == EV_KEY){
 			if(ev.code == BTN_LEFT){
+				ofLogNotice("ofAppEGLWindow") << "BTN_LEFT" << std::endl;
 				if(ev.value == 0){ // release
 					mouseEvent.button = OF_MOUSE_BUTTON_LEFT;
 					mouseEvent.type = ofMouseEventArgs::Released;
@@ -1521,6 +1538,7 @@ void ofAppEGLWindow::processInput(int fd, const char * node){
 					pushMouseEvent = true;
 				}
 			}else if(ev.code == BTN_MIDDLE){
+				ofLogNotice("ofAppEGLWindow") << "BTN_MIDDLE" << std::endl;
 				if(ev.value == 0){ // release
 					mouseEvent.button = OF_MOUSE_BUTTON_MIDDLE;
 					mouseEvent.type = ofMouseEventArgs::Released;
@@ -1533,6 +1551,7 @@ void ofAppEGLWindow::processInput(int fd, const char * node){
 					pushMouseEvent = true;
 				}
 			}else if(ev.code == BTN_RIGHT){
+				ofLogNotice("ofAppEGLWindow") << "BTN_RIGHT" << std::endl;
 				if(ev.value == 0){ // release
 					mouseEvent.button = OF_MOUSE_BUTTON_RIGHT;
 					mouseEvent.type = ofMouseEventArgs::Released;
@@ -1543,6 +1562,19 @@ void ofAppEGLWindow::processInput(int fd, const char * node){
 					mouseEvent.type = ofMouseEventArgs::Pressed;
 					mouseEvent.button = OF_MOUSE_BUTTON_RIGHT;
 					pushMouseEvent = true;
+				}
+			}else if(ev.code == BTN_TOUCH){
+				if(ev.value == 0){ // release	
+					touchEvent.type = ofTouchEventArgs::up;
+					touchEvent.id = 0;
+					mt[touchEvent.id] = 0;
+					pushTouchEvent = true;
+
+				}else if(ev.value == 1){ // press
+					touchEvent.type = ofTouchEventArgs::down;
+					touchEvent.id = 0;
+					mt[touchEvent.id] = 1;
+					pushTouchEvent = true;
 				}
 			}else{
 				if(ev.value == 0){
@@ -1581,6 +1613,10 @@ void ofAppEGLWindow::processInput(int fd, const char * node){
 					case KEY_BACKSPACE:
 						pushKeyEvent = true;
 						keyEvent.key = OF_KEY_BACKSPACE;
+						break;
+					case KEY_SPACE:
+						pushKeyEvent = true;
+						keyEvent.key = OF_KEY_SPACE;
 						break;
 					case KEY_DELETE:
 						pushKeyEvent = true;
@@ -1694,43 +1730,89 @@ void ofAppEGLWindow::processInput(int fd, const char * node){
 						}
 				}	
 			}
-		}else if(ev.type == EV_REL || ev.type == EV_ABS){
+		}else if (ev.type == EV_REL){
 			int axis = ev.code;
 			int amount = ev.value;
-
-			switch(axis) {
-				case 0:
-					if(ev.type == EV_REL){
-						mouseEvent.x += amount * mouseScaleX;
-					}else{
-						mouseEvent.x = amount * (float)currentWindowRect.width / (float)mouseAbsXMax;
-					}
-
-					mouseEvent.x = ofClamp(mouseEvent.x, 0, currentWindowRect.width);
-					axisValuePending = true;
+			switch (axis)
+			{
+			case REL_X:
+				mouseEvent.x += amount * mouseScaleX;
+				mouseEvent.x = ofClamp(mouseEvent.x, 0, currentWindowRect.width);
+				axisValuePending = true;
+				break;
+			case REL_Y:
+				mouseEvent.y += amount * mouseScaleY;
+				mouseEvent.y = ofClamp(mouseEvent.y, 0, currentWindowRect.height);
+				axisValuePending = true;
+				break;
+			default:
+				ofLogNotice("ofAppEGLWindow") << "readMouseEvents(): unknown mouse axis (perhaps it's the scroll wheel?): axis " << axis << " amount " << amount << std::endl;
+				break;
+			}
+		}else if (ev.type == EV_ABS){
+			int axis = ev.code;
+			int amount = ev.value;
+			switch (axis)
+			{
+				// do not need this mouse returns REL_X/REL_Y
+				case ABS_X:
+					// mouseEvent.x = amount * (float)currentWindowRect.width / (float)mouseAbsXMax;
+					// mouseEvent.x = ofClamp(mouseEvent.x, 0, currentWindowRect.width);
+					// axisValuePending = true;
 					break;
-				case 1:
-					if(ev.type == EV_REL){
-						mouseEvent.y += amount * mouseScaleY;
-					}else{
-						mouseEvent.y = amount * (float)currentWindowRect.height / (float)mouseAbsYMax;
+				case ABS_Y:
+					// mouseEvent.y = amount * (float)currentWindowRect.height / (float)mouseAbsYMax;
+					// mouseEvent.y = ofClamp(mouseEvent.y, 0, currentWindowRect.height);
+					// axisValuePending = true;
+					break;
+				case ABS_MT_TOOL_TYPE:
+					break;
+				case ABS_MT_SLOT:
+					touchEvent.id = amount;
+					break;
+				case ABS_MT_TRACKING_ID:
+					if (amount == -1)
+					{
+						if( mt[touchEvent.id] == 1){
+							touchEvent.type = ofTouchEventArgs::up;
+							mt[touchEvent.id] = 0;
+							pushTouchEvent = true;
+						}
 					}
-
-					mouseEvent.y = ofClamp(mouseEvent.y, 0, currentWindowRect.height);
-					axisValuePending = true;
+					else 
+					{
+						if (mt[touchEvent.id] == 0){
+							touchEvent.type = ofTouchEventArgs::down;
+							mt[touchEvent.id] = 1;
+							pushTouchEvent = true;
+						}
+						touchAxisValuePending = true;
+					}
+					break;
+				case ABS_MT_POSITION_X:
+					mtp[touchEvent.id].x = amount * (float)currentWindowRect.width / (float)mouseAbsXMax;
+					mtp[touchEvent.id].x = ofClamp(mtp[touchEvent.id].x, 0, currentWindowRect.width);
+					touchAxisValuePending = true;
+					break;
+				case ABS_MT_POSITION_Y:
+					mtp[touchEvent.id].y = amount * (float)currentWindowRect.height / (float)mouseAbsYMax;
+					mtp[touchEvent.id].y = ofClamp(mtp[touchEvent.id].y, 0, currentWindowRect.height);
+					if(!pushTouchEvent){
+						touchEvent.type = ofTouchEventArgs::move;
+						pushTouchEvent = true;
+					}
+					touchAxisValuePending = true;
 					break;
 				default:
-					ofLogNotice("ofAppEGLWindow") << "readMouseEvents(): unknown mouse axis (perhaps it's the scroll wheel?)";
+					ofLogNotice("ofAppEGLWindow") << "EV_ABS unknown axis: axis " << axis << " amount " << amount << std::endl;
 					break;
 			}
 		}else if(ev.type == EV_MSC){
 		}else if(ev.type == EV_SYN){
 			// EV_SYN Used as markers to separate events. Events may be
-			// separated in time or in space, such as with the multitouch protocol.
-
+			// separated in time or in space, suc8h as with the multitouch protocol.
 			// EV_SYN events are sent when axis value (one or a pair) are changed
 			if(axisValuePending){
-				// ofLog() << "EV_SYN pending end : " << iter->second;
 				// TODO, this state doesn't make as much sense when the mouse is not dragging
 				if(mb.mouseButtonState > 0){
 					// dragging (what if dragging w/ more than one button?)
@@ -1746,8 +1828,17 @@ void ofAppEGLWindow::processInput(int fd, const char * node){
 				axisValuePending = false;
 			}
 
-			//ofLogVerbose("ofAppEGLWindow") << "readMouseEvents(): EV_SYN";
+			if(touchAxisValuePending){
+				if(!pushTouchEvent){
+					touchEvent.type = ofTouchEventArgs::move;
+					pushTouchEvent = true;
+				}
+				touchAxisValuePending = false;
+			}
 		}
+
+		
+		
 
 		if(pushKeyEvent){
 			lock();
@@ -1762,6 +1853,15 @@ void ofAppEGLWindow::processInput(int fd, const char * node){
 			mouseEvents.push(mouseEvent);
 			unlock();
 			pushMouseEvent = false;
+		}
+
+		if(pushTouchEvent){
+			touchEvent.x = mtp[touchEvent.id].x;
+			touchEvent.y = mtp[touchEvent.id].y;
+			lock();
+			touchEvents.push(touchEvent);
+			unlock();
+			pushTouchEvent = false;
 		}
 		nBytesRead = read(fd, &ev,sizeof(struct input_event));
 	}
@@ -2129,6 +2229,7 @@ static KeySym KeyCodeToKeySym(Display * display, KeyCode keycode, unsigned int e
 void ofAppEGLWindow::handleX11Event(const XEvent& event){
 	ofMouseEventArgs mouseEvent;
 	ofKeyEventArgs keyEvent;
+
 	switch (event.type){
 	case KeyPress:
 	case KeyRelease:
@@ -2161,7 +2262,7 @@ void ofAppEGLWindow::handleX11Event(const XEvent& event){
 		instance->coreEvents.notifyMouseEvent(mouseEvent);
 		break;
 	case MotionNotify:
-		//cout << "motion notify" << endl;
+		//cout << "motion notify" << std::endl;
 		mouseEvent.x = static_cast<float>(event.xmotion.x);
 		mouseEvent.y = static_cast<float>(event.xmotion.y);
 		mouseEvent.button = event.xbutton.button;

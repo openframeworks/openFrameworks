@@ -128,10 +128,10 @@ void ofxCvFloatImage::setFromPixels( const unsigned char* _pixels, int w, int h 
     if( !bAllocated || w != width || h != height ) {
 		if ( !bAllocated ){
 			ofLogNotice("ofxCvFloatImage") << "setFromPixels(): allocating to match dimensions: "
-				<< width << " " << height;
+				<< w << " " << h;
 		}else{
 			ofLogNotice("ofxCvFloatImage") << "setFromPixels(): reallocating to match dimensions: "
-				<< width << " " << height;
+				<< w << " " << h;
 		}
 		allocate(w,h);
 	}
@@ -166,10 +166,10 @@ void ofxCvFloatImage::setFromPixels( float* _pixels, int w, int h ) {
     if( !bAllocated || w != width || h != height ) {
 		if ( !bAllocated ){
 			ofLogNotice("ofxCvFloatImage") << "setFromPixels(): allocating to match dimensions: "
-				<< width << " " << height;
+				<< w << " " << h;
 		}else{
 			ofLogNotice("ofxCvFloatImage") << "setFromPixels(): reallocating to match dimensions: "
-				<< width << " " << height;
+				<< w << " " << h;
 		}
 		allocate(w,h);
 	}

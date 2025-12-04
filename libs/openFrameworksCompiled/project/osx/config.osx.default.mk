@@ -70,21 +70,30 @@ PLATFORM_REQUIRED_ADDONS =
 ##########################################################################################
 
 ifndef MAC_OS_MIN_VERSION
-	MAC_OS_MIN_VERSION = 10.9
+	MAC_OS_MIN_VERSION = 10.15
 endif
 
 ifndef MAC_OS_STD_LIB
 	MAC_OS_STD_LIB = libc++
 endif
 
+ifndef MAC_OS_C_VER
+    MAC_OS_C_VER = -std=c17
+endif
+
+ifndef MAC_OS_CPP_VER
+    MAC_OS_CPP_VER = -std=c++2b
+endif
+
 # Link against libstdc++ to silence tr1/memory errors on latest versions of osx
 PLATFORM_CFLAGS = -stdlib=$(MAC_OS_STD_LIB)
 
 # Warning Flags (http://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html)
-PLATFORM_CFLAGS += -Wall
+PLATFORM_CFLAGS += -Wall -Werror=return-type
 
 # Code Generation Option Flags (http://gcc.gnu.org/onlinedocs/gcc/Code-Gen-Options.html)
 PLATFORM_CFLAGS += -fexceptions
+
 
 ifeq ($(shell xcode-select -print-path 2> /dev/null; echo $$?),0)
 	MAC_OS_XCODE_ROOT=$(shell xcode-select -print-path)
@@ -92,7 +101,45 @@ ifeq ($(shell xcode-select -print-path 2> /dev/null; echo $$?),0)
 	MAC_OS_SDK_PATH=$(MAC_OS_XCODE_ROOT)/Platforms/MacOSX.platform/Developer/SDKs
 
 	ifndef MAC_OS_SDK
-		ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX10.15.sdk),$(MAC_OS_SDK_PATH)/MacOSX10.15.sdk)
+		ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX14.5.sdk),$(MAC_OS_SDK_PATH)/MacOSX14.5.sdk)
+            MAC_OS_SDK=14.5
+		else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX14.4.sdk),$(MAC_OS_SDK_PATH)/MacOSX14.4.sdk)
+            MAC_OS_SDK=14.4
+        else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX14.3.sdk),$(MAC_OS_SDK_PATH)/MacOSX14.3.sdk)
+            MAC_OS_SDK=14.3
+        else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX14.2.sdk),$(MAC_OS_SDK_PATH)/MacOSX14.2.sdk)
+            MAC_OS_SDK=14.2
+        else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX14.1.sdk),$(MAC_OS_SDK_PATH)/MacOSX14.1.sdk)
+            MAC_OS_SDK=14.1
+        else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX14.0.sdk),$(MAC_OS_SDK_PATH)/MacOSX14.0.sdk)
+            MAC_OS_SDK=14.0
+        else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX13.2.sdk),$(MAC_OS_SDK_PATH)/MacOSX13.2.sdk)
+            MAC_OS_SDK=13.2
+        else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX13.1.sdk),$(MAC_OS_SDK_PATH)/MacOSX13.1.sdk)
+            MAC_OS_SDK=13.1
+        else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX13.0.sdk),$(MAC_OS_SDK_PATH)/MacOSX13.0.sdk)
+            MAC_OS_SDK=13.0
+        else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX12.4.sdk),$(MAC_OS_SDK_PATH)/MacOSX12.4.sdk)
+            MAC_OS_SDK=12.4
+        else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX12.3.sdk),$(MAC_OS_SDK_PATH)/MacOSX12.3.sdk)
+            MAC_OS_SDK=12.3
+        else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX12.2.sdk),$(MAC_OS_SDK_PATH)/MacOSX12.2.sdk)
+            MAC_OS_SDK=12.2
+        else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX12.1.sdk),$(MAC_OS_SDK_PATH)/MacOSX12.1.sdk)
+            MAC_OS_SDK=12.1
+        else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX12.0.sdk),$(MAC_OS_SDK_PATH)/MacOSX12.0.sdk)
+            MAC_OS_SDK=12.0
+        else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX11.4.sdk),$(MAC_OS_SDK_PATH)/MacOSX11.4.sdk)
+            MAC_OS_SDK=11.4
+        else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX11.3.sdk),$(MAC_OS_SDK_PATH)/MacOSX11.3.sdk)
+            MAC_OS_SDK=11.3
+        else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX11.2.sdk),$(MAC_OS_SDK_PATH)/MacOSX11.2.sdk)
+            MAC_OS_SDK=11.2
+        else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX11.1.sdk),$(MAC_OS_SDK_PATH)/MacOSX11.1.sdk)
+            MAC_OS_SDK=11.1
+        else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX11.0.sdk),$(MAC_OS_SDK_PATH)/MacOSX11.0.sdk)
+            MAC_OS_SDK=11.0
+        else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX10.15.sdk),$(MAC_OS_SDK_PATH)/MacOSX10.15.sdk)
 			MAC_OS_SDK=10.15
 		else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX10.14.sdk),$(MAC_OS_SDK_PATH)/MacOSX10.14.sdk)
 			MAC_OS_SDK=10.14
@@ -137,9 +184,15 @@ ifdef MAC_OS_SDK_ROOT
 endif
 
 PLATFORM_CFLAGS += -mmacosx-version-min=$(MAC_OS_MIN_VERSION)
+PLATFORM_CFLAGS += $(MAC_OS_C_VER)
 
+PLATFORM_CXXFLAGS += -mmacosx-version-min=$(MAC_OS_MIN_VERSION)
 PLATFORM_CXXFLAGS += -x objective-c++
-PLATFORM_CXXFLAGS += -std=c++11
+PLATFORM_CXXFLAGS += $(MAC_OS_CPP_VER)
+
+# Enable ARC
+PLATFORM_CFLAGS += -fobjc-arc
+
 
 ifeq ($(USE_GST),1)
 	PLATFORM_CFLAGS += -I/Library/Frameworks/Gstreamer.framework/Headers
@@ -155,9 +208,8 @@ endif
 ################################################################################
 
 PLATFORM_LDFLAGS = -stdlib=$(MAC_OS_STD_LIB)
-
 #PLATFORM_LDFLAGS += -arch i386
-
+# PLATFORM_LDFLAGS += -lcurl
 PLATFORM_LDFLAGS += -mmacosx-version-min=$(MAC_OS_MIN_VERSION) -v
 
 ##########################################################################################
@@ -174,7 +226,7 @@ PLATFORM_LDFLAGS += -mmacosx-version-min=$(MAC_OS_MIN_VERSION) -v
 ##########################################################################################
 
 # RELEASE Debugging options (http://gcc.gnu.org/onlinedocs/gcc/Debugging-Options.html)
-PLATFORM_OPTIMIZATION_CFLAGS_RELEASE = -Os
+PLATFORM_OPTIMIZATION_CFLAGS_RELEASE = -O3
 
 # DEBUG Debugging options (http://gcc.gnu.org/onlinedocs/gcc/Debugging-Options.html)
 PLATFORM_OPTIMIZATION_CFLAGS_DEBUG = -g3
@@ -199,19 +251,12 @@ endif
 # Note: Be sure to leave a leading space when using a += operator to add items to the list
 ##########################################################################################
 
-PLATFORM_CORE_EXCLUSIONS =
-
 # core sources
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/app/ofAppGlutWindow.cpp
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofDirectShowGrabber.cpp
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofDirectShowPlayer.cpp
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofQtKitGrabber.cpp
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofQtKitPlayer.cpp
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofQtKitMovieRenderer.cpp
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofQtKitPlayer.mm
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofQtUtils.cpp
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofQuicktimeGrabber.cpp
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofQuicktimePlayer.cpp
+PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofMediaFoundationPlayer.cpp
+PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/sound/ofMediaFoundationSoundPlayer.cpp
 
 ifneq ($(USE_GST),1)
 	PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofGstUtils.cpp
@@ -222,15 +267,12 @@ PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/app/ofAppEGLWindow.cp
 
 
 # third party
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/boost/include/boost/%
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/videoInput/%
 
-
-ifeq ($(USE_FMOD),0)
-	PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/fmodex/%
-	PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/sound/ofFmodSoundPlayer.cpp
-	PLATFORM_CFLAGS += -DUSE_FMOD=0
-endif
+# ifeq ($(USE_FMOD),0)
+PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/fmod/%
+PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/sound/ofFmodSoundPlayer.cpp
+PLATFORM_CFLAGS += -DUSE_FMOD=0
+# endif
 
 ##########################################################################################
 # PLATFORM HEADER SEARCH PATHS
@@ -295,22 +337,24 @@ PLATFORM_LIBRARY_SEARCH_PATHS =
 
 PLATFORM_FRAMEWORKS =
 PLATFORM_FRAMEWORKS += Accelerate
-PLATFORM_FRAMEWORKS += QTKit
-PLATFORM_FRAMEWORKS += AGL
+PLATFORM_FRAMEWORKS += AppKit
 PLATFORM_FRAMEWORKS += ApplicationServices
+PLATFORM_FRAMEWORKS += AVFoundation
 PLATFORM_FRAMEWORKS += AudioToolbox
-PLATFORM_FRAMEWORKS += CoreAudio
-PLATFORM_FRAMEWORKS += CoreFoundation
-PLATFORM_FRAMEWORKS += CoreServices
-PLATFORM_FRAMEWORKS += OpenGL
-PLATFORM_FRAMEWORKS += IOKit
 PLATFORM_FRAMEWORKS += Cocoa
 PLATFORM_FRAMEWORKS += CoreVideo
-PLATFORM_FRAMEWORKS += AVFoundation
+PLATFORM_FRAMEWORKS += CoreAudio
 PLATFORM_FRAMEWORKS += CoreMedia
+PLATFORM_FRAMEWORKS += CoreFoundation
+PLATFORM_FRAMEWORKS += CoreServices
+PLATFORM_FRAMEWORKS += Metal
+PLATFORM_FRAMEWORKS += Foundation
+PLATFORM_FRAMEWORKS += IOKit
+PLATFORM_FRAMEWORKS += OpenGL
 PLATFORM_FRAMEWORKS += QuartzCore
 PLATFORM_FRAMEWORKS += Security
-PLATFORM_FRAMEWORKS += LDAP
+PLATFORM_FRAMEWORKS += SystemConfiguration
+
 
 ifeq ($(USE_GST),1)
 	PLATFORM_FRAMEWORKS += GStreamer
@@ -362,39 +406,32 @@ afterplatform: $(TARGET_NAME)
 	@mkdir -p bin/$(BIN_NAME).app/Contents/MacOS
 	@mkdir -p bin/$(BIN_NAME).app/Contents/Resources
 
-	@echo '<?xml version="1.0" encoding="UTF-8"?>' > bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">' >> bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '<plist version="1.0">' >> bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '<dict>' >> bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '  <key>CFBundleGetInfoString</key>' >> bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '  <string>$(BIN_NAME).app</string>' >> bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '  <key>CFBundleExecutable</key>' >> bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '  <string>$(BIN_NAME)</string>' >> bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '  <key>CFBundleIdentifier</key>' >> bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '  <string>com.your-company-name.www</string>' >> bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '  <key>CFBundleName</key>' >> bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '  <string>$(BIN_NAME)</string>' >> bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '  <key>CFBundleShortVersionString</key>' >> bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '  <string>0.01</string>' >> bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '  <key>CFBundleInfoDictionaryVersion</key>' >> bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '  <string>6.0</string>' >> bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '  <key>CFBundlePackageType</key>' >> bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '  <string>APPL</string>' >> bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '  <key>IFMajorVersion</key>' >> bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '  <integer>0</integer>' >> bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '  <key>IFMinorVersion</key>' >> bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '  <integer>1</integer>' >> bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '</dict>' >> bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '</plist>' >> bin/$(BIN_NAME).app/Contents/Info.plist
+# Use the openFrameworks-Info.plist as the default. Feel free to edit it in your project folder to override and values.
+	@if [ ! -f openFrameworks-Info.plist ]; then cp $(OF_ROOT)/scripts/templates/osx/openFrameworks-Info.plist openFrameworks-Info.plist; fi
+	@cp openFrameworks-Info.plist bin/$(BIN_NAME).app/Contents/Info.plist;
+
+# App icons
+ ifeq ($(RUN_TARGET), RunRelease)
+	@if [ -f of.icns ]; then cp of.icns bin/$(BIN_NAME).app/Contents/Resources/; else cp $(OF_LIBS_PATH)/openFrameworksCompiled/project/osx/of.icns bin/$(BIN_NAME).app/Contents/Resources/; fi
+	@sed -i '' 's/\$${ICON_NAME}/of.icns/g' bin/$(BIN_NAME).app/Contents/Info.plist
+ else
+	@if [ -f of_debug.icns ]; then cp of_debug.icns bin/$(BIN_NAME).app/Contents/Resources/; else cp $(OF_LIBS_PATH)/openFrameworksCompiled/project/osx/of_debug.icns bin/$(BIN_NAME).app/Contents/Resources/; fi
+	@sed -i '' 's/\$${ICON_NAME}/of_debug.icns/g' bin/$(BIN_NAME).app/Contents/Info.plist
+ endif
+
+	@sed -i '' 's/\$${DEVELOPMENT_LANGUAGE}/English/g' bin/$(BIN_NAME).app/Contents/Info.plist
+	@sed -i '' 's/\$${EXECUTABLE_NAME}/$(BIN_NAME)/g' bin/$(BIN_NAME).app/Contents/Info.plist
+	@sed -i '' 's/\$${TARGET_NAME}/$(BIN_NAME)/g' bin/$(BIN_NAME).app/Contents/Info.plist
+	@sed -i '' 's/\$${PRODUCT_BUNDLE_IDENTIFIER}/cc.openFrameworks.$(BIN_NAME)/g' bin/$(BIN_NAME).app/Contents/Info.plist
+	@sed -i '' 's/\$${MARKETING_VERSION}/1.0/g' bin/$(BIN_NAME).app/Contents/Info.plist
 
 	@echo TARGET=$(TARGET)
-
-
 	@mv $(TARGET) bin/$(BIN_NAME).app/Contents/MacOS
 
-ifneq ($(USE_FMOD),0)
-	@cp $(OF_LIBS_PATH)/*/lib/$(PLATFORM_LIB_SUBPATH)/*.$(SHARED_LIB_EXTENSION) bin/$(BIN_NAME).app/Contents/MacOS;
-endif
+# ifneq ($(USE_FMOD),0)
+# 	@mkdir -p bin/$(BIN_NAME).app/Contents/Frameworks
+# 	@cp $(OF_LIBS_PATH)/*/lib/$(PLATFORM_LIB_SUBPATH)/*.$(SHARED_LIB_EXTENSION) bin/$(BIN_NAME).app/Contents/Frameworks/;
+# endif
 
 	@echo
 	@echo "     compiling done"

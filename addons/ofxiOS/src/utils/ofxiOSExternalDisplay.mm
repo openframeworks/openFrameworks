@@ -7,8 +7,9 @@
 
 #include "ofxiOSExternalDisplay.h"
 #include <TargetConditionals.h>
+#include <vector>
 
-using namespace std;
+using std::vector;
 
 #if TARGET_OS_IOS || (TARGET_OS_IPHONE && !TARGET_OS_TV)
 

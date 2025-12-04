@@ -330,7 +330,8 @@ static const float widthTex = 8.0f/256.0f;
 static const float heightTex = 14.0f/256.0f;
 ofPixels ofBitmapFont::pixels;
 
-using namespace std;
+using std::numeric_limits;
+using std::string;
 
 void ofBitmapFont::init(){
 	if(pixels.isAllocated()) return;

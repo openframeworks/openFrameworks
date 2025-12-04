@@ -4,11 +4,10 @@
 //
 //  Created by Dan Rosser on 7/3/18.
 //
-
+#include "ofxiOSConstants.h"
+#if defined(OF_UI_KIT) && defined(OF_GL_KIT)
 #include <TargetConditionals.h>
-
 #import "EAGLKView.h"
-
 #import "ES1Renderer.h"
 #import "ES2Renderer.h"
 
@@ -25,15 +24,15 @@
     return [CAEAGLLayer class];
 }
 
-- (id)initWithFrame:(CGRect)frame
-andPreferedRenderer:(ESRendererVersion)version
-              andAA:(bool)msaaEnabled
-          andRetina:(bool)retinaEnabled
-     andRetinaScale:(CGFloat)retinaScale
- sharegroup:(EAGLSharegroup*)sharegroup
-        colorFormat:(GLKViewDrawableColorFormat)colorFormat
-        depthFormat:(GLKViewDrawableDepthFormat)depthFormat
-      stencilFormat:(GLKViewDrawableStencilFormat)stencilFormat {
+- (instancetype)initWithFrame:(CGRect)frame
+          andPreferedRenderer:(ESRendererVersion)version
+                        andAA:(bool)msaaEnabled
+                    andRetina:(bool)retinaEnabled
+               andRetinaScale:(CGFloat)retinaScale
+                   sharegroup:(EAGLSharegroup*)sharegroup
+                  colorFormat:(GLKViewDrawableColorFormat)colorFormat
+                  depthFormat:(GLKViewDrawableDepthFormat)depthFormat
+                stencilFormat:(GLKViewDrawableStencilFormat)stencilFormat {
 
     if((self = [super initWithFrame:frame])) {
         
@@ -61,8 +60,12 @@ andPreferedRenderer:(ESRendererVersion)version
         
         //------------------------------------------------------
         if(rendererVersion == ESRendererVersion_30) {
-            NSLog(@"OpenGLES 3.0 Renderer not implemented for oF. Defaulting to OpenGLES 2.0");
-            rendererVersion = ESRendererVersion_20;
+            self.context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES3 sharegroup:sharegroup];
+            NSLog(@"Creating OpenGL ES3 Renderer");
+            if(!self.context) {
+                NSLog(@"OpenGL ES3 failed");
+                rendererVersion = ESRendererVersion_20;
+            }
         }
         
         if(rendererVersion == ESRendererVersion_20) {
@@ -80,7 +83,7 @@ andPreferedRenderer:(ESRendererVersion)version
             
             if(!self.context){
                 NSLog(@"Critical Error - ofiOS GLKView.m could not start any type of OpenGLES renderer");
-                [self release];
+                self = nil;
                 return nil;
             }
         }
@@ -116,7 +119,6 @@ andPreferedRenderer:(ESRendererVersion)version
 
 - (void) dealloc{
     [self destroy];
-    [super dealloc];
 }
 
 - (void) setup {
@@ -184,3 +186,5 @@ andPreferedRenderer:(ESRendererVersion)version
 
 
 @end
+
+#endif

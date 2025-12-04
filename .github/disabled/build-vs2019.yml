@@ -1,0 +1,57 @@
+name: build-vs
+
+# make the action not run on the local repo if the branch is also in a pull request to OF/OF
+on:
+  push:
+    if: github.event_name == 'push' && github.event.pull_request == null
+    paths-ignore:
+    - '**/*.md'
+    - 'examples/**'
+  pull_request:
+    if: github.event_name == 'pull_request' && github.repository == 'openframeworks/openFrameworks'
+    paths-ignore:
+      - '**/*.md'
+      - 'examples/**'
+
+env:
+  ccache: ccache
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-vs2019:
+    runs-on: windows-2019
+    strategy:
+      matrix:
+        include:
+          - platform: x64
+            bits: 64
+    env:
+      BITS: ${{ matrix.bits }}
+    steps:
+      - name: Clone repository
+        uses: actions/checkout@v4
+      - uses: msys2/setup-msys2@v2
+        with:
+          update: true
+          install: >-
+            git
+            unzip
+            rsync
+            wget
+      - name: Install dependencies
+        shell: msys2 {0}
+        run:
+          ./scripts/ci/vs/install.sh
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v1.1
+      - name: Build emptyExample
+        working-directory: ${{env.GITHUB_WORKSPACE}}
+        run:
+          msbuild examples/templates/emptyExample/emptyExample.vcxproj /p:configuration=release /p:platform=${{ matrix.platform }} /p:PlatformToolset=v142
+      - name: Build allAddonsExample
+        working-directory: ${{env.GITHUB_WORKSPACE}}
+        run:
+          msbuild examples/templates/allAddonsExample/allAddonsExample.vcxproj /p:configuration=release /p:platform=${{ matrix.platform }} /p:PlatformToolset=v142

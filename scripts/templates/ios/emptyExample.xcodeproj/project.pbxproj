@@ -1,1093 +1,2420 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-<plist version="1.0">
-<dict>
-	<key>archiveVersion</key>
-	<string>1</string>
-	<key>classes</key>
-	<dict/>
-	<key>objectVersion</key>
-	<string>46</string>
-	<key>objects</key>
-	<dict>
-		<key>19C28FACFE9D520D11CA2CBB</key>
-		<dict>
-			<key>children</key>
-			<array>
-				<string>1D6058910D05DD3D006BFB54</string>
-			</array>
-			<key>isa</key>
-			<string>PBXGroup</string>
-			<key>name</key>
-			<string>Products</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>1D30AB110D05D00D00671497</key>
-		<dict>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>wrapper.framework</string>
-			<key>name</key>
-			<string>Foundation.framework</string>
-			<key>path</key>
-			<string>System/Library/Frameworks/Foundation.framework</string>
-			<key>sourceTree</key>
-			<string>SDKROOT</string>
-		</dict>
-		<key>1D60588D0D05DD3D006BFB54</key>
-		<dict>
-			<key>buildActionMask</key>
-			<string>2147483647</string>
-			<key>files</key>
-			<array>
-				<string>9936F6101BFA4DEE00891288</string>
-				<string>9936F6121BFA65F100891288</string>
-			</array>
-			<key>isa</key>
-			<string>PBXResourcesBuildPhase</string>
-			<key>runOnlyForDeploymentPostprocessing</key>
-			<string>0</string>
-		</dict>
-		<key>1D60588E0D05DD3D006BFB54</key>
-		<dict>
-			<key>buildActionMask</key>
-			<string>2147483647</string>
-			<key>files</key>
-			<array>
-				<string>E4D8936E11527B74007E1F53</string>
-				<string>E4D8936F11527B74007E1F53</string>
-			</array>
-			<key>isa</key>
-			<string>PBXSourcesBuildPhase</string>
-			<key>runOnlyForDeploymentPostprocessing</key>
-			<string>0</string>
-		</dict>
-		<key>1D60588F0D05DD3D006BFB54</key>
-		<dict>
-			<key>buildActionMask</key>
-			<string>2147483647</string>
-			<key>files</key>
-			<array>
-				<string>9969E7561C782C4500DEF0F6</string>
-				<string>E41D421413B3A95300A75A5D</string>
-				<string>901808C12053638E004A7774</string>
-				<string>1D60589F0D05DD5A006BFB54</string>
-				<string>1DF5F4E00D08C38300B7A737</string>
-				<string>288765FD0DF74451002DB57D</string>
-				<string>BB16EBD20F2B2A9500518274</string>
-				<string>BB16EBD90F2B2AB500518274</string>
-				<string>BBE5EAB80F49AD8400F28951</string>
-				<string>53F323EB10A20EDB00E0DAE4</string>
-				<string>5326AEA810A23A0500278DE6</string>
-				<string>E41D400B13B39D2100A75A5D</string>
-				<string>E41D400C13B39D2100A75A5D</string>
-				<string>E41D400D13B39D2100A75A5D</string>
-				<string>E41D400E13B39D2100A75A5D</string>
-				<string>67DFA53619F92A69003B3434</string>
-			</array>
-			<key>isa</key>
-			<string>PBXFrameworksBuildPhase</string>
-			<key>runOnlyForDeploymentPostprocessing</key>
-			<string>0</string>
-		</dict>
-		<key>1D6058900D05DD3D006BFB54</key>
-		<dict>
-			<key>buildConfigurationList</key>
-			<string>1D6058960D05DD3E006BFB54</string>
-			<key>buildPhases</key>
-			<array>
-				<string>1D60588D0D05DD3D006BFB54</string>
-				<string>1D60588E0D05DD3D006BFB54</string>
-				<string>1D60588F0D05DD3D006BFB54</string>
-				<string>9255DD331112741900D6945E</string>
-			</array>
-			<key>buildRules</key>
-			<array/>
-			<key>dependencies</key>
-			<array>
-				<string>E41D410413B3A11300A75A5D</string>
-			</array>
-			<key>isa</key>
-			<string>PBXNativeTarget</string>
-			<key>name</key>
-			<string>emptyExample</string>
-			<key>productName</key>
-			<string>iPhone</string>
-			<key>productReference</key>
-			<string>1D6058910D05DD3D006BFB54</string>
-			<key>productType</key>
-			<string>com.apple.product-type.application</string>
-		</dict>
-		<key>1D6058910D05DD3D006BFB54</key>
-		<dict>
-			<key>explicitFileType</key>
-			<string>wrapper.application</string>
-			<key>includeInIndex</key>
-			<string>0</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>path</key>
-			<string>emptyExample.app</string>
-			<key>sourceTree</key>
-			<string>BUILT_PRODUCTS_DIR</string>
-		</dict>
-		<key>1D6058940D05DD3E006BFB54</key>
-		<dict>
-			<key>buildSettings</key>
-			<dict>
-				<key>ALWAYS_SEARCH_USER_PATHS</key>
-				<string>NO</string>
-				<key>ASSETCATALOG_COMPILER_APPICON_NAME</key>
-				<string>AppIcon</string>
-				<key>ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME</key>
-				<string>Brand Assets</string>
-				<key>FRAMEWORK_SEARCH_PATHS</key>
-				<array>
-					<string>$(inherited)</string>
-					<string>$(PROJECT_DIR)</string>
-				</array>
-				<key>GCC_PRECOMPILE_PREFIX_HEADER</key>
-				<string>YES</string>
-				<key>GCC_PREFIX_HEADER</key>
-				<string>ofxiOS_Prefix.pch</string>
-				<key>GCC_WARN_64_TO_32_BIT_CONVERSION[arch=*64]</key>
-				<string>NO</string>
-				<key>INFOPLIST_FILE</key>
-				<string>ofxiOS-Info.plist</string>
-				<key>IPHONEOS_DEPLOYMENT_TARGET</key>
-				<string>7.0</string>
-				<key>PRODUCT_NAME</key>
-				<string>${TARGET_NAME}</string>
-				<key>TARGETED_DEVICE_FAMILY</key>
-				<string>1,2</string>
-				<key>VALID_ARCHS</key>
-				<string>$(ARCHS_STANDARD)</string>
-			</dict>
-			<key>isa</key>
-			<string>XCBuildConfiguration</string>
-			<key>name</key>
-			<string>Debug</string>
-		</dict>
-		<key>1D6058950D05DD3E006BFB54</key>
-		<dict>
-			<key>buildSettings</key>
-			<dict>
-				<key>ASSETCATALOG_COMPILER_APPICON_NAME</key>
-				<string>AppIcon</string>
-				<key>ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME</key>
-				<string>Brand Assets</string>
-				<key>FRAMEWORK_SEARCH_PATHS</key>
-				<array>
-					<string>$(inherited)</string>
-					<string>$(PROJECT_DIR)</string>
-				</array>
-				<key>GCC_PRECOMPILE_PREFIX_HEADER</key>
-				<string>YES</string>
-				<key>GCC_PREFIX_HEADER</key>
-				<string>ofxiOS_Prefix.pch</string>
-				<key>GCC_WARN_64_TO_32_BIT_CONVERSION[arch=*64]</key>
-				<string>NO</string>
-				<key>INFOPLIST_FILE</key>
-				<string>ofxiOS-Info.plist</string>
-				<key>IPHONEOS_DEPLOYMENT_TARGET</key>
-				<string>7.0</string>
-				<key>PRODUCT_NAME</key>
-				<string>${TARGET_NAME}</string>
-				<key>TARGETED_DEVICE_FAMILY</key>
-				<string>1,2</string>
-				<key>VALID_ARCHS</key>
-				<string>$(ARCHS_STANDARD)</string>
-			</dict>
-			<key>isa</key>
-			<string>XCBuildConfiguration</string>
-			<key>name</key>
-			<string>Release</string>
-		</dict>
-		<key>1D6058960D05DD3E006BFB54</key>
-		<dict>
-			<key>buildConfigurations</key>
-			<array>
-				<string>1D6058940D05DD3E006BFB54</string>
-				<string>1D6058950D05DD3E006BFB54</string>
-			</array>
-			<key>defaultConfigurationIsVisible</key>
-			<string>0</string>
-			<key>defaultConfigurationName</key>
-			<string>Release</string>
-			<key>isa</key>
-			<string>XCConfigurationList</string>
-		</dict>
-		<key>1D60589F0D05DD5A006BFB54</key>
-		<dict>
-			<key>fileRef</key>
-			<string>1D30AB110D05D00D00671497</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>1DF5F4DF0D08C38300B7A737</key>
-		<dict>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>wrapper.framework</string>
-			<key>name</key>
-			<string>UIKit.framework</string>
-			<key>path</key>
-			<string>System/Library/Frameworks/UIKit.framework</string>
-			<key>sourceTree</key>
-			<string>SDKROOT</string>
-		</dict>
-		<key>1DF5F4E00D08C38300B7A737</key>
-		<dict>
-			<key>fileRef</key>
-			<string>1DF5F4DF0D08C38300B7A737</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>288765FC0DF74451002DB57D</key>
-		<dict>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>wrapper.framework</string>
-			<key>name</key>
-			<string>CoreGraphics.framework</string>
-			<key>path</key>
-			<string>System/Library/Frameworks/CoreGraphics.framework</string>
-			<key>sourceTree</key>
-			<string>SDKROOT</string>
-		</dict>
-		<key>288765FD0DF74451002DB57D</key>
-		<dict>
-			<key>fileRef</key>
-			<string>288765FC0DF74451002DB57D</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>29B97313FDCFA39411CA2CEA</key>
-		<dict>
-			<key>attributes</key>
-			<dict>
-				<key>LastUpgradeCheck</key>
-				<string>0600</string>
-			</dict>
-			<key>buildConfigurationList</key>
-			<string>C01FCF4E08A954540054247B</string>
-			<key>compatibilityVersion</key>
-			<string>Xcode 3.2</string>
-			<key>developmentRegion</key>
-			<string>English</string>
-			<key>hasScannedForEncodings</key>
-			<string>1</string>
-			<key>isa</key>
-			<string>PBXProject</string>
-			<key>knownRegions</key>
-			<array>
-				<string>English</string>
-				<string>Japanese</string>
-				<string>French</string>
-				<string>German</string>
-			</array>
-			<key>mainGroup</key>
-			<string>29B97314FDCFA39411CA2CEA</string>
-			<key>projectDirPath</key>
-			<string></string>
-			<key>projectReferences</key>
-			<array>
-				<dict>
-					<key>ProductGroup</key>
-					<string>E41D40FE13B3A0D800A75A5D</string>
-					<key>ProjectRef</key>
-					<string>E41D40FD13B3A0D800A75A5D</string>
-				</dict>
-			</array>
-			<key>projectRoot</key>
-			<string></string>
-			<key>targets</key>
-			<array>
-				<string>1D6058900D05DD3D006BFB54</string>
-			</array>
-		</dict>
-		<key>29B97314FDCFA39411CA2CEA</key>
-		<dict>
-			<key>children</key>
-			<array>
-				<string>9936F60E1BFA4DEE00891288</string>
-				<string>E4D8936A11527B74007E1F53</string>
-				<string>BB24E1F710DAA51900E9C588</string>
-				<string>BB16F26B0F2B646B00518274</string>
-				<string>BB16E9930F2B1E5900518274</string>
-				<string>19C28FACFE9D520D11CA2CBB</string>
-				<string>901808C02053638E004A7774</string>
-			</array>
-			<key>isa</key>
-			<string>PBXGroup</string>
-			<key>name</key>
-			<string>CustomTemplate</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>29B97323FDCFA39411CA2CEA</key>
-		<dict>
-			<key>children</key>
-			<array>
-				<string>67DFA53419F92A5E003B3434</string>
-				<string>901808BF2053636F004A7774</string>
-				<string>BBE5EAB70F49AD8400F28951</string>
-				<string>E41D400613B39D2100A75A5D</string>
-				<string>E4A823A312561BE3002F86A2</string>
-				<string>5326AEA710A23A0500278DE6</string>
-				<string>E41D400713B39D2100A75A5D</string>
-				<string>9969E7551C782C4500DEF0F6</string>
-				<string>E41D400813B39D2100A75A5D</string>
-				<string>1D30AB110D05D00D00671497</string>
-				<string>E41D400913B39D2100A75A5D</string>
-				<string>53F323EA10A20EDB00E0DAE4</string>
-				<string>BB16EBD10F2B2A9500518274</string>
-				<string>BB16EBD80F2B2AB500518274</string>
-				<string>1DF5F4DF0D08C38300B7A737</string>
-				<string>288765FC0DF74451002DB57D</string>
-			</array>
-			<key>isa</key>
-			<string>PBXGroup</string>
-			<key>name</key>
-			<string>core frameworks</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>32CA4F630368D1EE00C91783</key>
-		<dict>
-			<key>fileEncoding</key>
-			<string>4</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.c.h</string>
-			<key>path</key>
-			<string>ofxiOS_Prefix.pch</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>5326AEA710A23A0500278DE6</key>
-		<dict>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>wrapper.framework</string>
-			<key>name</key>
-			<string>CoreLocation.framework</string>
-			<key>path</key>
-			<string>System/Library/Frameworks/CoreLocation.framework</string>
-			<key>sourceTree</key>
-			<string>SDKROOT</string>
-		</dict>
-		<key>5326AEA810A23A0500278DE6</key>
-		<dict>
-			<key>fileRef</key>
-			<string>5326AEA710A23A0500278DE6</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>53F323EA10A20EDB00E0DAE4</key>
-		<dict>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>wrapper.framework</string>
-			<key>name</key>
-			<string>OpenAL.framework</string>
-			<key>path</key>
-			<string>System/Library/Frameworks/OpenAL.framework</string>
-			<key>sourceTree</key>
-			<string>SDKROOT</string>
-		</dict>
-		<key>53F323EB10A20EDB00E0DAE4</key>
-		<dict>
-			<key>fileRef</key>
-			<string>53F323EA10A20EDB00E0DAE4</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>67DFA53419F92A5E003B3434</key>
-		<dict>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>wrapper.framework</string>
-			<key>name</key>
-			<string>Accelerate.framework</string>
-			<key>path</key>
-			<string>System/Library/Frameworks/Accelerate.framework</string>
-			<key>sourceTree</key>
-			<string>SDKROOT</string>
-		</dict>
-		<key>67DFA53619F92A69003B3434</key>
-		<dict>
-			<key>fileRef</key>
-			<string>67DFA53419F92A5E003B3434</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>6948EE371B920CB800B5AC1A</key>
-		<dict>
-			<key>children</key>
-			<array/>
-			<key>isa</key>
-			<string>PBXGroup</string>
-			<key>name</key>
-			<string>local_addons</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>901808BF2053636F004A7774</key>
-		<dict>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>wrapper.framework</string>
-			<key>name</key>
-			<string>GLKit.framework</string>
-			<key>path</key>
-			<string>System/Library/Frameworks/GLKit.framework</string>
-			<key>sourceTree</key>
-			<string>SDKROOT</string>
-		</dict>
-		<key>901808C02053638E004A7774</key>
-		<dict>
-			<key>children</key>
-			<array/>
-			<key>isa</key>
-			<string>PBXGroup</string>
-			<key>name</key>
-			<string>Frameworks</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>901808C12053638E004A7774</key>
-		<dict>
-			<key>fileRef</key>
-			<string>901808BF2053636F004A7774</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>9255DD331112741900D6945E</key>
-		<dict>
-			<key>buildActionMask</key>
-			<string>2147483647</string>
-			<key>files</key>
-			<array/>
-			<key>inputPaths</key>
-			<array/>
-			<key>isa</key>
-			<string>PBXShellScriptBuildPhase</string>
-			<key>outputPaths</key>
-			<array/>
-			<key>runOnlyForDeploymentPostprocessing</key>
-			<string>0</string>
-			<key>shellPath</key>
-			<string>/bin/sh</string>
-			<key>shellScript</key>
-			<string>rsync -avz --exclude='.DS_Store' "${SRCROOT}/bin/data/" "${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}"</string>
-		</dict>
-		<key>9936F60E1BFA4DEE00891288</key>
-		<dict>
-			<key>children</key>
-			<array>
-				<string>9936F6111BFA65F100891288</string>
-				<string>9936F60F1BFA4DEE00891288</string>
-			</array>
-			<key>isa</key>
-			<string>PBXGroup</string>
-			<key>path</key>
-			<string>mediaAssets</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>9936F60F1BFA4DEE00891288</key>
-		<dict>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>folder.assetcatalog</string>
-			<key>path</key>
-			<string>Images.xcassets</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>9936F6101BFA4DEE00891288</key>
-		<dict>
-			<key>fileRef</key>
-			<string>9936F60F1BFA4DEE00891288</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>9936F6111BFA65F100891288</key>
-		<dict>
-			<key>fileEncoding</key>
-			<string>4</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>file.storyboard</string>
-			<key>path</key>
-			<string>LaunchScreen.storyboard</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>9936F6121BFA65F100891288</key>
-		<dict>
-			<key>fileRef</key>
-			<string>9936F6111BFA65F100891288</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>9969E7551C782C4500DEF0F6</key>
-		<dict>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>wrapper.framework</string>
-			<key>name</key>
-			<string>CoreMotion.framework</string>
-			<key>path</key>
-			<string>System/Library/Frameworks/CoreMotion.framework</string>
-			<key>sourceTree</key>
-			<string>SDKROOT</string>
-		</dict>
-		<key>9969E7561C782C4500DEF0F6</key>
-		<dict>
-			<key>fileRef</key>
-			<string>9969E7551C782C4500DEF0F6</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>BB16E9930F2B1E5900518274</key>
-		<dict>
-			<key>children</key>
-			<array>
-				<string>BBE5E94E0F497BD800F28951</string>
-			</array>
-			<key>isa</key>
-			<string>PBXGroup</string>
-			<key>name</key>
-			<string>libs</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>BB16EBD10F2B2A9500518274</key>
-		<dict>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>wrapper.framework</string>
-			<key>name</key>
-			<string>OpenGLES.framework</string>
-			<key>path</key>
-			<string>System/Library/Frameworks/OpenGLES.framework</string>
-			<key>sourceTree</key>
-			<string>SDKROOT</string>
-		</dict>
-		<key>BB16EBD20F2B2A9500518274</key>
-		<dict>
-			<key>fileRef</key>
-			<string>BB16EBD10F2B2A9500518274</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>BB16EBD80F2B2AB500518274</key>
-		<dict>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>wrapper.framework</string>
-			<key>name</key>
-			<string>QuartzCore.framework</string>
-			<key>path</key>
-			<string>System/Library/Frameworks/QuartzCore.framework</string>
-			<key>sourceTree</key>
-			<string>SDKROOT</string>
-		</dict>
-		<key>BB16EBD90F2B2AB500518274</key>
-		<dict>
-			<key>fileRef</key>
-			<string>BB16EBD80F2B2AB500518274</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>BB16F26B0F2B646B00518274</key>
-		<dict>
-			<key>children</key>
-			<array/>
-			<key>isa</key>
-			<string>PBXGroup</string>
-			<key>name</key>
-			<string>addons</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>BB24DDC910DA781C00E9C588</key>
-		<dict>
-			<key>fileEncoding</key>
-			<string>4</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>text.plist.xml</string>
-			<key>path</key>
-			<string>ofxiOS-Info.plist</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>BB24E1F710DAA51900E9C588</key>
-		<dict>
-			<key>children</key>
-			<array>
-				<string>E41D40FD13B3A0D800A75A5D</string>
-				<string>32CA4F630368D1EE00C91783</string>
-				<string>BB24DDC910DA781C00E9C588</string>
-				<string>E41D3EE513B3906D00A75A5D</string>
-				<string>6948EE371B920CB800B5AC1A</string>
-				<string>E41D3ED613B38FB500A75A5D</string>
-			</array>
-			<key>isa</key>
-			<string>PBXGroup</string>
-			<key>name</key>
-			<string>openFrameworks</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>BBE5E94E0F497BD800F28951</key>
-		<dict>
-			<key>children</key>
-			<array>
-				<string>29B97323FDCFA39411CA2CEA</string>
-			</array>
-			<key>isa</key>
-			<string>PBXGroup</string>
-			<key>name</key>
-			<string>core</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>BBE5EAB70F49AD8400F28951</key>
-		<dict>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>wrapper.framework</string>
-			<key>name</key>
-			<string>AudioToolbox.framework</string>
-			<key>path</key>
-			<string>System/Library/Frameworks/AudioToolbox.framework</string>
-			<key>sourceTree</key>
-			<string>SDKROOT</string>
-		</dict>
-		<key>BBE5EAB80F49AD8400F28951</key>
-		<dict>
-			<key>fileRef</key>
-			<string>BBE5EAB70F49AD8400F28951</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>C01FCF4E08A954540054247B</key>
-		<dict>
-			<key>buildConfigurations</key>
-			<array>
-				<string>C01FCF4F08A954540054247B</string>
-				<string>C01FCF5008A954540054247B</string>
-			</array>
-			<key>defaultConfigurationIsVisible</key>
-			<string>0</string>
-			<key>defaultConfigurationName</key>
-			<string>Release</string>
-			<key>isa</key>
-			<string>XCConfigurationList</string>
-		</dict>
-		<key>C01FCF4F08A954540054247B</key>
-		<dict>
-			<key>baseConfigurationReference</key>
-			<string>E41D3ED613B38FB500A75A5D</string>
-			<key>buildSettings</key>
-			<dict>
-				<key>ALWAYS_SEARCH_USER_PATHS</key>
-				<string>YES</string>
-				<key>CLANG_CXX_LIBRARY</key>
-				<string>libc++</string>
-				<key>CODE_SIGN_IDENTITY</key>
-				<string></string>
-				<key>CODE_SIGN_IDENTITY[sdk=iphoneos*]</key>
-				<string>iPhone Developer</string>
-				<key>CODE_SIGN_IDENTITY[sdk=iphonesimulator*]</key>
-				<string></string>
-				<key>COMPRESS_PNG_FILES</key>
-				<string>NO</string>
-				<key>GCC_C_LANGUAGE_STANDARD</key>
-				<string>c11</string>
-				<key>GCC_OPTIMIZATION_LEVEL</key>
-				<string>0</string>
-				<key>GCC_SYMBOLS_PRIVATE_EXTERN</key>
-				<string>NO</string>
-				<key>GCC_WARN_64_TO_32_BIT_CONVERSION[arch=*64]</key>
-				<string>NO</string>
-				<key>GCC_WARN_ABOUT_INVALID_OFFSETOF_MACRO</key>
-				<string>NO</string>
-				<key>GCC_WARN_ABOUT_POINTER_SIGNEDNESS</key>
-				<string>NO</string>
-				<key>GCC_WARN_ABOUT_RETURN_TYPE</key>
-				<string>YES</string>
-				<key>GCC_WARN_ALLOW_INCOMPLETE_PROTOCOL</key>
-				<string>NO</string>
-				<key>GCC_WARN_PROTOTYPE_CONVERSION</key>
-				<string>NO</string>
-				<key>GCC_WARN_UNUSED_VARIABLE</key>
-				<string>YES</string>
-				<key>IPHONEOS_DEPLOYMENT_TARGET</key>
-				<string>7.0</string>
-				<key>ONLY_ACTIVE_ARCH</key>
-				<string>YES</string>
-				<key>PROVISIONING_PROFILE[sdk=iphoneos*]</key>
-				<string></string>
-				<key>SDKROOT</key>
-				<string>iphoneos</string>
-				<key>TARGETED_DEVICE_FAMILY</key>
-				<string>1</string>
-				<key>VALID_ARCHS</key>
-				<string>$(ARCHS_STANDARD)</string>
-				<key>WARNING_LDFLAGS</key>
-				<string>-no_arch_warnings</string>
-			</dict>
-			<key>isa</key>
-			<string>XCBuildConfiguration</string>
-			<key>name</key>
-			<string>Debug</string>
-		</dict>
-		<key>C01FCF5008A954540054247B</key>
-		<dict>
-			<key>baseConfigurationReference</key>
-			<string>E41D3ED613B38FB500A75A5D</string>
-			<key>buildSettings</key>
-			<dict>
-				<key>ALWAYS_SEARCH_USER_PATHS</key>
-				<string>YES</string>
-				<key>CLANG_CXX_LIBRARY</key>
-				<string>libc++</string>
-				<key>CODE_SIGN_IDENTITY</key>
-				<string></string>
-				<key>CODE_SIGN_IDENTITY[sdk=iphoneos*]</key>
-				<string>iPhone Developer</string>
-				<key>CODE_SIGN_IDENTITY[sdk=iphonesimulator*]</key>
-				<string></string>
-				<key>COMPRESS_PNG_FILES</key>
-				<string>NO</string>
-				<key>GCC_C_LANGUAGE_STANDARD</key>
-				<string>c11</string>
-				<key>GCC_DYNAMIC_NO_PIC</key>
-				<string>NO</string>
-				<key>GCC_GENERATE_DEBUGGING_SYMBOLS</key>
-				<string>NO</string>
-				<key>GCC_OPTIMIZATION_LEVEL</key>
-				<string>s</string>
-				<key>GCC_SYMBOLS_PRIVATE_EXTERN</key>
-				<string>NO</string>
-				<key>GCC_THUMB_SUPPORT</key>
-				<string>NO</string>
-				<key>GCC_WARN_64_TO_32_BIT_CONVERSION[arch=*64]</key>
-				<string>NO</string>
-				<key>GCC_WARN_ABOUT_RETURN_TYPE</key>
-				<string>YES</string>
-				<key>GCC_WARN_UNUSED_VARIABLE</key>
-				<string>YES</string>
-				<key>IPHONEOS_DEPLOYMENT_TARGET</key>
-				<string>7.0</string>
-				<key>ONLY_ACTIVE_ARCH</key>
-				<string>NO</string>
-				<key>SDKROOT</key>
-				<string>iphoneos</string>
-				<key>TARGETED_DEVICE_FAMILY</key>
-				<string>1</string>
-				<key>VALID_ARCHS</key>
-				<string>$(ARCHS_STANDARD)</string>
-				<key>WARNING_LDFLAGS</key>
-				<string>-no_arch_warnings</string>
-			</dict>
-			<key>isa</key>
-			<string>XCBuildConfiguration</string>
-			<key>name</key>
-			<string>Release</string>
-		</dict>
-		<key>E41D3ED613B38FB500A75A5D</key>
-		<dict>
-			<key>fileEncoding</key>
-			<string>4</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>text.xcconfig</string>
-			<key>path</key>
-			<string>Project.xcconfig</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>E41D3EE513B3906D00A75A5D</key>
-		<dict>
-			<key>fileEncoding</key>
-			<string>4</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>text.xcconfig</string>
-			<key>name</key>
-			<string>CoreOF.xcconfig</string>
-			<key>path</key>
-			<string>../../../libs/openFrameworksCompiled/project/ios/CoreOF.xcconfig</string>
-			<key>sourceTree</key>
-			<string>SOURCE_ROOT</string>
-		</dict>
-		<key>E41D400613B39D2100A75A5D</key>
-		<dict>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>wrapper.framework</string>
-			<key>name</key>
-			<string>AVFoundation.framework</string>
-			<key>path</key>
-			<string>System/Library/Frameworks/AVFoundation.framework</string>
-			<key>sourceTree</key>
-			<string>SDKROOT</string>
-		</dict>
-		<key>E41D400713B39D2100A75A5D</key>
-		<dict>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>wrapper.framework</string>
-			<key>name</key>
-			<string>CoreMedia.framework</string>
-			<key>path</key>
-			<string>System/Library/Frameworks/CoreMedia.framework</string>
-			<key>sourceTree</key>
-			<string>SDKROOT</string>
-		</dict>
-		<key>E41D400813B39D2100A75A5D</key>
-		<dict>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>wrapper.framework</string>
-			<key>name</key>
-			<string>CoreVideo.framework</string>
-			<key>path</key>
-			<string>System/Library/Frameworks/CoreVideo.framework</string>
-			<key>sourceTree</key>
-			<string>SDKROOT</string>
-		</dict>
-		<key>E41D400913B39D2100A75A5D</key>
-		<dict>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>wrapper.framework</string>
-			<key>name</key>
-			<string>MapKit.framework</string>
-			<key>path</key>
-			<string>System/Library/Frameworks/MapKit.framework</string>
-			<key>sourceTree</key>
-			<string>SDKROOT</string>
-		</dict>
-		<key>E41D400B13B39D2100A75A5D</key>
-		<dict>
-			<key>fileRef</key>
-			<string>E41D400613B39D2100A75A5D</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>E41D400C13B39D2100A75A5D</key>
-		<dict>
-			<key>fileRef</key>
-			<string>E41D400713B39D2100A75A5D</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>E41D400D13B39D2100A75A5D</key>
-		<dict>
-			<key>fileRef</key>
-			<string>E41D400813B39D2100A75A5D</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>E41D400E13B39D2100A75A5D</key>
-		<dict>
-			<key>fileRef</key>
-			<string>E41D400913B39D2100A75A5D</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>E41D40FD13B3A0D800A75A5D</key>
-		<dict>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>wrapper.pb-project</string>
-			<key>name</key>
-			<string>iOS+OFLib.xcodeproj</string>
-			<key>path</key>
-			<string>../../../libs/openFrameworksCompiled/project/ios/iOS+OFLib.xcodeproj</string>
-			<key>sourceTree</key>
-			<string>SOURCE_ROOT</string>
-		</dict>
-		<key>E41D40FE13B3A0D800A75A5D</key>
-		<dict>
-			<key>children</key>
-			<array>
-				<string>E41D410213B3A0D800A75A5D</string>
-			</array>
-			<key>isa</key>
-			<string>PBXGroup</string>
-			<key>name</key>
-			<string>Products</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>E41D410113B3A0D800A75A5D</key>
-		<dict>
-			<key>containerPortal</key>
-			<string>E41D40FD13B3A0D800A75A5D</string>
-			<key>isa</key>
-			<string>PBXContainerItemProxy</string>
-			<key>proxyType</key>
-			<string>2</string>
-			<key>remoteGlobalIDString</key>
-			<string>BB24DED610DA7A3F00E9C588</string>
-			<key>remoteInfo</key>
-			<string>iPhone+OF Static Library</string>
-		</dict>
-		<key>E41D410213B3A0D800A75A5D</key>
-		<dict>
-			<key>fileType</key>
-			<string>archive.ar</string>
-			<key>isa</key>
-			<string>PBXReferenceProxy</string>
-			<key>path</key>
-			<string>libofxiOS_iphoneos_Debug.a</string>
-			<key>remoteRef</key>
-			<string>E41D410113B3A0D800A75A5D</string>
-			<key>sourceTree</key>
-			<string>BUILT_PRODUCTS_DIR</string>
-		</dict>
-		<key>E41D410313B3A11300A75A5D</key>
-		<dict>
-			<key>containerPortal</key>
-			<string>E41D40FD13B3A0D800A75A5D</string>
-			<key>isa</key>
-			<string>PBXContainerItemProxy</string>
-			<key>proxyType</key>
-			<string>1</string>
-			<key>remoteGlobalIDString</key>
-			<string>BB24DE5C10DA7A3F00E9C588</string>
-			<key>remoteInfo</key>
-			<string>iPhone+OF Static Library</string>
-		</dict>
-		<key>E41D410413B3A11300A75A5D</key>
-		<dict>
-			<key>isa</key>
-			<string>PBXTargetDependency</string>
-			<key>name</key>
-			<string>iPhone+OF Static Library</string>
-			<key>targetProxy</key>
-			<string>E41D410313B3A11300A75A5D</string>
-		</dict>
-		<key>E4A823A312561BE3002F86A2</key>
-		<dict>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>wrapper.framework</string>
-			<key>name</key>
-			<string>CoreGraphics.framework</string>
-			<key>path</key>
-			<string>System/Library/Frameworks/CoreGraphics.framework</string>
-			<key>sourceTree</key>
-			<string>SDKROOT</string>
-		</dict>
-		<key>E4D8936A11527B74007E1F53</key>
-		<dict>
-			<key>children</key>
-			<array>
-				<string>E4D8936B11527B74007E1F53</string>
-				<string>E4D8936D11527B74007E1F53</string>
-				<string>E4D8936C11527B74007E1F53</string>
-			</array>
-			<key>isa</key>
-			<string>PBXGroup</string>
-			<key>path</key>
-			<string>src</string>
-			<key>sourceTree</key>
-			<string>SOURCE_ROOT</string>
-		</dict>
-		<key>E4D8936B11527B74007E1F53</key>
-		<dict>
-			<key>fileEncoding</key>
-			<string>4</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.cpp.objcpp</string>
-			<key>name</key>
-			<string>main.mm</string>
-			<key>path</key>
-			<string>src/main.mm</string>
-			<key>sourceTree</key>
-			<string>SOURCE_ROOT</string>
-		</dict>
-		<key>E4D8936C11527B74007E1F53</key>
-		<dict>
-			<key>fileEncoding</key>
-			<string>4</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.c.h</string>
-			<key>name</key>
-			<string>ofApp.h</string>
-			<key>path</key>
-			<string>src/ofApp.h</string>
-			<key>sourceTree</key>
-			<string>SOURCE_ROOT</string>
-		</dict>
-		<key>E4D8936D11527B74007E1F53</key>
-		<dict>
-			<key>fileEncoding</key>
-			<string>4</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.cpp.objcpp</string>
-			<key>name</key>
-			<string>ofApp.mm</string>
-			<key>path</key>
-			<string>src/ofApp.mm</string>
-			<key>sourceTree</key>
-			<string>SOURCE_ROOT</string>
-		</dict>
-		<key>E4D8936E11527B74007E1F53</key>
-		<dict>
-			<key>fileRef</key>
-			<string>E4D8936B11527B74007E1F53</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>E4D8936F11527B74007E1F53</key>
-		<dict>
-			<key>fileRef</key>
-			<string>E4D8936D11527B74007E1F53</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-	</dict>
-	<key>rootObject</key>
-	<string>29B97313FDCFA39411CA2CEA</string>
-</dict>
-</plist>
+{
+  "archiveVersion" : "1",
+  "classes" : {
+
+  },
+  "objects" : {
+    "1D30AB110D05D00D00671497" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "wrapper.framework",
+      "name" : "Foundation.framework",
+      "path" : "System\/Library\/Frameworks\/Foundation.framework",
+      "sourceTree" : "SDKROOT"
+    },
+    "1D60588D0D05DD3D006BFB54" : {
+      "buildActionMask" : "2147483647",
+      "files" : [
+        "9936F6101BFA4DEE00891288",
+        "9936F6121BFA65F100891288"
+      ],
+      "isa" : "PBXResourcesBuildPhase",
+      "runOnlyForDeploymentPostprocessing" : "0"
+    },
+    "1D60588E0D05DD3D006BFB54" : {
+      "buildActionMask" : "2147483647",
+      "files" : [
+        "E4D8936E11527B74007E1F53",
+        "E4D8936F11527B74007E1F53"
+      ],
+      "isa" : "PBXSourcesBuildPhase",
+      "runOnlyForDeploymentPostprocessing" : "0"
+    },
+    "1D60588F0D05DD3D006BFB54" : {
+      "buildActionMask" : "2147483647",
+      "files" : [
+        "9969E7561C782C4500DEF0F6",
+        "901808C12053638E004A7774",
+        "1D60589F0D05DD5A006BFB54",
+        "1DF5F4E00D08C38300B7A737",
+        "288765FD0DF74451002DB57D",
+        "BB16EBD20F2B2A9500518274",
+        "BB16EBD90F2B2AB500518274",
+        "BBE5EAB80F49AD8400F28951",
+        "53F323EB10A20EDB00E0DAE4",
+        "5326AEA810A23A0500278DE6",
+        "E41D400B13B39D2100A75A5D",
+        "E41D400C13B39D2100A75A5D",
+        "E41D400D13B39D2100A75A5D",
+        "E41D400E13B39D2100A75A5D",
+        "67DFA53619F92A69003B3434"
+      ],
+      "isa" : "PBXFrameworksBuildPhase",
+      "runOnlyForDeploymentPostprocessing" : "0"
+    },
+    "1D60589F0D05DD5A006BFB54" : {
+      "fileRef" : "1D30AB110D05D00D00671497",
+      "isa" : "PBXBuildFile"
+    },
+    "1D6058900D05DD3D006BFB54" : {
+      "buildConfigurationList" : "1D6058960D05DD3E006BFB54",
+      "buildPhases" : [
+        "BF46A0162D754E9E00E4F02F",
+        "1D60588D0D05DD3D006BFB54",
+        "1D60588E0D05DD3D006BFB54",
+        "1D60588F0D05DD3D006BFB54",
+        "9255DD331112741900D6945E"
+      ],
+      "buildRules" : [
+
+      ],
+      "dependencies" : [
+
+      ],
+      "isa" : "PBXNativeTarget",
+      "name" : "emptyExample",
+      "productName" : "iPhone",
+      "productReference" : "1D6058910D05DD3D006BFB54",
+      "productType" : "com.apple.product-type.application"
+    },
+    "1D6058910D05DD3D006BFB54" : {
+      "explicitFileType" : "wrapper.application",
+      "includeInIndex" : "0",
+      "isa" : "PBXFileReference",
+      "path" : "emptyExample.app",
+      "sourceTree" : "BUILT_PRODUCTS_DIR"
+    },
+    "1D6058940D05DD3E006BFB54" : {
+      "buildSettings" : {
+        "ALWAYS_SEARCH_USER_PATHS" : "NO",
+        "ASSETCATALOG_COMPILER_APPICON_NAME" : "AppIcon",
+        "ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME" : "",
+        "CLANG_LINK_OBJC_RUNTIME" : "YES",
+        "FRAMEWORK_SEARCH_PATHS" : [
+          "$(inherited)",
+          "$(PROJECT_DIR)"
+        ],
+        "GCC_PRECOMPILE_PREFIX_HEADER" : "YES",
+        "GCC_PREFIX_HEADER" : "ofxiOS_Prefix.pch",
+        "GCC_WARN_64_TO_32_BIT_CONVERSION[arch=*64]" : "NO",
+        "HEADER_SEARCH_PATHS" : [
+          "$(OF_CORE_HEADERS)",
+          "src"
+        ],
+        "INFOPLIST_FILE" : "ofxiOS-Info.plist",
+        "OTHER_LDFLAGS" : [
+          "$(OF_CORE_LIBS)",
+          "$(OF_CORE_FRAMEWORKS)",
+          "$(LIB_OF_DEBUG)"
+        ],
+        "PRODUCT_NAME" : "${TARGET_NAME}",
+        "TARGETED_DEVICE_FAMILY" : "1,2",
+        "VALID_ARCHS" : "$(ARCHS_STANDARD)"
+      },
+      "isa" : "XCBuildConfiguration",
+      "name" : "Debug"
+    },
+    "1D6058950D05DD3E006BFB54" : {
+      "buildSettings" : {
+        "ASSETCATALOG_COMPILER_APPICON_NAME" : "AppIcon",
+        "ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME" : "",
+        "CLANG_LINK_OBJC_RUNTIME" : "YES",
+        "FRAMEWORK_SEARCH_PATHS" : [
+          "$(inherited)",
+          "$(PROJECT_DIR)"
+        ],
+        "GCC_PRECOMPILE_PREFIX_HEADER" : "YES",
+        "GCC_PREFIX_HEADER" : "ofxiOS_Prefix.pch",
+        "GCC_WARN_64_TO_32_BIT_CONVERSION[arch=*64]" : "NO",
+        "HEADER_SEARCH_PATHS" : [
+          "$(OF_CORE_HEADERS)",
+          "src"
+        ],
+        "INFOPLIST_FILE" : "ofxiOS-Info.plist",
+        "OTHER_LDFLAGS" : [
+          "$(OF_CORE_LIBS)",
+          "$(OF_CORE_FRAMEWORKS)",
+          "$(LIB_OF_RELEASE)"
+        ],
+        "PRODUCT_NAME" : "${TARGET_NAME}",
+        "TARGETED_DEVICE_FAMILY" : "1,2",
+        "VALID_ARCHS" : "$(ARCHS_STANDARD)"
+      },
+      "isa" : "XCBuildConfiguration",
+      "name" : "Release"
+    },
+    "1D6058960D05DD3E006BFB54" : {
+      "buildConfigurations" : [
+        "1D6058940D05DD3E006BFB54",
+        "1D6058950D05DD3E006BFB54"
+      ],
+      "defaultConfigurationIsVisible" : "0",
+      "defaultConfigurationName" : "Release",
+      "isa" : "XCConfigurationList"
+    },
+    "1DF5F4DF0D08C38300B7A737" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "wrapper.framework",
+      "name" : "UIKit.framework",
+      "path" : "System\/Library\/Frameworks\/UIKit.framework",
+      "sourceTree" : "SDKROOT"
+    },
+    "1DF5F4E00D08C38300B7A737" : {
+      "fileRef" : "1DF5F4DF0D08C38300B7A737",
+      "isa" : "PBXBuildFile"
+    },
+    "19C28FACFE9D520D11CA2CBB" : {
+      "children" : [
+        "1D6058910D05DD3D006BFB54"
+      ],
+      "isa" : "PBXGroup",
+      "name" : "Products",
+      "sourceTree" : "<group>"
+    },
+    "29B97313FDCFA39411CA2CEA" : {
+      "attributes" : {
+        "LastUpgradeCheck" : "0600"
+      },
+      "buildConfigurationList" : "C01FCF4E08A954540054247B",
+      "compatibilityVersion" : "Xcode 3.2",
+      "developmentRegion" : "en",
+      "hasScannedForEncodings" : "1",
+      "isa" : "PBXProject",
+      "knownRegions" : [
+        "en",
+        "Base"
+      ],
+      "mainGroup" : "29B97314FDCFA39411CA2CEA",
+      "projectDirPath" : "",
+      "projectRoot" : "",
+      "targets" : [
+        "1D6058900D05DD3D006BFB54"
+      ]
+    },
+    "29B97314FDCFA39411CA2CEA" : {
+      "children" : [
+        "9936F60E1BFA4DEE00891288",
+        "E4D8936A11527B74007E1F53",
+        "BB24E1F710DAA51900E9C588",
+        "BB16F26B0F2B646B00518274",
+        "BB16E9930F2B1E5900518274",
+        "19C28FACFE9D520D11CA2CBB",
+        "901808C02053638E004A7774"
+      ],
+      "isa" : "PBXGroup",
+      "name" : "CustomTemplate",
+      "sourceTree" : "<group>"
+    },
+    "29B97323FDCFA39411CA2CEA" : {
+      "children" : [
+        "67DFA53419F92A5E003B3434",
+        "901808BF2053636F004A7774",
+        "BBE5EAB70F49AD8400F28951",
+        "E41D400613B39D2100A75A5D",
+        "E4A823A312561BE3002F86A2",
+        "5326AEA710A23A0500278DE6",
+        "E41D400713B39D2100A75A5D",
+        "9969E7551C782C4500DEF0F6",
+        "E41D400813B39D2100A75A5D",
+        "1D30AB110D05D00D00671497",
+        "E41D400913B39D2100A75A5D",
+        "53F323EA10A20EDB00E0DAE4",
+        "BB16EBD10F2B2A9500518274",
+        "BB16EBD80F2B2AB500518274",
+        "1DF5F4DF0D08C38300B7A737",
+        "288765FC0DF74451002DB57D"
+      ],
+      "isa" : "PBXGroup",
+      "name" : "core frameworks",
+      "sourceTree" : "<group>"
+    },
+    "32CA4F630368D1EE00C91783" : {
+      "fileEncoding" : "4",
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofxiOS_Prefix.pch",
+      "sourceTree" : "<group>"
+    },
+    "53F323EA10A20EDB00E0DAE4" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "wrapper.framework",
+      "name" : "OpenAL.framework",
+      "path" : "System\/Library\/Frameworks\/OpenAL.framework",
+      "sourceTree" : "SDKROOT"
+    },
+    "53F323EB10A20EDB00E0DAE4" : {
+      "fileRef" : "53F323EA10A20EDB00E0DAE4",
+      "isa" : "PBXBuildFile"
+    },
+    "67DFA53419F92A5E003B3434" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "wrapper.framework",
+      "name" : "Accelerate.framework",
+      "path" : "System\/Library\/Frameworks\/Accelerate.framework",
+      "sourceTree" : "SDKROOT"
+    },
+    "67DFA53619F92A69003B3434" : {
+      "fileRef" : "67DFA53419F92A5E003B3434",
+      "isa" : "PBXBuildFile"
+    },
+    "5326AEA710A23A0500278DE6" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "wrapper.framework",
+      "name" : "CoreLocation.framework",
+      "path" : "System\/Library\/Frameworks\/CoreLocation.framework",
+      "sourceTree" : "SDKROOT"
+    },
+    "5326AEA810A23A0500278DE6" : {
+      "fileRef" : "5326AEA710A23A0500278DE6",
+      "isa" : "PBXBuildFile"
+    },
+    "6948EE371B920CB800B5AC1A" : {
+      "children" : [
+
+      ],
+      "isa" : "PBXGroup",
+      "name" : "local_addons",
+      "sourceTree" : "<group>"
+    },
+    "9255DD331112741900D6945E" : {
+      "buildActionMask" : "2147483647",
+      "files" : [
+
+      ],
+      "inputPaths" : [
+
+      ],
+      "isa" : "PBXShellScriptBuildPhase",
+      "outputPaths" : [
+
+      ],
+      "runOnlyForDeploymentPostprocessing" : "0",
+      "shellPath" : "\/bin\/sh",
+      "shellScript" : "rsync -avz --exclude='.DS_Store' \"${SRCROOT}\/bin\/data\/\" \"${TARGET_BUILD_DIR}\/${UNLOCALIZED_RESOURCES_FOLDER_PATH}\"\n"
+    },
+    "9936F60E1BFA4DEE00891288" : {
+      "children" : [
+        "9936F6111BFA65F100891288",
+        "9936F60F1BFA4DEE00891288"
+      ],
+      "isa" : "PBXGroup",
+      "path" : "mediaAssets",
+      "sourceTree" : "<group>"
+    },
+    "9936F60F1BFA4DEE00891288" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "folder.assetcatalog",
+      "path" : "Images.xcassets",
+      "sourceTree" : "<group>"
+    },
+    "9936F6101BFA4DEE00891288" : {
+      "fileRef" : "9936F60F1BFA4DEE00891288",
+      "isa" : "PBXBuildFile"
+    },
+    "9936F6111BFA65F100891288" : {
+      "fileEncoding" : "4",
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "file.storyboard",
+      "path" : "LaunchScreen.storyboard",
+      "sourceTree" : "<group>"
+    },
+    "9936F6121BFA65F100891288" : {
+      "fileRef" : "9936F6111BFA65F100891288",
+      "isa" : "PBXBuildFile"
+    },
+    "9969E7551C782C4500DEF0F6" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "wrapper.framework",
+      "name" : "CoreMotion.framework",
+      "path" : "System\/Library\/Frameworks\/CoreMotion.framework",
+      "sourceTree" : "SDKROOT"
+    },
+    "9969E7561C782C4500DEF0F6" : {
+      "fileRef" : "9969E7551C782C4500DEF0F6",
+      "isa" : "PBXBuildFile"
+    },
+    "288765FC0DF74451002DB57D" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "wrapper.framework",
+      "name" : "CoreGraphics.framework",
+      "path" : "System\/Library\/Frameworks\/CoreGraphics.framework",
+      "sourceTree" : "SDKROOT"
+    },
+    "288765FD0DF74451002DB57D" : {
+      "fileRef" : "288765FC0DF74451002DB57D",
+      "isa" : "PBXBuildFile"
+    },
+    "901808BF2053636F004A7774" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "wrapper.framework",
+      "name" : "GLKit.framework",
+      "path" : "System\/Library\/Frameworks\/GLKit.framework",
+      "sourceTree" : "SDKROOT"
+    },
+    "901808C02053638E004A7774" : {
+      "children" : [
+
+      ],
+      "isa" : "PBXGroup",
+      "name" : "Frameworks",
+      "sourceTree" : "<group>"
+    },
+    "901808C12053638E004A7774" : {
+      "fileRef" : "901808BF2053636F004A7774",
+      "isa" : "PBXBuildFile"
+    },
+    "BB16E9930F2B1E5900518274" : {
+      "children" : [
+        "BBE5E94E0F497BD800F28951"
+      ],
+      "isa" : "PBXGroup",
+      "name" : "libs",
+      "sourceTree" : "<group>"
+    },
+    "BB16EBD10F2B2A9500518274" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "wrapper.framework",
+      "name" : "OpenGLES.framework",
+      "path" : "System\/Library\/Frameworks\/OpenGLES.framework",
+      "sourceTree" : "SDKROOT"
+    },
+    "BB16EBD20F2B2A9500518274" : {
+      "fileRef" : "BB16EBD10F2B2A9500518274",
+      "isa" : "PBXBuildFile"
+    },
+    "BB16EBD80F2B2AB500518274" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "wrapper.framework",
+      "name" : "QuartzCore.framework",
+      "path" : "System\/Library\/Frameworks\/QuartzCore.framework",
+      "sourceTree" : "SDKROOT"
+    },
+    "BB16EBD90F2B2AB500518274" : {
+      "fileRef" : "BB16EBD80F2B2AB500518274",
+      "isa" : "PBXBuildFile"
+    },
+    "BB16F26B0F2B646B00518274" : {
+      "children" : [
+
+      ],
+      "isa" : "PBXGroup",
+      "name" : "addons",
+      "path" : "..\/..\/..\/addons",
+      "sourceTree" : "SOURCE_ROOT"
+    },
+    "BB24DDC910DA781C00E9C588" : {
+      "fileEncoding" : "4",
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "text.plist.xml",
+      "path" : "ofxiOS-Info.plist",
+      "sourceTree" : "<group>"
+    },
+    "BB24E1F710DAA51900E9C588" : {
+      "children" : [
+        "BF8CFFB52D758AD200AA5C47",
+        "BF8CFDD22D756AC800AA5C47",
+        "BF8CFDDF2D756AC800AA5C47",
+        "BF8CFDE82D756AC800AA5C47",
+        "BF8CFDE92D756AC800AA5C47",
+        "BF8CFDEE2D756AC800AA5C47",
+        "BF8CFE0B2D756AC800AA5C47",
+        "BF8CFE232D756AC800AA5C47",
+        "BF8CFE332D756AC800AA5C47",
+        "BF8CFE3D2D756AC800AA5C47",
+        "BF8CFE492D756AC800AA5C47",
+        "BF8CFE632D756AC800AA5C47",
+        "BF8CFE682D756AC800AA5C47",
+        "32CA4F630368D1EE00C91783",
+        "BB24DDC910DA781C00E9C588",
+        "E41D3EE513B3906D00A75A5D",
+        "6948EE371B920CB800B5AC1A",
+        "E41D3ED613B38FB500A75A5D"
+      ],
+      "isa" : "PBXGroup",
+      "name" : "openFrameworks",
+      "sourceTree" : "<group>"
+    },
+    "BBE5E94E0F497BD800F28951" : {
+      "children" : [
+        "29B97323FDCFA39411CA2CEA"
+      ],
+      "isa" : "PBXGroup",
+      "name" : "core",
+      "sourceTree" : "<group>"
+    },
+    "BBE5EAB70F49AD8400F28951" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "wrapper.framework",
+      "name" : "AudioToolbox.framework",
+      "path" : "System\/Library\/Frameworks\/AudioToolbox.framework",
+      "sourceTree" : "SDKROOT"
+    },
+    "BBE5EAB80F49AD8400F28951" : {
+      "fileRef" : "BBE5EAB70F49AD8400F28951",
+      "isa" : "PBXBuildFile"
+    },
+    "BF8CFDD22D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "name" : "ofMain.h",
+      "path" : "..\/..\/..\/libs\/openFrameworks\/ofMain.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFDD32D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "text",
+      "path" : "ofMesh.inl",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFDD42D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.cpp",
+      "path" : "of3dPrimitives.cpp",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFDD52D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "of3dPrimitives.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFDD62D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.cpp",
+      "path" : "of3dUtils.cpp",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFDD72D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "of3dUtils.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFDD82D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.cpp",
+      "path" : "ofCamera.cpp",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFDD92D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofCamera.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFDDA2D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.cpp",
+      "path" : "ofEasyCam.cpp",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFDDB2D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofEasyCam.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFDDC2D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofMesh.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFDDD2D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.cpp",
+      "path" : "ofNode.cpp",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFDDE2D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofNode.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFDDF2D756AC800AA5C47" : {
+      "children" : [
+        "BF8CFDD32D756AC800AA5C47",
+        "BF8CFDD42D756AC800AA5C47",
+        "BF8CFDD52D756AC800AA5C47",
+        "BF8CFDD62D756AC800AA5C47",
+        "BF8CFDD72D756AC800AA5C47",
+        "BF8CFDD82D756AC800AA5C47",
+        "BF8CFDD92D756AC800AA5C47",
+        "BF8CFDDA2D756AC800AA5C47",
+        "BF8CFDDB2D756AC800AA5C47",
+        "BF8CFDDC2D756AC800AA5C47",
+        "BF8CFDDD2D756AC800AA5C47",
+        "BF8CFDDE2D756AC800AA5C47"
+      ],
+      "isa" : "PBXGroup",
+      "name" : "3d",
+      "path" : "..\/..\/..\/libs\/openFrameworks\/3d",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFDE02D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.cpp",
+      "path" : "ofBaseApp.cpp",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFDE12D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofAppBaseWindow.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFDE22D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.cpp",
+      "path" : "ofAppRunner.cpp",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFDE32D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofAppRunner.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFDE42D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofBaseApp.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFDE52D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.cpp",
+      "path" : "ofMainLoop.cpp",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFDE62D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofMainLoop.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFDE72D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofWindowSettings.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFDE82D756AC800AA5C47" : {
+      "children" : [
+        "BF8CFDE02D756AC800AA5C47",
+        "BF8CFDE12D756AC800AA5C47",
+        "BF8CFDE22D756AC800AA5C47",
+        "BF8CFDE32D756AC800AA5C47",
+        "BF8CFDE42D756AC800AA5C47",
+        "BF8CFDE52D756AC800AA5C47",
+        "BF8CFDE62D756AC800AA5C47",
+        "BF8CFDE72D756AC800AA5C47"
+      ],
+      "isa" : "PBXGroup",
+      "name" : "app",
+      "path" : "..\/..\/..\/libs\/openFrameworks\/app",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFDE92D756AC800AA5C47" : {
+      "children" : [
+
+      ],
+      "isa" : "PBXGroup",
+      "name" : "communication",
+      "path" : "..\/..\/..\/libs\/openFrameworks\/communication",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFDEA2D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofEvent.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFDEB2D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.cpp",
+      "path" : "ofEvents.cpp",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFDEC2D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofEvents.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFDED2D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofEventUtils.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFDEE2D756AC800AA5C47" : {
+      "children" : [
+        "BF8CFDEA2D756AC800AA5C47",
+        "BF8CFDEB2D756AC800AA5C47",
+        "BF8CFDEC2D756AC800AA5C47",
+        "BF8CFDED2D756AC800AA5C47"
+      ],
+      "isa" : "PBXGroup",
+      "name" : "events",
+      "path" : "..\/..\/..\/libs\/openFrameworks\/events",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFDEF2D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofGLBaseTypes.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFDF02D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.cpp",
+      "path" : "ofBufferObject.cpp",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFDF12D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofBufferObject.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFDF22D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.cpp",
+      "path" : "ofCubeMap.cpp",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFDF32D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofCubeMap.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFDF42D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofCubeMapShaders.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFDF52D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.cpp",
+      "path" : "ofFbo.cpp",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFDF62D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofFbo.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFDF72D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.cpp",
+      "path" : "ofGLProgrammableRenderer.cpp",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFDF82D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofGLProgrammableRenderer.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFDF92D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.cpp",
+      "path" : "ofGLRenderer.cpp",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFDFA2D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofGLRenderer.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFDFB2D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.cpp",
+      "path" : "ofGLUtils.cpp",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFDFC2D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofGLUtils.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFDFD2D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.cpp",
+      "path" : "ofLight.cpp",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFDFE2D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofLight.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFDFF2D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.cpp",
+      "path" : "ofShadow.cpp",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE0A2D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofVboMesh.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE0B2D756AC800AA5C47" : {
+      "children" : [
+        "BF8CFDEF2D756AC800AA5C47",
+        "BF8CFDF02D756AC800AA5C47",
+        "BF8CFDF12D756AC800AA5C47",
+        "BF8CFDF22D756AC800AA5C47",
+        "BF8CFDF32D756AC800AA5C47",
+        "BF8CFDF42D756AC800AA5C47",
+        "BF8CFDF52D756AC800AA5C47",
+        "BF8CFDF62D756AC800AA5C47",
+        "BF8CFDF72D756AC800AA5C47",
+        "BF8CFDF82D756AC800AA5C47",
+        "BF8CFDF92D756AC800AA5C47",
+        "BF8CFDFA2D756AC800AA5C47",
+        "BF8CFDFB2D756AC800AA5C47",
+        "BF8CFDFC2D756AC800AA5C47",
+        "BF8CFDFD2D756AC800AA5C47",
+        "BF8CFDFE2D756AC800AA5C47",
+        "BF8CFDFF2D756AC800AA5C47",
+        "BF8CFE002D756AC800AA5C47",
+        "BF8CFE012D756AC800AA5C47",
+        "BF8CFE022D756AC800AA5C47",
+        "BF8CFE032D756AC800AA5C47",
+        "BF8CFE042D756AC800AA5C47",
+        "BF8CFE052D756AC800AA5C47",
+        "BF8CFE062D756AC800AA5C47",
+        "BF8CFE072D756AC800AA5C47",
+        "BF8CFE082D756AC800AA5C47",
+        "BF8CFE092D756AC800AA5C47",
+        "BF8CFE0A2D756AC800AA5C47"
+      ],
+      "isa" : "PBXGroup",
+      "name" : "gl",
+      "path" : "..\/..\/..\/libs\/openFrameworks\/gl",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE0C2D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.cpp",
+      "path" : "ofGraphicsBaseTypes.cpp",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE0D2D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofGraphicsBaseTypes.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE0E2D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofGraphicsConstants.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE0F2D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "text",
+      "path" : "ofPolyline.inl",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE1A2D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.cpp",
+      "path" : "ofPixels.cpp",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE1B2D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofPixels.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE1C2D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofPolyline.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE1D2D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.cpp",
+      "path" : "ofRendererCollection.cpp",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE1E2D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofRendererCollection.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE1F2D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.cpp",
+      "path" : "ofTessellator.cpp",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE2A2D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofMatrix4x4.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE2B2D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.cpp",
+      "path" : "ofQuaternion.cpp",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE2C2D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofQuaternion.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE2D2D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.cpp",
+      "path" : "ofVec2f.cpp",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE002D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofShadow.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE2E2D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofVec2f.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE2F2D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofVec3f.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE3A2D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.cpp",
+      "path" : "ofSoundStream.cpp",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE3B2D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofSoundStream.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE3C2D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofSoundUtils.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE3D2D756AC800AA5C47" : {
+      "children" : [
+        "BF8CFE342D756AC800AA5C47",
+        "BF8CFE352D756AC800AA5C47",
+        "BF8CFE362D756AC800AA5C47",
+        "BF8CFE372D756AC800AA5C47",
+        "BF8CFE382D756AC800AA5C47",
+        "BF8CFE392D756AC800AA5C47",
+        "BF8CFE3A2D756AC800AA5C47",
+        "BF8CFE3B2D756AC800AA5C47",
+        "BF8CFE3C2D756AC800AA5C47"
+      ],
+      "isa" : "PBXGroup",
+      "name" : "sound",
+      "path" : "..\/..\/..\/libs\/openFrameworks\/sound",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE3E2D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.cpp",
+      "path" : "ofBaseTypes.cpp",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE3F2D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.cpp",
+      "path" : "ofColor.cpp",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE4A2D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofConstants.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE4B2D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.cpp",
+      "path" : "ofFileUtils.cpp",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE4C2D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofFileUtils.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE4D2D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.cpp",
+      "path" : "ofFpsCounter.cpp",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE4E2D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofFpsCounter.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE4F2D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.cpp",
+      "path" : "ofLog.cpp",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE5A2D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofTimer.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE5B2D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.cpp",
+      "path" : "ofTimerFps.cpp",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE5C2D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofTimerFps.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE5D2D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.cpp",
+      "path" : "ofURLFileLoader.cpp",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE5E2D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofURLFileLoader.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE5F2D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.cpp",
+      "path" : "ofUtils.cpp",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE012D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.cpp",
+      "path" : "ofMaterial.cpp",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE022D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofMaterial.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE032D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.cpp",
+      "path" : "ofShader.cpp",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE042D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofShader.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE052D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.cpp",
+      "path" : "ofTexture.cpp",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE062D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofTexture.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE072D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.cpp",
+      "path" : "ofVbo.cpp",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE082D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofVbo.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE092D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.cpp",
+      "path" : "ofVboMesh.cpp",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE102D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.cpp",
+      "path" : "of3dGraphics.cpp",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE112D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "of3dGraphics.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE122D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.cpp",
+      "path" : "ofBitmapFont.cpp",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE132D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofBitmapFont.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE142D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.cpp",
+      "path" : "ofGraphics.cpp",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE152D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofGraphics.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE162D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.cpp",
+      "path" : "ofImage.cpp",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE172D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofImage.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE182D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.cpp",
+      "path" : "ofPath.cpp",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE192D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofPath.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE202D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofTessellator.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE212D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.cpp",
+      "path" : "ofTrueTypeFont.cpp",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE222D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofTrueTypeFont.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE232D756AC800AA5C47" : {
+      "children" : [
+        "BF8CFE0C2D756AC800AA5C47",
+        "BF8CFE0D2D756AC800AA5C47",
+        "BF8CFE0E2D756AC800AA5C47",
+        "BF8CFE0F2D756AC800AA5C47",
+        "BF8CFE102D756AC800AA5C47",
+        "BF8CFE112D756AC800AA5C47",
+        "BF8CFE122D756AC800AA5C47",
+        "BF8CFE132D756AC800AA5C47",
+        "BF8CFE142D756AC800AA5C47",
+        "BF8CFE152D756AC800AA5C47",
+        "BF8CFE162D756AC800AA5C47",
+        "BF8CFE172D756AC800AA5C47",
+        "BF8CFE182D756AC800AA5C47",
+        "BF8CFE192D756AC800AA5C47",
+        "BF8CFE1A2D756AC800AA5C47",
+        "BF8CFE1B2D756AC800AA5C47",
+        "BF8CFE1C2D756AC800AA5C47",
+        "BF8CFE1D2D756AC800AA5C47",
+        "BF8CFE1E2D756AC800AA5C47",
+        "BF8CFE1F2D756AC800AA5C47",
+        "BF8CFE202D756AC800AA5C47",
+        "BF8CFE212D756AC800AA5C47",
+        "BF8CFE222D756AC800AA5C47"
+      ],
+      "isa" : "PBXGroup",
+      "name" : "graphics",
+      "path" : "..\/..\/..\/libs\/openFrameworks\/graphics",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE242D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofMathConstants.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE252D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.cpp",
+      "path" : "ofMath.cpp",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE262D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofMath.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE272D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.cpp",
+      "path" : "ofMatrix3x3.cpp",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE282D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofMatrix3x3.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE292D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.cpp",
+      "path" : "ofMatrix4x4.cpp",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE302D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.cpp",
+      "path" : "ofVec4f.cpp",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE312D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofVec4f.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE322D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofVectorMath.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE332D756AC800AA5C47" : {
+      "children" : [
+        "BF8CFE242D756AC800AA5C47",
+        "BF8CFE252D756AC800AA5C47",
+        "BF8CFE262D756AC800AA5C47",
+        "BF8CFE272D756AC800AA5C47",
+        "BF8CFE282D756AC800AA5C47",
+        "BF8CFE292D756AC800AA5C47",
+        "BF8CFE2A2D756AC800AA5C47",
+        "BF8CFE2B2D756AC800AA5C47",
+        "BF8CFE2C2D756AC800AA5C47",
+        "BF8CFE2D2D756AC800AA5C47",
+        "BF8CFE2E2D756AC800AA5C47",
+        "BF8CFE2F2D756AC800AA5C47",
+        "BF8CFE302D756AC800AA5C47",
+        "BF8CFE312D756AC800AA5C47",
+        "BF8CFE322D756AC800AA5C47"
+      ],
+      "isa" : "PBXGroup",
+      "name" : "math",
+      "path" : "..\/..\/..\/libs\/openFrameworks\/math",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE342D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.cpp",
+      "path" : "ofSoundBaseTypes.cpp",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE352D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofSoundBaseTypes.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE362D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.cpp",
+      "path" : "ofSoundBuffer.cpp",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE372D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofSoundBuffer.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE382D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.cpp",
+      "path" : "ofSoundPlayer.cpp",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE392D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofSoundPlayer.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE402D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofColor.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE412D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.cpp",
+      "path" : "ofParameter.cpp",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE422D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofParameter.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE432D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.cpp",
+      "path" : "ofParameterGroup.cpp",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE442D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofParameterGroup.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE452D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofPoint.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE462D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.cpp",
+      "path" : "ofRectangle.cpp",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE472D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofRectangle.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE482D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofTypes.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE492D756AC800AA5C47" : {
+      "children" : [
+        "BF8CFE3E2D756AC800AA5C47",
+        "BF8CFE3F2D756AC800AA5C47",
+        "BF8CFE402D756AC800AA5C47",
+        "BF8CFE412D756AC800AA5C47",
+        "BF8CFE422D756AC800AA5C47",
+        "BF8CFE432D756AC800AA5C47",
+        "BF8CFE442D756AC800AA5C47",
+        "BF8CFE452D756AC800AA5C47",
+        "BF8CFE462D756AC800AA5C47",
+        "BF8CFE472D756AC800AA5C47",
+        "BF8CFE482D756AC800AA5C47"
+      ],
+      "isa" : "PBXGroup",
+      "name" : "types",
+      "path" : "..\/..\/..\/libs\/openFrameworks\/types",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE502D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofLog.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE512D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.cpp",
+      "path" : "ofMatrixStack.cpp",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE522D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofMatrixStack.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE532D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofNoise.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE542D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.cpp",
+      "path" : "ofSystemUtils.cpp",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE552D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofSystemUtils.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE562D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.cpp",
+      "path" : "ofThread.cpp",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE572D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofThread.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE582D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofThreadChannel.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE592D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.cpp",
+      "path" : "ofTimer.cpp",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE602D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofUtils.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE612D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.cpp",
+      "path" : "ofXml.cpp",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE622D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofXml.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE632D756AC800AA5C47" : {
+      "children" : [
+        "BF8CFE4A2D756AC800AA5C47",
+        "BF8CFE4B2D756AC800AA5C47",
+        "BF8CFE4C2D756AC800AA5C47",
+        "BF8CFE4D2D756AC800AA5C47",
+        "BF8CFE4E2D756AC800AA5C47",
+        "BF8CFE4F2D756AC800AA5C47",
+        "BF8CFE502D756AC800AA5C47",
+        "BF8CFE512D756AC800AA5C47",
+        "BF8CFE522D756AC800AA5C47",
+        "BF8CFE532D756AC800AA5C47",
+        "BF8CFE542D756AC800AA5C47",
+        "BF8CFE552D756AC800AA5C47",
+        "BF8CFE562D756AC800AA5C47",
+        "BF8CFE572D756AC800AA5C47",
+        "BF8CFE582D756AC800AA5C47",
+        "BF8CFE592D756AC800AA5C47",
+        "BF8CFE5A2D756AC800AA5C47",
+        "BF8CFE5B2D756AC800AA5C47",
+        "BF8CFE5C2D756AC800AA5C47",
+        "BF8CFE5D2D756AC800AA5C47",
+        "BF8CFE5E2D756AC800AA5C47",
+        "BF8CFE5F2D756AC800AA5C47",
+        "BF8CFE602D756AC800AA5C47",
+        "BF8CFE612D756AC800AA5C47",
+        "BF8CFE622D756AC800AA5C47"
+      ],
+      "isa" : "PBXGroup",
+      "name" : "utils",
+      "path" : "..\/..\/..\/libs\/openFrameworks\/utils",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE642D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.cpp",
+      "path" : "ofVideoGrabber.cpp",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE652D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofVideoGrabber.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE662D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.cpp",
+      "path" : "ofVideoPlayer.cpp",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE672D756AC800AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofVideoPlayer.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFE682D756AC800AA5C47" : {
+      "children" : [
+        "BF8CFE642D756AC800AA5C47",
+        "BF8CFE652D756AC800AA5C47",
+        "BF8CFE662D756AC800AA5C47",
+        "BF8CFE672D756AC800AA5C47"
+      ],
+      "isa" : "PBXGroup",
+      "name" : "video",
+      "path" : "..\/..\/..\/libs\/openFrameworks\/video",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF5A2D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofxiOSEAGLView.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF5B2D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.objcpp",
+      "path" : "ofxiOSEAGLView.mm",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF5C2D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofxiOSGLKView.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF5D2D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.objcpp",
+      "path" : "ofxiOSGLKView.mm",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF5E2D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofxiOSGLKViewController.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF5F2D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.objcpp",
+      "path" : "ofxiOSGLKViewController.mm",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF6A2D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.objc",
+      "path" : "EAGLView.m",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF6B2D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ES1Renderer.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF6C2D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.objc",
+      "path" : "ES1Renderer.m",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF6D2D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ES2Renderer.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF6E2D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.objc",
+      "path" : "ES2Renderer.m",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF6F2D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ES3Renderer.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF7A2D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.objcpp",
+      "path" : "ofxiOSSoundStreamDelegate.mm",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF7B2D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofxOpenALSoundPlayer.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF7C2D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.cpp",
+      "path" : "ofxOpenALSoundPlayer.cpp",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF7D2D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "SoundEngine.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF7E2D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.cpp",
+      "path" : "SoundEngine.cpp",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF7F2D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "SoundInputStream.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF8A2D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofxtvOSURLFileLoader.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF8B2D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.cpp",
+      "path" : "ofxtvOSURLFileLoader.cpp",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF8C2D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofxtvOSViewController.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF8D2D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.objcpp",
+      "path" : "ofxtvOSViewController.mm",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF8E2D758AD200AA5C47" : {
+      "children" : [
+        "BF8CFF862D758AD200AA5C47",
+        "BF8CFF872D758AD200AA5C47",
+        "BF8CFF882D758AD200AA5C47",
+        "BF8CFF892D758AD200AA5C47",
+        "BF8CFF8A2D758AD200AA5C47",
+        "BF8CFF8B2D758AD200AA5C47",
+        "BF8CFF8C2D758AD200AA5C47",
+        "BF8CFF8D2D758AD200AA5C47"
+      ],
+      "isa" : "PBXGroup",
+      "path" : "tvOS",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF8F2D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofxiOSCoreHaptics.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF9A2D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.objcpp",
+      "path" : "ofxiOSExtras.mm",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF9B2D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofxiOSImagePicker.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF9C2D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.objcpp",
+      "path" : "ofxiOSImagePicker.mm",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF9D2D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofxiOSKeyboard.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF9E2D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.objcpp",
+      "path" : "ofxiOSKeyboard.mm",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF9F2D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofxiOSMapKit.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF542D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofAppiOSWindow.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF552D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.objcpp",
+      "path" : "ofAppiOSWindow.mm",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF562D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofxiOSApp.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF572D758AD200AA5C47" : {
+      "children" : [
+        "BF8CFF542D758AD200AA5C47",
+        "BF8CFF552D758AD200AA5C47",
+        "BF8CFF562D758AD200AA5C47"
+      ],
+      "isa" : "PBXGroup",
+      "path" : "app",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF582D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofxiOSAppDelegate.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF592D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.objcpp",
+      "path" : "ofxiOSAppDelegate.mm",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF602D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofxiOSViewController.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF612D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.objcpp",
+      "path" : "ofxiOSViewController.mm",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF622D758AD200AA5C47" : {
+      "children" : [
+        "BF8CFF582D758AD200AA5C47",
+        "BF8CFF592D758AD200AA5C47",
+        "BF8CFF5A2D758AD200AA5C47",
+        "BF8CFF5B2D758AD200AA5C47",
+        "BF8CFF5C2D758AD200AA5C47",
+        "BF8CFF5D2D758AD200AA5C47",
+        "BF8CFF5E2D758AD200AA5C47",
+        "BF8CFF5F2D758AD200AA5C47",
+        "BF8CFF602D758AD200AA5C47",
+        "BF8CFF612D758AD200AA5C47"
+      ],
+      "isa" : "PBXGroup",
+      "path" : "core",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF632D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofxiOSAlerts.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF642D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.objcpp",
+      "path" : "ofxiOSAlerts.mm",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF652D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofxiOSAlertsListener.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF662D758AD200AA5C47" : {
+      "children" : [
+        "BF8CFF632D758AD200AA5C47",
+        "BF8CFF642D758AD200AA5C47",
+        "BF8CFF652D758AD200AA5C47"
+      ],
+      "isa" : "PBXGroup",
+      "path" : "events",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF672D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "EAGLKView.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF682D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.objc",
+      "path" : "EAGLKView.m",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF692D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "EAGLView.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF702D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.objc",
+      "path" : "ES3Renderer.m",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF712D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ESRenderer.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF722D758AD200AA5C47" : {
+      "children" : [
+        "BF8CFF672D758AD200AA5C47",
+        "BF8CFF682D758AD200AA5C47",
+        "BF8CFF692D758AD200AA5C47",
+        "BF8CFF6A2D758AD200AA5C47",
+        "BF8CFF6B2D758AD200AA5C47",
+        "BF8CFF6C2D758AD200AA5C47",
+        "BF8CFF6D2D758AD200AA5C47",
+        "BF8CFF6E2D758AD200AA5C47",
+        "BF8CFF6F2D758AD200AA5C47",
+        "BF8CFF702D758AD200AA5C47",
+        "BF8CFF712D758AD200AA5C47"
+      ],
+      "isa" : "PBXGroup",
+      "path" : "gl",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF732D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "AVSoundPlayer.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF742D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.objc",
+      "path" : "AVSoundPlayer.m",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF752D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofxiOSSoundPlayer.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF762D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.objcpp",
+      "path" : "ofxiOSSoundPlayer.mm",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF772D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofxiOSSoundStream.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF782D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.objcpp",
+      "path" : "ofxiOSSoundStream.mm",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF792D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofxiOSSoundStreamDelegate.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF802D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.objc",
+      "path" : "SoundInputStream.m",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF812D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "SoundOutputStream.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF822D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.objc",
+      "path" : "SoundOutputStream.m",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF832D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "SoundStream.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF842D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.objc",
+      "path" : "SoundStream.m",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF852D758AD200AA5C47" : {
+      "children" : [
+        "BF8CFF732D758AD200AA5C47",
+        "BF8CFF742D758AD200AA5C47",
+        "BF8CFF752D758AD200AA5C47",
+        "BF8CFF762D758AD200AA5C47",
+        "BF8CFF772D758AD200AA5C47",
+        "BF8CFF782D758AD200AA5C47",
+        "BF8CFF792D758AD200AA5C47",
+        "BF8CFF7A2D758AD200AA5C47",
+        "BF8CFF7B2D758AD200AA5C47",
+        "BF8CFF7C2D758AD200AA5C47",
+        "BF8CFF7D2D758AD200AA5C47",
+        "BF8CFF7E2D758AD200AA5C47",
+        "BF8CFF7F2D758AD200AA5C47",
+        "BF8CFF802D758AD200AA5C47",
+        "BF8CFF812D758AD200AA5C47",
+        "BF8CFF822D758AD200AA5C47",
+        "BF8CFF832D758AD200AA5C47",
+        "BF8CFF842D758AD200AA5C47"
+      ],
+      "isa" : "PBXGroup",
+      "path" : "sound",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF862D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofxtvOSAppDelegate.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF872D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.objcpp",
+      "path" : "ofxtvOSAppDelegate.mm",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF882D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofxtvOSGLKViewController.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF892D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.objcpp",
+      "path" : "ofxtvOSGLKViewController.mm",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF902D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.objcpp",
+      "path" : "ofxiOSCoreHaptics.mm",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF912D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofxiOSCoreLocation.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF922D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.objcpp",
+      "path" : "ofxiOSCoreLocation.mm",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF932D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofxiOSCoreMotion.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF942D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.objcpp",
+      "path" : "ofxiOSCoreMotion.mm",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF952D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofxiOSEventAdapter.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF962D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.objcpp",
+      "path" : "ofxiOSEventAdapter.mm",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF972D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofxiOSExternalDisplay.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF982D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.objcpp",
+      "path" : "ofxiOSExternalDisplay.mm",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFF992D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofxiOSExtras.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFFA02D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.objcpp",
+      "path" : "ofxiOSMapKit.mm",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFFA12D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofxiOSMapKitDelegate.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFFA22D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.objcpp",
+      "path" : "ofxiOSMapKitDelegate.mm",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFFA32D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofxiOSMapKitListener.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFFA42D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofxiPhoneExtras.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFFA52D758AD200AA5C47" : {
+      "children" : [
+        "BF8CFF8F2D758AD200AA5C47",
+        "BF8CFF902D758AD200AA5C47",
+        "BF8CFF912D758AD200AA5C47",
+        "BF8CFF922D758AD200AA5C47",
+        "BF8CFF932D758AD200AA5C47",
+        "BF8CFF942D758AD200AA5C47",
+        "BF8CFF952D758AD200AA5C47",
+        "BF8CFF962D758AD200AA5C47",
+        "BF8CFF972D758AD200AA5C47",
+        "BF8CFF982D758AD200AA5C47",
+        "BF8CFF992D758AD200AA5C47",
+        "BF8CFF9A2D758AD200AA5C47",
+        "BF8CFF9B2D758AD200AA5C47",
+        "BF8CFF9C2D758AD200AA5C47",
+        "BF8CFF9D2D758AD200AA5C47",
+        "BF8CFF9E2D758AD200AA5C47",
+        "BF8CFF9F2D758AD200AA5C47",
+        "BF8CFFA02D758AD200AA5C47",
+        "BF8CFFA12D758AD200AA5C47",
+        "BF8CFFA22D758AD200AA5C47",
+        "BF8CFFA32D758AD200AA5C47",
+        "BF8CFFA42D758AD200AA5C47"
+      ],
+      "isa" : "PBXGroup",
+      "path" : "utils",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFFA62D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "AVFoundationVideoGrabber.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFFA72D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.objcpp",
+      "path" : "AVFoundationVideoGrabber.mm",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFFA82D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "AVFoundationVideoPlayer.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFFA92D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.objc",
+      "path" : "AVFoundationVideoPlayer.m",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFFAA2D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofxiOSVideoGrabber.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFFAB2D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.objcpp",
+      "path" : "ofxiOSVideoGrabber.mm",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFFAC2D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofxiOSVideoPlayer.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFFAD2D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.objcpp",
+      "path" : "ofxiOSVideoPlayer.mm",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFFAE2D758AD200AA5C47" : {
+      "children" : [
+        "BF8CFFA62D758AD200AA5C47",
+        "BF8CFFA72D758AD200AA5C47",
+        "BF8CFFA82D758AD200AA5C47",
+        "BF8CFFA92D758AD200AA5C47",
+        "BF8CFFAA2D758AD200AA5C47",
+        "BF8CFFAB2D758AD200AA5C47",
+        "BF8CFFAC2D758AD200AA5C47",
+        "BF8CFFAD2D758AD200AA5C47"
+      ],
+      "isa" : "PBXGroup",
+      "path" : "video",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFFAF2D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofxiOS.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFFB02D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofxiOSConstants.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFFB12D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofxiOSExtensions.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFFB22D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofxiPhone.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFFB32D758AD200AA5C47" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "path" : "ofxtvOS.h",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFFB42D758AD200AA5C47" : {
+      "children" : [
+        "BF8CFF572D758AD200AA5C47",
+        "BF8CFF622D758AD200AA5C47",
+        "BF8CFF662D758AD200AA5C47",
+        "BF8CFF722D758AD200AA5C47",
+        "BF8CFF852D758AD200AA5C47",
+        "BF8CFF8E2D758AD200AA5C47",
+        "BF8CFFA52D758AD200AA5C47",
+        "BF8CFFAE2D758AD200AA5C47",
+        "BF8CFFAF2D758AD200AA5C47",
+        "BF8CFFB02D758AD200AA5C47",
+        "BF8CFFB12D758AD200AA5C47",
+        "BF8CFFB22D758AD200AA5C47",
+        "BF8CFFB32D758AD200AA5C47"
+      ],
+      "isa" : "PBXGroup",
+      "path" : "src",
+      "sourceTree" : "<group>"
+    },
+    "BF8CFFB52D758AD200AA5C47" : {
+      "children" : [
+        "BF8CFFB42D758AD200AA5C47"
+      ],
+      "isa" : "PBXGroup",
+      "name" : "ofxiOS",
+      "path" : "..\/..\/..\/addons\/ofxiOS",
+      "sourceTree" : "<group>"
+    },
+    "BF46A0162D754E9E00E4F02F" : {
+      "alwaysOutOfDate" : "1",
+      "buildActionMask" : "2147483647",
+      "files" : [
+
+      ],
+      "inputFileListPaths" : [
+
+      ],
+      "inputPaths" : [
+
+      ],
+      "isa" : "PBXShellScriptBuildPhase",
+      "outputFileListPaths" : [
+
+      ],
+      "outputPaths" : [
+
+      ],
+      "runOnlyForDeploymentPostprocessing" : "0",
+      "shellPath" : "\/bin\/sh",
+      "shellScript" : "#!\/bin\/sh\n\necho \"Running: Platform: $PLATFORM_NAME\"\nif [[ \"${PLATFORM_NAME}\" == \"iphonesimulator\" ]]; then\n    OF_CORE_SDK=\"iphonesimulator\"\n    if [[ \"$HOST_ARCH\" == \"arm64\" ]]; then\n        ARCHS=\"-arch arm64\"\n    elif [[ \"$HOST_ARCH\" == \"x86_64\" ]]; then\n        ARCHS=\"-arch x86_64 arm64\"\n    else\n        echo \"Warning: Unknown host architecture '$HOST_ARCH', defaulting to arm64 for simulator\"\n        ARCHS=\"-arch arm64\"\n    fi\nelse\n    OF_CORE_SDK=\"iphoneos\"\n    ARCHS=\"-arch arm64\"\nfi\n\nexport OF_CORE_BUILD_COMMAND=\"xcodebuild -project $OF_PATH\/libs\/openFrameworksCompiled\/project\/ios\/iOS+OFLib.xcodeproj \\\n-target openFrameworks -configuration ${CONFIGURATION} \\\nSDK=${OF_CORE_SDK} -sdk ${OF_CORE_SDK} ${ARCHS} \\\nCLANG_CXX_LANGUAGE_STANDARD=$CLANG_CXX_LANGUAGE_STANDARD \\\nIPHONEOS_DEPLOYMENT_TARGET=$IPHONEOS_DEPLOYMENT_TARGET \\\nGCC_PREPROCESSOR_DEFINITIONS=$USER_PREPROCESSOR_DEFINITIONS\"\n\necho \"Running: $OF_CORE_BUILD_COMMAND\"\n\n# Execute the build command\neval $OF_CORE_BUILD_COMMAND\n",
+      "showEnvVarsInLog" : "0"
+    },
+    "C01FCF4E08A954540054247B" : {
+      "buildConfigurations" : [
+        "C01FCF4F08A954540054247B",
+        "C01FCF5008A954540054247B"
+      ],
+      "defaultConfigurationIsVisible" : "0",
+      "defaultConfigurationName" : "Release",
+      "isa" : "XCConfigurationList"
+    },
+    "C01FCF4F08A954540054247B" : {
+      "baseConfigurationReference" : "E41D3ED613B38FB500A75A5D",
+      "buildSettings" : {
+        "ALWAYS_SEARCH_USER_PATHS" : "YES",
+        "CLANG_CXX_LIBRARY" : "libc++",
+        "CODE_SIGN_IDENTITY" : "",
+        "CODE_SIGN_IDENTITY[sdk=iphoneos*]" : "iPhone Developer",
+        "CODE_SIGN_IDENTITY[sdk=iphonesimulator*]" : "",
+        "COMPRESS_PNG_FILES" : "NO",
+        "GCC_C_LANGUAGE_STANDARD" : "c17",
+        "GCC_OPTIMIZATION_LEVEL" : "0",
+        "GCC_SYMBOLS_PRIVATE_EXTERN" : "NO",
+        "GCC_WARN_64_TO_32_BIT_CONVERSION[arch=*64]" : "NO",
+        "GCC_WARN_ABOUT_INVALID_OFFSETOF_MACRO" : "NO",
+        "GCC_WARN_ABOUT_POINTER_SIGNEDNESS" : "NO",
+        "GCC_WARN_ABOUT_RETURN_TYPE" : "YES",
+        "GCC_WARN_ALLOW_INCOMPLETE_PROTOCOL" : "NO",
+        "GCC_WARN_PROTOTYPE_CONVERSION" : "NO",
+        "GCC_WARN_UNUSED_VARIABLE" : "YES",
+        "ONLY_ACTIVE_ARCH" : "YES",
+        "PROVISIONING_PROFILE[sdk=iphoneos*]" : "",
+        "SDKROOT" : "iphoneos",
+        "TARGETED_DEVICE_FAMILY" : "1",
+        "VALID_ARCHS" : "$(ARCHS_STANDARD)",
+        "WARNING_LDFLAGS" : "-no_arch_warnings"
+      },
+      "isa" : "XCBuildConfiguration",
+      "name" : "Debug"
+    },
+    "C01FCF5008A954540054247B" : {
+      "baseConfigurationReference" : "E41D3ED613B38FB500A75A5D",
+      "buildSettings" : {
+        "ALWAYS_SEARCH_USER_PATHS" : "YES",
+        "CLANG_CXX_LIBRARY" : "libc++",
+        "CODE_SIGN_IDENTITY" : "",
+        "CODE_SIGN_IDENTITY[sdk=iphoneos*]" : "iPhone Developer",
+        "CODE_SIGN_IDENTITY[sdk=iphonesimulator*]" : "",
+        "COMPRESS_PNG_FILES" : "NO",
+        "GCC_C_LANGUAGE_STANDARD" : "c11",
+        "GCC_DYNAMIC_NO_PIC" : "NO",
+        "GCC_GENERATE_DEBUGGING_SYMBOLS" : "NO",
+        "GCC_OPTIMIZATION_LEVEL" : "s",
+        "GCC_SYMBOLS_PRIVATE_EXTERN" : "NO",
+        "GCC_THUMB_SUPPORT" : "NO",
+        "GCC_WARN_64_TO_32_BIT_CONVERSION[arch=*64]" : "NO",
+        "GCC_WARN_ABOUT_RETURN_TYPE" : "YES",
+        "GCC_WARN_UNUSED_VARIABLE" : "YES",
+        "ONLY_ACTIVE_ARCH" : "NO",
+        "SDKROOT" : "iphoneos",
+        "TARGETED_DEVICE_FAMILY" : "1",
+        "VALID_ARCHS" : "$(ARCHS_STANDARD)",
+        "WARNING_LDFLAGS" : "-no_arch_warnings"
+      },
+      "isa" : "XCBuildConfiguration",
+      "name" : "Release"
+    },
+    "E4A823A312561BE3002F86A2" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "wrapper.framework",
+      "name" : "CoreGraphics.framework",
+      "path" : "System\/Library\/Frameworks\/CoreGraphics.framework",
+      "sourceTree" : "SDKROOT"
+    },
+    "E4D8936A11527B74007E1F53" : {
+      "children" : [
+        "E4D8936B11527B74007E1F53",
+        "E4D8936D11527B74007E1F53",
+        "E4D8936C11527B74007E1F53"
+      ],
+      "isa" : "PBXGroup",
+      "path" : "src",
+      "sourceTree" : "SOURCE_ROOT"
+    },
+    "E4D8936B11527B74007E1F53" : {
+      "fileEncoding" : "4",
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.objcpp",
+      "name" : "main.mm",
+      "path" : "src\/main.mm",
+      "sourceTree" : "SOURCE_ROOT"
+    },
+    "E4D8936C11527B74007E1F53" : {
+      "fileEncoding" : "4",
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.c.h",
+      "name" : "ofApp.h",
+      "path" : "src\/ofApp.h",
+      "sourceTree" : "SOURCE_ROOT"
+    },
+    "E4D8936D11527B74007E1F53" : {
+      "fileEncoding" : "4",
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "sourcecode.cpp.objcpp",
+      "name" : "ofApp.mm",
+      "path" : "src\/ofApp.mm",
+      "sourceTree" : "SOURCE_ROOT"
+    },
+    "E4D8936E11527B74007E1F53" : {
+      "fileRef" : "E4D8936B11527B74007E1F53",
+      "isa" : "PBXBuildFile"
+    },
+    "E4D8936F11527B74007E1F53" : {
+      "fileRef" : "E4D8936D11527B74007E1F53",
+      "isa" : "PBXBuildFile"
+    },
+    "E41D3ED613B38FB500A75A5D" : {
+      "fileEncoding" : "4",
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "text.xcconfig",
+      "path" : "Project.xcconfig",
+      "sourceTree" : "<group>"
+    },
+    "E41D3EE513B3906D00A75A5D" : {
+      "fileEncoding" : "4",
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "text.xcconfig",
+      "name" : "CoreOF.xcconfig",
+      "path" : "..\/..\/..\/libs\/openFrameworksCompiled\/project\/ios\/CoreOF.xcconfig",
+      "sourceTree" : "SOURCE_ROOT"
+    },
+    "E41D400B13B39D2100A75A5D" : {
+      "fileRef" : "E41D400613B39D2100A75A5D",
+      "isa" : "PBXBuildFile"
+    },
+    "E41D400C13B39D2100A75A5D" : {
+      "fileRef" : "E41D400713B39D2100A75A5D",
+      "isa" : "PBXBuildFile"
+    },
+    "E41D400D13B39D2100A75A5D" : {
+      "fileRef" : "E41D400813B39D2100A75A5D",
+      "isa" : "PBXBuildFile"
+    },
+    "E41D400E13B39D2100A75A5D" : {
+      "fileRef" : "E41D400913B39D2100A75A5D",
+      "isa" : "PBXBuildFile"
+    },
+    "E41D400613B39D2100A75A5D" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "wrapper.framework",
+      "name" : "AVFoundation.framework",
+      "path" : "System\/Library\/Frameworks\/AVFoundation.framework",
+      "sourceTree" : "SDKROOT"
+    },
+    "E41D400713B39D2100A75A5D" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "wrapper.framework",
+      "name" : "CoreMedia.framework",
+      "path" : "System\/Library\/Frameworks\/CoreMedia.framework",
+      "sourceTree" : "SDKROOT"
+    },
+    "E41D400813B39D2100A75A5D" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "wrapper.framework",
+      "name" : "CoreVideo.framework",
+      "path" : "System\/Library\/Frameworks\/CoreVideo.framework",
+      "sourceTree" : "SDKROOT"
+    },
+    "E41D400913B39D2100A75A5D" : {
+      "isa" : "PBXFileReference",
+      "lastKnownFileType" : "wrapper.framework",
+      "name" : "MapKit.framework",
+      "path" : "System\/Library\/Frameworks\/MapKit.framework",
+      "sourceTree" : "SDKROOT"
+    }
+  },
+  "objectVersion" : "54",
+  "rootObject" : "29B97313FDCFA39411CA2CEA"
+}

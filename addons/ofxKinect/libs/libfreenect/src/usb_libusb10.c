@@ -63,7 +63,7 @@ FN_INTERNAL int fnusb_num_devices(freenect_context *ctx)
 			}
 			else if (desc.idProduct == PID_KV2_CAMERA)
 			{
-				FN_NOTICE("Skipping Kinect v2 device (needs https://github.com/libfreenect2).\n");
+				FN_NOTICE("Skipping Kinect v2 device (needs https://github.com/OpenKinect/libfreenect2).\n");
 			}
 		}
 	}
@@ -228,7 +228,7 @@ FN_INTERNAL int fnusb_list_device_attributes(freenect_context *ctx, struct freen
 						{
 							res = libusb_get_string_descriptor_ascii(audio_handle, audio_desc.iSerialNumber, serial, 256);
 							libusb_close(audio_handle);
-							if (res != 0)
+							if (res <= 0)
 							{
 								FN_WARNING("Failed to get audio serial of K4W or 1473 device: %s\n", libusb_error_name(res));
 							}
@@ -455,6 +455,9 @@ FN_INTERNAL int fnusb_open_subdevices(freenect_device *dev, int index)
 				ctx->zero_plane_res = 322;
 			}
 
+			dev->usb_cam.VID = desc.idVendor;
+			dev->usb_cam.PID = desc.idProduct;
+
 			res = fnusb_claim_camera(dev);
 			if (res < 0) {
 				goto failure;
@@ -582,7 +585,8 @@ FN_INTERNAL int fnusb_open_subdevices(freenect_device *dev, int index)
 			}
 			else
 			{
-				res = upload_firmware(&dev->usb_audio, "audios.bin");
+				char audiosBin[11] = "audios.bin";
+				res = upload_firmware(&dev->usb_audio, audiosBin);
 			}
 
 			if (res < 0) {

@@ -34,5 +34,5 @@ vec3 hemisphereSample_uniform(uint i, uint N){
 void main(){
 	vec3 pos = hemisphereSample_uniform(uint(gl_VertexID), uint(numVertices));
 	v_position = vec4(pos * -600, 1.0);
-	v_color = vec4(pos, 1.0);
+	v_color = vec4(abs(pos.x), abs(pos.y), abs(pos.z), 1.0);
 }

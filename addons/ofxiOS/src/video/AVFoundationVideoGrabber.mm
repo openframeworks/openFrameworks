@@ -5,7 +5,9 @@
 #include "AVFoundationVideoGrabber.h"
 #include <TargetConditionals.h>
 
-#if TARGET_OS_IOS || (TARGET_OS_IPHONE && !TARGET_OS_TV)
+#include "ofxiOSConstants.h"
+#if defined(OF_UI_KIT)
+#if defined(TARGET_OS_IOS)
 
 #include "ofxiOSExtras.h"
 #include "ofAppRunner.h"
@@ -33,7 +35,7 @@
 
 #pragma mark -
 #pragma mark Initialization
-- (id)init {
+- (instancetype)init {
 	self = [super init];
 	if (self) {
 		captureInput = nil;
@@ -51,8 +53,25 @@
 }
 
 - (BOOL)initCapture:(int)framerate capWidth:(int)w capHeight:(int)h{
-	NSArray * devices = [AVCaptureDevice devicesWithMediaType:AVMediaTypeVideo];
-	
+
+	NSMutableArray *deviceTypes = [NSMutableArray arrayWithObjects:AVCaptureDeviceTypeBuiltInWideAngleCamera,
+	AVCaptureDeviceTypeBuiltInTelephotoCamera,
+	AVCaptureDeviceTypeBuiltInUltraWideCamera,
+	AVCaptureDeviceTypeBuiltInDualCamera,
+	AVCaptureDeviceTypeBuiltInDualWideCamera,
+	AVCaptureDeviceTypeBuiltInTripleCamera,
+	AVCaptureDeviceTypeBuiltInTrueDepthCamera, nil];
+	if (@available(iOS 17.0, macCatalyst 17.0, tvOS 17.0, *)) {
+		if (&AVCaptureDeviceTypeContinuityCamera != nil) {
+			[deviceTypes addObject:AVCaptureDeviceTypeContinuityCamera];
+			[deviceTypes addObject:AVCaptureDeviceTypeBuiltInLiDARDepthCamera];
+			[deviceTypes addObject:AVCaptureDeviceTypeBuiltInTrueDepthCamera];
+			[deviceTypes addObject:AVCaptureDeviceTypeExternal];
+		}
+	}
+    AVCaptureDeviceDiscoverySession *discoverySession = [AVCaptureDeviceDiscoverySession discoverySessionWithDeviceTypes:deviceTypes mediaType:AVMediaTypeVideo position:AVCaptureDevicePositionUnspecified];
+
+    NSArray<AVCaptureDevice *> *devices = discoverySession.devices;
 	if([devices count] > 0) {
 		if(deviceID>[devices count]-1)
 			deviceID = [devices count]-1;
@@ -109,7 +128,6 @@
 		dispatch_queue_t queue;
 		queue = dispatch_queue_create("cameraQueue", NULL);
 		[captureOutput setSampleBufferDelegate:self queue:queue];
-		dispatch_release(queue);
 		
 		// Set the video output to store frame in BGRA (It is supposed to be faster)
 		NSString* key = (NSString*)kCVPixelBufferPixelFormatTypeKey; 
@@ -122,7 +140,7 @@
 		if(self.captureSession) {
 			self.captureSession = nil;
 		}
-		self.captureSession = [[[AVCaptureSession alloc] init] autorelease];
+		self.captureSession = [[AVCaptureSession alloc] init];
 		
 		[self.captureSession beginConfiguration]; 
 		
@@ -169,21 +187,16 @@
 		// In this example we set a min frame duration of 1/10 seconds so a maximum framerate of 10fps. We say that
 		// we are not able to process more than 10 frames per second.
 		// Called after added to captureSession
-        
-        if(IS_IOS_7_OR_LATER == false) {
-            if(IS_IOS_6_OR_LATER) {
-                #ifdef __IPHONE_6_0
-                AVCaptureConnection *conn = [captureOutput connectionWithMediaType:AVMediaTypeVideo];
-                if ([conn isVideoMinFrameDurationSupported] == YES &&
-                    [conn isVideoMaxFrameDurationSupported] == YES) { // iOS 6+
-                        [conn setVideoMinFrameDuration:CMTimeMake(1, framerate)];
-                        [conn setVideoMaxFrameDuration:CMTimeMake(1, framerate)];
-                }
-                #endif
-            } else { // iOS 5 or earlier
-                [captureOutput setMinFrameDuration:CMTimeMake(1, framerate)];
-            }
+        AVCaptureConnection *connection = [captureOutput connectionWithMediaType:AVMediaTypeVideo];
+        NSError *error = nil;
+        if ([device lockForConfiguration:&error]) {
+            device.activeVideoMinFrameDuration = CMTimeMake(1, framerate);
+            device.activeVideoMaxFrameDuration = CMTimeMake(1, framerate);
+            [device unlockForConfiguration];
+        } else {
+            NSLog(@"Error locking device for configuration: %@", error);
         }
+
 		// We start the capture Session
 		[self.captureSession commitConfiguration];		
 		[self.captureSession startRunning];
@@ -245,7 +258,27 @@
 
 -(std::vector <std::string>)listDevices{
     std::vector <std::string> deviceNames;
-	NSArray * devices = [AVCaptureDevice devicesWithMediaType:AVMediaTypeVideo];
+    NSArray<AVCaptureDevice *> *devices;
+	
+	NSMutableArray *deviceTypes = [NSMutableArray arrayWithObjects:AVCaptureDeviceTypeBuiltInWideAngleCamera,
+	AVCaptureDeviceTypeBuiltInTelephotoCamera,
+	AVCaptureDeviceTypeBuiltInUltraWideCamera,
+	AVCaptureDeviceTypeBuiltInDualCamera,
+	AVCaptureDeviceTypeBuiltInDualWideCamera,
+	AVCaptureDeviceTypeBuiltInTripleCamera,
+	AVCaptureDeviceTypeBuiltInTrueDepthCamera,
+							   nil
+	];
+	if (@available(iOS 17.0, macCatalyst 17.0, tvOS 17.0, *)) {
+		if (&AVCaptureDeviceTypeContinuityCamera != nil) {
+			[deviceTypes addObject:AVCaptureDeviceTypeContinuityCamera];
+			[deviceTypes addObject:AVCaptureDeviceTypeBuiltInLiDARDepthCamera];
+			[deviceTypes addObject:AVCaptureDeviceTypeBuiltInTrueDepthCamera];
+			[deviceTypes addObject:AVCaptureDeviceTypeExternal];
+		}
+	}
+	AVCaptureDeviceDiscoverySession *discoverySession = [AVCaptureDeviceDiscoverySession discoverySessionWithDeviceTypes:deviceTypes mediaType:AVMediaTypeVideo position:AVCaptureDevicePositionUnspecified];
+        devices = discoverySession.devices;
 	int i=0;
 	for (AVCaptureDevice * captureDevice in devices){
         deviceNames.push_back([captureDevice.localizedName UTF8String]);
@@ -293,8 +326,8 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
 				// Create a CGImageRef from the CVImageBufferRef
 				CGColorSpaceRef colorSpace	= CGColorSpaceCreateDeviceRGB(); 
 				
-				CGContextRef newContext		= CGBitmapContextCreate(baseAddress, widthIn, heightIn, 8, bytesPerRow, colorSpace, kCGBitmapByteOrder32Little | kCGImageAlphaPremultipliedFirst);
-				CGImageRef newImage			= CGBitmapContextCreateImage(newContext); 
+				CGContextRef newContext		= CGBitmapContextCreate(baseAddress, widthIn, heightIn, 8, bytesPerRow, colorSpace, (CGBitmapInfo)kCGBitmapByteOrder32Little | (CGBitmapInfo)kCGImageAlphaPremultipliedFirst);
+				CGImageRef newImage			= CGBitmapContextCreateImage(newContext);
 
 				CGImageRelease(currentFrame);	
 				currentFrame = CGImageCreateCopy(newImage);		
@@ -330,7 +363,6 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
 		if(captureOutput.sampleBufferDelegate != nil) {
 			[captureOutput setSampleBufferDelegate:nil queue:NULL];
 		}
-		[captureOutput release];
 		captureOutput = nil;
 	}
 	
@@ -346,7 +378,6 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
 		CGImageRelease(currentFrame);
 		currentFrame = nil;
 	}
-    [super dealloc];
 }
 
 - (void)eraseGrabberPtr {
@@ -376,7 +407,6 @@ AVFoundationVideoGrabber::~AVFoundationVideoGrabber(){
 		// Stop and release the the iOSVideoGrabber
 		[grabber stopCapture];
 		[grabber eraseGrabberPtr];
-		[grabber release];
 		grabber = nil;
 	}
 	clear();
@@ -460,13 +490,13 @@ void AVFoundationVideoGrabber::updatePixelsCB( CGImageRef & ref ){
 		
 		if(ofGetOrientation() == OF_ORIENTATION_DEFAULT) {
 			transform = CGAffineTransformMakeTranslation(0.0, height);
-			transform = CGAffineTransformRotate(transform, 3.0 * M_PI / 2.0);
+			transform = CGAffineTransformRotate(transform, glm::half_pi<float>() + glm::pi<float>());
 				
 			CGContextConcatCTM(spriteContext, transform);
 			CGContextDrawImage(spriteContext, CGRectMake(0.0, 0.0, (CGFloat)height, (CGFloat)width), ref);
 		} else if(ofGetOrientation() == OF_ORIENTATION_180) {
 			transform = CGAffineTransformMakeTranslation(width, 0.0);
-			transform = CGAffineTransformRotate(transform, M_PI / 2.0);
+			transform = CGAffineTransformRotate(transform, glm::half_pi<float>());
 			
 			CGContextConcatCTM(spriteContext, transform);
 			CGContextDrawImage(spriteContext, CGRectMake(0.0, 0.0, (CGFloat)height, (CGFloat)width), ref);
@@ -560,5 +590,5 @@ ofPixelFormat AVFoundationVideoGrabber::getPixelFormat() {
 }
 
 #endif
-
+#endif
 

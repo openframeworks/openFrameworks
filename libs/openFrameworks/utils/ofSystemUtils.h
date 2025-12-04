@@ -1,22 +1,24 @@
 #pragma once
-#include "ofConstants.h"
+
+#include "ofConstants.h" // fs::path
+#include <string>
 
 /// \class ofFileDialogResult
 /// \brief file dialog box selection or save result
 class ofFileDialogResult{
-	public:
-		ofFileDialogResult();
-		
-		/// \return the name of the selected file or directory, if set
-		/// currently returns only 1 file, this may change in the future
-		std::string getName();
-	
-		/// \return the full path of the selected file or directory, if set
-		std::string getPath();
-	
-		std::string filePath; ///< full path to selected file or directory
-		std::string fileName; ///< selected file or directory name
-		bool bSuccess; ///< true if the dialog action was successful, aka file select not cancel
+public:
+	ofFileDialogResult();
+
+	/// \return the name of the selected file or directory, if set
+	/// currently returns only 1 file, this may change in the future
+	std::string getName();
+
+	/// \return the full path of the selected file or directory, if set
+	std::string getPath();
+
+	std::string filePath = ""; ///< full path to selected file or directory
+	std::string fileName = ""; ///< selected file or directory name
+	bool bSuccess = false; ///< true if the dialog action was successful, aka file select not cancel
 };
 
 /// \brief show an error message in an alert dialog box

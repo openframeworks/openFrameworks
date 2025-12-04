@@ -3,7 +3,8 @@
 //  Created by Lukasz Karluk on 14/06/13.
 //  http://julapy.com/blog
 //
-
+#include "ofxiOSConstants.h"
+#ifdef TARGET_OF_IOS
 #include "ofxiOSSoundStreamDelegate.h"
 #include "ofLog.h"
 #include "ofSoundBuffer.h"
@@ -20,12 +21,12 @@
 
 @implementation ofxiOSSoundStreamDelegate
 
-- (id)init {
+- (instancetype)init {
     self = [super init];
     if(self) {
         inputBuffer = std::shared_ptr<ofSoundBuffer>(new ofSoundBuffer);
         outputBuffer = std::shared_ptr<ofSoundBuffer>(new ofSoundBuffer);
-	tickCount = 0;
+        tickCount = 0;
     }
     return self;
 }
@@ -33,10 +34,9 @@
 - (void)dealloc {
     inCallback = nullptr;
     outCallback = nullptr;
-    [super dealloc];
 }
 
-- (id)initWithSoundInputFn:(std::function<void(ofSoundBuffer &)>)fn {
+- (instancetype)initWithSoundInputFn:(std::function<void(ofSoundBuffer &)>)fn {
     self = [self init];
     if(self) {
         inCallback = fn;
@@ -44,7 +44,7 @@
     return self;
 }
 
-- (id)initWithSoundOutputFn:(std::function<void(ofSoundBuffer &)>)fn {
+- (instancetype)initWithSoundOutputFn:(std::function<void(ofSoundBuffer &)>)fn {
     self = [self init];
     if(self) {
         outCallback = fn;
@@ -105,3 +105,4 @@
 }
 
 @end
+#endif

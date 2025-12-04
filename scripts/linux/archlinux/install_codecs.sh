@@ -1,2 +1,2 @@
-pacman -Sy --needed mpg123 gst-plugins-ugly
+pacman -S --needed mpg123 gst-plugins-ugly
 

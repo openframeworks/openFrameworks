@@ -29,12 +29,12 @@
  *
  * ***********************************************************************/
 
-#include "ofxiOSAppDelegate.h"
-
-#if TARGET_OS_IOS || (TARGET_OS_IPHONE && !TARGET_OS_TV)
-
-#include "ofxiOSViewController.h"
-#include "ofxiOSExternalDisplay.h"
+#include "ofxiOSConstants.h"
+#if defined(OF_UI_KIT) && TARGET_OS_IOS || (TARGET_OS_IPHONE && !TARGET_OS_TV)
+#import "ofxiOSAppDelegate.h"
+#import "ofxiOSViewController.h"
+#import "ofxiOSGLKViewController.h"
+#import "ofxiOSExternalDisplay.h"
 #include "ofxiOSExtras.h"
 #include "ofxiOSAlerts.h"
 #include "ofxiOSEAGLView.h"
@@ -45,28 +45,23 @@
 
 @implementation ofxiOSAppDelegate
 
-@synthesize window;
-@synthesize externalWindow;
 @synthesize currentScreenIndex;
-
-@synthesize uiViewController;
 
 - (void)dealloc {
     self.window = nil;
 	self.externalWindow = nil;
 	self.uiViewController = nil;
-    [super dealloc];
 }
 
 - (void)applicationDidFinishLaunching:(UIApplication *)application {
 	
-    self.window = [[[UIWindow alloc] initWithFrame: [[UIScreen mainScreen] bounds]] autorelease];
+    self.window = [[UIWindow alloc] initWithFrame: [[UIScreen mainScreen] bounds]];
 	[self.window makeKeyAndVisible];
     
     currentScreenIndex = 0;
     
     // set the root application path
-    ofSetDataPathRoot([[NSString stringWithFormat:@"%@/", [[NSBundle mainBundle] resourcePath]] cStringUsingEncoding:NSUTF8StringEncoding]);
+    ofSetDataPathRoot(of::filesystem::path([[NSString stringWithFormat:@"%@/", [[NSBundle mainBundle] resourcePath]] cStringUsingEncoding:NSUTF8StringEncoding]));
     
 	// show or hide status bar depending on OF_WINDOW or OF_FULLSCREEN
     [[UIApplication sharedApplication] setStatusBarHidden:(ofxiOSGetOFWindow()->getWindowMode() == OF_FULLSCREEN)];
@@ -145,11 +140,11 @@
 			case METAL_KIT:
 				NSLog(@"No MetalKit yet supported for openFrameworks: Falling back to GLKit");
 			case GL_KIT:
-				self.uiViewController = (UIViewController*)[[[ofxiOSGLKViewController alloc] initWithFrame:frame app:(ofxiOSApp *)ofGetAppPtr() sharegroup:nil] autorelease];
+				self.uiViewController = (UIViewController *)[[ofxiOSGLKViewController alloc] initWithFrame:frame app:(ofxiOSApp *)ofGetAppPtr() sharegroup:nil];
 				break;
 			case CORE_ANIMATION:
 			default:
-				self.uiViewController = [[[ofxiOSViewController alloc] initWithFrame:frame app:(ofxiOSApp *)ofGetAppPtr() sharegroup:nil] autorelease];
+				self.uiViewController = [[ofxiOSViewController alloc] initWithFrame:frame app:(ofxiOSApp *)ofGetAppPtr() sharegroup:nil];
 				break;
 				
 		}
@@ -172,14 +167,22 @@
 		}
 		
         if(!bDoesHWOrientation) {
-			if([self.uiViewController respondsToSelector:@selector(rotateToInterfaceOrientation:animated:)]) {
-				[self.uiViewController rotateToInterfaceOrientation:UIInterfaceOrientationPortrait animated:false];
-			}
+            if([self.uiViewController isKindOfClass:ofxiOSViewController.class]) {
+                ofxiOSViewController *controller = (ofxiOSViewController*)self.uiViewController;
+                [controller rotateToInterfaceOrientation:UIInterfaceOrientationPortrait animated:false];
+            } else if([self.uiViewController isKindOfClass:ofxiOSGLKViewController.class]) {
+                ofxiOSGLKViewController *controller = (ofxiOSGLKViewController *)self.uiViewController;
+                [controller rotateToInterfaceOrientation:UIInterfaceOrientationPortrait animated:false];
+            }
 		} else {
           	[[UIApplication sharedApplication] setStatusBarOrientation:interfaceOrientation animated:NO];
-			if([self.uiViewController respondsToSelector:@selector(rotateToInterfaceOrientation:animated:)]) {
-				[self.uiViewController rotateToInterfaceOrientation:interfaceOrientation animated:false];
-			}
+            if([self.uiViewController isKindOfClass:ofxiOSViewController.class]) {
+                ofxiOSViewController *controller = (ofxiOSViewController*)self.uiViewController;
+                [controller rotateToInterfaceOrientation:UIInterfaceOrientationPortrait animated:false];
+            } else if([self.uiViewController isKindOfClass:ofxiOSGLKViewController.class]) {
+                ofxiOSGLKViewController *controller = (ofxiOSGLKViewController *)self.uiViewController;
+                [controller rotateToInterfaceOrientation:UIInterfaceOrientationPortrait animated:false];
+            }
 			ofSetOrientation(requested);
         }
         
@@ -239,11 +242,17 @@
 	if( [[[UIDevice currentDevice] systemVersion] compare:@"8.0" options:NSNumericSearch] == NSOrderedAscending ) {
 		//iOS7-
 		if(deviceOrientation != UIDeviceOrientationUnknown && deviceOrientation != UIDeviceOrientationFaceUp && deviceOrientation != UIDeviceOrientationFaceDown ) {
-			if([self.uiViewController respondsToSelector:@selector(isReadyToRotate)]) {
-				if([self.uiViewController isReadyToRotate]) {
-            		ofxiOSAlerts.deviceOrientationChanged( deviceOrientation );
-				}
-			}
+            if([self.uiViewController isKindOfClass:ofxiOSViewController.class]) {
+                ofxiOSViewController *controller = (ofxiOSViewController*)self.uiViewController;
+                if([controller isReadyToRotate]) {
+                    ofxiOSAlerts.deviceOrientationChanged( deviceOrientation );
+                }
+            } else if([self.uiViewController isKindOfClass:ofxiOSGLKViewController.class]) {
+                ofxiOSGLKViewController *controller = (ofxiOSGLKViewController *)self.uiViewController;
+                if([controller isReadyToRotate]) {
+                    ofxiOSAlerts.deviceOrientationChanged( deviceOrientation );
+                }
+            }
 		}
 	}else {
         ofxiOSAlerts.deviceOrientationChanged( deviceOrientation );
@@ -293,7 +302,7 @@
     externalScreenFrame = CGRectZero;
     externalScreenFrame.size = CGSizeMake(w, h);
     
-    self.externalWindow = [[[UIWindow alloc] initWithFrame:externalScreenFrame] autorelease];
+    self.externalWindow = [[UIWindow alloc] initWithFrame:externalScreenFrame];
     self.externalWindow.screen = externalScreen;
     self.externalWindow.clipsToBounds = YES;
     self.externalWindow.hidden = NO;
@@ -331,7 +340,7 @@
     externalScreenFrame = CGRectZero;
     externalScreenFrame.size = CGSizeMake(w, h);
     
-    self.externalWindow = [[[UIWindow alloc] initWithFrame:externalScreenFrame] autorelease];
+    self.externalWindow = [[UIWindow alloc] initWithFrame:externalScreenFrame];
     self.externalWindow.screen = externalScreen;
     self.externalWindow.clipsToBounds = YES;
     self.externalWindow.hidden = NO;

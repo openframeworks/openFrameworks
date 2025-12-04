@@ -1,11 +1,9 @@
 ofxAssimpModelLoader
+ofxGui
+ofxKinect
 ofxNetwork
 ofxOpenCv
 ofxOsc
-ofxXmlSettings
-ofxThreadedImageLoader
-ofxGui
-ofxKinect
 ofxSvg
-ofxPoco
-
+ofxThreadedImageLoader
+ofxXmlSettings

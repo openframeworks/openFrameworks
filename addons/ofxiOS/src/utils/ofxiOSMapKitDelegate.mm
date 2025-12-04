@@ -27,10 +27,11 @@
  * OF THE POSSIBILITY OF SUCH DAMAGE. 
  *
  * ***********************************************************************/
-
+#include "ofxiOSConstants.h"
+#if defined(OF_MAP_KIT)
 #include <TargetConditionals.h>
 
-#if TARGET_OS_IOS || (TARGET_OS_IPHONE && !TARGET_OS_TV)
+#if defined(TARGET_OS_IOS) || (TARGET_OS_IPHONE && !TARGET_OS_TV)
 
 #include "ofxiOSMapKitDelegate.h"
 #include "ofxiOSMapKit.h"
@@ -38,7 +39,7 @@
 
 @implementation ofxiOSMapKitDelegate
 
--(id)initWithMapKit:(ofxiOSMapKit*)mk {
+-(instancetype)initWithMapKit:(ofxiOSMapKit*)mk {
 	if(self = [super init]) {
 		mapKit = mk;
 		ofLogVerbose("ofxiOSMapKitDelegate") << "initWithMapKit";
@@ -48,7 +49,6 @@
 
 -(void)dealloc {
 	ofLogVerbose("ofxiOSMapKitDelegate") << "dealloc";
-	[super dealloc];
 }
 
 
@@ -78,4 +78,5 @@
 
 @end
 
+#endif
 #endif

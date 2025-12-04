@@ -19,7 +19,7 @@
 
 
 SHELL ?= /bin/sh
-OF_ROOT ?=  $(realpath ../../..)
+OF_ROOT ?= ../../..
 PLATFORM_VARIANT ?= default
 
 # ifeq ($(CC),$(EMSCRIPTEN)/emcc)
@@ -68,6 +68,7 @@ else
 	endif
 endif
 
+
 ifdef MAKEFILE_DEBUG
     $(info PLATFORM_ARCH=$(PLATFORM_ARCH))
     $(info PLATFORM_OS=$(PLATFORM_OS))
@@ -92,6 +93,8 @@ ifndef PLATFORM_LIB_SUBPATH
 			PLATFORM_LIB_SUBPATH=linux
 		else ifeq ($(PLATFORM_ARCH),i686)
 			PLATFORM_LIB_SUBPATH=linux
+		else ifeq ($(PLATFORM_ARCH),aarch64)
+			PLATFORM_LIB_SUBPATH=linuxaarch64
 		else
 			$(error This makefile does not support your architecture $(PLATFORM_ARCH))
 		endif
@@ -232,7 +235,12 @@ include $(OF_PLATFORM_MAKEFILES)/config.$(PLATFORM_LIB_SUBPATH).$(PLATFORM_VARIA
 ifdef ABI_PATH
 	ABI_LIB_SUBPATH=$(PLATFORM_LIB_SUBPATH)/$(strip $(ABI_PATH))
 else
+	#hack to get makefiles working again
+	ifeq ($(PLATFORM_LIB_SUBPATH),osx)
+		ABI_LIB_SUBPATH=macos
+	else
 	ABI_LIB_SUBPATH=$(PLATFORM_LIB_SUBPATH)
+	endif
 endif
 
 PLATFORM_PKG_CONFIG ?= pkg-config
@@ -262,9 +270,12 @@ CORE_EXCLUSIONS = $(strip $(PLATFORM_CORE_EXCLUSIONS))
 
 # find all of the source directories
 # grep -v "/\.[^\.]" will exclude all .hidden folders and files
-ALL_OF_CORE_SOURCE_PATHS=$(shell $(FIND) $(OF_LIBS_OPENFRAMEWORKS_PATH) -maxdepth 1 -mindepth 1 -type d | grep -v "/\.[^\.]" )
+ALL_OF_CORE_SOURCE_PATHS2=$(shell $(FIND) $(OF_LIBS_OPENFRAMEWORKS_PATH) -maxdepth 1 -mindepth 1 -type d | grep -v "/\.[^\.]" )
 
 # create a list of core source PATHS, filtering out any  items that have a match in the CORE_EXCLUSIONS list
+ALL_OF_CORE_SOURCE_PATHS = $(filter-out $(CORE_EXCLUSIONS),$(ALL_OF_CORE_SOURCE_PATHS2))
+
+
 OF_CORE_SOURCE_PATHS=$(filter-out $(CORE_EXCLUSIONS),$(ALL_OF_CORE_SOURCE_PATHS))
 
 # create our core include paths from the source directory paths,

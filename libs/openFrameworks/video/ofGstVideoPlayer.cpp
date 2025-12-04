@@ -12,8 +12,6 @@
 #include "ofConstants.h"
 #include "ofGstUtils.h"
 
-using namespace std;
-
 ofGstVideoPlayer::ofGstVideoPlayer(){
 	nFrames						= 0;
 	internalPixelFormat			= OF_PIXELS_RGB;
@@ -40,7 +38,7 @@ ofPixelFormat ofGstVideoPlayer::getPixelFormat() const {
 }
 
 
-bool ofGstVideoPlayer::createPipeline(string name){
+bool ofGstVideoPlayer::createPipeline(std::string name){
 #ifndef OF_USE_GST_GL
 #if GST_VERSION_MAJOR==0
 	GstCaps *caps;
@@ -101,24 +99,31 @@ bool ofGstVideoPlayer::createPipeline(string name){
 		break;
 	}
 #else
-	string mime="video/x-raw";
+	std::string mime="video/x-raw";
 
 	GstCaps *caps;
 	if(internalPixelFormat==OF_PIXELS_NATIVE){
 		caps = gst_caps_from_string((mime + ",format={RGBA,BGRA,RGB,BGR,RGB16,GRAY8,YV12,I420,NV12,NV21,YUY2}").c_str());
 	}else{
-		string format = ofGstVideoUtils::getGstFormatName(internalPixelFormat);
+		std::string format = ofGstVideoUtils::getGstFormatName(internalPixelFormat);
 		caps = gst_caps_new_simple(mime.c_str(),
 											"format", G_TYPE_STRING, format.c_str(),
 											NULL);
 	}
+    
 #endif
 
 	#if GST_VERSION_MAJOR==0
 		GstElement * gstPipeline = gst_element_factory_make("playbin2","player");
 	#else
-		GstElement * gstPipeline = gst_element_factory_make("playbin","player");
-	#endif
+        #if GST_VERSION_MAJOR==1 && GST_VERSION_MINOR > 18
+            //TODO: Fedora 35 onwards has issues with playbin - so using playbin3
+            //TODO: Check future GStreamer versions and potentially return to "playbin", or use a different approach to create the pipeline.
+            GstElement * gstPipeline = gst_element_factory_make("playbin3","player");
+        #else
+            GstElement * gstPipeline = gst_element_factory_make("playbin","player");
+        #endif
+    #endif
 	g_object_ref_sink(gstPipeline);
 	g_object_set(G_OBJECT(gstPipeline), "uri", name.c_str(), (void*)NULL);
 
@@ -182,15 +187,17 @@ bool ofGstVideoPlayer::createPipeline(string name){
 #endif
 }
 
-void ofGstVideoPlayer::loadAsync(string name){
+void ofGstVideoPlayer::loadAsync(const of::filesystem::path & fileName){
 	bAsyncLoad = true;
-	load(name);
+	load(fileName);
 }
 
-bool ofGstVideoPlayer::load(string name){
-	if( name.find( "file://",0 ) != string::npos){
+// FIXME: fs::path
+bool ofGstVideoPlayer::load(const of::filesystem::path & fileName){
+	std::string name { ofPathToString(fileName) };
+	if( name.find( "file://",0 ) != std::string::npos){
 		bIsStream = bAsyncLoad;
-	}else if( name.find( "://",0 ) == string::npos){
+	}else if( name.find( "://",0 ) == std::string::npos){
 		GError * err = NULL;
 		gchar* name_ptr = gst_filename_to_uri(ofToDataPath(name).c_str(),&err);
 		name = name_ptr;

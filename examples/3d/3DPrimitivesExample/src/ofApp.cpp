@@ -10,7 +10,7 @@ void ofApp::setup(){
 	ofDisableArbTex();
 	texture.load("of.png");
 	texture.getTexture().setTextureWrap( GL_REPEAT, GL_REPEAT );
-	vidGrabber.setup(640, 480, true);
+	vidGrabber.setup(640, 480);
 
 	bFill       = true;
 	bWireframe  = true;
@@ -124,7 +124,7 @@ void ofApp::draw() {
 		// x = columns, y = rows //
 		glm::vec2 planeDims = plane.getResolution();
 		float planeAngleX = ofGetElapsedTimef()*3.6;
-		float planeAngleInc = 3.f / (float)planeDims.x;  
+		float planeAngleInc = 3.f / (float)planeDims.x;
 		glm::vec3 vert;
 		for (size_t i = 0; i < deformPlane.getNumIndices(); i++) {
 			planeAngleX += planeAngleInc;
@@ -178,7 +178,7 @@ void ofApp::draw() {
 			box.transformGL();
 			for (int i = 0; i < ofBoxPrimitive::SIDES_TOTAL; i++) {
 				ofPushMatrix();
-				ofTranslate(boxSides[i].getNormal(0) * sin(ofGetElapsedTimef()) * 50);
+				ofTranslate(boxSides[i].getNormal(0) * sin(ofGetElapsedTimef()) * 50.0f);
 				boxSides[i].draw();
 				ofPopMatrix();
 			}
@@ -240,7 +240,7 @@ void ofApp::draw() {
 
 
 	// ICO Sphere //
-	
+
 	icoSphere.rotateDeg(spinX, 1.0, 0.0, 0.0);
 	icoSphere.rotateDeg(spinY, 0, 1.0, 0.0);
 
@@ -294,13 +294,13 @@ void ofApp::draw() {
 			cylinder.transformGL();
 			ofPushMatrix(); {
 				if (topCap.getNumNormals() > 0) {
-					ofTranslate(topCap.getNormal(0) * (cos(ofGetElapsedTimef() * 5) + 1)*.5f * 100);
+					ofTranslate(topCap.getNormal(0) * (cos(ofGetElapsedTimef() * 5) + 1)*.5f * 100.0f);
 					topCap.draw();
 				}
 			} ofPopMatrix();
 			ofPushMatrix(); {
 				if (bottomCap.getNumNormals() > 0) {
-					ofTranslate(bottomCap.getNormal(0) * (cos(ofGetElapsedTimef() * 4) + 1)*.5f * 100);
+					ofTranslate(bottomCap.getNormal(0) * (cos(ofGetElapsedTimef() * 4) + 1)*.5f * 100.0f);
 					bottomCap.draw();
 				}
 			} ofPopMatrix();
@@ -341,8 +341,8 @@ void ofApp::draw() {
 			cone.transformGL();
 			ofPushMatrix();
 			if (bottomCap.getNumNormals() > 0) {
-				ofTranslate(bottomCap.getNormal(0) * cone.getHeight()*.5);
-				ofRotateDeg(sin(ofGetElapsedTimef() * 5) * RAD_TO_DEG, 1, 0, 0);
+				ofTranslate(bottomCap.getNormal(0) * (float)cone.getHeight()*.5f);
+				ofRotateDeg( glm::degrees( sin(ofGetElapsedTimef() * 5) ), 1, 0, 0);
 				bottomCap.draw();
 			}
 			ofPopMatrix();
@@ -411,7 +411,7 @@ void ofApp::draw() {
 	ofFill();
 
 	cam.end();
-	
+
 	ofSetDrawBitmapMode(OF_BITMAPMODE_MODEL_BILLBOARD);
 
 	ofDrawBitmapStringHighlight("ofPlanePrimitive"	, glm::vec3(-90,-160,0) + cam.worldToScreen(plane.getGlobalPosition()) );

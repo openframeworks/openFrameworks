@@ -1,14 +1,22 @@
 #pragma once
 
-#include "ofConstants.h"
-#include "glm/mat4x4.hpp"
 #include "ofGraphicsBaseTypes.h"
+// MARK: Targets, some can be moved to cpp, GLEW also
+#include "ofConstants.h"
+
+#if !defined(GLM_FORCE_CTOR_INIT)
+	#define GLM_FORCE_CTOR_INIT
+#endif
+#if !defined(GLM_ENABLE_EXPERIMENTAL)
+	#define GLM_ENABLE_EXPERIMENTAL
+#endif
+#include <glm/mat4x4.hpp>
+#include "ofGLUtils.h"
 
 class ofRectangle;
 
 template<typename T>
 class ofPixels_;
-
 typedef ofPixels_<unsigned char> ofPixels;
 typedef ofPixels_<unsigned short> ofShortPixels;
 typedef ofPixels_<float> ofFloatPixels;
@@ -99,7 +107,8 @@ void ofDisableNormalizedTexCoords();
 ///
 /// \param wrapS wrap parameter for texture coordinate s.
 /// \param wrapT wrap parameter for texture coordinate t.
-OF_DEPRECATED_MSG("Use member method ofTexture::setTextureWrap() instead.",void ofSetTextureWrap(GLfloat wrapS = GL_CLAMP_TO_EDGE, GLfloat wrapT = GL_CLAMP_TO_EDGE));
+[[deprecated("Use member method ofTexture::setTextureWrap()")]]
+void ofSetTextureWrap(GLfloat wrapS = GL_CLAMP_TO_EDGE, GLfloat wrapT = GL_CLAMP_TO_EDGE);
 
 /// \brief Check whether OF is using custom global texture wrapping.
 ///
@@ -107,7 +116,8 @@ OF_DEPRECATED_MSG("Use member method ofTexture::setTextureWrap() instead.",void 
 ///
 /// \sa ofSetTextureWrap()
 /// \returns true if OF is currently using custom global texture wrapping. 
-OF_DEPRECATED_MSG("Use member method ofTexture::setTextureWrap() instead.",bool ofGetUsingCustomTextureWrap());
+[[deprecated("Use member method ofTexture::setTextureWrap()")]]
+bool ofGetUsingCustomTextureWrap();
 
 /// \brief Removes global custom texture wrapping.
 ///
@@ -116,7 +126,8 @@ OF_DEPRECATED_MSG("Use member method ofTexture::setTextureWrap() instead.",bool 
 /// \warning Deprecated. Use member methods instead.
 ///
 /// \sa ofSetTextureWrap()
-OF_DEPRECATED_MSG("Use member method ofTexture::setTextureWrap() instead.",void ofRestoreTextureWrap());
+[[deprecated("Use member method ofTexture::setTextureWrap()")]]
+void ofRestoreTextureWrap();
 
 /// \brief Set custom global texture minification/magnification scaling filters.
 ///
@@ -128,18 +139,21 @@ OF_DEPRECATED_MSG("Use member method ofTexture::setTextureWrap() instead.",void 
 /// \sa ofTexture::setTextureMinMagFilter()
 /// \param minFilter minifying filter for scaling a pixel to a smaller area.
 /// \param magFilter magnifying filter for scaling a pixel to a larger area.
-OF_DEPRECATED_MSG("Use member method ofTexture::setTextureMinMagFilter() instead.",void ofSetMinMagFilters(GLfloat minFilter = GL_LINEAR, GLfloat magFilter = GL_LINEAR));
+[[deprecated("Use member method ofTexture::setTextureMinMagFilter()")]]
+void ofSetMinMagFilters(GLfloat minFilter = GL_LINEAR, GLfloat magFilter = GL_LINEAR);
 
 /// \brief Check whether OF is using custom global texture scaling filters.
 /// \returns true if OF is currently using custom texture scaling filters.
 /// \warning Deprecated. Use member methods instead.
-OF_DEPRECATED_MSG("Use member method ofTexture::setTextureMinMagFilter() instead.",bool ofGetUsingCustomMinMagFilters());
+[[deprecated("Use member method ofTexture::setTextureMinMagFilter()")]]
+bool ofGetUsingCustomMinMagFilters();
 
 /// \brief Removes global custom texture wrapping.
 ///
 /// Restores individual ofTexture min mag filter settings.
 /// \warning Deprecated. Use member methods instead.
-OF_DEPRECATED_MSG("Use member method ofTexture::setTextureMinMagFilter() instead.",void ofRestoreMinMagFilters());
+[[deprecated("Use member method ofTexture::setTextureMinMagFilter()")]]
+void ofRestoreMinMagFilters();
 
 /// \brief Texture compression types.
 ///
@@ -166,8 +180,12 @@ public:
 #ifndef TARGET_OPENGLES
 		glInternalFormat = GL_RGB8;
 		textureTarget = GL_TEXTURE_RECTANGLE_ARB;
-#else
+#elif defined(TARGET_OPENGLES)
+	#if defined(GL_RGB16F)
+		glInternalFormat = GL_RGB16F;
+	#else
 		glInternalFormat = GL_RGB;
+	#endif
 		textureTarget = GL_TEXTURE_2D;
 #endif
 
@@ -423,7 +441,8 @@ class ofTexture : public ofBaseDraws {
 	/// Legacy function for backwards compatibility.
 	///
 	/// \returns true if the texture has been allocated.
-	OF_DEPRECATED_MSG("Use isAllocated instead",bool bAllocated() const);
+	[[deprecated("Use isAllocated")]]
+	bool bAllocated() const;
 
 	/// \brief Destroy an ofTexture instance.
 	///
@@ -937,6 +956,7 @@ class ofTexture : public ofBaseDraws {
 	/// \internal
 	ofTextureData texData; ///< Internal texture data access.
 	                       ///< For backwards compatibility.
+
 
 protected:
 

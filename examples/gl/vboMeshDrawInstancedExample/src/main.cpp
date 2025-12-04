@@ -1,7 +1,6 @@
 #include "ofMain.h"
 #include "ofApp.h"
 
-
 // by default this example will run in OpenGL 2.0, see ofApp.h for running it
 // in OpenGL 3.2
 
@@ -16,56 +15,18 @@
 int main( ){
 	
 
-	ofGLWindowSettings glWindowSettings;
-
-#ifdef USE_PROGRAMMABLE_GL
-	// we are using the programmable gl renderer.
-
-	glWindowSettings.setGLVersion(3, 2);
-	ofCreateWindow(glWindowSettings);			// <-------- setup the GL context
-
-#else
-	// we are not using the progammable gl renderer.
+	//Use ofGLFWWindowSettings for more options like multi-monitor fullscreen
+	ofGLWindowSettings settings;
+	settings.setSize(1024, 768);
 	
-	// when we are not using the programmable gl renderer it is not safe to assume
-	// out current gl context provides us with the necessary openGL extensions to
-	// run this example.
+	#ifdef USE_PROGRAMMABLE_GL
+		settings.setGLVersion(3,2);
+	#endif
 	
-	// let's check if the current openGL context provides us with glDrawElementsInstanced
-	// we do this after we have initialised our openGL context.
+	settings.windowMode = OF_WINDOW; //can also be OF_FULLSCREEN
 
-	glWindowSettings.setGLVersion(2, 1);
-	ofCreateWindow(glWindowSettings);			// <-------- setup the GL context
-	
-	ostringstream extStr;
-	extStr << (char*)glGetString(GL_EXTENSIONS);		// first get all available extensions.
-	string extensionsAvailable = extStr.str();
-	
-	
-	if (ofStringTimesInString(extensionsAvailable, "GL_ARB_draw_instanced") == 0)
-		{
-			ofLogFatalError("App") << " GL_ARB_draw_instanced is needed for this example but it is not supported by your graphics card. Exiting App.";
-			return -1;
+	auto window = ofCreateWindow(settings);
 
-		} else {
-			
-			// GL_ARB_draw_instanced is available... so far so good.
-			
-			// either one of these is needed, too:
-			if (ofStringTimesInString(extensionsAvailable, "GL_EXT_gpu_shader4") == 0 &&
-				ofStringTimesInString(extensionsAvailable, "NV_vertex_program4") == 0 )
-			{
-				ofLogFatalError("App") << " GL_EXT_gpu_shader4 or NV_vertex_program4 is needed for this example but it is not supported by your graphics card. Exiting App.";
-				return -1;
-
-			}
-
-		}
-#endif
-	
-	// this kicks off the running of my app
-	// can be OF_WINDOW or OF_FULLSCREEN
-	// pass in width and height too:
-	ofRunApp(new ofApp());
-
+	ofRunApp(window, std::make_shared<ofApp>());
+	ofRunMainLoop();
 }

@@ -29,9 +29,10 @@
  * ***********************************************************************/ 
 
 #pragma once
-
+#include "ofxiOSConstants.h"
+#if defined(OF_MAP_KIT)
 #include <TargetConditionals.h>
-#if TARGET_OS_IOS || (TARGET_OS_IPHONE && !TARGET_OS_TV)
+#if defined(TARGET_OS_IOS) || (TARGET_OS_IPHONE && !TARGET_OS_TV)
 
 #import <MapKit/MapKit.h>
 
@@ -41,7 +42,7 @@ class ofxiOSMapKit;
 	ofxiOSMapKit*					mapKit;
 }
 
--(id)initWithMapKit:(ofxiOSMapKit*)mk;
+-(instancetype)initWithMapKit:(ofxiOSMapKit*)mk;
 -(void)dealloc;
 
 - (void)mapView:(MKMapView *)mapView regionDidChangeAnimated:(BOOL)animated;
@@ -52,4 +53,5 @@ class ofxiOSMapKit;
 
 @end
 
+#endif
 #endif

@@ -2,6 +2,8 @@
 #pragma once
 
 #import "ESRenderer.h"
+#include "ofxiOSConstants.h"
+#if defined(OF_UI_KIT) && defined(OF_GL_KIT)
 #import <OpenGLES/ES2/gl.h>
 #import <OpenGLES/ES2/glext.h>
 
@@ -26,11 +28,11 @@
     bool bResize;
 }
 
-- (id)initWithDepth:(bool)depth
-              andAA:(bool)msaa
-     andMSAASamples:(int)samples
-          andRetina:(bool)retina
-         sharegroup:(EAGLSharegroup*)sharegroup;
+- (instancetype)initWithDepth:(bool)depth
+                        andAA:(bool)msaa
+               andMSAASamples:(int)samples
+                    andRetina:(bool)retina
+                   sharegroup:(EAGLSharegroup*)sharegroup;
 - (void)startRender;
 - (void)finishRender;
 - (BOOL)resizeFromLayer:(CAEAGLLayer *)layer;
@@ -42,4 +44,4 @@
 - (NSInteger)getHeight;
 
 @end
-
+#endif

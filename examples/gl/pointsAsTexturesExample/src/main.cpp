@@ -1,21 +1,25 @@
 #include "ofMain.h"
 #include "ofApp.h"
-#ifdef TARGET_OPENGLES
-#include "ofGLProgrammableRenderer.h"
+#if defined TARGET_OPENGLES && not defined TARGET_EMSCRIPTEN
+	#include "ofGLProgrammableRenderer.h"
 #endif
 //========================================================================
 int main( ){
 
 	ofSetLogLevel(OF_LOG_VERBOSE);
-	#ifdef TARGET_OPENGLES
-    ofSetCurrentRenderer(ofGLProgrammableRenderer::TYPE);
+	#if defined TARGET_OPENGLES && not defined TARGET_EMSCRIPTEN
+		ofSetCurrentRenderer(ofGLProgrammableRenderer::TYPE);
 	#endif
 
-	ofSetupOpenGL(1024,768, OF_WINDOW);			// <-------- setup the GL context
+	//Use ofGLFWWindowSettings for more options like multi-monitor fullscreen
+	ofGLWindowSettings settings;
+	settings.setGLVersion(3, 2);
+	settings.setSize(1024, 768);
+	settings.windowMode = OF_WINDOW; //can also be OF_FULLSCREEN
 
-	// this kicks off the running of my app
-	// can be OF_WINDOW or OF_FULLSCREEN
-	// pass in width and height too:
-	ofRunApp( new ofApp());
+	auto window = ofCreateWindow(settings);
+
+	ofRunApp(window, std::make_shared<ofApp>());
+	ofRunMainLoop();
 
 }

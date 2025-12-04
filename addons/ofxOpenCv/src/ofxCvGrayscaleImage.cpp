@@ -66,10 +66,10 @@ void ofxCvGrayscaleImage::setFromPixels( const unsigned char* _pixels, int w, in
     if( !bAllocated || w != width || h != height ) {
 		if ( !bAllocated ){
 			ofLogNotice("ofxCvGrayscaleImage") << "setFromPixels(): allocating to match dimensions: "
-				<< width << " " << height;
+				<< w << " " << h;
 		}else{
 			ofLogNotice("ofxCvGrayScaleImage") << "setFromPixels(): reallocating to match dimensions: "
-				<< width << " " << height;
+				<< w << " " << h;
 		}
 		allocate(w,h);
 	}

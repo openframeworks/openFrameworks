@@ -4,17 +4,18 @@ if [ $EUID != 0 ]; then
 	echo "this script must be run as root"
 	echo ""
 	echo "usage:"
-	echo "su -"
-	echo "./install_dependencies.sh"
+	echo "sudo ./install_dependencies.sh"
 	exit $exit_code
    exit 1
 fi
 
-pacman -Sy --needed make pkgconf gcc openal glew freeglut freeimage gstreamer gst-plugins-base gst-plugins-good gst-plugins-bad gst-libav opencv libxcursor assimp boost glfw-x11 uriparser curl pugixml rtaudio poco
+ROOT=$(cd $(dirname $0); pwd -P)
+
+pacman -S --needed make pkgconf gcc openal glew freeglut freeimage gstreamer gst-plugins-base gst-plugins-good gst-plugins-bad gst-libav opencv libxcursor assimp glfw-x11 uriparser curl pugixml rtaudio poco brotli
 
 exit_code=$?
 if [ $exit_code != 0 ]; then
-	echo "error installing packages, there could be an error with your internet connection"
+	echo "error installing packages, there could be an error with your internet connection, or you system might be too out of date (run pacman -Syu before running this script)"
 	exit $exit_code
 fi
 

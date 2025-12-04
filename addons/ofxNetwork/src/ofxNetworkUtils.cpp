@@ -3,13 +3,18 @@
 #include "ofUtils.h"
 
 
-
-int ofxNetworkCheckErrno(const char* file, int line) {
+//-----------------------------------------------------------------
+int ofxNetworkGetLastError(){
 	#ifdef TARGET_WIN32
-		int	err	= WSAGetLastError();
+		return WSAGetLastError();
 	#else
-		int err = errno;
+		return errno;
 	#endif
+}
+
+
+//-----------------------------------------------------------------
+void ofxNetworkLogError(int err, const char* file, int line){
 	switch(err){
 	case 0:
 		break;
@@ -111,6 +116,12 @@ int ofxNetworkCheckErrno(const char* file, int line) {
 		ofLogVerbose("ofxNetwork") << file << ": " << line << " unknown error: " << err << " see errno.h for description of the error";
 		break;
 	}
+}
 
+
+//-----------------------------------------------------------------
+int ofxNetworkCheckErrno(const char* file, int line) {
+	int err = ofxNetworkGetLastError();
+	ofxNetworkLogError( err, file, line );
 	return err;
 }

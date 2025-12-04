@@ -15,6 +15,8 @@
 //
 
 #import "SoundInputStream.h"
+#include "ofxiOSConstants.h"
+#if defined(TARGET_OF_IOS) && defined(OF_UI_KIT)
 #import <AVFoundation/AVFoundation.h>
 
 typedef struct {
@@ -84,9 +86,9 @@ static OSStatus soundInputStreamRenderCallback(void *inRefCon,
 //----------------------------------------------------------------
 @implementation SoundInputStream
 
-- (id)initWithNumOfChannels:(NSInteger)value0
-             withSampleRate:(NSInteger)value1
-             withBufferSize:(NSInteger)value2 {
+- (instancetype)initWithNumOfChannels:(NSInteger)value0
+                       withSampleRate:(NSInteger)value1
+                       withBufferSize:(NSInteger)value2 {
     self = [super initWithNumOfChannels:value0
                          withSampleRate:value1
                          withBufferSize:value2];
@@ -99,7 +101,6 @@ static OSStatus soundInputStreamRenderCallback(void *inRefCon,
 
 - (void)dealloc {
     [self stop];
-    [super dealloc];
 }
 
 - (void)start {
@@ -238,3 +239,4 @@ static OSStatus soundInputStreamRenderCallback(void *inRefCon,
 }
 
 @end
+#endif

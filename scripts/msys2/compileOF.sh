@@ -17,13 +17,6 @@ while getopts tj: opt ; do
 	esac
 done
 
-if [ "${MSYSTEM:0:5}" != "MINGW" ]
-then
-	echo "This is not a MINGW(32|64) shell!"
-	echo "Please launch compileOF.sh from a MINGW(32|64) shell."
-	exit 1
-fi
-
 cd ${SCRIPTPATH}/../../libs/openFrameworksCompiled/project
 
 if [ -v CI ]; then

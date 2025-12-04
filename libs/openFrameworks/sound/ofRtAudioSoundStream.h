@@ -1,7 +1,6 @@
 #pragma once
-
 #include "ofConstants.h"
-
+#if defined(OF_RTAUDIO)
 #include "ofSoundBaseTypes.h"
 #include "ofSoundBuffer.h"
 
@@ -44,3 +43,4 @@ private:
 	static int rtAudioCallback(void *outputBuffer, void *inputBuffer, unsigned int bufferSize, double streamTime, RtAudioStreamStatus status, void *data);
 
 };
+#endif

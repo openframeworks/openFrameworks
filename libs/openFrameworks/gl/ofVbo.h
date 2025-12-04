@@ -1,10 +1,12 @@
+#pragma once
+
 //TODO: Add edge flags?
 
-#pragma once
-#include "ofConstants.h"
 #include "ofGraphicsConstants.h"
 #include "ofBufferObject.h"
-#include <map>
+// FIXME: Targets but it can be optional
+#include "ofConstants.h"
+#include <unordered_map>
 
 template<typename T>
 class ofColor_;
@@ -204,7 +206,7 @@ private:
 	VertexAttribute colorAttribute;
 	VertexAttribute texCoordAttribute;
 	VertexAttribute normalAttribute;
-	std::map<int,VertexAttribute> customAttributes;
+	std::unordered_map<int,VertexAttribute> customAttributes;
 	
 	static bool vaoChecked;
 	static bool vaoSupported;

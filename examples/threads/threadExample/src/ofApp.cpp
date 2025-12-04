@@ -4,6 +4,7 @@
 void ofApp::setup(){
 	threadedObject.setup();
 	doLock = false;
+	ofLogNotice("main thread Id") << ofGetMainThreadId();
 }
 
 //--------------------------------------------------------------
@@ -39,6 +40,12 @@ void ofApp::draw(){
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
 	if (key == 'a'){
+		if (ofIsCurrentThreadTheMainThread()) {
+			ofLogNotice("ofApp::keyPressed") << "processed in main thread";
+		} else {
+			// will never happen but to document the branch:
+			ofLogNotice("ofApp::keyPressed") << "processed in other thread";
+		}
 		threadedObject.start();
 	}else if (key == 's'){
 		threadedObject.stop();

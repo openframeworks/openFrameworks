@@ -8,8 +8,8 @@ public:
 	ofxEmscriptenSoundPlayer();
 	~ofxEmscriptenSoundPlayer();
 
-
-	bool load(const std::filesystem::path& fileName, bool stream = false);
+	bool load(const of::filesystem::path& fileName, bool stream = false);
+//	bool load(const std::string& fileName, bool stream = false);
 	void unload();
 	void play();
 	void stop();
@@ -30,7 +30,9 @@ public:
 	float getPan() const;
 	bool isLoaded() const;
 	float getVolume() const;
-	int getDurationMS() const;
+	
+	float getDuration() const;
+	unsigned int getDurationMS() const;
 	double getDurationSecs() const;
 
 	static float * getSystemSpectrum(int bands);
@@ -39,9 +41,10 @@ private:
 	void setPositionSecs(double s);
 	static std::vector<float> systemSpectrum;
 	int context;
-	int sound;
 	bool multiplay;
-	float speed;
 	float volume;
+	float speed;
+	float pan;
 	bool playing;
+	int player_id;
 };

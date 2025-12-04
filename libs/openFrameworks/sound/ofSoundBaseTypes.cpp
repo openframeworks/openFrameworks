@@ -22,21 +22,33 @@ std::string toString(ofSoundDevice::Api api){
 		case ofSoundDevice::MS_DS:
 			return "MS DirectShow";
 		default:
-			return "Unkown API";
+			return "Unknown API";
 	}
 }
 
 
 void ofBaseSoundStream::printDeviceList() const {
 	ofLogNotice("ofBaseSoundStream::printDeviceList") << std::endl;
-	for(int i=ofSoundDevice::ALSA; i<ofSoundDevice::NUM_APIS; ++i){
-		ofSoundDevice::Api api = (ofSoundDevice::Api)i;
+#ifndef TARGET_EMSCRIPTEN
+	std::vector<ofSoundDevice::Api> platformApis;
+#ifdef TARGET_LINUX
+	platformApis = { ofSoundDevice::ALSA, ofSoundDevice::PULSE, ofSoundDevice::OSS, ofSoundDevice::JACK };
+#elif defined(TARGET_OSX)
+	platformApis = { ofSoundDevice::OSX_CORE };
+#elif defined(TARGET_WIN32)
+	platformApis = { ofSoundDevice::MS_WASAPI, ofSoundDevice::MS_ASIO, ofSoundDevice::MS_DS };
+#endif
+	for (auto api : platformApis) {
 		auto devices = getDeviceList(api);
-		if(!devices.empty()){
-				ofLogNotice("ofBaseSoundStream::printDeviceList") << "Api: " << toString(api);
-				ofLogNotice("ofBaseSoundStream::printDeviceList") << devices;
+		if (!devices.empty()) {
+			ofLogNotice("ofBaseSoundStream::printDeviceList") << "Api: " << toString(api);
+			ofLogNotice("ofBaseSoundStream::printDeviceList") << devices;
 		}
 	}
+#else
+	ofSoundDevice::Api api = (ofSoundDevice::Api)0;
+	getDeviceList(api); // only trigger the java script function once.
+#endif
 }
 
 //------------------------------------------------------------

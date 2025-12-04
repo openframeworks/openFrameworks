@@ -1,9 +1,8 @@
-#include "ofPixels.h"
 #include "ofGraphicsConstants.h"
-#include "glm/common.hpp"
-#include <cstring>
-
-using namespace std;
+#include "ofPixels.h"
+#include "ofColor.h"
+#include <string.h> // memcpy
+#include <functional> // std::function
 
 static ofImageType getImageTypeFromChannels(size_t channels){
 	switch(channels){
@@ -146,6 +145,8 @@ static size_t channelsFromPixelFormat(ofPixelFormat format){
 		return 1;
 		break;
 	case OF_PIXELS_GRAY_ALPHA:
+
+	// FIXME: this is not true for OF_PIXELS_RGB565. it has 3 channels and 2 bytes.
 	case OF_PIXELS_RGB565:
 		return 2;
 		break;
@@ -169,7 +170,7 @@ static size_t channelsFromPixelFormat(ofPixelFormat format){
 		return 2;
 		break;
 	default:
-		ofLog(OF_LOG_ERROR,"ofPixels: format doesn't support channels");
+        ofLogError("ofPixels")  << "format doesn't support channels";
 		return 1;
 	}
 }
@@ -186,7 +187,7 @@ static ofPixelFormat ofPixelFormatFromImageType(ofImageType type){
 		return OF_PIXELS_RGBA;
 		break;
 	default:
-		ofLog(OF_LOG_ERROR,"ofPixels: image type not supported");
+        ofLogError("ofPixels")  << "image type not supported";
 		return OF_PIXELS_UNKNOWN;
 	}
 }
@@ -208,12 +209,12 @@ static ofImageType ofImageTypeFromPixelFormat(ofPixelFormat pixelFormat){
 	case OF_PIXELS_UNKNOWN:
 		return OF_IMAGE_UNDEFINED;
 	default:
-		ofLog(OF_LOG_ERROR,"ofPixels: image type not supported");
+        ofLogError("ofPixels")  <<  "image type not supported";
 		return OF_IMAGE_UNDEFINED;
 	}
 }
 
-string ofToString(ofPixelFormat pixelFormat){
+std::string ofToString(ofPixelFormat pixelFormat){
 	switch(pixelFormat){
 		case OF_PIXELS_RGB:
 			return "RGB";
@@ -396,10 +397,10 @@ template<typename PixelType>
 void ofPixels_<PixelType>::setFromExternalPixels(PixelType * newPixels, size_t w, size_t h, ofPixelFormat _pixelFormat){
 	clear();
 	pixelFormat = _pixelFormat;
-	width= w;
+	width = w;
 	height = h;
 
-	pixelsSize = bytesFromPixelFormat(w,h,_pixelFormat) / sizeof(PixelType);
+	pixelsSize = w * h * getNumChannels();
 
 	pixels = newPixels;
 	pixelsOwner = false;
@@ -516,8 +517,8 @@ void ofPixels_<PixelType>::allocate(size_t w, size_t h, ofPixelFormat format){
 		return;
 	}
 
-	size_t newSize = bytesFromPixelFormat(w,h,format);
-	size_t oldSize = getTotalBytes();
+	size_t newSize = w * h * pixelBitsFromPixelFormat(format);
+	size_t oldSize = width * height * pixelBitsFromPixelFormat(pixelFormat);
 	//we check if we are already allocated at the right size
 	if(bAllocated && newSize==oldSize){
 		pixelFormat = format;
@@ -533,9 +534,12 @@ void ofPixels_<PixelType>::allocate(size_t w, size_t h, ofPixelFormat format){
 	width 		= w;
 	height 		= h;
 
-	pixelsSize = newSize / sizeof(PixelType);
+	pixelsSize = w * h * getNumChannels();
 
+	// we have some incongruence here, if we use PixelType
+	// we are not able to use RGB565 format
 	pixels = new PixelType[pixelsSize];
+//	pixels = new uint8_t[newSize];
 	bAllocated = true;
 	pixelsOwner = true;
 }
@@ -586,11 +590,11 @@ void ofPixels_<PixelType>::clear(){
 		pixels = nullptr;
 	}
 
-	width			= 0;
-	height			= 0;
-	pixelFormat		= OF_PIXELS_UNKNOWN;
-	pixelsSize		= 0;
-	bAllocated		= false;
+	width = 0;
+	height = 0;
+	pixelFormat = OF_PIXELS_UNKNOWN;
+	pixelsSize = 0;
+	bAllocated = false;
 }
 
 template<typename PixelType>
@@ -1326,6 +1330,9 @@ float ofPixels_<PixelType>::bicubicInterpolate (const float *patch, float x,floa
 	a20 * x2 + a21 * x2 * y + a22 * x2 * y2 + a23 * x2 * y3 +
 	a30 * x3 + a31 * x3 * y + a32 * x3 * y2 + a33 * x3 * y3;
 
+	if (std::is_floating_point<PixelType>::value) {
+		return std::min(1.0f, std::max(out, 0.0f));
+	}
 	return std::min(static_cast<size_t>(255), std::max(static_cast<size_t>(out), static_cast<size_t>(0)));
 }
 
@@ -1359,8 +1366,8 @@ bool ofPixels_<PixelType>::resizeTo(ofPixels_<PixelType>& dst, ofInterpolationMe
 				float srcx = 0.5;
 				size_t srcIndex = static_cast<size_t>(srcy) * srcWidth;
 				for (size_t dstx=0; dstx<dstWidth; dstx++){
-					size_t pixelIndex = static_cast<size_t>(srcIndex + srcx) * bytesPerPixel;
-					for (size_t k=0; k<bytesPerPixel; k++){
+					size_t pixelIndex = static_cast<size_t>(srcIndex + srcx) * channelsFromPixelFormat(pixelFormat);
+					for (size_t k=0; k< channelsFromPixelFormat(pixelFormat); k++){
 						dstPixels[dstIndex] = pixels[pixelIndex];
 						dstIndex++;
 						pixelIndex++;
@@ -1389,19 +1396,19 @@ bool ofPixels_<PixelType>::resizeTo(ofPixels_<PixelType>& dst, ofInterpolationMe
 			size_t patchIndex;
 			float patch[16];
 
-			size_t srcRowBytes = srcWidth*bytesPerPixel;
+			size_t srcRowBytes = srcWidth*channelsFromPixelFormat(pixelFormat);
 			size_t loIndex = (srcRowBytes)+1;
-			size_t hiIndex = (srcWidth*srcHeight*bytesPerPixel)-(srcRowBytes)-1;
+			size_t hiIndex = (srcWidth*srcHeight*channelsFromPixelFormat(pixelFormat))-(srcRowBytes)-1;
 
 			for (size_t dsty=0; dsty<dstHeight; dsty++){
 				for (size_t dstx=0; dstx<dstWidth; dstx++){
 
-					size_t   dstIndex0 = (dsty*dstWidth + dstx) * bytesPerPixel;
+					size_t   dstIndex0 = (dsty*dstWidth + dstx) * channelsFromPixelFormat(pixelFormat);
 					float srcxf = srcWidth  * (float)dstx/(float)dstWidth;
 					float srcyf = srcHeight * (float)dsty/(float)dstHeight;
 					size_t   srcx = static_cast<size_t>(std::min(srcWidth-1, static_cast<size_t>(srcxf)));
 					size_t   srcy = static_cast<size_t>(std::min(srcHeight-1, static_cast<size_t>(srcyf)));
-					size_t   srcIndex0 = (srcy*srcWidth + srcx) * bytesPerPixel;
+					size_t   srcIndex0 = (srcy*srcWidth + srcx) * channelsFromPixelFormat(pixelFormat);
 
 					px1 = srcxf - srcx;
 					py1 = srcyf - srcy;
@@ -1410,14 +1417,14 @@ bool ofPixels_<PixelType>::resizeTo(ofPixels_<PixelType>& dst, ofInterpolationMe
 					py2 = py1 * py1;
 					py3 = py2 * py1;
 
-					for (size_t k=0; k<bytesPerPixel; k++){
+					for (size_t k=0; k<channelsFromPixelFormat(pixelFormat); k++){
 						size_t   dstIndex = dstIndex0+k;
 						size_t   srcIndex = srcIndex0+k;
 
 						for (size_t dy=0; dy<4; dy++) {
 							patchRow = srcIndex + ((dy-1)*srcRowBytes);
 							for (size_t dx=0; dx<4; dx++) {
-								patchIndex = patchRow + (dx-1)*bytesPerPixel;
+								patchIndex = patchRow + (dx-1)*channelsFromPixelFormat(pixelFormat);
 								if ((patchIndex >= loIndex) && (patchIndex < hiIndex)) {
 									srcColor = pixels[patchIndex];
 								}

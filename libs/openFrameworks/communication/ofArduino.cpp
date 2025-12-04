@@ -46,10 +46,14 @@
 
 #include "ofArduino.h"
 #include "ofUtils.h"
-#include "ofMath.h"
 #include "ofLog.h"
+#include <climits>
 
-using namespace std;
+using std::vector;
+using std::string;
+using std::list;
+using std::pair;
+
 
  // TODO thread it?
  // TODO throw event or exception if the serial port goes down...
@@ -555,10 +559,7 @@ bool ofArduino::isAttached() {
 // ------------------------------ private functions
 
 void ofArduino::processData(unsigned char inputData) {
-
-	char msg[100];
-	sprintf(msg, "Received Byte: %i", inputData);
-	//Logger::get("Application").information(msg);
+	ofLog() << "Received Byte: " << inputData;
 
 	// we have command data
 	if (_waitForData > 0 && inputData < 128) {
@@ -666,7 +667,7 @@ void ofArduino::processSysExData(vector <unsigned char> data) {
 	// act on reserved sysEx messages (extended commands) or trigger SysEx event...
 	switch (data.front()) {  //first byte in buffer is command
 	case REPORT_FIRMWARE:
-		ofLogVerbose("ofArduino") << "Recieved Firmware Report";
+		ofLogVerbose("ofArduino") << "Received Firmware Report";
 		it = data.begin();
 		it++;    // skip the first byte, which is the firmware version command
 		_majorFirmwareVersion = *it;
@@ -693,7 +694,7 @@ void ofArduino::processSysExData(vector <unsigned char> data) {
 		break;
 
 	case STRING_DATA:
-		ofLogVerbose("ofArduino") << "Recieved Firamta String";
+		ofLogVerbose("ofArduino") << "Received Firmata String";
 		it = data.begin();
 		it++;    // skip the first byte, which is the string command
 		while (it != data.end()) {
@@ -712,7 +713,7 @@ void ofArduino::processSysExData(vector <unsigned char> data) {
 		ofNotifyEvent(EStringReceived, str, this);
 		break;
 	case I2C_REPLY:
-		ofLogVerbose("ofArduino") << "Recieved I2C Reply";
+		ofLogVerbose("ofArduino") << "Received I2C Reply";
 		if (data.size() > 7 && (data.size() - 5) % 2 == 0) {
 			Firmata_I2C_Data i2creply;
 			it = data.begin();
@@ -726,15 +727,15 @@ void ofArduino::processSysExData(vector <unsigned char> data) {
 				it++;
 			}
 			i2creply.data = str;
-			ofNotifyEvent(EI2CDataRecieved, i2creply, this);
+			ofNotifyEvent(EI2CDataReceived, i2creply, this);
 		}
 		else {
-			ofLogError("Arduino I2C") << "Incorrect Number of Bytes recieved, possible buffer overflow";
+			ofLogError("Arduino I2C") << "Incorrect Number of Bytes received, possible buffer overflow";
 			purge();
 		}
 		break;
 	case ENCODER_DATA:
-		ofLogVerbose("ofArduino") << "Recieved Encoder Data";
+		ofLogVerbose("ofArduino") << "Received Encoder Data";
 		if (data.size() % 5 == 1) {
 
 			vector<Firmata_Encoder_Data> encoderReply;
@@ -770,14 +771,14 @@ void ofArduino::processSysExData(vector <unsigned char> data) {
 			ofNotifyEvent(EEncoderDataReceived, encoderReply, this);
 		}
 		else {
-			ofLogError("Arduino Encoder") << "Incorrect Number of Bytes recieved, possible buffer overflow";
+			ofLogError("Arduino Encoder") << "Incorrect Number of Bytes received, possible buffer overflow";
 			purge();
 		}
 
 		break;
 	case SERIAL_MESSAGE:
 	{
-		ofLogVerbose("ofArduino") << "Recieved Serial Message";
+		ofLogVerbose("ofArduino") << "Received Serial Message";
 		Firmata_Serial_Data reply;
 
 		it = data.begin();
@@ -826,7 +827,7 @@ void ofArduino::processSysExData(vector <unsigned char> data) {
 	break;
 	case CAPABILITY_RESPONSE:
 	{
-		ofLogVerbose("ofArduino") << "Recieved Capability Response";
+		ofLogVerbose("ofArduino") << "Received Capability Response";
 		it = data.begin();
 		it += 2; // skip the first byte, which is the string command
 
@@ -911,7 +912,7 @@ void ofArduino::processSysExData(vector <unsigned char> data) {
 	break;
 	case ANALOG_MAPPING_RESPONSE:
 	{
-		ofLogVerbose("ofArduino") << "Recieved Analog Map Query Response";
+		ofLogVerbose("ofArduino") << "Received Analog Map Query Response";
 		it = data.begin();
 		int pin = 0;
 		bool fAPin = false;
@@ -946,11 +947,11 @@ void ofArduino::processSysExData(vector <unsigned char> data) {
 	break;
 	case PIN_STATE_RESPONSE:
 	{
-		ofLogVerbose("ofArduino") << "Recieved Pin State Query Response";
+		ofLogVerbose("ofArduino") << "Received Pin State Query Response";
 		it = data.begin();
 		it++;    // skip the first byte, which is the string command
 		int pin = *it++;
-		Firmata_Pin_Modes mode;
+		Firmata_Pin_Modes mode{Firmata_Pin_Modes::MODE_INPUT};
 		switch (*it++) {
 		case ARD_INPUT:
 			mode = Firmata_Pin_Modes::MODE_INPUT;
@@ -986,14 +987,7 @@ void ofArduino::processSysExData(vector <unsigned char> data) {
 			mode = Firmata_Pin_Modes::MODE_ENCODER;
 			break;
 		}
-//		int val;
-		int shift = 0;
-		while (it != data.end()) {
-//			val = *it << shift;
-			it++;
-			shift += 7;
-		} //clear whatever is left
-		//int pinVal[2] = { pin, val }; //I think this was supposed to be the return value
+
 		pair<int, Firmata_Pin_Modes> reply(pin, mode);
 		ofNotifyEvent(EPinStateResponseReceived, reply, this);
 	}
@@ -1047,7 +1041,7 @@ void ofArduino::sendDigitalPortReporting(int port, int mode) {
 
 void ofArduino::sendDigitalPinReporting(int pin, int mode) {
 
-	int port = floor(pin / 8);
+	int port = std::floor(pin / 8);
 	if (mode == ARD_OFF || mode == ARD_ON) {
 		_digitalPinReporting[pin] = mode;
 		sendDigitalPortReporting(port, mode);
@@ -1247,8 +1241,8 @@ void ofArduino::sendStepperMove(int stepperID, int direction, int numSteps, int 
 
 		// the stepper interface expects decimal expressed an an integer
 		if (acceleration != 0 && deceleration != 0) {
-			int accel = floor(acceleration * 100);
-			int decel = floor(deceleration * 100);
+			int accel = std::floor(acceleration * 100);
+			int decel = std::floor(deceleration * 100);
 
 			sendByte(START_SYSEX);
 			sendByte(STEPPER_DATA);
@@ -1470,7 +1464,7 @@ void  ofArduino::sendOneWireSearch(char type, int pin) {
 }
 
 void  ofArduino::sendOneWireRead(int pin, vector<unsigned char> devices, int numBytesToRead) {
-	int correlationId = floor(ofRandomuf() * 255);
+	int correlationId = std::floor(ofRandomuf() * 255);
 	vector<unsigned char> b;
 	sendOneWireRequest(pin, ONEWIRE_READ_REQUEST_BIT, devices, numBytesToRead, correlationId, 0, b);
 }
@@ -1490,7 +1484,7 @@ void  ofArduino::sendOneWireDelay(int pin, unsigned int delay) {
 };
 
 void  ofArduino::sendOneWireWriteAndRead(int pin, vector<unsigned char> devices, vector<unsigned char> data, int numBytesToRead) {
-	int correlationId = floor(ofRandomuf() * 255);
+	int correlationId = std::floor(ofRandomuf() * 255);
 	sendOneWireRequest(pin, ONEWIRE_WRITE_REQUEST_BIT | ONEWIRE_READ_REQUEST_BIT, devices, numBytesToRead, correlationId, 0, data);
 }
 
@@ -1523,7 +1517,9 @@ void  ofArduino::sendOneWireRequest(int pin, unsigned char subcommand, vector<un
 
 	if (correlationId) {
 		bytes[10] = correlationId & 0xFF;
-		bytes[11] = (correlationId >> 8) & 0xFF;
+		// Doesn't make sense. uint8_t >> 8 will always be zero.
+		// bytes[11] = (correlationId >> 8) & 0xFF;
+		bytes[11] = 0;
 	}
 
 	if (delay > 0) {

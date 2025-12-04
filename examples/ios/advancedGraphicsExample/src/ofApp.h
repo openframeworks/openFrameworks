@@ -3,33 +3,33 @@
 #include "ofxiOS.h"
 
 class ofApp : public ofxiOSApp{
-    
-    public:
-        void setup();
-        void update();
-        void draw();
 	
-        void exit();
-    
-        void touchDown(ofTouchEventArgs & touch);
-        void touchMoved(ofTouchEventArgs & touch);
-        void touchUp(ofTouchEventArgs & touch);
-        void touchDoubleTap(ofTouchEventArgs & touch);
-        void touchCancelled(ofTouchEventArgs & touch);
+	public:
+		void setup();
+		void update();
+		void draw();
 	
-        void lostFocus();
-        void gotFocus();
-        void gotMemoryWarning();
-        void deviceOrientationChanged(int newOrientation);
+		void exit();
 	
-        float counter;
-        float spin;
-        float spinPct;
-        int prevMX;
-        int prevMY;
-        bool bFirstMouseMove;
+		void touchDown(ofTouchEventArgs & touch);
+		void touchMoved(ofTouchEventArgs & touch);
+		void touchUp(ofTouchEventArgs & touch);
+		void touchDoubleTap(ofTouchEventArgs & touch);
+		void touchCancelled(ofTouchEventArgs & touch);
 	
-        bool retina;
+		void lostFocus();
+		void gotFocus();
+		void gotMemoryWarning();
+		void deviceOrientationChanged(int newOrientation);
+	
+		float counter;
+		float spin;
+		float spinPct;
+		int prevMX;
+		int prevMY;
+		bool bFirstMouseMove;
+	
+		bool retina;
 };
 
 

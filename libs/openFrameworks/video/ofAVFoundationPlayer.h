@@ -7,9 +7,10 @@
 #pragma once
 
 #include "ofVideoBaseTypes.h"
-#include "ofPixels.h"
 #include "ofTexture.h"
 #include "ofThread.h"
+// MARK: Template if pixels is changed to unique_ptr
+#include "ofPixels.h"
 
 #ifdef __OBJC__
 #import "ofAVFoundationVideoPlayer.h"
@@ -25,57 +26,57 @@ public:
 	
 	ofAVFoundationPlayer();
 	~ofAVFoundationPlayer();
-	   
-    bool load(std::string name);
-	void loadAsync(std::string name);
-    void close();
-    void update();
+	
+	bool load(const of::filesystem::path & fileName);
+	void loadAsync(const of::filesystem::path & fileName);
+	void close();
+	void update();
 
-    void draw();
-    void draw(float x, float y);
-    void draw(const ofRectangle & rect);
-    void draw(float x, float y, float w, float h);
-    
+	void draw();
+	void draw(float x, float y);
+	void draw(const ofRectangle & rect);
+	void draw(float x, float y, float w, float h);
+	
 	bool setPixelFormat(ofPixelFormat pixelFormat);
 	ofPixelFormat getPixelFormat() const;
 	
-    void play();
-    void stop();
+	void play();
+	void stop();
 	
-    bool isFrameNew() const;
-    const ofPixels & getPixels() const;
-    ofPixels & getPixels();
-    ofTexture * getTexturePtr();
-    void initTextureCache();
-    void killTexture();
-    void killTextureCache();
+	bool isFrameNew() const;
+	const ofPixels & getPixels() const;
+	ofPixels & getPixels();
+	ofTexture * getTexturePtr();
+	void initTextureCache();
+	void killTexture();
+	void killTextureCache();
 	
-    float getWidth() const;
-    float getHeight() const;
+	float getWidth() const;
+	float getHeight() const;
 	
-    bool isPaused() const;
-    bool isLoaded() const;
-    bool isPlaying() const;
+	bool isPaused() const;
+	bool isLoaded() const;
+	bool isPlaying() const;
 	
-    float getPosition() const;
-    float getSpeed() const;
-    float getDuration() const;
-    bool getIsMovieDone() const;
+	float getPosition() const;
+	float getSpeed() const;
+	float getDuration() const;
+	bool getIsMovieDone() const;
 	
-    void setPaused(bool bPause);
-    void setPosition(float pct);
-    void setVolume(float volume); // 0..1
-    void setLoopState(ofLoopType state);
-    void setSpeed(float speed);
-    void setFrame(int frame);  // frame 0 = first frame...
+	void setPaused(bool bPause);
+	void setPosition(float pct);
+	void setVolume(float volume); // 0..1
+	void setLoopState(ofLoopType state);
+	void setSpeed(float speed);
+	void setFrame(int frame);  // frame 0 = first frame...
 	
-    int	getCurrentFrame() const;
-    int	getTotalNumFrames() const;
-    ofLoopType getLoopState() const;
+	int	getCurrentFrame() const;
+	int	getTotalNumFrames() const;
+	ofLoopType getLoopState() const;
 	
-    void firstFrame();
-    void nextFrame();
-    void previousFrame();
+	void firstFrame();
+	void nextFrame();
+	void previousFrame();
 
 	ofAVFoundationPlayer& operator=(ofAVFoundationPlayer other);
 	
@@ -84,31 +85,35 @@ public:
 #else
 	void * getAVFoundationVideoPlayer();
 #endif
-    
-    OF_DEPRECATED_MSG("ofAVFoundationPlayer::loadMovie() is deprecated, use load() instead.", bool loadMovie(std::string name));
-    OF_DEPRECATED_MSG("ofAVFoundationPlayer::getPixelsRef() is deprecated, use getPixels() instead.", ofPixels & getPixelsRef());
-    OF_DEPRECATED_MSG("ofAVFoundationPlayer::getPixelsRef() is deprecated, use getPixels() instead.", const ofPixels & getPixelsRef() const);
-    OF_DEPRECATED_MSG("ofAVFoundationPlayer::getTexture() is deprecated, use getTexturePtr() instead.", ofTexture * getTexture());
-    
+	
+	[[deprecated("use load()")]]
+	bool loadMovie(const of::filesystem::path & fileName);
+	[[deprecated("use getPixels()")]]
+	ofPixels & getPixelsRef();
+	[[deprecated("use getPixels()")]]
+	const ofPixels & getPixelsRef() const;
+	[[deprecated("use getTexturePtr()")]]
+	ofTexture * getTexture();
+	
 protected:
 	
-    bool loadPlayer(std::string name, bool bAsync);
+	bool loadPlayer(const of::filesystem::path & fileName, bool bAsync);
 	void disposePlayer();
-    bool isReady() const;
+	bool isReady() const;
 
 #ifdef __OBJC__
-    ofAVFoundationVideoPlayer * videoPlayer;
+	ofAVFoundationVideoPlayer * videoPlayer;
 #else
-    void * videoPlayer;
+	void * videoPlayer;
 #endif
-    
-    bool bFrameNew;
-    bool bResetPixels;
-    bool bUpdatePixels;
-    bool bUpdateTexture;
+	
+	bool bFrameNew;
+	bool bResetPixels;
+	bool bUpdatePixels;
+	bool bUpdateTexture;
 	bool bUseTextureCache;
 	
-    ofPixels pixels;
+	ofPixels pixels;
 	ofPixelFormat pixelFormat;
 	ofTexture videoTexture;
 	

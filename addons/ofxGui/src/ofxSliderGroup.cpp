@@ -1,5 +1,4 @@
 #include "ofxSliderGroup.h"
-using namespace std;
 
 template<class VecType>
 ofxVecSlider_<VecType>::ofxVecSlider_(ofParameter<VecType> value, float width, float height){
@@ -9,23 +8,23 @@ ofxVecSlider_<VecType>::ofxVecSlider_(ofParameter<VecType> value, float width, f
 
 template<class VecType>
 ofxVecSlider_<VecType> * ofxVecSlider_<VecType>::setup(ofParameter<VecType> value, float width, float height){
-    ofxGuiGroup::setup(value.getName(), "", 0, 0);
+    ofxGuiGroup::setup(value.getName(), {}, 0, 0);
     
     parameters.clear();
-    
-    const string names[4] = {"x", "y", "z", "w"};
+	listeners.unsubscribeAll();
+    const std::string names[4] = {"x", "y", "z", "w"};
     
     this->value.makeReferenceTo(value);
-    this->value.addListener(this, & ofxVecSlider_::changeValue);
+	listeners.push(this->value.newListener(this, & ofxVecSlider_::changeValue));
 
     VecType val = value;
     VecType min = value.getMin();
     VecType max = value.getMax();
-    
+
 	for (size_t i = 0; i < dim(); i++) {
     	ofParameter<float> p(names[i], val[i], min[i], max[i]);
-        add(new ofxSlider<float>(p, width, height));
-        p.addListener(this, & ofxVecSlider_::changeSlider);
+		add(createGuiElement<ofxSlider<float>>(p, width, height));
+        listeners.push(p.newListener(this, & ofxVecSlider_::changeSlider));
     }
 
     sliderChanging = false;
@@ -127,21 +126,22 @@ ofxColorSlider_<ColorType>::ofxColorSlider_(ofParameter<ofColor_<ColorType> > va
 
 template<class ColorType>
 ofxColorSlider_<ColorType> * ofxColorSlider_<ColorType>::setup(ofParameter<ofColor_<ColorType> > value, float width, float height){
-    ofxGuiGroup::setup(value.getName(), "", 0, 0);
+	ofxGuiGroup::setup(value.getName(), {}, 0, 0);
     parameters.clear();
 
-	const string names[4] = {"r", "g", "b", "a"};
+	const std::string names[4] = {"r", "g", "b", "a"};
 
     ofColor_<ColorType> val = value;
     ofColor_<ColorType> min = value.getMin();
     ofColor_<ColorType> max = value.getMax();
 
 	picker.setup(value, width, width * 9. / 11.);
-
+	
+	listeners.unsubscribeAll();
     for (int i=0; i<4; i++) {
     	ofParameter<ColorType> p(names[i], val[i], min[i], max[i]);
-        add(new ofxSlider<ColorType>(p, width, height));
-        p.addListener(this, & ofxColorSlider_::changeSlider);
+        add(createGuiElement<ofxSlider<ColorType>>(p, width, height));
+		listeners.push(p.newListener(this, & ofxColorSlider_::changeSlider));
 		collection[i]->setFillColor(value.get());
         float range = p.getMax()-p.getMin();
         if(range == 0){
@@ -151,7 +151,7 @@ ofxColorSlider_<ColorType> * ofxColorSlider_<ColorType>::setup(ofParameter<ofCol
         }
     }
 	add(&picker);
-	picker.getParameter().template cast<ofColor_<ColorType>>().addListener(this, & ofxColorSlider_::changeValue);
+	listeners.push(picker.getParameter().template cast<ofColor_<ColorType>>().newListener(this, & ofxColorSlider_::changeValue));
 
 
 	sliderChanging = false;
@@ -257,14 +257,15 @@ ofxRectangleSlider::ofxRectangleSlider(ofParameter<ofRectangle> value, float wid
 
 
 ofxRectangleSlider * ofxRectangleSlider::setup(ofParameter<ofRectangle> value, float width, float height){
-    ofxGuiGroup::setup(value.getName(), "", 0, 0);
+    ofxGuiGroup::setup(value.getName(), {}, 0, 0);
     
     parameters.clear();
     
 //    const string names[4] = {"x", "y", "width", "height"};
 	
+	listeners.unsubscribeAll();
     this->value.makeReferenceTo(value);
-    this->value.addListener(this, & ofxRectangleSlider::changeValue);
+    listeners.push(this->value.newListener(this, & ofxRectangleSlider::changeValue));
 
     ofRectangle val = value;
     ofRectangle min = value.getMin();
@@ -273,24 +274,24 @@ ofxRectangleSlider * ofxRectangleSlider::setup(ofParameter<ofRectangle> value, f
 	// adding a [] operator to ofRectangle would be handy for this situation
 //	for (size_t i = 0; i < 4; i++) {
 //    	ofParameter<float> p(names[i], val[i], min[i], max[i]);
-//        add(new ofxSlider<float>(p, width, height));
+//        add(createGuiElement<ofxSlider<float>>(p, width, height));
 //        p.addListener(this, & ofxRectangleSlider::changeSlider);
 //    }
     	ofParameter<float> x("x", val.x, min.x, max.x);
-        add(new ofxSlider<float>(x, width, height));
-        x.addListener(this, & ofxRectangleSlider::changeSlider);
+        add(createGuiElement< ofxSlider<float> >(x, width, height));
+        listeners.push(x.newListener(this, & ofxRectangleSlider::changeSlider));
 	
 		ofParameter<float> y("y", val.y, min.y, max.y);
-        add(new ofxSlider<float>(y, width, height));
-        y.addListener(this, & ofxRectangleSlider::changeSlider);
+        add(createGuiElement<ofxSlider<float>>(y, width, height));
+        listeners.push(y.newListener(this, & ofxRectangleSlider::changeSlider));
 
     	ofParameter<float> w("width", val.width, min.width, max.width);
-        add(new ofxSlider<float>(w, width, height));
-        w.addListener(this, & ofxRectangleSlider::changeSlider);
+        add(createGuiElement<ofxSlider<float>>(w, width, height));
+        listeners.push(w.newListener(this, & ofxRectangleSlider::changeSlider));
 
 		ofParameter<float> h("height", val.height, min.height, max.height);
-        add(new ofxSlider<float>(h, width, height));
-        h.addListener(this, & ofxRectangleSlider::changeSlider);
+        add(createGuiElement<ofxSlider<float>>(h, width, height));
+        listeners.push(h.newListener(this, & ofxRectangleSlider::changeSlider));
 
 
     sliderChanging = false;

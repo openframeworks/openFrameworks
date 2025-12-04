@@ -7,14 +7,12 @@ void ofApp::setup(){
 	compute.linkProgram();
 	camera.setFarClip(ofGetWidth()*10);
 	particles.resize(1024*8);
-	int i=0;
 	for(auto & p: particles){
 		p.pos.x = ofRandom(-ofGetWidth()*0.5,ofGetWidth()*0.5);
 		p.pos.y = ofRandom(-ofGetHeight()*0.5,ofGetHeight()*0.5);
 		p.pos.z = ofRandom(-ofGetHeight()*0.5,ofGetHeight()*0.5);
 		p.pos.w = 1;
 		p.vel = {0,0,0,0};
-		i++;
 	}
 	particlesBuffer.allocate(particles,GL_DYNAMIC_DRAW);
 	particlesBuffer2.allocate(particles,GL_DYNAMIC_DRAW);
@@ -67,14 +65,14 @@ void ofApp::update(){
 	compute.setUniform3f("attractor1",atractor1.x,atractor1.y,atractor1.z);
 	compute.setUniform3f("attractor2",atractor2.x,atractor2.y,atractor2.z);
 	compute.setUniform3f("attractor3",atractor3.x,atractor3.y,atractor3.z);
-	
+
 	// since each work group has a local_size of 1024 (this is defined in the shader)
 	// we only have to issue 1 / 1024 workgroups to cover the full workload.
 	// note how we add 1024 and subtract one, this is a fast way to do the equivalent
 	// of std::ceil() in the float domain, i.e. to round up, so that we're also issueing
 	// a work group should the total size of particles be < 1024
 	compute.dispatchCompute((particles.size() + 1024 -1 )/1024, 1, 1);
-	
+
 	compute.end();
 
 	particlesBuffer.copyTo(particlesBuffer2);
@@ -167,6 +165,6 @@ void ofApp::gotMessage(ofMessage msg){
 }
 
 //--------------------------------------------------------------
-void ofApp::dragEvent(ofDragInfo dragInfo){ 
+void ofApp::dragEvent(ofDragInfo dragInfo){
 
 }

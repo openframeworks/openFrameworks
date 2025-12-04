@@ -108,7 +108,7 @@ void ofApp::setupViewports(){
 
 //--------------------------------------------------------------
 void ofApp::update(){
-   
+
 }
 
 
@@ -185,9 +185,9 @@ void ofApp::draw(){
 	ofDrawRectangle(viewMain);
 
 	// restore the GL depth function
-	
+
 	ofPopStyle();
-	
+
 	//
 	//--
 }
@@ -297,9 +297,9 @@ void ofApp::drawScene(int cameraIndex){
 
 		ofPopMatrix();
 
-		// Alternatively to the above, you may call the built-in method of 
+		// Alternatively to the above, you may call the built-in method of
 		// ofCamera to draw its frustum:
-		// 
+		//
 		// camEasyCam.drawFrustum(boundsToUse);
 
 		ofPopStyle();

@@ -2,13 +2,14 @@
 #include "ofPolyline.h"
 #endif
 
-#include "ofConstants.h"
 #include "ofRectangle.h"
 #include "ofGraphicsBaseTypes.h"
-#include "ofVectorMath.h"
 #include "ofAppRunner.h"
-#include "ofMath.h"
 #include "ofLog.h"
+#include "ofMath.h"
+
+#include <ofVectorMath.h> // toGlm
+//#include <glm/gtx/vector_angle.hpp>
 
 //----------------------------------------------------------
 template<class T>
@@ -188,12 +189,12 @@ template<class T>
 void ofPolyline_<T>::setCircleResolution(int res){
 	if (res > 1 && res != (int)circlePoints.size()){
 		circlePoints.resize(res);
-        
+
 		float angle = 0.0f;
-		const float angleAdder = M_TWO_PI / (float)res;
+		const float angleAdder = glm::two_pi<float>() / (float)res;
 		for (int i = 0; i < res; i++){
-			circlePoints[i].x = cos(angle);
-			circlePoints[i].y = sin(angle);
+			circlePoints[i].x = std::cos(angle);
+			circlePoints[i].y = std::sin(angle);
 			circlePoints[i].z = 0.0f;
 			angle += angleAdder;
 		}
@@ -207,7 +208,7 @@ template<class T>
 // should always be radians?  or should this take degrees?
 // used internally, so perhaps not as important
 float ofPolyline_<T>::wrapAngle(float angleRadians) {
-	return ofWrap(angleRadians, 0.0f, TWO_PI);
+	return ofWrap(angleRadians, 0.0f, glm::two_pi<float>());
 }
 
 //----------------------------------------------------------
@@ -216,34 +217,34 @@ void ofPolyline_<T>::bezierTo( const T & cp1, const T & cp2, const T & to, int c
 	// if, and only if poly vertices has points, we can make a bezier
 	// from the last point
 	curveVertices.clear();
-    
+
 	// the resolultion with which we computer this bezier
 	// is arbitrary, can we possibly make it dynamic?
-    
+
 	if (size() > 0){
 		float x0 = points[size()-1].x;
 		float y0 = points[size()-1].y;
 		float z0 = points[size()-1].z;
-        
+
 		float   ax, bx, cx;
 		float   ay, by, cy;
 		float   az, bz, cz;
 		float   t, t2, t3;
 		float   x, y, z;
-        
+
 		// polynomial coefficients
 		cx = 3.0f * (cp1.x - x0);
 		bx = 3.0f * (cp2.x - cp1.x) - cx;
 		ax = to.x - x0 - cx - bx;
-        
+
 		cy = 3.0f * (cp1.y - y0);
 		by = 3.0f * (cp2.y - cp1.y) - cy;
 		ay = to.y - y0 - cy - by;
-        
+
 		cz = 3.0f * (cp1.z - z0);
 		bz = 3.0f * (cp2.z - cp1.z) - cz;
 		az = to.z - z0 - cz - bz;
-        
+
 		for (int i = 1; i <= curveResolution; i++){
 			t 	=  (float)i / (float)(curveResolution);
 			t2 = t * t;
@@ -277,11 +278,11 @@ void ofPolyline_<T>::quadBezierTo(float x1, float y1, float z1, float x2, float 
 //----------------------------------------------------------
 template<class T>
 void ofPolyline_<T>::curveTo( const T & to, int curveResolution ){
-    
+
 	curveVertices.push_back(to);
-    
+
 	if (curveVertices.size() == 4){
-        
+
 		float x0 = curveVertices[0].x;
 		float y0 = curveVertices[0].y;
 		float z0 = curveVertices[0].z;
@@ -294,31 +295,31 @@ void ofPolyline_<T>::curveTo( const T & to, int curveResolution ){
 		float x3 = curveVertices[3].x;
 		float y3 = curveVertices[3].y;
 		float z3 = curveVertices[3].z;
-        
+
 		float t,t2,t3;
 		float x,y,z;
-        
+
 		for (int i = 1; i <= curveResolution; i++){
-            
+
 			t 	=  (float)i / (float)(curveResolution);
 			t2 	= t * t;
 			t3 	= t2 * t;
-            
+
 			x = 0.5f * ( ( 2.0f * x1 ) +
                         ( -x0 + x2 ) * t +
                         ( 2.0f * x0 - 5.0f * x1 + 4 * x2 - x3 ) * t2 +
                         ( -x0 + 3.0f * x1 - 3.0f * x2 + x3 ) * t3 );
-            
+
 			y = 0.5f * ( ( 2.0f * y1 ) +
                         ( -y0 + y2 ) * t +
                         ( 2.0f * y0 - 5.0f * y1 + 4 * y2 - y3 ) * t2 +
                         ( -y0 + 3.0f * y1 - 3.0f * y2 + y3 ) * t3 );
-            
+
 			z = 0.5f * ( ( 2.0f * z1 ) +
                         ( -z0 + z2 ) * t +
                         ( 2.0f * z0 - 5.0f * z1 + 4 * z2 - z3 ) * t2 +
                         ( -z0 + 3.0f * z1 - 3.0f * z2 + z3 ) * t3 );
-            
+
 			points.emplace_back(x,y,z);
 		}
 		curveVertices.pop_front();
@@ -329,40 +330,40 @@ void ofPolyline_<T>::curveTo( const T & to, int curveResolution ){
 //----------------------------------------------------------
 template<class T>
 void ofPolyline_<T>::arc(const T & center, float radiusX, float radiusY, float angleBegin, float angleEnd, bool clockwise, int circleResolution){
-    
+
     if(circleResolution<=1) circleResolution=2;
     setCircleResolution(circleResolution);
     points.reserve(points.size()+circleResolution);
 
     const float epsilon = 0.0001f;
-    
+
     const size_t nCirclePoints = circlePoints.size();
-    float segmentArcSize  = M_TWO_PI / (float)nCirclePoints;
-    
-    // convert angles to radians and wrap them into the range 0-M_TWO_PI and
-    float angleBeginRad = wrapAngle(ofDegToRad(angleBegin));
-    float angleEndRad =   wrapAngle(ofDegToRad(angleEnd));
-    
-    while(angleBeginRad >= angleEndRad) angleEndRad += M_TWO_PI;
-    
+    float segmentArcSize  = glm::two_pi<float>() / (float)nCirclePoints;
+
+    // convert angles to radians and wrap them into the range 0 - glm::two_pi<float>() and
+    float angleBeginRad = wrapAngle(glm::radians(angleBegin));
+    float angleEndRad =   wrapAngle(glm::radians(angleEnd));
+
+    while(angleBeginRad >= angleEndRad) angleEndRad += glm::two_pi<float>();
+
     // determine the directional angle delta
     float d = clockwise ? angleEndRad - angleBeginRad : angleBeginRad - angleEndRad;
     // find the shortest angle delta, clockwise delta direction yeilds POSITIVE values
-    float deltaAngle = atan2(sin(d),cos(d));
-    
+    float deltaAngle = std::atan2(std::sin(d),std::cos(d));
+
     // establish the remaining angle that we have to work through
     float remainingAngle = deltaAngle;
-    
+
     // if the delta angle is in the CCW direction OR the start and stop angles are
     // effectively the same adjust the remaining angle to be a be a full rotation
-    if(deltaAngle < 0 || std::abs(deltaAngle) < epsilon) remainingAngle += M_TWO_PI;
-    
+    if(deltaAngle < 0 || std::abs(deltaAngle) < epsilon) remainingAngle += glm::two_pi<float>();
+
 	T radii(radiusX, radiusY, 0.f);
 	T point(0);
-    
+
     int currentLUTIndex = 0;
     bool isFirstPoint = true; // special case for the first point
-    
+
     while(remainingAngle > 0) {
         if(isFirstPoint) {
             // TODO: should this be the exact point on the circle or
@@ -371,21 +372,21 @@ void ofPolyline_<T>::arc(const T & center, float radiusX, float radiusY, float a
             //
             // get the EXACT first point requested (for points that
             // don't fall precisely on a LUT entry)
-			point = T(cos(angleBeginRad), sin(angleBeginRad), 0.f);
+			point = T(std::cos(angleBeginRad), std::sin(angleBeginRad), 0.f);
             // set up the get any in between points from the LUT
-            float ratio = angleBeginRad / M_TWO_PI * (float)nCirclePoints;
-            currentLUTIndex = clockwise ? (int)ceil(ratio) : (int)floor(ratio);
+            float ratio = angleBeginRad / glm::two_pi<float>() * (float)nCirclePoints;
+            currentLUTIndex = clockwise ? (int)std::ceil(ratio) : (int)std::floor(ratio);
             float lutAngleAtIndex = currentLUTIndex * segmentArcSize;
             // the angle between the beginning angle and the next angle in the LUT table
             float d = clockwise ? (lutAngleAtIndex - angleBeginRad) : (angleBeginRad - lutAngleAtIndex);
-            float firstPointDelta = atan2(sin(d),cos(d)); // negative is in the clockwise direction
-            
+            float firstPointDelta = std::atan2(std::sin(d),std::cos(d)); // negative is in the clockwise direction
+
             // if the are "equal", get the next one CCW
             if(std::abs(firstPointDelta) < epsilon) {
                 currentLUTIndex = clockwise ? (currentLUTIndex + 1) : (currentLUTIndex - 1);
                 firstPointDelta = segmentArcSize; // we start at the next lut point
             }
-            
+
             // start counting from the offset
             remainingAngle -= firstPointDelta;
             isFirstPoint = false;
@@ -401,22 +402,22 @@ void ofPolyline_<T>::arc(const T & center, float radiusX, float radiusY, float a
                 // if the angle overshoots, then the while loop will fail next time
             }
         }
-        
+
         // keep the current lut index in range
         if(clockwise) {
             currentLUTIndex = currentLUTIndex % nCirclePoints;
         } else {
             if(currentLUTIndex < 0) currentLUTIndex = nCirclePoints + currentLUTIndex;
         }
-        
+
         // add the point to the poly line
         point = point * radii + center;
         points.push_back(point);
-        
+
         // if the next LUT point moves us past the end angle then
         // add a a point a the exact end angle and call it finished
         if(remainingAngle < epsilon) {
-			point = T(cos(angleEndRad), sin(angleEndRad), 0.f);
+			point = T(std::cos(angleEndRad), std::sin(angleEndRad), 0.f);
             point = point * radii + center;
             points.push_back(point);
             remainingAngle = 0; // call it finished, the next while loop test will fail
@@ -453,7 +454,7 @@ T ofPolyline_<T>::getCentroid2D() const{
 //----------------------------------------------------------
 template<class T>
 ofRectangle ofPolyline_<T>::getBoundingBox() const {
-    
+
 	ofRectangle box;
     for(size_t i = 0; i < size(); i++) {
         if(i == 0) {
@@ -471,7 +472,7 @@ ofPolyline_<T> ofPolyline_<T>::getSmoothed(int smoothingSize, float smoothingSha
 	int n = size();
 	smoothingSize = ofClamp(smoothingSize, 0, n);
 	smoothingShape = ofClamp(smoothingShape, 0, 1);
-	
+
 	// precompute weights and normalization
 	std::vector<float> weights;
 	weights.resize(smoothingSize);
@@ -480,10 +481,10 @@ ofPolyline_<T> ofPolyline_<T>::getSmoothed(int smoothingSize, float smoothingSha
 		float curWeight = ofMap(i, 0, smoothingSize, 1, smoothingShape);
 		weights[i] = curWeight;
 	}
-	
+
 	// make a copy of this polyline
 	ofPolyline_ result = *this;
-	
+
 	for(int i = 0; i < n; i++) {
 		float sum = 1; // center weight
 		for(int j = 1; j < smoothingSize; j++) {
@@ -508,7 +509,7 @@ ofPolyline_<T> ofPolyline_<T>::getSmoothed(int smoothingSize, float smoothingSha
 		}
 		result[i] /= sum;
 	}
-	
+
 	return result;
 }
 
@@ -522,7 +523,7 @@ ofPolyline_<T> ofPolyline_<T>::getResampledBySpacing(float spacing) const {
     for(f=0; f<=totalLength; f += spacing) {
         poly.lineTo(getPointAtLength(f));
     }
-    
+
     if(!isClosed()) {
         if( f != totalLength ){
             poly.lineTo(points.back());
@@ -531,7 +532,7 @@ ofPolyline_<T> ofPolyline_<T>::getResampledBySpacing(float spacing) const {
     } else {
         poly.setClosed(true);
     }
-    
+
     return poly;
 }
 
@@ -557,13 +558,13 @@ inline T getClosestPointUtil(const T& p1, const T& p2, const T& p3, float* norma
 		}
 		return p1;
 	}
-	
+
 	float u = (p3.x - p1.x) * (p2.x - p1.x);
 	u += (p3.y - p1.y) * (p2.y - p1.y);
 	// perfect place for fast inverse sqrt...
 	float len = glm::length(toGlm(p2 - p1));
 	u /= (len * len);
-	
+
 	// clamp u
 	if(u > 1) {
 		u = 1;
@@ -582,14 +583,14 @@ template<class T>
 // which assumes vertices are evenly spaced
 T ofPolyline_<T>::getClosestPoint(const T& target, unsigned int* nearestIndex) const {
 	const ofPolyline_ & polyline = *this;
-    
+
 	if(polyline.size() < 2) {
 		if(nearestIndex != nullptr) {
 			nearestIndex = 0;
 		}
 		return target;
 	}
-	
+
 	float distance = 0;
 	T nearestPoint(0);
 	unsigned int nearest = 0;
@@ -600,10 +601,10 @@ T ofPolyline_<T>::getClosestPoint(const T& target, unsigned int* nearestIndex) c
 	}
 	for(int i = 0; i < (int) lastPosition; i++) {
 		bool repeatNext = i == (int) (polyline.size() - 1);
-		
+
 		const auto& cur = polyline[i];
 		const auto& next = repeatNext ? polyline[0] : polyline[i + 1];
-		
+
 		float curNormalizedPosition = 0;
 		auto curNearestPoint = getClosestPointUtil(cur, next, target, &curNormalizedPosition);
 		float curDistance = glm::distance(toGlm(curNearestPoint), toGlm(target));
@@ -614,7 +615,7 @@ T ofPolyline_<T>::getClosestPoint(const T& target, unsigned int* nearestIndex) c
 			normalizedPosition = curNormalizedPosition;
 		}
 	}
-	
+
 	if(nearestIndex != nullptr) {
 		if(normalizedPosition > .5) {
 			nearest++;
@@ -624,7 +625,7 @@ T ofPolyline_<T>::getClosestPoint(const T& target, unsigned int* nearestIndex) c
 		}
 		*nearestIndex = nearest;
 	}
-	
+
 	return nearestPoint;
 }
 
@@ -641,15 +642,15 @@ bool ofPolyline_<T>::inside(float x, float y, const ofPolyline_ & polyline){
 	int i;
 	double xinters;
 	T p1,p2;
-    
+
 	int N = polyline.size();
-    
+
 	p1 = polyline[0];
 	for (i=1;i<=N;i++) {
 		p2 = polyline[i % N];
-		if (y > MIN(p1.y,p2.y)) {
-            if (y <= MAX(p1.y,p2.y)) {
-                if (x <= MAX(p1.x,p2.x)) {
+		if (y > std::min(p1.y,p2.y)) {
+            if (y <= std::max(p1.y,p2.y)) {
+                if (x <= std::max(p1.x,p2.x)) {
                     if (p1.y != p2.y) {
                         xinters = (y-p1.y)*(p2.x-p1.x)/(p2.y-p1.y)+p1.x;
                         if (p1.x == p2.x || x <= xinters)
@@ -660,7 +661,7 @@ bool ofPolyline_<T>::inside(float x, float y, const ofPolyline_ & polyline){
 		}
 		p1 = p2;
 	}
-    
+
 	if (counter % 2 == 0) return false;
 	else return true;
 }
@@ -669,7 +670,7 @@ bool ofPolyline_<T>::inside(float x, float y, const ofPolyline_ & polyline){
 template<class T>
 bool ofPolyline_<T>::inside(float x, float y) const {
 	return ofPolyline_<T>::inside(x, y, *this);
-    
+
 }
 
 //--------------------------------------------------
@@ -755,50 +756,50 @@ namespace of{
 template<class T>
 void ofPolyline_<T>::simplify(float tol){
     if(points.size() < 2) return;
-    
+
 	int n = size();
-	
+
 	if(n == 0) {
 		return;
 	}
 
 	std::vector <T> sV;
 	sV.resize(n);
-    
+
     int    i, k, m, pv;            // misc counters
     float  tol2 = tol * tol;       // tolerance squared
     std::vector<T> vt;
     std::vector<int> mk;
     vt.resize(n);
 	mk.resize(n,0);
-    
-    
+
+
     // STAGE 1.  Vertex Reduction within tolerance of prior vertex cluster
     vt[0] = points[0];              // start at the beginning
     for (i=k=1, pv=0; i<n; i++) {
 		if (glm::length2((const glm::vec3&)points[i] - (const glm::vec3&)points[pv]) < tol2) continue;
-        
+
         vt[k++] = points[i];
         pv = i;
     }
     if (pv < n-1) vt[k++] = points[n-1];      // finish at the end
-    
+
     // STAGE 2.  Douglas-Peucker polyline simplification
     mk[0] = mk[k-1] = 1;       // mark the first and last vertices
 	of::priv::simplifyDP( tol, &vt[0], 0, k-1, &mk[0] );
-    
+
     // copy marked vertices to the output simplified polyline
     for (i=m=0; i<k; i++) {
         if (mk[i]) sV[m++] = vt[i];
     }
-    
+
 	//get rid of the unused points
 	if( m < (int)sV.size() ){
 		points.assign( sV.begin(),sV.begin()+m );
 	}else{
 		points = sV;
 	}
-    
+
 }
 
 //--------------------------------------------------
@@ -819,7 +820,7 @@ void ofPolyline_<T>::translate(const glm::vec2 &p){
 //--------------------------------------------------
 template<class T>
 void ofPolyline_<T>::rotateDeg(float degrees, const glm::vec3& axis){
-    rotateRad(ofDegToRad(degrees), axis);
+    rotateRad(glm::radians(degrees), axis);
 }
 
 //--------------------------------------------------
@@ -840,7 +841,7 @@ void ofPolyline_<T>::rotate(float degrees, const glm::vec3 &axis){
 //--------------------------------------------------
 template<class T>
 void ofPolyline_<T>::rotateDeg(float degrees, const glm::vec2& axis){
-    rotateRad(ofDegToRad(degrees), glm::vec3(axis, 0.0));
+    rotateRad(glm::radians(degrees), glm::vec3(axis, 0.0));
 }
 
 //--------------------------------------------------
@@ -852,7 +853,7 @@ void ofPolyline_<T>::rotateRad(float radians, const glm::vec2& axis){
 //--------------------------------------------------
 template<class T>
 void ofPolyline_<T>::rotate(float degrees, const glm::vec2 &axis){
-    rotateRad(ofDegToRad(degrees), glm::vec3(axis, 0.0));
+    rotateRad(glm::radians(degrees), glm::vec3(axis, 0.0));
 }
 
 //--------------------------------------------------
@@ -889,16 +890,16 @@ template<class T>
 float ofPolyline_<T>::getIndexAtLength(float length) const {
     if(points.size() < 2) return 0;
     updateCache();
-    
+
     float totalLength = getPerimeter();
     length = ofClamp(length, 0, totalLength);
-    
+
     int lastPointIndex = isClosed() ? points.size() : points.size()-1;
-    
-    int i1 = ofClamp(floor(length / totalLength * lastPointIndex), 0, lengths.size()-2);   // start approximation here
+
+    int i1 = ofClamp(std::floor(length / totalLength * lastPointIndex), 0, lengths.size()-2);   // start approximation here
     int leftLimit = 0;
     int rightLimit = lastPointIndex;
-    
+
     float distAt1, distAt2;
     for(int iterations = 0; iterations < 32; iterations ++) {	// limit iterations
         i1 = ofClamp(i1, 0, lengths.size()-1);
@@ -993,7 +994,7 @@ template<class T>
 float ofPolyline_<T>::getDegreesAtIndex(int index) const {
 	if(points.size() < 2) return 0;
 	updateCache();
-	return ofRadToDeg(angles[getWrappedIndex(index)]);
+	return glm::degrees(angles[getWrappedIndex(index)]);
 }
 
 //--------------------------------------------------
@@ -1003,7 +1004,7 @@ float ofPolyline_<T>::getDegreesAtIndexInterpolated(float findex) const {
 	int i1, i2;
 	float t;
 	getInterpolationParams(findex, i1, i2, t);
-	return ofRadToDeg(ofLerp(getDegreesAtIndex(i1), getDegreesAtIndex(i2), t));
+	return glm::degrees(ofLerp(getDegreesAtIndex(i1), getDegreesAtIndex(i2), t));
 }
 
 
@@ -1093,12 +1094,12 @@ void ofPolyline_<T>::calcData(int index, T &tangent, float &angle, T &rotation, 
 
 	auto v1(p1 - p2); // vector to previous point
 	auto v2(p3 - p2); // vector to next point
-	
+
 	v1 = glm::normalize(v1);
 	v2 = glm::normalize(v2);
 
-	// If just one of p1, p2, or p3 was identical, further calculations 
-	// are (almost literally) pointless, as v1 or v2 will then contain 
+	// If just one of p1, p2, or p3 was identical, further calculations
+	// are (almost literally) pointless, as v1 or v2 will then contain
 	// NaN values instead of floats.
 
 	bool noSegmentHasZeroLength = (v1 == v1 && v2 == v2);
@@ -1119,7 +1120,7 @@ void ofPolyline_<T>::calcData(int index, T &tangent, float &angle, T &rotation, 
 template<class T>
 int ofPolyline_<T>::getWrappedIndex(int index) const {
     if(points.empty()) return 0;
-    
+
     if(index < 0) return isClosed() ? (index + points.size()) % points.size() : 0;
     if(index > int(points.size())-1) return isClosed() ? index % points.size() : points.size() - 1;
     return index;
@@ -1128,7 +1129,7 @@ int ofPolyline_<T>::getWrappedIndex(int index) const {
 //--------------------------------------------------
 template<class T>
 void ofPolyline_<T>::getInterpolationParams(float findex, int &i1, int &i2, float &t) const {
-    i1 = floor(findex);
+    i1 = std::floor(findex);
     t = findex - i1;
     i1 = getWrappedIndex(i1);
     i2 = getWrappedIndex(i1 + 1);
@@ -1146,7 +1147,7 @@ void ofPolyline_<T>::updateCache(bool bForceUpdate) const {
         area = 0;
 		centroid2D = {0.f, 0.f, 0.f};
         bCacheIsDirty = false;
-        
+
         if(points.size() < 2) return;
 
         // area
@@ -1155,8 +1156,8 @@ void ofPolyline_<T>::updateCache(bool bForceUpdate) const {
         }
         area += points[points.size()-1].x * points[0].y - points[0].x * points[points.size()-1].y;
         area *= 0.5;
-        
-        if(fabsf(area) < FLT_EPSILON) {
+
+        if(fabsf(area) < std::numeric_limits<float>::epsilon()) {
             centroid2D = getBoundingBox().getCenter();
         } else {
             // centroid
@@ -1167,19 +1168,19 @@ void ofPolyline_<T>::updateCache(bool bForceUpdate) const {
             }
             centroid2D.x += (points[points.size()-1].x + points[0].x) * (points[points.size()-1].x*points[0].y - points[0].x*points[points.size()-1].y);
             centroid2D.y += (points[points.size()-1].y + points[0].y) * (points[points.size()-1].x*points[0].y - points[0].x*points[points.size()-1].y);
-            
+
             centroid2D.x /= (6*area);
             centroid2D.y /= (6*area);
         }
 
-        
+
         // per vertex cache
         lengths.resize(points.size());
         tangents.resize(points.size());
         angles.resize(points.size());
         normals.resize(points.size());
         rotations.resize(points.size());
-        
+
         float angle;
 		T rotation;
 		T normal;
@@ -1194,10 +1195,10 @@ void ofPolyline_<T>::updateCache(bool bForceUpdate) const {
             angles[i] = angle;
             rotations[i] = rotation;
             normals[i] = normal;
-            
+
 			length += glm::distance(toGlm(points[i]), toGlm(points[getWrappedIndex(i + 1)]));
         }
-        
+
         if(isClosed()) lengths.push_back(length);
     }
 }
@@ -1250,4 +1251,3 @@ template<class T>
 typename std::vector<T>::const_reverse_iterator ofPolyline_<T>::rend() const{
 	return points.rend();
 }
-

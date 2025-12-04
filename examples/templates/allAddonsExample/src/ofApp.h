@@ -9,7 +9,6 @@
 #include "ofxKinect.h"
 #include "ofxGui.h"
 #include "ofxSvg.h"
-#include "ofxXmlPoco.h"
 #include "ofMain.h"
 
 class ofApp : public ofBaseApp{
@@ -33,18 +32,17 @@ class ofApp : public ofBaseApp{
 		void gotMessage(ofMessage msg);
 
 		// we don't actually use these
-        // just checking to see if they
-        // all work in the same place :)
+		// just checking to see if they
+		// all work in the same place :)
 
-        ofxCvGrayscaleImage cvGray;
-        ofxTCPClient client;
-        ofxTCPServer server;
-        ofxOscSender osc_sender;
-        ofxXmlSettings settings;
-	ofxAssimpModelLoader betterModelLoader;
-	ofxThreadedImageLoader threadedLoader;
-	ofxKinect kinect;
-	ofxPanel gui;
-	ofxSVG svg;
-    ofxXmlPoco xml;
+		ofxCvGrayscaleImage cvGray;
+		ofxTCPClient client;
+		ofxTCPServer server;
+		ofxOscSender osc_sender;
+		ofxXmlSettings settings;
+		ofxAssimpModelLoader betterModelLoader;
+		ofxThreadedImageLoader threadedLoader;
+		ofxKinect kinect;
+		ofxPanel gui;
+		ofxSvg svg;
 };

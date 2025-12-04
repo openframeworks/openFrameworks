@@ -17,7 +17,7 @@ int nPoints = 4096; // points to draw
 float complexity = 6; // wind complexity
 float pollenMass = .8; // pollen mass
 float timeSpeed = .02; // wind variation speed
-float phase = TWO_PI; // separate u-noise from v-noise
+float phase = glm::two_pi<float>(); // separate u-noise from v-noise
 float windSpeed = 40; // wind vector magnitude for debug
 int step = 10; // spatial sampling rate for debug
 bool debugMode = false;
@@ -46,7 +46,7 @@ void ofApp::setup() {
 	// randomly allocate the points across the screen
   points.resize(nPoints);
   for(int i = 0; i < nPoints; i++) {
-    points[i] = glm::vec2(ofRandom(0, ofGetWidth()), ofRandom(0, ofGetHeight()));
+	points[i] = glm::vec2(ofRandom(0, ofGetWidth()), ofRandom(0, ofGetHeight()));
   }
 	
 	// we'll be drawing the points into an ofMesh that is drawn as bunch of points
@@ -63,20 +63,20 @@ void ofApp::update() {
 		glm::vec2 field = getField(points[i]); // get the field at this position
 		// use the strength of the field to determine a speed to move
 		// the speed is changing over time and velocity-space as well
-    float speed = (1 + ofNoise(t, field.x, field.y)) / pollenMass;
+	float speed = (1 + ofNoise(t, field.x, field.y)) / pollenMass;
 		// add the velocity of the particle to its position 
-    x += ofLerp(-speed, speed, field.x);
-    y += ofLerp(-speed, speed, field.y);
+	x += ofLerp(-speed, speed, field.x);
+	y += ofLerp(-speed, speed, field.y);
 		// if we've moved outside of the screen, reinitialize randomly
-    if(x < 0 || x > width || y < 0 || y > height) {
-      x = ofRandom(0, width);
-      y = ofRandom(0, height);
-    }
+	if(x < 0 || x > width || y < 0 || y > height) {
+	  x = ofRandom(0, width);
+	  y = ofRandom(0, height);
+	}
 		// save the changes we made to the position
-    points[i].x = x;
-    points[i].y = y;
+	points[i].x = x;
+	points[i].y = y;
 		// add the current point to our collection of drawn points
-      cloud.addVertex({x, y,0});
+	  cloud.addVertex({x, y,0});
 	}
 } 
 
@@ -84,18 +84,18 @@ void ofApp::update() {
 void ofApp::draw() {
 	ofBackground(255);
   if(debugMode) {
-    ofSetColor(0);
+	ofSetColor(0);
 		// draw a vector field for the debug screen
-    for(int i = 0; i < width; i += step) {
-      for(int j = 0; j < height; j += step) {
+	for(int i = 0; i < width; i += step) {
+	  for(int j = 0; j < height; j += step) {
 				glm::vec2 field = getField(glm::vec2(i, j));
-        ofPushMatrix();
-        ofTranslate(i, j);
+		ofPushMatrix();
+		ofTranslate(i, j);
 				ofSetColor(0);
-        ofDrawLine(0, 0, ofLerp(-windSpeed, windSpeed, field.x), ofLerp(-windSpeed, windSpeed, field.y));
-        ofPopMatrix();
-      }
-    }
+		ofDrawLine(0, 0, ofLerp(-windSpeed, windSpeed, field.x), ofLerp(-windSpeed, windSpeed, field.y));
+		ofPopMatrix();
+	  }
+	}
 		// draw the points as circles
 		ofSetColor(ofColor::red);
 		for(int i = 0; i < nPoints; i++) {
@@ -103,7 +103,7 @@ void ofApp::draw() {
 		}
   } else {
 		// when not in debug mode, draw all the points to the screen
-    ofSetColor(0, 10);
+	ofSetColor(0, 10);
 		cloud.draw();
 	}
 	

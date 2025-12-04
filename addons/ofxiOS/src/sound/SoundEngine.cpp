@@ -67,7 +67,10 @@
  
  */
 
-#if !TARGET_IPHONE_SIMULATOR
+
+#include "ofxiOSConstants.h"
+#if defined(OF_OPEN_AL) && !TARGET_IPHONE_SIMULATOR && !TARGET_TVOS_SIMULATOR
+#include "SoundEngine.h"
 /*==================================================================================================
 	SoundEngine.cpp
 ==================================================================================================*/
@@ -86,10 +89,11 @@
 #include <pthread.h>
 #include <mach/mach.h>
 #include <iostream>
-using namespace std;
 
-// Local Includes
-#include "SoundEngine.h"
+using std::cout;
+using std::endl;
+
+
 
 #define	AssertNoError(inMessage, inHandler)						\
 			if(result != noErr)									\
@@ -445,8 +449,9 @@ class BackgroundTrackMgr
 				while (nPackets == 0)
 				{
 					// if loadAtOnce, get all packets in the file, otherwise ~.5 seconds of data
-					nPackets = THIS->GetNumPacketsToRead(CurFileInfo);					
-					result = AudioFileReadPackets(CurFileInfo->mAFID, false, &numBytes, THIS->mPacketDescs, THIS->mCurrentPacket, &nPackets, 
+					nPackets = THIS->GetNumPacketsToRead(CurFileInfo);
+                    numBytes = nPackets * inCompleteAQBuffer->mAudioDataBytesCapacity;
+					result = AudioFileReadPacketData(CurFileInfo->mAFID, false, &numBytes, THIS->mPacketDescs, THIS->mCurrentPacket, &nPackets,
 											inCompleteAQBuffer->mAudioData);
 						AssertNoError("Error reading file data", end);
 					

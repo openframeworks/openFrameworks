@@ -1,0 +1,350 @@
+plugins {
+    id 'com.android.application'
+}
+
+def CMAKELIST_PATH = './src/'
+def CPP_SOURCE = './src/'
+def JAVA_SOURCE = './src/java'
+def PRJ_SRC_ROOT = './src/'
+def ofRoot(){ return '../../../../' }
+final ofSource = ofRoot() + 'libs/openFrameworks'
+final ofLibs = ofRoot() + 'libs'
+final addons = ofRoot() + 'addons'
+ext.ofLibraryOutput = ofRoot() + 'libs/openFrameworksCompiled/lib/android'
+def CMAKE_SCRIPT = ofRoot() + 'libs/openFrameworksCompiled/project/android/cmake.sh'
+def OFX_ANDROID = ofRoot() + 'addons/ofxAndroid'
+//def OF_ADDONS_ARGUMENTS = "${OF_ADDONS}"
+def enableProguardInReleaseBuilds = true
+def enableProguardInDebugBuilds = false
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '8.14.3'
+}
+tasks.register("prepareKotlinBuildScriptModel"){
+}
+def projectRoot = rootProject.projectDir.absolutePath
+def addonFile = new File(projectRoot, "addons.make")
+
+println "projectRoot = ${projectRoot}"
+println "addonFile = ${addonFile.absolutePath}"
+
+
+// Get all addon paths from addons.make
+
+def ofRoot = "/../../../"
+
+def addonPaths = []
+if (addonFile.exists()) {
+	addonFile.eachLine { line ->
+		def addonRelPath = ofRoot + "/addons/" + line.trim()
+		def addonPath = new File(projectRoot, addonRelPath).canonicalFile
+		println "Resolved addon path: ${addonPath}"
+		if (addonPath.exists()) {
+			addonPaths.add(addonPath)
+		} else {
+			println "Missing addon path: ${addonPath}"
+		}
+	}
+}
+
+println "Checking path: ${addonPaths}"
+
+
+def addonIncludeDirs = []
+def addonSourceFiles = []
+def addonLibs = []
+
+// Collect include directories and libraries for each addon
+addonPaths.each { addon ->
+	// Add addon/src
+	def includePath = new File(addon, "src")
+	if (includePath.exists()) {
+		addonIncludeDirs.add(includePath.absolutePath)
+		includePath.eachFileRecurse { file ->
+			if (file.name.endsWith(".cpp") || file.name.endsWith(".c")) {
+				println "Found C/CPP source: ${file}"
+				addonSourceFiles.add(file.absolutePath)
+			}
+		}
+		def javaDirs = [
+			new File(addon, "java"),
+			new File(addon, "kotlin"),
+			new File(addon, "srcJava"),
+			new File(addon, "src")
+		]
+		javaDirs.each { dir ->
+			if (dir.exists()) {
+				dir.eachFileRecurse { file ->
+					if (file.name.endsWith(".java") || file.name.endsWith(".kt")) {
+						println "Found Java/Kotlin source: ${file}"
+						addonSourceFiles.add(file.absolutePath)
+					}
+				}
+			}
+		}
+	}
+	// Add libs/*/include/
+	def libsDir = new File(addon, "libs")
+	if (libsDir.exists()) {
+		libsDir.eachDir { subLib ->
+			def includeDir = new File(subLib, "include").canonicalFile
+			if (includeDir.exists()) {
+				println "Found sublib include: ${includeDir}"
+				addonIncludeDirs.add(includeDir.absolutePath)
+			}
+		}
+	}
+}
+// Define supported Android ABIs
+def supportedAbis = ["arm64-v8a", "armeabi-v7a", "x86_64"]
+def currentAbis = []
+if (android.defaultConfig.ndk.abiFilters != null && !android.defaultConfig.ndk.abiFilters.isEmpty()) {
+	currentAbis = android.defaultConfig.ndk.abiFilters.toList()
+} else {
+	currentAbis = supportedAbis
+}
+println "abiFilters type: ${android.defaultConfig.ndk.abiFilters?.getClass()}"
+println "abiFilters value: ${android.defaultConfig.ndk.abiFilters}"
+println "currentAbis value: ${currentAbis}"
+
+def addonLibMap = [:].withDefault { [] }
+
+supportedAbis.each { abi -> addonLibMap[abi] = [] }
+addonPaths.each { addon ->
+	def libsDir = new File(addon, "libs")
+	if (libsDir.exists() && libsDir.isDirectory()) {
+		libsDir.eachDir { subLib ->
+			def libRoot = new File(subLib, "lib/android")
+			supportedAbis.each { abi ->
+				def archDir = new File(libRoot, abi).canonicalFile
+				if (archDir.exists() && archDir.isDirectory()) {
+					def libFiles = archDir.listFiles()?.findAll {
+						it.name.endsWith(".so") || it.name.endsWith(".a")
+					}
+					if (libFiles) {
+						addonLibMap[abi].addAll(libFiles*.absolutePath)
+					}
+				}
+			}
+		}
+	}
+}
+
+addonPaths.each { addon ->
+	def libsDir = new File(addon, "libs")
+	if (libsDir.exists() && libsDir.isDirectory()) {
+		libsDir.eachDir { subLib ->
+			def libRoot = new File(subLib, "lib/android")
+			supportedAbis.each { abi ->
+				def archDir = new File(libRoot, abi).canonicalFile
+				println "Checking: ${archDir}"
+				if (archDir.exists() && archDir.isDirectory()) {
+					def libFiles = archDir.listFiles()?.findAll {
+						it.name.endsWith(".so") || it.name.endsWith(".a")
+					}
+					if (libFiles && !libFiles.isEmpty()) {
+						println "Found ${libFiles.size()} libraries in ${archDir}:"
+						libFiles.each { lib -> println "    - ${lib.absolutePath}" }
+						addonLibs.addAll(libFiles*.absolutePath)
+					} else {
+						println "No libs found in ${archDir}"
+					}
+				}
+			}
+		}
+	} else {
+		println "No 'libs/' folder in ${addon.name}"
+	}
+}
+println "Addon Libraries found: [${addonLibs}]"
+
+// Convert lists to CMake arguments
+def cmakeIncludeArgs = "-DADDON_INCLUDE_DIRS=\"" + addonIncludeDirs.join(";") + "\""
+def cmakeLibArgs = "-DADDON_LIBS=\"" + addonLibs.join(";") + "\""
+def cmakeSrcArgs = "-DADDON_SOURCES=" + addonSourceFiles.join(";")
+
+println "Found addons: " + addonPaths
+println "Include directories: " + addonIncludeDirs
+
+
+
+android {
+    compileSdkVersion 34
+    buildToolsVersion '35.0.0'
+    //ndkPath "/Users/x/android-ndk-r21e"  // Point to your own NDK if needed
+    ndkVersion '28.2.13676358' // use android studio side loaded ndk
+    buildFeatures {
+        prefab true
+    }
+    signingConfigs {
+        debug {
+        }
+        release {
+            storeFile new File("${System.properties['user.home']}/.android/debug.keystore")
+            storeType "jks"
+            keyAlias 'androiddebugkey'
+//			storePassword 'android' // <- UPDATE THIS
+//          keyPassword 'android'   // <- UPDATE THIS
+        }
+    }
+    defaultConfig {
+        applicationId "cc.openframeworks.androidAssimpExample"  // IMPORTANT : THIS DEFINES THE ID OF THE APK
+        minSdkVersion 24
+        targetSdkVersion 34
+        versionCode 12
+        versionName '12.0'
+        ndk.abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86_64'
+
+		def androidSTL = "-DANDROID_STL=c++_shared"
+		if (project.hasProperty("OF_STATIC") && project.OF_STATIC.toBoolean()) {
+			androidSTL "-DANDROID_STL=c++_static"
+		}
+
+        externalNativeBuild {
+			cmake {
+				arguments "-DANDROID_TOOLCHAIN=clang",
+					"-DTARGET_OPENGLES=TRUE",
+					"-DCMAKE_VERBOSE_MAKEFILE=ON",
+					cmakeIncludeArgs,
+					cmakeLibArgs,
+					cmakeSrcArgs,
+					androidSTL
+				abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86_64'
+				version '3.22.1'
+			}
+        }
+        multiDexEnabled false
+    }
+    buildTypes {
+        release {
+            signingConfig signingConfigs.release
+            jniDebuggable false
+            debuggable false
+            minifyEnabled false
+            shrinkResources false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
+        }
+        debug {
+            jniDebuggable true
+            debuggable true
+            minifyEnabled false
+            shrinkResources false
+            signingConfig signingConfigs.debug
+        }
+    }
+    flavorDimensions "version"
+    productFlavors {
+        playstore {
+            applicationIdSuffix ""
+            signingConfig signingConfigs.release
+        }
+//        humble {
+//            applicationIdSuffix ".humble"
+//        }
+//        amazon {
+//            applicationIdSuffix ".amazon"
+//        }
+//        samsung {
+//            applicationIdSuffix ".samsung"
+//        }
+//        oppo {
+//            applicationIdSuffix ".oppo"
+//        }
+    }
+    sourceSets {
+        main {
+            manifest.srcFile "${PRJ_SRC_ROOT}/AndroidManifest.xml"
+            java.srcDirs = ["${PRJ_SRC_ROOT}/java",
+                            "${OFX_ANDROID}/Java"]
+            res.srcDirs = ["${PRJ_SRC_ROOT}/res"]
+			assets {
+				srcDirs 'src/main/assets', '../bin/data'
+			}
+        }
+    }
+    externalNativeBuild {
+		cmake {
+			path "${CMAKELIST_PATH}/CMakeLists.txt"
+		}
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    androidResources {
+        noCompress ''
+    }
+    dependenciesInfo {
+        includeInApk false
+        includeInBundle false
+    }
+	namespace 'cc.openframeworks.android'
+//    testOptions {
+//        devices {
+//            pixel2api29 (com.android.build.api.dsl.ManagedVirtualDevice) {
+//                // Use device profiles you typically see in
+//                // Android Studio
+//                device = "Pixel 2"
+//                apiLevel = 29
+//                // You can also specify "aosp" if you don’t require
+//                // Google Play Services.
+//                systemImageSource = "google"
+//                abi = "x86"
+//            }
+//        }
+//    }
+}
+
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'androidx.appcompat:appcompat:1.7.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.2.1'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation "com.getkeepsafe.relinker:relinker:1.4.5"
+    implementation 'com.google.android.material:material:1.12.0'
+    if (project.hasProperty("googleplay")) {
+        implementation "com.google.android.gms:play-services-games:22.0.1"
+        implementation "com.google.android.gms:play-services-auth:20.0.1"
+        implementation "com.google.android.gms:play-services-base:18.0.1"
+        implementation "com.google.android.gms:play-services-basement:18.0.0"
+        implementation "com.google.android.gms:play-services-instantapps:18.0.1"
+        implementation "com.google.android.gms:play-services-appset:16.0.2"
+    }
+}
+
+def doesOFSoFileExist(arch) {
+	def fileType = (project.hasProperty("OF_STATIC") && project.OF_STATIC.toBoolean()) ? "a" : "so"
+	def libFile = file("$ofLibraryOutput/$arch/libopenFrameworksAndroid.${fileType}")
+	return libFile.exists()
+}
+
+task checkAndBuildOF {
+    doLast {
+        println "checking openFrameworks libraries..."
+        def knownABIs = ["arm64-v8a", "armeabi-v7a", "x86_64"]
+        def isWindows = System.getProperty("os.name").toLowerCase().contains("win")
+        def gitBashPath = isWindows ? "C:\\Program Files\\Git\\git-bash.exe" : "bash"
+        def cmakeScriptPath = file(CMAKE_SCRIPT).absolutePath
+        knownABIs.each { arch ->
+            if (!doesOFSoFileExist(arch)) {
+                println "openFrameworks library missing for $arch! Running CMake build..."
+                if(isWindows) {
+                    exec {
+                        commandLine '"C:\\Program Files\\Git\\bin\\bash.exe"'
+                        args cmakeScriptPath
+                    }
+                } else {
+                    exec {
+                        commandLine 'bash', cmakeScriptPath
+                    }
+                }
+            } else {
+                println "openFrameworks library exists for $arch"
+            }
+        }
+    }
+}
+preBuild.dependsOn checkAndBuildOF
+

@@ -4,8 +4,10 @@ uniform mat4 modelViewProjectionMatrix;
 in vec4 position;
 in vec4 instanceColor;
 uniform samplerBuffer tex;
-out vec4 color;
 
+#if !defined(OF_SHADOW_DEPTH_PASS)
+out vec4 color;
+#endif
 
 void main(){
     int x = gl_InstanceID*4;
@@ -16,6 +18,12 @@ void main(){
         texelFetch(tex, x+2), 
         texelFetch(tex, x+3)
     );
-    color = instanceColor;
-	gl_Position = modelViewProjectionMatrix * transformMatrix * position;
+	
+	#if defined(OF_SHADOW_DEPTH_PASS)
+		vec3 worldPosition = (transformMatrix * vec4(position.xyz, 1.0)).xyz;
+		sendShadowDepthWorldPosition(worldPosition);
+	#else
+		color = instanceColor;
+		gl_Position = modelViewProjectionMatrix * transformMatrix * position;
+	#endif
 }

@@ -1,6 +1,15 @@
 #include "ofSerial.h"
 #include "ofUtils.h"
 #include "ofLog.h"
+#include <fcntl.h>
+#include <errno.h>
+#include <ctype.h>
+#include <algorithm>
+#include <cstring>
+
+#ifndef TARGET_WIN32
+	#include <unistd.h>
+#endif	
 
 #if defined( TARGET_OSX ) || defined( TARGET_LINUX )
 	#include <sys/ioctl.h>
@@ -8,19 +17,35 @@
 	#include <dirent.h>
 #endif
 
-
-#include <fcntl.h>
-#include <errno.h>
-#include <ctype.h>
-#include <algorithm>
-#include <cstring>
-
-using namespace std;
-
 #ifdef TARGET_LINUX
 	#include <linux/serial.h>
 #endif
 
+// FIXME: check if this i sexclusive to windows and move to the right target if yes.
+//#if defined( TARGET_OSX ) || defined( TARGET_LINUX ) || defined (TARGET_ANDROID)
+//	#include <termios.h>
+//#else
+#ifdef TARGET_WIN32
+	#include <winbase.h>
+	#include <tchar.h>
+	#include <iostream>
+	#include <string.h>
+	#include <devpropdef.h>
+	#include <setupapi.h>
+	#include <regstr.h>
+	/// \cond INTERNAL
+	#define MAX_SERIAL_PORTS 256
+	/// \endcond
+	#include <winioctl.h>
+	/*#ifndef _MSC_VER
+		#define INITGUID
+		#include <initguid.h> // needed for dev-c++ & DEFINE_GUID
+	#endif*/
+#endif
+
+
+using std::vector;
+using std::string;
 
 #ifdef TARGET_WIN32
 
@@ -69,9 +94,10 @@ void ofSerial::enumerateWin32Ports(){
 
 			 char * begin = nullptr;
 			 char * end = nullptr;
-			 begin = strstr((char *)dataBuf, "COM");
+			 begin = strstr((char *)dataBuf, "(COM");
 
 			 if(begin){
+				 begin++;	// get rid of the (
 				 end = strstr(begin, ")");
 				 if(end){
 					 *end = 0;   // get rid of the )...
@@ -368,6 +394,7 @@ bool ofSerial::setup(string portName, int baud){
 		options.c_oflag &= (tcflag_t) ~(OPOST);
 		options.c_cflag |= CS8;
 		#if defined( TARGET_LINUX )
+            options.c_iflag &= ~(IXON | IXOFF | IXANY); // turn off software xon/xoff flow ctrl
 			options.c_cflag |= CRTSCTS;
 			options.c_lflag &= ~(ICANON | ECHO | ISIG);
 		#endif
@@ -416,7 +443,7 @@ bool ofSerial::setup(string portName, int baud){
 		cfgSize = sizeof(cfg);
 		GetCommConfig(hComm, &cfg, &cfgSize);
 		int bps = baud;
-		swprintf(buf, L"baud=%d parity=N data=8 stop=1", bps);
+		swprintf(buf, 80, L"baud=%d parity=N data=8 stop=1", bps);
 
 		if(!BuildCommDCBW(buf, &cfg.dcb)){
 			ofLogError("ofSerial") << "setup(): unable to build comm dcb, (" << buf << ")";

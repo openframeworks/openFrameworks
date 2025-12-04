@@ -32,7 +32,7 @@ DEFAULT_REPO_URL="http://mirrors.kernel.org/archlinux"
 DEFAULT_ARM_REPO_URL="http://mirror.archlinuxarm.org"
 
 PACMAN_PACKAGES_ARM=(
-acl archlinux-keyring attr bzip2 curl expat glibc gpgme libarchive  libassuan libgpg-error libssh2 lzo openssl pacman pacman-mirrorlist xz zlib linux-raspberrypi linux-raspberrypi-headers libutil-linux linux-api-headers linux-firmware krb5 e2fsprogs keyutils libidn gcc-libs coreutils bash grep gawk file tar systemd sed gcc glibc coreutils systemd  make pkg-config openal glew freeimage freetype2 libsndfile openssl mesa mesa-libgl fontconfig gstreamer gst-plugins-base gst-plugins-base-libs gst-plugins-good gst-plugins-bad gst-libav assimp boost cairo pixman libpng harfbuzz graphite libdrm libx11 xproto kbproto libxcb libxau libxdmcp libxext xextproto libxdamage damageproto libxfixes fixesproto libxxf86vm xf86vidmodeproto libxrender renderproto alsa-lib flex libxrandr libxi libxcursor libxshmfence wayland opencv uriparser curl libxml2 pugixml libpsl icu
+acl archlinux-keyring attr bzip2 curl expat glibc gpgme libarchive  libassuan libgpg-error libssh2 lzo openssl pacman pacman-mirrorlist xz zlib linux-raspberrypi linux-raspberrypi-headers libutil-linux linux-api-headers linux-firmware krb5 e2fsprogs keyutils libidn gcc-libs coreutils bash grep gawk file tar systemd sed gcc glibc coreutils systemd  make pkg-config openal glew freeimage freetype2 libsndfile openssl mesa mesa-libgl fontconfig gstreamer gst-plugins-base gst-plugins-base-libs gst-plugins-good gst-plugins-bad gst-libav assimp cairo pixman libpng harfbuzz graphite libdrm libx11 xproto kbproto libxcb libxau libxdmcp libxext xextproto libxdamage damageproto libxfixes fixesproto libxxf86vm xf86vidmodeproto libxrender renderproto alsa-lib flex libxrandr libxi libxcursor libxshmfence wayland opencv uriparser curl libxml2 pugixml libpsl icu
 )
 BASIC_PACKAGE_ARMS=(${PACMAN_PACKAGES_ARM[*]} filesystem)
 
@@ -47,6 +47,10 @@ debug() {
 extract_href() {
   sed -n '/<a / s/^.*<a [^>]*href="\([^\"]*\)".*$/\1/p'
 }
+
+SCRIPT_DIR="${BASH_SOURCE%/*}"
+if [[ ! -d "$SCRIPT_DIR" ]]; then SCRIPT_DIR="$PWD"; fi
+. "$SCRIPT_DIR/../../dev/downloader.sh"
 
 fetch() {
   curl -L -s "$@"
@@ -121,7 +125,7 @@ configure_minimal_system() {
 
 install_rpi_image(){
   mkdir -p $DEST/root/archlinux_arm
-  wget http://archlinuxarm.org/os/ArchLinuxARM-rpi-2-latest.tar.gz
+  downloader http://archlinuxarm.org/os/ArchLinuxARM-rpi-2-latest.tar.gz
   tar xzf ArchLinuxARM-rpi-2-latest.tar.gz -C $DEST/root/archlinux_arm
   echo "Server = http://eu.mirror.archlinuxarm.org/\$arch/\$repo" > $DEST/etc/pacman.d/mirrorlist
   sed -i "s/Architecture = auto/Architecture = armv7h/g" $DEST/etc/pacman.conf

@@ -29,13 +29,15 @@
  * ***********************************************************************/ 
 
 #pragma once
-
+#include "ofxiOSConstants.h"
+#if defined(OF_MAP_KIT)
 #include <TargetConditionals.h>
 #if TARGET_OS_IOS || (TARGET_OS_IPHONE && !TARGET_OS_TV)
 
 #import <MapKit/MapKit.h>
 #include "ofConstants.h"
 #include "ofxiOSMapKitListener.h"
+#import "ofxiOSMapKitDelegate.h"
 #include "glm/vec2.hpp"
 #include "ofRectangle.h"
 #include <list>
@@ -140,7 +142,7 @@ public:
 	MKMapView	*getMKMapView();
 	
 protected:
-	
+    ofxiOSMapKitDelegate *mapKitDelegate;
 	MKMapView	*mapView;
 	std::list<ofxiOSMapKitListener*> listeners;
 	
@@ -163,4 +165,4 @@ protected:
 //-------------------------------------------------------------------------------
 
 #endif
-
+#endif

@@ -19,35 +19,35 @@ enum ReadyState{
 };
 
 ofxEmscriptenVideoPlayer::ofxEmscriptenVideoPlayer()
-:id(html5video_player_create())
-,gotFirstFrame(false)
+:player_id(html5video_player_create())
 ,usePixels(true){
-
 
 }
 
 ofxEmscriptenVideoPlayer::~ofxEmscriptenVideoPlayer() {
-	html5video_player_delete(id);
+	html5video_player_delete(player_id);
 }
 
-bool ofxEmscriptenVideoPlayer::load(string name){
-	html5video_player_load(id,ofToDataPath(name).c_str());
+bool ofxEmscriptenVideoPlayer::load(const of::filesystem::path & fileName){
+	std::string name = ofPathToString(fileName);
+	if (name.substr(0, 7) == "http://" || name.substr(0, 8) == "https://"){
+		html5video_player_load_url(player_id, fileName.c_str());
+	} else{
+		html5video_player_load(player_id, ofToDataPath(fileName).c_str());
+	}
 	return true;
 }
 
 void ofxEmscriptenVideoPlayer::close(){
-	html5video_player_delete(id);
-	id = html5video_player_create();
-	gotFirstFrame = false;
+	html5video_player_delete(player_id);
+	player_id = html5video_player_create();
 }
 
-
 void ofxEmscriptenVideoPlayer::update(){
-	gotFirstFrame = pixels.isAllocated();
-	if(html5video_player_update(id,pixels.isAllocated() && usePixels,pixels.getData())){
-		if(texture.texData.width!=html5video_player_width(id) || texture.texData.height!=html5video_player_height(id)){
-			texture.texData.width = html5video_player_width(id);
-			texture.texData.height = html5video_player_height(id);
+	if(html5video_player_update(player_id, pixels.isAllocated() && usePixels, pixels.getData())){
+		if(texture.texData.width!=html5video_player_width(player_id) || texture.texData.height!=html5video_player_height(player_id)){
+			texture.texData.width = html5video_player_width(player_id);
+			texture.texData.height = html5video_player_height(player_id);
 			texture.texData.tex_w = texture.texData.width;
 			texture.texData.tex_h = texture.texData.height;
 			switch(getPixelFormat()){
@@ -65,7 +65,7 @@ void ofxEmscriptenVideoPlayer::update(){
 				break;
 			}
 		}
-		if(texture.texData.textureID!=html5video_player_texture_id(id)){
+		if(texture.texData.textureID!=html5video_player_texture_id(player_id)){
 			texture.texData.bFlipTexture = false;
 			switch(getPixelFormat()){
 			case OF_PIXELS_RGBA:
@@ -85,24 +85,35 @@ void ofxEmscriptenVideoPlayer::update(){
 			texture.texData.tex_t = 1;
 			texture.texData.textureTarget = GL_TEXTURE_2D;
 			texture.texData.bAllocated = true;
-			texture.setUseExternalTextureID(html5video_player_texture_id(id));
+			texture.setUseExternalTextureID(html5video_player_texture_id(player_id));
 		}
-	}
+	}else{
+            if( !bHadValidFrame && !bWarnBlocked ){
+                if( ofGetElapsedTimef() - timePlayRequested > 3.0 ){
+                    string errorMsg = "ofxEmscriptenVideoPlayer::update video is not playing - check your browser preferences 'Auto Play' and click allow for this site  ";
+                    ofLogError() << errorMsg << endl;
+                    std::cout << errorMsg << endl;
+                    bWarnBlocked = true;
+                }
+            }
+        }
 }
-
-
 
 void ofxEmscriptenVideoPlayer::play(){
-	html5video_player_play(id);
+	html5video_player_play(player_id);
 }
 
-
 void ofxEmscriptenVideoPlayer::stop(){
-	html5video_player_stop(id);
+	html5video_player_stop(player_id);
 }
 
 bool ofxEmscriptenVideoPlayer::isFrameNew() const{
-	return gotFirstFrame;
+	// does not work with Emscripten
+	if (pixels.isAllocated() || texture.isAllocated()){
+		return true;
+	} else{
+		return false;
+	}
 }
 
 ofPixels & ofxEmscriptenVideoPlayer::getPixels(){
@@ -126,28 +137,27 @@ float ofxEmscriptenVideoPlayer::getHeight() const{
 }
 
 bool ofxEmscriptenVideoPlayer::isPaused() const{
-	return html5video_player_is_paused(id);
+	return html5video_player_is_paused(player_id);
 }
 
 bool ofxEmscriptenVideoPlayer::isLoaded() const{
-	return html5video_player_ready_state(id) == HAVE_ENOUGH_DATA;
+	return html5video_player_ready_state(player_id) == HAVE_ENOUGH_DATA;
 }
 
 bool ofxEmscriptenVideoPlayer::isPlaying() const{
 	return !isPaused();
 }
 
-
 bool ofxEmscriptenVideoPlayer::setPixelFormat(ofPixelFormat pixelFormat){
 	switch(pixelFormat){
 	case OF_PIXELS_RGBA:
-		html5video_player_set_pixel_format(id,"RGBA");
+		html5video_player_set_pixel_format(player_id, "RGBA");
 		break;
 	case OF_PIXELS_RGB:
-		html5video_player_set_pixel_format(id,"RGB");
+		html5video_player_set_pixel_format(player_id, "RGB");
 		break;
 	case OF_PIXELS_MONO:
-		html5video_player_set_pixel_format(id,"GRAY");
+		html5video_player_set_pixel_format(player_id, "GRAY");
 		break;
 	default:
 		ofLogError() << "can't set pixel format";
@@ -157,7 +167,7 @@ bool ofxEmscriptenVideoPlayer::setPixelFormat(ofPixelFormat pixelFormat){
 }
 
 ofPixelFormat ofxEmscriptenVideoPlayer::getPixelFormat() const{
-	string format = html5video_player_pixel_format(id);
+	string format = html5video_player_pixel_format(player_id);
 	if(format == "RGB"){
 		return OF_PIXELS_RGB;
 	}else if(format == "RGBA"){
@@ -170,54 +180,56 @@ ofPixelFormat ofxEmscriptenVideoPlayer::getPixelFormat() const{
 }
 
 float ofxEmscriptenVideoPlayer::getPosition() const{
-	return html5video_player_current_time(id) / html5video_player_duration(id);
+	if (html5video_player_duration(player_id) != 0) {
+	    return html5video_player_current_time(player_id) / html5video_player_duration(player_id);
+	} else {
+	    return 0;
+	}
 }
 
 float ofxEmscriptenVideoPlayer::getSpeed() const{
-	return html5video_player_playback_rate(id);
+	return html5video_player_playback_rate(player_id);
 }
 
 float ofxEmscriptenVideoPlayer::getDuration() const{
-	return html5video_player_duration(id);
+	return html5video_player_duration(player_id);
 }
 
 bool ofxEmscriptenVideoPlayer::getIsMovieDone() const{
-	return html5video_player_ended(id);
+	return html5video_player_ended(player_id);
 }
-
 
 void ofxEmscriptenVideoPlayer::setPaused(bool bPause){
 	if(bPause){
-		html5video_player_pause(id);
+		html5video_player_pause(player_id);
 	}else{
-		html5video_player_play(id);
+		html5video_player_play(player_id);
 	}
 }
 
 void ofxEmscriptenVideoPlayer::setPosition(float pct){
-	html5video_player_set_current_time(id,pct*html5video_player_duration(id));
+	html5video_player_set_current_time(player_id, pct * html5video_player_duration(player_id));
 }
 
 void ofxEmscriptenVideoPlayer::setVolume(float volume){
-	html5video_player_set_volume(id,volume);
+	html5video_player_set_volume(player_id, volume);
 }
 
 void ofxEmscriptenVideoPlayer::setLoopState(ofLoopType state){
-	if(state!=OF_LOOP_NONE){
-		html5video_player_set_loop(id,1);
+	if(state != OF_LOOP_NONE){
+		html5video_player_set_loop(player_id, 1);
 	}else{
-		html5video_player_set_loop(id,0);
+		html5video_player_set_loop(player_id, 0);
 	}
 }
 
 void ofxEmscriptenVideoPlayer::setSpeed(float speed){
-	html5video_player_set_playback_rate(id,speed);
+	html5video_player_set_playback_rate(player_id, speed);
 }
 
 void ofxEmscriptenVideoPlayer::setFrame(int frame){
 
 }
-
 
 int	ofxEmscriptenVideoPlayer::getCurrentFrame() const{
 	return 0;
@@ -228,16 +240,15 @@ int	ofxEmscriptenVideoPlayer::getTotalNumFrames() const{
 }
 
 ofLoopType ofxEmscriptenVideoPlayer::getLoopState() const{
-	return html5video_player_loop(id)?OF_LOOP_NORMAL:OF_LOOP_NONE;
+	return html5video_player_loop(player_id)?OF_LOOP_NORMAL:OF_LOOP_NONE;
 }
 
-
 void ofxEmscriptenVideoPlayer::firstFrame(){
-	html5video_player_set_current_time(id,0);
+	html5video_player_set_current_time(player_id, 0);
 }
 
 void ofxEmscriptenVideoPlayer::nextFrame(){
-	html5video_player_set_current_time(id,html5video_player_duration(id));
+	html5video_player_set_current_time(player_id, html5video_player_duration(player_id));
 }
 
 void ofxEmscriptenVideoPlayer::previousFrame(){
@@ -246,4 +257,12 @@ void ofxEmscriptenVideoPlayer::previousFrame(){
 
 void ofxEmscriptenVideoPlayer::setUsePixels(bool usePixels){
 	this->usePixels = usePixels;
+}
+
+void ofxEmscriptenVideoPlayer::setPan(float pan){
+	html5video_player_set_pan(player_id, pan);
+}
+
+float ofxEmscriptenVideoPlayer::getPan() const{
+	return html5video_player_pan(player_id);
 }

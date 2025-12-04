@@ -8,16 +8,23 @@ int main( ){
 	int windowWidth = 1024;
 	int windowHeight = 500;
 	
-	#ifdef TARGET_OPENGLES
-    	ofGLESWindowSettings settings;
-	settings.width = windowWidth;
-	settings.height = windowHeight;
-	settings.setGLESVersion(2);
-	ofCreateWindow(settings);
+	#if defined TARGET_OPENGLES && not defined TARGET_EMSCRIPTEN
+		ofGLESWindowSettings settings;
+		settings.width = windowWidth;
+		settings.height = windowHeight;
+		settings.setGLESVersion(2);
+		
+		auto window = ofCreateWindow(settings);
+		ofRunApp(window, std::make_shared<ofApp>());
 	#else
-	ofSetupOpenGL(windowWidth, windowHeight, OF_WINDOW);
-	#endif
+		ofGLWindowSettings settings;
+		settings.setSize(windowWidth, windowHeight);
+		settings.windowMode = OF_WINDOW; //can also be OF_FULLSCREEN
 
-	ofRunApp( new ofApp());
+		auto window = ofCreateWindow(settings);
+		ofRunApp(window, std::make_shared<ofApp>());
+	#endif
+	
+	ofRunMainLoop();
 
 }

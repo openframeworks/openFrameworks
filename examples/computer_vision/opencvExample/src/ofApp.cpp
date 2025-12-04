@@ -4,15 +4,15 @@
 void ofApp::setup(){
 
 	#ifdef _USE_LIVE_VIDEO
-        vidGrabber.setVerbose(true);
-        vidGrabber.setup(320,240);
+		vidGrabber.setVerbose(true);
+		vidGrabber.setup(320,240);
 	#else
-        vidPlayer.load("fingers.mov");
-        vidPlayer.play();
-        vidPlayer.setLoopState(OF_LOOP_NORMAL);
+		vidPlayer.load("fingers.mp4");
+		vidPlayer.play();
+		vidPlayer.setLoopState(OF_LOOP_NORMAL);
 	#endif
 
-    colorImg.allocate(320,240);
+	colorImg.allocate(320,240);
 	grayImage.allocate(320,240);
 	grayBg.allocate(320,240);
 	grayDiff.allocate(320,240);
@@ -25,25 +25,25 @@ void ofApp::setup(){
 void ofApp::update(){
 	ofBackground(100,100,100);
 
-    bool bNewFrame = false;
+	bool bNewFrame = false;
 
 	#ifdef _USE_LIVE_VIDEO
-       vidGrabber.update();
+	   vidGrabber.update();
 	   bNewFrame = vidGrabber.isFrameNew();
-    #else
-        vidPlayer.update();
-        bNewFrame = vidPlayer.isFrameNew();
+	#else
+		vidPlayer.update();
+		bNewFrame = vidPlayer.isFrameNew();
 	#endif
 
 	if (bNewFrame){
 
 		#ifdef _USE_LIVE_VIDEO
-            colorImg.setFromPixels(vidGrabber.getPixels());
-	    #else
-            colorImg.setFromPixels(vidPlayer.getPixels());
-        #endif
+			colorImg.setFromPixels(vidGrabber.getPixels());
+		#else
+			colorImg.setFromPixels(vidPlayer.getPixels());
+		#endif
 
-        grayImage = colorImg;
+		grayImage = colorImg;
 		if (bLearnBakground == true){
 			grayBg = grayImage;		// the = sign copys the pixels from grayImage into grayBg (operator overloading)
 			bLearnBakground = false;
@@ -82,8 +82,8 @@ void ofApp::draw(){
 
 	// or, instead we can draw each blob individually from the blobs vector,
 	// this is how to get access to them:
-    for (int i = 0; i < contourFinder.nBlobs; i++){
-        contourFinder.blobs[i].draw(360,540);
+	for (int i = 0; i < contourFinder.nBlobs; i++){
+		contourFinder.blobs[i].draw(360,540);
 		
 		// draw over the centroid if the blob is a hole
 		ofSetColor(255);
@@ -92,7 +92,7 @@ void ofApp::draw(){
 				contourFinder.blobs[i].boundingRect.getCenter().x + 360,
 				contourFinder.blobs[i].boundingRect.getCenter().y + 540);
 		}
-    }
+	}
 
 	// finally, a report:
 	ofSetHexColor(0xffffff);

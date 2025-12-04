@@ -9,7 +9,7 @@ class ofApp : public ofBaseApp{
 		void update();
 		void draw();
 		void drawScene(bool isPreview);
-		
+
 		void keyPressed(int key);
 		void keyReleased(int key);
 		void mouseMoved(int x, int y );
@@ -20,23 +20,23 @@ class ofApp : public ofBaseApp{
 		void mouseExited(int x, int y);
 		void windowResized(int w, int h);
 		void dragEvent(ofDragInfo dragInfo);
-		void gotMessage(ofMessage msg);		
+		void gotMessage(ofMessage msg);
 
 		ofVideoGrabber video;
 		ofxCvHaarFinder finder;
-	
+
 		//the view window is defined by 3 corners
 		glm::vec3 windowTopLeft;
 		glm::vec3 windowBottomLeft;
 		glm::vec3 windowBottomRight;
 		ofCamera headTrackedCamera;
 		ofEasyCam previewCamera;
-	
+
 		bool usePreview;
 		float windowWidth;
 		float windowHeight;
 		float viewerDistance;
-	
+
 		deque<glm::vec3> headPositionHistory;
 
 		ofVboMesh window;

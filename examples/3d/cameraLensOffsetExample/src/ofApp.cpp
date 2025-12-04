@@ -4,24 +4,24 @@
 void ofApp::setup(){
 	ofEnableSmoothing();
 	ofSetVerticalSync(true);
-	
+
 	video.setup(320, 240);
 	finder.setup("haarcascade_frontalface_default.xml");
 	usePreview = false;
-	
+
 	previewCamera.setDistance(3.0f);
 	previewCamera.setNearClip(0.01f);
 	previewCamera.setFarClip(500.0f);
 	previewCamera.setPosition(0.4f, 0.2f, 0.8f);
 	previewCamera.lookAt(glm::vec3(0.0f, 0.0f, 0.0f));
-	
+
 	headTrackedCamera.setNearClip(0.01f);
 	headTrackedCamera.setFarClip(1000.0f);
-	
+
 	//defining the real world coordinates of the window which is being headtracked is important for visual accuracy
 	windowWidth = 0.3f;
 	windowHeight = 0.2f;
-	
+
 	windowTopLeft = glm::vec3(-windowWidth / 2.0f,
 							+windowHeight / 2.0f,
 							0.0f);
@@ -31,7 +31,7 @@ void ofApp::setup(){
 	windowBottomRight = glm::vec3(+windowWidth / 2.0f,
 								-windowHeight / 2.0f,
 								0.0f);
-	
+
 	//we use this constant since we're using a really hacky headtracking in this example
 	//if you use something that can properly locate the head in 3d (like a kinect), you don't need this fudge factor
 	viewerDistance = 0.4f;
@@ -41,23 +41,23 @@ void ofApp::setup(){
 void ofApp::update(){
 	video.update();
 	finder.findHaarObjects(video.getPixels());
-	
+
 	glm::vec3 headPosition(0,0,viewerDistance);
-	
+
 	if (finder.blobs.size() > 0) {
 		//get the head position in camera pixel coordinates
 		const ofxCvBlob & blob = finder.blobs.front();
 		float cameraHeadX = blob.centroid.x;
 		float cameraHeadY = blob.centroid.y;
-		
+
 		//do a really hacky interpretation of this, really you should be using something better to find the head (e.g. kinect skeleton tracking)
-		
+
 		//since camera isn't mirrored, high x in camera means -ve x in world
 		float worldHeadX = ofMap(cameraHeadX, 0, video.getWidth(), windowBottomRight.x, windowBottomLeft.x);
-		
+
 		//low y in camera is +ve y in world
 		float worldHeadY = ofMap(cameraHeadY, 0, video.getHeight(), windowTopLeft.y, windowBottomLeft.y);
-		
+
 		//set position in a pretty arbitrary way
 		headPosition = glm::vec3(worldHeadX, worldHeadY, viewerDistance);
 	} else {
@@ -66,7 +66,7 @@ void ofApp::update(){
 			headPosition = glm::vec3(0.5f * windowWidth * sin(ofGetElapsedTimef()), 0.5f * windowHeight * cos(ofGetElapsedTimef()), viewerDistance);
 		}
 	}
-	
+
 	headPositionHistory.push_back(headPosition);
 	while (headPositionHistory.size() > 50.0f){
 		headPositionHistory.pop_front();
@@ -79,35 +79,35 @@ void ofApp::update(){
 
 //--------------------------------------------------------------
 void ofApp::drawScene(bool isPreview){
-	
+
 	ofEnableDepthTest();
 
 	if (isPreview) {
 		ofPushStyle();
 		ofSetColor(150, 100, 100);
 		ofDrawGrid(1.0f, 5.0f, true);
-		
+
 		ofSetColor(255);
-		
+
 		//--
 		//draw camera preview
 		//
 		headTrackedCamera.transformGL();
-		
+
 		ofPushMatrix();
 		ofScale(0.002f, 0.002f, 0.002f);
 		ofNode().draw();
 		ofPopMatrix();
-		
-        ofMultMatrix(glm::inverse(headTrackedCamera.getProjectionMatrix()));
-		
+
+		ofMultMatrix(glm::inverse(headTrackedCamera.getProjectionMatrix()));
+
 		ofNoFill();
 		ofDrawBox(2.0f);
-		
+
 		headTrackedCamera.restoreTransformGL();
 		//
 		//--
-		
+
 		//--
 		//draw window preview
 		//
@@ -117,13 +117,15 @@ void ofApp::drawScene(bool isPreview){
 		window.addVertex(windowBottomRight);
 		window.setMode(OF_PRIMITIVE_LINE_STRIP);
 		window.draw();
-		glPointSize(3.0f);
+		#ifndef TARGET_EMSCRIPTEN
+			glPointSize(3.0f);
+		#endif
 		window.drawVertices();
 		//
 		//--
-        ofPopStyle();
+		ofPopStyle();
 	}
-	
+
 	ofPushStyle();
 	ofNoFill();
 	ofColor col(200,100,100);
@@ -133,7 +135,7 @@ void ofApp::drawScene(bool isPreview){
 		ofDrawRectangle(-windowWidth / 2.0f, -windowHeight / 2.0f, z, windowWidth, windowHeight);
 	}
 	ofPopStyle();
-	
+
 	ofPushStyle();
 	ofEnableSmoothing();
 	ofSetColor(255);
@@ -145,7 +147,7 @@ void ofApp::drawScene(bool isPreview){
 	}
 	ofEndShape(false);
 	ofPopStyle();
-	
+
 	ofDisableDepthTest();
 }
 
@@ -162,9 +164,9 @@ void ofApp::draw(){
 	else{
 		headTrackedCamera.begin();
 	}
-	
+
 	drawScene(usePreview);
-	
+
 	if (usePreview){
 		previewCamera.end();
 	}
@@ -173,8 +175,8 @@ void ofApp::draw(){
 	}
 	//
 	//------
-	
-	
+
+
 	//------
 	//draw some overlays
 	//
@@ -186,20 +188,20 @@ void ofApp::draw(){
 		ofDrawRectangle(cur.x, cur.y, cur.width, cur.height);
 	}
 	ofPopStyle();
-	
+
 	stringstream message;
 	message << "[SPACE] = User preview camera [" << (usePreview ? 'x' : ' ') << "]";
-	
+
 	ofDrawBitmapString(message.str(), video.getWidth() + 10, 20);
-	
+
 	if (usePreview){
 		ofRectangle bottomLeft(0, ofGetHeight() - 200.0f, 300.0f, 200.0f);
-		
+
 		ofPushStyle();
 		ofSetColor(0);
 		ofDrawRectangle(bottomLeft);
 		ofPopStyle();
-		
+
 		headTrackedCamera.begin(bottomLeft);
 		drawScene(false);
 		headTrackedCamera.end();
@@ -260,6 +262,6 @@ void ofApp::gotMessage(ofMessage msg){
 }
 
 //--------------------------------------------------------------
-void ofApp::dragEvent(ofDragInfo dragInfo){ 
+void ofApp::dragEvent(ofDragInfo dragInfo){
 
 }

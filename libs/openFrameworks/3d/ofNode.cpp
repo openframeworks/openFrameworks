@@ -1,9 +1,15 @@
 
 #include "ofNode.h"
-#include "ofMath.h"
-#include "ofLog.h"
 #include "of3dGraphics.h"
-#include "ofGraphicsBaseTypes.h"
+
+#if !defined(GLM_FORCE_CTOR_INIT)
+	#define GLM_FORCE_CTOR_INIT
+#endif
+#if !defined(GLM_ENABLE_EXPERIMENTAL)
+	#define GLM_ENABLE_EXPERIMENTAL
+#endif
+#include <glm/mat4x4.hpp>
+#include "ofVectorMath.h"
 
 //----------------------------------------
 ofNode::ofNode()
@@ -227,7 +233,8 @@ void ofNode::setOrientation(const glm::quat& q) {
 
 //----------------------------------------
 void ofNode::setOrientation(const glm::vec3& eulerAngles) {
-	setOrientation(glm::angleAxis(ofDegToRad(eulerAngles.x), glm::vec3(1, 0, 0)) * glm::angleAxis(ofDegToRad(eulerAngles.z), glm::vec3(0, 0, 1)) * glm::angleAxis(ofDegToRad(eulerAngles.y), glm::vec3(0, 1, 0)));
+    glm::quat q(glm::radians(eulerAngles));
+    setOrientation(q);
 }
 
 //----------------------------------------
@@ -254,7 +261,7 @@ glm::vec3 ofNode::getOrientationEuler() const {
 //----------------------------------------
 glm::vec3 ofNode::getOrientationEulerDeg() const {
 	auto euler = glm::eulerAngles(orientation.get());
-	return {ofRadToDeg(euler.x), ofRadToDeg(euler.y), ofRadToDeg(euler.z)};
+	return glm::degrees( euler );
 }
 
 //----------------------------------------
@@ -282,6 +289,39 @@ void ofNode::setScale(const glm::vec3& s) {
 //----------------------------------------
 glm::vec3 ofNode::getScale() const {
 	return scale;
+}
+
+//----------------------------------------
+void ofNode::setPositionOrientationScale( const glm::vec3& p, const glm::quat& q, const glm::vec3& s ) {
+	this->position = p;
+	this->orientation = q;
+	this->scale = s;
+	createMatrix();
+	onPositionChanged();
+	onOrientationChanged();
+	onScaleChanged();
+}
+
+//----------------------------------------
+void ofNode::setPositionOrientationScale( const glm::vec3& p, const glm::quat& q, const float& s ) {
+	setPositionOrientationScale( p, q, {s,s,s} );
+}
+
+//----------------------------------------
+void ofNode::setPositionOrientationScale( const glm::vec3& p, const glm::vec3& eulerAnglesDeg, const glm::vec3& s ) {
+	this->position = p;
+	glm::quat q(glm::radians(eulerAnglesDeg));
+	this->orientation = q;
+	this->scale = s;
+	createMatrix();
+	onPositionChanged();
+	onOrientationChanged();
+	onScaleChanged();
+}
+
+//----------------------------------------
+void ofNode::setPositionOrientationScale( const glm::vec3& p, const glm::vec3& eulerAnglesDeg, const float& s ) {
+	setPositionOrientationScale( p, eulerAnglesDeg, {s,s,s} );
 }
 
 //----------------------------------------
@@ -370,7 +410,7 @@ void ofNode::rotate(float degrees, const glm::vec3& v) {
 
 //----------------------------------------
 void ofNode::rotateDeg(float degrees, const glm::vec3& v) {
-	rotate(glm::angleAxis(ofDegToRad(degrees), v));
+	rotate(glm::angleAxis(glm::radians(degrees), v));
 }
 
 //----------------------------------------
@@ -385,7 +425,7 @@ void ofNode::rotate(float degrees, float vx, float vy, float vz) {
 
 //----------------------------------------
 void ofNode::rotateDeg(float degrees, float vx, float vy, float vz) {
-	rotate(glm::angleAxis(ofDegToRad(degrees), glm::vec3(vx, vy, vz)));
+	rotate(glm::angleAxis(glm::radians(degrees), glm::vec3(vx, vy, vz)));
 }
 
 //----------------------------------------
@@ -395,8 +435,8 @@ void ofNode::rotateRad(float radians, float vx, float vy, float vz) {
 
 //----------------------------------------
 void ofNode::rotateAround(const glm::quat& q, const glm::vec3& point) {
-	//	ofLogVerbose("ofNode") << "rotateAround(const glm::quat& q, const ofVec3f& point) not implemented yet";
-	//	ofMatrix4x4 m = getLocalTransformMatrix();
+	//	ofLogVerbose("ofNode") << "rotateAround(const glm::quat& q, const glm::vec3& point) not implemented yet";
+	//	glm::mat4 m = getLocalTransformMatrix();
 	//	m.setTranslation(point);
 	//	m.rotate(q);
 	
@@ -413,7 +453,7 @@ void ofNode::rotateAround(float degrees, const glm::vec3& axis, const glm::vec3&
 
 //----------------------------------------
 void ofNode::rotateAroundDeg(float degrees, const glm::vec3& axis, const glm::vec3& point) {
-	rotateAround(glm::angleAxis(ofDegToRad(degrees), axis), point);
+	rotateAround(glm::angleAxis(glm::radians(degrees), axis), point);
 }
 
 //----------------------------------------
@@ -426,8 +466,8 @@ void ofNode::lookAt(const glm::vec3& lookAtPosition){
     auto relPosition = (getGlobalPosition() - lookAtPosition);
 	auto radius = glm::length(relPosition);
     if(radius>0){
-		float latitude = acos(relPosition.y / radius) - glm::half_pi<float>();
-		float longitude = atan2(relPosition.x , relPosition.z);
+		float latitude = std::acos(relPosition.y / radius) - glm::half_pi<float>();
+		float longitude = std::atan2(relPosition.x , relPosition.z);
 		glm::quat q = glm::angleAxis(0.f, glm::vec3(0,0,1)) * glm::angleAxis(longitude, glm::vec3(0,1,0)) * glm::angleAxis(latitude, glm::vec3(1,0,0));
         setGlobalOrientation(q);
     }
@@ -590,8 +630,8 @@ void ofNode::orbitDeg(float longitude, float latitude, float radius, ofNode& cen
 //----------------------------------------
 void ofNode::orbitDeg(float longitude, float latitude, float radius, const glm::vec3& centerPoint) {
 	glm::quat q = 
-	          glm::angleAxis(ofDegToRad(longitude), glm::vec3(0, 1, 0)) 
-	        * glm::angleAxis(ofDegToRad(latitude),  glm::vec3(1, 0, 0));
+	          glm::angleAxis(glm::radians(longitude), glm::vec3(0, 1, 0))
+	        * glm::angleAxis(glm::radians(latitude),  glm::vec3(1, 0, 0));
 
 	glm::vec4 p { 0.f, 0.f, 1.f, 0.f };	   // p is a direction, not a position, so .w == 0
 	

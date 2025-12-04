@@ -28,5 +28,6 @@ class ofApp : public ofBaseApp{
 		ofFloatImage img;
 		ofEasyCam easyCam;
 		ofVboMesh mesh;
+		ofMaterial material;
 		ofLight light;
 };

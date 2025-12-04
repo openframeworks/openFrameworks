@@ -106,10 +106,10 @@ void ofxCvColorImage::setFromPixels( const unsigned char* _pixels, int w, int h 
     if( !bAllocated || w != width || h != height ) {
 		if ( !bAllocated ){
 			ofLogNotice("ofxCvColorImage") << "setFromPixels(): allocating to match dimensions: "
-				<< width << " " << height;
+				<< w << " " << h;
 		}else{
 			ofLogNotice("ofxCvColorImage") << "setFromPixels(): reallocating to match dimensions: "
-				<< width << " " << height;
+				<< w << " " << h;
 		}
 		allocate(w,h);
 	}

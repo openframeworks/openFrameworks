@@ -80,23 +80,25 @@ createArchImg(){
     fi
 
     if [ "$download" = "1" ]; then
+		mkdir ~/archlinux
         echo "Downloading archlinux image"
         #$ROOT/arch-bootstrap_downloadonly.sh -a armv7h -r "http://eu.mirror.archlinuxarm.org/" ~/archlinux
-		cd ~
-		wget -v http://os.archlinuxarm.org/os/ArchLinuxARM-rpi-2-latest.tar.gz
+		cd ~/archlinux
+		wget -v http://os.archlinuxarm.org/os/ArchLinuxARM-rpi-armv7-latest.tar.gz
         # download=$!
         # echoDots $download
         # wait $download
 
-		mkdir ~/archlinux
 		junest -- << EOF
-	        tar xzf ~/ArchLinuxARM-rpi-2-latest.tar.gz --no-same-owner -C ~/archlinux/ 2>&1 >/dev/null | grep -v "tar: Ignoring unknown extended header keyword"
+	        tar xzf ArchLinuxARM-rpi-armv7-latest.tar.gz --no-same-owner 2>&1 >/dev/null | grep -v "tar: Ignoring unknown extended header keyword"
+			cd ~
+			
             sed -i s_/etc/pacman_$HOME/archlinux/etc/pacman_g ~/archlinux/etc/pacman.conf
             sed -i "s/Required DatabaseOptional/Never/g" ~/archlinux/etc/pacman.conf
-            pacman --noconfirm -S archlinux-keyring
-            pacman --noconfirm -S ccache
-			pacman --noconfirm --needed -r ~/archlinux/ --config ~/archlinux/etc/pacman.conf --arch=armv7h -Syu
-			pacman --noconfirm --needed -r ~/archlinux/ --config ~/archlinux/etc/pacman.conf --arch=armv7h -S \
+            sudo pacman --noconfirm -S archlinux-keyring
+            sudo pacman --noconfirm -S ccache
+			sudo pacman --noconfirm --needed -r ~/archlinux/ --config ~/archlinux/etc/pacman.conf --arch=armv7h -Syu
+			sudo pacman --noconfirm --needed -r ~/archlinux/ --config ~/archlinux/etc/pacman.conf --arch=armv7h -S \
 				make \
 				pkg-config \
 				gcc \
@@ -112,7 +114,6 @@ createArchImg(){
 				gst-plugins-base \
 				gst-plugins-good \
 				assimp \
-				boost \
 				libxcursor \
 				opencv \
 				assimp \
@@ -149,10 +150,11 @@ EOF
 }
 
 downloadFirmware(){
-    cd ~
-    wget https://github.com/raspberrypi/firmware/archive/master.zip -O firmware.zip
-    unzip firmware.zip
-    cp -r ~/firmware-master/opt archlinux/
+#    echo "try no firmware"
+#    # cd ~
+#    # wget https://github.com/raspberrypi/firmware/archive/master.zip -O firmware.zip
+#    # unzip firmware.zip
+#    # cp -r ~/firmware-master/opt archlinux/    
 }
 
 
@@ -199,17 +201,17 @@ installRtAudio(){
 
 installJunest(){
 	if [ ! -d ~/.local/share/junest ]; then
-		git clone git://github.com/fsquillace/junest ~/.local/share/junest
+		git clone https://github.com/fsquillace/junest ~/.local/share/junest
 	fi
 	export PATH=~/.local/share/junest/bin:$PATH
 	junest setup
 	junest -- << EOF
         echo updating keys
-        pacman -Syy gnupg --noconfirm --needed
-        pacman-key --populate archlinux
-        pacman-key --refresh-keys
-		pacman -Syyu --noconfirm
-		pacman -S --noconfirm --needed git flex grep gcc pkg-config make wget sed
+        sudo pacman -Syy gnupg --noconfirm --needed
+        sudo pacman-key --populate archlinux
+        sudo pacman-key --refresh-keys
+		sudo pacman -Syyu --noconfirm
+		sudo pacman -S --noconfirm --needed git flex grep gcc pkg-config make wget sed
 EOF
     echo "Done installing junest"
 }
@@ -222,8 +224,8 @@ downloadToolchain
 downloadFirmware
 installRtAudio
 
-cd ~/archlinux/usr/lib
-relativeSoftLinks "../.." "..\/.."
+#cd ~/archlinux/usr/lib
+#relativeSoftLinks "../.." "..\/.."
 #cd $ROOT/archlinux/usr/lib/arm-unknown-linux-gnueabihf
 #relativeSoftLinks  "../../.." "..\/..\/.."
 #cd $ROOT/raspbian/usr/lib/gcc/arm-unknown-linux-gnueabihf/5.3

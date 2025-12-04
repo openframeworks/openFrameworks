@@ -1,13 +1,22 @@
 #include "ofMain.h"
 #include "ofApp.h"
 
+#include <cstdio>
+#include <emscripten/version.h>
+
 //========================================================================
 int main( ){
-	ofSetupOpenGL(1024,768,OF_WINDOW);			// <-------- setup the GL context
 
-	// this kicks off the running of my app
-	// can be OF_WINDOW or OF_FULLSCREEN
-	// pass in width and height too:
-	ofRunApp(new ofApp());
+	printf("emscripten:v%d.%d.%d\n", __EMSCRIPTEN_major__, __EMSCRIPTEN_minor__, __EMSCRIPTEN_tiny__);
+
+	//Use ofGLFWWindowSettings for more options like multi-monitor fullscreen
+	ofGLWindowSettings settings;
+	settings.setSize(1024, 768);
+	settings.windowMode = OF_WINDOW; //can also be OF_FULLSCREEN
+
+	auto window = ofCreateWindow(settings);
+
+	ofRunApp(window, std::make_shared<ofApp>());
+	ofRunMainLoop();
 
 }

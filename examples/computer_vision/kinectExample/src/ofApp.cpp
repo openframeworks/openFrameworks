@@ -1,8 +1,8 @@
 #include "ofApp.h"
 
 /*
-    If you are struggling to get the device to connect ( especially Windows Users )
-    please look at the ReadMe: in addons/ofxKinect/README.md
+	If you are struggling to get the device to connect ( especially Windows Users )
+	please look at the ReadMe: in addons/ofxKinect/README.md
 */
 
 //--------------------------------------------------------------
@@ -11,7 +11,7 @@ void ofApp::setup() {
 	
 	// enable depth->video image calibration
 	kinect.setRegistration(true);
-    
+	
 	kinect.init();
 	//kinect.init(true); // shows infrared instead of RGB video image
 	//kinect.init(false, false); // disable video image (faster fps)
@@ -124,31 +124,31 @@ void ofApp::draw() {
 	
 	// draw instructions
 	ofSetColor(255, 255, 255);
-	stringstream reportStream;
-        
-    if(kinect.hasAccelControl()) {
-        reportStream << "accel is: " << ofToString(kinect.getMksAccel().x, 2) << " / "
-        << ofToString(kinect.getMksAccel().y, 2) << " / "
-        << ofToString(kinect.getMksAccel().z, 2) << endl;
-    } else {
-        reportStream << "Note: this is a newer Xbox Kinect or Kinect For Windows device," << endl
-		<< "motor / led / accel controls are not currently supported" << endl << endl;
-    }
-    
-	reportStream << "press p to switch between images and point cloud, rotate the point cloud with the mouse" << endl
-	<< "using opencv threshold = " << bThreshWithOpenCV <<" (press spacebar)" << endl
-	<< "set near threshold " << nearThreshold << " (press: + -)" << endl
+	std::stringstream reportStream;
+		
+	if(kinect.hasAccelControl()) {
+		reportStream << "accel is: " << ofToString(kinect.getMksAccel().x, 2) << " / "
+		<< ofToString(kinect.getMksAccel().y, 2) << " / "
+		<< ofToString(kinect.getMksAccel().z, 2) << std::endl;
+	} else {
+		reportStream << "Note: this is a newer Xbox Kinect or Kinect For Windows device," << std::endl
+		<< "motor / led / accel controls are not currently supported" << std::endl << std::endl;
+	}
+	
+	reportStream << "press p to switch between images and point cloud, rotate the point cloud with the mouse" << std::endl
+	<< "using opencv threshold = " << bThreshWithOpenCV <<" (press spacebar)" << std::endl
+	<< "set near threshold " << nearThreshold << " (press: + -)" << std::endl
 	<< "set far threshold " << farThreshold << " (press: < >) num blobs found " << contourFinder.nBlobs
-	<< ", fps: " << ofGetFrameRate() << endl
-	<< "press c to close the connection and o to open it again, connection is: " << kinect.isConnected() << endl;
+	<< ", fps: " << ofGetFrameRate() << std::endl
+	<< "press c to close the connection and o to open it again, connection is: " << kinect.isConnected() << std::endl;
 
-    if(kinect.hasCamTiltControl()) {
-    	reportStream << "press UP and DOWN to change the tilt angle: " << angle << " degrees" << endl
-        << "press 1-5 & 0 to change the led mode" << endl;
-    }
-    
+	if(kinect.hasCamTiltControl()) {
+		reportStream << "press UP and DOWN to change the tilt angle: " << angle << " degrees" << std::endl
+		<< "press 1-5 & 0 to change the led mode" << std::endl;
+	}
+	
 	ofDrawBitmapString(reportStream.str(), 20, 652);
-    
+	
 }
 
 void ofApp::drawPointCloud() {

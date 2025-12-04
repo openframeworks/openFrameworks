@@ -14,32 +14,36 @@
 #include "ofMain.h"
 
 class ofApp : public ofBaseApp{
+	public:
+		void setup();
+		void update();
+		void draw();
 
-  public:
-    void setup();
-    void update();
-    void draw();
+		void keyPressed  (int key);
+		void keyReleased(int key);
+		void mouseMoved(int x, int y );
+		void mouseDragged(int x, int y, int button);
+		void mousePressed(int x, int y, int button);
+		void mouseReleased(int x, int y, int button);
+		void mouseEntered(int x, int y);
+		void mouseExited(int x, int y);
+		void windowResized(int w, int h);
+		void dragEvent(ofDragInfo dragInfo);
+		void gotMessage(ofMessage msg);
 
-    void keyPressed  (int key);
-    void keyReleased(int key);
-    void mouseMoved(int x, int y );
-    void mouseDragged(int x, int y, int button);
-    void mousePressed(int x, int y, int button);
-    void mouseReleased(int x, int y, int button);
-    void mouseEntered(int x, int y);
-    void mouseExited(int x, int y);
-    void windowResized(int w, int h);
-    void dragEvent(ofDragInfo dragInfo);
-    void gotMessage(ofMessage msg);
-	
-	//this holds all of our points
-    vector<glm::vec3> points;
-    //this keeps track of the center of all the points
-    glm::vec3 center;
-    
-	//our camera objects for looking at the scene from multiple perspectives
-	ofCamera camera;
-	
-	//if usecamera is true, we'll turn on the camera view
-    bool usecamera;
+		//this holds all of our points
+		vector<glm::vec3> points;
+		//this keeps track of the center of all the points
+		glm::vec3 center;
+
+		//our camera objects for looking at the scene from multiple perspectives
+		ofCamera camera;
+
+		//if usecamera is true, we'll turn on the camera view
+		bool usecamera;
+		// use the polyline for smoothing
+		ofPolyline polyline;
+
+		bool usePolyline = true;
+		int smoothingSize = 3;
 };

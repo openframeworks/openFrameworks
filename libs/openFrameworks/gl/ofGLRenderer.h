@@ -1,4 +1,5 @@
 #pragma once
+
 #include "ofGraphicsBaseTypes.h"
 #include "ofPolyline.h"
 #include "of3dGraphics.h"
@@ -110,6 +111,7 @@ public:
 	void setRectMode(ofRectMode mode);
 	ofRectMode getRectMode();
 	void setLineWidth(float lineWidth);
+	void setPointSize(float pointSize);
 	void setDepthTest(bool depthTest);
 	void setLineSmoothing(bool smooth);
 	void setBlendMode(ofBlendMode blendMode);
@@ -119,22 +121,22 @@ public:
 	void disableAntiAliasing();
 
 	// color options
-	void setColor(int r, int g, int b); // 0-255
-	void setColor(int r, int g, int b, int a); // 0-255
-	void setColor(const ofColor & color);
-	void setColor(const ofColor & color, int _a);
-	void setColor(int gray); // new set a color as grayscale with one argument
+	void setColor(float r, float g, float b); // 0-1
+	void setColor(float r, float g, float b, float a); // 0-1
+	void setColor(const ofFloatColor & color);
+	void setColor(const ofFloatColor & color, float _a);
+	void setColor(float gray); // new set a color as grayscale with one argument
 	void setHexColor( int hexColor ); // hex, like web 0xFF0033;
 
 	void setBitmapTextMode(ofDrawBitmapMode mode);
 
 	// bg color
-	ofColor getBackgroundColor();
-	void setBackgroundColor(const ofColor & c);
-	void background(const ofColor & c);
+	ofFloatColor getBackgroundColor();
+	void setBackgroundColor(const ofFloatColor & c);
+	void background(const ofFloatColor & c);
 	void background(float brightness);
-	void background(int hexColor, float _a=255.0f);
-	void background(int r, int g, int b, int a=255);
+	void background(int hexColor, int _a=255);
+	void background(float r, float g, float b, float a=1.f);
 
 	void setBackgroundAuto(bool bManual);		// default is true
 	bool getBackgroundAuto();
@@ -175,7 +177,7 @@ public:
 	void disableSeparateSpecularLight();
 	bool getLightingEnabled();
 	void setSmoothLighting(bool b);
-	void setGlobalAmbientColor(const ofColor& c);
+	void setGlobalAmbientColor(const ofFloatColor& c);
 
 	// lighting per light
 	void enableLight(int lightIndex);
@@ -192,11 +194,15 @@ public:
 
 	void bind(const ofBaseVideoDraws & video);
 	void bind(const ofBaseMaterial & material);
+	void bind(const ofShadow & shadow); // does nothing, only programmable renderer supported
+	void bind(const ofShadow & shadow, GLenum aCubeFace);
 	void bind(const ofShader & shader);
 	void bind(const ofTexture & texture, int location);
 	void bind(const ofCamera & camera, const ofRectangle & viewport);
 	void unbind(const ofBaseVideoDraws & video);
 	void unbind(const ofBaseMaterial & material);
+	void unbind(const ofShadow & shadow); // does nothing, only programmable renderer supported
+	void unbind(const ofShadow & shadow, GLenum aCubeFace);
 	void unbind(const ofShader & shader);
 	void unbind(const ofTexture & texture, int location);
 	void unbind(const ofCamera & camera);

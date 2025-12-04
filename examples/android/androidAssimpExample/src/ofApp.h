@@ -10,6 +10,7 @@ class ofApp : public ofxAndroidApp{
 
 	public:
 		void setup();
+		void exit();
 		void update();
 		void draw();
 		
@@ -28,18 +29,22 @@ class ofApp : public ofxAndroidApp{
 		void stop();
 		void resume();
 		void reloadTextures();
-
 		bool backPressed();
 		void okPressed();
 		void cancelPressed();
 
+		void deviceRefreshRateChanged(int refreshRate);
+		void deviceHighestRefreshRateChanged(int refreshRate);
+		void deviceRefreshRateChangedEvent(int &refreshRate);
+		void deviceHighestRefreshRateChangedEvent(int & refreshRate);
+
 		bool bAnimate;
 		bool bAnimateMouse;
-        float animationPosition;
-        ofxAssimpModelLoader model;
-        ofLight	light;
+		float animationPosition;
+		ofxAssimpModelLoader model;
+		ofLight	light;
 
-        ofMesh mesh;
-        bool loaded;
-        int currentModel;
+		ofMesh mesh;
+		bool loaded;
+		int currentModel;
 };

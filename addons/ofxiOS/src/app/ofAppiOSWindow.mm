@@ -29,6 +29,8 @@
  *
  * ***********************************************************************/ 
 #include <TargetConditionals.h>
+#include "ofxiOSConstants.h"
+#if defined(TARGET_OF_IOS)
 #include "ofAppiOSWindow.h"
 #include "ofGLRenderer.h"
 #include "ofGLProgrammableRenderer.h"
@@ -486,3 +488,5 @@ std::shared_ptr<ofBaseRenderer> & ofAppiOSWindow::renderer(){
 ofiOSWindowSettings & ofAppiOSWindow::getSettings() {
     return settings;
 }
+
+#endif

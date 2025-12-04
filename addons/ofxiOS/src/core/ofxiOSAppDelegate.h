@@ -30,9 +30,10 @@
  * ***********************************************************************/ 
 
 #pragma once
-
+#include "ofxiOSConstants.h"
+#if defined(OF_UI_KIT) 
 #include <TargetConditionals.h>
-#if TARGET_OS_IOS || (TARGET_OS_IPHONE && !TARGET_OS_TV)
+#if defined(TARGET_OS_IOS) || (TARGET_OS_IPHONE && !TARGET_OS_TV)
 
 #import <UIKit/UIKit.h>
 
@@ -44,10 +45,10 @@
     NSInteger currentScreenIndex;
 }
 
-@property (nonatomic, retain) UIWindow * window;
-@property (nonatomic, retain) UIWindow * externalWindow;
-@property (nonatomic, retain) UIViewController * uiViewController;
-@property (readonly,  assign) NSInteger currentScreenIndex;
+@property (nonatomic, strong) UIWindow * window;
+@property (nonatomic, strong) UIWindow * externalWindow;
+@property (nonatomic, strong) UIViewController * uiViewController;
+@property (readonly) NSInteger currentScreenIndex;
 
 - (BOOL)application:(UIApplication*)application
       handleOpenURL:(NSURL*)url;
@@ -65,4 +66,4 @@
 #define ofxiPhoneAppDelegate ofxiOSAppDelegate
 
 #endif
-
+#endif

@@ -3,29 +3,28 @@
 
 openFrameworks is a C++ toolkit for creative coding.  If you are new to OF, welcome!
 
-[![Slack Status](https://ofslack.herokuapp.com/badge.svg)](https://ofslack.herokuapp.com)
+- [Grab the Nightly Release (to avoid submodule cloning)](https://github.com/openframeworks/openFrameworks/releases)
+- [Setup guides for different Platforms](https://openframeworks.cc/download/)
+- [Join Our Slack](https://join.slack.com/t/openframeworks/shared_invite/zt-1r2brqms0-dZMMFZgZhFTgomjJ0vlCjA)
+- [Discuss on the Forum](https://forum.openframeworks.cc) 
+- [Follow OF on Mastodon](https://fosstodon.org/@openframeworks)
 
 ## Build status
 
-* The **master** branch contains the newest, most recently updated code. This code is packaged and available for download in the "Nightly Builds" section of [openframeworks.cc/download](openframeworks.cc/download).
-* The **stable** branch contains the code corresponding to the last stable openFrameworks release. This stable code is packaged and available for download at [openframeworks.cc/download](openframeworks.cc/download).
+* The **master** branch contains the newest, most recently updated code. This code is packaged and available for download in the "Nightly Builds" section of [openframeworks.cc/download](https://openframeworks.cc/download/).
+* The **stable** branch contains the code corresponding to the last stable openFrameworks release. This stable code is packaged and available for download at [openframeworks.cc/download](https://openframeworks.cc/download/).
 
 Platform                     | Master branch  | Stable branch
 -----------------------------|:---------|:---------
-Windows MSYS2 32bits         | [![Build status](https://appveyor-matrix-badges.herokuapp.com/repos/arturoc/openFrameworks/branch/master/1)](https://ci.appveyor.com/project/arturoc/openFrameworks/branch/master) | [![Build status](https://appveyor-matrix-badges.herokuapp.com/repos/arturoc/openFrameworks/branch/stable/1)](https://ci.appveyor.com/project/arturoc/openFrameworks/branch/stable)
-Windows MSYS2 64bits         | [![Build status](https://appveyor-matrix-badges.herokuapp.com/repos/arturoc/openFrameworks/branch/master/2)](https://ci.appveyor.com/project/arturoc/openFrameworks/branch/master) | N/A
-Windows Visual Studio 32bits | [![Build status](https://appveyor-matrix-badges.herokuapp.com/repos/arturoc/openFrameworks/branch/master/3)](https://ci.appveyor.com/project/arturoc/openFrameworks/branch/master) | [![Build status](https://appveyor-matrix-badges.herokuapp.com/repos/arturoc/openFrameworks/branch/stable/2)](https://ci.appveyor.com/project/arturoc/openFrameworks/branch/stable)
-Windows Visual Studio 64bits | [![Build status](https://appveyor-matrix-badges.herokuapp.com/repos/arturoc/openFrameworks/branch/master/4)](https://ci.appveyor.com/project/arturoc/openFrameworks/branch/master) | [![Build status](https://appveyor-matrix-badges.herokuapp.com/repos/arturoc/openFrameworks/branch/stable/3)](https://ci.appveyor.com/project/arturoc/openFrameworks/branch/stable)
-Linux 64                     | [![Linux 64 Build Status](http://badges.herokuapp.com/travis/openframeworks/openFrameworks?env=TARGET="linux64"&label=build&branch=master)](https://travis-ci.org/openframeworks/openFrameworks) | [![Linux 64 Build Status](http://badges.herokuapp.com/travis/openframeworks/openFrameworks?env=TARGET="linux64"&label=build&branch=stable)](https://travis-ci.org/openframeworks/openFrameworks)
-Linux armv6l                 | [![Linux armv6l Build Status](http://badges.herokuapp.com/travis/openframeworks/openFrameworks?env=TARGET="linuxarmv6l"&label=build&branch=master)](https://travis-ci.org/openframeworks/openFrameworks) | [![Linux armv6l Build Status](http://badges.herokuapp.com/travis/openframeworks/openFrameworks?env=TARGET="linuxarmv6l"&label=build&branch=stable)](https://travis-ci.org/openframeworks/openFrameworks)
-Linux armv7l                 | [![Linux armv7l Build Status](http://badges.herokuapp.com/travis/openframeworks/openFrameworks?env=TARGET="linuxarmv7l"&label=build&branch=master)](https://travis-ci.org/openframeworks/openFrameworks) | [![Linux armv7l Build Status](http://badges.herokuapp.com/travis/openframeworks/openFrameworks?env=TARGET="linuxarmv7l"&label=build&branch=stable)](https://travis-ci.org/openframeworks/openFrameworks)
-Emscripten                   | [![Emscripten Build Status](http://badges.herokuapp.com/travis/openframeworks/openFrameworks?env=TARGET="emscripten"&label=build&branch=master)](https://travis-ci.org/openframeworks/openFrameworks) | [![Emscripten Build Status](http://badges.herokuapp.com/travis/openframeworks/openFrameworks?env=TARGET="emscripten"&label=build&branch=stable)](https://travis-ci.org/openframeworks/openFrameworks)
-macos                        | [![macos Build Status](http://badges.herokuapp.com/travis/openframeworks/openFrameworks?env=TARGET="osx"&label=build&branch=master)](https://travis-ci.org/openframeworks/openFrameworks) | [![macos Build Status](http://badges.herokuapp.com/travis/openframeworks/openFrameworks?env=TARGET="osx"&label=build&branch=stable)](https://travis-ci.org/openframeworks/openFrameworks)
-macos makefiles              | [![macos makefiles Build Status](http://badges.herokuapp.com/travis/openframeworks/openFrameworks?env=OPT="makefiles"&label=build&branch=master)](https://travis-ci.org/openframeworks/openFrameworks) | [![macos makefiles Build Status](http://badges.herokuapp.com/travis/openframeworks/openFrameworks?env=OPT="makefiles"&label=build&branch=stable)](https://travis-ci.org/openframeworks/openFrameworks)
-iOS                          | [![iOS Build Status](http://badges.herokuapp.com/travis/openframeworks/openFrameworks?env=TARGET="ios"&label=build&branch=master)](https://travis-ci.org/openframeworks/openFrameworks) | [![iOS Build Status](http://badges.herokuapp.com/travis/openframeworks/openFrameworks?env=TARGET="ios"&label=build&branch=stable)](https://travis-ci.org/openframeworks/openFrameworks)
-tvos                         | [![tvos Build Status](http://badges.herokuapp.com/travis/openframeworks/openFrameworks?env=TARGET="tvos"&label=build&branch=master)](https://travis-ci.org/openframeworks/openFrameworks) | [![tvos Build Status](http://badges.herokuapp.com/travis/openframeworks/openFrameworks?env=TARGET="tvos"&label=build&branch=stable)](https://travis-ci.org/openframeworks/openFrameworks)
-Android Arm7                 | [![Android Arm7 Build Status](http://badges.herokuapp.com/travis/openframeworks/openFrameworks?env=GRADLE_TARGET="compileArm7DebugSources"&label=build&branch=master)](https://travis-ci.org/openframeworks/openFrameworks) | [![Android Arm7 Build Status](http://badges.herokuapp.com/travis/openframeworks/openFrameworks?env=GRADLE_TARGET="compileArm7DebugSources"&label=build&branch=stable)](https://travis-ci.org/openframeworks/openFrameworks)
-Android X86                  | [![Android X86 Build Status](http://badges.herokuapp.com/travis/openframeworks/openFrameworks?env=GRADLE_TARGET="compileX86DebugSources"&label=build&branch=master)](https://travis-ci.org/openframeworks/openFrameworks) | [![Android X86 Build Status](http://badges.herokuapp.com/travis/openframeworks/openFrameworks?env=GRADLE_TARGET="compileX86DebugSources"&label=build&branch=stable)](https://travis-ci.org/openframeworks/openFrameworks)
+Windows MSYS2        | [![Build status](https://github.com/openframeworks/openFrameworks/workflows/build-msys2/badge.svg)](https://github.com/openframeworks/openFrameworks/actions) | [![Build status](https://github.com/openframeworks/openFrameworks/workflows/build-msys2/badge.svg?branch=stable)](https://github.com/openframeworks/openFrameworks/actions)
+Windows Visual Studio  | [![Build status](https://github.com/openframeworks/openFrameworks/workflows/build-vs/badge.svg)](https://github.com/openframeworks/openFrameworks/actions) | [![Build status](https://github.com/openframeworks/openFrameworks/workflows/build-vs/badge.svg?branch=stable)](https://github.com/openframeworks/openFrameworks/actions)
+Linux 64 & Arm                    | [![Linux Build Status](https://github.com/openframeworks/openFrameworks/workflows/build-linux64-and-arm/badge.svg)](https://github.com/openframeworks/openFrameworks/actions) | [![Linux Build Status](https://github.com/openframeworks/openFrameworks/workflows/build-linux64-and-arm/badge.svg?branch=stable)](https://github.com/openframeworks/openFrameworks/actions)
+Emscripten                   | [![Emscripten Build Status](https://github.com/openframeworks/openFrameworks/workflows/build-emscripten/badge.svg)](https://github.com/openframeworks/openFrameworks/actions) | [![Emscripten Build Status](https://github.com/openframeworks/openFrameworks/workflows/build-emscripten/badge.svg?branch=stable)](https://github.com/openframeworks/openFrameworks/actions) 
+macos                        | [![macos Build Status](https://github.com/openframeworks/openFrameworks/workflows/build-macos/badge.svg)](https://github.com/openframeworks/openFrameworks/actions) | [![macos Build Status](https://github.com/openframeworks/openFrameworks/workflows/build-macos/badge.svg?branch=stable)](https://github.com/openframeworks/openFrameworks/actions)
+iOS & tvOS                         | [![iOS tvOS Build Status](https://github.com/openframeworks/openFrameworks/workflows/build-ios-tvos/badge.svg)](https://github.com/openframeworks/openFrameworks/actions) | [![iOS tvOS Build Status](https://github.com/openframeworks/openFrameworks/workflows/build-ios-tvos/badge.svg?branch=stable)](https://github.com/openframeworks/openFrameworks/actions)
+
+<!-- Android Arm7                 | [![Android Build Status](https://github.com/openframeworks/openFrameworks/workflows/build-android/badge.svg)](https://github.com/openframeworks/openFrameworks/actions) | [![Android Build Status](https://github.com/openframeworks/openFrameworks/workflows/build-android/badge.svg?branch=stable)](https://github.com/openframeworks/openFrameworks/actions) -->
+
 
 
 ## folder structure
@@ -40,7 +39,7 @@ This release of OF comes with several folders:
 * libs
 * other
 * scripts
-* project generator
+* projectGenerator
 
 
 `docs` has some documentation around OF usage, per platform things to consider, etc. You should definitely take a look in there; for example, if you are on OSX, read the osx.md.   `apps` and `examples` are where projects go -- `examples` contains a variety of projects that show you how to use OF, and `apps` is where your own projects will go.  `libs` contains the libraries that OF uses, including the openframeworks core itself.  `addons` are for additional functionality that's not part of the core.  `export` is for DLLs and dylibs that need to be put in each compiled project.  The `scripts` folder has the templates and small scripts for automating OF per platform. `project generator` is a GUI based tool for making new projects - this folder is only there in packaged releases.  

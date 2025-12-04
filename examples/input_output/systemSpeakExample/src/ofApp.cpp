@@ -34,10 +34,10 @@ void ofApp::threadedFunction() {
 			string cmd = "echo " + words[step] + "|espeak";           // create the command
 		#endif
 
-                // print command and execute it
-                cout << cmd << endl;
-                ofSystem(cmd.c_str());
-                  
+				// print command and execute it
+				cout << cmd << endl;
+				ofSystem(cmd.c_str());
+
 		// step to the next word
 		step ++;
 		step %= words.size();

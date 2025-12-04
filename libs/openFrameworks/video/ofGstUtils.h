@@ -1,5 +1,6 @@
 #pragma once
 
+// MARK: TARGET_ANDROID - maybe it can be removed
 #include "ofConstants.h"
 #ifndef TARGET_ANDROID
 #include "ofPixels.h"
@@ -47,6 +48,7 @@ public:
 	bool 	isPlaying() const {return bPlaying;}
 
 	float	getPosition() const;
+    int64_t getPositionNanos() const;
 	float 	getSpeed() const;
 	float 	getDuration() const;
 	int64_t  getDurationNanos() const;
@@ -70,6 +72,8 @@ public:
 	virtual void close();
 
 	void setSinkListener(ofGstAppSink * appsink);
+
+	bool updated_in_frame { false };
 
 	// callbacks to get called from gstreamer
 #if GST_VERSION_MAJOR==0
@@ -109,6 +113,7 @@ private:
 	std::condition_variable		eosCondition;
 	std::mutex			eosMutex;
 	guint				busWatchID;
+
 
 	class ofGstMainLoopThread: public ofThread{
 	public:
@@ -166,8 +171,8 @@ public:
 	void 			reallocateOnNextFrame();
 
 	bool 			isFrameNew() const;
-	ofPixels&		getPixels();
-	const ofPixels&	getPixels() const;
+	ofPixels &		getPixels();
+	const ofPixels &	getPixels() const;
 	ofTexture * 	getTexture();
 	void 			update();
 

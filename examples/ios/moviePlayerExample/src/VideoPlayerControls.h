@@ -6,6 +6,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "VideoPlayerControlsDelegateForOF.h"
 
 @protocol VideoPlayerControlsDelegate <NSObject>
 - (void)playPressed;
@@ -23,11 +24,10 @@
 - (void)muteOffPressed;
 @end
 
-@interface VideoPlayerControls : UIViewController <UIGestureRecognizerDelegate> {
+@interface VideoPlayerControls : UIViewController {
+    ofApp * app;
     id<VideoPlayerControlsDelegate> delegate;
 }
-
-@property(nonatomic, assign) id delegate;
 
 - (void)setPlay:(BOOL)bPlay;
 - (void)setNative:(BOOL)bNative;

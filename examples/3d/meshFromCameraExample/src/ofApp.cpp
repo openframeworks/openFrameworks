@@ -19,13 +19,12 @@ void ofApp::setup(){
 	ofSetFrameRate(60);
 	ofBackground(66,66,66);
 	
+	int width = 320;
+	int height = 240;
+
 	//initialize the video grabber
 	vidGrabber.setVerbose(true);
-	vidGrabber.setup(320,240);
-
-	//store the width and height for convenience
-	int width = vidGrabber.getWidth();
-	int height = vidGrabber.getHeight();
+	vidGrabber.setup(width,height);
 	
 	//add one vertex to the mesh for each pixel
 	for (int y = 0; y < height; y++){
@@ -50,7 +49,6 @@ void ofApp::setup(){
 	
 	//this is an annoying thing that is used to flip the camera
 	cam.setScale(1,-1,1);
-	
 	
 	//this determines how much we push the meshes out
 	extrusionAmount = 300.0;
@@ -81,13 +79,13 @@ void ofApp::update(){
 	}
 	
 	//let's move the camera when you move the mouse
-	float rotateAmount = ofMap(ofGetMouseY(), 0, ofGetHeight(), 0, 360);
+	float rotateAmount = ofMap(ofGetMouseY(), 0, ofGetHeight(), -90, 90);
 
 	
 	//move the camera around the mesh
 	glm::vec3 camDirection(0,0,1);
 	glm::vec3 centre(vidGrabber.getWidth()/2.f,vidGrabber.getHeight()/2.f, 255/2.f);
-	glm::vec3 camDirectionRotated = glm::rotate(camDirection, rotateAmount, glm::vec3(1,0,0));
+	glm::vec3 camDirectionRotated = glm::rotate(camDirection, ofDegToRad(rotateAmount), glm::vec3(1,0,0));
 	glm::vec3 camPosition = centre + camDirectionRotated * extrusionAmount;
 	
 	cam.setPosition(camPosition);

@@ -8,71 +8,71 @@
 #import "VideoPlayerControlsDelegateForOF.h"
 
 @implementation VideoPlayerControlsDelegateForOF {
-    //
+	//
 }
 
 - (id)initWithApp:(ofApp *)myApp {
-    self = [super init];
-    if(self) {
-        app = myApp;
-    }
-    return self;
+	self = [super init];
+	if(self) {
+		app = myApp;
+	}
+	return self;
 }
 
 - (void)dealloc {
-    [super dealloc];
+//	[super dealloc];
 }
 
 - (void)playPressed {
-    app->playPressed();
+	app->playPressed();
 }
 
 - (void)pausePressed {
-    app->pausePressed();
+	app->pausePressed();
 }
 
 - (void)scrubBegin {
-    app->scrubBegin();
+	app->scrubBegin();
 }
 
 - (void)scrubToPosition:(float)position {
-    app->scrubToPosition(position);
+	app->scrubToPosition(position);
 }
 
 - (void)scrubEnd {
-    app->scrubEnd();
+	app->scrubEnd();
 }
 
 - (void)loadPressed {
-    app->loadPressed();
+	app->loadPressed();
 }
 
 - (void)unloadPressed {
-    app->unloadPressed();
+	app->unloadPressed();
 }
 
 - (void)loopOnPressed {
-    app->loopOnPressed();
+	app->loopOnPressed();
 }
 
 - (void)loopOffPressed {
-    app->loopOffPressed();
+	app->loopOffPressed();
 }
 
 - (void)nativeOnPressed {
-    app->nativeOnPressed();
+	app->nativeOnPressed();
 }
 
 - (void)nativeOffPressed {
-    app->nativeOffPressed();
+	app->nativeOffPressed();
 }
 
 - (void)muteOnPressed {
-    app->muteOnPressed();
+	app->muteOnPressed();
 }
 
 - (void)muteOffPressed {
-    app->muteOffPressed();
+	app->muteOffPressed();
 }
 
 @end

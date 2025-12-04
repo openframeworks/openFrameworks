@@ -153,7 +153,7 @@ Windows applications compiled with msys2 need some system dlls to run. If you ar
 
     make copy_dlls
 	
-from the msys2 terminal and it'll copy the necesary dlls to the project bin folder. Now you can copy that bin folder to any computer and it will run right away without having to install msys2.
+from the msys2 terminal and it'll copy the necessary dlls to the project bin folder. Now you can copy that bin folder to any computer and it will run right away without having to install msys2.
 
 This is still experimental so if you find any problem please [report it on github](https://github.com/openframeworks/openFrameworks/new?title=Problem%20with%20msys2%20dlls)
 

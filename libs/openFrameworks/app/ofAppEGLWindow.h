@@ -1,16 +1,17 @@
 #pragma once
 
-#include "ofConstants.h"
 #include "ofAppBaseWindow.h"
 #include "ofThread.h"
 #include "ofImage.h"
 #include "ofEvents.h"
 #include "ofRectangle.h"
-
+// MARK: Target
+#include "ofConstants.h"
 
 #include <queue>
 #include <map>
 #include <X11/Xlib.h>
+#include <EGL/egl.h>
 
 enum ofAppEGLWindowType {
 	OF_APP_WINDOW_AUTO,
@@ -157,6 +158,7 @@ protected:
 	void threadedFunction();
 	std::queue<ofMouseEventArgs> mouseEvents;
 	std::queue<ofKeyEventArgs>   keyEvents;
+	std::queue<ofTouchEventArgs> touchEvents;
 	void checkEvents();
 	ofImage mouseCursor;
 

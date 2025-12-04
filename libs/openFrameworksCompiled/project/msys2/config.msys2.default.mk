@@ -25,21 +25,20 @@
 #   core source code.
 ##########################################################################################
 
-MINGW_PREFIX ?= /mingw32
-PLATFORM_CFLAGS += -std=gnu++14 -DUNICODE -D_UNICODE
+#MINGW_PREFIX ?= /mingw32
+MINGW_PREFIX ?= /mingw64
+PLATFORM_CFLAGS += -std=gnu++17 -DUNICODE -D_UNICODE
 #PLATFORM_CFLAGS += -IC:/msys64/mingw32/include/gstreamer-1.0 -DOF_VIDEO_PLAYER_GSTREAMER
-ifdef USE_CCACHE
-	CC = ccache $(MINGW_PREFIX)/bin/gcc
-	CXX = ccache $(MINGW_PREFIX)/bin/g++
-else
-	CC = $(MINGW_PREFIX)/bin/gcc
-	CXX = $(MINGW_PREFIX)/bin/g++
-endif
+
+CC = $(MINGW_PREFIX)/bin/gcc
+CXX = $(MINGW_PREFIX)/bin/g++
+
 FIND ?= /usr/bin/find
 PLATFORM_AR = $(MINGW_PREFIX)/bin/ar
-PLATFORM_LD = $(MINGW_PREFIX)/bin/ld
+#PLATFORM_LD = $(MINGW_PREFIX)/bin/ld
+PLATFORM_LD = /usr/bin/lld
 PLATFORM_RESOURCE_COMPILER = $(MINGW_PREFIX)/bin/windres
-PLATFORM_PKG_CONFIG = $(MINGW_PREFIX)/bin/pkg-config
+PLATFORM_PKG_CONFIG = $(MINGW_PREFIX)/bin/pkgconf
 
 
 PLATFORM_PROJECT_DEBUG_BIN_NAME=$(APPNAME)_debug.exe
@@ -62,15 +61,19 @@ PLATFORM_RUN_COMMAND = cd bin;./$(BIN_NAME)
 # Note: Be sure to leave a leading space when using a += operator to add items to the list
 ##########################################################################################
 
-#PLATFORM_DEFINES = OF_USING_STD_FS
+PLATFORM_DEFINES = OF_VIDEO_PLAYER_DIRECTSHOW
+
 ifeq ($(OF_USE_POCO),1)
 	PLATFORM_DEFINES += POCO_STATIC
 endif
 
-ifeq ($(MSYSTEM),MINGW64)
-	PLATFORM_DEFINES += OF_SOUND_PLAYER_OPENAL
+# Define the sound player to use : OpenAL is the default.
+# Uncomment next line to use FMOD sound player
+#PLATFORM_DEFINES += OF_SOUND_PLAYER_FMOD
+ifeq ($(shell pkg-config libmpg123 --exists; echo $$?),0)
 	PLATFORM_DEFINES += OF_USING_MPG123
 endif
+
 
 ##########################################################################################
 # PLATFORM REQUIRED ADDON
@@ -106,10 +109,10 @@ PLATFORM_CFLAGS += -Wall
 PLATFORM_CFLAGS += -fexceptions
 
 # Architecture / Machine Flags (http://gcc.gnu.org/onlinedocs/gcc/Submodel-Options.html)
-ifeq ($(shell gcc -march=native -S -o /dev/null -xc /dev/null 2> /dev/null; echo $$?),0)
-	PLATFORM_CFLAGS += -march=native
-	PLATFORM_CFLAGS += -mtune=native
-endif
+#ifeq ($(shell gcc -march=native -S -o /dev/null -xc /dev/null 2> /dev/null; echo $$?),0)
+#	PLATFORM_CFLAGS += -march=native
+#	PLATFORM_CFLAGS += -mtune=native
+#endif
 
 
 ################################################################################
@@ -123,9 +126,12 @@ endif
 
 #PLATFORM_LDFLAGS += -arch i386
 PLATFORM_LDFLAGS += -lpthread
-ifndef DEBUG
-	PLATFORM_LDFLAGS += -mwindows
+
+
+ifeq ($(findstring MINGW64,$(MSYSTEM)),MINGW64)
+	PLATFORM_LDFLAGS += -Wl,--disable-dynamicbase,--disable-high-entropy-va,--default-image-base-low
 endif
+
 ifeq ($(findstring OF_USING_STD_FS, $(PLATFORM_DEFINES)),OF_USING_STD_FS)
 	PLATFORM_LDFLAGS += -lstdc++fs
 endif
@@ -145,7 +151,7 @@ endif
 ##########################################################################################
 
 # RELEASE Debugging options (http://gcc.gnu.org/onlinedocs/gcc/Debugging-Options.html)
-PLATFORM_OPTIMIZATION_CFLAGS_RELEASE = -Os
+PLATFORM_OPTIMIZATION_CFLAGS_RELEASE = -O3
 
 # DEBUG Debugging options (http://gcc.gnu.org/onlinedocs/gcc/Debugging-Options.html)
 PLATFORM_OPTIMIZATION_CFLAGS_DEBUG = -g3 #-D_GLIBCXX_DEBUG
@@ -164,16 +170,13 @@ PLATFORM_OPTIMIZATION_CFLAGS_DEBUG = -g3 #-D_GLIBCXX_DEBUG
 # Note: Be sure to leave a leading space when using a += operator to add items to the list
 ##########################################################################################
 
-PLATFORM_CORE_EXCLUSIONS =
-
 # core sources
 
 PLATFORM_CORE_EXCLUSIONS += %.mm
 PLATFORM_CORE_EXCLUSIONS += %.m
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofQtUtils.cpp
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofQuickTimeGrabber.cpp
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofQuickTimePlayer.cpp
 #PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofDirectShowPlayer.cpp
+PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/sound/ofMediaFoundationSoundPlayer.cpp
+PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofMediaFoundationPlayer.cpp
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofGstUtils.cpp
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofGstVideoGrabber.cpp
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofGstVideoPlayer.cpp
@@ -184,14 +187,15 @@ PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/glew/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/cairo/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/freetype/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/FreeImage/%
+PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/glm/%
+PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/json/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openssl/%
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/boost/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/glfw/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/curl/%
-# FMOD is not supported on MINGW64
-ifeq ($(MSYSTEM),MINGW64)
-	PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/fmod/%
-endif
+PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/pugixml/%
+PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/rtaudio/%
+PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/uriparser/%
+PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/utf8/%
 #PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/glm/%
 
 
@@ -206,6 +210,7 @@ endif
 ##########################################################################################
 
 # PLATFORM_HEADER_SEARCH_PATHS =
+#PLATFORM_HEADER_SEARCH_PATHS += $(MINGW_PREFIX)/include/utf8cpp
 
 ##########################################################################################
 # PLATFORM LIBRARIES
@@ -227,8 +232,12 @@ endif
 
 PLATFORM_LIBRARIES += ksuser opengl32 gdi32 msimg32 glu32 dsound winmm strmiids #dxguid
 PLATFORM_LIBRARIES += uuid ole32 oleaut32 setupapi wsock32 ws2_32 Iphlpapi Comdlg32
-PLATFORM_LIBRARIES += freeimage boost_filesystem-mt boost_system-mt freetype cairo
+PLATFORM_LIBRARIES += freeimage
+PLATFORM_LIBRARIES += mf mfplat mfuuid mfreadwrite
+# PLATFORM_LIBRARIES += glfw3
+
 #PLATFORM_LIBRARIES += gstapp-1.0 gstvideo-1.0 gstbase-1.0 gstreamer-1.0 gobject-2.0 glib-2.0 intl
+#PLATFORM_LIBRARIES += mf mfplat mfuuid d3d11 #xaudio2
 
 #static libraries (fully qualified paths)
 #PLATFORM_STATIC_LIBRARIES += somestaticlib
@@ -237,13 +246,16 @@ PLATFORM_PKG_CONFIG_LIBRARIES =
 PLATFORM_PKG_CONFIG_LIBRARIES += cairo
 PLATFORM_PKG_CONFIG_LIBRARIES += zlib
 PLATFORM_PKG_CONFIG_LIBRARIES += openssl
+PLATFORM_PKG_CONFIG_LIBRARIES += freetype2
 PLATFORM_PKG_CONFIG_LIBRARIES += glew
 PLATFORM_PKG_CONFIG_LIBRARIES += glfw3
 #PLATFORM_PKG_CONFIG_LIBRARIES += gstreamer-1.0
 PLATFORM_PKG_CONFIG_LIBRARIES += libcurl
-ifeq ($(findstring OF_SOUND_PLAYER_OPENAL, $(PLATFORM_DEFINES)),OF_SOUND_PLAYER_OPENAL)
-	PLATFORM_PKG_CONFIG_LIBRARIES += openal
-endif
+PLATFORM_PKG_CONFIG_LIBRARIES += liburiparser
+PLATFORM_PKG_CONFIG_LIBRARIES += nlohmann_json
+PLATFORM_PKG_CONFIG_LIBRARIES += openal
+PLATFORM_PKG_CONFIG_LIBRARIES += pugixml
+PLATFORM_PKG_CONFIG_LIBRARIES += rtaudio
 ifeq ($(findstring OF_USING_MPG123, $(PLATFORM_DEFINES)),OF_USING_MPG123)
 	PLATFORM_PKG_CONFIG_LIBRARIES += sndfile
 	PLATFORM_PKG_CONFIG_LIBRARIES += libmpg123
@@ -309,15 +321,15 @@ copy_dlls:
 	@echo "     copying dlls to bin"
 
 	@ntldd --recursive $(wildcard bin/$(APPNAME)*.exe) | sed -e 's:\\:/:g' | grep -F "$(MINGW_PREFIX)" | cut -d">" -f2 |cut -d" " -f2 >dlllist
-	
+
 	@while read -r dll; do \
 		test -e "$$dll" && cp "$$dll" ./bin; \
     done <dlllist
 	@echo "     `wc -l <dlllist` dlls copied"
 	@rm dlllist
-	
+
 afterplatform: $(TARGET_NAME)
-	@if [ -e $(OF_LIBS_PATH)/*/lib/$(PLATFORM_LIB_SUBPATH)/*.$(SHARED_LIB_EXTENSION) ]; then cp $(OF_LIBS_PATH)/*/lib/$(PLATFORM_LIB_SUBPATH)/*.$(SHARED_LIB_EXTENSION) bin/; fi
+	-cp ${OF_LIBS_PATH}/*/lib/${PLATFORM_LIB_SUBPATH}/*.${SHARED_LIB_EXTENSION} bin/ ; true
 	@echo
 	@echo "     compiling done"
 	@echo "     to launch the application"

@@ -1,21 +1,152 @@
 #include "ofMaterial.h"
-#include "ofConstants.h"
 #include "ofLight.h"
+#include "ofShadow.h"
+#include "ofCubeMap.h"
+#include "ofImage.h"
 #include "ofGLProgrammableRenderer.h"
 
-using namespace std;
+#if !defined(GLM_FORCE_CTOR_INIT)
+	#define GLM_FORCE_CTOR_INIT
+#endif
+#if !defined(GLM_ENABLE_EXPERIMENTAL)
+	#define GLM_ENABLE_EXPERIMENTAL
+#endif
+#include <glm/vec2.hpp>
+#include <glm/gtx/transform.hpp>
 
-std::map<ofGLProgrammableRenderer*, std::map<std::string, std::weak_ptr<ofMaterial::Shaders>>> ofMaterial::shadersMap;
+using std::shared_ptr;
+using std::string;
+
+std::unordered_map<ofGLProgrammableRenderer*, std::unordered_map<std::string, std::weak_ptr<ofMaterial::Shaders>>> ofMaterial::shadersMap;
+std::unordered_map<ofGLProgrammableRenderer *, std::unordered_map<std::string, std::weak_ptr<ofMaterial::DepthShaders>>> ofMaterial::depthShadersMap;
 
 namespace{
-string vertexSource(string defaultHeader, int maxLights, bool hasTexture, bool hasColor);
-string fragmentSource(string defaultHeader, string customUniforms, string postFragment, int maxLights, bool hasTexture, bool hasColor);
+string vertexSource(bool bPBR, string defaultHeader, int maxLights, bool hasTexture, bool hasColor, std::string addShaderSrc,const ofMaterialSettings& adata);
+string fragmentSource(bool bPBR, string defaultHeader, string customUniforms, const ofMaterialSettings& adata, int maxLights, bool hasTexture, bool hasColor, std::string definesString="");
+string shaderDepthVertexSource(const ofMaterialSettings& adata);
 }
 
-
+//----------------------------------------------------------
 ofMaterial::ofMaterial() {
 }
 
+//----------------------------------------------------------
+std::string ofMaterial::getUniformName( const ofMaterialTextureType& aMaterialTextureType ) {
+	switch(aMaterialTextureType) {
+		case OF_MATERIAL_TEXTURE_DIFFUSE:
+			return "tex0";
+		case OF_MATERIAL_TEXTURE_SPECULAR:
+			return "tex_specular";
+		case OF_MATERIAL_TEXTURE_AMBIENT:
+			return "tex_ambient";
+		case OF_MATERIAL_TEXTURE_EMISSIVE:
+			return "tex_emissive";
+		case OF_MATERIAL_TEXTURE_NORMAL:
+			return "tex_normal";
+		case OF_MATERIAL_TEXTURE_OCCLUSION:
+			return "tex_occlusion";
+		case OF_MATERIAL_TEXTURE_AO_ROUGHNESS_METALLIC:
+			return "tex_ao_roughness_metallic";
+		case OF_MATERIAL_TEXTURE_ROUGHNESS_METALLIC:
+			return "tex_roughness_metallic";
+		case OF_MATERIAL_TEXTURE_ROUGHNESS:
+			return "tex_roughness";
+		case OF_MATERIAL_TEXTURE_METALLIC:
+			return "tex_metallic";
+		case OF_MATERIAL_TEXTURE_DISPLACEMENT:
+			return "tex_displacement";
+		case OF_MATERIAL_TEXTURE_CLEARCOAT:
+			return "tex_clearcoat_intensity";
+		case OF_MATERIAL_TEXTURE_CLEARCOAT_ROUGHNESS:
+			return "tex_clearcoat_roughness";
+		case OF_MATERIAL_TEXTURE_CLEARCOAT_INTENSITY_ROUGHNESS:
+			return "tex_clearcoat_intensity_roughness";
+		case OF_MATERIAL_TEXTURE_CLEARCOAT_NORMAL:
+			return "tex_clearcoat_normal";
+		default:
+			break;
+	}
+	return "";
+}
+
+//----------------------------------------------------------
+std::string ofMaterial::getTextureTypeAsString(const ofMaterialTextureType & aMaterialTextureType) {
+	switch(aMaterialTextureType) {
+		case OF_MATERIAL_TEXTURE_DIFFUSE:
+			return "DIFFUSE";
+		case OF_MATERIAL_TEXTURE_SPECULAR:
+			return "SPECULAR";
+		case OF_MATERIAL_TEXTURE_AMBIENT:
+			return "AMBIENT";
+		case OF_MATERIAL_TEXTURE_EMISSIVE:
+			return "EMISSIVE";
+		case OF_MATERIAL_TEXTURE_NORMAL:
+			return "NORMAL";
+		case OF_MATERIAL_TEXTURE_OCCLUSION:
+			return "OCCLUSION";
+		case OF_MATERIAL_TEXTURE_AO_ROUGHNESS_METALLIC:
+			return "AO_ROUGHNESS_METALLIC";
+		case OF_MATERIAL_TEXTURE_ROUGHNESS_METALLIC:
+			return "ROUGHNESS_METALLIC";
+		case OF_MATERIAL_TEXTURE_ROUGHNESS:
+			return "ROUGHNESS";
+		case OF_MATERIAL_TEXTURE_METALLIC:
+			return "METALLIC";
+		case OF_MATERIAL_TEXTURE_DISPLACEMENT:
+			return "DISPLACEMENT";
+		case OF_MATERIAL_TEXTURE_CLEARCOAT:
+			return "CLEARCOAT";
+		case OF_MATERIAL_TEXTURE_CLEARCOAT_ROUGHNESS:
+			return "CLEARCOAT_ROUGHNESS";
+		case OF_MATERIAL_TEXTURE_CLEARCOAT_INTENSITY_ROUGHNESS:
+			return "CLEARCOAT_INTENSITY_ROUGHNESS";
+		case OF_MATERIAL_TEXTURE_CLEARCOAT_NORMAL:
+			return "CLEARCOAT_NORMAL";
+		default:
+			break;
+	}
+	return "NONE";
+}
+
+//----------------------------------------------------------
+bool ofMaterial::isPBRSupported() {
+	#if defined(TARGET_OPENGLES) && !defined(TARGET_EMSCRIPTEN)
+	return false;
+	#endif
+	
+	if( !ofIsGLProgrammableRenderer() ) {
+		return false;
+	}
+	return true;
+}
+
+//----------------------------------------------------------
+void ofMaterial::setPBR(bool ab) {
+	if( ab && !ofIsGLProgrammableRenderer() ) {
+		if( !bPrintedPBRRenderWarning ) {
+			bPrintedPBRRenderWarning=true;
+			ofLogWarning("ofMaterial::setPBR") << " PBR material must be used with Programmable Renderer.";
+		}
+		data.isPbr = false;
+		return;
+	}
+	
+	#if defined(TARGET_OPENGLES) && !defined(TARGET_EMSCRIPTEN)
+	if( ab ) {
+		if( !bPrintedPBRRenderWarning ) {
+			bPrintedPBRRenderWarning=true;
+			ofLogWarning("ofMaterial::setPBR") << " PBR material is not supported on this OPENGL ES platform.";
+		}
+		data.isPbr = false;
+		return;
+	}
+	#endif
+	
+	
+	data.isPbr = ab;
+}
+
+//----------------------------------------------------------
 void ofMaterial::setColors(ofFloatColor oDiffuse, ofFloatColor oAmbient, ofFloatColor oSpecular, ofFloatColor oEmissive) {
 	setDiffuseColor(oDiffuse);
 	setAmbientColor(oAmbient);
@@ -23,9 +154,11 @@ void ofMaterial::setColors(ofFloatColor oDiffuse, ofFloatColor oAmbient, ofFloat
 	setEmissiveColor(oEmissive);
 }
 
-
+//----------------------------------------------------------
 void ofMaterial::setup(const ofMaterialSettings & settings){
-	if(settings.customUniforms != data.customUniforms || settings.postFragment != data.postFragment){
+	if(settings.customUniforms != data.customUniforms || settings.postFragment != data.postFragment || 
+		settings.mainVertexKey != data.mainVertexKey || settings.mainFragmentKey != data.mainFragmentKey || 
+		settings.isPbr != data.isPbr){
 		shaders.clear();
 		uniforms1f.clear();
 		uniforms2f.clear();
@@ -35,136 +168,866 @@ void ofMaterial::setup(const ofMaterialSettings & settings){
 		uniforms2i.clear();
 		uniforms3i.clear();
 		uniforms4i.clear();
+		mCustomUniforms.clear();
+		mDefines.clear();
+		mBDefinesDirty = true;
 	}
 	data = settings;
+	setClearCoatEnabled(data.clearCoatEnabled);
 }
 
+//----------------------------------------------------------
+void ofMaterial::setShaderMain(std::string aShaderSrc, GLenum atype, std::string skey) {
+	if(!isPBR()) {
+		ofLogWarning("ofMaterial::setShaderMain") << "only available on PBR materials.";
+		return;
+	}
+	
+	if(atype == GL_VERTEX_SHADER) {
+		// we would like to replace the current shader at key 
+		// using a skey instead of shadersrc as key so we can easily overwrite
+		if( data.mainVertexKey == skey) {
+			// delete previous shader here, whether frag shader has same key or not
+			std::string sid = getShaderStringId();
+			mShaderIdsToRemove[sid]++;
+		}
+		data.mainVertex = aShaderSrc;
+		data.mainVertexKey = skey;
+	} else if( atype == GL_FRAGMENT_SHADER ) {
+		if( data.mainFragmentKey == skey) {
+			// delete previous shader here, whether frag shader has same key or not
+			std::string sid = getShaderStringId();
+			mShaderIdsToRemove[sid]++;
+		}
+		data.mainFragment = aShaderSrc;
+		data.mainFragmentKey = skey;
+	}
+}
+
+//----------------------------------------------------------
+void ofMaterial::setDepthShaderMain(std::string aShaderSrc, std::string akey) {
+	if(!isPBR()) {
+		ofLogWarning("ofMaterial::setDepthShaderMain") << "only available on PBR materials.";
+		return;
+	}
+	mBHasDepthShader = false;
+	if(akey.empty()){
+		data.mainDepthVertex = "";
+		data.mainDepthVertexKey = akey;
+		ofLogVerbose("ofMaterial::setDepthShaderMain") << "clearing depth shader, key is not set.";
+		return;
+	}
+	if( data.mainDepthVertexKey == akey) {
+		// delete previous shader here
+		std::string sid = getDepthShaderStringId();
+		mDepthShaderIdsToRemove[sid]++;
+	}
+	data.mainDepthVertex = aShaderSrc;
+	data.mainDepthVertexKey = akey;
+	mBHasDepthShader = true;
+}
+
+//----------------------------------------------------------
+bool ofMaterial::hasDepthShader() const {
+	return mBHasDepthShader || hasTexture(OF_MATERIAL_TEXTURE_DISPLACEMENT);
+}
+
+//----------------------------------------------------------
 void ofMaterial::setDiffuseColor(ofFloatColor oDiffuse) {
 	data.diffuse = oDiffuse;
+	if( isBound() && currentRenderShader) {
+		currentRenderShader->setUniform4fv("mat_diffuse", &data.diffuse.r );
+	}
 }
 
+//----------------------------------------------------------
 void ofMaterial::setAmbientColor(ofFloatColor oAmbient) {
 	data.ambient = oAmbient;
+	if( isBound() && !isPBR() && currentRenderShader) {
+		currentRenderShader->setUniform4fv("mat_ambient", &data.ambient.r);
+	}
 }
 
+//----------------------------------------------------------
 void ofMaterial::setSpecularColor(ofFloatColor oSpecular) {
 	data.specular = oSpecular;
+	if( isBound() && !isPBR() && currentRenderShader) {
+		currentRenderShader->setUniform4fv("mat_specular", &data.specular.r);
+	}
 }
 
+//----------------------------------------------------------
 void ofMaterial::setEmissiveColor(ofFloatColor oEmissive) {
 	data.emissive = oEmissive;
+	if( isBound() && currentRenderShader) {
+		currentRenderShader->setUniform4fv("mat_emissive", &data.emissive.r);
+	}
 }
 
+//----------------------------------------------------------
 void ofMaterial::setShininess(float nShininess) {
 	data.shininess = nShininess;
+	if( isBound() && !isPBR() && currentRenderShader) {
+		currentRenderShader->setUniform1f("mat_shininess",data.shininess);
+	}
 }
 
+//----------------------------------------------------------
+void ofMaterial::setTexCoordScale( float xscale, float yscale ) {
+	data.texCoordScale.x = xscale;
+	data.texCoordScale.y = yscale;
+	if( isBound() && currentRenderShader) {
+		currentRenderShader->setUniform2f("mat_texcoord_scale", data.texCoordScale );
+	}
+}
+
+//----------------------------------------------------------
+bool ofMaterial::loadTexture( const ofMaterialTextureType& aMaterialTextureType, std::string apath ) {
+	return loadTexture(aMaterialTextureType, apath, !ofGetUsingArbTex(), false);
+}
+
+//----------------------------------------------------------
+bool ofMaterial::loadTexture( const ofMaterialTextureType& aMaterialTextureType, std::string apath, bool bTex2d, bool mirrorY ) {
+	
+	bool bWasUsingArb = ofGetUsingArbTex();
+	bTex2d ? ofDisableArbTex() : ofEnableArbTex();
+	
+	auto tex { std::make_shared<ofTexture>() };
+	bool bLoadOk = ofLoadImage(*tex, apath, mirrorY );
+	
+	if( bLoadOk ) {
+		// if there was a previous instance, then erase it, then replace it
+		if( mLocalTextures.find(aMaterialTextureType) != mLocalTextures.end() ) {
+			if( mLocalTextures[aMaterialTextureType] ) {
+				mLocalTextures[aMaterialTextureType].reset();
+			}
+			mLocalTextures.erase(aMaterialTextureType);
+		}
+		mLocalTextures[aMaterialTextureType] = tex;
+		setTexture( aMaterialTextureType, *tex );
+	} else {
+		ofLogError("ofMaterial") << "loadTexture(): FAILED for " << getUniformName(aMaterialTextureType) << " at path: " << apath;
+	}
+	
+	bWasUsingArb ? ofEnableArbTex() : ofDisableArbTex();
+	return bLoadOk;
+}
+
+//----------------------------------------------------------
+bool ofMaterial::hasLoadedTexture(const ofMaterialTextureType & aMaterialTextureType) {
+	if( mLocalTextures.find(aMaterialTextureType) != mLocalTextures.end() ) {
+		if(mLocalTextures[aMaterialTextureType]) {
+			return true;
+		}
+	}
+	return false;
+}
+
+//----------------------------------------------------------
+std::shared_ptr<ofTexture> ofMaterial::getLoadedTexture(const ofMaterialTextureType & aMaterialTextureType) {
+	if( mLocalTextures.find(aMaterialTextureType) != mLocalTextures.end() ) {
+		return mLocalTextures[aMaterialTextureType];
+	}
+	return std::shared_ptr<ofTexture>();
+}
+
+//----------------------------------------------------------
+bool ofMaterial::isPBRTexture(const ofMaterialTextureType& aMaterialTextureType) {
+	return aMaterialTextureType >= (int)OF_MATERIAL_TEXTURE_AO_ROUGHNESS_METALLIC;
+}
+
+//----------------------------------------------------------
+void ofMaterial::setTexture(const ofMaterialTextureType& aMaterialTextureType,const ofTexture & aTex) {
+	if(isBound()) {
+		ofLogWarning("ofMaterial::setTexture") << " must set texture when material is not bound.";
+		return;
+	}
+	if( !isPBR() ) {
+		if(isPBRTexture(aMaterialTextureType)) {
+			ofLogVerbose("ofMaterial::setTexture") << " setting material to pbr.";
+			setPBR(true);
+		}
+	}
+	
+	
+
+	if(aMaterialTextureType == OF_MATERIAL_TEXTURE_CLEARCOAT ||
+	   aMaterialTextureType == OF_MATERIAL_TEXTURE_CLEARCOAT_ROUGHNESS ||
+	   aMaterialTextureType == OF_MATERIAL_TEXTURE_CLEARCOAT_INTENSITY_ROUGHNESS ) {
+		if( aTex.isAllocated() ) {
+			setClearCoatEnabled(true);
+		}
+	}
+	setCustomUniformTexture(getUniformName(aMaterialTextureType), aTex);
+	mergeCustomUniformTextures();
+}
+
+//----------------------------------------------------------
+void ofMaterial::setDiffuseTexture(const ofTexture & aTex) {
+	setTexture(OF_MATERIAL_TEXTURE_DIFFUSE, aTex);
+}
+
+//----------------------------------------------------------
+void ofMaterial::setSpecularTexture(const ofTexture & aTex){
+	setTexture(OF_MATERIAL_TEXTURE_SPECULAR, aTex);
+}
+
+//----------------------------------------------------------
+void ofMaterial::setAmbientTexture(const ofTexture & aTex){
+	setTexture(OF_MATERIAL_TEXTURE_AMBIENT, aTex);
+}
+
+//----------------------------------------------------------
+void ofMaterial::setEmissiveTexture(const ofTexture & aTex){
+	setTexture(OF_MATERIAL_TEXTURE_EMISSIVE, aTex);
+}
+
+//----------------------------------------------------------
+void ofMaterial::setNormalTexture(const ofTexture & aTex){
+	setTexture(OF_MATERIAL_TEXTURE_NORMAL, aTex);
+}
+
+//----------------------------------------------------------
+void ofMaterial::setOcclusionTexture(const ofTexture & aTex){
+	setTexture(OF_MATERIAL_TEXTURE_OCCLUSION, aTex);
+}
+
+//----------------------------------------------------
+void ofMaterial::removeTexture(const ofMaterialTextureType & aMaterialTextureType) {
+	// if there was a previous instance, then erase it
+	if( mLocalTextures.find(aMaterialTextureType) != mLocalTextures.end() ) {
+		if( mLocalTextures[aMaterialTextureType] ) {
+			mLocalTextures[aMaterialTextureType].reset();
+		}
+		mLocalTextures.erase(aMaterialTextureType);
+	}
+	removeCustomUniformTexture(aMaterialTextureType);
+}
+
+//----------------------------------------------------
+void ofMaterial::setAoRoughnessMetallicTexture(const ofTexture & aTex) {
+	// r: occlusion, g: roughness, b: metallic
+	setTexture(OF_MATERIAL_TEXTURE_AO_ROUGHNESS_METALLIC, aTex );
+}
+
+//----------------------------------------------------
+void ofMaterial::setRoughnessMetallicTexture(const ofTexture & aTex) {
+	// r: n/a, g: roughness, b: metallic
+	setTexture(OF_MATERIAL_TEXTURE_ROUGHNESS_METALLIC, aTex);
+}
+
+//----------------------------------------------------
+void ofMaterial::setRoughnessTexture(const ofTexture & aTex) {
+	setTexture(OF_MATERIAL_TEXTURE_ROUGHNESS, aTex);
+}
+
+//----------------------------------------------------
+void ofMaterial::setMetallicTexture(const ofTexture & aTex) {
+	setTexture(OF_MATERIAL_TEXTURE_METALLIC, aTex);
+}
+
+//----------------------------------------------------
+void ofMaterial::setDisplacementTexture(const ofTexture & aTex) {
+	setTexture(OF_MATERIAL_TEXTURE_DISPLACEMENT, aTex);
+}
+
+//----------------------------------------------------
+void ofMaterial::setClearCoatTexture( const ofTexture& aTex ) {
+	setTexture(OF_MATERIAL_TEXTURE_CLEARCOAT, aTex );
+}
+
+//----------------------------------------------------
+void ofMaterial::setMetallic( const float& ametallic ) {
+	data.metallic = ametallic;
+	
+	if( isBound() && isPBR() && currentRenderShader) {
+		currentRenderShader->setUniform1f("mat_metallic", data.metallic );
+	}
+	if( !isPBR() ) {
+		setPBR(true);
+	}
+}
+
+//----------------------------------------------------
+void ofMaterial::setRoughness( const float& aroughness ) {
+	data.roughness = aroughness;
+	if( isBound() && isPBR() && currentRenderShader) {
+		currentRenderShader->setUniform1f("mat_roughness", data.roughness );
+	}
+	if( !isPBR() ) {
+		setPBR(true);
+	}
+}
+
+//----------------------------------------------------
+void ofMaterial::setReflectance( const float& areflectance ) {
+	data.reflectance = areflectance;
+	if( isBound() && isPBR() && currentRenderShader) {
+		currentRenderShader->setUniform1f("mat_reflectance", data.reflectance );
+	}
+	if( !isPBR() ) {
+		setPBR(true);
+	}
+}
+
+//----------------------------------------------------
+void ofMaterial::setClearCoatEnabled( bool ab ) {
+	if(isBound()) {
+		ofLogWarning("ofMaterial::setClearCoatEnabled") << " must be called when material is not bound.";
+		return;
+	}
+	if( !isPBR() ) {
+		setPBR(true);
+	}
+	data.clearCoatEnabled = ab;
+	if(ab) {
+		addShaderDefine( "HAS_CLEAR_COAT", "1" );
+	} else {
+		removeShaderDefine( "HAS_CLEAR_COAT" );
+	}
+}
+
+//----------------------------------------------------
+void ofMaterial::setClearCoatStrength( const float& astrength ) {
+	data.clearCoatStrength = astrength;
+	if( isClearCoatEnabled() && isBound() && isPBR() && currentRenderShader ) {
+		currentRenderShader->setUniform2f("mat_clearcoat", data.clearCoatStrength, data.clearCoatRoughness );
+	}
+	if( !isPBR() ) {
+		setPBR(true);
+	}
+}
+
+//----------------------------------------------------
+void ofMaterial::setClearCoatRoughness( const float& aroughness ) {
+	data.clearCoatRoughness = aroughness;
+	if( isClearCoatEnabled() && isBound() && isPBR() && currentRenderShader ) {
+		currentRenderShader->setUniform2f("mat_clearcoat", data.clearCoatStrength, data.clearCoatRoughness );
+	}
+	if( !isPBR() ) {
+		setPBR(true);
+	}
+}
+
+//----------------------------------------------------------
+void ofMaterial::setDisplacementStrength( const float& astrength ) {
+	data.displacementStrength = astrength;
+	if(isBound() && isPBR() && currentRenderShader ) {
+		if( hasTexture(OF_MATERIAL_TEXTURE_DISPLACEMENT) ) {
+			currentRenderShader->setUniform1f("mat_displacement_strength", data.displacementStrength );
+		}
+	}
+	if( !isPBR() ) {
+		setPBR(true);
+	}
+}
+
+//----------------------------------------------------------
+void ofMaterial::setDisplacementNormalsStrength( const float& astrength ) {
+	data.displacementNormalsStrength = astrength;
+	if(isBound() && isPBR() && currentRenderShader ) {
+		if( hasTexture(OF_MATERIAL_TEXTURE_DISPLACEMENT) ) {
+			currentRenderShader->setUniform1f("mat_displacement_normals_strength", data.displacementNormalsStrength );
+		}
+	}
+}
+
+//----------------------------------------------------------
+void ofMaterial::setNormalGeomToNormalMapMix( const float& astrength ) {
+	data.normalGeomToNormalMapMix = astrength;
+	if(isBound() && isPBR() && currentRenderShader ) {
+		if( hasTexture(OF_MATERIAL_TEXTURE_NORMAL) || hasTexture(OF_MATERIAL_TEXTURE_DISPLACEMENT) ) {
+			currentRenderShader->setUniform1f("mat_normal_mix", data.normalGeomToNormalMapMix );
+		}
+	}
+}
+
+//----------------------------------------------------------
 void ofMaterial::setData(const ofMaterial::Data &data){
 	setup(data);
 }
 
+//----------------------------------------------------------
 float ofMaterial::getShininess()const{
 	return data.shininess;
 }
 
+//----------------------------------------------------
+float ofMaterial::getMetallic() const {
+	return data.metallic;
+}
+
+//----------------------------------------------------
+float ofMaterial::getRoughness() const {
+	return data.roughness;
+}
+
+//----------------------------------------------------
+float ofMaterial::getReflectance() const {
+	return data.reflectance;
+}
+
+//----------------------------------------------------
+bool ofMaterial::isClearCoatEnabled() const {
+	return data.clearCoatEnabled;
+}
+
+//----------------------------------------------------
+float ofMaterial::getClearCoatStrength() const {
+	return data.clearCoatStrength;
+}
+
+//----------------------------------------------------
+float ofMaterial::getClearCoatRoughness() const {
+	return data.clearCoatRoughness;
+}
+
+//----------------------------------------------------
+float ofMaterial::getDisplacementStrength() const {
+	return data.displacementStrength;
+}
+
+//----------------------------------------------------
+float ofMaterial::getDisplacementNormalsStrength() const {
+	return data.displacementNormalsStrength;
+}
+
+//----------------------------------------------------
+float ofMaterial::getNormalGeomToNormalMapMix() const {
+	return data.normalGeomToNormalMapMix;
+}
+
+//----------------------------------------------------------
 ofFloatColor ofMaterial::getDiffuseColor()const {
 	return data.diffuse;
 }
 
+//----------------------------------------------------------
 ofFloatColor ofMaterial::getAmbientColor()const {
 	return data.ambient;
 }
 
+//----------------------------------------------------------
 ofFloatColor ofMaterial::getSpecularColor()const {
 	return data.specular;
 }
 
+//----------------------------------------------------------
 ofFloatColor ofMaterial::getEmissiveColor()const {
 	return data.emissive;
 }
 
+//----------------------------------------------------------
 ofMaterialSettings ofMaterial::getSettings() const{
     return data;
 }
 
+//-----------------------------------------------------------
 void ofMaterial::begin() const{
 	if(ofGetGLRenderer()){
 		ofGetGLRenderer()->bind(*this);
 	}
 }
 
+//----------------------------------------------------------
 void ofMaterial::end() const{
 	if(ofGetGLRenderer()){
 		ofGetGLRenderer()->unbind(*this);
 	}
 }
 
+//----------------------------------------------------------
+void ofMaterial::uploadMatrices(const ofShader & shader,ofGLProgrammableRenderer & renderer) const {
+	if(!isPBR()) {
+		ofBaseMaterial::uploadMatrices(shader, renderer);
+	}
+}
+
+//-----------------------------------------------------------
+void ofMaterial::mergeCustomUniformTextures() {
+	mergeCustomUniformTextures(OF_MATERIAL_TEXTURE_ROUGHNESS_METALLIC, {
+		OF_MATERIAL_TEXTURE_ROUGHNESS,
+		OF_MATERIAL_TEXTURE_METALLIC
+	} );
+	
+	mergeCustomUniformTextures(OF_MATERIAL_TEXTURE_ROUGHNESS_METALLIC, {
+		OF_MATERIAL_TEXTURE_OCCLUSION,
+		OF_MATERIAL_TEXTURE_ROUGHNESS_METALLIC
+	} );
+	
+	mergeCustomUniformTextures(OF_MATERIAL_TEXTURE_AO_ROUGHNESS_METALLIC, {
+		OF_MATERIAL_TEXTURE_OCCLUSION,
+		OF_MATERIAL_TEXTURE_ROUGHNESS,
+		OF_MATERIAL_TEXTURE_METALLIC
+	} );
+}
+
+//-----------------------------------------------------------
+void ofMaterial::mergeCustomUniformTextures(ofMaterialTextureType mainType, std::vector<ofMaterialTextureType> mergeTypes) {
+	size_t mtsSize = mergeTypes.size();
+	if(!hasTexture(mainType) && mtsSize > 1){
+		bool bHasAllMergeTypes = true;
+		GLint texID;
+		int texTarget;
+		bool bMatchingTextures = true;
+		int minTexLocation = 99999;
+		
+		for(size_t i = 0; i < mtsSize; i++ ) {
+			if(!hasTexture(mergeTypes[i])){
+				bHasAllMergeTypes = false;
+				bMatchingTextures = false;
+				break;
+			} else {
+				auto rtex = getCustomUniformTexture(mergeTypes[i]);
+				if(i == 0 ) {
+					texID = rtex.textureID;
+					texTarget = rtex.textureTarget;
+				}
+				if( rtex.textureTarget != texTarget || rtex.textureID != texID ) {
+					bMatchingTextures = false;
+					break;
+				} else {
+					if( rtex.textureLocation < minTexLocation ) {
+						minTexLocation = rtex.textureLocation;
+					}
+				}
+			}
+		}
+		
+		if(bHasAllMergeTypes && bMatchingTextures && minTexLocation < 1000){
+			for(size_t i = 0; i < mtsSize; i++ ) {
+				removeCustomUniformTexture(mergeTypes[i]);
+			}
+			setCustomUniformTexture( getUniformName(mainType), texTarget, texID, minTexLocation );
+		}
+	}
+}
+
+//-----------------------------------------------------------
+ofMaterial::TextureUnifom ofMaterial::getCustomUniformTexture(const ofMaterialTextureType& aMaterialTextureType){
+	return getCustomUniformTexture(getUniformName(aMaterialTextureType));
+}
+
+//-----------------------------------------------------------
+ofMaterial::TextureUnifom ofMaterial::getCustomUniformTexture(const std::string & name){
+	if(uniformstex.find(name) != uniformstex.end()){
+		return uniformstex[name];
+	}
+	return TextureUnifom{};
+}
+
+// called from ofGLProgrammableRenderer
+//-----------------------------------------------------------
+void ofMaterial::unbind(ofGLProgrammableRenderer & renderer) const {
+	mBound = false;
+	currentRenderShader = nullptr;
+}
+
+//-----------------------------------------------------------
+const std::string ofMaterial::getShaderStringId() const {
+	std::string pbrStr = "pbr-yes";
+	if(!isPBR()) {
+		pbrStr = "pbr-no";
+	}
+	return pbrStr+data.uniqueIdString+data.postFragment+data.mainVertexKey+data.mainFragmentKey;
+}
+
+//-----------------------------------------------------------
+const std::string ofMaterial::getDepthShaderStringId() const {
+	if( !data.mainDepthVertexKey.empty() ) {
+		return data.mainDepthVertexKey;
+	}
+	if( hasTexture(OF_MATERIAL_TEXTURE_DISPLACEMENT) ) {
+		return "displacement_depth_id";
+	}
+	return "";
+}
+
+//-----------------------------------------------------------
+void ofMaterial::initDepthShaders(ofGLProgrammableRenderer & renderer) const {
+	// check to remove any depth shaders //
+	{
+		if( mDepthShaderIdsToRemove.size() ) {
+			for( auto& sids : mDepthShaderIdsToRemove ) {
+				if(depthShadersMap[&renderer].find(sids.first)!=depthShadersMap[&renderer].end()){
+					auto newShaders = depthShadersMap[&renderer][sids.first].lock();
+					if( newShaders ) {
+						newShaders.reset();
+					}
+					depthShadersMap[&renderer].erase(sids.first);
+				}
+			}
+			
+			ofLogVerbose("ofMaterial :: initShaders : depth shaders: " ) << depthShadersMap.size() << " | " << ofGetFrameNum();
+			
+			auto trendererShaders = mDepthShaders.find(&renderer);
+			if( trendererShaders != mDepthShaders.end() ) {
+				if(trendererShaders->second) {
+					trendererShaders->second.reset();
+				}
+				mDepthShaders.erase(&renderer);
+			}
+			mDepthShaderIdsToRemove.clear();
+		}
+	}
+	
+	// now lets check the depth shaders
+	if( getDepthShaderStringId() != "" ) {
+		auto depthShaders = mDepthShaders.find(&renderer);
+		const std::string shaderId = getDepthShaderStringId();
+		
+		if(depthShaders == mDepthShaders.end() ||
+		   depthShaders->second->shaderId != shaderId ){
+			if(depthShadersMap[&renderer].find(shaderId) != depthShadersMap[&renderer].end()){
+				auto newShaders = depthShadersMap[&renderer][shaderId].lock();
+				if(newShaders == nullptr ){
+					depthShadersMap[&renderer].erase(shaderId);
+					mDepthShaders[&renderer] = nullptr;
+				}else{
+					ofLogVerbose("ofMaterial") << "initDepthShaders : swapping depth shaders | " << ofGetFrameNum();
+					mDepthShaders[&renderer] = newShaders;
+				}
+			} else {
+				mDepthShaders[&renderer] = nullptr;
+			}
+		}
+		
+		if(mDepthShaders[&renderer] == nullptr){
+			ofLogVerbose("ofMaterial") << "initDepthShaders : allocating depth shaders | " << ofGetFrameNum();
+			
+			mDepthShaders[&renderer].reset(new DepthShaders);
+			mDepthShaders[&renderer]->shaderId = shaderId;
+			
+			depthShadersMap[&renderer][shaderId] = mDepthShaders[&renderer];
+		}
+	}
+	
+}
+
+//-----------------------------------------------------------
+const ofShader& ofMaterial::getShadowDepthShader( const ofShadow& ashadow, ofGLProgrammableRenderer & renderer ) const {
+	initDepthShaders(renderer);
+//	std::string shadowId = ofToString(ashadow.getData()->lightType, 0)+"_"+ofToString(ashadow.getNumShadowDepthPasses(), 0);
+	unsigned int shadowShaderId = ashadow.getData()->lightType + ((ashadow.getNumShadowDepthPasses()+1)*100);
+	auto shadowShader = mDepthShaders[&renderer]->shaders.find(shadowShaderId);
+	
+	if(shadowShader == mDepthShaders[&renderer]->shaders.end() || !mDepthShaders[&renderer]->shaders[shadowShaderId] ) {
+		auto nDepthShader { std::make_shared<ofShader>() };
+		
+		auto customUniforms = data.customUniforms;
+		for( auto & custom : mCustomUniforms ){
+			customUniforms += custom.second + " " + custom.first + ";\n";
+		}
+		
+		std::string definesString = getDefinesString();
+		definesString += "#define SAMPLER sampler2D\n";
+		definesString += "#define TEXTURE texture\n";
+		std::string extraVertString = definesString;
+		extraVertString += customUniforms;
+		
+		std::string srcMain = extraVertString+shaderDepthVertexSource(data);
+		ofLogVerbose("--ofMaterial::getShadowDepthShader--");
+		if(!ashadow.setupShadowDepthShader( *nDepthShader, srcMain )) {
+			ofLogError("ofMaterial :: getShadowDepthShader() : error loading depth shader: ") << data.mainDepthVertexKey;
+		}
+		ofLogVerbose(nDepthShader->getShaderSource(GL_VERTEX_SHADER));
+		
+		mDepthShaders[&renderer]->shaders[shadowShaderId] = nDepthShader;
+	}
+	return *mDepthShaders[&renderer]->shaders[shadowShaderId];
+}
+
+//-----------------------------------------------------------
 void ofMaterial::initShaders(ofGLProgrammableRenderer & renderer) const{
+	// remove any shaders that have their main source remove 
+	{
+		if( mShaderIdsToRemove.size() ) {
+			for( auto& sids : mShaderIdsToRemove ) {
+				if(shadersMap[&renderer].find(sids.first)!=shadersMap[&renderer].end()){
+					auto newShaders = shadersMap[&renderer][sids.first].lock();
+					if( newShaders ) {
+						newShaders.reset();
+					}
+					shadersMap[&renderer].erase(sids.first);
+				}
+			}
+
+			ofLogVerbose("ofMaterial :: initShaders") << shadersMap.size() << " | " << ofGetFrameNum();
+
+			auto trendererShaders = shaders.find(&renderer);
+			if( trendererShaders != shaders.end() ) {
+				if(trendererShaders->second) {
+					trendererShaders->second.reset();
+				}
+				shaders.erase(&renderer);
+			}
+			mShaderIdsToRemove.clear();
+		}
+	}
+	
+
     auto rendererShaders = shaders.find(&renderer);
-    if(rendererShaders == shaders.end() || rendererShaders->second->numLights != ofLightsData().size()){
-        if(shadersMap[&renderer].find(data.postFragment)!=shadersMap[&renderer].end()){
-            auto newShaders = shadersMap[&renderer][data.postFragment].lock();
-            if(newShaders == nullptr || newShaders->numLights != ofLightsData().size()){
-                shadersMap[&renderer].erase(data.postFragment);
-                shaders[&renderer] = nullptr;
-            }else{
-                shaders[&renderer] = newShaders;
-            }
-        }
-    }
+	
+	size_t numLights = ofLightsData().size();
+	// only support for a single cube map at a time
+	size_t numCubeMaps = ofCubeMap::getCubeMapsData().size() > 0 ? 1 : 0;
+	const std::string shaderId = getShaderStringId();
+	
+	if(rendererShaders == shaders.end() ||
+	   rendererShaders->second->numLights != numLights ||
+	   rendererShaders->second->numCubeMaps != numCubeMaps ||
+	   rendererShaders->second->shaderId != shaderId ){
+		if(shadersMap[&renderer].find(shaderId)!=shadersMap[&renderer].end()){
+			auto newShaders = shadersMap[&renderer][shaderId].lock();
+			if(newShaders == nullptr || newShaders->numLights != numLights || newShaders->numCubeMaps != numCubeMaps ){
+				shadersMap[&renderer].erase(shaderId);
+				shaders[&renderer] = nullptr;
+			}else{
+				ofLogVerbose("ofMaterial") << "initShaders : swapping shaders | " << ofGetFrameNum();
+				shaders[&renderer] = newShaders;
+			}
+		} else {
+			shaders[&renderer] = nullptr;
+		}
+	}
 
     if(shaders[&renderer] == nullptr){
+		ofLogVerbose("ofMaterial") << "initShaders : allocating shaders again | " << ofGetFrameNum();
+        //add the custom uniforms to the shader header
+        auto customUniforms = data.customUniforms;
+        for( auto & custom : mCustomUniforms ){
+        	customUniforms += custom.second + " " + custom.first + ";\n";
+        }
+
+		std::string definesString = getDefinesString();
+		
+		ofLogVerbose("ofMaterial") << " defines--------------- " << std::endl;
+		ofLogVerbose("ofMaterial") << definesString;
+		ofLogVerbose("ofMaterial") << "textures --------------- " << uniformstex.size();
+		for (auto & uniform : uniformstex) {
+			ofLogVerbose() << uniform.first << ", " << uniform.second.textureTarget <<", " << uniform.second.textureID << ", " << uniform.second.textureLocation << std::endl;
+		}
+		
+		std::string extraVertString = definesString;
+//		if( hasTexture(OF_MATERIAL_TEXTURE_DISPLACEMENT) ) {
+//			extraVertString += "\nuniform SAMPLER "+getUniformName(OF_MATERIAL_TEXTURE_DISPLACEMENT)+";\n";
+//		}
+		extraVertString += customUniforms;
+		ofLogVerbose( "ofMaterial" ) << " extraVertString------------------- ";
+		ofLogVerbose() << extraVertString;
+		ofLogVerbose( "ofMaterial" ) << "! extraVertString !------------------- " << std::endl;
+     
         #ifndef TARGET_OPENGLES
             string vertexRectHeader = renderer.defaultVertexShaderHeader(GL_TEXTURE_RECTANGLE);
             string fragmentRectHeader = renderer.defaultFragmentShaderHeader(GL_TEXTURE_RECTANGLE);
         #endif
         string vertex2DHeader = renderer.defaultVertexShaderHeader(GL_TEXTURE_2D);
         string fragment2DHeader = renderer.defaultFragmentShaderHeader(GL_TEXTURE_2D);
-        auto numLights = ofLightsData().size();
+		
+		#if defined(TARGET_OPENGLES) && defined(TARGET_EMSCRIPTEN)
+		// TODO: Should this be in programmable renderer?
+		if(ofIsGLProgrammableRenderer()) {
+//			if(isPBR()) {
+//			header = "#version 300 es\n";// + header;
+				vertex2DHeader = "#version "+ofGLSLVersionFromGL(renderer.getGLVersionMajor(), renderer.getGLVersionMinor())+"\n";
+				vertex2DHeader += "precision highp float;\n";
+				vertex2DHeader += "precision highp int;\n";
+				vertex2DHeader += "#define TARGET_OPENGLES\n";
+				vertex2DHeader += "#define IN in\n";
+				vertex2DHeader += "#define OUT out\n";
+				vertex2DHeader += "#define TEXTURE texture\n";
+				vertex2DHeader += "#define SAMPLER sampler2D\n";
+
+				fragment2DHeader = "#version "+ofGLSLVersionFromGL(renderer.getGLVersionMajor(), renderer.getGLVersionMinor())+"\n";
+				fragment2DHeader += "precision highp float;\n";
+				fragment2DHeader += "precision highp int;\n";
+				fragment2DHeader += "#define TARGET_OPENGLES\n";
+				fragment2DHeader += "#define IN in\n";
+				fragment2DHeader += "#define OUT out\n";
+				fragment2DHeader += "#define TEXTURE texture\n";
+				fragment2DHeader += "#define FRAG_COLOR fragColor\n";
+				fragment2DHeader += "out vec4 fragColor;\n";
+				fragment2DHeader += "#define SAMPLER sampler2D\n";
+				fragment2DHeader += "precision highp sampler2D;\n";
+				fragment2DHeader += "precision highp samplerCube;\n";
+				// we don't use any samplerCubeShadows
+				//fragment2DHeader += "precision highp samplerCubeShadow;\n";
+				fragment2DHeader += "precision mediump sampler2DShadow;\n";
+				#if defined( GL_TEXTURE_2D_ARRAY ) && defined(glTexImage3D)
+				fragment2DHeader += "precision mediump sampler2DArrayShadow;\n";
+				#endif
+//				fragment2DHeader += "precision highp samplerCubeShadow;\n";
+//				fragment2DHeader += "precision highp sampler2DShadow;\n";
+//				fragment2DHeader += "precision highp sampler2DArrayShadow;\n";
+//			}
+		}
+		#endif
+		
+		ofLogVerbose( "ofMaterial" ) << " fragment2DHeader------------------- ";
+		ofLogVerbose() << fragment2DHeader;
+		ofLogVerbose( "ofMaterial" ) << " fragment2DHeader ";
+
         shaders[&renderer].reset(new Shaders);
         shaders[&renderer]->numLights = numLights;
-        shaders[&renderer]->noTexture.setupShaderFromSource(GL_VERTEX_SHADER,vertexSource(vertex2DHeader,numLights,false,false));
-        shaders[&renderer]->noTexture.setupShaderFromSource(GL_FRAGMENT_SHADER,fragmentSource(fragment2DHeader, data.customUniforms, data.postFragment,numLights,false,false));
+		shaders[&renderer]->numCubeMaps = numCubeMaps;
+		shaders[&renderer]->shaderId = shaderId;
+		
+        shaders[&renderer]->noTexture.setupShaderFromSource(GL_VERTEX_SHADER,vertexSource(isPBR(),vertex2DHeader,numLights,false,false,extraVertString,data));
+        shaders[&renderer]->noTexture.setupShaderFromSource(GL_FRAGMENT_SHADER,fragmentSource(isPBR(),fragment2DHeader, customUniforms, data,numLights,false,false, definesString));
         shaders[&renderer]->noTexture.bindDefaults();
         shaders[&renderer]->noTexture.linkProgram();
 
-        shaders[&renderer]->texture2D.setupShaderFromSource(GL_VERTEX_SHADER,vertexSource(vertex2DHeader,numLights,true,false));
-        shaders[&renderer]->texture2D.setupShaderFromSource(GL_FRAGMENT_SHADER,fragmentSource(fragment2DHeader, data.customUniforms, data.postFragment,numLights,true,false));
+        shaders[&renderer]->texture2D.setupShaderFromSource(GL_VERTEX_SHADER,vertexSource(isPBR(),vertex2DHeader,numLights,true,false,extraVertString,data));
+        shaders[&renderer]->texture2D.setupShaderFromSource(GL_FRAGMENT_SHADER,fragmentSource(isPBR(),fragment2DHeader, customUniforms, data,numLights,true,false,definesString));
         shaders[&renderer]->texture2D.bindDefaults();
         shaders[&renderer]->texture2D.linkProgram();
 
         #ifndef TARGET_OPENGLES
-            shaders[&renderer]->textureRect.setupShaderFromSource(GL_VERTEX_SHADER,vertexSource(vertexRectHeader,numLights,true,false));
-            shaders[&renderer]->textureRect.setupShaderFromSource(GL_FRAGMENT_SHADER,fragmentSource(fragmentRectHeader, data.customUniforms, data.postFragment,numLights,true,false));
+            shaders[&renderer]->textureRect.setupShaderFromSource(GL_VERTEX_SHADER,vertexSource(isPBR(),vertexRectHeader,numLights,true,false,extraVertString,data));
+            shaders[&renderer]->textureRect.setupShaderFromSource(GL_FRAGMENT_SHADER,fragmentSource(isPBR(),fragmentRectHeader, customUniforms, data,numLights,true,false,definesString));
             shaders[&renderer]->textureRect.bindDefaults();
             shaders[&renderer]->textureRect.linkProgram();
         #endif
 
-        shaders[&renderer]->color.setupShaderFromSource(GL_VERTEX_SHADER,vertexSource(vertex2DHeader,numLights,false,true));
-        shaders[&renderer]->color.setupShaderFromSource(GL_FRAGMENT_SHADER,fragmentSource(fragment2DHeader, data.customUniforms, data.postFragment,numLights,false,true));
+        shaders[&renderer]->color.setupShaderFromSource(GL_VERTEX_SHADER,vertexSource(isPBR(),vertex2DHeader,numLights,false,true,extraVertString,data));
+        shaders[&renderer]->color.setupShaderFromSource(GL_FRAGMENT_SHADER,fragmentSource(isPBR(),fragment2DHeader, customUniforms, data,numLights,false,true, definesString));
         shaders[&renderer]->color.bindDefaults();
         shaders[&renderer]->color.linkProgram();
 
 
-        shaders[&renderer]->texture2DColor.setupShaderFromSource(GL_VERTEX_SHADER,vertexSource(vertex2DHeader,numLights,true,true));
-        shaders[&renderer]->texture2DColor.setupShaderFromSource(GL_FRAGMENT_SHADER,fragmentSource(fragment2DHeader, data.customUniforms, data.postFragment,numLights,true,true));
+        shaders[&renderer]->texture2DColor.setupShaderFromSource(GL_VERTEX_SHADER,vertexSource(isPBR(),vertex2DHeader,numLights,true,true,extraVertString,data));
+        shaders[&renderer]->texture2DColor.setupShaderFromSource(GL_FRAGMENT_SHADER,fragmentSource(isPBR(),fragment2DHeader, customUniforms, data,numLights,true,true,definesString));
         shaders[&renderer]->texture2DColor.bindDefaults();
         shaders[&renderer]->texture2DColor.linkProgram();
 
         #ifndef TARGET_OPENGLES
-            shaders[&renderer]->textureRectColor.setupShaderFromSource(GL_VERTEX_SHADER,vertexSource(vertexRectHeader,numLights,true,true));
-            shaders[&renderer]->textureRectColor.setupShaderFromSource(GL_FRAGMENT_SHADER,fragmentSource(fragmentRectHeader, data.customUniforms, data.postFragment,numLights,true,true));
+            shaders[&renderer]->textureRectColor.setupShaderFromSource(GL_VERTEX_SHADER,vertexSource(isPBR(),vertexRectHeader,numLights,true,true,extraVertString,data));
+            shaders[&renderer]->textureRectColor.setupShaderFromSource(GL_FRAGMENT_SHADER,fragmentSource(isPBR(),fragmentRectHeader, customUniforms, data,numLights,true,true,definesString));
             shaders[&renderer]->textureRectColor.bindDefaults();
             shaders[&renderer]->textureRectColor.linkProgram();
         #endif
 
-        shadersMap[&renderer][data.postFragment] = shaders[&renderer];
+		shadersMap[&renderer][shaderId] = shaders[&renderer];
     }
 
 }
 
 const ofShader & ofMaterial::getShader(int textureTarget, bool geometryHasColor, ofGLProgrammableRenderer & renderer) const{
     initShaders(renderer);
+	
+	if(bHasCustomShader && customShader){
+		return *customShader;
+	}
+	
+	// override the textureTarget argument coming from the programmable renderer
+	// the renderer is passing the textureTarget based on if there is a texture that is bound
+	// if there is no texture bound, then go ahead and switch to the diffuse texture
+	if(textureTarget == OF_NO_TEXTURE && hasTexture(OF_MATERIAL_TEXTURE_DIFFUSE) ) {
+		const std::string loc = getUniformName(OF_MATERIAL_TEXTURE_DIFFUSE);
+		const auto& dt = uniformstex.at(loc);
+		textureTarget = dt.textureTarget;
+	}
+	
 	switch(textureTarget){
 	case OF_NO_TEXTURE:
         if(geometryHasColor){
@@ -191,12 +1054,47 @@ const ofShader & ofMaterial::getShader(int textureTarget, bool geometryHasColor,
 }
 
 void ofMaterial::updateMaterial(const ofShader & shader,ofGLProgrammableRenderer & renderer) const{
-	shader.setUniform4fv("mat_ambient", &data.ambient.r);
-	shader.setUniform4fv("mat_diffuse", &data.diffuse.r);
-	shader.setUniform4fv("mat_specular", &data.specular.r);
+	currentRenderShader = &shader;
+	
 	shader.setUniform4fv("mat_emissive", &data.emissive.r);
-	shader.setUniform4fv("global_ambient", &ofGetGlobalAmbientColor().r);
-	shader.setUniform1f("mat_shininess",data.shininess);
+	shader.setUniform2f("mat_texcoord_scale", data.texCoordScale );
+	
+	if( isPBR() ) {
+		shader.setUniform3f("uCameraPos", renderer.getCurrentEyePosition());
+		shader.setUniform4fv("mat_diffuse", &data.diffuse.r );
+		shader.setUniform1f("mat_roughness", data.roughness );
+		shader.setUniform1f("mat_metallic", data.metallic );
+		shader.setUniform1f("mat_reflectance", data.reflectance );
+		if( isClearCoatEnabled() ) {
+			shader.setUniform2f("mat_clearcoat", data.clearCoatStrength, data.clearCoatRoughness );
+		}
+		
+		if( hasTexture(OF_MATERIAL_TEXTURE_DISPLACEMENT) ) {
+			shader.setUniform1f("mat_displacement_strength", data.displacementStrength );
+			shader.setUniform1f("mat_displacement_normals_strength", data.displacementNormalsStrength );
+		}
+		if( hasTexture(OF_MATERIAL_TEXTURE_NORMAL) || hasTexture(OF_MATERIAL_TEXTURE_DISPLACEMENT) ) {
+			shader.setUniform1f("mat_normal_mix", data.normalGeomToNormalMapMix );
+		}
+		
+		auto cubeMapData = ofCubeMap::getActiveData();
+		if( cubeMapData ) {
+			shader.setUniform1f("mat_ibl_exposure", cubeMapData->exposure );
+			shader.setUniform1f("uCubeMapEnabled", 1.0f );
+			shader.setUniform1f("uEnvMapMaxMips", cubeMapData->maxMipLevels );
+		} else {
+			shader.setUniform1f("mat_ibl_exposure", 1.0f );
+			shader.setUniform1f("uCubeMapEnabled", 0.0f );
+			shader.setUniform1f("uEnvMapMaxMips", 1.0f );
+		}
+		
+	} else {
+		shader.setUniform4fv("mat_ambient", &data.ambient.r);
+		shader.setUniform4fv("mat_diffuse", &data.diffuse.r);
+		shader.setUniform4fv("mat_specular", &data.specular.r);
+		shader.setUniform4fv("global_ambient", &ofGetGlobalAmbientColor().r);
+		shader.setUniform1f("mat_shininess",data.shininess);
+	}
 	for(auto & uniform: uniforms1f){
 		shader.setUniform1f(uniform.first, uniform.second);
 	}
@@ -243,105 +1141,372 @@ void ofMaterial::updateLights(const ofShader & shader,ofGLProgrammableRenderer &
 			shader.setUniform1f("lights["+idx+"].enabled",0);
 			continue;
 		}
-		auto lightEyePosition = renderer.getCurrentViewMatrix() * light->position;
+		glm::vec4 lightEyePosition = light->position;
+		// pbr uses global positions
+		if( !isPBR() ) {
+			if( light->lightType == OF_LIGHT_DIRECTIONAL ) {
+				// support for reversed phong lighting setup
+				lightEyePosition = renderer.getCurrentViewMatrix() * -light->position;
+			} else {
+				lightEyePosition = renderer.getCurrentViewMatrix() * light->position;
+			}
+		}
+
+		if( isPBR() ) {
+			if( light->lightType == OF_LIGHT_DIRECTIONAL ) {
+				lightEyePosition = glm::vec4(-light->direction, lightEyePosition.w);
+			}
+			if( light->lightType != OF_LIGHT_POINT ) {
+				shader.setUniform3f("lights["+idx+"].direction", light->direction );
+			}
+		}
+
 		shader.setUniform1f("lights["+idx+"].enabled",1);
 		shader.setUniform1f("lights["+idx+"].type", light->lightType);
 		shader.setUniform4f("lights["+idx+"].position", lightEyePosition);
-		shader.setUniform4f("lights["+idx+"].ambient", light->ambientColor);
-		shader.setUniform4f("lights["+idx+"].specular", light->specularColor);
+		if( !isPBR() ) {
+			shader.setUniform4f("lights["+idx+"].ambient", light->ambientColor);
+			shader.setUniform4f("lights["+idx+"].specular", light->specularColor);
+		}
 		shader.setUniform4f("lights["+idx+"].diffuse", light->diffuseColor);
 
 		if(light->lightType!=OF_LIGHT_DIRECTIONAL){
+			// TODO: add in light radius if pbr?
+			shader.setUniform1f("lights["+idx+"].radius", 0.0f);
 			shader.setUniform1f("lights["+idx+"].constantAttenuation", light->attenuation_constant);
 			shader.setUniform1f("lights["+idx+"].linearAttenuation", light->attenuation_linear);
 			shader.setUniform1f("lights["+idx+"].quadraticAttenuation", light->attenuation_quadratic);
 		}
 
 		if(light->lightType==OF_LIGHT_SPOT){
-			glm::vec3 direction = glm::vec3(light->position) + light->direction;
-			glm::vec4 direction4 = renderer.getCurrentViewMatrix() * glm::vec4(direction,1.0);
-			direction = glm::vec3(direction4) / direction4.w;
-			direction = direction - glm::vec3(lightEyePosition);
-			shader.setUniform3f("lights["+idx+"].spotDirection", glm::normalize(direction));
+			// PBR light calcs are in world space
+			glm::vec3 direction = light->direction;
+			if( !isPBR() ) {
+				direction = glm::vec3(light->position) + light->direction;
+				glm::vec4 direction4 = renderer.getCurrentViewMatrix() * glm::vec4(direction, 1.0f);
+				direction = glm::vec3(direction4) / direction4.w;
+				direction = direction - glm::vec3(lightEyePosition);
+				shader.setUniform3f("lights["+idx+"].spotDirection", glm::normalize(direction));
+			}
+			//shader.setUniform3f("lights["+idx+"].spotDirection", glm::normalize(direction));
 			shader.setUniform1f("lights["+idx+"].spotExponent", light->exponent);
 			shader.setUniform1f("lights["+idx+"].spotCutoff", light->spotCutOff);
-			shader.setUniform1f("lights["+idx+"].spotCosCutoff", cos(ofDegToRad(light->spotCutOff)));
+			shader.setUniform1f("lights["+idx+"].spotCosCutoff", std::cos(glm::radians(light->spotCutOff)));
 		}else if(light->lightType==OF_LIGHT_DIRECTIONAL){
-			glm::vec3 halfVector(glm::normalize(glm::vec4(0.f, 0.f, 1.f, 0.f) + lightEyePosition));
-			shader.setUniform3f("lights["+idx+"].halfVector", halfVector);
+			if( !isPBR() ) {
+				glm::vec3 halfVector(glm::normalize(glm::vec4(0.f, 0.f, 1.f, 0.f) + lightEyePosition));
+				shader.setUniform3f("lights["+idx+"].halfVector", halfVector);
+			}
 		}else if(light->lightType==OF_LIGHT_AREA){
 			shader.setUniform1f("lights["+idx+"].width", light->width);
 			shader.setUniform1f("lights["+idx+"].height", light->height);
-			glm::vec3 direction = glm::vec3(light->position) + light->direction;
-			glm::vec4 direction4 = renderer.getCurrentViewMatrix() * glm::vec4(direction, 1.0);
-			direction = glm::vec3(direction4) / direction4.w;
-			direction = direction - glm::vec3(lightEyePosition);
-			shader.setUniform3f("lights["+idx+"].spotDirection", glm::normalize(direction));
-			glm::vec3 right = glm::vec3(light->position) + light->right;
-			glm::vec4 right4 = renderer.getCurrentViewMatrix() * glm::vec4(right, 1.0);
-			right = glm::vec3(right4) / right4.w;
-			right = right - glm::vec3(lightEyePosition);
-			auto up = glm::cross(right, direction);
-			shader.setUniform3f("lights["+idx+"].right", glm::normalize(toGlm(right)));
+			glm::vec3 direction = light->direction;
+			if( !isPBR() ) {
+				direction = glm::vec3(light->position) + light->direction;
+				glm::vec4 direction4 = renderer.getCurrentViewMatrix() * glm::vec4(direction, 1.0f);
+				direction = glm::vec3(direction4) / direction4.w;
+				direction = direction - glm::vec3(lightEyePosition);
+				shader.setUniform3f("lights["+idx+"].spotDirection", glm::normalize(direction));
+			}
+			
+			auto right = light->right;
+			auto up = light->up;
+			if( !isPBR() ) {
+				right = glm::vec3(light->position) + light->right;
+				glm::vec4 right4 = renderer.getCurrentViewMatrix() * glm::vec4(right, 1.0f);
+				right = glm::vec3(right4) / right4.w;
+				right = right - glm::vec3(lightEyePosition);
+				up = glm::cross(right, direction);
+			}
+			shader.setUniform3f("lights["+idx+"].right", glm::normalize(right));
 			shader.setUniform3f("lights["+idx+"].up", glm::normalize(up));
 		}
 	}
 }
 
+void ofMaterial::updateShadows(const ofShader & shader,ofGLProgrammableRenderer & renderer) const {
+	// going to start above the highest tex location
+	shader.setShadowUniforms(getHighestUniformTextureLocation()+1);
+}
+
+void ofMaterial::updateEnvironmentMaps(const ofShader & shader,ofGLProgrammableRenderer & renderer) const {
+	if( isPBR() ) {
+		// adding 4 to the offset to account for the shadows
+		shader.setPbrEnvironmentMapUniforms(getHighestUniformTextureLocation()+1+4);
+	}
+}
+
+void ofMaterial::setCustomShader( std::shared_ptr<ofShader> aCustomShader) {
+	customShader = aCustomShader;
+	if( customShader ) {
+		bHasCustomShader = true;
+	}
+}
+
 void ofMaterial::setCustomUniform1f(const std::string & name, float value){
 	uniforms1f[name] = value;
+	mCustomUniforms[name] = "uniform float";
 }
 
 void ofMaterial::setCustomUniform2f(const std::string & name, glm::vec2 value){
 	uniforms2f[name] = value;
+	mCustomUniforms[name] = "uniform vec2";
 }
 
 void ofMaterial::setCustomUniform3f(const std::string & name, glm::vec3 value) {
 	uniforms3f[name] = value;
+	mCustomUniforms[name] = "uniform vec3";
 }
 
 void ofMaterial::setCustomUniform4f(const std::string & name, glm::vec4 value) {
 	uniforms4f[name] = value;
+	mCustomUniforms[name] = "uniform vec4";
 }
 
 void ofMaterial::setCustomUniform1i(const std::string & name, int value) {
 	uniforms1i[name] = value;
+	mCustomUniforms[name] = "uniform int";
 }
 
 void ofMaterial::setCustomUniform2i(const std::string & name, glm::vec<2,int> value) {
 	uniforms2i[name] = value;
+	mCustomUniforms[name] = "uniform ivec2";
 }
 
 void ofMaterial::setCustomUniform3i(const std::string & name, glm::vec<3, int> value) {
 	uniforms3i[name] = value;
+	mCustomUniforms[name] = "uniform ivec3";
 }
 
 void ofMaterial::setCustomUniform4i(const std::string & name, glm::vec<4, int> value) {
 	uniforms4i[name] = value;
+	mCustomUniforms[name] = "uniform ivec4";
 }
 
 void ofMaterial::setCustomUniformMatrix4f(const std::string & name, glm::mat4 value){
 	uniforms4m[name] = value;
+	mCustomUniforms[name] = "uniform mat4";
 }
 
 void ofMaterial::setCustomUniformMatrix3f(const std::string & name, glm::mat3 value){
 	uniforms3m[name] = value;
+	mCustomUniforms[name] = "uniform mat3";
 }
 
+//--------------------------------------------------------
+void ofMaterial::setCustomUniformTexture(const std::string & name, const ofTexture & value ) {
+	setCustomUniformTexture(name, value.getTextureData().textureTarget, int(value.getTextureData().textureID) );
+}
+
+//--------------------------------------------------------
+void ofMaterial::setCustomUniformTexture(const std::string & name, int textureTarget, GLint textureID){
+	
+	int textureLocation = -1;
+	// if the texture uniform name is not registered, then try to find a new location //
+	if( uniformstex.count(name) < 1 ) {
+		// not detected, lets get the next location
+		int newLoc = 1;
+		// set a max of 20 texture locations //
+		// going to start at 1 since OF will set the diffuse texture to 0
+		for( int i = 2; i < 20; i++ ) {
+			bool bAlreadyHas = false;
+			newLoc = i;
+			for( auto& iter : uniformstex ) {
+				if( iter.second.textureLocation == i ) {
+					bAlreadyHas = true;
+					break;
+				}
+			}
+			if( !bAlreadyHas ) {
+				textureLocation = newLoc;
+				break;
+			}
+		}
+		if( textureLocation < 0 ) {
+			ofLogWarning("ofMaterial") << "setCustomUniformTexture(): " << name << " auto textureLocation not detected";
+		} else {
+			ofLogVerbose("ofMaterial") << "setCustomUniformTexture(): add custom texture: " << name << " to textureLocation: " << textureLocation;
+		}
+	} else {
+		textureLocation = uniformstex[name].textureLocation;
+	}
+	
+	if( textureLocation > -1 ) {
+		setCustomUniformTexture(name, textureTarget, textureID, textureLocation);
+	}
+}
+
+//--------------------------------------------------------
 void ofMaterial::setCustomUniformTexture(const std::string & name, const ofTexture & value, int textureLocation){
-	uniformstex[name] = {value.getTextureData().textureTarget, int(value.getTextureData().textureID), textureLocation};
+	setCustomUniformTexture(name, value.getTextureData().textureTarget, int(value.getTextureData().textureID), textureLocation);
 }
 
-void ofMaterial::setCustomUniformTexture(const string & name, int textureTarget, GLint textureID, int textureLocation){
-	uniformstex[name] = {textureTarget, textureID, textureLocation};
+//--------------------------------------------------------
+void ofMaterial::setCustomUniformTexture(const std::string & name, int textureTarget, GLint textureID, int textureLocation){
+	// only set the custom uniform and define if it is not the diffuse texture
+	// the texture shaders have HAS_TEXTURE and uniform SAMPLER tex0 already included
+	string shaderDefine = "";
+	if( name != getUniformName(OF_MATERIAL_TEXTURE_DIFFUSE) ) {
+		shaderDefine = "HAS_"+ofToUpper(name);
+		mCustomUniforms[name] = "uniform SAMPLER";
+		addShaderDefine(shaderDefine, "1" );
+	}
+	uniformstex[name] = {textureTarget, textureID, textureLocation, shaderDefine};
 }
+
+//--------------------------------------------------------
+bool ofMaterial::removeCustomUniformTexture(const ofMaterialTextureType& aMaterialTextureType) {
+	return removeCustomUniformTexture(getUniformName(aMaterialTextureType));
+}
+
+//--------------------------------------------------------
+bool ofMaterial::removeCustomUniformTexture(const std::string & name){
+	if( uniformstex.find(name) != uniformstex.end() ){
+		removeShaderDefine(uniformstex[name].shaderDefine);
+		uniformstex.erase(name);
+		return true;
+	}
+	return false;
+}
+
+//--------------------------------------------------------
+int ofMaterial::getHighestUniformTextureLocation() const {
+	int max = 1;
+	for( auto& iter : uniformstex ) {
+		if( iter.second.textureLocation > max ) {
+			max = iter.second.textureLocation;
+		}
+	}
+	return max;
+}
+
+//--------------------------------------------------------
+bool ofMaterial::hasTexture(const ofMaterialTextureType& aMaterialTextureType) const {
+	auto name = getUniformName(aMaterialTextureType);
+	if( uniformstex.find(name) != uniformstex.end() ){
+		return true;
+	}
+	return false;
+}
+
+//--------------------------------------------------------
+void ofMaterial::addShaderDefine( const std::string & aDefineName ) {
+	addShaderDefine( aDefineName, "" );
+}
+
+//--------------------------------------------------------
+void ofMaterial::addShaderDefine( const std::string & aDefineName, const std::string & aDefineValue ) {
+	if( aDefineName.empty() ) return;
+	
+	bool bUpdateDefines = false;
+	if( mDefines.count(aDefineName) < 1 ) {
+		bUpdateDefines = true;
+		mBDefinesDirty = true;
+	}
+	mDefines[aDefineName] = aDefineValue;
+	if( bUpdateDefines ) {
+		// update the unique id using uniqueIdString string //
+		data.uniqueIdString = "";
+		for( auto& def : mDefines ) {
+			data.uniqueIdString += def.first;
+		}
+	}
+}
+
+//--------------------------------------------------------
+bool ofMaterial::removeShaderDefine( const std::string & aDefineName ) {
+	if( aDefineName.empty() ) return false;
+	
+	if(mDefines.count(aDefineName) > 0 ) {
+		mDefines.erase(aDefineName);
+		
+		// update the unique id using uniqueIdString string //
+		data.uniqueIdString = "";
+		for( auto& def : mDefines ) {
+			data.uniqueIdString += def.first;
+		}
+		
+		return true;
+	}
+	return false;
+}
+
+//--------------------------------------------------------
+const std::string ofMaterial::getDefinesString() const {
+	std::string definesString = "";
+	for( auto& diter : mDefines ) {
+		definesString += "#define "+diter.first+" "+diter.second+"\n";
+	}
+	
+	if( isPBR() ) {
+		#ifdef TARGET_OPENGLES
+		definesString += "#define PBR_QUALITY_LEVEL_LOW 1 \n";
+		#else
+		definesString += "#define PBR_QUALITY_LEVEL_HIGH 1\n";
+		#endif
+	}
+	
+	if(isPBR() && ofCubeMap::getCubeMapsData().size() > 0 && ofIsGLProgrammableRenderer() ) {
+//		const auto& cubeMapData = ofCubeMap::getActiveData();
+		
+		definesString += "#define HAS_CUBE_MAP 1\n";
+		
+		bool bHasIrradiance = false;
+		bool bPreFilteredMap = false;
+		bool bBrdfLutTex = false;
+		for( auto cmdWeak : ofCubeMap::getCubeMapsData() ) {
+			auto cmd = cmdWeak.lock();
+			if( !cmd ) continue;
+			if( cmd->bIrradianceAllocated ) {
+				bHasIrradiance=true;
+			}
+			if( cmd->bPreFilteredMapAllocated ) {
+				bPreFilteredMap=true;
+			}
+			if( cmd->settings.useLutTex && ofCubeMap::getBrdfLutTexture().isAllocated() ) {
+				bBrdfLutTex=true;
+			}
+		}
+		
+		if(bHasIrradiance) {
+			definesString += "#define HAS_TEX_ENV_IRRADIANCE 1\n";
+		}
+		if(bPreFilteredMap) {
+			definesString += "#define HAS_TEX_ENV_PRE_FILTER 1\n";
+		}
+		if(bBrdfLutTex) {
+			definesString += "#define HAS_TEX_ENV_BRDF_LUT 1\n";
+		}
+		// need to add .0 to be read as a float in the shader for gl es
+		//definesString += "#define ENV_MAP_MAX_MIPS "+ofToString(ofCubeMap::getNumMipMaps(),0)+".0\n";
+		
+	}
+	
+	definesString += ofShadow::getShaderDefinesAsString();
+	return definesString;
+}
+
 
 #include "shaders/phong.vert"
 #include "shaders/phong.frag"
+#include "shaders/shadow.glsl"
+
+#include "shaders/shaderUtils.glsl"
+#include "shaders/pbrMaterial.glsl"
+#include "shaders/pbrData.glsl"
+#include "shaders/pbrLightingFuncs.glsl"
+#include "shaders/pbrLighting.glsl"
+#include "shaders/pbrLightIBL.glsl"
+
+#include "shaders/pbr.vert"
+#include "shaders/pbr.frag"
+
 
 namespace{
     string shaderHeader(string header, int maxLights, bool hasTexture, bool hasColor){
-        header += "#define MAX_LIGHTS " + ofToString(max(1,maxLights)) + "\n";
+//        header += "#define MAX_LIGHTS " + ofToString(std::max(1,maxLights)) + "\n";
+		header += "#define MAX_LIGHTS " + ofToString(maxLights) + "\n";
+		
         if(hasTexture){
             header += "#define HAS_TEXTURE 1\n";
 		} else {
@@ -352,22 +1517,108 @@ namespace{
 		} else {
 			header += "#define HAS_COLOR 0\n";
 		}
+		
         return header;
     }
 
-    string vertexSource(string defaultHeader, int maxLights, bool hasTexture, bool hasColor){
-        return shaderHeader(defaultHeader, maxLights, hasTexture, hasColor) + vertexShader;
-    }
+	//string vertexSource(bool bPBR, string defaultHeader, int maxLights, bool hasTexture, bool hasColor, std::string addShaderSrc){
+	string vertexSource(bool bPBR, string defaultHeader, int maxLights, bool hasTexture, bool hasColor, std::string addShaderSrc, const ofMaterialSettings& adata){
+		auto source = bPBR ? shader_pbr_vert : vertexShader;
+		if( bPBR ) {
+			ofStringReplace(source, "%additional_includes%", addShaderSrc);
+		} else {
+			ofStringReplace(source, "%additional_includes%", "");
+		}
 
-    string fragmentSource(string defaultHeader, string customUniforms,  string postFragment, int maxLights, bool hasTexture, bool hasColor){
-        auto source = fragmentShader;
+		if( bPBR ) {
+			string mainVertex = adata.mainVertex;
+			if( mainVertex.empty() ) {
+				mainVertex = shader_pbr_main_vert;
+			}
+			ofStringReplace(source, "%mainVertex%", mainVertex);
+		}
+
+        return shaderHeader(defaultHeader, maxLights, hasTexture, hasColor) + source;
+    }
+	// const ofMaterialSettings& adata
+	string fragmentSource(bool bPBR, string defaultHeader, string customUniforms, const ofMaterialSettings& adata, int maxLights, bool hasTexture, bool hasColor, string definesString){
+    // string fragmentSource(bool bPBR, string defaultHeader, string customUniforms, string postFragment, int maxLights, bool hasTexture, bool hasColor, string definesString){
+        auto source = bPBR ? shader_pbr_frag : fragmentShader;
+		
+		string postFragment = adata.postFragment;
         if(postFragment.empty()){
             postFragment = "vec4 postFragment(vec4 localColor){ return localColor; }";
         }
-		ofStringReplace(source, "%postFragment%", postFragment);
-		ofStringReplace(source, "%custom_uniforms%", customUniforms);
+        ofStringReplace(source, "%postFragment%", postFragment);
+        ofStringReplace(source, "%custom_uniforms%", customUniforms);
 
-        source = shaderHeader(defaultHeader, maxLights, hasTexture, hasColor) + source;
+		if( bPBR ) {
+			string mainFrag = adata.mainFragment;
+			if( mainFrag.empty() ) {
+				if(bPBR) {
+					mainFrag = shader_pbr_main_frag;
+				}
+			}
+			ofStringReplace(source, "%mainFragment%", mainFrag);
+		}
+		
+		if(bPBR) {
+			string addIncludes = shader_utils;
+			addIncludes += shader_pbr_material;
+			addIncludes += shader_pbr_lighting_funcs;
+			addIncludes += shader_pbr_data;
+			addIncludes += shader_pbr_lighting;
+			addIncludes += shader_pbr_lighting_ibl;
+			// set PBR includes here
+			ofStringReplace(source, "%additional_includes%", addIncludes);
+		}
+		
+		
+		if( ofIsGLProgrammableRenderer() ) {
+			#if defined(TARGET_OPENGLES)
+				#if defined(TARGET_EMSCRIPTEN)
+					ofStringReplace(source, "%shader_shadow_include%", shadow_shader_include );
+				#else
+					ofStringReplace(source, "%shader_shadow_include%", "" );
+				#endif
+			#else
+				ofStringReplace(source, "%shader_shadow_include%", shadow_shader_include );
+			#endif
+		} else {
+			ofStringReplace(source, "%shader_shadow_include%", "" );
+		}
+		
+        source = shaderHeader(defaultHeader, maxLights, hasTexture, hasColor) + definesString + source;
         return source;
     }
+
+	string shaderDepthVertexSource(const ofMaterialSettings& adata) {
+//		auto source = bPBR ? shader_pbr_vert : vertexShader;
+		string header = "#define IN in\n";
+		auto source = shader_pbr_vert;
+		
+		string mainVertex = adata.mainDepthVertex;
+		if( mainVertex.empty() ) {
+			mainVertex = shader_pbr_main_depth_vert;
+		}
+		ofStringReplace(source, "%mainVertex%", mainVertex);
+		ofStringReplace(source, "%additional_includes%", "");
+		
+//		if( bPBR ) {
+//			ofStringReplace(source, "%additional_includes%", addShaderSrc);
+//		} else {
+//			ofStringReplace(source, "%additional_includes%", "");
+//		}
+//
+//		if( bPBR ) {
+//			string mainVertex = adata.mainVertex;
+//			if( mainVertex.empty() ) {
+//				mainVertex = shader_pbr_main_vert;
+//			}
+//			ofStringReplace(source, "%mainVertex%", mainVertex);
+//		}
+//
+//		return shaderHeader(defaultHeader, maxLights, hasTexture, hasColor) + source;
+		return header+source;
+	}
 }

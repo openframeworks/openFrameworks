@@ -4,11 +4,11 @@
 
 class ofApp : public ofBaseApp {
 	public:
-	
+
 		void setup();
 		void update();
 		void draw();
-		
+
 		void keyPressed(int key);
 		void keyReleased(int key);
 		void mouseMoved(int x, int y );
@@ -19,9 +19,9 @@ class ofApp : public ofBaseApp {
 		void mouseExited(int x, int y);
 		void windowResized(int w, int h);
 		void dragEvent(ofDragInfo dragInfo);
-		void gotMessage(ofMessage msg);		
-	
+		void gotMessage(ofMessage msg);
+
 		void drawInteractionArea();
-        bool bHelpText;
+		bool bHelpText;
 		ofEasyCam cam; // add mouse controls for camera movement
 };

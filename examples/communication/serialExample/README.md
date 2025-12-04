@@ -18,23 +18,23 @@ In the code, pay attention to:
 
 * Listing all serial devices with ```serial.listDevices()```, which logs a list to the console. Make sure the port ID you specify is the same that your Arduino or other device is connected on.
 * When a device is connected, check the console logs to ensure that you're not getting any Serial connection errors and have successfully connected to the specified port
-* To signal successful communication back to the Arduino, send a trigger message: ```serial.writeByte('a')```
-* Read incoming messages with ```serial.readBytes()```
-* Store incoming messages in an array ```bytesReturned[3]``` to match the set of data being sent from the Arduino sketch. This can be changed to match the size of discrete data packets being sent from Arduino.
+* To signal successful communication back to the serial device, send the trigger message that was typed: ```serial.writeBytes( messageToSend.c_str(), (int)messageToSend.size() );```
+* Read incoming messages with ```serial.readBytes(serialReadBuffer, numBytesToRead );```
+* Store incoming messages in a vector ```receivedSerialMessages``` to match the set of data being sent from the serial device. This can be changed to match the size of discrete data packets being sent from serial device.
 
 
 ### Expected Behavior
 
-When launching this app, you should see a white screen with gray text showing the following information:
+When launching this app, you should see a white screen with text showing the following information:
 
-* nBytes read
-* nTimes read
-* read byte
-* time of reading
+* Serial connected status string
+* Device list
+* Message to send
+* Received Messages
 
 ### Instructions for use:
 
-* Click the mouse to send a communication trigger to Arduino and receive a serial packet in return. The displayed values onscreen should change to reflect sent and received data.
+* Type a serial message and then hit enter to send a communication trigger to a serial device and receive a serial packet in return. The displayed values onscreen should change to reflect the received data.
 
 ### Other classes used in this file
 

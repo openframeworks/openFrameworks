@@ -3,7 +3,11 @@
 
 //--------------------------------------------------------------
 void ofApp::setup(){
-	ofBackground(0,0,0);
+
+    ofBackground(255,255,255);
+	ofSetVerticalSync(false);
+	ofEnableAlphaBlending();
+
 
 	// List devices
 	// The device name contains information about the direction of the camera
@@ -22,11 +26,15 @@ void ofApp::setup(){
 	// Start the grabber
 	grabber.setup(1280, 720);
 
-    if(grabber.isInitialized()) {
-        // Get the orientation and facing of the current camera
-        cameraOrientation = ((ofxAndroidVideoGrabber *) grabber.getGrabber().get())->getCameraOrientation();
-        cameraFacingFront = ((ofxAndroidVideoGrabber *) grabber.getGrabber().get())->getFacingOfCamera();
-    }
+	if(grabber.isInitialized()) {
+		// Get the orientation and facing of the current camera
+		cameraOrientation = ((ofxAndroidVideoGrabber *) grabber.getGrabber().get())->getCameraOrientation();
+		cameraFacingFront = ((ofxAndroidVideoGrabber *) grabber.getGrabber().get())->getFacingOfCamera();
+	}
+}
+
+void ofApp::exit(){
+
 }
 
 //--------------------------------------------------------------
@@ -109,13 +117,13 @@ void ofApp::draw(){
 }
 
 //--------------------------------------------------------------
-void ofApp::keyPressed  (int key){
-
+void ofApp::keyPressed  (int key){ 
+	
 }
 
 //--------------------------------------------------------------
-void ofApp::keyReleased(int key){
-
+void ofApp::keyReleased(int key){ 
+	
 }
 
 //--------------------------------------------------------------
@@ -203,5 +211,21 @@ void ofApp::okPressed(){
 
 //--------------------------------------------------------------
 void ofApp::cancelPressed(){
+
+}
+
+void ofApp::deviceRefreshRateChanged(int refreshRate) {
+
+}
+
+void ofApp::deviceHighestRefreshRateChanged(int refreshRate) {
+
+}
+
+void ofApp::deviceRefreshRateChangedEvent(int &refreshRate) {
+
+}
+
+void ofApp::deviceHighestRefreshRateChangedEvent(int &refreshRate) {
 
 }

@@ -69,7 +69,7 @@ Precompiled libusb libs are included for Windows.
 
 Install instructions: 
 
-The easiest way to add the correct usb drivers to a Kinect device is to use the Free USB Driver tool: http://zadig.akeo.ie/
+The easiest way to add the correct usb drivers to a Kinect device is to use the Free USB Driver tool: http://zadig.akeo.ie/. Note: [Release 2.0.1](https://github.com/pbatard/libwdi/releases/tag/w162) is recommended as newer releases are incompatible with some AMD based machines. 
 Select your Xbox Camera, Xbox Audio and Xbox Motor in the drop down and then select the libusbk driver from the driver menu and click install. ( you will need to do this three times, once for the camera, then motor, then audio ).  This advice comes from the https://github.com/OpenKinect/libfreenect#windows ReadMe. 
 
 ofxKinect will not work if the drivers are not installed.

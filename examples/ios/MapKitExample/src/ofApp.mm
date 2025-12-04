@@ -10,11 +10,8 @@
 
 //--------------------------------------------------------------
 void ofApp::setup(){	
-    
-    ofBackground(0, 0);
-    
-	// initialize the accelerometer
-	ofxAccelerometer.setup();
+	
+	ofBackground(0, 0);
 	
 	// dump lots of info to console (useful for debugging)
 	ofSetLogLevel(OF_LOG_VERBOSE);
@@ -44,7 +41,7 @@ void ofApp::setup(){
 	// note this could affect performance quite seriously
 	
 	// add OpenGL View main window.
-    ofxiOSSendGLViewToFront();
+	ofxiOSSendGLViewToFront();
 	
 	// OpenGL View is now in front of mapview, but it isn't transparent, so we can't see the map
 	// Make the map transparent so we can see the mapview in undrawn areas
@@ -103,7 +100,7 @@ void ofApp::draw() {
 
 //--------------------------------------------------------------
 void ofApp::exit(){
-    
+	
 }
 
 //--------------------------------------------------------------
@@ -133,46 +130,46 @@ void ofApp::errorLoadingMap(string errorDescription){
 
 //--------------------------------------------------------------
 void ofApp::touchDown(ofTouchEventArgs & touch){
-    
+	
 }
 
 //--------------------------------------------------------------
 void ofApp::touchMoved(ofTouchEventArgs & touch){
-    
+	
 }
 
 //--------------------------------------------------------------
 void ofApp::touchUp(ofTouchEventArgs & touch){
-    
+	
 }
 
 //--------------------------------------------------------------
 void ofApp::touchDoubleTap(ofTouchEventArgs & touch){
-    
+	
 }
 
 //--------------------------------------------------------------
 void ofApp::touchCancelled(ofTouchEventArgs & touch){
-    
+	
 }
 
 //--------------------------------------------------------------
 void ofApp::lostFocus(){
-    
+	
 }
 
 //--------------------------------------------------------------
 void ofApp::gotFocus(){
-    
+	
 }
 
 //--------------------------------------------------------------
 void ofApp::gotMemoryWarning(){
-    
+	
 }
 
 //--------------------------------------------------------------
 void ofApp::deviceOrientationChanged(int newOrientation){
-    
+	
 }
 

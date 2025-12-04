@@ -1,6 +1,4 @@
 #include "ofGLUtils.h"
-
-#include <set>
 #include "ofGLProgrammableRenderer.h"
 #include "ofGraphics.h"
 #include "ofShader.h"
@@ -10,8 +8,11 @@
 #include "ofPixels.h"
 #include "ofLog.h"
 #include "ofGraphicsConstants.h"
+#include <set>
 
-using namespace std;
+using std::shared_ptr;
+using std::vector;
+using std::string;
 
 //---------------------------------
 // deprecations
@@ -87,7 +88,18 @@ int ofGetGLInternalFormat(const ofShortPixels& pixels) {
 
 //---------------------------------
 int ofGetGLInternalFormat(const ofFloatPixels& pixels) {
-#ifndef TARGET_OPENGLES
+#if defined(TARGET_EMSCRIPTEN)
+	switch(pixels.getNumChannels()) {
+		case 3: return GL_RGB16F;
+		case 4: return GL_RGBA16F;
+		case 2:
+			ofLogWarning("ofGLUtils") << "ofGetGLInternalFormat(): two channel float textures not supported.";
+			return GL_RG16F;
+		default:
+			ofLogWarning("ofGLUtils") << "ofGetGLInternalFormat(): single channel float textures not supported.";
+			return GL_R16F;
+	}
+#elif !defined(TARGET_OPENGLES)
 	switch(pixels.getNumChannels()) {
 		case 3: return GL_RGB32F;
 		case 4: return GL_RGBA32F;
@@ -150,7 +162,7 @@ string ofGetGLInternalFormatName(int glInternalFormat) {
 int ofGetGLFormatFromInternal(int glInternalFormat){
 	switch(glInternalFormat) {
 			case GL_RGBA:
-	#ifndef TARGET_OPENGLES
+	#if !defined(TARGET_OPENGLES) || defined(TARGET_EMSCRIPTEN)
 			case GL_RGBA8:
 			case GL_RGBA16:
 			case GL_RGBA16F:
@@ -161,10 +173,14 @@ int ofGetGLFormatFromInternal(int glInternalFormat){
 		    case GL_RGBA32UI:
 	#endif
 				 return GL_RGBA;
+#ifdef TARGET_OF_IOS
+			case GL_BGRA:
+			return GL_BGRA;
+#endif
 
 
 			case GL_RGB:
-	#ifndef TARGET_OPENGLES
+	#if !defined(TARGET_OPENGLES) || defined(TARGET_EMSCRIPTEN)
 			case GL_RGB8:
 			case GL_RGB16:
 		    case GL_RGB16F:
@@ -178,7 +194,7 @@ int ofGetGLFormatFromInternal(int glInternalFormat){
 
 
 			case GL_LUMINANCE:
-	#ifndef TARGET_OPENGLES
+	#if !defined(TARGET_OPENGLES)
 			case GL_LUMINANCE8:
 			case GL_LUMINANCE16:
 			case GL_LUMINANCE32F_ARB:
@@ -186,7 +202,7 @@ int ofGetGLFormatFromInternal(int glInternalFormat){
 				 return GL_LUMINANCE;
 
 			case GL_LUMINANCE_ALPHA:
-	#ifndef TARGET_OPENGLES
+	#if !defined(TARGET_OPENGLES)
 			case GL_LUMINANCE8_ALPHA8:
 			case GL_LUMINANCE16_ALPHA16:
 			case GL_LUMINANCE_ALPHA32F_ARB:
@@ -198,7 +214,7 @@ int ofGetGLFormatFromInternal(int glInternalFormat){
 				 return GL_DEPTH_STENCIL;
 
 			case GL_DEPTH_COMPONENT:
-#ifndef TARGET_OPENGLES
+#if !defined(TARGET_OPENGLES) || defined(TARGET_EMSCRIPTEN)
 			case GL_DEPTH_COMPONENT16:
 			case GL_DEPTH_COMPONENT24:
 			case GL_DEPTH_COMPONENT32:
@@ -208,7 +224,7 @@ int ofGetGLFormatFromInternal(int glInternalFormat){
 			case GL_STENCIL_INDEX:
 				return GL_STENCIL_INDEX;
 
-#ifndef TARGET_OPENGLES
+#if !defined(TARGET_OPENGLES) || defined(TARGET_EMSCRIPTEN)
 			case GL_R8:
 			case GL_R16:
 		    case GL_R16I:
@@ -269,7 +285,7 @@ int ofGetGLTypeFromInternal(int glInternalFormat){
 		break;
 #endif
 
-#ifndef TARGET_OPENGLES
+#if !defined(TARGET_OPENGLES) || defined(TARGET_EMSCRIPTEN)
 		case GL_LUMINANCE32F_ARB:
 		case GL_LUMINANCE_ALPHA32F_ARB:
 		case GL_R32F:
@@ -367,7 +383,7 @@ int ofGetGLType(const ofFloatPixels & pixels) {
 ofImageType ofGetImageTypeFromGLType(int glType){
 	switch(glType){
 	case GL_LUMINANCE:
-#ifndef TARGET_OPENGLES
+#if !defined(TARGET_OPENGLES) || defined(TARGET_EMSCRIPTEN)
 	case GL_LUMINANCE8:
 	case GL_LUMINANCE16:
 	case GL_LUMINANCE32F_ARB:
@@ -389,7 +405,7 @@ ofImageType ofGetImageTypeFromGLType(int glType){
 
 
 	case GL_RGB:
-#ifndef TARGET_OPENGLES
+#if !defined(TARGET_OPENGLES) || defined(TARGET_EMSCRIPTEN)
 	case GL_RGB8:
 	case GL_RGB16:
 	case GL_RGB16F:
@@ -403,7 +419,7 @@ ofImageType ofGetImageTypeFromGLType(int glType){
 
 
 	case GL_RGBA:
-#ifndef TARGET_OPENGLES
+#if !defined(TARGET_OPENGLES) || defined(TARGET_EMSCRIPTEN)
 	case GL_RGBA8:
 	case GL_RGBA16:
 	case GL_RGBA16F:
@@ -419,7 +435,7 @@ ofImageType ofGetImageTypeFromGLType(int glType){
 }
 
 GLuint ofGetGLPolyMode(ofPolyRenderMode mode){
-#ifndef TARGET_OPENGLES
+#if !defined(TARGET_OPENGLES) || defined(TARGET_EMSCRIPTEN)
 	switch(mode){
 		case(OF_MESH_POINTS):
 			return GL_POINT;
@@ -441,7 +457,7 @@ GLuint ofGetGLPolyMode(ofPolyRenderMode mode){
 }
 
 ofPolyRenderMode ofGetOFPolyMode(GLuint mode){
-#ifndef TARGET_OPENGLES
+#if !defined(TARGET_OPENGLES) || defined(TARGET_EMSCRIPTEN)
 	switch(mode){
 		case(GL_POINT):
 			return OF_MESH_POINTS;
@@ -691,6 +707,9 @@ int ofGetNumChannelsFromGLFormat(int glFormat){
 	switch(glFormat){
 	case GL_RGB:
 		return 3;
+#ifdef TARGET_OF_IOS
+	case GL_BGRA:
+#endif
 	case GL_RGBA:
 		return 4;
 	case GL_LUMINANCE:
@@ -720,7 +739,7 @@ int ofGetBytesPerChannelFromGLType(int glType){
 			return 2;
 #endif
 
-#ifndef TARGET_OPENGLES
+#if !defined(TARGET_OPENGLES) || defined(TARGET_EMSCRIPTEN)
 		case GL_FLOAT:
 			return 4;
 #endif
@@ -790,7 +809,7 @@ vector<string> ofGLSupportedExtensions(){
 bool ofGLCheckExtension(string searchName){
 #if defined( TARGET_OPENGLES )
 	vector<string> extensionsList = ofGLSupportedExtensions();
-	set<string> extensionsSet;
+	std::set<string> extensionsSet;
 	extensionsSet.insert(extensionsList.begin(),extensionsList.end());
 	return extensionsSet.find(searchName)!=extensionsSet.end();
 #else
@@ -806,7 +825,7 @@ bool ofGLSupportsNPOTTextures(){
 	static bool npotSupported = false;
 	if(!npotChecked){
 		vector<string> extensionsList = ofGLSupportedExtensions();
-		set<string> extensionsSet;
+		std::set<string> extensionsSet;
 		extensionsSet.insert(extensionsList.begin(),extensionsList.end());
 
 		npotSupported = extensionsSet.find("GL_OES_texture_npot")!=extensionsSet.end() ||
@@ -825,7 +844,23 @@ bool ofGLSupportsNPOTTextures(){
 
 string ofGLSLVersionFromGL(int major, int minor){
 #ifdef TARGET_OPENGLES
-	return "ES1";
+	#ifdef TARGET_EMSCRIPTEN
+	if( major >= 2 ) { // for emscripten major version refers to WEBGL version
+		return "300 es";
+	} else {
+		return "ES1";
+	}
+	#else
+		if(major == 1){
+			return "ES1";
+		}else if(major == 2){
+			return "ES2";
+		}else if(major == 3){
+			return "ES3";
+		}else {
+			return "ES1";
+		}
+	#endif
 #else
 	switch(major){
 	case 3:
@@ -845,6 +880,76 @@ string ofGLSLVersionFromGL(int major, int minor){
 	}
 #endif
 }
+
+string ofGLSLVersionFromGL(){
+    int major = 0;
+    int minor = 0;
+    
+    auto glRenderer = std::dynamic_pointer_cast<ofBaseGLRenderer>(ofGetCurrentRenderer());
+    if( glRenderer ){
+        major = glRenderer->getGLVersionMajor();
+        minor = glRenderer->getGLVersionMinor();
+    }
+    return ofGLSLVersionFromGL(major, minor);
+}
+
+//TODO: unify this with similar in ofGLProgrammableRenderer and ofMaterial
+string ofGLSLGetDefaultHeader(){
+    string header = "";
+
+    auto glRenderer = std::dynamic_pointer_cast<ofBaseGLRenderer>(ofGetCurrentRenderer());
+    
+    if( glRenderer ){
+        string versionStr = ofGLSLVersionFromGL(glRenderer->getGLVersionMajor(), glRenderer->getGLVersionMinor());
+        header = "#version "+versionStr+"\n";
+        
+        #ifdef TARGET_OPENGLES
+            if( versionStr != "ES1" ){
+                header += "#extension GL_OES_standard_derivatives : enable\n";
+            }
+            #ifdef TARGET_ANDROID
+                header += "#extension GL_OES_EGL_image_external : require\n";
+            #endif
+            header += "precision mediump float;\n";
+            header += "precision mediump int;\n";
+            header += "#define TARGET_OPENGLES\n";
+        #else
+            if( ofGetUsingArbTex() ){
+                if( glRenderer->getGLVersionMajor() < 4 && glRenderer->getGLVersionMinor() < 2 ){
+                    header += "\n#extension GL_ARB_texture_rectangle : enable";
+                }
+            }
+        #endif
+    }
+    return header;
+}
+
+#ifdef TARGET_OPENGLES
+int ofGLESVersionFromGL(){
+	const GLubyte * version = glGetString(GL_VERSION);
+	if(version != nullptr){
+		if(strstr((const char*)version, "ES 1.0")){
+			return 100;
+		}else if(strstr((const char*)version, "ES 1.1")){
+			return 101;
+		}else if(strstr((const char*)version, "ES-CM 1.1")){
+			return 101;
+		}else if(strstr((const char*)version, "ES 2.0")){
+			return 200;
+		}else if(strstr((const char*)version, "ES 3.0")){
+			return 300;
+		}else if(strstr((const char*)version, "ES 3.1")){
+			return 301;
+		}else if(strstr((const char*)version, "ES 3.2")){
+			return 302;
+		}else{
+			return 101;
+		}
+	}else{
+		return 101;
+	}
+}
+#endif
 
 #ifndef TARGET_PROGRAMMABLE_GL
 shared_ptr<ofBaseGLRenderer> ofGetGLRenderer(){
@@ -871,7 +976,7 @@ shared_ptr<ofBaseGLRenderer> ofGetGLRenderer(){
 #ifndef TARGET_OPENGLES
 namespace{
 	void gl_debug_callback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar *message, void * user){
-		ostringstream oss;
+		std::ostringstream oss;
 		oss << "GL Debug: ";
 
 		ofLogLevel level;

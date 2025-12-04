@@ -49,11 +49,8 @@ void ofxCvHaarFinder::setNeighbors(unsigned neighbors) {
 	this->neighbors = neighbors;
 }
 
-void ofxCvHaarFinder::setup(std::string haarFile) {
-
-	this->haarFile = haarFile;
-
-	haarFile = ofToDataPath(haarFile);
+void ofxCvHaarFinder::setup(const of::filesystem::path & fileName) {
+	haarFile = ofToDataPath(fileName);
 #ifdef USE_OLD_CV
 	if(cascade != NULL)
 		cvReleaseHaarClassifierCascade(&cascade);
@@ -71,11 +68,11 @@ void ofxCvHaarFinder::setup(std::string haarFile) {
 	#endif
 
 	if (!cascade)
-        ofLogError("ofxCvHaarFinder") << "setup(): couldn't load Haar cascade file: \"" << haarFile << "\"";
+        ofLogError("ofxCvHaarFinder") << "setup(): couldn't load Haar cascade file: " << haarFile;
 #else
-	cascade.load( haarFile );
+	cascade.load( ofPathToString(haarFile) );
 	if( cascade.empty() )
-		ofLogError("ofxCvHaarFinder") << "setup(): couldn't load Haar cascade file: \"" << haarFile << "\"";
+		ofLogError("ofxCvHaarFinder") << "setup(): couldn't load Haar cascade file: " << haarFile ;
 #endif //USE_OLD_CV
 }
 

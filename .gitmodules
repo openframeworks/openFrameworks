@@ -1,6 +1,7 @@
 [submodule "apps/projectGenerator"]
 	path = apps/projectGenerator
-	url = https://github.com/openframeworks/projectGenerator.git
+	url = https://github.com/openframeworks/projectGenerator
+	branch = master
 [submodule "scripts/apothecary"]
 	path = scripts/apothecary
 	url = https://github.com/openframeworks/apothecary
