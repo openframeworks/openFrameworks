@@ -22,7 +22,7 @@ void ofXml::setParsingOptions(unsigned int l_parsing_options) {
 
 bool ofXml::load(const of::filesystem::path & file){
 	auto auxDoc = std::make_shared<pugi::xml_document>();
-	auto res = auxDoc->load_file(ofToDataPath(file).c_str(), parsing_options));
+	auto res = auxDoc->load_file(ofToDataPath(file).c_str(), parsing_options);
 	if( res ){
 		doc = auxDoc;
 		xml = doc->root();
