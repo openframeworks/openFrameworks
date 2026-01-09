@@ -241,11 +241,11 @@ static GLint getGLFormatFromAiFormat(const char * aiFormat){
 				return GL_RGB;
 			}
 		}else{
-			ofLogError("getGLFormatFromAiFormat") << " can't parse format " << formatStr;
+			ofLogError("getGLFormatFromAiFormat") << "can't parse format " << formatStr;
 		}
 	}
 
-	ofLogWarning("getGLFormatFromAiFormat") << " can't parse format " << formatStr << " returning GL_RGB";
+	ofLogWarning("getGLFormatFromAiFormat") << "can't parse format " << formatStr << " returning GL_RGB";
 	return GL_RGB;
 }
 
