@@ -2,7 +2,7 @@
 
 
 //--------------------------------------------------------------
-void ofApp::setup(){	 
+void ofApp::setup(){
 
 	// load in sounds:
 	beat.load("sounds/jdee_beat.mp3");
@@ -14,16 +14,16 @@ void ofApp::setup(){
 
 //--------------------------------------------------------------
 void ofApp::update(){
-	
+
 	ofBackground(80,80,20);
 
 	// update the sound playing system:
-	ofSoundUpdate();	
-	
+	ofSoundUpdate();
+
 	// (1) we increase px and py by adding vx and vy
 	px += vx;
 	py += vy;
-	
+
 	// (2) check for collision, and trigger sounds:
 	// horizontal collisions:
 	if (px < 0){
@@ -51,22 +51,22 @@ void ofApp::update(){
 
 	// (4) we use velocity for volume of the samples:
 	float vel = sqrt(vx*vx + vy*vy);
-	ow.setVolume(MIN(vel/5.0f, 1));
-	beat.setVolume(MIN(vel/5.0f, 1));
-	dog.setVolume(MIN(vel/5.0f, 1));
-	rooster.setVolume(MIN(vel/5.0f, 1));
+	ow.setVolume(std::min(vel/5.0f, 1.0f));
+	beat.setVolume(std::min(vel/5.0f, 1.0f));
+	dog.setVolume(std::min(vel/5.0f, 1.0f));
+	rooster.setVolume(std::min(vel/5.0f, 1.0f));
 
 	// (5) grab the fft, and put in into a "smoothed" array,
 	//		by taking maximums, as peaks and then smoothing downward
 	float * val = ofSoundGetSpectrum(nBandsToGet);		// request 128 values for fft
 	for (int i = 0;i < nBandsToGet; i++){
-		
+
 		// let the smoothed value sink to zero:
 		fftSmoothed[i] *= 0.96f;
-		
+
 		// take the max, either the smoothed or the incoming:
 		if (fftSmoothed[i] < val[i]) fftSmoothed[i] = val[i];
-		
+
 	}
 
 
@@ -75,46 +75,46 @@ void ofApp::update(){
 //--------------------------------------------------------------
 void ofApp::draw(){
 
-	
+
 	ofEnableAlphaBlending();
 		ofSetColor(255,255,255,100);
 		ofDrawRectangle(100,ofGetHeight()-300,5*128,200);
 	ofDisableAlphaBlending();
-	
+
 	// draw the fft resutls:
 	ofSetColor(255,255,255,255);
-	
+
 	float width = (float)(5*128) / nBandsToGet;
 	for (int i = 0;i < nBandsToGet; i++){
 		// (we use negative height here, because we want to flip them
 		// because the top corner is 0,0)
 		ofDrawRectangle(100+i*width,ofGetHeight()-100,width,-(fftSmoothed[i] * 200));
 	}
-	
+
 	// finally draw the playing circle:
 
 	ofEnableAlphaBlending();
 		ofSetColor(255,255,255,20);
 		ofDrawCircle(px, py,50);
 	ofDisableAlphaBlending();
-	
+
 	ofSetHexColor(0xffffff);
 	ofDrawCircle(px, py,8);
 }
 
 
 //--------------------------------------------------------------
-void ofApp::keyPressed  (int key){ 
+void ofApp::keyPressed  (int key){
 }
 
 //--------------------------------------------------------------
-void ofApp::keyReleased(int key){ 
-	
+void ofApp::keyReleased(int key){
+
 }
 
 //--------------------------------------------------------------
 void ofApp::mouseMoved(int x, int y ){
-	
+
 }
 
 //--------------------------------------------------------------
@@ -126,7 +126,7 @@ void ofApp::mouseDragged(int x, int y, int button){
 	prevx = x;
 	prevy = y;
 }
- 
+
 //--------------------------------------------------------------
 void ofApp::mousePressed(int x, int y, int button){
 	prevx = x;
@@ -159,7 +159,6 @@ void ofApp::gotMessage(ofMessage msg){
 }
 
 //--------------------------------------------------------------
-void ofApp::dragEvent(ofDragInfo dragInfo){ 
+void ofApp::dragEvent(ofDragInfo dragInfo){
 
 }
-

@@ -15,8 +15,8 @@ void ofApp::setup(){
 	//we load our settings file
 	//initially we do this from the data/ folder
 	//but when we save we are saving to the documents folder which is the only place we have write access to
-	//thats why we check if the file exists in the documents folder. 
-	
+	//thats why we check if the file exists in the documents folder.
+
 	if( XML.loadFile(ofxiOSGetDocumentsDirectory() + "mySettings.xml") ){
 		message = "mySettings.xml loaded from documents folder!";
 	}else if( XML.loadFile("mySettings.xml") ){
@@ -24,7 +24,7 @@ void ofApp::setup(){
 	}else{
 		message = "unable to load mySettings.xml check data/ folder";
 	}
-	
+
 	//read the colors from XML
 	//if the settings file doesn't exist we assigns default values (170, 190, 240)
 	red		= XML.getValue("BACKGROUND:COLOR:RED", 170);
@@ -74,7 +74,7 @@ void ofApp::setup(){
 
 				//we have only allocated a certan amount of space for our array
 				//so we don't want to read more than that amount of points
-				int totalToRead = MIN(numPtTags, NUM_PTS);
+				int totalToRead = std::min(numPtTags, NUM_PTS);
 
 				for(int i = 0; i < totalToRead; i++){
 					//the last argument of getValue can be used to specify
@@ -110,11 +110,11 @@ void ofApp::draw(){
 	string drawString = "How the data is stored:\n\n";
 	if(xmlStructure.size() > 0){
 		ofEnableAlphaBlending();
-		ofSetColor(255-red, 255-green, 255-blue, 180);	
+		ofSetColor(255-red, 255-green, 255-blue, 180);
 		drawString += xmlStructure+"</STROKE>";
 		TTF.drawString(drawString, 5, 60);
 	}
-	
+
 	//---------
 	//Lets draw the stroke as a continous line
 	ofSetHexColor(0x222222);
@@ -146,7 +146,7 @@ void ofApp::draw(){
 
 //--------------------------------------------------------------
 void ofApp::exit(){
-	
+
 }
 
 //--------------------------------------------------------------
@@ -226,7 +226,7 @@ void ofApp::touchMoved(ofTouchEventArgs & touch){
 			dragPts[pointCount].set(touch.x, touch.y);
 			pointCount++;
 		}
-	
+
 	}
 
 }
@@ -254,21 +254,20 @@ void ofApp::touchCancelled(ofTouchEventArgs & touch){
 
 //--------------------------------------------------------------
 void ofApp::lostFocus(){
-	
+
 }
 
 //--------------------------------------------------------------
 void ofApp::gotFocus(){
-	
+
 }
 
 //--------------------------------------------------------------
 void ofApp::gotMemoryWarning(){
-	
+
 }
 
 //--------------------------------------------------------------
 void ofApp::deviceOrientationChanged(int newOrientation){
-	
-}
 
+}

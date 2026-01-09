@@ -95,7 +95,7 @@ void ofApp::update(){
 		// store as floats
 		flowMat = cv::Mat(scaledHeight, scaledWidth, CV_32FC2);
 
-		ofSetWindowShape(MIN(sourceWidth, 1920), MIN(sourceHeight, 1200));
+		ofSetWindowShape(std::min(sourceWidth, 1920), std::min(sourceHeight, 1200));
 
 		// clear the previous vectors
 		spinCubes.clear();
