@@ -42,7 +42,7 @@ void ofApp::update(){
 	box.drawWireframe();
 	fbo.end();
 	ofDisableDepthTest();
-
+#ifndef TARGET_EMSCRIPTEN
 	if(record){
 		// copy the fbo texture to a buffer
 		fbo.getTexture().copyTo(pixelBufferBack);
@@ -61,6 +61,7 @@ void ofApp::update(){
 		// back from another to avoid stalls
 		swap(pixelBufferBack,pixelBufferFront);
 	}
+#endif
 }
 
 //--------------------------------------------------------------
@@ -68,11 +69,15 @@ void ofApp::draw(){
 	ofSetColor(255);
 	fbo.draw(0,0);
 	ofDrawBitmapString(ofGetFrameRate(),20,20);
+#ifndef TARGET_EMSCRIPTEN
 	if(record){
 		ofDrawBitmapString("'r' toggles recording (on)",20,40);
 	}else{
 		ofDrawBitmapString("'r' toggles recording (off)",20,40);
 	}
+#else
+	ofDrawBitmapString("'d' downloads screenshot",20,40);
+#endif
 }
 
 //--------------------------------------------------------------
@@ -80,6 +85,24 @@ void ofApp::keyPressed(int key){
 	if(key=='r'){
 		record = !record;
 	}
+#ifdef TARGET_EMSCRIPTEN
+	if (key=='d') {
+		fbo.readToPixels(pixels);
+		ofSaveImage(pixels, "screenshot.jpg");
+		EM_ASM(
+		var content = FS.readFile("/data/screenshot.jpg");
+		FS.unlink("/data/screenshot.jpg");
+		var a = document.createElement('a');
+		a.download = "screenshot.jpg";
+		var blob = new Blob([content], {type: "text/plain;charset=utf-8"});
+		a.href = URL.createObjectURL(blob);
+		document.body.appendChild(a);
+		a.click();
+		document.body.removeChild(a);
+		URL.revokeObjectURL(a.href);
+		);
+	}
+#endif
 }
 
 //--------------------------------------------------------------
