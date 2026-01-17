@@ -188,13 +188,16 @@ public:
 	#endif
 		textureTarget = GL_TEXTURE_2D;
 #endif
-
-		tex_t = 0;
-		tex_u = 0;
-		tex_w = 0;
-		tex_h = 0;
-		width = 0;
-		height = 0;
+        
+        tex_t = 0;
+        tex_u = 0;
+        tex_v = 0;
+        tex_w = 0;
+        tex_h = 0;
+        tex_d = 0;
+        width = 0;
+        height = 0;
+        depth = 0;
 		
 		bFlipTexture = false;
 		compressionType = OF_COMPRESS_NONE;
@@ -218,12 +221,14 @@ public:
 	int glInternalFormat; ///< GL internal format, e.g. GL_RGB8.
                         ///< \sa http://www.opengl.org/wiki/Image_Format
 	
-	float tex_t; ///< Texture horizontal coordinate, ratio of width to display width.
-	float tex_u; ///< Texture vertical coordinate, ratio of height to display height.
-	float tex_w; ///< Texture width (in pixels).
-	float tex_h; ///< Texture height (in pixels).
-	float width, height; ///< Texture display size.
-	
+    float tex_t; ///< Texture horizontal coordinate, ratio of width to display width.
+    float tex_u; ///< Texture vertical coordinate, ratio of height to display height.
+    float tex_v;
+    float tex_w; ///< Texture width (in pixels).
+    float tex_h; ///< Texture height (in pixels).
+    float tex_d;
+    float width, height, depth; ///< Texture display size.
+
 	bool bFlipTexture; ///< Should the texture be flipped vertically?
 	ofTexCompression compressionType; ///< Texture compression type.
 	bool bAllocated; ///< Has the texture been allocated?
@@ -567,7 +572,7 @@ class ofTexture : public ofBaseDraws {
 	/// \param glFormat GL pixel type: GL_RGBA, GL_LUMINANCE, etc.
 	/// \param glType the OpenGL type of the data.
     void loadData(const void * data, int w, int h, int glFormat, int glType);
-	
+    
 #ifndef TARGET_OPENGLES
 	/// \brief Load pixels from an ofBufferObject
 	///
@@ -582,6 +587,25 @@ class ofTexture : public ofBaseDraws {
 	/// \param glFormat GL pixel type: GL_RGBA, GL_LUMINANCE, etc.
 	/// \param glType the GL type to load.
 	void loadData(const ofBufferObject & buffer, int glFormat, int glType);
+    
+    /// \brief Load texture array from a vector of ofPixels
+    ///
+    /// Allocates GL_TEXTURE_3D or GL_TEXTURE_2D_ARRAY, which can be
+    /// used in shader as sampler2DArray
+    ///
+    /// \param texArray Vector of ofPixels.
+    template<typename PixelType>
+    void loadData(const std::vector<ofPixels_<PixelType>> &texArray);
+    
+    /// \brief Load byte pixel data into 3D texture.
+    ///
+    /// \param data Pointer to byte pixel data. Must not be nullptr.
+    /// \param w Pixel data width.
+    /// \param h Pixel data height.
+    /// \param d Pixel data depth.
+    /// \param glFormat GL pixel type: GL_RGBA, GL_LUMINANCE, etc.
+    /// \param glType the OpenGL type of the data.
+    void loadData(const void * data, int w, int h, int d, int glFormat, int glType);
 #endif
 
 	/// \brief Copy an area of the screen into this texture.
@@ -754,6 +778,8 @@ class ofTexture : public ofBaseDraws {
 	///
 	/// \returns Display width of texture in pixels.
 	float getWidth() const;
+    
+    float getDepth() const;
 
 	/// \brief Set the anchor point the texture is drawn around as a percentage.
 	///
