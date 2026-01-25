@@ -11,7 +11,7 @@ fi
 
 ROOT=$(cd $(dirname $0); pwd -P)
 
-pacman -S --needed make pkgconf gcc openal glew freeglut freeimage gstreamer gst-plugins-base gst-plugins-good gst-plugins-bad gst-libav opencv libxcursor assimp glfw-x11 uriparser curl pugixml rtaudio poco brotli
+pacman -S --needed make pkgconf gcc openal glm glew boost freeglut gstreamer gst-plugins-base gst-plugins-good gst-plugins-bad gst-libav opencv libxcursor assimp glfw-x11 uriparser curl pugixml rtaudio poco brotli
 
 exit_code=$?
 if [ $exit_code != 0 ]; then
@@ -31,3 +31,27 @@ else
 	sed -i -E 's/ADDON_PKG_CONFIG_LIBRARIES =(.*)opencv\s/ADDON_PKG_CONFIG_LIBRARIES =\1opencv4 /g' "$addons_dir/ofxOpenCv/addon_config.mk"
 	sed -i -E 's/ADDON_PKG_CONFIG_LIBRARIES =(.*)opencv$/ADDON_PKG_CONFIG_LIBRARIES =\1opencv4/g' "$addons_dir/ofxOpenCv/addon_config.mk"
 fi
+
+# freeimage has been dropped from Arch repos so we need to install it manually with yay, paru or makepkg -si
+if command -v paru &> /dev/null; then
+    AUR_HELPER_INTALL_CMD="paru -S --noconfirm freeimage"
+    echo "Installing freeimage from AUR using paru"
+elif command -v yay &> /dev/null; then
+    AUR_HELPER_INTALL_CMD="yay -S --noconfirm freeimage"
+    echo "Installing freeimage from AUR using yay"
+else
+    echo "use makepkg -si to install freeimage from AUR: https://aur.archlinux.org/packages/freeimage"
+    exit 1
+fi
+
+# run aur helper install command on a user shell that wants password prompt
+sudo -u $(logname) bash -c "$AUR_HELPER_INTALL_CMD"
+exit_code=$?
+
+if [ $exit_code != 0 ]; then
+    echo "error installing freeimage from AUR"
+    exit 1
+fi
+
+echo "all dependencies installed successfully!"
+
