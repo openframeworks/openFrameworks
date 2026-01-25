@@ -8,4 +8,3 @@ if [ $EUID != 0 ]; then
 fi
 
 pacman -S --needed mpg123 gst-plugins-ugly
-

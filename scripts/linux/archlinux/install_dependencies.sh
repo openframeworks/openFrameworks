@@ -32,7 +32,7 @@ else
 	sed -i -E 's/ADDON_PKG_CONFIG_LIBRARIES =(.*)opencv$/ADDON_PKG_CONFIG_LIBRARIES =\1opencv4/g' "$addons_dir/ofxOpenCv/addon_config.mk"
 fi
 
-# freeimage has been dropped from Arch repos so we need to install it manually with yay, paru or makepkg -si
+# freeimage has been dropped from Arch main rep's so we need to install it manually with yay, paru or makepkg -si
 if command -v paru &> /dev/null; then
     AUR_HELPER_INTALL_CMD="paru -S --noconfirm freeimage"
     echo "Installing freeimage from AUR using paru"
@@ -44,7 +44,6 @@ else
     exit 1
 fi
 
-# run aur helper install command on a user shell that wants password prompt
 sudo -u $(logname) bash -c "$AUR_HELPER_INTALL_CMD"
 exit_code=$?
 
