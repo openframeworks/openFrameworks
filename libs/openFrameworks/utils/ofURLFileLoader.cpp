@@ -151,6 +151,8 @@ bool ofURLFileLoaderImpl::checkValidCertifcate(const std::string & cert_file) {
 		ofLogError("ofURLFileLoader") << "Unknown error occurred in checkValidCertifcate.";
 		return false;
 	}
+#else
+	return false;
 #endif
 }
 
