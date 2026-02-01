@@ -84,7 +84,9 @@ public:
 		bool bFirstRect = true;
 		auto allEs = getAllElements(false);
 		for( auto& ele : allEs ) {
-			auto erect = ele->getBoundingBox();
+			// Grab the global bounding box so that we can put it into the group space later
+			// If we just grab the element local bounding box, it doesn't account for position, rotation, etc.
+			auto erect = ele->getGlobalBoundingBox();
 			if( erect.width > 0 && erect.height > 0 ) {
 				if(bFirstRect) {
 					rrect = erect;
@@ -94,6 +96,20 @@ public:
 				bFirstRect = false;
 			}
 		}
+		
+		if( !bFirstRect ) {
+			// Now lets put the rectangle into the group transform space.
+			auto gmat = getGlobalTransformMatrix();
+			auto gmatInv = glm::inverse(gmat);
+			
+			std::vector<glm::vec3> rverts = { rrect.getTopLeft(), rrect.getTopRight(), rrect.getBottomRight(), rrect.getBottomLeft()};
+			
+			for( auto& rv : rverts ) {
+				rv = glm::vec3(gmatInv * glm::vec4(rv, 1.f));
+			}
+			return _calculateExtents( rverts );
+		}
+		
 		return rrect;
 	};
 	

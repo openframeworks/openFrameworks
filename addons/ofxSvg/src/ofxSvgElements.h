@@ -213,6 +213,13 @@ public:
 	virtual ofRectangle getBoundingBox() override {
 		if(mBBoxNeedsRecalc) {
 			mBBoxNeedsRecalc = false;
+			
+			// Note: Hack to force outlines by setting a stroke if there is none.
+			float prevStrokeWidth = path.getStrokeWidth();
+			if( prevStrokeWidth < 1.0f ) {
+				path.setStrokeWidth(1.f);
+			}
+			
 //			ofRectangle brect;
 			const auto& outlines = path.getOutline();
 			if( outlines.size() > 0 ) {
@@ -232,6 +239,8 @@ public:
 					}
 				}
 			}
+			
+			path.setStrokeWidth(prevStrokeWidth);
 		}
 		return mBounds;
 	};
@@ -392,6 +401,7 @@ public:
 	};
 	
 	void load();
+	bool load( const of::filesystem::path& afilePath );
 	bool isLoaded() {
 		return (img.isAllocated() && img.getWidth() > 0 && img.getHeight() > 0);
 	}

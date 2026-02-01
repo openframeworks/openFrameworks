@@ -239,6 +239,14 @@ void ofxSvgImage::load() {
 }
 
 //--------------------------------------------------------------
+bool ofxSvgImage::load( const of::filesystem::path& afilePath ) {
+	filepath = afilePath;
+	bTryLoad = false;
+	load();
+	return isLoaded();
+}
+
+//--------------------------------------------------------------
 void ofxSvgImage::customDraw() {
 	if( !bTryLoad ) {
 		load();
