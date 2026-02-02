@@ -123,6 +123,9 @@ void ofURLFileLoaderImpl::start() {
 }
 
 void ofURLFileLoaderImpl::stop() {
+	if (isThreadRunning()) {
+		ofRemoveListener(ofEvents().update, this, &ofURLFileLoaderImpl::update);
+	}
 	stopThread();
 	requests.close();
 	responses.close();
