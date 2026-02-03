@@ -30,8 +30,8 @@ void ofApp::setup(){
 	bSelectedOscHor = false;
 	bSelectedOscVert = false;
 
-	ofEnableSmoothing();
-	ofEnableAlphaBlending();
+	ofSetSmoothing(true);
+	ofSetAlphaBlending(true);
 	ofSetVerticalSync(true);
 }
 
@@ -69,7 +69,7 @@ void ofApp::draw(){
 
 
 
-	ofEnableSmoothing();
+	ofSetSmoothing(true);
 
 	//This are just the reference lines draw in the screen.
 	ofSetColor(0, 0, 0, 150);

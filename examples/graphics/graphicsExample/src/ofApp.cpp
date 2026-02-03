@@ -57,12 +57,12 @@ void ofApp::draw(){
 	ofSetHexColor(0x00FF33);
 	ofDrawRectangle(400,350,100,100);
 	// alpha is usually turned off - for speed puposes.  let's turn it on!
-	ofEnableAlphaBlending();
+	ofSetAlphaBlending(true);
 	ofSetColor(255,0,0,127);   // red, 50% transparent
 	ofDrawRectangle(450,430,100,33);
 	ofSetColor(255,0,0,(int)(counter * 10.0f) % 255);   // red, variable transparent
 	ofDrawRectangle(450,370,100,33);
-	ofDisableAlphaBlending();
+	ofSetAlphaBlending(false);
 
 	ofSetHexColor(0x000000);
 	ofDrawBitmapString("transparency", 410,500);
@@ -86,11 +86,7 @@ void ofApp::keyPressed  (int key){
 	// the key of s toggles antialiasing
 	if (key == 's'){
 		bSmooth = !bSmooth;
-		if (bSmooth){
-			ofEnableAntiAliasing(); 
-		}else{
-			ofDisableAntiAliasing(); 
-		}
+		ofSetAntiAliasing(bSmooth);
 	}
 }
 

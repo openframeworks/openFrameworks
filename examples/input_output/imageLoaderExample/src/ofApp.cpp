@@ -32,10 +32,10 @@ void ofApp::draw(){
 	tdfSmall.draw(200, 300);
 	
 	ofSetColor(255);
-	ofEnableAlphaBlending();
+	ofSetAlphaBlending(true);
 	float wave = sin(ofGetElapsedTimef());
 	transparency.draw(500 + (wave * 100), 20);
-	ofDisableAlphaBlending();
+	ofSetAlphaBlending(false);
 	
 	// getting the ofColors from an image,
 	// using the brightness to draw circles

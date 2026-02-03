@@ -18,7 +18,7 @@ void ofApp::setup(){
 	// changed order slightly to work better for mapping
 	asciiCharacters =  string("  ..,,,'''``--_:;^^**""=+<>iv%&xclrs)/){}I?!][1taeo7zjLunT#@JCwfy325Fp6mqSghVd4EgXPGZbYkOA8U$KHDBWNMR0Q");
 	
-	ofEnableAlphaBlending();
+	ofSetAlphaBlending(true);
 }
 
 

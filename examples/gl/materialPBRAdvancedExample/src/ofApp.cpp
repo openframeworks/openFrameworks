@@ -99,7 +99,7 @@ void ofApp::draw(){
 	ofDisableDepthTest();
 	
 	ofSetColor(255);
-	ofEnableAlphaBlending();
+	ofSetAlphaBlending(true);
 #ifdef USE_LIGHT
 	for( auto& lp : lights ) {
 		lp->gui.draw();

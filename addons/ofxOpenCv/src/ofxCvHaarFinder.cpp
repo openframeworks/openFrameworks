@@ -147,7 +147,7 @@ int ofxCvHaarFinder::findHaarObjects(const ofxCvGrayscaleImage&  input,
 
 void ofxCvHaarFinder::draw( float x, float y ) {
 	ofPushStyle();
-	ofEnableAlphaBlending();
+	ofSetAlphaBlending(true);
 	ofSetColor( 255,0,200,100 );
 	ofPushMatrix();
 

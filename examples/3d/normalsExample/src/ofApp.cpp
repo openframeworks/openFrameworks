@@ -10,8 +10,8 @@ void ofApp::setup(){
 
 	ofSetVerticalSync(true);
 	ofEnableLighting();
-	ofEnableAlphaBlending();
-	ofEnableSmoothing();
+	ofSetAlphaBlending(true);
+	ofSetSmoothing(true);
 
 	mesh.addVertex(glm::vec3(0,0,0)); // add center vertex
 	mesh.addColor(ofColor(137,137,140,255)); // center is same as bg

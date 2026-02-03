@@ -164,8 +164,8 @@ void ofApp::renderMultibandNoiseDemo(){
 void ofApp::render1DNoiseStrip (float x, float y, float width, float height, float dt, float *data){
 	
 	ofPushMatrix();
-	ofDisableSmoothing();
-	ofEnableAlphaBlending();
+	ofSetSmoothing(false);
+	ofSetAlphaBlending(true);
 	ofTranslate(x, y, 0); 
 	
 	// Yes, this is a drop shadow
@@ -180,7 +180,7 @@ void ofApp::render1DNoiseStrip (float x, float y, float width, float height, flo
 	ofDrawRectangle(0,0, width, height); 
 	
 	// Draw a filled gray noise terrain.
-	ofEnableSmoothing();
+	ofSetSmoothing(true);
 	ofFill();
 	ofSetColor(190); 
 	ofBeginShape();
@@ -205,7 +205,7 @@ void ofApp::render1DNoiseStrip (float x, float y, float width, float height, flo
 	ofEndShape(false);
 	
 	// Draw a box outline on top, around everything
-	ofDisableSmoothing();
+	ofSetSmoothing(false);
 	ofNoFill();
 	ofSetColor(0,0,0); 
 	ofDrawRectangle(0,0, width, height);

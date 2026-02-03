@@ -2,7 +2,7 @@
 
 //--------------------------------------------------------------
 void ofApp::setup(){
-	ofEnableSmoothing();
+	ofSetSmoothing(true);
 	ofSetVerticalSync(true);
 
 	video.setup(320, 240);
@@ -137,7 +137,7 @@ void ofApp::drawScene(bool isPreview){
 	ofPopStyle();
 
 	ofPushStyle();
-	ofEnableSmoothing();
+	ofSetSmoothing(true);
 	ofSetColor(255);
 	ofSetLineWidth(5.0f);
 	ofBeginShape();

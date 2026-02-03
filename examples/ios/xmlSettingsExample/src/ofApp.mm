@@ -109,7 +109,7 @@ void ofApp::draw(){
 
 	string drawString = "How the data is stored:\n\n";
 	if(xmlStructure.size() > 0){
-		ofEnableAlphaBlending();
+		ofSetAlphaBlending(true);
 		ofSetColor(255-red, 255-green, 255-blue, 180);
 		drawString += xmlStructure+"</STROKE>";
 		TTF.drawString(drawString, 5, 60);
@@ -129,7 +129,7 @@ void ofApp::draw(){
 
 	//the message bars at the top and bottom of the app
 	//ofSetHexColor(0xDDDDDD);
-	ofEnableAlphaBlending();
+	ofSetAlphaBlending(true);
 	ofSetColor(0, 0, 0, 200);
 
 	ofDrawRectangle(0, 0, ofGetWidth(), 36);

@@ -30,9 +30,9 @@ void ofApp::draw() {
 	ofPushMatrix();
 	ofTranslate(ofGetWidth()/2.0f,ofGetHeight()/2.0f);
 	ofRotateZDeg(angle);
-	ofEnableAlphaBlending();
+	ofSetAlphaBlending(true);
 	rpiLogo.draw(-rpiLogo.getWidth()/2.0f,-rpiLogo.getHeight()/2.0f);
-	ofDisableAlphaBlending();
+	ofSetAlphaBlending(false);
 	ofPopMatrix();
 
 	// draw the mouse

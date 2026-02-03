@@ -84,7 +84,7 @@ void ofApp::draw(){
 	}
 
 	//Lets stop the blending!
-	ofDisableAlphaBlending();
+	ofSetAlphaBlending(false);
 
 	if(ofGetWidth() > 480){ // then we are running retina
 		ofScale(2, 2, 0);
@@ -104,7 +104,7 @@ void ofApp::draw(){
 	//enable blending!
 	//We are going to use a blend mode that adds
 	//all the colors to white.
-	ofEnableAlphaBlending();
+	ofSetAlphaBlending(true);
 	glBlendFunc(GL_ONE, GL_ONE);
 
 	//---------------------------------
@@ -138,7 +138,7 @@ void ofApp::draw(){
 	//LISSAJOUS EXAMPLE
 	//http://en.wikipedia.org/wiki/Lissajous_curve
 
-	ofEnableAlphaBlending();
+	ofSetAlphaBlending(true);
 
 	float x = 0;
 	float y = 0;

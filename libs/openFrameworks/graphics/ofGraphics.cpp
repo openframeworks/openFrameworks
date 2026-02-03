@@ -637,16 +637,15 @@ void ofEnableBlendMode(ofBlendMode blendMode){
 }
 
 //----------------------------------------------------------
-void ofEnablePointSprites() {
+void ofSetPointSprites(bool pointSprites) {
 	if (ofGetCurrentRenderer()->getType() == "GL" || ofGetCurrentRenderer()->getType() == "ProgrammableGL") {
-		static_cast<ofBaseGLRenderer *>(ofGetCurrentRenderer().get())->enablePointSprites();
-	}
-}
-
-//----------------------------------------------------------
-void ofDisablePointSprites() {
-	if (ofGetCurrentRenderer()->getType() == "GL" || ofGetCurrentRenderer()->getType() == "ProgrammableGL") {
-		static_cast<ofBaseGLRenderer *>(ofGetCurrentRenderer().get())->disablePointSprites();
+		auto renderer = static_cast<ofBaseGLRenderer *>(ofGetCurrentRenderer().get());
+		if (pointSprites) {
+			renderer->enablePointSprites();
+		}
+		else {
+			renderer->disablePointSprites();
+		}
 	}
 }
 
@@ -656,25 +655,15 @@ void ofDisableBlendMode() {
 }
 
 //----------------------------------------------------------
-void ofEnableAlphaBlending() {
-	ofEnableBlendMode(OF_BLENDMODE_ALPHA);
+void ofSetAlphaBlending(bool blending) {
+	blending ? ofEnableBlendMode(OF_BLENDMODE_ALPHA) : ofDisableBlendMode();
 }
 
 //----------------------------------------------------------
-void ofDisableAlphaBlending() {
-	ofDisableBlendMode();
-}
-
-//----------------------------------------------------------
-void ofEnableSmoothing() {
+void ofSetSmoothing(bool smoothing) {
 	// please see:
 	// http://www.opengl.org/resources/faq/technical/rasterization.htm
-	ofGetCurrentRenderer()->setLineSmoothing(true);
-}
-
-//----------------------------------------------------------
-void ofDisableSmoothing() {
-	ofGetCurrentRenderer()->setLineSmoothing(false);
+	ofGetCurrentRenderer()->setLineSmoothing(smoothing);
 }
 
 //----------------------------------------------------------
@@ -683,13 +672,9 @@ void ofSetPolyMode(ofPolyWindingMode mode) {
 }
 
 //----------------------------------------
-void ofEnableAntiAliasing() {
-	ofGetCurrentRenderer()->enableAntiAliasing();
-}
-
-//----------------------------------------
-void ofDisableAntiAliasing() {
-	ofGetCurrentRenderer()->disableAntiAliasing();
+void ofSetAntiAliasing(bool antialiasing) {
+	auto renderer = ofGetCurrentRenderer();
+	antialiasing ? renderer->enableAntiAliasing() : renderer->disableAntiAliasing();
 }
 
 //----------------------------------------

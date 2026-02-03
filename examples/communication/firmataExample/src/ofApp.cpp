@@ -141,10 +141,10 @@ void ofApp::analogPinChanged(const int & pinNum) {
 void ofApp::draw(){
 	bgImage.draw(0,0);
 
-	ofEnableAlphaBlending();
+	ofSetAlphaBlending(true);
 	ofSetColor(0, 0, 0, 127);
 	ofDrawRectangle(510, 15, 275, 150);
-	ofDisableAlphaBlending();
+	ofSetAlphaBlending(false);
 
 	ofSetColor(255, 255, 255);
 	if (!bSetupArduino){

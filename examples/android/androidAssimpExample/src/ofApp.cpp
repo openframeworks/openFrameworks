@@ -18,7 +18,7 @@ void ofApp::setup(){
 	}
 
 	ofEnableBlendMode(OF_BLENDMODE_ALPHA);
-	ofDisableAlphaBlending();
+	ofSetAlphaBlending(false);
 
 	ofEnableDepthTest();
 

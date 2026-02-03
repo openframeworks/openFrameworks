@@ -21,7 +21,7 @@
 void ofApp::setup(){
 	ofBackground(90);
 	randomizeViewports();
-	ofEnableSmoothing();
+	ofSetSmoothing(true);
 }
 
 //--------------------------------------------------------------

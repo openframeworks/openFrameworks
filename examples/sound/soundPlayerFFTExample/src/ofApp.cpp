@@ -76,10 +76,10 @@ void ofApp::update(){
 void ofApp::draw(){
 
 
-	ofEnableAlphaBlending();
+	ofSetAlphaBlending(true);
 		ofSetColor(255,255,255,100);
 		ofDrawRectangle(100,ofGetHeight()-300,5*128,200);
-	ofDisableAlphaBlending();
+	ofSetAlphaBlending(false);
 
 	// draw the fft resutls:
 	ofSetColor(255,255,255,255);
@@ -93,10 +93,10 @@ void ofApp::draw(){
 
 	// finally draw the playing circle:
 
-	ofEnableAlphaBlending();
+	ofSetAlphaBlending(true);
 		ofSetColor(255,255,255,20);
 		ofDrawCircle(px, py,50);
-	ofDisableAlphaBlending();
+	ofSetAlphaBlending(false);
 
 	ofSetHexColor(0xffffff);
 	ofDrawCircle(px, py,8);

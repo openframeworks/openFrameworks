@@ -45,7 +45,7 @@ void ofApp::setup() {
 	// we need to disable ARB textures in order to use normalized texcoords
 	ofDisableArbTex();
 	texture.load("dot.png");
-	ofEnableAlphaBlending();
+	ofSetAlphaBlending(true);
 }
 
 //--------------------------------------------------------------
@@ -98,11 +98,11 @@ void ofApp::draw() {
 	// size of the points via the vert shader
 	billboardShader.begin();
 
-	ofEnablePointSprites(); // not needed for GL3/4
+	ofSetPointSprites(true); // not needed for GL3/4
 	texture.getTexture().bind();
 	billboards.draw();
 	texture.getTexture().unbind();
-	ofDisablePointSprites(); // not needed for GL3/4
+	ofSetPointSprites(false); // not needed for GL3/4
 
 	billboardShader.end();
 

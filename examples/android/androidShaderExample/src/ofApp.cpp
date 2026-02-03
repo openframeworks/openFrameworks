@@ -5,7 +5,7 @@ void ofApp::setup(){
 	ofSetLogLevel(OF_LOG_VERBOSE);
 	ofBackground(34, 34, 34);
 	ofSetVerticalSync(false);
-	ofEnableAlphaBlending();
+	ofSetAlphaBlending(true);
 
 	//we load a font and tell OF to make outlines so we can draw it as GL shapes rather than textures
 	font.load("type/verdana.ttf", 80, true, false, true, 0.4, 72);

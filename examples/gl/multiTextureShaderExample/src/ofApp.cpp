@@ -8,7 +8,7 @@ void ofApp::setup(){
 	// If ARB is left enabled, then it would be 0 -> tex width and 0 -> tex height
 	// opengl es only supports non arb textures where tex coords are 0 - 1
 	ofDisableArbTex();
-	ofEnableAlphaBlending();
+	ofSetAlphaBlending(true);
 	int camWidth 		= 320;	// try to grab at this size.
 	int camHeight 		= 240;
 

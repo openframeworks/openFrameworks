@@ -4,8 +4,8 @@
 //--------------------------------------------------------------
 void ofApp::setup(){
 	ofBackground(0,0,0);
-	ofEnableSmoothing();
-	ofEnableAlphaBlending();
+	ofSetSmoothing(true);
+	ofSetAlphaBlending(true);
 	ofSetWindowTitle("color example");
 
 	ofSetRectMode(OF_RECTMODE_CENTER);

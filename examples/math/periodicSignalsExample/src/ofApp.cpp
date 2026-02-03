@@ -23,7 +23,7 @@ void ofApp::setup(){
 	freq.setLabelString("frequency (hz)");
 	
 	ofSetVerticalSync(true);
-	ofEnableAlphaBlending();
+	ofSetAlphaBlending(true);
 	ofSetColor(20);
 	
 	preSpeed = speed.getValue();
@@ -93,12 +93,12 @@ void ofApp::draw(){
 	ofDrawLine(ofGetWidth()-rightMargin,0,ofGetWidth()-rightMargin,ofGetHeight());
 
 	for(int i=0;i<(int)trail.size();i++){
-		ofEnableSmoothing();
+		ofSetSmoothing(true);
 		ofDrawCircle(x,y[i],radius);
 		trail[i].draw();
 
 
-		ofDisableSmoothing();
+		ofSetSmoothing(false);
 		ofDrawLine(0,60*(i+2),ofGetWidth(),60*(i+2));
 
 		float rectY = 60*(i+2);

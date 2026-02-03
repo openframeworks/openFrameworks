@@ -16,7 +16,7 @@ void ofApp::setup(){
 	gui.loadFromFile("settings.xml");
 
 	font.load("frabk.ttf",9,true,true);
-	ofEnableAlphaBlending();
+	ofSetAlphaBlending(true);
 }
 
 void ofApp::vSyncChanged(bool & vSync){

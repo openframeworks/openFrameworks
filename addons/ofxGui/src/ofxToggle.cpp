@@ -121,7 +121,7 @@ void ofxToggle::render(){
 	ofColor c = ofGetStyle().color;
 	ofBlendMode blendMode = ofGetStyle().blendingMode;
 	if(blendMode!=OF_BLENDMODE_ALPHA){
-		ofEnableAlphaBlending();
+		ofSetAlphaBlending(true);
 	}
 	ofSetColor(thisTextColor);
 

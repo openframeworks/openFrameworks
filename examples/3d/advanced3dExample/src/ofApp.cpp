@@ -34,7 +34,7 @@ void ofApp::setup(){
 
 	ofSetVerticalSync(true);
 	ofBackground(70, 70, 70);
-	ofEnableSmoothing();
+	ofSetSmoothing(true);
 	ofEnableDepthTest();
 
 

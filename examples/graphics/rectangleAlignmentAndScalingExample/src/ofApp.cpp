@@ -21,7 +21,7 @@ void ofApp::setup(){
 	// aspect-ratio preservation modes.
 
 	ofSetFrameRate(30);
-	ofEnableAlphaBlending();
+	ofSetAlphaBlending(true);
 
 	isScaling = false;
 	isAligning = true;

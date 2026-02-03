@@ -55,7 +55,7 @@ void ofApp::setup(){
     videoTexture.allocate(videoPixels);
     
     ofSetBackgroundColor(0, 0, 0); // set the background colour to dark black
-    ofDisableSmoothing();
+    ofSetSmoothing(false);
     
     // set start time from system time
     seconds = ofGetSeconds();

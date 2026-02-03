@@ -67,8 +67,8 @@ void ofxSimpleSlider::setLabelString (string str){
 //----------------------------------------------------
 void ofxSimpleSlider::draw(ofEventArgs& event){
 	
-	ofEnableAlphaBlending();
-	ofDisableSmoothing();
+	ofSetAlphaBlending(true);
+	ofSetSmoothing(false);
 	ofPushMatrix();
 	ofTranslate(x,y,0);
 	
@@ -123,7 +123,7 @@ void ofxSimpleSlider::draw(ofEventArgs& event){
 	
 	ofPopMatrix();
 	ofSetLineWidth(1.0);
-	ofDisableAlphaBlending();
+	ofSetAlphaBlending(false);
 }
 
 //----------------------------------------------------

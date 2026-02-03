@@ -188,7 +188,7 @@ void ofApp::setup(){
 
 	ofSetVerticalSync(true);
 
-	ofEnableAlphaBlending();
+	ofSetAlphaBlending(true);
 
 
 	sortedType = 1; // by name, at the start

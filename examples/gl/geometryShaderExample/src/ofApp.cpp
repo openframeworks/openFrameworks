@@ -6,7 +6,7 @@ void ofApp::setup(){
 	ofSetLogLevel(OF_LOG_VERBOSE);
 	ofBackground(50, 50, 50);
 	ofSetVerticalSync(false);
-	ofEnableAlphaBlending();
+	ofSetAlphaBlending(true);
 
 	shader.setGeometryInputType(GL_LINES);
 	shader.setGeometryOutputType(GL_TRIANGLE_STRIP);

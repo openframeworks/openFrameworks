@@ -207,7 +207,7 @@ void ofApp::draw(){
 	
 	
 	// show a faint the non-curve version of the same polygon:
-	ofEnableAlphaBlending();
+	ofSetAlphaBlending(true);
 		ofNoFill();
 		ofSetColor(0,0,0,40);
 		ofBeginShape();
@@ -223,7 +223,7 @@ void ofApp::draw(){
 			else ofNoFill();
 			ofDrawCircle(curveVertices[i].x, curveVertices[i].y,4);
 		}
-	ofDisableAlphaBlending();
+	ofSetAlphaBlending(false);
 	//-------------------------------------
 	
 	
@@ -255,14 +255,14 @@ void ofApp::draw(){
 	ofEndShape();
 	
 	
-	ofEnableAlphaBlending();
+	ofSetAlphaBlending(true);
 		ofFill();
 		ofSetColor(0,0,0,40);
 		ofDrawCircle(x0,y0,4);
 		ofDrawCircle(x1,y1,4);
 		ofDrawCircle(x2,y2,4);
 		ofDrawCircle(x3,y3,4);
-	ofDisableAlphaBlending();
+	ofSetAlphaBlending(false);
 	
 	
 	

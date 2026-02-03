@@ -36,7 +36,7 @@ void ofApp::update(){
 //--------------------------------------------------------------
 void ofApp::draw(){
 
-	ofDisableSmoothing();
+	ofSetSmoothing(false);
 	ofSetLineWidth(2);
 
 	ofPoint p1;

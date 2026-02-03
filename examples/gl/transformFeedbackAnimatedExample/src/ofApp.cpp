@@ -144,7 +144,7 @@ void ofApp::draw(){
 	ofDrawGridPlane(100, 10);
 	ofPopMatrix();
 	
-	ofEnablePointSprites();
+	ofSetPointSprites(true);
 	shaderRender.begin();
 	shaderRender.setUniformTexture("tex", dotTexture, 0);
 	shaderRender.setUniform1f("uElapsedTime", ofGetElapsedTimef() );
@@ -156,7 +156,7 @@ void ofApp::draw(){
 	
 	vbos[bufferIndex]->draw(GL_POINTS, 0, numVertices);
 	shaderRender.end();
-	ofDisablePointSprites();
+	ofSetPointSprites(false);
 	
 	cam.end();
 	// swap the buffer index

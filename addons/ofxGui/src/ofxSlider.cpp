@@ -282,7 +282,7 @@ void ofxSlider<Type>::render(){
 
 		ofBlendMode blendMode = ofGetStyle().blendingMode;
 		if(blendMode!=OF_BLENDMODE_ALPHA){
-			ofEnableAlphaBlending();
+			ofSetAlphaBlending(true);
 		}
 		ofSetColor(thisTextColor);
 

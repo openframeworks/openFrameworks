@@ -66,9 +66,9 @@ void ofApp::draw(){
 	// 	blending had to be enabled 
 	// 	for transparency to work:
 	
-	ofEnableAlphaBlending();
+	ofSetAlphaBlending(true);
 	texColorAlpha.draw(250,200,w,h);
-	ofDisableAlphaBlending();
+	ofSetAlphaBlending(false);
 
 }
 

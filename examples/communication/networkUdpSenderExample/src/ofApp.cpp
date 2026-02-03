@@ -7,7 +7,7 @@ void ofApp::setup(){
 	// we don't want to be running to fast
 	ofSetVerticalSync(true);
 	ofSetFrameRate(60);
-	ofEnableAntiAliasing();
+	ofSetAntiAliasing(true);
 
 	//create the socket and set to send to 127.0.0.1:11999
 	ofxUDPSettings settings;

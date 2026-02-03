@@ -12,7 +12,7 @@
 //--------------------------------------------------------------
 void ofApp::setup(){
 
-	ofEnableAlphaBlending();
+	ofSetAlphaBlending(true);
 //	ofNoFill();
 
 	camera.setFarClip(5000);

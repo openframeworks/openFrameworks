@@ -47,7 +47,7 @@ void ofApp::setup(){
 //--------------------------------------------------------------
 void ofApp::update(){
 
-	ofEnableAlphaBlending();
+	ofSetAlphaBlending(true);
 
 	//lets draw some graphics into our two fbos
 	rgbaFbo.begin();

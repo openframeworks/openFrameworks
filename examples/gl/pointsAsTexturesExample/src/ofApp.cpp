@@ -77,16 +77,16 @@ void ofApp::draw() {
 	
 	ofSetColor(255, 100, 90);
 
-	ofEnableAlphaBlending();
+	ofSetAlphaBlending(true);
 	
 	// this makes everything look glowy :)
 	ofEnableBlendMode(OF_BLENDMODE_ADD);
-	ofEnablePointSprites();
+	ofSetPointSprites(true);
 
 	if (bSmoothing) {
-		ofEnableSmoothing();
+		ofSetSmoothing(true);
 	} else {
-		ofDisableSmoothing();
+		ofSetSmoothing(false);
 	}
 	
 	// determine if we should bind a texture for our points to draw
@@ -137,7 +137,7 @@ void ofApp::draw() {
 		
 	}
 
-	ofDisablePointSprites();
+	ofSetPointSprites(false);
 
 	camera.end();
 	
@@ -145,7 +145,7 @@ void ofApp::draw() {
 	
 	// check to see if the points are
 	// sizing to the right size
-	ofEnableAlphaBlending();
+	ofSetAlphaBlending(true);
 	camera.begin();
 	for (unsigned int i=0; i<points.size(); i++) {
 		ofSetColor(255, 80);

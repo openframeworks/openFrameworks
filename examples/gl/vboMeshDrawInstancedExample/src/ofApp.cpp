@@ -88,7 +88,7 @@ void ofApp::draw(){
 	ofEnableDepthTest();
 	// we don't care about alpha blending in this example, and by default alpha blending is on in openFrameworks > 0.8.0
 	// so we de-activate it for now.
-	ofDisableAlphaBlending();
+	ofSetAlphaBlending(false);
 	
 	ofBackgroundGradient(ofColor(18,33,54), ofColor(18,22,28));
 	
@@ -118,7 +118,7 @@ void ofApp::draw(){
 	ofSetColor(ofColor::white);
 	ofDrawBitmapString("Use mouse to move camera.\nPress 'f' to toggle fullscreen;\nSPACEBAR to reload shader.", 10, 20);
 	
-	ofEnableAlphaBlending();
+	ofSetAlphaBlending(true);
 	
 	
 }

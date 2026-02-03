@@ -28,7 +28,7 @@ void ofApp::draw(){
 	ofSetColor(54);
 	ofDrawBitmapString("Core Location Example", 8, 60);
 
-	ofEnableAlphaBlending();	
+	ofSetAlphaBlending(true);	
 	ofSetColor(255);
 		ofPushMatrix();
 		ofTranslate(160, 220, 0);

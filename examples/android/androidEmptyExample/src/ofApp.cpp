@@ -5,7 +5,7 @@ void ofApp::setup(){
 
     ofBackground(255,255,255);
 	ofSetVerticalSync(false);
-	ofEnableAlphaBlending();
+	ofSetAlphaBlending(true);
 
 }
 

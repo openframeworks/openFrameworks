@@ -70,7 +70,7 @@ void ofxPanel::render(){
 	if(bHeaderEnabled){
 		ofBlendMode blendMode = ofGetStyle().blendingMode;
 		if(blendMode!=OF_BLENDMODE_ALPHA){
-			ofEnableAlphaBlending();
+			ofSetAlphaBlending(true);
 		}
 		ofColor c = ofGetStyle().color;
 		ofSetColor(thisTextColor);

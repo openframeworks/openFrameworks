@@ -213,7 +213,7 @@ void ofApp::draw(){
 	ofDrawBitmapStringHighlight(ss.str(), 20, 20 );
 	
 	ofSetColor(255);
-	ofEnableAlphaBlending();
+	ofSetAlphaBlending(true);
 	
 }
 // create a renderScene() function so the same drawing can happen in both ofApp::draw()

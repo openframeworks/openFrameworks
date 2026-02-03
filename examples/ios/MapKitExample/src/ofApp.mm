@@ -16,7 +16,7 @@ void ofApp::setup(){
 	// dump lots of info to console (useful for debugging)
 	ofSetLogLevel(OF_LOG_VERBOSE);
 	
-	ofEnableAlphaBlending();
+	ofSetAlphaBlending(true);
 	
 	// load font for displaying info
 	font.load("verdana.ttf", 12);

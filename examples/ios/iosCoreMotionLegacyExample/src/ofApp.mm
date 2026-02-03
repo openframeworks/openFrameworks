@@ -40,7 +40,7 @@ void ofApp::draw() {
 
 	float angle = 180.0 - glm::degrees( atan2(accelerometerData.y, accelerometerData.x) );
 
-	ofEnableAlphaBlending();
+	ofSetAlphaBlending(true);
 	ofSetColor(255);
 	ofPushMatrix();
 		ofTranslate(ofGetWidth()/2, ofGetHeight()/2, 0);

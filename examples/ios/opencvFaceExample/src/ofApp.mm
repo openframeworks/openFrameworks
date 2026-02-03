@@ -72,7 +72,7 @@ void ofApp::draw(){
 		}
 	ofPopStyle();
 	
-	ofEnableAlphaBlending();
+	ofSetAlphaBlending(true);
 	ofSetColor(230, 0, 255, 200);
 	ofDrawRectangle(0, 0, ofGetWidth(), 16);
 	ofSetColor(255, 255, 255);

@@ -82,8 +82,8 @@ void ofApp::renderNoisyRobotArmDemo(){
 	float noisyG = ofNoise(t * 0.73); // guarantee that our color channels are
 	float noisyB = ofNoise(t * 0.81); // not all (apparently) synchronized.
 
-	ofEnableSmoothing();
-	ofEnableAlphaBlending();
+	ofSetSmoothing(true);
+	ofSetAlphaBlending(true);
 	ofSetCircleResolution(12);
 	ofSetLineWidth(1.0);
 
@@ -172,8 +172,8 @@ void ofApp::renderRadialSignedNoiseDemo (){
 	// the noise as radial displacements to a circle.
 	ofPushMatrix();
 	ofTranslate(centerX + radialNoiseDemoR,centerY,0);
-	ofEnableAlphaBlending();
-	ofEnableSmoothing();
+	ofSetAlphaBlending(true);
+	ofSetSmoothing(true);
 	ofNoFill();
 
 	// Draw a faint plain circle, so that we can better understand
@@ -206,7 +206,7 @@ void ofApp::renderRadialSignedNoiseDemo (){
 	}
 
 	// draw the "mesh" (line)
-	ofEnableSmoothing();
+	ofSetSmoothing(true);
 	wigglyMeshLine.draw();
 
 	// draw a little ball at the end
@@ -225,8 +225,8 @@ void ofApp::renderLinearSignedNoiseDemo(){
 
 	float drawWiggleWidth = radialNoiseDemoR*glm::two_pi<float>();
 	ofTranslate (radialNoiseDemoX + radialNoiseDemoR - drawWiggleWidth, radialNoiseDemoY-radialNoiseDemoR,0);
-	ofEnableAlphaBlending();
-	ofEnableSmoothing();
+	ofSetAlphaBlending(true);
+	ofSetSmoothing(true);
 	ofNoFill();
 
 	// draw a "baseline"

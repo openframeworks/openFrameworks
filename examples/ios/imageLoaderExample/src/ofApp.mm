@@ -35,9 +35,9 @@ void ofApp::draw(){
 	tdfSmall.draw(200,300);
 	
 	ofSetHexColor(0xFFFFFF);
-	ofEnableAlphaBlending();
+	ofSetAlphaBlending(true);
 	transparency.draw(sin(ofGetElapsedTimeMillis()/1000.0f) * 100 + 500,20);
-	ofDisableAlphaBlending();
+	ofSetAlphaBlending(false);
 	
 	ofSetHexColor(0x000000);
 	

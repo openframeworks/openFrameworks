@@ -90,7 +90,7 @@ void ofApp::draw() {
 	
 	
 	// the lines
-	ofEnableAlphaBlending();
+	ofSetAlphaBlending(true);
 	ofSetColor(255, 255, 255);
 	vbo.bind();
 	vbo.updateVertexData(pos, total);

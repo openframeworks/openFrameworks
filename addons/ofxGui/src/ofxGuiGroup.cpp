@@ -342,7 +342,7 @@ void ofxGuiGroup::render(){
 	}
 	ofBlendMode blendMode = ofGetStyle().blendingMode;
 	if(blendMode != OF_BLENDMODE_ALPHA){
-		ofEnableAlphaBlending();
+		ofSetAlphaBlending(true);
 	}
 	ofColor c = ofGetStyle().color;
 	if(bHeaderEnabled){

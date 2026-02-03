@@ -81,11 +81,11 @@ void ofApp::update() {
 
 //--------------------------------------------------------------
 void ofApp::draw() {
-	ofEnableAlphaBlending();
+	ofSetAlphaBlending(true);
 	ofSetColor(255);
 	
 	shader.begin();
-	ofEnablePointSprites();
+	ofSetPointSprites(true);
 	
 	
 	texture.getTexture().bind();
@@ -98,7 +98,7 @@ void ofApp::draw() {
 	vbo.draw(GL_POINTS, 0, NUM_BILLBOARDS);
 	texture.getTexture().unbind();
 
-	ofDisablePointSprites();
+	ofSetPointSprites(false);
 	shader.end();
 }
 

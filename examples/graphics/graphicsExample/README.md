@@ -11,7 +11,7 @@ In the code, pay attention to:
 * different commands for setting the active color, such as ```ofSetColor()``` and ```ofSetHexColor()```. These commands set the color for subsequent drawing operations, including lines and fills.
 * toggling transparency, with ```ofEnableAlphaBlending()``` and ```ofDisableAlphaBlending()```
 * toggling of shape fills, with ```ofFill()``` and ```ofNoFill()```
-* toggling the anti-aliasing of lines, with ```ofEnableAntiAliasing()``` and ```ofDisableAntiAliasing()```
+* toggling the anti-aliasing of lines, with ```ofSetAntiAliasing()```
 * rendering bitmap text to the screen, with ```ofDrawBitmapString()```.
 
 ### Expected Behavior

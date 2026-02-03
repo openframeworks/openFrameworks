@@ -61,11 +61,11 @@ void ofApp::update(){
 void ofApp::draw(){
 	ofEnableDepthTest();
 	cam.begin();
-	ofEnablePointSprites();
+	ofSetPointSprites(true);
 	renderShader.begin();
 	vbo.draw(GL_POINTS, 0, numVertices);
 	renderShader.end();
-	ofDisablePointSprites();
+	ofSetPointSprites(false);
 	cam.end();
 }
 

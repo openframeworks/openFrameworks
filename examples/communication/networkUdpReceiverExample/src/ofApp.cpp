@@ -5,7 +5,7 @@ void ofApp::setup(){
 	//we run at 60 fps!
 	ofSetVerticalSync(true);
 	ofSetFrameRate(60);
-	ofEnableAntiAliasing();
+	ofSetAntiAliasing(true);
 
 	//create the socket and bind to port 11999
 	ofxUDPSettings settings;

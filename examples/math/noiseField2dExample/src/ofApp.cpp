@@ -41,7 +41,7 @@ glm::vec2 ofApp::getField(const glm::vec2& position) {
 //--------------------------------------------------------------
 void ofApp::setup() {
 	ofSetVerticalSync(true); // don't go too fast
-	ofEnableAlphaBlending();
+	ofSetAlphaBlending(true);
 	
 	// randomly allocate the points across the screen
   points.resize(nPoints);

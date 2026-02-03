@@ -117,10 +117,10 @@ void ofApp::draw(){
 	//--------
 	//we make a black area on the left
 	//which we can print the xml text on
-	ofEnableAlphaBlending();
+	ofSetAlphaBlending(true);
 	ofSetColor(0, 0, 0, 200);
 	ofDrawRectangle(0, 0, 160, ofGetHeight());
-	ofDisableAlphaBlending();
+	ofSetAlphaBlending(false);
 
 	//our text that shows how the <STROKE> data looks in the xml file
 	ofSetColor(240, 240, 240);
@@ -131,7 +131,7 @@ void ofApp::draw(){
 
 	//the message bars at the top and bottom of the app
 	//ofSetHexColor(0xDDDDDD);
-	ofEnableAlphaBlending();
+	ofSetAlphaBlending(true);
 	ofSetColor(0, 0, 0, 200);
 
 	ofDrawRectangle(160, 0, ofGetWidth()-160, 20);

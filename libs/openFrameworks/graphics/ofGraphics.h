@@ -44,10 +44,10 @@ void ofSetColor(int r, int g, int b);
 ///
 /// ~~~~{.cpp}
 /// void ofApp::draw(){
-///     ofEnableAlphaBlending();    // turn on alpha blending
+///     ofSetAlphaBlending(true);    // turn on alpha blending
 ///     ofSetColor(255,0,0,127);    // red, 50% transparent
 ///     ofDrawRectangle(20,20,100,100);
-///     ofDisableAlphaBlending();   // turn it back off, if you don't need it
+///     ofSetAlphaBlending(false);   // turn it back off, if you don't need it
 /// }
 /// ~~~~
 void ofSetColor(int r, int g, int b, int a);
@@ -846,57 +846,35 @@ void ofEnableBlendMode(ofBlendMode blendMode);
 /// \brief Disable the current blend mode.
 void ofDisableBlendMode();
 
-/// \brief Turn on point sprite.
+/// \brief Set point sprite.
 ///
 /// Textures can be mapped onto points. By default, point size is 1pt. So
 /// texture is not shown correctly. You can change point size by
-/// `glPointSize(GLfloat size).
-void ofEnablePointSprites();
+/// `glPointSize(GLfloat size)`.
+void ofSetPointSprites(bool pointSprites);
 
-/// \brief Turn off point sprites
-void ofDisablePointSprites();
-
-/// \brief Turns on alpha blending (which is on by default since OF version 0.8.0).
+/// \brief Sets whether or not to use alpha blending (which is on by default since OF version 0.8.0).
 /// It simply wraps opengl commands that enable blending, and turn on a common
 /// blend mode.
 ///
 /// ~~~~{.cpp}
 /// void ofApp::draw(){
-///     ofEnableAlphaBlending();    // turn on alpha blending
+///     ofSetAlphaBlending(true);    // turn on alpha blending
 ///     ofSetColor(255,0,0,127);    // red, 50% transparent
 ///     ofDrawRectangle(20,20,100,100);      // draws the rect with alpha
-///     ofDisableAlphaBlending();   // turn off alpha
+///     ofSetAlphaBlending(false);   // turn off alpha
 ///     ofDrawRectangle(120,20,100,100);     // draws the rect without alpha
 /// }
 /// ~~~~
-void ofEnableAlphaBlending(); // this just turns on and off opengl blending, the common mode
+void ofSetAlphaBlending(bool blending); // this just turns on and off opengl blending, the common mode
 
-/// \brief Turn off alpha blending.
-/// ~~~~{.cpp}
-/// void ofApp::draw(){
-///     ofEnableAlphaBlending();    // turn on alpha blending
-///     ofSetColor(255,0,0,127);    // red, 50% transparent
-///     ofDrawRectangle(20,20,100,100);      // draws the rect with alpha
-///     ofDisableAlphaBlending();   // turn off alpha
-///     ofDrawRectangle(120,20,100,100); // draws the rect without alpha
-/// }
-/// ~~~~
-///
-/// \sa ofEnableAlphaBlending()
-void ofDisableAlphaBlending();
-
-void ofEnableSmoothing();
-
-/// \brief Turn off smoothing. Currently, this only works for lines. You can draw a
+/// \brief Set whether or not to do smoothing. Currently, this only works for lines. You can draw a
 /// filled object, and then draw the outline with smoothing enabled to get
 /// smoothing effects on filled shapes.
-void ofDisableSmoothing();
+void ofSetSmoothing(bool smoothing);
 
-/// Enables anti-aliasing (smoothing) for lines.
-void ofEnableAntiAliasing();
-
-/// \brief Turns off anti-aliasing (smoothing).
-void ofDisableAntiAliasing();
+/// Set anti-aliasing (smoothing) for lines.
+void ofSetAntiAliasing(bool antialiasing);
 
 // drawing style - combines color, fill, blending and smoothing
 ofStyle ofGetStyle();
