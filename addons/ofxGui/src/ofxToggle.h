@@ -11,7 +11,7 @@ public:
 	ofxToggle(ofParameter<bool> _bVal, float width = defaultWidth, float height = defaultHeight);
 	ofxToggle * setup(ofParameter<bool> _bVal, float width = defaultWidth, float height = defaultHeight);
 	ofxToggle * setup(const std::string& toggleName, bool _bVal, float width = defaultWidth, float height = defaultHeight);
-	
+	virtual void setSize(float width, float height);
 
 	virtual bool mouseMoved(ofMouseEventArgs & args);
 	virtual bool mousePressed(ofMouseEventArgs & args);
