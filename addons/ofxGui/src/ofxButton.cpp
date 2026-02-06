@@ -46,7 +46,7 @@ ofxButton* ofxButton::setup(const std::string& toggleName, float width, float he
 	return this;
 }
 
-void ofxToggle::setSize(float width, float height){
+void ofxButton::setSize(float width, float height){
 	b.width = width;
 	b.height = height;
 	checkboxRect.set(1, 1, b.height - 2, b.height - 2);
