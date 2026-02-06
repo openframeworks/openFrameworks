@@ -46,6 +46,13 @@ ofxButton* ofxButton::setup(const std::string& toggleName, float width, float he
 	return this;
 }
 
+void ofxButton::setSize(float width, float height){
+	b.width = width;
+	b.height = height;
+	checkboxRect.set(1, 1, b.height - 2, b.height - 2);
+	sizeChangedCB();
+}
+
 void ofxButton::generateDraw(){
 	bg.clear();
 	bg.setFillColor(thisBackgroundColor);
