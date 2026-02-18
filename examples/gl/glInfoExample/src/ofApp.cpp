@@ -90,35 +90,36 @@ print_extension_list(char *ext)
 static void
 print_limits(void)
 {
-
 	static const struct token_name openglLimits[] = {
-		{ 1, GL_MAX_ATTRIB_STACK_DEPTH, "GL_MAX_ATTRIB_STACK_DEPTH" },
-		{ 1, GL_MAX_CLIENT_ATTRIB_STACK_DEPTH, "GL_MAX_CLIENT_ATTRIB_STACK_DEPTH" },
-		{ 1, GL_MAX_CLIP_PLANES, "GL_MAX_CLIP_PLANES" },
-		{ 1, GL_MAX_COLOR_MATRIX_STACK_DEPTH, "GL_MAX_COLOR_MATRIX_STACK_DEPTH" },
+		#ifndef TARGET_EMSCRIPTEN
+			{ 1, GL_MAX_ATTRIB_STACK_DEPTH, "GL_MAX_ATTRIB_STACK_DEPTH" },
+			{ 1, GL_MAX_CLIENT_ATTRIB_STACK_DEPTH, "GL_MAX_CLIENT_ATTRIB_STACK_DEPTH" },
+			{ 1, GL_MAX_CLIP_PLANES, "GL_MAX_CLIP_PLANES" },
+			{ 1, GL_MAX_COLOR_MATRIX_STACK_DEPTH, "GL_MAX_COLOR_MATRIX_STACK_DEPTH" },	
+			{ 1, GL_MAX_EVAL_ORDER, "GL_MAX_EVAL_ORDER" },
+			{ 1, GL_MAX_LIGHTS, "GL_MAX_LIGHTS" },
+			{ 1, GL_MAX_LIST_NESTING, "GL_MAX_LIST_NESTING" },
+			{ 1, GL_MAX_MODELVIEW_STACK_DEPTH, "GL_MAX_MODELVIEW_STACK_DEPTH" },
+			{ 1, GL_MAX_NAME_STACK_DEPTH, "GL_MAX_NAME_STACK_DEPTH" },
+			{ 1, GL_MAX_PIXEL_MAP_TABLE, "GL_MAX_PIXEL_MAP_TABLE" },
+			{ 1, GL_MAX_PROJECTION_STACK_DEPTH, "GL_MAX_PROJECTION_STACK_DEPTH" },
+			{ 1, GL_MAX_TEXTURE_STACK_DEPTH, "GL_MAX_TEXTURE_STACK_DEPTH" },
+			{ 1, GL_MAX_RECTANGLE_TEXTURE_SIZE_NV, "GL_MAX_RECTANGLE_TEXTURE_SIZE_NV" },
+			{ 1, GL_MAX_TEXTURE_UNITS_ARB, "GL_MAX_TEXTURE_UNITS_ARB" },
+			{ 2, GL_SMOOTH_LINE_WIDTH_RANGE, "GL_SMOOTH_LINE_WIDTH_RANGE" },		
+			{ 2, GL_SMOOTH_POINT_SIZE_RANGE, "GL_SMOOTH_POINT_SIZE_RANGE" },
+		#endif
 		{ 1, GL_MAX_ELEMENTS_VERTICES, "GL_MAX_ELEMENTS_VERTICES" },
 		{ 1, GL_MAX_ELEMENTS_INDICES, "GL_MAX_ELEMENTS_INDICES" },
-		{ 1, GL_MAX_EVAL_ORDER, "GL_MAX_EVAL_ORDER" },
-		{ 1, GL_MAX_LIGHTS, "GL_MAX_LIGHTS" },
-		{ 1, GL_MAX_LIST_NESTING, "GL_MAX_LIST_NESTING" },
-		{ 1, GL_MAX_MODELVIEW_STACK_DEPTH, "GL_MAX_MODELVIEW_STACK_DEPTH" },
-		{ 1, GL_MAX_NAME_STACK_DEPTH, "GL_MAX_NAME_STACK_DEPTH" },
-		{ 1, GL_MAX_PIXEL_MAP_TABLE, "GL_MAX_PIXEL_MAP_TABLE" },
-		{ 1, GL_MAX_PROJECTION_STACK_DEPTH, "GL_MAX_PROJECTION_STACK_DEPTH" },
-		{ 1, GL_MAX_TEXTURE_STACK_DEPTH, "GL_MAX_TEXTURE_STACK_DEPTH" },
 		{ 1, GL_MAX_TEXTURE_SIZE, "GL_MAX_TEXTURE_SIZE" },
 		{ 1, GL_MAX_3D_TEXTURE_SIZE, "GL_MAX_3D_TEXTURE_SIZE" },
 		{ 1, GL_MAX_CUBE_MAP_TEXTURE_SIZE_ARB, "GL_MAX_CUBE_MAP_TEXTURE_SIZE_ARB" },
-		{ 1, GL_MAX_RECTANGLE_TEXTURE_SIZE_NV, "GL_MAX_RECTANGLE_TEXTURE_SIZE_NV" },
 		{ 1, GL_NUM_COMPRESSED_TEXTURE_FORMATS_ARB, "GL_NUM_COMPRESSED_TEXTURE_FORMATS_ARB" },
-		{ 1, GL_MAX_TEXTURE_UNITS_ARB, "GL_MAX_TEXTURE_UNITS_ARB" },
 		{ 1, GL_MAX_TEXTURE_LOD_BIAS_EXT, "GL_MAX_TEXTURE_LOD_BIAS_EXT" },
 		{ 1, GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, "GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT" },
 		{ 2, GL_MAX_VIEWPORT_DIMS, "GL_MAX_VIEWPORT_DIMS" },
 		{ 2, GL_ALIASED_LINE_WIDTH_RANGE, "GL_ALIASED_LINE_WIDTH_RANGE" },
-		{ 2, GL_SMOOTH_LINE_WIDTH_RANGE, "GL_SMOOTH_LINE_WIDTH_RANGE" },
 		{ 2, GL_ALIASED_POINT_SIZE_RANGE, "GL_ALIASED_POINT_SIZE_RANGE" },
-		{ 2, GL_SMOOTH_POINT_SIZE_RANGE, "GL_SMOOTH_POINT_SIZE_RANGE" },
 		{ 0, (GLenum) 0, NULL }
 	};
 	GLint i, max[2];
@@ -135,7 +136,6 @@ print_limits(void)
 }
 
 void printShaderLimits(){
-
 	static const struct token_name lll[] = {
 		{ 1, GL_MAX_VERTEX_ATTRIBS, "GL_MAX_VERTEX_ATTRIBS" },
 		{ 1, GL_MAX_VERTEX_UNIFORM_COMPONENTS, "GL_MAX_VERTEX_UNIFORM_COMPONENTS" },
@@ -160,7 +160,6 @@ void printShaderLimits(){
 
 
 void printGLInfo(){
-
 	char *version = NULL;
 	char *vendor = NULL;
 	char *renderer = NULL;
@@ -173,14 +172,11 @@ void printGLInfo(){
 	renderer =    (char*)glGetString(GL_RENDERER);
 
 	cout << "version=" << version << "\nvendor=" << vendor << "\nrenderer=" << renderer << "\n";
-
 }
 
 
 //--------------------------------------------------------------
 void ofApp::setup(){
-
-
 	info.version = (char*)glGetString(GL_VERSION);
 	info.vendor = (char*)glGetString(GL_VENDOR);
 	info.renderer = (char*)glGetString(GL_RENDERER);
@@ -203,8 +199,9 @@ void ofApp::setup(){
 
 	glGetIntegerv(GL_MAX_TEXTURE_SIZE, &info.maxTextureSize);
 	glGetIntegerv(GL_MAX_VIEWPORT_DIMS, info.maxDimensions);
-	glGetIntegerv(GL_MAX_LIGHTS, &info.maxLights);
-
+	#ifndef TARGET_EMSCRIPTEN
+		glGetIntegerv(GL_MAX_LIGHTS, &info.maxLights);
+	#endif
 }
 
 //--------------------------------------------------------------
@@ -214,7 +211,6 @@ void ofApp::update(){
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-
 	string output = "";
 
 	string pointSprites = ((info.bPointSpritesSupported == true) ? "yes" : "no");
@@ -238,24 +234,22 @@ void ofApp::draw(){
 
 	ofDrawBitmapStringHighlight(output, 20, 20);
 	ofDrawBitmapStringHighlight("press ' ' to load full report", 20, 220, ofColor::magenta, ofColor::white);
-
 }
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
-
 	if (key == ' '){
 
 		// todo: rewrite this with ofLog:
+		
+		#ifndef TARGET_EMSCRIPTEN
+			FILE *fp;
 
-		FILE *fp;
-
-
-		if((fp=freopen(ofToDataPath("openglReport.txt").c_str(), "w" ,stdout))==NULL) {
-			cout << "Cannot open file.\n";
-			return;
-		}
-
+			if((fp=freopen(ofToDataPath("openglReport.txt").c_str(), "w" ,stdout))==NULL) {
+				cout << "Cannot open file.\n";
+				return;
+			}
+		#endif
 
 		cout << "-------------------------------------------------\n";
 		cout << "opengl info\n";
@@ -296,20 +290,22 @@ void ofApp::keyPressed(int key){
 
 
 		printGlewInfo();
+		
+		#ifndef TARGET_EMSCRIPTEN
+			fclose(fp);
 
-		fclose(fp);
-
-		#ifdef TARGET_WIN32
-		string command = "start " + ofToString(ofToDataPath("openglReport.txt").c_str());
-		#elif defined(TARGET_LINUX)
-		string command = "xdg-open " + ofToString(ofToDataPath("openglReport.txt").c_str());
-		#else
-		string command = "open " + ofToString(ofToDataPath("openglReport.txt").c_str());
+			#ifdef TARGET_WIN32
+				string command = "start " + ofToString(ofToDataPath("openglReport.txt").c_str());
+			#elif defined(TARGET_LINUX)
+				string command = "xdg-open " + ofToString(ofToDataPath("openglReport.txt").c_str());
+			#else
+				string command = "open " + ofToString(ofToDataPath("openglReport.txt").c_str());
+			#endif
+		
+			if (0 != system(command.c_str())){
+				ofLogWarning() << "Command " << command.c_str() << " did not return 0. Something may have gone wrong.";
+			}
 		#endif
-
-		if (0 != system(command.c_str())){
-			ofLogWarning() << "Command " << command.c_str() << " did not return 0. Something may have gone wrong.";
-		}
 	}
 }
 
