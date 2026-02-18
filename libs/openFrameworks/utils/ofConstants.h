@@ -200,12 +200,8 @@ enum ofTargetPlatform{
     #define TARGET_GLFW_WINDOW
     #define OF_CAIRO
     #define OF_RTAUDIO
-	#ifndef __MACOSX_CORE__
-		#define __MACOSX_CORE__ // rtAudio
-	#endif
-	#ifndef OF_NO_FMOD
-		#define OF_NO_FMOD
-	#endif
+
+
 	#include "GL/glew.h"
     #include "OpenGL/OpenGL.h"
 
@@ -315,39 +311,31 @@ typedef TESSindex ofIndexType;
 
 
 #if (defined(_M_ARM64) || defined(_M_ARM64EC)) && defined(TARGET_WIN32)
-	#undef USE_FMOD // No FMOD lib for ARM64 yet
-	#ifndef OF_NO_FMOD
-		#define OF_NO_FMOD
-	#endif
+	// #undef USE_FMOD // No FMOD lib for ARM64 yet
 	#include <arm64_neon.h> // intrinsics SIMD on https://learn.microsoft.com/en-us/cpp/intrinsics/arm64-intrinsics?view=msvc-170
 #endif
 
-//------------------------------------------------ soundplayer
-//MAC_OS and IOS uncomment to enable AVEnginePlayer
-#ifdef OF_NO_FMOD
-    #undef USE_FMOD
-    #if defined(TARGET_OF_IOS) || defined(TARGET_OSX)
-        #define OF_SOUND_PLAYER_AV_ENGINE
-    #elif defined(TARGET_WIN32)
-		#define OF_SOUND_PLAYER_MEDIA_FOUNDATION
-	#endif
-#endif
+
 
 // check if any soundplayer api is defined from the compiler
 
+//------------------------------------------------ soundplayer
 #if !defined(TARGET_NO_SOUND)
-#if !defined(OF_SOUND_PLAYER_QUICKTIME) && !defined(OF_SOUND_PLAYER_FMOD) && !defined(OF_SOUND_PLAYER_OPENAL) && !defined(OF_SOUND_PLAYER_EMSCRIPTEN) && !defined(OF_SOUND_PLAYER_AV_ENGINE) && !defined(OF_SOUND_PLAYER_MEDIA_FOUNDATION)
-  #ifdef TARGET_OF_IOS
-  	#define OF_SOUND_PLAYER_IPHONE
-  #elif defined(TARGET_LINUX) || defined(TARGET_MINGW)
-  	#define OF_SOUND_PLAYER_OPENAL
-  #elif defined(TARGET_EMSCRIPTEN)
-	#define OF_SOUND_PLAYER_EMSCRIPTEN
-  #elif !defined(TARGET_ANDROID) && (!defined(USE_FMOD) || USE_FMOD)
-  	#define OF_SOUND_PLAYER_FMOD
-  #endif
-#endif
-
+	#if defined(USE_FMOD)
+		#define OF_SOUND_PLAYER_FMOD
+	#else
+		#if defined(TARGET_OF_IOS) || defined(TARGET_OSX)
+			#define OF_SOUND_PLAYER_AV_ENGINE
+//		#elif defined(TARGET_OF_IOS)
+//			#define OF_SOUND_PLAYER_IPHONE
+		#elif defined(TARGET_LINUX) || defined(TARGET_MINGW)
+			#define OF_SOUND_PLAYER_OPENAL
+		#elif defined(TARGET_EMSCRIPTEN)
+			#define OF_SOUND_PLAYER_EMSCRIPTEN
+		#elif defined(TARGET_WIN32)
+			#define OF_SOUND_PLAYER_MEDIA_FOUNDATION
+		#endif
+	#endif
 #endif
 
 //------------------------------------------------ thread local storage

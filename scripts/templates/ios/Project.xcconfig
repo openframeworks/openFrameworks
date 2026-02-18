@@ -12,9 +12,6 @@ OF_PATH = ../../..
 MARKETING_VERSION = 0.1.0
 
 
-OF_NO_FMOD=1
-USER_PREPROCESSOR_DEFINITIONS="OF_NO_FMOD=1"
-
 // this is "Build" in the Xcode target Identity UI, an incremental build number
 // important for the App Store as new build submissions need a diff number even
 // if MARKETING_VERSION is the same
