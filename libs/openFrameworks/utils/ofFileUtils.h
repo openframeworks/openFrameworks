@@ -447,6 +447,26 @@ public:
 	static of::filesystem::path getCurrentExeDirFS();
 	static std::string getCurrentExeDir();
 
+	/// Get the App name of the running binary
+	///
+	/// \param strip_debug removes a trailing "Debug" if present
+	/// \returns the App name as native string
+	static const auto getAppName(bool strip_debug = true) {
+		auto name = ofFilePath::getCurrentExePathFS().filename().native();
+#if defined(TARGET_OSX)
+		auto debug_suffix = std::filesystem::path("Debug").native();
+#else
+		auto debug_suffix = std::filesystem::path("_debug").native();
+#endif
+		auto dbsize = debug_suffix.size();
+		if (strip_debug) {
+			if (name.size() > dbsize && name.compare(name.size() -dbsize , dbsize, debug_suffix) == 0) {
+				name.erase(name.size() - dbsize);
+			}
+		}
+		return name;
+	}
+
 	/// Get the absolute path to the user's home directory.
 	///
 	/// Mac OSX: /Users/<username>
