@@ -1020,6 +1020,15 @@ void ofShader::setUniform4i(const string & name, int v1, int v2, int v3, int v4)
 }
 
 //--------------------------------------------------------------
+void ofShader::setUniformBufferObject(const std::string & name, const void * data, GLsizeiptr dataSize) {
+	if (!bufferObjectsCache[name].isAllocated()) {
+		bufferObjectsCache[name].allocate(dataSize, GL_STATIC_DRAW);
+	}
+	bufferObjectsCache[name].updateData(dataSize, data);
+	bufferObjectsCache[name].bindBase(GL_UNIFORM_BUFFER, getUniformBlockIndex(name));
+}
+	
+//--------------------------------------------------------------
 void ofShader::setUniform1f(const string & name, float v1) const {
     if (bLoaded) {
         int loc = getUniformLocation(name);
