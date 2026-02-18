@@ -170,8 +170,12 @@ void ofParameter<void>::setSerializable(bool serializable) {
     obj->serializable = serializable;
 }
 
+std::shared_ptr<ofAbstractParameter> ofParameter<void>::getSharedPtr() const {
+	return std::make_shared<ofParameter<void>>(*this);
+}
+
 std::shared_ptr<ofAbstractParameter> ofParameter<void>::newReference() const {
-    return std::make_shared<ofParameter<void>>(*this);
+	return getSharedPtr();
 }
 
 void ofParameter<void>::setParent(ofParameterGroup & parent) {
