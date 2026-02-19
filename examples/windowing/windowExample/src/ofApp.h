@@ -30,5 +30,8 @@ class ofApp : public ofBaseApp{
 		float 	ballPositionY;
 		float 	ballVelocityX;
 		float 	ballVelocityY;
+
+		float posx;
+		float posy;
 	
 };
