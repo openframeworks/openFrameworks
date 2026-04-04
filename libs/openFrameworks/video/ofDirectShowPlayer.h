@@ -1,6 +1,5 @@
 //DirectShowVideo and ofDirectShowPlayer written by Theodore Watson, Jan 2014
 //See the cpp file for the DirectShow implementation 
-//To allow for QuickTime video playback install the K-Lite Mega Codec Pack 10.2
 
 #pragma once 
 #include "ofVideoBaseTypes.h"
