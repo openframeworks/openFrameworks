@@ -8,7 +8,7 @@ LEGACY=0
 SILENT_ARGS=""
 NO_SSL=""
 BLEEDING_EDGE=0
-DL_VERSION=2.6.7
+DL_VERSION=2.7.0
 TAG=""
 
 printHelp(){
@@ -126,6 +126,9 @@ while [[ $# -gt 0 ]]; do
         ;;
         -l|--legacy)
         LEGACY=1
+        ;;
+        -vs|--vs2026)
+        VS_2026=1
         ;;
         -h|--help)
         printHelp
@@ -249,12 +252,18 @@ elif [ "$ARCH" == "" ] && [ "$PLATFORM" == "vs" ]; then
             PKGS="openFrameworksLibs_${VER}_${PLATFORM}_2019_64_1.zip \
                   openFrameworksLibs_${VER}_${PLATFORM}_2019_64_2.zip"
         else
-            PKGS="openFrameworksLibs_${VER}_${PLATFORM}_64_1.zip \
-                  openFrameworksLibs_${VER}_${PLATFORM}_64_2.zip \
-                  openFrameworksLibs_${VER}_${PLATFORM}_arm64_1.zip \
-                  openFrameworksLibs_${VER}_${PLATFORM}_arm64_2.zip \
-                  openFrameworksLibs_${VER}_${PLATFORM}_arm64ec_1.zip \
-                  openFrameworksLibs_${VER}_${PLATFORM}_arm64ec_2.zip"
+            if [[ $VS_2026 == 1 ]]; then
+                VS_PLATFORM="${PLATFORM}_2026"
+            else
+                VS_PLATFORM="${PLATFORM}"
+            fi
+                PKGS="openFrameworksLibs_${VER}_${VS_PLATFORM}_64_1.zip \
+                      openFrameworksLibs_${VER}_${VS_PLATFORM}_64_2.zip \
+                      openFrameworksLibs_${VER}_${VS_PLATFORM}_arm64_1.zip \
+                      openFrameworksLibs_${VER}_${VS_PLATFORM}_arm64_2.zip \
+                      openFrameworksLibs_${VER}_${VS_PLATFORM}_arm64ec_1.zip \
+                      openFrameworksLibs_${VER}_${VS_PLATFORM}_arm64ec_2.zip"
+            
         fi
     else
         PKGS="openFrameworksLibs_${VER}_${PLATFORM}_64_1.zip \
