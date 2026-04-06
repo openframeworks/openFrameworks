@@ -32,7 +32,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Docker Step
-        run: "docker run -di --name emscripten -v $PWD:/src emscripten/emsdk:4.0.16 bash"
+        run: "docker run -di --name emscripten -v $PWD:/src emscripten/emsdk:5.0.5 bash"
       # - name: Determine Release
       #   id: vars
       #   shell: bash
