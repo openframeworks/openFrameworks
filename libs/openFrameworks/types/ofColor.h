@@ -9,6 +9,8 @@
 #include <glm/ext/scalar_common.hpp>
 #include <glm/vec3.hpp>
 #include <iostream>
+#include <limits>
+#include <vector>
 
 /// \class ofColor_
 ///
@@ -40,6 +42,20 @@ public:
     /// \param blue The blue component.
     /// \param alpha The alpha component.
     ofColor_(float red, float green, float blue, float alpha = limit());
+
+    /// \brief Construct an ofColor_ by using values in a vector
+    ///
+    /// \param list 1 item = The gray value (full alpha)
+    /// \param list 2 items = The gray value + alpha
+    /// \param list 3 items = The RGB values (full alpha)
+    /// \param list 4 items = The RGB values + alpha
+    template<class InitType>
+    ofColor_(std::vector<InitType> list): ofColor_() {
+        if (list.size() == 1) set(list[0]);
+        if (list.size() == 2) set(list[0], list[1]);
+        if (list.size() == 3) set(list[0], list[1], list[2]);
+        if (list.size() == 4) set(list[0], list[1], list[2], list[3]);
+    }
 
     /// \brief Construct a grayscale ofColor_ by specifying a single number.
     ///
