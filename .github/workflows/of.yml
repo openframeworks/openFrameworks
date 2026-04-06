@@ -163,6 +163,41 @@ jobs:
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+   build-vs2026:
+    runs-on: windows-2025-vs2026
+    strategy:
+      matrix:
+        platform: [x64, ARM64, ARM64EC]
+    env:
+      BITS: ${{ matrix.bits }}
+    steps:
+      - name: Clone repository
+        uses: actions/checkout@v4
+      - uses: msys2/setup-msys2@v2.27.0
+        with:
+          update: true
+          install: >-
+            git
+            unzip
+      - name: Install dependencies
+        shell: msys2 {0}
+        run: ./scripts/ci/vs/install.sh --vs2026 -a ${{ matrix.platform }}
+        
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v2
+
+      - name: Build DEBUG and RELEASE emptyExample
+        working-directory: ${{env.GITHUB_WORKSPACE}}
+        run: |
+          msbuild examples/templates/emptyExample/emptyExample.vcxproj /p:configuration=debug /p:platform=${{ matrix.platform }} /p:PlatformToolset=v145
+          msbuild examples/templates/emptyExample/emptyExample.vcxproj /p:configuration=release /p:platform=${{ matrix.platform }} /p:PlatformToolset=v145
+      - name: Build DEBUG and RELEASE allAddonsExample
+        working-directory: ${{env.GITHUB_WORKSPACE}}
+        run: |
+          msbuild examples/templates/allAddonsExample/allAddonsExample.vcxproj /p:configuration=debug /p:platform=${{ matrix.platform }} /p:PlatformToolset=v145
+          msbuild examples/templates/allAddonsExample/allAddonsExample.vcxproj /p:configuration=release /p:platform=${{ matrix.platform }} /p:PlatformToolset=v145
+
+
   rpi-build:
     runs-on: ubuntu-24.04
     strategy:
