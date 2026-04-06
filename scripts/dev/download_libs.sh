@@ -8,7 +8,7 @@ LEGACY=0
 SILENT_ARGS=""
 NO_SSL=""
 BLEEDING_EDGE=0
-DL_VERSION=2.7.0
+DL_VERSION=2.7.1
 TAG=""
 
 printHelp(){
@@ -273,12 +273,17 @@ elif [ "$ARCH" == "" ] && [ "$PLATFORM" == "vs" ]; then
       fi
 elif [ "$PLATFORM" == "vs" ]; then
     if [[ $BLEEDING_EDGE = 1 ]] ; then
+        if [[ $VS_2026 == 1 ]]; then
+            VS_PLATFORM="${PLATFORM}_2026"
+        else
+            VS_PLATFORM="${PLATFORM}"
+        fi
         if [[ $LEGACY == 1 ]]; then
             PKGS="openFrameworksLibs_${VER}_${PLATFORM}_2019_64_1.zip \
                   openFrameworksLibs_${VER}_${PLATFORM}_2019_64_2.zip"
         else
-            PKGS="openFrameworksLibs_${VER}_${PLATFORM}_${ARCH}_1.zip \
-                  openFrameworksLibs_${VER}_${PLATFORM}_${ARCH}_2.zip"
+            PKGS="openFrameworksLibs_${VER}_${VS_PLATFORM}_${ARCH}_1.zip \
+                  openFrameworksLibs_${VER}_${VS_PLATFORM}_${ARCH}_2.zip"
         fi
     else       
         PKGS="openFrameworksLibs_${VER}_${PLATFORM}_${ARCH}_1.zip \
