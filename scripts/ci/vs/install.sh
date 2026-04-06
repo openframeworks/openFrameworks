@@ -22,6 +22,9 @@ done
 if [[ -n "$ARCH" ]]; then
   ARCH=$(echo "$ARCH" | tr '[:upper:]' '[:lower:]')
   echo "Downloading libs for architecture: $ARCH (target folder: $VS_TARGET)"
+  if [[ "$ARCH" == "x64" ]]; then
+    ARCH="64"
+  fi
 fi
 
 unset BITS
