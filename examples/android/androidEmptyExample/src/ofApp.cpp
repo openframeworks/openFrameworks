@@ -3,6 +3,14 @@
 //--------------------------------------------------------------
 void ofApp::setup(){
 
+    ofBackground(255,255,255);
+	ofSetVerticalSync(false);
+	ofEnableAlphaBlending();
+
+}
+
+void ofApp::exit(){
+
 }
 
 //--------------------------------------------------------------
@@ -12,6 +20,12 @@ void ofApp::update(){
 
 //--------------------------------------------------------------
 void ofApp::draw(){
+
+    int r = 128 + 127 * cosf(ofGetElapsedTimef());
+    int g = 0;
+    int b = 128 + 127 * sinf(ofGetElapsedTimef());
+
+    ofBackground(r,g,b);
 
 }
 
@@ -92,5 +106,21 @@ void ofApp::okPressed(){
 
 //--------------------------------------------------------------
 void ofApp::cancelPressed(){
+
+}
+
+void ofApp::deviceRefreshRateChanged(int refreshRate) {
+
+}
+
+void ofApp::deviceHighestRefreshRateChanged(int refreshRate) {
+
+}
+
+void ofApp::deviceRefreshRateChangedEvent(int &refreshRate) {
+
+}
+
+void ofApp::deviceHighestRefreshRateChangedEvent(int &refreshRate) {
 
 }

@@ -165,3 +165,24 @@ void ofApp::windowResized(int w, int h){
 
 }
 
+//--------------------------------------------------------------
+void ofApp::deviceRefreshRateChanged(int refreshRate) {
+}
+
+//--------------------------------------------------------------
+void ofApp::deviceHighestRefreshRateChanged(int refreshRate) {
+}
+
+//--------------------------------------------------------------
+void ofApp::deviceRefreshRateChangedEvent(int &refreshRate) {
+}
+
+//--------------------------------------------------------------
+void ofApp::deviceHighestRefreshRateChangedEvent(int &refreshRate) {
+}
+
+//--------------------------------------------------------------
+void ofApp::exit(){
+
+}
+

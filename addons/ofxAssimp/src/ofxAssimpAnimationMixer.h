@@ -6,14 +6,14 @@
 #pragma once
 #include "ofxAssimpAnimation.h"
 
-namespace ofx::assimp {
+namespace ofxAssimp {
 class AnimationClip {
 public:
 	static bool shouldRemove( const AnimationClip& ac );
 	
 	AnimationClip() {}
-	AnimationClip(Animation anim, float aweight) {
-		animation = anim;
+	AnimationClip(std::shared_ptr<Animation> anim, float aweight) {
+		animationWeak = anim;
 		weight = aweight;
 	}
 //	AnimationClip(const Animation& anim, float aweight, bool abOneShot) {
@@ -39,8 +39,15 @@ public:
 	
 	void tagForRemoval() {bRemove=true;}
 	
+	void resetAnimation() {
+		if( auto alock = animationWeak.lock() ) {
+			alock->reset();
+		}
+	}
+	
 	float weight = 1.0f;
-	Animation animation;
+//	Animation animation;
+	std::weak_ptr<Animation> animationWeak;
 	
 //protected:
 	float mTargetWeight = -1.f;

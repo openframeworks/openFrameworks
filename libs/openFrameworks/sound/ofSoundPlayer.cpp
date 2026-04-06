@@ -1,7 +1,11 @@
 #include "ofSoundPlayer.h"
 #include "ofLog.h"
-#define GLM_FORCE_CTOR_INIT
-#define GLM_ENABLE_EXPERIMENTAL
+#if !defined(GLM_FORCE_CTOR_INIT)
+	#define GLM_FORCE_CTOR_INIT
+#endif
+#if !defined(GLM_ENABLE_EXPERIMENTAL)
+	#define GLM_ENABLE_EXPERIMENTAL
+#endif
 #include <glm/ext/scalar_common.hpp>
 
 #ifdef OF_SOUND_PLAYER_AV_ENGINE

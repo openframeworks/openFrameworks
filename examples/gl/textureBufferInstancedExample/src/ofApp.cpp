@@ -65,7 +65,7 @@ void ofApp::setup(){
 	light.setPosition(0.0, 3600, 600 );
 	light.lookAt( glm::vec3(0,0,0) );
 	light.getShadow().setEnabled(true);
-	light.getShadow().setGlCullingEnabled(true);
+	light.getShadow().setCullingEnabled(true);
 	light.getShadow().setStrength(0.2);
 	light.getShadow().setNearClip(200);
 	light.getShadow().setFarClip(7500);

@@ -6,6 +6,7 @@
 #include "ofRectangle.h"
 #include "ofTexture.h"
 #include <unordered_map>
+#include <vector>
 
 class ofPath;
 

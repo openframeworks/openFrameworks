@@ -178,7 +178,7 @@ void ofApp::draw() {
 			box.transformGL();
 			for (int i = 0; i < ofBoxPrimitive::SIDES_TOTAL; i++) {
 				ofPushMatrix();
-				ofTranslate(boxSides[i].getNormal(0) * sin(ofGetElapsedTimef()) * 50);
+				ofTranslate(boxSides[i].getNormal(0) * sin(ofGetElapsedTimef()) * 50.0f);
 				boxSides[i].draw();
 				ofPopMatrix();
 			}
@@ -294,13 +294,13 @@ void ofApp::draw() {
 			cylinder.transformGL();
 			ofPushMatrix(); {
 				if (topCap.getNumNormals() > 0) {
-					ofTranslate(topCap.getNormal(0) * (cos(ofGetElapsedTimef() * 5) + 1)*.5f * 100);
+					ofTranslate(topCap.getNormal(0) * (cos(ofGetElapsedTimef() * 5) + 1)*.5f * 100.0f);
 					topCap.draw();
 				}
 			} ofPopMatrix();
 			ofPushMatrix(); {
 				if (bottomCap.getNumNormals() > 0) {
-					ofTranslate(bottomCap.getNormal(0) * (cos(ofGetElapsedTimef() * 4) + 1)*.5f * 100);
+					ofTranslate(bottomCap.getNormal(0) * (cos(ofGetElapsedTimef() * 4) + 1)*.5f * 100.0f);
 					bottomCap.draw();
 				}
 			} ofPopMatrix();
@@ -341,7 +341,7 @@ void ofApp::draw() {
 			cone.transformGL();
 			ofPushMatrix();
 			if (bottomCap.getNumNormals() > 0) {
-				ofTranslate(bottomCap.getNormal(0) * cone.getHeight()*.5);
+				ofTranslate(bottomCap.getNormal(0) * (float)cone.getHeight()*.5f);
 				ofRotateDeg( glm::degrees( sin(ofGetElapsedTimef() * 5) ), 1, 0, 0);
 				bottomCap.draw();
 			}

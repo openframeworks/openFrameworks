@@ -4,10 +4,13 @@
 
 #include "ofAppRunner.h"
 #include "ofGraphicsBaseTypes.h"
+// it can be removed if other PR is merged #8178
 #include "ofVectorMath.h"
 #include "ofLog.h"
 #include "ofColor.h"
 #include "ofUtils.h" // ofTo
+
+//#include <glm/gtx/vector_angle.hpp>
 
 #include <unordered_map>
 
@@ -1657,7 +1660,7 @@ const std::vector<ofMeshFace_<V,N,C,T>> & ofMesh_<V,N,C,T>::getUniqueFaces() con
 		bool bHasTexcoords  = hasTexCoords();
 
 		if( getMode() == OF_PRIMITIVE_TRIANGLES) {
-			for(std::size_t j = 0; j < indices.size(); j += 3) {
+			for(ofIndexType j = 0; j < indices.size(); j += 3) {
 				ofMeshFace_<V,N,C,T> & tri = faces[triindex];
 				for(std::size_t k = 0; k < 3; k++) {
 					index = indices[j+k];

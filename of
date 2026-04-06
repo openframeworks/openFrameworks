@@ -1,0 +1,8 @@
+# pipe commands to core oF script
+_OF_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+_OF_DIR="$(realpath "$_OF_DIR")"
+_OF_SCRIPT="$(realpath "$_OF_DIR/scripts/of.sh")"
+echo "$(date): [openFrameworks: $@]"
+source "$_OF_SCRIPT" $@
+EXIT_CODE=$?
+exit ${EXIT_CODE}

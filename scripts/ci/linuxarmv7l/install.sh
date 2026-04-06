@@ -114,7 +114,6 @@ createArchImg(){
 				gst-plugins-base \
 				gst-plugins-good \
 				assimp \
-				boost \
 				libxcursor \
 				opencv \
 				assimp \

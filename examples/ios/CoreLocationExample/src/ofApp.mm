@@ -26,13 +26,13 @@ void ofApp::update(){
 //--------------------------------------------------------------
 void ofApp::draw(){
 	ofSetColor(54);
-	ofDrawBitmapString("Core Location Example", 8, 20);
+	ofDrawBitmapString("Core Location Example", 8, 60);
 
 	ofEnableAlphaBlending();	
 	ofSetColor(255);
 		ofPushMatrix();
 		ofTranslate(160, 220, 0);
-		ofRotateZ(heading);
+		ofRotateZDeg(heading);
 		compassImg.draw(0,0);
 	ofPopMatrix();
 	
@@ -40,17 +40,17 @@ void ofApp::draw(){
 	arrowImg.draw(160, 220);	
 
 	ofSetColor(54);
-	ofDrawBitmapString("LAT: ", 8, ofGetHeight() - 8);
-	ofDrawBitmapString("LON: ", ofGetWidth() - 108, ofGetHeight() - 8);
+	ofDrawBitmapString("LAT: ", 8, ofGetHeight() - 68);
+	ofDrawBitmapString("LON: ", ofGetWidth() - 108, ofGetHeight() - 68);
 
 	if(hasGPS){
-		cout<<coreLocation->getLatitude()<<" | "<< coreLocation->getLatitude() <<endl;
+		cout<<coreLocation->getLatitude()<<" | "<< coreLocation->getLongitude() <<endl;
 		
 		ofSetHexColor(0x009d88);
-		ofDrawBitmapString(ofToString(coreLocation->getLatitude()), 8 + 33, ofGetHeight() - 8);
+		ofDrawBitmapString(ofToString(coreLocation->getLatitude()), 8 + 33, ofGetHeight() - 68);
 
 		ofSetHexColor(0x0f7941d);
-		ofDrawBitmapString(ofToString(coreLocation->getLongitude()), (ofGetWidth() - 108) + 33, ofGetHeight() - 8);
+		ofDrawBitmapString(ofToString(coreLocation->getLongitude()), (ofGetWidth() - 108) + 33, ofGetHeight() - 68);
 		
 	}
 }

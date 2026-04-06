@@ -72,7 +72,7 @@ void ofApp::draw(){
 	float redValueFromXspeed = ofMap( fabs(xspeed), 1, 15, 100, 255, true );
 	float greenValueFromYspeed = ofMap( fabs(yspeed), 1, 15, 100, 255, true );
 
-	ofSetColor( redValueFromXspeed, greenValueFromYspeed, MIN(redValueFromXspeed, greenValueFromYspeed) );
+	ofSetColor( redValueFromXspeed, greenValueFromYspeed, std::min(redValueFromXspeed, greenValueFromYspeed) );
 	ofDrawSphere(0, -newSize, 0, 10.0 );
 	ofDrawSphere(0, newSize, 0, 10.0 );
 	ofDrawSphere(newSize, 0, 0, 10.0 );

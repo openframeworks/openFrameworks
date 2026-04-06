@@ -37,5 +37,5 @@ void ofxAndroidLogChannel::log(ofLogLevel level, const string & module, const st
 		androidPrio=ANDROID_LOG_INFO;
 		break;
 	}
-	__android_log_print(androidPrio,module.c_str(),msg.c_str());
+	__android_log_print(androidPrio,module.c_str(),"%s", msg.c_str());
 }

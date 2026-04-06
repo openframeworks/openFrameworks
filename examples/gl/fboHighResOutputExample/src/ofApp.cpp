@@ -10,8 +10,8 @@ void ofApp::setup(){
 	glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxSize);
 	
 	// take the smaller size
-	int fboWidth = MIN(8192,maxSize);
-	int fboHeight = MIN(8192,maxSize);
+	int fboWidth = std::min(8192,maxSize);
+	int fboHeight = std::min(8192,maxSize);
 	//allocate our fbo with 3 color channels and 4x multisample
 	#ifdef TARGET_EMSCRIPTEN
 		fboOutput.allocate(fboWidth, fboHeight, GL_RGB);

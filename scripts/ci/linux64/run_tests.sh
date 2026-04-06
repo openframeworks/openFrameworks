@@ -16,13 +16,22 @@ for group in *; do
 				cd $test
 				cp ../../../scripts/templates/linux/Makefile .
 				cp ../../../scripts/templates/linux/config.make .
+				sleep 0.3 
 				make -j2 Debug
+				sleep 0.3 
 				cd bin
 				binname=$(basename ${test})
-				#gdb -batch -ex "run" -ex "bt" -ex "q \$_exitcode" ./${binname}_debug
-				./${binname}_debug
+				
+				if [[ -f ./${binname}_debug ]]; then
+					gdb -batch -ex "run" -ex "bt" -ex "q \$_exitcode" ./${binname}_debug
+					#./${binname}_debug
+				else
+					echo "Binary not found: ${binname}_debug"
+					exit 1
+				fi
 				errorcode=$?
 				if [[ $errorcode -ne 0 ]]; then
+					echo "Test failed: ${binname}_debug with error code: $errorcode"
 					exit $errorcode
 				fi
 				cd $ROOT/tests

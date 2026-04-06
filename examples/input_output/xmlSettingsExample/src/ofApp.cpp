@@ -69,7 +69,7 @@ void ofApp::setup(){
 
 				//we have only allocated a certan amount of space for our array
 				//so we don't want to read more than that amount of points
-				int totalToRead = MIN(numPtTags, NUM_PTS);
+				int totalToRead = std::min(numPtTags, NUM_PTS);
 
 				for(int i = 0; i < totalToRead; i++){
 					//the last argument of getValue can be used to specify

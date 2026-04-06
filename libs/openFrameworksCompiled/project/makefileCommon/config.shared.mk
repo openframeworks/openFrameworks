@@ -112,7 +112,7 @@ ifndef PLATFORM_LIB_SUBPATH
 		PLATFORM_LIB_SUBPATH=android
 		SHARED_LIB_EXTENSION=so
 	else ifeq ($(PLATFORM_OS),Darwin)
-		PLATFORM_LIB_SUBPATH=macos
+		PLATFORM_LIB_SUBPATH=osx
 		SHARED_LIB_EXTENSION=dylib
 	else ifeq ($(PLATFORM_OS),emscripten)
 		PLATFORM_LIB_SUBPATH=emscripten
@@ -235,7 +235,12 @@ include $(OF_PLATFORM_MAKEFILES)/config.$(PLATFORM_LIB_SUBPATH).$(PLATFORM_VARIA
 ifdef ABI_PATH
 	ABI_LIB_SUBPATH=$(PLATFORM_LIB_SUBPATH)/$(strip $(ABI_PATH))
 else
+	#hack to get makefiles working again
+	ifeq ($(PLATFORM_LIB_SUBPATH),osx)
+		ABI_LIB_SUBPATH=macos
+	else
 	ABI_LIB_SUBPATH=$(PLATFORM_LIB_SUBPATH)
+	endif
 endif
 
 PLATFORM_PKG_CONFIG ?= pkg-config

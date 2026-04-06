@@ -976,7 +976,7 @@ static NSString *kShouldEnginePauseNotification = @"kShouldEnginePauseNotificati
 
 - (int)positionMs {
 	float timeSeconds = [self positionSeconds];
-	return timeSeconds/1000.0;
+	return timeSeconds*1000.0;
 }
 
 - (float)positionSeconds{

@@ -22,7 +22,7 @@ std::string toString(ofSoundDevice::Api api){
 		case ofSoundDevice::MS_DS:
 			return "MS DirectShow";
 		default:
-			return "Unkown API";
+			return "Unknown API";
 	}
 }
 
@@ -30,10 +30,17 @@ std::string toString(ofSoundDevice::Api api){
 void ofBaseSoundStream::printDeviceList() const {
 	ofLogNotice("ofBaseSoundStream::printDeviceList") << std::endl;
 #ifndef TARGET_EMSCRIPTEN
-	for(int i=ofSoundDevice::ALSA; i<ofSoundDevice::NUM_APIS; ++i){
-		ofSoundDevice::Api api = (ofSoundDevice::Api)i;
+	std::vector<ofSoundDevice::Api> platformApis;
+#ifdef TARGET_LINUX
+	platformApis = { ofSoundDevice::ALSA, ofSoundDevice::PULSE, ofSoundDevice::OSS, ofSoundDevice::JACK };
+#elif defined(TARGET_OSX)
+	platformApis = { ofSoundDevice::OSX_CORE };
+#elif defined(TARGET_WIN32)
+	platformApis = { ofSoundDevice::MS_WASAPI, ofSoundDevice::MS_ASIO, ofSoundDevice::MS_DS };
+#endif
+	for (auto api : platformApis) {
 		auto devices = getDeviceList(api);
-		if(!devices.empty()){
+		if (!devices.empty()) {
 			ofLogNotice("ofBaseSoundStream::printDeviceList") << "Api: " << toString(api);
 			ofLogNotice("ofBaseSoundStream::printDeviceList") << devices;
 		}

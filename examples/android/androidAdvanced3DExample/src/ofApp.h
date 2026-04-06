@@ -31,6 +31,7 @@ class ofApp : public ofxAndroidApp{
 
 	public:
 		void setup();
+		void exit();
 		void update();
 		void draw();
 	
@@ -57,6 +58,11 @@ class ofApp : public ofxAndroidApp{
 		bool backPressed();
 		void okPressed();
 		void cancelPressed();
+
+		void deviceRefreshRateChanged(int refreshRate);
+		void deviceHighestRefreshRateChanged(int refreshRate);
+		void deviceRefreshRateChangedEvent(int &refreshRate);
+		void deviceHighestRefreshRateChangedEvent(int & refreshRate);
 
 		//cameras (all these inherit from ofCamera)
 		ofEasyCam				camEasyCam;

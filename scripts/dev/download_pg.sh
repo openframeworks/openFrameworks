@@ -6,6 +6,8 @@ ARCH=""
 OVERWRITE=1
 SILENT_ARGS=""
 BLEEDING_EDGE=0
+DL_VERSION=2.8.0
+TAG=""
 
 printHelp(){
 cat << EOF
@@ -18,6 +20,7 @@ cat << EOF
                                 If not specified tries to autodetect the platform
     -s, --silent                Silent download progress
     -h, --help                  Shows this message
+    -t, --tag                   tag release for libraries
 EOF
 }
 
@@ -27,14 +30,18 @@ if [[ ! -d "$SCRIPT_DIR" ]]; then SCRIPT_DIR="$PWD"; fi
 
 download(){
     echo "Downloading $1"
-    
+
+    REPO="nightly"
     if [[ $BLEEDING_EDGE = 1 ]] ; then
-        echo downloader https://github.com/openframeworks/projectGenerator/releases/download/bleeding/$1 $SILENT_ARGS
-        downloader https://github.com/openframeworks/projectGenerator/releases/download/bleeding/$1 $SILENT_ARGS
-    else
-        echo downloader https://github.com/openframeworks/projectGenerator/releases/download/nightly/$1
-        downloader https://github.com/openframeworks/projectGenerator/releases/download/nightly/$1 
+        REPO="latest"
     fi
+    if [[ $TAG != "" ]] ; then
+        REPO="$TAG"
+    fi
+
+    echo downloader https://github.com/openframeworks/projectGenerator/releases/download/$REPO/$1
+    downloader https://github.com/openframeworks/projectGenerator/releases/download/$REPO/$1
+
 }
 
 # trap any script errors and exit
@@ -87,6 +94,10 @@ while [[ $# -gt 0 ]]; do
         -h|--help)
         printHelp
         exit 0
+        ;;
+        -t|--tag)
+        TAG="$2"
+        shift # past argument
         ;;
         *)
         echo "Error: invalid argument: $key"
@@ -150,23 +161,31 @@ cd "$SCRIPT_DIR"
 
 OUTDIR=../../
 
+ZIP="zip"
 if [[ $BLEEDING_EDGE = 1 ]] ; then
-    VER=bleeding
+    VER=latest
 fi
 
+if [[ $TAG != "" ]] ; then
+    VER="$TAG"
+fi
+
+if [ "$PLATFORM" == "linux" ]; then
+    ZIP="tar.bz2"
+fi
 if [ "$PLATFORM" == "vs" ]; then
     EXT=".exe"
 else
     EXT=".app"
 fi
+
 OUTPUT=projectGenerator
 if [ "$PLATFORM" == "msys2" ] || [ "$PLATFORM" == "vs" ]; then
     GUI="-gui"
 else
     GUI=""
 fi
-PKG="projectGenerator-${PLATFORM}${GUI}.zip"
-
+PKG="projectGenerator-${PLATFORM}${GUI}.${ZIP}"
 echo " openFrameworks download_pg.sh"
 
 cd ../../
@@ -189,8 +208,10 @@ if [ "$PLATFORM" == "msys2" ] || [ "$PLATFORM" == "vs" ]; then
 else
     mkdir -p "${OUTDIR}${OUTPUT}"
     tar xjf "$PKG" -C "${OUTDIR}${OUTPUT}"
-    mv "${OUTDIR}/${OUTPUT}/projectGenerator-osx/projectGenerator$EXT" "${OUTDIR}/${OUTPUT}/projectGenerator$EXT"
-    rm -rf "${OUTDIR}/${OUTPUT}/projectGenerator-osx/"
+    if [ "$PLATFORM" == "osx" ]; then
+        mv "${OUTDIR}/${OUTPUT}/projectGenerator-osx/projectGenerator$EXT" "${OUTDIR}/${OUTPUT}/projectGenerator$EXT"
+        rm -rf "${OUTDIR}/${OUTPUT}/projectGenerator-osx/"
+    fi
 fi
 
 if [ "$PLATFORM" == "msys2" ] || [ "$PLATFORM" == "vs" ]; then
@@ -199,16 +220,26 @@ if [ "$PLATFORM" == "msys2" ] || [ "$PLATFORM" == "vs" ]; then
     else
         rsync -avzp "${OUTDIR}/${OUTPUT}/resources/app/app/projectGenerator.exe" "${OUTDIR}/${OUTPUT}/projectGeneratorCmd.exe"
     fi
-    chmod +x "${OUTDIR}/${OUTPUT}/projectGeneratorCMD.exe"
-    chmod +x "${OUTDIR}/${OUTPUT}/resources/app/projectGenerator.exe"
+    # if command -v chmod &> /dev/null; then
+        chmod +x "${OUTDIR}/${OUTPUT}/projectGeneratorCmd.exe"
+        chmod +x "${OUTDIR}/${OUTPUT}/resources/app/app/projectGenerator.exe"
+    # else
+    #     echo "Warning: chmod command not found, skipping permission adjustment."
+    # fi
+elif [ "$PLATFORM" == "linux" ]; then
+    chmod +x "${OUTDIR}/${OUTPUT}/projectGenerator"
 else
     if ! command -v rsync &> /dev/null; then      
         cp -arX "${OUTDIR}/${OUTPUT}/projectGenerator$EXT/Contents/Resources/app/app/projectGenerator" "${OUTDIR}/${OUTPUT}/projectGenerator"
     else
         rsync -avzp "${OUTDIR}/${OUTPUT}/projectGenerator$EXT/Contents/Resources/app/app/projectGenerator" "${OUTDIR}/${OUTPUT}/projectGenerator"
     fi
-    chmod +x "${OUTDIR}/${OUTPUT}/projectGenerator"
-    chmod +x "${OUTDIR}/${OUTPUT}/projectGenerator$EXT/Contents/MacOS/projectGenerator"
+    # if command -v chmod &> /dev/null; then
+        chmod +x "${OUTDIR}/${OUTPUT}/projectGenerator"
+        chmod +x "${OUTDIR}/${OUTPUT}/projectGenerator$EXT/Contents/MacOS/projectGenerator"
+    # else
+    #     echo "Warning: chmod command not found, skipping permission adjustment."
+    # fi
 fi
 
 echo " ------ "

@@ -1,5 +1,5 @@
 #!/bin/bash
-# set -ev
+set -ev
 OF_ROOT=$( cd "$(dirname "$0")/../../.." ; pwd -P )
 
 export CROSS_COMPILING=1

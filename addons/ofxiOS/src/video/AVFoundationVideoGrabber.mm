@@ -53,15 +53,23 @@
 }
 
 - (BOOL)initCapture:(int)framerate capWidth:(int)w capHeight:(int)h{
-    AVCaptureDeviceDiscoverySession *discoverySession = [AVCaptureDeviceDiscoverySession discoverySessionWithDeviceTypes:@[
-        AVCaptureDeviceTypeBuiltInWideAngleCamera,
-        AVCaptureDeviceTypeBuiltInTelephotoCamera,
-        AVCaptureDeviceTypeBuiltInUltraWideCamera,
-        AVCaptureDeviceTypeBuiltInDualCamera,
-        AVCaptureDeviceTypeBuiltInDualWideCamera,
-        AVCaptureDeviceTypeBuiltInTripleCamera,
-        AVCaptureDeviceTypeExternal
-    ] mediaType:AVMediaTypeVideo position:AVCaptureDevicePositionUnspecified];
+
+	NSMutableArray *deviceTypes = [NSMutableArray arrayWithObjects:AVCaptureDeviceTypeBuiltInWideAngleCamera,
+	AVCaptureDeviceTypeBuiltInTelephotoCamera,
+	AVCaptureDeviceTypeBuiltInUltraWideCamera,
+	AVCaptureDeviceTypeBuiltInDualCamera,
+	AVCaptureDeviceTypeBuiltInDualWideCamera,
+	AVCaptureDeviceTypeBuiltInTripleCamera,
+	AVCaptureDeviceTypeBuiltInTrueDepthCamera, nil];
+	if (@available(iOS 17.0, macCatalyst 17.0, tvOS 17.0, *)) {
+		if (&AVCaptureDeviceTypeContinuityCamera != nil) {
+			[deviceTypes addObject:AVCaptureDeviceTypeContinuityCamera];
+			[deviceTypes addObject:AVCaptureDeviceTypeBuiltInLiDARDepthCamera];
+			[deviceTypes addObject:AVCaptureDeviceTypeBuiltInTrueDepthCamera];
+			[deviceTypes addObject:AVCaptureDeviceTypeExternal];
+		}
+	}
+    AVCaptureDeviceDiscoverySession *discoverySession = [AVCaptureDeviceDiscoverySession discoverySessionWithDeviceTypes:deviceTypes mediaType:AVMediaTypeVideo position:AVCaptureDevicePositionUnspecified];
 
     NSArray<AVCaptureDevice *> *devices = discoverySession.devices;
 	if([devices count] > 0) {
@@ -251,28 +259,26 @@
 -(std::vector <std::string>)listDevices{
     std::vector <std::string> deviceNames;
     NSArray<AVCaptureDevice *> *devices;
-    if (@available(iOS 17.0, *)) {
-        AVCaptureDeviceDiscoverySession *session = [AVCaptureDeviceDiscoverySession discoverySessionWithDeviceTypes:@[
-            AVCaptureDeviceTypeBuiltInWideAngleCamera,
-            AVCaptureDeviceTypeBuiltInTelephotoCamera,
-            AVCaptureDeviceTypeBuiltInUltraWideCamera,
-            AVCaptureDeviceTypeBuiltInDualCamera,
-            AVCaptureDeviceTypeBuiltInDualWideCamera,
-            AVCaptureDeviceTypeBuiltInTripleCamera,
-            AVCaptureDeviceTypeExternal
-        ] mediaType:AVMediaTypeVideo position:AVCaptureDevicePositionUnspecified];
-        devices = session.devices;
-    } else {
-        AVCaptureDeviceDiscoverySession *session = [AVCaptureDeviceDiscoverySession discoverySessionWithDeviceTypes:@[
-            AVCaptureDeviceTypeBuiltInWideAngleCamera,
-            AVCaptureDeviceTypeBuiltInTelephotoCamera,
-            AVCaptureDeviceTypeBuiltInUltraWideCamera,
-            AVCaptureDeviceTypeBuiltInDualCamera,
-            AVCaptureDeviceTypeBuiltInDualWideCamera,
-            AVCaptureDeviceTypeBuiltInTripleCamera,
-        ] mediaType:AVMediaTypeVideo position:AVCaptureDevicePositionUnspecified];
-        devices = session.devices;
-    }
+	
+	NSMutableArray *deviceTypes = [NSMutableArray arrayWithObjects:AVCaptureDeviceTypeBuiltInWideAngleCamera,
+	AVCaptureDeviceTypeBuiltInTelephotoCamera,
+	AVCaptureDeviceTypeBuiltInUltraWideCamera,
+	AVCaptureDeviceTypeBuiltInDualCamera,
+	AVCaptureDeviceTypeBuiltInDualWideCamera,
+	AVCaptureDeviceTypeBuiltInTripleCamera,
+	AVCaptureDeviceTypeBuiltInTrueDepthCamera,
+							   nil
+	];
+	if (@available(iOS 17.0, macCatalyst 17.0, tvOS 17.0, *)) {
+		if (&AVCaptureDeviceTypeContinuityCamera != nil) {
+			[deviceTypes addObject:AVCaptureDeviceTypeContinuityCamera];
+			[deviceTypes addObject:AVCaptureDeviceTypeBuiltInLiDARDepthCamera];
+			[deviceTypes addObject:AVCaptureDeviceTypeBuiltInTrueDepthCamera];
+			[deviceTypes addObject:AVCaptureDeviceTypeExternal];
+		}
+	}
+	AVCaptureDeviceDiscoverySession *discoverySession = [AVCaptureDeviceDiscoverySession discoverySessionWithDeviceTypes:deviceTypes mediaType:AVMediaTypeVideo position:AVCaptureDevicePositionUnspecified];
+        devices = discoverySession.devices;
 	int i=0;
 	for (AVCaptureDevice * captureDevice in devices){
         deviceNames.push_back([captureDevice.localizedName UTF8String]);
@@ -320,8 +326,8 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
 				// Create a CGImageRef from the CVImageBufferRef
 				CGColorSpaceRef colorSpace	= CGColorSpaceCreateDeviceRGB(); 
 				
-				CGContextRef newContext		= CGBitmapContextCreate(baseAddress, widthIn, heightIn, 8, bytesPerRow, colorSpace, kCGBitmapByteOrder32Little | kCGImageAlphaPremultipliedFirst);
-				CGImageRef newImage			= CGBitmapContextCreateImage(newContext); 
+				CGContextRef newContext		= CGBitmapContextCreate(baseAddress, widthIn, heightIn, 8, bytesPerRow, colorSpace, (CGBitmapInfo)kCGBitmapByteOrder32Little | (CGBitmapInfo)kCGImageAlphaPremultipliedFirst);
+				CGImageRef newImage			= CGBitmapContextCreateImage(newContext);
 
 				CGImageRelease(currentFrame);	
 				currentFrame = CGImageCreateCopy(newImage);		

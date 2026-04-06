@@ -30,50 +30,63 @@ static int  sWindowHeight = 800;
 
 static bool bSetupScreen = true;
 
-static JavaVM *ofJavaVM=0;
+static JavaVM *ofJavaVM=nullptr;
 
 static ofAppAndroidWindow * window;
 
 static ofOrientation orientation = OF_ORIENTATION_DEFAULT;
 
 static queue<ofTouchEventArgs> touchEventArgsQueue;
-static std::mutex mtx;
-static bool threadedTouchEvents = false;
-static bool appSetup = false;
-static bool accumulateTouchEvents = false;
+static queue<ofKeyEventArgs> keyEventArgsQueue;
+static queue<ofKeyEventArgs> axisEventArgsQueue;
 
+static std::mutex mtx, keyMtx, controllerMtx;
+
+static bool appSetup = false;
+
+static bool threadedKeyEvents = false;
+static bool threadedTouchEvents = false;
+static bool threadedAxisEvents = false;
+
+static bool accumulateTouchEvents = false;
+static bool accumulateAxisEvents = false;
+
+static bool multiWindowMode = false;
+
+AAssetManager* assetManager;
 
 void ofExitCallback();
 
 //----- define in main.cpp---//
-void ofAndroidApplicationInit();
-void ofAndroidActivityInit();
+//JNIEXPORT void JNICALL ofAndroidApplicationInit();
+//JNIEXPORT void JNICALL ofAndroidActivityInit();
 
 //static ofAppAndroidWindow window;
-
-JavaVM * ofGetJavaVMPtr(){
+JNIEXPORT JavaVM * JNICALL
+ofGetJavaVMPtr(){
 	return ofJavaVM;
 }
 
-JNIEnv * ofGetJNIEnv(){
+JNIEXPORT JNIEnv * JNICALL
+ ofGetJNIEnv(){
 	JNIEnv *env;
 	JavaVM * vm = ofGetJavaVMPtr();
 	if(!vm){
 		ofLogError("ofAppAndroidWindow") << "couldn't get java virtual machine";
-		return NULL;
+		return nullptr;
 	}
 
-	int getEnvStat = vm->GetEnv((void**) &env, JNI_VERSION_1_4);
+	int getEnvStat = vm->GetEnv((void**) &env, JNI_VERSION_1_6);
 
 	if (getEnvStat == JNI_EDETACHED) {
 
-		if (vm->AttachCurrentThread(&env, NULL) != 0) {
+		if (vm->AttachCurrentThread(&env, nullptr) != 0) {
 			ofLogError("ofAppAndroidWindow") << "couldn't get environment using GetEnv()";
-			return NULL;
+			return nullptr;
 		}
 	} else if (getEnvStat != JNI_OK) {
 		ofLogError("ofAppAndroidWindow") << "couldn't get environment using GetEnv()";
-		return NULL;
+		return nullptr;
 	}
 
 	return env;
@@ -89,30 +102,65 @@ jclass ofGetOFLifeCycle(){
 
 jobject ofGetOFActivityObject(){
 	JNIEnv * env = ofGetJNIEnv();
-	if(!env) return NULL;
+	if(!env) return nullptr;
 
 	jclass OFLifeCycle = ofGetOFLifeCycle();
-	if(!OFLifeCycle) return NULL;
+	if(!OFLifeCycle) return nullptr;
 
 	jfieldID ofActivityID = env->GetStaticFieldID(OFLifeCycle,"m_activity","Lcc/openframeworks/OFActivity;");
 	if(!ofActivityID){
 		ofLogError("ofAppAndroidWindow") << "couldn't get field ID for ofActivity";
-		return NULL;
+		return nullptr;
 	}
 
 	return env->GetStaticObjectField(OFLifeCycle,ofActivityID);
 }
 
 
-
-
-ofAppAndroidWindow::ofAppAndroidWindow()
-:currentRenderer(new ofGLRenderer(this))
-,glesVersion(1){
+ofAppAndroidWindow::ofAppAndroidWindow()  {
+	//ofLogError("ofAppAndroidWindow") << "ofAppAndroidWindow() the window is this";
 	window = this;
+	msaaSamples = 1;
+	glesVersion = 2;
+
+	ofGetMainLoop()->setCurrentWindow(this);
+}
+
+ofAppAndroidWindow::ofAppAndroidWindow(ofAppBaseWindow & other) {
+	window = this;
+	msaaSamples = 1;
+	glesVersion = 2;
+	setMultiWindowMode(other.getWindowMode());
+	ofGetMainLoop()->setCurrentWindow(this);
+}
+
+void ofAppAndroidWindow::setCurrentWindow() {
+	ofLogVerbose("ofAppAndroidWindow") << "setCurrentWindow the window is this";
+	window = this;
+	ofGetMainLoop()->setCurrentWindow(this);
+}
+
+void ofAppAndroidWindow::setSampleSize(int samples) {
+	msaaSamples = samples;
+}
+
+int	ofAppAndroidWindow::getSamples() {
+	return msaaSamples;
+}
+
+AAssetManager&	ofAppAndroidWindow::getAssetManager() {
+	return *assetManager;
+}
+
+void	ofAppAndroidWindow::setAssetManager(AAssetManager* aaAssetManager) {
+	 assetManager = aaAssetManager;
 }
 
 ofAppAndroidWindow::~ofAppAndroidWindow() {
+	if(window != nullptr && window == this) {
+		window = nullptr;
+		ofLogError("ofAppAndroidWindow") << "~ofAppAndroidWindow destroyed";
+	}
 	// TODO Auto-generated destructor stub
 }
 
@@ -126,8 +174,13 @@ void ofAppAndroidWindow::setup(const ofGLESWindowSettings & settings)
 }
 
 void ofAppAndroidWindow::setup(const ofxAndroidWindowSettings & settings){
+
+	if(window == nullptr) {
+		ofLogError("ofAppAndroidWindow") << "Setup and Window is nullptr ! Fixing";
+		setCurrentWindow();
+	}
 	glesVersion = settings.glesVersion;
-	ofLogError() << "setup gles" << glesVersion;
+	ofLogError("ofAppAndroidWindow") << "Setup OpenGLES:" << glesVersion;
 	if(glesVersion<2){
 		currentRenderer = std::make_shared<ofGLRenderer>(this);
 	}else{
@@ -136,10 +189,12 @@ void ofAppAndroidWindow::setup(const ofxAndroidWindowSettings & settings){
 
 	jclass javaClass = ofGetJNIEnv()->FindClass("cc/openframeworks/OFAndroid");
 
-	if(javaClass==0){
+	if(javaClass==nullptr){
 		ofLogError("ofAppAndroidWindow") << "setupOpenGL(): couldn't find OFAndroid java class";
 		return;
 	}
+
+	makeCurrent();
 
 	jmethodID method = ofGetJNIEnv()->GetStaticMethodID(javaClass,"setupGL","(IZ)V");
 	if(!method){
@@ -148,6 +203,8 @@ void ofAppAndroidWindow::setup(const ofxAndroidWindowSettings & settings){
 	}
 
 	ofGetJNIEnv()->CallStaticVoidMethod(javaClass,method,glesVersion,settings.preserveContextOnPause);
+
+
 }
 
 void ofAppAndroidWindow::update(){
@@ -183,10 +240,12 @@ void ofAppAndroidWindow::setOrientation(ofOrientation _orientation){
 	orientation = _orientation;
 	jclass javaClass = ofGetJNIEnv()->FindClass("cc/openframeworks/OFAndroid");
 
-	if(javaClass==0){
+	if(javaClass==nullptr){
 		ofLogError("ofAppAndroidWindow") << "setOrientation(): couldn't find OFAndroid java class";
 		return;
 	}
+
+    bSetupScreen = true;
 
 	jmethodID setScreenOrientation = ofGetJNIEnv()->GetStaticMethodID(javaClass,"setScreenOrientation","(I)V");
 	if(!setScreenOrientation){
@@ -203,10 +262,18 @@ ofOrientation ofAppAndroidWindow::getOrientation(){
 	return orientation;
 }
 
+
+void ofAppAndroidWindow::makeCurrent(){
+	shared_ptr<ofMainLoop> mainLoop = ofGetMainLoop();
+	if(mainLoop){
+		mainLoop->setCurrentWindow(this);
+	}
+}
+
 void ofAppAndroidWindow::setFullscreen(bool fullscreen){
 	jclass javaClass = ofGetJNIEnv()->FindClass("cc/openframeworks/OFAndroid");
 
-	if(javaClass==0){
+	if(javaClass==nullptr){
 		ofLogError("ofAppAndroidWindow") << "setFullscreen(): couldn't find OFAndroid java class";
 		return;
 	}
@@ -225,11 +292,28 @@ void ofAppAndroidWindow::toggleFullscreen(){
 
 void ofAppAndroidWindow::setThreadedEvents(bool threadedEvents){
 	threadedTouchEvents = threadedEvents;
+	threadedKeyEvents = threadedEvents;
+	threadedAxisEvents = threadedEvents;
 }
 
 
 void ofAppAndroidWindow::setAccumulateTouchEvents(bool accumEvents){
 	accumulateTouchEvents = accumEvents;
+}
+
+void ofAppAndroidWindow::setMultiWindowMode(bool multiWindow) {
+	multiWindowMode = multiWindow;
+}
+
+bool ofAppAndroidWindow::getIsThreadedEvents() {
+	return threadedTouchEvents;
+}
+bool ofAppAndroidWindow::getIsAccumulateTouchEvents() {
+	return accumulateTouchEvents;
+}
+
+bool ofAppAndroidWindow::getIsMultiWindowMode() {
+	return multiWindowMode;
 }
 
 
@@ -246,9 +330,11 @@ int ofAppAndroidWindow::getGlesVersion()
 	return glesVersion;
 }
 
+
 extern "C"{
 
-jint JNI_OnLoad(JavaVM* vm, void* reserved)
+JNIEXPORT jint JNICALL
+JNI_OnLoad(JavaVM* vm, void* reserved)
 {
 	JNIEnv *env;
 	ofJavaVM = vm;
@@ -260,73 +346,104 @@ jint JNI_OnLoad(JavaVM* vm, void* reserved)
 	return JNI_VERSION_1_4;
 }
 
-void
-Java_cc_openframeworks_OFAndroid_setAppDataDir( JNIEnv*  env, jobject  thiz, jstring data_dir)
+JNIEXPORT void JNICALL
+Java_cc_openframeworks_OFAndroid_setAppDataDir( JNIEnv*  env, jclass thiz, jstring data_dir)
 {
 	jboolean iscopy;
 	const char *mfile = env->GetStringUTFChars(data_dir, &iscopy);
-	__android_log_print(ANDROID_LOG_INFO,"ofAppAndroidWindow",("setting app dir name to: \"" + string(mfile) + "\"").c_str());
-    ofSetDataPathRoot({ string(mfile)+"/" });
+	ofLogVerbose("ofAppAndroidWindow") << "setting app dir name to: " << string(mfile);
+    ofSetDataPathRoot(string(mfile)+"/");
     env->ReleaseStringUTFChars(data_dir, mfile);
 }
 
-void Java_cc_openframeworks_OFAndroid_init( JNIEnv*  env, jclass  clazz)
-{
-	ofAndroidApplicationInit();
+//JNIEXPORT void JNICALL
+//Java_cc_openframeworks_OFAndroid_init( JNIEnv*  env, jclass  clazz)
+//{
+//	ofLogVerbose("ofAppAndroidWindow") << "OFAndroid_init";
+//	//ofAndroidApplicationInit();
+//}
+//
+//JNIEXPORT void JNICALL
+//Java_cc_openframeworks_OFAndroid_onCreate( JNIEnv*  env, jclass  clazz)
+//{
+//    ofLogVerbose("ofAppAndroidWindow") << "OFAndroid_onCreate";
+//	ofAndroidActivityInit();
+//}
+
+JNIEXPORT void JNICALL
+Java_cc_openframeworks_OFAndroid_onRestart( JNIEnv*  env, jclass thiz){
+	ofLogVerbose("ofAppAndroidWindow") << "onRestart";
 }
 
-void Java_cc_openframeworks_OFAndroid_onCreate( JNIEnv*  env, jclass  clazz)
-{
-	ofAndroidActivityInit();
-}
-
-void
-Java_cc_openframeworks_OFAndroid_onRestart( JNIEnv*  env, jobject  thiz ){
-
-}
-
-void
-Java_cc_openframeworks_OFAndroid_onStart( JNIEnv*  env, jobject  thiz ){
+JNIEXPORT void JNICALL
+Java_cc_openframeworks_OFAndroid_onStart( JNIEnv*  env, jclass thiz){
 	ofLogVerbose("ofAppAndroidWindow") << "onStart";
 	stopped = false;
+	bSetupScreen = true;
 	ofNotifyEvent(ofxAndroidEvents().start);
 }
 
-void
-Java_cc_openframeworks_OFAndroid_onStop( JNIEnv*  env, jobject  thiz ){
+JNIEXPORT void JNICALL
+Java_cc_openframeworks_OFAndroid_onStop( JNIEnv*  env, jclass thiz){
 	ofLogVerbose("ofAppAndroidWindow") << "onStop";
 	ofNotifyEvent( ofxAndroidEvents().stop );
 	stopped = true;
 }
 
-void
-Java_cc_openframeworks_OFAndroid_onResume( JNIEnv*  env, jobject  thiz ){
+JNIEXPORT void JNICALL
+Java_cc_openframeworks_OFAndroid_onResume( JNIEnv*  env, jclass thiz){
 	ofLogVerbose("ofAppAndroidWindow") << "onResume";
+	bSetupScreen = true;
+	stopped = false;
+
+	if(!threadedTouchEvents){
+		mtx.lock();
+			while (!touchEventArgsQueue.empty())
+			{
+			touchEventArgsQueue.pop();
+			}
+		mtx.unlock();
+	}
+	if(!threadedKeyEvents){
+		keyMtx.lock();
+				while (!keyEventArgsQueue.empty())
+				{
+					keyEventArgsQueue.pop();
+				}
+		keyMtx.unlock();
+	}
 	ofNotifyEvent(ofxAndroidEvents().resume);
 }
 
-void
-Java_cc_openframeworks_OFAndroid_onPause( JNIEnv*  env, jobject  thiz ){
+
+JNIEXPORT void JNICALL
+Java_cc_openframeworks_OFAndroid_onPause( JNIEnv*  env, jclass thiz){
 	ofLogVerbose("ofAppAndroidWindow") << "onPause";
 	ofNotifyEvent(ofxAndroidEvents().pause);
 }
 
 
-void
+JNIEXPORT void JNICALL
 Java_cc_openframeworks_OFAndroid_onDestroy( JNIEnv*  env, jclass  thiz ){
 	appSetup = false;
+	stopped = true;
 	ofEvents().notifyExit();
 	ofExitCallback();
 }
 
-void
+JNIEXPORT void JNICALL
 Java_cc_openframeworks_OFAndroid_onSurfaceDestroyed( JNIEnv*  env, jclass  thiz ){
-	surfaceDestroyed = true;
-	ofLogVerbose("ofAppAndroidWindow") << "onSurfaceDestroyed";
-	ofNotifyEvent(ofxAndroidEvents().unloadGL);
+	if(!surfaceDestroyed) {
+		surfaceDestroyed = true;
+		ofLogVerbose("ofAppAndroidWindow") << "onSurfaceDestroyed";
+		ofNotifyEvent(ofxAndroidEvents().unloadGL);
+		bSetupScreen = true;
+	} else {
+		ofLogVerbose("ofAppAndroidWindow") << "onSurfaceDestroyed already destroyed though";
+	}
 }
 
-void
+JNIEXPORT void JNICALL
 Java_cc_openframeworks_OFAndroid_onSurfaceCreated( JNIEnv*  env, jclass  thiz ){
 	if(appSetup){
 		ofLogVerbose("ofAppAndroidWindow") << "onSurfaceCreated";
@@ -337,66 +454,145 @@ Java_cc_openframeworks_OFAndroid_onSurfaceCreated( JNIEnv*  env, jclass  thiz ){
 		window->renderer()->pushStyle();
 		window->renderer()->setupGraphicDefaults();
 		window->renderer()->popStyle();
-
-	}else{
-		int glesVersion = window->getGlesVersion();
+		window->setThreadedEvents(false);
+        int glesVersion = window->getGlesVersion();
+		bSetupScreen = true;
 		if( glesVersion < 2 )
 		{
-			static_cast<ofGLRenderer*>(window->renderer().get())->setup();
+			ofLogVerbose("ofAppAndroidWindow") << "onSurfaceCreated OpenGLES 1";
+			dynamic_cast<ofGLRenderer*>(window->renderer().get())->setup();
 		}
 		else
 		{
-			static_cast<ofGLProgrammableRenderer*>(window->renderer().get())->setup(glesVersion,0);
+			ofLogVerbose("ofAppAndroidWindow") << "onSurfaceCreated OpenGLES 2.0";
+			dynamic_cast<ofGLProgrammableRenderer*>(window->renderer().get())->setup(glesVersion,0);
+		}
+
+	}else{
+		if(window != nullptr) {
+			int glesVersion = window->getGlesVersion();
+			bSetupScreen = true;
+			if (glesVersion < 2) {
+				ofLogVerbose("ofAppAndroidWindow") << "onSurfaceCreated OpenGLES 1";
+				dynamic_cast<ofGLRenderer *>(window->renderer().get())->setup();
+			} else {
+				ofLogVerbose("ofAppAndroidWindow") << "onSurfaceCreated OpenGLES 2.0";
+				dynamic_cast<ofGLProgrammableRenderer *>(window->renderer().get())->setup(
+						glesVersion, 0);
+			}
 		}
 	}
 
 	surfaceDestroyed = false;
 }
 
-void
+JNIEXPORT jboolean JNICALL
+Java_cc_openframeworks_OFAndroid_isWindowReady( JNIEnv*  env, jclass  thiz) {
+
+          if(window != nullptr && window->renderer() != nullptr) {
+            return true;
+      } else {
+        return false;
+        }
+}
+
+JNIEXPORT void JNICALL
 Java_cc_openframeworks_OFAndroid_setup( JNIEnv*  env, jclass  thiz, jint w, jint h  )
 {
-	ofLogVerbose("ofAppAndroidWindow") << "setup " << w << "x" << h;
+	ofLogNotice("ofAppAndroidWindow") << "setup " << w << "x" << h;
 	stopped = false;
     sWindowWidth  = w;
     sWindowHeight = h;
-	window->renderer()->startRender();
-	if(bSetupScreen) window->renderer()->setupScreen();
-	window->events().notifySetup();
-	window->renderer()->finishRender();
+    if(window != nullptr && window->renderer() != nullptr)
+	    window->renderer()->startRender();
+	if(bSetupScreen) {
+        if(window != nullptr && window->renderer() != nullptr) {
+			ofLogNotice("ofAppAndroidWindow") << "setupScreen - Logical Resolution:" << w << "x" << h << " Rendering at Resolution:" << w * window->getSamples() << "x" << h * window->getSamples() << " with MSAA:" << window->getSamples();
+			window->renderer()->setupScreen();
+            bSetupScreen = false;
+        } else {
+            ofLogError("ofAppAndroidWindow") << "No Window or Renderer for Logical Resolution:" << w << "x" << h;
+        }
+	}
+
+    if(window != nullptr) {
+    	window->makeCurrent();
+    	if(assetManager != nullptr)
+			window->setAssetManager(assetManager);
+	    window->events().notifySetup();
+
+    }
+    if(window != nullptr && window->renderer() != nullptr)
+	    window->renderer()->finishRender();
 	appSetup = true;
 }
 
-void
+JNIEXPORT void JNICALL
 Java_cc_openframeworks_OFAndroid_resize( JNIEnv*  env, jclass  thiz, jint w, jint h )
 {
     sWindowWidth  = w;
     sWindowHeight = h;
-    ofLogNotice("ofAppAndroidWindow") << "resize " << w << "x" << h;
-    window->events().notifyWindowResized(w,h);
+    bSetupScreen = true;
+    if(window != nullptr) {
+		ofLogNotice("ofAppAndroidWindow") << "resize to Logical Resolution:" << w << "x" << h << " Hardware Resolution: " << w * window->getSamples() << "x" << h * window->getSamples()  << " with MSAA:" << window->getSamples();
+		window->events().notifyWindowResized(w,h);
+    }
 }
 
 /* Call to finalize the graphics state */
-void
+JNIEXPORT void JNICALL
 Java_cc_openframeworks_OFAndroid_exit( JNIEnv*  env, jclass  thiz )
 {
+    ofLogVerbose("ofAppAndroidWindow") << "OFAndroid_exit";
 	exit(0);
 	//window->events().notifyExit();
 }
 
+//
+JNIEXPORT void JNICALL
+Java_cc_openframeworks_OFAndroid_setAssetManager(JNIEnv *env, jclass thiz,
+		jobject jAssetManager) {
+
+	env->NewGlobalRef(jAssetManager);
+
+	AAssetManager *aaAssetManager = AAssetManager_fromJava(env, jAssetManager);
+	if (aaAssetManager == nullptr) {
+		ofLogError("ofAppAndroidWindow") << "Could not obtain the AAssetManager";
+		return;
+	}
+
+	assetManager = aaAssetManager;
+
+	if(window == nullptr || (window != nullptr && window->renderer() == nullptr)) {
+		ofLogVerbose("ofAppAndroidWindow") << "setAssetManager window is null";
+		return;
+	}
+
+	window->setAssetManager(assetManager);
+
+
+
+
+}
+
 /* Call to render the next GL frame */
-void
+JNIEXPORT void JNICALL
 Java_cc_openframeworks_OFAndroid_render( JNIEnv*  env, jclass  thiz )
 {
+	if(stopped || surfaceDestroyed) {
+        ofLogVerbose("ofAppAndroidWindow") << "OFAndroid_render  stopped:" << stopped << "surfaceDestroyed" << surfaceDestroyed;
+	    return;
+	}
 
-	if(stopped || surfaceDestroyed) return;
-
-	if(!threadedTouchEvents){
+	if(window == nullptr || (window != nullptr && window->renderer() == nullptr)) {
+		ofLogVerbose("ofAppAndroidWindow") << "OFAndroid_render window is null";
+		return;
+	}
+	if(!threadedTouchEvents){ // process touch events in render loop thread to prevent latency
 		mtx.lock();
 		queue<ofTouchEventArgs> events = touchEventArgsQueue;
 		while(!touchEventArgsQueue.empty()) touchEventArgsQueue.pop();
 		mtx.unlock();
-
 		while(!events.empty()){
 			switch(events.front().type){
 			case ofTouchEventArgs::down:
@@ -423,17 +619,56 @@ Java_cc_openframeworks_OFAndroid_render( JNIEnv*  env, jclass  thiz )
 		}
 	}
 
+	if(!threadedKeyEvents) { // process key events in render loop thread to prevent latency
+		keyMtx.lock();
+		queue<ofKeyEventArgs> keyEvents = keyEventArgsQueue;
+		while (!keyEventArgsQueue.empty()) keyEventArgsQueue.pop();
+		keyMtx.unlock();
 
-	window->renderer()->startRender();
-	window->events().notifyUpdate();
-	if(bSetupScreen) window->renderer()->setupScreen();
-	window->events().notifyDraw();
-	window->renderer()->finishRender();
+		while (!keyEvents.empty()) {
+			switch (keyEvents.front().type) {
+				case ofKeyEventArgs::Type::Pressed:
+					ofNotifyEvent(window->events().keyPressed, keyEvents.front());
+					break;
+				case ofKeyEventArgs::Type::Released:
+					ofNotifyEvent(window->events().keyReleased, keyEvents.front());
+					break;
+			}
+			keyEvents.pop();
+		}
+	}
+
+	if(!threadedAxisEvents) {
+//		axisMtx.lock();
+//		queue<ofKeyEventArgs> keyEvents = keyEventArgsQueue;
+//		while (!keyEventArgsQueue.empty()) keyEventArgsQueue.pop();
+//		axisMtx.unlock();
+	}
+
+
+	if (bSetupScreen) {
+		window->renderer()->startRender();
+		window->renderer()->setupScreen();
+		window->events().notifyUpdate();
+		window->events().notifyDraw();
+		window->renderer()->finishRender();
+		bSetupScreen = false;
+	} else {
+		window->renderer()->startRender();
+		window->events().notifyUpdate();
+		window->events().notifyDraw();
+		window->renderer()->finishRender();
+	}
 
 }
 
-void
+JNIEXPORT void JNICALL
 Java_cc_openframeworks_OFAndroid_onTouchDown(JNIEnv*  env, jclass  thiz, jint id,jfloat x,jfloat y,jfloat pressure,jfloat majoraxis,jfloat minoraxis,jfloat angle){
+	if(window == nullptr || (window != nullptr && window->renderer() == nullptr)) {
+		ofLogNotice("oF") << "Java_cc_openframeworks_OFAndroid_onTouchDown no window or renderer";
+		return;
+	}
+
 	ofTouchEventArgs touch;
 	touch.id = id;
 	touch.x = x;
@@ -453,8 +688,9 @@ Java_cc_openframeworks_OFAndroid_onTouchDown(JNIEnv*  env, jclass  thiz, jint id
 	}
 }
 
-void
+JNIEXPORT void JNICALL
 Java_cc_openframeworks_OFAndroid_onTouchUp(JNIEnv*  env, jclass  thiz, jint id,jfloat x,jfloat y,jfloat pressure,jfloat majoraxis,jfloat minoraxis,jfloat angle){
+	if(window == nullptr || (window != nullptr && window->renderer() == nullptr)) return;
 	ofTouchEventArgs touch;
 	touch.id = id;
 	touch.x = x;
@@ -474,8 +710,9 @@ Java_cc_openframeworks_OFAndroid_onTouchUp(JNIEnv*  env, jclass  thiz, jint id,j
 	}
 }
 
-void
+JNIEXPORT void JNICALL
 Java_cc_openframeworks_OFAndroid_onTouchCancelled(JNIEnv*  env, jclass  thiz, jint id,jfloat x,jfloat y){
+	if(window == nullptr || (window != nullptr && window->renderer() == nullptr)) return;
 	ofTouchEventArgs touch;
 	touch.id = id;
 	touch.x = x;
@@ -491,8 +728,9 @@ Java_cc_openframeworks_OFAndroid_onTouchCancelled(JNIEnv*  env, jclass  thiz, ji
 	}
 }
 
-void
+JNIEXPORT void JNICALL
 Java_cc_openframeworks_OFAndroid_onTouchMoved(JNIEnv*  env, jclass  thiz, jint id,jfloat x,jfloat y,jfloat pressure,jfloat majoraxis,jfloat minoraxis,jfloat angle){
+	if(window == nullptr || (window != nullptr && window->renderer() == nullptr)) return;
 	ofTouchEventArgs touch;
 	touch.id = id;
 	touch.x = x;
@@ -517,8 +755,9 @@ Java_cc_openframeworks_OFAndroid_onTouchMoved(JNIEnv*  env, jclass  thiz, jint i
 	}
 }
 
-void
+JNIEXPORT void JNICALL
 Java_cc_openframeworks_OFAndroid_onTouchDoubleTap(JNIEnv*  env, jclass  thiz, jint id,jfloat x,jfloat y,jfloat pressure){
+	if(window == nullptr || (window != nullptr && window->renderer() == nullptr)) return;
 	ofTouchEventArgs touch;
 	touch.id = id;
 	touch.x = x;
@@ -535,59 +774,80 @@ Java_cc_openframeworks_OFAndroid_onTouchDoubleTap(JNIEnv*  env, jclass  thiz, ji
 	}
 }
 
-void
+JNIEXPORT void JNICALL
 Java_cc_openframeworks_OFAndroid_onSwipe(JNIEnv*  env, jclass  thiz, jint id, jint swipeDir){
+	if(window == nullptr || (window != nullptr && window->renderer() == nullptr)) return;
 	ofxAndroidSwipeEventArgs swipe{(ofxAndroidSwipeDir)swipeDir,id};
 	ofNotifyEvent(ofxAndroidEvents().swipe,swipe);
 }
 
-jboolean
+JNIEXPORT jboolean JNICALL
 Java_cc_openframeworks_OFAndroid_onScale(JNIEnv*  env, jclass  thiz, jobject detector){
+	if(window == nullptr || (window != nullptr && window->renderer() == nullptr)) return false;
 	ofxAndroidScaleEventArgs scale(detector);
 	return ofxAndroidEvents().scale.notify(nullptr,scale);
 }
 
-jboolean
+JNIEXPORT jboolean JNICALL
 Java_cc_openframeworks_OFAndroid_onScaleBegin(JNIEnv*  env, jclass  thiz, jobject detector){
+	if(window == nullptr || (window != nullptr && window->renderer() == nullptr)) return false;
 	ofxAndroidScaleEventArgs scale(detector);
 	return ofxAndroidEvents().scaleBegin.notify(nullptr,scale);
 }
 
-void
+JNIEXPORT void JNICALL
 Java_cc_openframeworks_OFAndroid_onScaleEnd(JNIEnv*  env, jclass  thiz, jobject detector){
+	if(window == nullptr || (window != nullptr && window->renderer() == nullptr)) return;
 	ofxAndroidScaleEventArgs scale(detector);
     ofxAndroidEvents().scaleEnd.notify(nullptr,scale);
 }
 
-jboolean
-Java_cc_openframeworks_OFAndroid_onKeyDown(JNIEnv*  env, jobject  thiz, jint  keyCode, jint unicode){
+JNIEXPORT jboolean JNICALL
+Java_cc_openframeworks_OFAndroid_onKeyDown(JNIEnv*  env, jclass thiz, jint  keyCode, jint unicode){
+	if(window == nullptr || (window != nullptr && window->renderer() == nullptr)) return true;
     ofKeyEventArgs key;
 	key.type = ofKeyEventArgs::Pressed;
     key.key = unicode;
     key.keycode = keyCode;
     key.scancode = keyCode;
     key.codepoint = unicode;
-    return window->events().notifyKeyEvent(key);
+	if(threadedKeyEvents){
+		return window->events().notifyKeyEvent(key);
+	}else{
+		keyMtx.lock();
+		keyEventArgsQueue.push(key);
+		keyMtx.unlock();
+		return true; // returning key states always true in non-threaded
+	}
+
 }
 
-jboolean
-Java_cc_openframeworks_OFAndroid_onKeyUp(JNIEnv*  env, jobject  thiz, jint  keyCode, jint unicode){
+JNIEXPORT jboolean JNICALL
+Java_cc_openframeworks_OFAndroid_onKeyUp(JNIEnv*  env, jclass thiz, jint  keyCode, jint unicode){
+	if(window == nullptr || (window != nullptr && window->renderer() == nullptr)) return true;
     ofKeyEventArgs key;
 	key.type = ofKeyEventArgs::Released;
     key.key = unicode;
     key.keycode = keyCode;
     key.scancode = keyCode;
     key.codepoint = unicode;
-    return window->events().notifyKeyEvent(key);
+	if(threadedKeyEvents){
+		return window->events().notifyKeyEvent(key);
+	}else{
+		keyMtx.lock();
+		keyEventArgsQueue.push(key);
+		keyMtx.unlock();
+		return true; // returning key states always true in non-threaded
+	}
 }
 
-jboolean
-Java_cc_openframeworks_OFAndroid_onBackPressed(){
+JNIEXPORT jboolean JNICALL
+Java_cc_openframeworks_OFAndroid_onBackPressed(JNIEnv *env, jclass clazz){
 	return ofxAndroidEvents().backPressed.notify(nullptr);
 }
 
-jboolean
-Java_cc_openframeworks_OFAndroid_onMenuItemSelected( JNIEnv*  env, jobject  thiz, jstring menu_id){
+JNIEXPORT jboolean JNICALL
+Java_cc_openframeworks_OFAndroid_onMenuItemSelected( JNIEnv*  env, jclass thiz, jstring menu_id){
 	jboolean iscopy;
 	const char * menu_id_str = env->GetStringUTFChars(menu_id, &iscopy);
 	if(!menu_id_str) return false;
@@ -595,8 +855,8 @@ Java_cc_openframeworks_OFAndroid_onMenuItemSelected( JNIEnv*  env, jobject  thiz
 	return ofxAndroidEvents().menuItemSelected.notify(nullptr,id_str);
 }
 
-jboolean
-Java_cc_openframeworks_OFAndroid_onMenuItemChecked( JNIEnv*  env, jobject  thiz, jstring menu_id, jboolean checked){
+JNIEXPORT jboolean JNICALL
+Java_cc_openframeworks_OFAndroid_onMenuItemChecked( JNIEnv*  env, jclass thiz, jstring menu_id, jboolean checked){
 	jboolean iscopy;
 	const char *menu_id_str = env->GetStringUTFChars(menu_id, &iscopy);
 	if(!menu_id_str) return false;
@@ -604,25 +864,68 @@ Java_cc_openframeworks_OFAndroid_onMenuItemChecked( JNIEnv*  env, jobject  thiz,
 	return ofxAndroidEvents().menuItemChecked.notify(nullptr,id_str);
 }
 
-void
-Java_cc_openframeworks_OFAndroid_okPressed( JNIEnv*  env, jobject  thiz ){
+JNIEXPORT void JNICALL
+Java_cc_openframeworks_OFAndroid_okPressed( JNIEnv*  env, jclass thiz){
 	ofNotifyEvent(ofxAndroidEvents().okPressed);
 }
 
-void
-Java_cc_openframeworks_OFAndroid_cancelPressed( JNIEnv*  env, jobject  thiz ){
+JNIEXPORT void JNICALL
+Java_cc_openframeworks_OFAndroid_cancelPressed( JNIEnv*  env, jclass thiz){
 	ofNotifyEvent(ofxAndroidEvents().cancelPressed);
 }
 
-void
-Java_cc_openframeworks_OFAndroid_networkConnected( JNIEnv*  env, jobject  thiz, jboolean connected){
+JNIEXPORT void JNICALL
+Java_cc_openframeworks_OFAndroid_networkConnected( JNIEnv*  env, jclass thiz, jboolean connected){
 	bool bConnected = (bool)connected;
 	ofNotifyEvent(ofxAndroidEvents().networkConnected,bConnected);
 }
 
-void
+JNIEXPORT void JNICALL
 Java_cc_openframeworks_OFAndroid_deviceOrientationChanged(JNIEnv*  env, jclass  thiz, jint orientation){
+	if(window == nullptr || (window != nullptr && window->renderer() == nullptr)) return;
 	ofOrientation _orientation = (ofOrientation) orientation;
 	ofNotifyEvent(ofxAndroidEvents().deviceOrientationChanged,_orientation );
 }
+
+JNIEXPORT void JNICALL
+Java_cc_openframeworks_OFAndroid_deviceHighestRefreshRate(JNIEnv*  env, jclass  thiz, jint refreshRate){
+	if(window == nullptr || (window != nullptr && window->renderer() == nullptr)) return;
+    int _refreshRate = (int) refreshRate;
+	ofLogNotice("oF") << "deviceHighestRefreshRate:" << _refreshRate;
+   // ofNotifyEvent(ofxAndroidEvents().deviceHighestRefreshRate,_refreshRate );
+}
+
+
+JNIEXPORT void JNICALL
+Java_cc_openframeworks_OFAndroid_deviceRefreshRate(JNIEnv*  env, jclass  thiz, jint refreshRate){
+	if(window == nullptr || (window != nullptr && window->renderer() == nullptr)) return;
+	ofLogNotice("oF") << "deviceRefreshRateChanged:" << refreshRate;
+	int _refreshRate = (int) refreshRate;
+	//ofNotifyEvent(ofxAndroidEvents().deviceRefreshRate,_refreshRate );
+}
+
+JNIEXPORT void JNICALL
+Java_cc_openframeworks_OFAndroid_setSampleSize(JNIEnv*  env, jclass  thiz, jint sampleSize){
+	if(window == nullptr || (window != nullptr && window->renderer() == nullptr)) return;
+	ofLogNotice("oF") << "setSampleSize:" << sampleSize;
+	window->setSampleSize(sampleSize);
+}
+
+JNIEXPORT void JNICALL
+Java_cc_openframeworks_OFAndroid_onAxisMoved(JNIEnv*  env, jclass  thiz, jint id, jint deviceid, jint productid, jfloat x, jfloat y){
+	if(window == nullptr || (window != nullptr && window->renderer() == nullptr)) return;
+	//ofLogNotice("oF") << "axisMoved:[" << id << "] x:" << x << " y:" << y;
+
+}
+
+
+JNIEXPORT void JNICALL
+Java_cc_openframeworks_OFAndroid_setMultiWindowMode(JNIEnv*  env, jclass  thiz, jboolean multiWindow){
+	if(window == nullptr || (window != nullptr && window->renderer() == nullptr)) return;
+    bool bMultiWindow = (bool)multiWindow;
+	ofLogNotice("oF") << "setMultiWindowMode:" << bMultiWindow;
+	window->setMultiWindowMode(bMultiWindow);
+}
+
+
 }

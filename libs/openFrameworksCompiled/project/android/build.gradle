@@ -1,77 +1,23 @@
-def ofRoot(){ return '../../../../' }
-final ofSource = ofRoot() + 'libs/openFrameworks'
-final ofLibs = ofRoot() + 'libs'
-final addons = ofRoot() + 'addons'
-
-// Load common functions
-apply from: "common-functions.gradle"
-
-apply plugin: "com.android.model.native"
-
-model {
-    android {
-        compileSdkVersion 25
-
-        defaultConfig.with {
-            minSdkVersion.apiLevel 19
-            targetSdkVersion.apiLevel 25
-        }
-
-        ndk {
-            platformVersion = "21"
-            moduleName "openFrameworksLib"
-            toolchain  = buildToolchain()
-            stl        = compilerStl()
-        }
-
-        sources {
-            main {
-                jni {
-                    source {
-                        srcDirs = [
-                                ofSource
-                        ]
-                        excludes = ["**/ofGraphicsCairo.cpp",
-                                    "**/ofDirectShowGrabber.cpp",
-                                    "**/ofDirectShowPlayer.cpp",
-                                    "**/ofGstUtils.cpp",
-                                    "**/ofGstVideoGrabber.cpp",
-                                    "**/ofGstVideoPlayer.cpp",
-                                    "**/ofAppGlutWindow.cpp",
-                                    "**/ofAppEGLWindow.cpp",
-                                    "**/ofAppGLFWWindow.cpp",
-                                    "**/ofCairoRenderer.cpp",
-                                    "**/ofFmodSoundPlayer.cpp",
-                                    "**/ofOpenALSoundPlayer.cpp",
-                                    "**/ofRtAudioSoundStream.cpp",
-                                    "**/glew/**/*",
-                                    "**/videoInput/**/*",
-                                    "**/fmod/**/*",
-                                    "**/kiss/**/*",
-                                    "**/assimp/**/*",
-                                    "**/portaudio/**/*",
-                                    "**/rtAudio/**/*",
-                                    "**/poco/lib/**/*",
-                                    "**/openssl/lib/**/*",
-                                    "**/boost/include/boost/**/*",
-                                    "**/curl/**/*"
-                        ]
-                    }
-                }
-            }
-        }
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
     }
-
-    android.productFlavors {
-        getAbis().each { abi ->
-            create(getFlavorName(abi)) {
-                ndk {
-                    abiFilters.add(abi)
-                    cppFlags.addAll(coreCppFlags(abi, ofRoot()))
-                    ldLibs.addAll(coreLdLibs(abi, ofRoot()))
-                    ldFlags.addAll(coreLdFlags(abi, ofRoot()))
-                }
-            }
-        }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:8.9.0'
     }
+}
+
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+    }
+    ext {
+
+    }
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
 }

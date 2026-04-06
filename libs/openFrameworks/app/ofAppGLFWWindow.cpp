@@ -37,6 +37,14 @@ using std::numeric_limits;
 using std::shared_ptr;
 using std::vector;
 
+namespace of{
+	namespace priv{
+		bool InitGLFW(){
+			return glfwInit();
+		}
+	}
+}
+
 //-------------------------------------------------------
 ofAppGLFWWindow::ofAppGLFWWindow()
 	: coreEvents(new ofCoreEvents) {
@@ -155,8 +163,8 @@ void ofAppGLFWWindow::setup(const ofGLESWindowSettings & settings) {
             return;
         }
         settings = _settings;
-        
-        if (!glfwInit()) {
+		
+        if (!of::priv::InitGLFW()) {
             ofLogError("ofAppGLFWWindow") << "couldn't init GLFW";
             return;
         }
@@ -1685,7 +1693,7 @@ void ofAppGLFWWindow::setup(const ofGLESWindowSettings & settings) {
     
     //------------------------------------------------------------
     void ofAppGLFWWindow::listVideoModes() {
-        glfwInit();
+        of::priv::InitGLFW();
         int numModes;
         const GLFWvidmode * vidModes = glfwGetVideoModes(nullptr, &numModes);
         for (int i = 0; i < numModes; i++) {
@@ -1696,7 +1704,7 @@ void ofAppGLFWWindow::setup(const ofGLESWindowSettings & settings) {
     
     //------------------------------------------------------------
     void ofAppGLFWWindow::listMonitors() {
-        glfwInit();
+        of::priv::InitGLFW();
         int count;
         const auto monitors = glfwGetMonitors(&count);
         for (int i = 0; i < count; i++) {

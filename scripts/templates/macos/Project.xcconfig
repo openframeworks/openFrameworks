@@ -67,13 +67,6 @@ GCC_PREPROCESSOR_DEFINITIONS=$(inherited)$(USER_PREPROCESSOR_DEFINITIONS)
 //OF_BUNDLE_DATA_FOLDER = 1
 //OF_BUNDLE_DYLIBS = 1
 
-// BOOST - UNCOMMENT BELOW TO ENABLE BOOST
-//HEADER_BOOST = "$(OF_PATH)/libs/boost/include"
-//LIB_BOOST_SYSTEM = "$(OF_PATH)/libs/boost/lib/osx/boost_system.a"
-//LIB_BOOST_FS = "$(OF_PATH)/libs/boost/lib/osx/boost_filesystem.a"
-//OF_CORE_LIBS = $(inherited) $(LIB_BOOST_FS) $(LIB_BOOST_SYSTEM)
-//OF_CORE_HEADERS = $(inherited) $(HEADER_BOOST)
-
 // Optional include to keep any permanent settings as CODE_SIGN_IDENTITY. 
 #include? "App.xcconfig"
 

@@ -43,9 +43,6 @@
 	#endif*/
 #endif
 
-// serial error codes
-#define OF_SERIAL_NO_DATA 	-2
-#define OF_SERIAL_ERROR		-1
 
 using std::vector;
 using std::string;
@@ -446,10 +443,10 @@ bool ofSerial::setup(string portName, int baud){
 		cfgSize = sizeof(cfg);
 		GetCommConfig(hComm, &cfg, &cfgSize);
 		int bps = baud;
-		swprintf(buf, L"baud=%d parity=N data=8 stop=1", bps);
+		swprintf(buf, 80, L"baud=%d parity=N data=8 stop=1", bps);
 
 		if(!BuildCommDCBW(buf, &cfg.dcb)){
-			ofLogError("ofSerial") << "setup(): unable to build comm dcb, (" << buf << ")";
+			ofLogError("ofSerial") << "setup(): unable to build comm dcb";
 		}
 
 		// Set baudrate and bits etc.

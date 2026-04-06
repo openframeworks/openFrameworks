@@ -1,0 +1,28 @@
+<IfModule mod_headers.c>
+   # Header set Cross-Origin-Embedder-Policy "require-corp"
+   # Header set Cross-Origin-Opener-Policy "same-origin"
+    Header unset Cross-Origin-Embedder-Policy
+    Header unset Cross-Origin-Opener-Policy
+    Header set Access-Control-Allow-Origin "*"
+    Header set Access-Control-Allow-Methods "GET, POST, OPTIONS, PUT, DELETE"
+    Header set Access-Control-Allow-Headers "Content-Type, Authorization"
+	Header set Content-Security-Policy "script-src 'self' 'unsafe-inline';"
+	Header set Content-Security-Policy "default-src 'self' 'unsafe-inline';"
+	Header set Content-Security-Policy "img-src 'self' 'unsafe-inline';"
+	Header set Content-Security-Policy "script-src 'self' 'unsafe-eval';"
+	Header set Content-Security-Policy "default-src 'self' 'unsafe-eval';"
+	#https://web.dev/articles/csp?utm_source=devtools#eval_too
+	#https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP
+</IfModule>
+
+# apache setting for WebAssembly COOP Requirement
+# https://docs.apryse.com/documentation/web/faq/wasm-threads/#configuring-your-website
+
+# https://emscripten.org/docs/compiling/WebAssembly.html
+Options Multiviews
+RemoveType .gz
+AddEncoding x-gzip .gz
+AddType application/wasm .wasm
+AddOutputFilterByType DEFLATE application/wasm
+
+# check content type of WASM using cURL: curl -I https://*.com/index.wasm | grep "content-type"

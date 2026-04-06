@@ -1,5 +1,5 @@
 #!/bin/bash
-# set -ev
+set -ev
 ROOT="$PWD"
 
 echo "##[group]**** Building OF core ****"

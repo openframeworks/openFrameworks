@@ -8,9 +8,10 @@ class ofApp : public ofxAndroidApp{
 	public:
 		
 		void setup();
+		void exit();
 		void update();
 		void draw();
-
+		
 		void keyPressed(int key);
 		void keyReleased(int key);
 		void windowResized(int w, int h);
@@ -32,6 +33,11 @@ class ofApp : public ofxAndroidApp{
 		void okPressed();
 		void cancelPressed();
 
+        void deviceRefreshRateChanged(int refreshRate);
+        void deviceHighestRefreshRateChanged(int refreshRate);
+        void deviceRefreshRateChangedEvent(int &refreshRate);
+        void deviceHighestRefreshRateChangedEvent(int & refreshRate);
+		
 		ofVideoGrabber grabber;
 
 		// Image storing a clone of the grabber image
@@ -42,5 +48,4 @@ class ofApp : public ofxAndroidApp{
 		int cameraOrientation;
 
 		int appOrientation;
-
 };

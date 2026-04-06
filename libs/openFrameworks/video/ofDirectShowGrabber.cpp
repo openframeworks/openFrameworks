@@ -1,6 +1,17 @@
 #include "ofDirectShowGrabber.h"
 #include "ofUtils.h"
 #ifdef TARGET_WIN32
+
+//--------------------------------------------------------------------
+//Static members / functions 
+
+int ofDirectShowGrabber::preferredFormat = -1; 
+
+void ofDirectShowGrabber::setPreferredFormat(int aPreferredFormat) {
+	preferredFormat = aPreferredFormat;
+}
+
+
 //--------------------------------------------------------------------
 ofDirectShowGrabber::ofDirectShowGrabber(){
 
@@ -51,6 +62,9 @@ bool ofDirectShowGrabber::setup(int w, int h){
 		height = h;
 		bGrabberInited = false;
 
+		if (preferredFormat >= 0) {
+			VI.setRequestedMediaSubType(preferredFormat);
+		}
 		if( attemptFramerate >= 0){
 			VI.setIdealFramerate(device, attemptFramerate);
 		}

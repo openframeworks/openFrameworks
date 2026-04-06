@@ -1,6 +1,5 @@
 #include "ofRectangle.h"
 #include "ofLog.h"
-#include "ofVectorMath.h"
 #include "ofMath.h"
 
 using std::ostream;
@@ -286,7 +285,7 @@ void ofRectangle::scaleTo(const ofRectangle& targetRect,
 
     if(aspectRatioMode == OF_ASPECT_RATIO_KEEP_BY_EXPANDING ||
        aspectRatioMode == OF_ASPECT_RATIO_KEEP) {
-        if(std::abs(sw) >= std::numeric_limits<float>::epsilon() || std::abs(sh) >= FLT_EPSILON) {
+        if(std::abs(sw) >= std::numeric_limits<float>::epsilon() || std::abs(sh) >= std::numeric_limits<float>::epsilon()) {
             float wRatio = std::abs(tw) / std::abs(sw);
             float hRatio = std::abs(th) / std::abs(sh);
             if(aspectRatioMode == OF_ASPECT_RATIO_KEEP_BY_EXPANDING) {
@@ -756,7 +755,7 @@ float ofRectangle::getHeight() const {
 //----------------------------------------------------------
 glm::vec2 ofRectangle::map(const glm::vec2 & coeff) const {
     return glm::vec2(
-        ofMap(coeff.x, 0.0f, 1.0f, getMinX(), getMaxX(), false), 
+        ofMap(coeff.x, 0.0f, 1.0f, getMinX(), getMaxX(), false),
         ofMap(coeff.y, 0.0f, 1.0f, getMinY(), getMaxY(), false)
         );
 }
@@ -772,7 +771,7 @@ ofRectangle ofRectangle::map(const ofRectangle & coeff) const {
 
 glm::vec2 ofRectangle::mapClamp(const glm::vec2 & coeff) const {
     return glm::vec2(
-        ofMap(coeff.x, 0.0f, 1.0f, getMinX(), getMaxX(), true), 
+        ofMap(coeff.x, 0.0f, 1.0f, getMinX(), getMaxX(), true),
         ofMap(coeff.y, 0.0f, 1.0f, getMinY(), getMaxY(), true)
         );
 }
@@ -783,7 +782,7 @@ ofRectangle ofRectangle::mapClamp(const ofRectangle & coeff) const {
        mapClamp(glm::vec2(coeff.getMaxX(), coeff.getMaxY()))
        );
 }
-    
+
 
 //----------------------------------------------------------
 ofRectangle& ofRectangle::operator = (const ofRectangle& rect) {
@@ -829,13 +828,17 @@ bool ofRectangle::isZero() const{
 
 //----------------------------------------------------------
 ostream& operator<<(ostream& os, const ofRectangle& rect){
-	os << rect.position << ", " << rect.width << ", " << rect.height;
+	os << rect.position.x << ", " << rect.position.y << ", " << rect.width << ", " << rect.height;
 	return os;
 }
 
 //----------------------------------------------------------
 istream& operator>>(istream& is, ofRectangle& rect){
-	is >> rect.position;
+	is >> rect.position.x;
+	is.ignore(2);
+	is >> rect.position.y;
+	is.ignore(2);
+	is >> rect.position.z;
 	is.ignore(2);
 	is >> rect.width;
 	is.ignore(2);

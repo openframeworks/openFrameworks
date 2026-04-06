@@ -2,7 +2,9 @@
 
 #ifdef OF_SOUND_PLAYER_OPENAL
 
-#define GLM_FORCE_CTOR_INIT
+#if !defined(GLM_FORCE_CTOR_INIT)
+	#define GLM_FORCE_CTOR_INIT
+#endif
 #include <glm/gtc/constants.hpp>
 #include <glm/ext/scalar_common.hpp>
 

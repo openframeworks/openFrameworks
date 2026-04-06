@@ -87,3 +87,24 @@ void ofApp::touchCancelled(int x, int y, int id){
 void ofApp::swipe(ofxAndroidSwipeDir swipeDir, int id){
 	ofLogNotice() << "swipes " << swipeDir << id;
 }
+
+//--------------------------------------------------------------
+void ofApp::deviceRefreshRateChanged(int refreshRate) {
+}
+
+//--------------------------------------------------------------
+void ofApp::deviceHighestRefreshRateChanged(int refreshRate) {
+}
+
+//--------------------------------------------------------------
+void ofApp::deviceRefreshRateChangedEvent(int &refreshRate) {
+}
+
+//--------------------------------------------------------------
+void ofApp::deviceHighestRefreshRateChangedEvent(int &refreshRate) {
+}
+
+//--------------------------------------------------------------
+void ofApp::exit(){
+
+}

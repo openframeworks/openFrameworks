@@ -32,6 +32,13 @@ class ofDirectShowGrabber : public ofBaseVideoGrabber{
 		ofDirectShowGrabber();
 		virtual ~ofDirectShowGrabber();
 
+		/// \brief Sets the preffered DirectShow media subtype - MJPG / H264 can provide faster framerates 
+		///
+		/// /use formats like: MEDIASUBTYPE_H264, MEDIASUBTYPE_MJPG, MEDIASUBTYPE_Y800 etc, default is: MEDIASUBTYPE_RGB24
+		/// /use -1 to revert to the default behavior 
+		///
+		static void setPreferredFormat(int aPreferredFormat); 		
+
 		std::vector<ofVideoDevice>	listDevices() const;
 		bool					setup(int w, int h);
 		void					update();
@@ -56,9 +63,6 @@ class ofDirectShowGrabber : public ofBaseVideoGrabber{
 		void					setDeviceID(int _deviceID);
 		void					setDesiredFrameRate(int framerate);
 
-
-		
-
 	protected:
 	
 		bool					bChooseDevice;
@@ -70,6 +74,7 @@ class ofDirectShowGrabber : public ofBaseVideoGrabber{
 		bool 					bIsFrameNew;	
 		
 		int						width, height;	
+		static int				preferredFormat; 
 		//--------------------------------- directshow
 		#ifdef OF_VIDEO_CAPTURE_DIRECTSHOW
 			int 					device;

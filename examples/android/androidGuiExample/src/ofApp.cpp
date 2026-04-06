@@ -1,10 +1,10 @@
 #include "ofApp.h"
 
-	
+
 //--------------------------------------------------------------
 void ofApp::setup(){
 	ofSetVerticalSync(true);
-	
+
 	// we add this listener before setting up so the initial circle resolution is correct
 	circleResolution.addListener(this, &ofApp::circleResolutionChanged);
 	ringButton.addListener(this,&ofApp::ringButtonPressed);
@@ -24,7 +24,7 @@ void ofApp::setup(){
 	gui.add(twoCircles.setup("twoCircles"));
 	gui.add(ringButton.setup("ring"));
 	gui.add(screenSize.set("screenSize", ofToString(ofGetWidth()) + "x" + ofToString(ofGetHeight())));
-	
+
 	bHide = true;
 
 	ring.load("ring.wav");
@@ -52,7 +52,7 @@ void ofApp::update(){
 //--------------------------------------------------------------
 void ofApp::draw(){
 	ofBackgroundGradient(ofColor::white, ofColor::gray);
-	
+
 	if( filled ){
 		ofFill();
 	}else{
@@ -66,7 +66,7 @@ void ofApp::draw(){
 	}else{
 		ofCircle(center->x, center->y, radius );
 	}
-	
+
 	if( bHide ){
 		gui.draw();
 	}
@@ -90,12 +90,12 @@ void ofApp::keyPressed(int key){
 
 //--------------------------------------------------------------
 void ofApp::keyReleased(int key){
-	
+
 }
 
 //--------------------------------------------------------------
 void ofApp::mouseMoved(int x, int y ){
-	
+
 }
 
 //--------------------------------------------------------------
@@ -104,12 +104,12 @@ void ofApp::mouseDragged(int x, int y, int button){
 
 //--------------------------------------------------------------
 void ofApp::mousePressed(int x, int y, int button){
-	
+
 }
 
 //--------------------------------------------------------------
 void ofApp::mouseReleased(int x, int y, int button){
-	
+
 }
 
 //--------------------------------------------------------------
@@ -129,10 +129,26 @@ void ofApp::windowResized(int w, int h){
 
 //--------------------------------------------------------------
 void ofApp::gotMessage(ofMessage msg){
-	
+
 }
 
 //--------------------------------------------------------------
-void ofApp::dragEvent(ofDragInfo dragInfo){ 
-	
+void ofApp::dragEvent(ofDragInfo dragInfo){
+
+}
+
+//--------------------------------------------------------------
+void ofApp::deviceRefreshRateChanged(int refreshRate) {
+}
+
+//--------------------------------------------------------------
+void ofApp::deviceHighestRefreshRateChanged(int refreshRate) {
+}
+
+//--------------------------------------------------------------
+void ofApp::deviceRefreshRateChangedEvent(int &refreshRate) {
+}
+
+//--------------------------------------------------------------
+void ofApp::deviceHighestRefreshRateChangedEvent(int &refreshRate) {
 }

@@ -1,17 +1,12 @@
-//
-//  ofxAssimpAnimationMixer.cpp
-//  Created by Nick Hardeman on 11/3/23.
-//
-
 #include "ofxAssimpAnimationMixer.h"
 #include "ofLog.h"
 #include "ofUtils.h"
 
-using namespace ofx::assimp;
+using namespace ofxAssimp;
 
 //--------------------------------------------------------------
 bool AnimationClip::shouldRemove( const AnimationClip& ac ) {
-	return ac.bRemove;
+	return (ac.animationWeak.expired() || ac.bRemove);
 }
 
 //--------------------------------------------------------------
@@ -22,7 +17,7 @@ std::size_t AnimationMixer::getNumAnimationClips() {
 //--------------------------------------------------------------
 AnimationClip& AnimationMixer::getAnimationClip(int aindex) {
 	if( getNumAnimationClips() < 1 ) {
-		ofLogWarning("ofx::assimp::AnimationMixer::getAnimationClip") << "there are no animation clips.";
+		ofLogWarning("ofxAssimp::AnimationMixer::getAnimationClip") << "there are no animation clips.";
 		return dummy;
 	}
 	aindex = ofClamp( aindex, 0, getNumAnimationClips()-1);
@@ -32,15 +27,18 @@ AnimationClip& AnimationMixer::getAnimationClip(int aindex) {
 //--------------------------------------------------------------
 AnimationClip& AnimationMixer::getAnimationClip(const std::string& aname) {
 	if( getNumAnimationClips() < 1 ) {
-		ofLogWarning("ofx::assimp::AnimationMixer::getAnimationClip") << "there are no animation clips.";
+		ofLogWarning("ofxAssimp::AnimationMixer::getAnimationClip") << "there are no animation clips.";
 		return dummy;
 	}
 	for( auto& anim : mAnimationClips ) {
-		if( anim.animation.getName() == aname ) {
-			return anim;
+		if(anim.animationWeak.expired()) {continue;}
+		if( auto alock = anim.animationWeak.lock() ) {
+			if( alock->getName() == aname ) {
+				return anim;
+			}
 		}
 	}
-	ofLogWarning("ofx::assimp::AnimationMixer::getAnimationClip") << " could not find clip " << aname;
+	ofLogWarning("ofxAssimp::AnimationMixer::getAnimationClip") << " could not find clip " << aname;
 	return dummy;
 }
 
@@ -62,9 +60,12 @@ bool AnimationMixer::remove( int aindex ) {
 bool AnimationMixer::remove( const std::string& aname ) {
 	int tindex = -1;
 	for(int i = 0; i < (int)mAnimationClips.size(); i++) {
-		if( mAnimationClips[i].animation.getName() == aname ) {
-			tindex = i;
-			break;
+		if(mAnimationClips[i].animationWeak.expired()) {continue;}
+		if( auto alock = mAnimationClips[i].animationWeak.lock() ) {
+			if( alock->getName() == aname ) {
+				tindex = i;
+				break;
+			}
 		}
 	}
 	if( tindex > -1 ) {
@@ -81,14 +82,20 @@ void AnimationMixer::removeAll() {
 //--------------------------------------------------------------
 void AnimationMixer::playAll() {
 	for( auto& anim : mAnimationClips ) {
-		anim.animation.play();
+		if(anim.animationWeak.expired()) {continue;}
+		if( auto alock = anim.animationWeak.lock() ) {
+			alock->play();
+		}
 	}
 }
 
 //--------------------------------------------------------------
 void AnimationMixer::stopAll() {
 	for( auto& anim : mAnimationClips ) {
-		anim.animation.stop();
+		if(anim.animationWeak.expired()) {continue;}
+		if( auto alock = anim.animationWeak.lock() ) {
+			alock->stop();
+		}
 	}
 }
 
@@ -96,7 +103,10 @@ void AnimationMixer::stopAll() {
 void AnimationMixer::update(float aElapsedTimef) {
 	for(auto& anim : mAnimationClips ) {
 //		std::cout << "AnimationMixer :: update : " << anim.animation.getName() << " position: " << anim.animation.getPositionInSeconds() << std::endl;
-		anim.animation.update();
+		if(anim.animationWeak.expired()) {continue;}
+		if( auto alock = anim.animationWeak.lock() ) {
+			alock->update();
+		}
 	}
 	
 	float tdelta = std::max( std::min(aElapsedTimef-mLastUpdateTime, 10.f), ai_epsilon);
@@ -171,9 +181,13 @@ void AnimationMixer::transition( const std::string& aname, float aduration, bool
 	// first get the targeted animation //
 	int animIndex = -1;
 	for( int i = 0; i < (int)mAnimationClips.size(); i++ ) {
-		if( mAnimationClips[i].animation.getName() == aname ) {
-			animIndex = i;
-			break;
+//		if( mAnimationClips[i].animation.getName() == aname ) {
+		if(mAnimationClips[i].animationWeak.expired()) {continue;}
+		if( auto alock = mAnimationClips[i].animationWeak.lock() ) {
+			if( alock->getName() == aname ) {
+				animIndex = i;
+				break;
+			}
 		}
 	}
 	if( animIndex < 0 ) {

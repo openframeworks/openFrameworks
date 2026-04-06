@@ -31,6 +31,12 @@ ofxToggle * ofxToggle::setup(const std::string& toggleName, bool _bVal, float wi
 	return setup(value,width,height);
 }
 
+void ofxToggle::setSize(float width, float height){
+	b.width = width;
+	b.height = height;
+	checkboxRect.set(1, 1, b.height - 2, b.height - 2);
+	sizeChangedCB();
+}
 
 bool ofxToggle::mouseMoved(ofMouseEventArgs & args){
 	if(isGuiDrawing() && b.inside(args)){

@@ -15,7 +15,7 @@ void ofApp::setup(){
 //--------------------------------------------------------------
 void ofApp::loadModel(string filename){
 	
-	ofx::assimp::ImportSettings tsettings;
+	ofxAssimp::ImportSettings tsettings;
 	tsettings.filePath = filename;
 //	tsettings.importTextures = false;
 //	tsettings.importAnimations = false;
@@ -41,7 +41,7 @@ void ofApp::loadModel(string filename){
 		mSceneString += model.getHierarchyAsString();
 		cout << mSceneString << endl;
 		
-		auto neckBone = model.getNodeAsType<ofx::assimp::Bone>("*:neck_control");
+		auto neckBone = model.getNodeAsType<ofxAssimp::Bone>("*:neck_control");
 		if( neckBone ) {
 			mLocalQuat = neckBone->getOrientationQuat();
 		}
@@ -55,7 +55,7 @@ void ofApp::loadModel(string filename){
 		
 		model.getAnimation("eat").setLoopType( OF_LOOP_NORMAL );
 		
-		auto tailBone = model.getNodeAsType<ofx::assimp::Bone>("*:tail_top");
+		auto tailBone = model.getNodeAsType<ofxAssimp::Bone>("*:tail_top");
 		if( tailBone ) {
 //			tailBone->setAnimationsEnabled(false);
 		}
@@ -106,7 +106,7 @@ void ofApp::update(){
 	
 	if( lookStrength > 0.0f ) {
 		// try to grab the neck bone
-		auto neckBone = model.getNodeAsType<ofx::assimp::Bone>("*:neck_control");
+		auto neckBone = model.getNodeAsType<ofxAssimp::Bone>("*:neck_control");
 		if( neckBone ) {
 			
 			glm::vec3 relPosition = neckBone->getGlobalPosition() - mLookAtPos;

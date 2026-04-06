@@ -22,8 +22,8 @@ void ofApp::setup(){
 
 	//loop around and make verts in a circle, with a bit of a z-wave
 	for (int i = 0; i < max; i++){
-		float step = 2*PI/max; // step size around circle
-		float theta = ofMap(i, 0, max-1, 0, 2*PI - step); //map i as circle divisions to actual radian values around the circle (note we don't go quite all the way around by one step, because it will be the same as where we started, so we'll just index that starting vertex when we make faces)
+		float step = glm::two_pi<float>()/max; // step size around circle
+		float theta = ofMap(i, 0, max-1, 0, glm::two_pi<float>() - step); //map i as circle divisions to actual radian values around the circle (note we don't go quite all the way around by one step, because it will be the same as where we started, so we'll just index that starting vertex when we make faces)
 
 		float prevTheta = theta - step; //one step back
 		float nextTheta = theta + step; // one step forward
@@ -52,7 +52,7 @@ void ofApp::setup(){
 
 		//add a color too
 		ofColor c;
-		c.setHsb(40 + 30*sin(2*theta+PI),255,255,255);
+		c.setHsb(40 + 30*sin(2*theta+glm::pi<float>()),255,255,255);
 		mesh.addColor(c);
 	}
 

@@ -77,7 +77,7 @@ linuxarmv7l:
 	ADDON_INCLUDES_EXCLUDE = libs/oscpack/src/ip/win32
 
 linuxaarch64:
-	AADDON_SOURCES_EXCLUDE = libs/oscpack/src/ip/win32/%
+	ADDON_SOURCES_EXCLUDE = libs/oscpack/src/ip/win32/%
 	ADDON_INCLUDES_EXCLUDE = libs/oscpack/src/ip/win32
 
 linux:

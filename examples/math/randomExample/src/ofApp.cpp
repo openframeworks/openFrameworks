@@ -131,11 +131,10 @@ void ofApp::perform() {
 		ofLogNotice("gaussian aka normal<vec3>(10,2)") << gaussian<vec3>(10, 2);
 		ofLogNotice("gaussian aka normal<vec3>({10,20,30},{2,1,.5})") << gaussian<vec3>({ 10, 20, 30 }, { 2, 1, .5 });
 
-		// exponential requires 1 args (no defaults)
+		// exponential requires 1 args (no defaults) which must be real (not int)
 
 		ofLogNotice("exponential(2.5)") << of::random::exponential(2.5);
 		ofLogNotice("exponential<double>(2.5)") << exponential<double>(2.5);
-		ofLogNotice("exponential<int>(2.5)") << exponential<int>(2.5);
 		ofLogNotice("exponential<vec2>(2.5)") << exponential<vec2>(2.5);
 		ofLogNotice("exponential<vec4>(2.5)") << exponential<vec4>(2.5);
 		ofLogNotice("exponential<vec2>({2.5, 10})") << exponential<vec2>({ 2.5, 10 });
@@ -145,7 +144,6 @@ void ofApp::perform() {
 
 		ofLogNotice("ofRandomExponential(2.5)") << ofRandomExponential(2.5);
 		ofLogNotice("ofRandomExponential<double>(2.5)") << ofRandomExponential<double>(2.5);
-		ofLogNotice("ofRandomExponential<int>(2.5)") << ofRandomExponential<int>(2.5);
 		ofLogNotice("ofRandomExponential<vec2>(2.5)") << ofRandomExponential<vec2>(2.5);
 		ofLogNotice("ofRandomExponential<vec2>({2.5, 10})") << ofRandomExponential<vec2>({ 2.5, 10 });
 		ofLogNotice("ofRandomExponential<vec3>(2.5, 10, 0.1") << ofRandomExponential<vec3>(2.5);
@@ -301,6 +299,9 @@ void ofApp::perform() {
 		ofLogNotice("ofRandomBoundNormal<glm::vec3>({100 ,200, 300},{110, 210, 310})") << ofRandomBoundNormal<glm::vec3>({100 ,200, 300},{110, 210, 310});
 		ofLogNotice("ofRandomBoundNormal<glm::vec4>(10, 20)") << ofRandomBoundNormal<glm::vec4>(10, 20);
 		ofLogNotice("ofRandomBoundNormal<glm::vec4>({100 ,200, 300, 400},{110, 210, 310, 410})") << ofRandomBoundNormal<glm::vec4>({100 ,200, 300, 400},{110, 210, 310, 410});
+
+		ofLogNotice("ofRandomBoundNormal<glm::vec2>(10, 20, 1)") << ofRandomBoundNormal<glm::vec2>(10, 20, 1);
+		ofLogNotice("ofRandomBoundNormal<glm::vec4>(10, 20, 1)") << ofRandomBoundNormal<glm::vec2>({10, 10}, {20,20}, {1,1});
 
 		ofLogNotice("======= alternate engines test =====");
 		std::random_device rd {};

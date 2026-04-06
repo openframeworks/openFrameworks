@@ -8,24 +8,24 @@ void ofApp::setup(){
 	}else{
 		shader.load("shadersGL2/shader");
 	}
-	
+
 	brushImage.load("brush.png");
 	// change the image to draw from the center
 	// the default is from top left
 	brushImage.setAnchorPercent(0.5f, 0.5f);
-	
+
 	textures.resize(5);
 	for( int i = 0; i < textures.size(); i++ ){
 		ofLoadImage(textures[i], "tex"+ofToString(i,0)+".jpg");
 	}
-	
+
 	bBrushDown = false;
-	
+
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
-	
+
 	// check to see if we need a new fbo size
 	// if the window size changes or the fbo is not allocated, we can catch it here and reallocate
 	if( !maskFbo.isAllocated() || maskFbo.getWidth() != ofGetWidth() || maskFbo.getHeight() != ofGetHeight() ){
@@ -36,7 +36,7 @@ void ofApp::update(){
 		maskFbo.begin();
 		ofClear(0,0,0,255);
 		maskFbo.end();
-		
+
 		drawMesh = ofMesh::plane(maskFbo.getWidth(), maskFbo.getHeight() );
 		// the plane has tex coords from 0 - 1, but we need tex coords from 0 -> maskFbo.getWidth()
 		auto& texCoords = drawMesh.getTexCoords();
@@ -45,11 +45,11 @@ void ofApp::update(){
 		for( auto& tc : texCoords ){
                     tc = maskFbo.getTexture().getCoordFromPercent(tc.x, (1.0-tc.y));
 		}
-		
+
 		// lets reload the font at a size in relation to width or height
 		ofTrueTypeFont tf;
-		tf.load("Batang.ttf", MIN(maskFbo.getWidth(), maskFbo.getHeight()) / 2, true, true, true);
-		
+		tf.load("Batang.ttf", std::min(maskFbo.getWidth(), maskFbo.getHeight()) / 2, true, true, true);
+
 		oLine.clear();
 		// pull out the polylines of the O character for later use
 		// getCharacterAsPoints returns an ofPath
@@ -60,7 +60,7 @@ void ofApp::update(){
 		for( auto op : opolys ){
 			oLine.addVertices( op.getVertices() );
 		}
-		
+
 		fLine.clear();
 		// pull out the polylines of the F character for later use
 		opath = tf.getCharacterAsPoints('F', true, false);
@@ -75,7 +75,7 @@ void ofApp::update(){
 void ofApp::draw(){
 
 	ofSetColor(255);
-	
+
 	//----------------------------------------------------------
 	// draw the brush into the fbo with the position based on the polylines derived from the font
 	maskFbo.begin();
@@ -87,21 +87,21 @@ void ofApp::draw(){
 		// store the elapsed time in a variable for later use
 		float elapsedTime = ofGetElapsedTimef();
 		float deltaTime = ofClamp( ofGetLastFrameTime(), 1.f / 1000.0, 1.f / 5.0f );
-		
+
 		float mouseXPercent = ofMap( ofGetMouseX(), 0, ofGetWidth(), 0.05, 1.0, true );
 		eTimeCounter += deltaTime * mouseXPercent;
-		
+
 		float offset = ofMap( ofGetMouseY(), 10, ofGetHeight()-10, 0, 100, true);
-		
+
 		float polylinePercent = ofWrap( eTimeCounter, 0, 1);
 		float findex = oLine.getIndexAtPercent(polylinePercent);
-		
+
 		auto position = oLine.getPointAtPercent( polylinePercent );
 		auto normal = oLine.getNormalAtIndexInterpolated(findex);
 		normal *= sin(  elapsedTime * 13.4f ) * cos(elapsedTime * 2.4f);
 		normal.z = 0.0;
 		position += normal * offset;
-		
+
 		ofPushMatrix();
 			// translate to the center of the fbo //
 			ofTranslate( maskFbo.getWidth()/2., maskFbo.getHeight() / 2. );
@@ -110,15 +110,15 @@ void ofApp::draw(){
 			ofTranslate( -oLine.getBoundingBox().getWidth()*0.75f, 0.0f );
 			brushImage.draw(position.x, position.y, brushSize, brushSize);
 		ofPopMatrix();
-		
-		
+
+
 		findex = fLine.getIndexAtPercent(polylinePercent);
 		position = fLine.getPointAtPercent( polylinePercent );
 		normal = fLine.getNormalAtIndexInterpolated(findex);
 		normal *= sin(  elapsedTime * 9.4f ) * cos(elapsedTime * 5.4f);
 		normal.z = 0.0;
 		position += normal * offset;
-		
+
 		ofPushMatrix();
 			// translate to the center of the fbo //
 			ofTranslate( maskFbo.getWidth()/2., maskFbo.getHeight() / 2. );
@@ -127,7 +127,7 @@ void ofApp::draw(){
 			ofTranslate( fLine.getBoundingBox().getWidth()*0.75f, 0.0f );
 			brushImage.draw(position.x, position.y, brushSize, brushSize);
 		ofPopMatrix();
-		
+
 	maskFbo.end();
 
 	//----------------------------------------------------------
@@ -144,7 +144,7 @@ void ofApp::draw(){
 		brushImage.draw(brushImageX, brushImageY, brushSize, brushSize);
 		maskFbo.end();
 	}
-	
+
 	//----------------------------------------------------------
 	// HERE the shader-masking happens
 	shader.begin();
@@ -169,9 +169,9 @@ void ofApp::draw(){
 		ofTranslate(ofGetWidth()/2, ofGetHeight()/2 );
 		drawMesh.draw();
 	ofPopMatrix();
-	
+
 	shader.end();
-	
+
 	//----------------------------------------------------------
 	float drawStringY = 0;
 	ofDrawBitmapStringHighlight("Drag the Mouse to draw. Mode (e): "+string(bEraser?"eraser":"brush"), 15,drawStringY+=15);
@@ -217,7 +217,7 @@ void ofApp::keyReleased(int key){
 
 //--------------------------------------------------------------
 void ofApp::mouseMoved(int x, int y){
-	
+
 }
 
 //--------------------------------------------------------------
@@ -246,6 +246,6 @@ void ofApp::gotMessage(ofMessage msg){
 }
 
 //--------------------------------------------------------------
-void ofApp::dragEvent(ofDragInfo dragInfo){ 
+void ofApp::dragEvent(ofDragInfo dragInfo){
 
 }

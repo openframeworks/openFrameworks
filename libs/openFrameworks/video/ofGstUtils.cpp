@@ -290,12 +290,12 @@ bool ofGstUtils::startPipeline(){
 			ofLogVerbose() << "Pipeline is PREROLLED";
 			break;
     }
-    
+
     if(isAppSink){
 		ofLogVerbose("ofGstUtils") << "startPipeline(): attaching callbacks";
 
         bool bSignals = false;
-        
+
 #if GST_VERSION_MAJOR==0
 
         GstAppSinkCallbacks gstCallbacks;
@@ -303,15 +303,15 @@ bool ofGstUtils::startPipeline(){
         gstCallbacks.new_preroll = &on_new_preroll_from_source;
         gstCallbacks.new_buffer = &on_new_buffer_from_source;
         gst_app_sink_set_callbacks(GST_APP_SINK(gstSink), &gstCallbacks, this, NULL);
-        
-#elseif GST_VERSION_MINOR <= 18
+
+#elif GST_VERSION_MINOR <= 18
 
         GstAppSinkCallbacks gstCallbacks;
         gstCallbacks.eos = &on_eos_from_source;
         gstCallbacks.new_preroll = &on_new_preroll_from_source;
         gstCallbacks.new_sample = &on_new_buffer_from_source;
         gst_app_sink_set_callbacks(GST_APP_SINK(gstSink), &gstCallbacks, this, NULL);
-        
+
 #else
 
         //GStreamer 1.20 onwards crashes with the callback approach above.
@@ -319,7 +319,7 @@ bool ofGstUtils::startPipeline(){
         g_signal_connect(GST_APP_SINK(gstSink), "eos", G_CALLBACK(on_eos_from_source), this);
         g_signal_connect(GST_APP_SINK(gstSink), "new-sample", G_CALLBACK(on_new_buffer_from_source), this);
         g_signal_connect(GST_APP_SINK(gstSink), "new-preroll", G_CALLBACK(on_new_preroll_from_source), this);
-        
+
         bSignals = true;
 #endif
 
@@ -330,7 +330,7 @@ bool ofGstUtils::startPipeline(){
         gst_app_sink_set_max_buffers(GST_APP_SINK(gstSink),3);
         gst_app_sink_set_drop (GST_APP_SINK(gstSink),true);
 	}
- 
+
 	// wait for paused state to query the duration
 	if(!isStream){
 		bPlaying = true;
@@ -507,6 +507,12 @@ void ofGstUtils::setLoopState(ofLoopType state){
 void ofGstUtils::setSpeed(float _speed){
 	if(_speed == speed) return;
 
+	if (updated_in_frame) {
+		ofLogVerbose("ofGstUtils") << "setSpeed(): prevented multiple changes within a frame";
+		return;
+	}
+	updated_in_frame = true;
+
 	GstFormat format = GST_FORMAT_TIME;
 	GstSeekFlags flags = (GstSeekFlags) (GST_SEEK_FLAG_ACCURATE | GST_SEEK_FLAG_FLUSH);
 
@@ -518,7 +524,7 @@ void ofGstUtils::setSpeed(float _speed){
             needPos = false;
         }
     #endif
-    
+
 	if(_speed > 1 || _speed < -1){
 		flags = (GstSeekFlags)(flags | GST_SEEK_FLAG_SKIP);
 	}
@@ -527,7 +533,7 @@ void ofGstUtils::setSpeed(float _speed){
 		gst_element_set_state (gstPipeline, GST_STATE_PAUSED);
 		return;
 	}
-  
+
 
 	gint64 pos = 0;
     GstSeekType seekType = GST_SEEK_TYPE_NONE;
@@ -770,7 +776,7 @@ bool ofGstUtils::gstHandleMessage(GstBus * bus, GstMessage * msg){
 			g_free (name);
 			break;
 		}
-		
+
 #if GST_VERSION_MAJOR==1 && GST_VERSION_MINOR>=2
 		case GST_MESSAGE_HAVE_CONTEXT:{
 			GstContext *context;
@@ -874,7 +880,7 @@ void ofGstVideoUtils::close(){
 	bBackPixelsChanged			= false;
 	frontBuffer.reset();
 	backBuffer.reset();
-	
+
 #if GST_VERSION_MAJOR==1
 	while(!bufferQueue.empty()) bufferQueue.pop();
 #endif
@@ -910,6 +916,7 @@ ofTexture * ofGstVideoUtils::getTexture(){
 
 void ofGstVideoUtils::update(){
 	if (isLoaded()){
+		updated_in_frame = false;
 		if(!isFrameByFrame()){
 			std::unique_lock<std::mutex> lock(mutex);
 			bHavePixelsChanged = bBackPixelsChanged;

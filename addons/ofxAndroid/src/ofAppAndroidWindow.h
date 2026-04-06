@@ -11,6 +11,8 @@
 #include "ofEvents.h"
 #include "ofConstants.h"
 #include "ofTypes.h"
+#include <android/asset_manager.h>
+#include <android/asset_manager_jni.h>
 
 class ofxAndroidWindowSettings : public ofGLESWindowSettings
 {
@@ -37,12 +39,13 @@ public:
 		preserveContextOnPause = preserve;
 	}
 	
-	bool preserveContextOnPause;
+	bool preserveContextOnPause = true;
 };
 
 class ofAppAndroidWindow: public ofAppBaseGLESWindow {
 public:
 	ofAppAndroidWindow();
+	ofAppAndroidWindow(ofAppBaseWindow &other);
 	virtual ~ofAppAndroidWindow();
 
 	static bool doesLoop(){ return true; }
@@ -57,6 +60,8 @@ public:
 	void setup(const ofxAndroidWindowSettings & settings);
 	void update();
 	void draw();
+
+	void setCurrentWindow();
 
 	void hideCursor() {}
 	void showCursor() {}
@@ -76,6 +81,7 @@ public:
 	void	setWindowTitle(std::string title){}
 
 	ofWindowMode	getWindowMode() {return OF_WINDOW;}
+	void 			makeCurrent();
 
 	void	setFullscreen(bool fullscreen);
 	void	toggleFullscreen();
@@ -86,16 +92,35 @@ public:
 	void			setOrientation(ofOrientation orientation);
 	ofOrientation	getOrientation();
 
+	void			setSampleSize(int samples);
+	int				getSamples();
+
 	ofCoreEvents & events();
 	std::shared_ptr<ofBaseRenderer> & renderer();
 
 	void	setThreadedEvents(bool threadedEvents);
 	void 	setAccumulateTouchEvents(bool accumEvents);
 
+	void 	setMultiWindowMode(bool multiWindowMode);
+
+	bool	getIsThreadedEvents();
+	bool 	getIsAccumulateTouchEvents();
+
+	bool	getIsMultiWindowMode();
+
+
 	int 	getGlesVersion();
+
+	AAssetManager& getAssetManager();
+	void setAssetManager(AAssetManager* assetManager);
+
+
 
 private:
 	ofCoreEvents coreEvents;
 	std::shared_ptr<ofBaseRenderer> currentRenderer;
 	int glesVersion;
+	int msaaSamples;
+	AAssetManager* assetManager = nullptr;
+
 };
