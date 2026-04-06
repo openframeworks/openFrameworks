@@ -3,7 +3,7 @@ OF_ROOT=$PWD
 SCRIPT_DIR="${BASH_SOURCE%/*}"
 
 RELEASE="${RELEASE:-nightly}"
-VS_TARGET="vs"
+VS_TARGET=""
 
 if [[ ! -d "$SCRIPT_DIR" ]]; then SCRIPT_DIR="$PWD"; fi
 . "$SCRIPT_DIR/../../dev/downloader.sh"
@@ -13,7 +13,7 @@ ARCH=""
 # Parse flags
 while [[ $# -gt 0 ]]; do
   case $1 in
-    --vs2026) VS_TARGET="vs2026"; shift ;;
+    --vs2026) VS_TARGET="--vs2026"; shift ;;
     -a|--arch) ARCH="$2"; shift 2 ;;
     *) shift ;;
   esac
@@ -28,9 +28,9 @@ unset BITS
 cd "${OF_ROOT}"
 if [[ -n "$ARCH" ]]; then
   echo "Downloading libs for architecture: $ARCH (target folder: $VS_TARGET)"
-  ./scripts/vs/download_libs.sh -p ${VS_TARGET} -a ${ARCH} --silent -t $RELEASE
+  ./scripts/vs/download_libs.sh -p vs -a ${ARCH} --silent -t $RELEASE $VS_TARGET
 else
-  ./scripts/vs/download_libs.sh -p ${VS_TARGET} --silent -t $RELEASE
+  ./scripts/vs/download_libs.sh -p vs --silent -t $RELEASE $VS_TARGET
 fi
 
 rm -rf projectGenerator
