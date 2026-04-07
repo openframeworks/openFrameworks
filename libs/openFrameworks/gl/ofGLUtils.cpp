@@ -433,7 +433,6 @@ ofImageType ofGetImageTypeFromGLType(int glType){
     #endif
         return OF_IMAGE_COLOR;
 
-<<<<<<< HEAD
     case GL_RGBA:
     #if !defined(TARGET_OPENGLES) || defined(GL_ES_VERSION_3_0)
     case GL_RGBA8:
@@ -450,41 +449,6 @@ ofImageType ofGetImageTypeFromGLType(int glType){
         return OF_IMAGE_COLOR_ALPHA;
     }
     return OF_IMAGE_UNDEFINED;
-=======
-	case GL_RGB:
-#ifndef TARGET_OPENGLES
-        case GL_RGB16:
-#endif
-#if !defined(TARGET_OPENGLES) || defined(GL_ES_VERSION_3_0)            
-	case GL_RGB8:
-	case GL_RGB16F:
-	case GL_RGB16I:
-	case GL_RGB16UI:
-	case GL_RGB32F:
-	case GL_RGB32I:
-	case GL_RGB32UI:
-#endif
-		return OF_IMAGE_COLOR;
-
-
-	case GL_RGBA:
-#ifndef TARGET_OPENGLES
-        case GL_RGBA16:
-#endif
-#if !defined(TARGET_OPENGLES) || defined(GL_ES_VERSION_3_0)
-	case GL_RGBA8:
-	case GL_RGBA16F:
-	case GL_RGBA16I:
-	case GL_RGBA16UI:
-	case GL_RGBA32F:
-	case GL_RGBA32I:
-	case GL_RGBA32UI:
-#endif
-		return OF_IMAGE_COLOR_ALPHA;
-	}
-        ofLogError("ofGLUtils") << "ofGetImageTypeFromGLType(): unknown type " << glType << ", returning OF_IMAGE_UNDEFINED";
-	return OF_IMAGE_UNDEFINED;
->>>>>>> b2409bdb7 (Smaller fixes)
 }
 
 GLuint ofGetGLPolyMode(ofPolyRenderMode mode){
