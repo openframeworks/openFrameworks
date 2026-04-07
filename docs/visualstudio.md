@@ -1,6 +1,9 @@
 # Visual Studio
 
-## Installation
+## Prerequisites
+- Git - [Git for Windows] (https://git-scm.com/install/windows)
+
+## Visual Studio Installation
 ------------
 
 Download and install **Visual Studio 2022** or **Visual Studio 2026**.  
@@ -11,6 +14,18 @@ We recommend the free **Community** edition.
 - [Visual Studio 2026 Community](https://visualstudio.microsoft.com/downloads/)  
 
 During installation, select the **Desktop development with C++** workload.
+
+## Install openFrameworks
+- Download openFrameworks 0.12.1 or later from the [download page](http://openframeworks.cc/download/) or from [github](https://github.com/openframeworks/openFrameworks/).
+- If you got openFrameworks from git: https://github.com/openframeworks/openFrameworks
+	- Run `scripts/android/download_libs.sh` to download libraries.
+	- Use the Project Generator to generate Visual Studio project files for examples.
+
+## Libraries
+------------
+
+If missing any libraries or want to update them run the script at **vs/scripts/**
+- **download_libs.sh**
 
 ## Creating a new openFrameworks project
 -------------------------------------
