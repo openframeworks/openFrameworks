@@ -119,15 +119,8 @@ void ofGLProgrammableRenderer::finishRender() {
 void ofGLProgrammableRenderer::draw(const ofMesh & vertexData, ofPolyRenderMode renderType, bool useColors, bool useTextures, bool useNormals) const {
 	if (vertexData.getVertices().empty()) return;
 
-		// tig: note that for GL3+ we use glPolygonMode to draw wireframes or filled meshes, and not the primitive mode.
-		// the reason is not purely aesthetic, but more conformant with the behaviour of ofGLRenderer. Whereas
-		// gles2.0 doesn't allow for a polygonmode.
-		// Also gles2 still supports vertex array syntax for uploading data to attributes and it seems to be faster than
-		// vbo's for meshes that are updated frequently so let's use that instead
-
-		//if (bSmoothHinted) startSmoothing();
-
-#if defined(TARGET_OPENGLES) && !defined(TARGET_EMSCRIPTEN)
+#ifdef TARGET_OPENGLES
+	// OpenGL ES path - use vertex attrib arrays (fast for frequently updated meshes)
 	glEnableVertexAttribArray(ofShader::POSITION_ATTRIBUTE);
 	glVertexAttribPointer(ofShader::POSITION_ATTRIBUTE, 3, GL_FLOAT, GL_FALSE, sizeof(typename ofMesh::VertexType), vertexData.getVerticesPointer());
 
@@ -155,61 +148,44 @@ void ofGLProgrammableRenderer::draw(const ofMesh & vertexData, ofPolyRenderMode 
 		glDisableVertexAttribArray(ofShader::TEXCOORD_ATTRIBUTE);
 	}
 
-	// const_cast<ofGLProgrammableRenderer *>(this)->setAttributes(true, useColors, useTextures, useNormals);
-
 	GLenum drawMode;
 	switch (renderType) {
-	case OF_MESH_POINTS:
-		drawMode = GL_POINTS;
-		break;
-	case OF_MESH_WIREFRAME:
-		drawMode = GL_LINES;
-		break;
-	case OF_MESH_FILL:
-		drawMode = ofGetGLPrimitiveMode(vertexData.getMode());
-		break;
-	default:
-		drawMode = ofGetGLPrimitiveMode(vertexData.getMode());
-		break;
+	case OF_MESH_POINTS:    drawMode = GL_POINTS; break;
+	case OF_MESH_WIREFRAME: drawMode = GL_LINES; break;
+	case OF_MESH_FILL:      drawMode = ofGetGLPrimitiveMode(vertexData.getMode()); break;
+	default:                drawMode = ofGetGLPrimitiveMode(vertexData.getMode()); break;
 	}
-	const_cast<ofGLProgrammableRenderer *>(this)->setAttributes(true, useColors, useTextures, useNormals, drawMode);
+
+	const_cast<ofGLProgrammableRenderer *>(this)->setAttributes(true, useColors, useTextures, useNormals);
 
 	if (vertexData.getNumIndices()) {
 		glDrawElements(drawMode, vertexData.getNumIndices(), GL_UNSIGNED_SHORT, vertexData.getIndexPointer());
 	} else {
 		glDrawArrays(drawMode, 0, vertexData.getNumVertices());
 	}
+
 #else
-	
+	// Desktop GL path - VBO + optional lines shader bundle
 	ofVbo* vboToRender = nullptr;
 	bool tGoingToRenderLines = false;
-#ifndef TARGET_OPENGLES
-//	meshVbo.setMesh(vertexData, GL_STREAM_DRAW, useColors, useTextures, useNormals);
+
 	glPolygonMode(GL_FRONT_AND_BACK, ofGetGLPolyMode(renderType));
 	GLenum drawMode = ofGetGLPrimitiveMode(vertexData.getMode());
-	// if the render type is different than the primitive mode
-	// ie. mesh mode is triangles but we called mesh.drawVertices() which uses GL_POINT for the render type
-	// however, we need GL_POINTS for rendering point sprites
-	if (pointSpritesEnabled && !usingCustomShader && !uniqueShader) {
-		if (renderType == OF_MESH_POINTS) {
-			drawMode = GL_POINTS;
-		}
-	}
 
 	bool bConfigureForLinesShader = areLinesShadersEnabled() && (drawMode == GL_LINES || drawMode == GL_LINE_STRIP || drawMode == GL_LINE_LOOP);
-	if( usingCustomShader || usingCustomShader || currentMaterial) {
+	if (usingCustomShader || currentMaterial) {
 		bConfigureForLinesShader = false;
 	}
 
-	if( bConfigureForLinesShader ) {
+	if (bConfigureForLinesShader) {
 		mDrawMode = drawMode;
 		tGoingToRenderLines = true;
 		ofGLProgrammableRenderer * mutThis = const_cast<ofGLProgrammableRenderer *>(this);
-		if( drawMode == GL_LINES ) {
-			mutThis->configureLinesBundleFromMesh( mutThis->mLinesBundleMap[GL_LINES], drawMode, vertexData);
+		if (drawMode == GL_LINES) {
+			mutThis->configureLinesBundleFromMesh(mutThis->mLinesBundleMap[GL_LINES], drawMode, vertexData);
 			vboToRender = &mutThis->mLinesBundleMap[GL_LINES].vbo;
 		} else {
-			mutThis->configureLinesBundleFromMesh( mutThis->mLinesBundleMap[GL_LINE_STRIP], drawMode, vertexData);
+			mutThis->configureLinesBundleFromMesh(mutThis->mLinesBundleMap[GL_LINE_STRIP], drawMode, vertexData);
 			vboToRender = &mutThis->mLinesBundleMap[GL_LINE_STRIP].vbo;
 		}
 	} else {
@@ -217,54 +193,11 @@ void ofGLProgrammableRenderer::draw(const ofMesh & vertexData, ofPolyRenderMode 
 		vboToRender = &meshVbo;
 	}
 
-#else
-//	meshVbo.setMesh(vertexData, GL_STATIC_DRAW, useColors, useTextures, useNormals);
-	GLenum drawMode;
-	switch (renderType) {
-	case OF_MESH_POINTS:
-		drawMode = GL_POINTS;
-		break;
-	case OF_MESH_WIREFRAME:
-		drawMode = GL_LINE_STRIP;
-		break;
-	case OF_MESH_FILL:
-		drawMode = ofGetGLPrimitiveMode(vertexData.getMode());
-		break;
-	default:
-		drawMode = ofGetGLPrimitiveMode(vertexData.getMode());
-		break;
-	}
-
-	bool bConfigureForLinesShader = areLinesShadersEnabled() && (drawMode == GL_LINES || drawMode == GL_LINE_STRIP || drawMode == GL_LINE_LOOP);
-	if( usingCustomShader || usingCustomShader || currentMaterial) {
-		bConfigureForLinesShader = false;
-	}
-
-	if(bConfigureForLinesShader) {
-		mDrawMode = drawMode;
-		tGoingToRenderLines = true;
-		ofGLProgrammableRenderer * mutThis = const_cast<ofGLProgrammableRenderer *>(this);
-		if( drawMode == GL_LINES ) {
-			mutThis->configureLinesBundleFromMesh( mutThis->mLinesBundleMap[GL_LINES], drawMode, vertexData);
-			vboToRender = &mutThis->mLinesBundleMap[GL_LINES].vbo;
-		} else {
-			mutThis->configureLinesBundleFromMesh( mutThis->mLinesBundleMap[GL_LINE_STRIP], drawMode, vertexData);
-			vboToRender = &mutThis->mLinesBundleMap[GL_LINE_STRIP].vbo;
-		}
-	} else {
-		meshVbo.setMesh(vertexData, GL_STATIC_DRAW, useColors, useTextures, useNormals);
-		vboToRender = &meshVbo;
-	}
-	
-	#endif
-
-	if( vboToRender != nullptr ) {
-		if( tGoingToRenderLines ) {
-			// Setting a bool here so that the setAttributes function does not try to switch the shaders because
-			// we are going to draw the mesh as triangles and we need the lines shader
-			// we are rendering lines, and the meshes we constructed are made of triangles
+	if (vboToRender != nullptr) {
+		if (tGoingToRenderLines) {
+			// Setting a bool here so that the setAttributes function does not try to switch the shaders
 			mBRenderingLines = true;
-			if( renderType == OF_MESH_FILL ) {
+			if (renderType == OF_MESH_FILL) {
 				drawMode = GL_TRIANGLES;
 			}
 		}
@@ -275,24 +208,14 @@ void ofGLProgrammableRenderer::draw(const ofMesh & vertexData, ofPolyRenderMode 
 			draw(*vboToRender, drawMode, 0, vboToRender->getNumVertices());
 		}
 
-		if( tGoingToRenderLines ) {
+		if (tGoingToRenderLines) {
 			mBRenderingLines = false;
 		}
 	}
 
-	// tig: note further that we could glGet() and store the current polygon mode, but don't, since that would
-	// infer a massive performance hit. instead, we revert the glPolygonMode to mirror the current ofFill state
-	// after we're finished drawing, following the principle of least surprise.
-	// ideally the glPolygonMode (or the polygon draw mode) should be part of ofStyle so that we can keep track
-	// of its state on the client side...
-
-	#ifndef TARGET_OPENGLES
+	// restore polygon mode to match current fill state
 	glPolygonMode(GL_FRONT_AND_BACK, currentStyle.bFill ? GL_FILL : GL_LINE);
-	#endif
-
 #endif
-
-	//if (bSmoothHinted) endSmoothing();
 }
 
 //----------------------------------------------------------
@@ -303,8 +226,10 @@ void ofGLProgrammableRenderer::draw(const ofVboMesh & mesh, ofPolyRenderMode ren
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::drawInstanced(const ofVboMesh & mesh, ofPolyRenderMode renderType, int primCount) const {
 	if (mesh.getNumVertices() == 0) return;
+
 	GLuint mode = ofGetGLPrimitiveMode(mesh.getMode());
-	// nh: if the render type is different than the primitive mode
+
+	// if the render type is different than the primitive mode
 	// ie. mesh mode is triangles but we called mesh.drawVertices() which uses GL_POINT for the render type
 	// however, we need GL_POINTS for rendering point sprites
 	if (pointSpritesEnabled) {
@@ -312,48 +237,30 @@ void ofGLProgrammableRenderer::drawInstanced(const ofVboMesh & mesh, ofPolyRende
 			mode = GL_POINTS;
 		}
 	}
-#if !defined( TARGET_OPENGLES ) || defined(TARGET_EMSCRIPTEN)
-	#if !defined(TARGET_EMSCRIPTEN)
+
+#if !defined(TARGET_OPENGLES) || defined(GL_ES_VERSION_3_0)
+	// Desktop + GLES 3.0+ (including Emscripten) — full polygon mode + instancing support
 	glPolygonMode(GL_FRONT_AND_BACK, ofGetGLPolyMode(renderType));
-	#else
-	// nh: glPolygonMode is not supported via emscripten,
-	// we can not render wire frames with vbos.
-	// this is not the best solution, but does provide some information
-	// and does not render as solid when wireframe mode is requested.
-	if (renderType == OF_MESH_WIREFRAME) {
-		if (mesh.getNumIndices()) {
-			drawElements(mesh.getVbo(), GL_LINES, mesh.getNumIndices());
+
+	if (mesh.getNumIndices() && renderType != OF_MESH_POINTS) {
+		if (primCount <= 1) {
+			drawElements(mesh.getVbo(), mode, mesh.getNumIndices());
 		} else {
-			draw(mesh.getVbo(), GL_LINES, 0, mesh.getNumVertices());
+			drawElementsInstanced(mesh.getVbo(), mode, mesh.getNumIndices(), primCount);
 		}
 	} else {
-	#endif
-		if (mesh.getNumIndices() && renderType != OF_MESH_POINTS) {
-			if (primCount <= 1) {
-				drawElements(mesh.getVbo(), mode, mesh.getNumIndices());
-			} else {
-				drawElementsInstanced(mesh.getVbo(), mode, mesh.getNumIndices(), primCount);
-			}
+		if (primCount <= 1) {
+			draw(mesh.getVbo(), mode, 0, mesh.getNumVertices());
 		} else {
-			if (primCount <= 1) {
-				draw(mesh.getVbo(), mode, 0, mesh.getNumVertices());
-			} else {
-				drawInstanced(mesh.getVbo(), mode, 0, mesh.getNumVertices(), primCount);
-			}
+			drawInstanced(mesh.getVbo(), mode, 0, mesh.getNumVertices(), primCount);
 		}
-	#if defined(TARGET_EMSCRIPTEN)
-	} // close the if for checking for wireframe
-	#endif
+	}
 
-	// tig: note further that we could glGet() and store the current polygon mode, but don't, since that would
-	// infer a massive performance hit. instead, we revert the glPolygonMode to mirror the current ofFill state
-	// after we're finished drawing, following the principle of least surprise.
-	// ideally the glPolygonMode (or the polygon draw mode) should be part of ofStyle so that we can keep track
-	// of its state on the client side...
-	#if !defined(TARGET_EMSCRIPTEN)
-		glPolygonMode(GL_FRONT_AND_BACK, currentStyle.bFill ? GL_FILL : GL_LINE);
-	#endif
+	// restore polygon mode to match current fill state
+	glPolygonMode(GL_FRONT_AND_BACK, currentStyle.bFill ? GL_FILL : GL_LINE);
+
 #else
+	// Pure GLES 2.0 fallback — no polygon mode, no instancing
 	if (renderType == OF_MESH_POINTS) {
 		draw(mesh.getVbo(), GL_POINTS, 0, mesh.getNumVertices());
 	} else if (renderType == OF_MESH_WIREFRAME) {
@@ -371,7 +278,6 @@ void ofGLProgrammableRenderer::drawInstanced(const ofVboMesh & mesh, ofPolyRende
 	}
 #endif
 }
-
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::draw(const of3dPrimitive & model, ofPolyRenderMode renderType) const {
 	const_cast<ofGLProgrammableRenderer *>(this)->pushMatrix();
@@ -567,8 +473,13 @@ void ofGLProgrammableRenderer::draw(const ofVbo & vbo, GLuint drawMode, int firs
 void ofGLProgrammableRenderer::drawElements(const ofVbo & vbo, GLuint drawMode, int amt, int offsetelements) const {
 	if (vbo.getUsingVerts()) {
 		vbo.bind();
-		const_cast<ofGLProgrammableRenderer *>(this)->setAttributes(vbo.getUsingVerts(), vbo.getUsingColors(), vbo.getUsingTexCoords(), vbo.getUsingNormals(), drawMode);
-#ifdef TARGET_OPENGLES && !defined(GL_ES_VERSION_2_0)
+		const_cast<ofGLProgrammableRenderer *>(this)->setAttributes(
+			vbo.getUsingVerts(),
+			vbo.getUsingColors(),
+			vbo.getUsingTexCoords(),
+			vbo.getUsingNormals(), drawMode);
+
+#ifdef TARGET_OPENGLES
 		glDrawElements(drawMode, amt, GL_UNSIGNED_SHORT, (void *)(sizeof(ofIndexType) * offsetelements));
 #else
 		glDrawElements(drawMode, amt, GL_UNSIGNED_INT, (void *)(sizeof(ofIndexType) * offsetelements));
@@ -1104,15 +1015,15 @@ void ofGLProgrammableRenderer::setFillMode(ofFillFlag fill) {
 	if (currentStyle.bFill) {
 		path.setFilled(true);
 		path.setStrokeWidth(0);
-#ifndef TARGET_OPENGLES
-		// GLES does not support glPolygonMode
+#if !defined(TARGET_OPENGLES) || defined(GL_ES_VERSION_3_0)
+		// GLES 3.0+ (and desktop) support glPolygonMode
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 #endif
 	} else {
 		path.setFilled(false);
 		path.setStrokeWidth(currentStyle.lineWidth);
-#ifndef TARGET_OPENGLES
-		// GLES does not support glPolygonMode
+#if !defined(TARGET_OPENGLES) || defined(GL_ES_VERSION_3_0)
+		// GLES 3.0+ (and desktop) support glPolygonMode
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 #endif
 	}
@@ -1221,20 +1132,19 @@ void ofGLProgrammableRenderer::setBlendMode(ofBlendMode blendMode) {
 
 	case OF_BLENDMODE_MAX:
 		glEnable(GL_BLEND);
-#ifdef TARGET_OPENGLES
-		ofLogWarning("ofGLProgrammableRenderer") << "OF_BLENDMODE_MAX not currently supported on OpenGL ES";
-#else
+#if !defined(TARGET_OPENGLES) || defined(GL_ES_VERSION_3_0)
 		glBlendEquation(GL_MAX);
+#else
+		ofLogWarning("ofGLProgrammableRenderer") << "OF_BLENDMODE_MAX not currently supported on OpenGL ES < 3.0";
 #endif
-
 		break;
 
 	case OF_BLENDMODE_MIN:
 		glEnable(GL_BLEND);
-#ifdef TARGET_OPENGLES
-		ofLogWarning("ofGLProgrammableRenderer") << "OF_BLENDMODE_MIN not currently supported on OpenGL ES";
-#else
+#if !defined(TARGET_OPENGLES) || defined(GL_ES_VERSION_3_0)
 		glBlendEquation(GL_MIN);
+#else
+		ofLogWarning("ofGLProgrammableRenderer") << "OF_BLENDMODE_MIN not currently supported on OpenGL ES < 3.0";
 #endif
 		break;
 
@@ -1247,37 +1157,33 @@ void ofGLProgrammableRenderer::setBlendMode(ofBlendMode blendMode) {
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::enablePointSprites() {
 	pointSpritesEnabled = true;
-#ifdef TARGET_OPENGLES
-#ifndef TARGET_PROGRAMMABLE_GL
-	glEnable(GL_POINT_SPRITE_OES);
-#endif
+#if !defined(TARGET_OPENGLES) || defined(GL_ES_VERSION_3_0)
+	glEnable(GL_PROGRAM_POINT_SIZE);
 #else
-		glEnable(GL_PROGRAM_POINT_SIZE);
+	glEnable(GL_POINT_SPRITE_OES);
 #endif
 }
 
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::disablePointSprites() {
-#ifdef TARGET_OPENGLES
-	#ifndef TARGET_PROGRAMMABLE_GL
-	glEnable(GL_POINT_SPRITE_OES);
-	#endif
-#else
-	glDisable(GL_PROGRAM_POINT_SIZE);
-#endif
 	pointSpritesEnabled = false;
+#if !defined(TARGET_OPENGLES) || defined(GL_ES_VERSION_3_0)
+	glDisable(GL_PROGRAM_POINT_SIZE);
+#else
+	glDisable(GL_POINT_SPRITE_OES);
+#endif
 }
 
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::enableAntiAliasing() {
-#if !defined(TARGET_PROGRAMMABLE_GL) || !defined(TARGET_OPENGLES)
+#if !defined(TARGET_OPENGLES) || defined(GL_ES_VERSION_3_0)
 	glEnable(GL_MULTISAMPLE);
 #endif
 }
 
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::disableAntiAliasing() {
-#if !defined(TARGET_PROGRAMMABLE_GL) || !defined(TARGET_OPENGLES)
+#if !defined(TARGET_OPENGLES) || defined(GL_ES_VERSION_3_0)
 	glDisable(GL_MULTISAMPLE);
 #endif
 }
@@ -1443,7 +1349,6 @@ void ofGLProgrammableRenderer::setAttributes(bool vertices, bool color, bool tex
 	if( prevDrawMode != mDrawMode ) {
 		if (currentTextureTarget != OF_NO_TEXTURE && currentShader ) {
 			// set all of the texture uniforms
-			// setUniformTexture(const string & name, int textureTarget, GLint textureID, int textureLocation) const {
 			for (auto &texUniform : mUniformsTex ) {
 				currentShader->setUniformTexture(texUniform.uniformName, texUniform.texData, texUniform.textureLocation);
 			}
@@ -1452,7 +1357,6 @@ void ofGLProgrammableRenderer::setAttributes(bool vertices, bool color, bool tex
 				auto &texUniform = mUniformsTex[0];
 				#if !defined(TARGET_OPENGLES)
 				if (currentTextureTarget == GL_TEXTURE_RECTANGLE_ARB) {
-					// set the size of the texture, since gl_PointCoord is normalized
 					currentShader->setUniform2f("src_tex_unit0_dims", texUniform.texData.width, texUniform.texData.height);
 				}
 				#endif
@@ -1635,7 +1539,7 @@ void ofGLProgrammableRenderer::bind(const ofFbo & fbo) {
 	glBindFramebuffer(GL_FRAMEBUFFER, currentFramebufferId);
 }
 
-#ifndef TARGET_OPENGLES
+#if !defined(TARGET_OPENGLES) || defined(GL_ES_VERSION_3_0)
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::bindForBlitting(const ofFbo & fboSrc, ofFbo & fboDst, int attachmentPoint) {
 	if (currentFramebufferId == fboSrc.getId()) {
@@ -1761,12 +1665,15 @@ void ofGLProgrammableRenderer::bind(const ofTexture & texture, int location) {
 		pushMatrix();
 		glm::mat4 m = glm::mat4(1.0);
 
-#ifndef TARGET_OPENGLES
-		if (texture.texData.textureTarget == GL_TEXTURE_RECTANGLE_ARB)
+#if !defined(TARGET_OPENGLES)
+		if (texture.texData.textureTarget == GL_TEXTURE_RECTANGLE_ARB) {
 			m = glm::scale(m, glm::vec3(texture.texData.width, texture.texData.height, 1.0f));
+		}
 		else
 #endif
+		{
 			m = glm::scale(m, glm::vec3(texture.texData.width / texture.texData.tex_w, texture.texData.height / texture.texData.tex_h, 1.0f));
+		}
 
 		loadMatrix(m);
 		matrixMode(OF_MATRIX_MODELVIEW);
@@ -1849,97 +1756,86 @@ void ofGLProgrammableRenderer::setDefaultUniforms() {
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::beginDefaultShader() {
 	if (usingCustomShader && !currentMaterial && !currentShadow) return;
-	if (currentShadow && bCustomShadowShader) return;
+ if (currentShadow && bCustomShadowShader) return;
 
-	const ofShader * nextShader = nullptr;
+ const ofShader * nextShader = nullptr;
 
-	bool bUseTexture = texCoordsEnabled;
-	if( mDrawMode == GL_POINTS ){
-		// if we are drawing points, we don't need tex coords and would like to use the texture
-		if (currentTextureTarget != OF_NO_TEXTURE ) {
-			bUseTexture = true;
-		}
-	}
+ bool bUseTexture = texCoordsEnabled;
+ if (mDrawMode == GL_POINTS) {
+	 // if we are drawing points, we don't need tex coords and would like to use the texture
+	 if (currentTextureTarget != OF_NO_TEXTURE) {
+		 bUseTexture = true;
+	 }
+ }
 
-	if (!uniqueShader || currentMaterial || currentShadow)
-	{
-		if (currentShadow) {
-			if (currentMaterial && currentMaterial->hasDepthShader()) {
-				nextShader = &currentMaterial->getShadowDepthShader(*currentShadow, *this);
-			} else {
-				nextShader = &currentShadow->getDepthShader(*this);
-			}
-		} else if (currentMaterial) {
-			nextShader = &currentMaterial->getShader(currentTextureTarget, colorsEnabled, *this);
-		} else if (bitmapStringEnabled) {
-			nextShader = &bitmapStringShader;
+ if (!uniqueShader || currentMaterial || currentShadow) {
+	 if (currentShadow) {
+		 if (currentMaterial && currentMaterial->hasDepthShader()) {
+			 nextShader = &currentMaterial->getShadowDepthShader(*currentShadow, *this);
+		 } else {
+			 nextShader = &currentShadow->getDepthShader(*this);
+		 }
+	 } else if (currentMaterial) {
+		 nextShader = &currentMaterial->getShader(currentTextureTarget, colorsEnabled, *this);
+	 } else if (bitmapStringEnabled) {
+		 nextShader = &bitmapStringShader;
+	 } else if (colorsEnabled && bUseTexture) {
+		 auto &shaderCollection = getShaderCollectionForMode(mDrawMode);
 
-		} else if (colorsEnabled && bUseTexture) {
-			auto &shaderCollection = getShaderCollectionForMode(mDrawMode);
+		 switch (currentTextureTarget) {
+		 #ifndef TARGET_OPENGLES
+		 case GL_TEXTURE_RECTANGLE_ARB:
+			 nextShader = &shaderCollection->texRectColor;
+			 break;
+		 #endif
+		 case GL_TEXTURE_2D:
+			 nextShader = &shaderCollection->tex2DColor;
+			 break;
+		 case OF_NO_TEXTURE:
+			 nextShader = &shaderCollection->noTexColor;
+			 break;
+		 #ifdef TARGET_ANDROID
+		 case GL_TEXTURE_EXTERNAL_OES:
+			 nextShader = &defaultOESTexColor;
+			 break;
+		 #endif
+		 }
+	 } else if (colorsEnabled) {
+		 nextShader = &getShaderCollectionForMode(mDrawMode)->noTexColor;
+	 } else if (bUseTexture) {
+		 auto &shaderCollection = getShaderCollectionForMode(mDrawMode);
+		 switch (currentTextureTarget) {
+		 #ifndef TARGET_OPENGLES
+		 case GL_TEXTURE_RECTANGLE_ARB:
+			 nextShader = &shaderCollection->texRectNoColor;
+			 break;
+		 #endif
+		 case GL_TEXTURE_2D:
+			 nextShader = &shaderCollection->tex2DNoColor;
+			 break;
+		 case OF_NO_TEXTURE:
+			 nextShader = &shaderCollection->noTexNoColor;
+			 break;
+		 #ifdef TARGET_ANDROID
+		 case GL_TEXTURE_EXTERNAL_OES:
+			 nextShader = &defaultOESTexNoColor;
+			 break;
+		 #endif
+		 }
+	 } else {
+		 nextShader = &getShaderCollectionForMode(mDrawMode)->noTexNoColor;
+	 }
+ } else {
+	 nextShader = &defaultUniqueShader;
+ }
 
-			switch (currentTextureTarget)
-			{
-#ifndef TARGET_OPENGLES
-			case GL_TEXTURE_RECTANGLE_ARB:
-				nextShader = &shaderCollection->texRectColor;
-				// nextShader = &defaultTexRectColor;
-				break;
-#endif
-			case GL_TEXTURE_2D:
-				nextShader = &shaderCollection->tex2DColor;
-				// nextShader = &defaultTex2DColor;
-				break;
-			case OF_NO_TEXTURE:
-				nextShader = &shaderCollection->noTexColor;
-				// nextShader = &defaultNoTexColor;
-				break;
-#ifdef TARGET_ANDROID
-			case GL_TEXTURE_EXTERNAL_OES:
-				nextShader = &defaultOESTexColor;
-				break;
-#endif
-			}
-		} else if (colorsEnabled) {
-			nextShader = &getShaderCollectionForMode(mDrawMode)->noTexColor;
-			// nextShader = &defaultNoTexColor;
-		} else if (bUseTexture) {
-			auto &shaderCollection = getShaderCollectionForMode(mDrawMode);
-			switch (currentTextureTarget) {
-#ifndef TARGET_OPENGLES
-			case GL_TEXTURE_RECTANGLE_ARB:
-				nextShader = &shaderCollection->texRectNoColor;
-				// nextShader = &defaultTexRectNoColor;
-				break;
-#endif
-			case GL_TEXTURE_2D:
-				nextShader = &shaderCollection->tex2DNoColor;
-				// nextShader = &defaultTex2DNoColor;
-				break;
-			case OF_NO_TEXTURE:
-				nextShader = &shaderCollection->noTexNoColor;
-				// nextShader = &defaultNoTexNoColor;
-				break;
-#ifdef TARGET_ANDROID
-			case GL_TEXTURE_EXTERNAL_OES:
-				nextShader = &defaultOESTexNoColor;
-				break;
-#endif
-			}
-		} else {
-			nextShader = &getShaderCollectionForMode(mDrawMode)->noTexNoColor;
-			// nextShader = &defaultNoTexNoColor;
-		}
-	} else {
-		nextShader = &defaultUniqueShader;
-	}
-
-	if (nextShader) {
-		if (!currentShader || *currentShader != *nextShader) {
-			settingDefaultShader = true;
-			bind(*nextShader);
-			settingDefaultShader = false;
-		}
-	}
+ if (nextShader) {
+	 if (!currentShader || *currentShader != *nextShader) {
+		 settingDefaultShader = true;
+		 bind(*nextShader);
+		 settingDefaultShader = false;
+	 }
+ }
 }
 
 //----------------------------------------------------------
@@ -3009,15 +2905,22 @@ static const string FRAGMENT_SHADER_PLANAR_YUV = STRINGIFY(
 
 static string defaultShaderHeader(string header, GLenum textureTarget, int major, int minor) {
 	ofStringReplace(header, "%glsl_version%", ofGLSLVersionFromGL(major, minor));
-#ifndef TARGET_OPENGLES
+
+#if !defined(TARGET_OPENGLES)
+	// Desktop only: rectangle texture extension (needed for older GL < 4.2)
 	if (major < 4 && minor < 2) {
 		ofStringReplace(header, "%extensions%", "#extension GL_ARB_texture_rectangle : enable");
 	} else {
 		ofStringReplace(header, "%extensions%", "");
 	}
 #else
+	#if !defined(GL_ES_VERSION_3_0)
 	ofStringReplace(header, "%extensions%", "#extension GL_OES_standard_derivatives : enable");
+	#else
+	ofStringReplace(header, "%extensions%", "");
+	#endif
 #endif
+
 	if (textureTarget == GL_TEXTURE_2D) {
 		header += "#define SAMPLER sampler2D\n";
 	} else {
@@ -3029,15 +2932,21 @@ static string defaultShaderHeader(string header, GLenum textureTarget, int major
 static string shaderSource(const string & src, int major, int minor) {
 	string shaderSrc = src;
 	ofStringReplace(shaderSrc, "%glsl_version%", ofGLSLVersionFromGL(major, minor));
-#ifndef TARGET_OPENGLES
+
+#if !defined(TARGET_OPENGLES)
 	if (major < 4 && minor < 2) {
 		ofStringReplace(shaderSrc, "%extensions%", "#extension GL_ARB_texture_rectangle : enable");
 	} else {
 		ofStringReplace(shaderSrc, "%extensions%", "");
 	}
 #else
-	ofStringReplace(shaderSrc, "%extensions%", "");
+	#if !defined(GL_ES_VERSION_3_0)
+	ofStringReplace(header, "%extensions%", "#extension GL_OES_standard_derivatives : enable");
+	#else
+	ofStringReplace(header, "%extensions%", "");
+	#endif
 #endif
+
 	return shaderSrc;
 }
 
