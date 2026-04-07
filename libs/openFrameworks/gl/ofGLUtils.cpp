@@ -452,51 +452,42 @@ ofImageType ofGetImageTypeFromGLType(int glType){
 }
 
 GLuint ofGetGLPolyMode(ofPolyRenderMode mode){
-#if !defined(TARGET_OPENGLES) || defined(TARGET_EMSCRIPTEN)
+#if !defined(TARGET_OPENGLES) || defined(GL_ES_VERSION_3_0)
 	switch(mode){
-		case(OF_MESH_POINTS):
+		case OF_MESH_POINTS:
 			return GL_POINT;
-			break;
-		case(OF_MESH_WIREFRAME):
+		case OF_MESH_WIREFRAME:
 			return GL_LINE;
-			break;
-		case(OF_MESH_FILL):
+		case OF_MESH_FILL:
 			return GL_FILL;
-			break;
 		default:
 			ofLogError("ofGLUtils") << "ofGetGLPolyMode(): unknown OF poly mode " << ofToString(mode) << ", returning GL_FILL";
 			return GL_FILL;
-			break;
 	}
 #else
-        ofLogError("ofGLUtils") << "ofGetGLPolyMode(): poly modes not supported in GLES";
-	return 0;
+	ofLogError("ofGLUtils") << "ofGetGLPolyMode(): poly modes not supported in OpenGL ES < 3.0";
+	return GL_FILL;
 #endif
 }
 
 ofPolyRenderMode ofGetOFPolyMode(GLuint mode){
-#if !defined(TARGET_OPENGLES) || defined(TARGET_EMSCRIPTEN)
+#if !defined(TARGET_OPENGLES) || defined(GL_ES_VERSION_3_0)
 	switch(mode){
-		case(GL_POINT):
+		case GL_POINT:
 			return OF_MESH_POINTS;
-			break;
-		case(GL_LINE):
+		case GL_LINE:
 			return OF_MESH_WIREFRAME;
-			break;
-		case(GL_FILL):
+		case GL_FILL:
 			return OF_MESH_FILL;
-			break;
 		default:
 			ofLogError("ofGLUtils") << "ofGetOFPolyMode(): unknown GL poly mode " << ofToString(mode) << ", returning OF_MESH_FILL";
 			return OF_MESH_FILL;
-			break;
 	}
 #else
-        ofLogError("ofGLUtils") << "ofGetOFPolyMode(): poly modes not supported in GLES. Returning OF_MESH_FILL";
+	ofLogError("ofGLUtils") << "ofGetOFPolyMode(): poly modes not supported in OpenGL ES < 3.0. Returning OF_MESH_FILL";
 	return OF_MESH_FILL;
 #endif
 }
-
 
 GLuint ofGetGLPrimitiveMode(ofPrimitiveMode mode){
 	switch(mode){
@@ -784,11 +775,6 @@ int ofGetBytesPerChannelFromGLType(int glType){
 	}
 }
 
-// Rounds an integer value up to the next multiple of 2,4 and 8.
-#define OF_ROUND_UP_2(num)  (((num)+1)&~1)
-#define OF_ROUND_UP_4(num)  (((num)+3)&~3)
-#define OF_ROUND_UP_8(num)  (((num)+7)&~7)
-
 void ofSetPixelStoreiAlignment(GLenum pname, int w, int bpc, int numChannels){
 	int stride = w * numChannels * bpc;
 	ofSetPixelStoreiAlignment(pname,stride);
@@ -841,27 +827,27 @@ bool ofGLCheckExtension(string searchName){
 }
 
 bool ofGLSupportsNPOTTextures(){
-#ifndef TARGET_OPENGLES
-	return GL_ARB_texture_rectangle;
-#elif !defined(TARGET_EMSCRIPTEN)
+#if !defined(TARGET_OPENGLES) || defined(GL_ES_VERSION_3_0)
+	// Desktop + GLES 3.0+ support NPOT textures natively (core feature)
+	return true;
+#else
+	// Pure GLES 2.0 — check extensions at runtime
 	static bool npotChecked = false;
 	static bool npotSupported = false;
 	if(!npotChecked){
 		vector<string> extensionsList = ofGLSupportedExtensions();
-		std::set<string> extensionsSet;
-		extensionsSet.insert(extensionsList.begin(),extensionsList.end());
+		std::set<string> extensionsSet(extensionsList.begin(), extensionsList.end());
 
-		npotSupported = extensionsSet.find("GL_OES_texture_npot")!=extensionsSet.end() ||
-				extensionsSet.find("APPLE_texture_2D_limited_npot")!=extensionsSet.end() ||
-				extensionsSet.find("GL_NV_texture_npot_2D_mipmap")!=extensionsSet.end() ||
-				extensionsSet.find("GL_IMG_texture_npot")!=extensionsSet.end() ||
-				extensionsSet.find("GL_ARB_texture_non_power_of_two")!=extensionsSet.end();
+		npotSupported = extensionsSet.find("GL_OES_texture_npot") != extensionsSet.end() ||
+						extensionsSet.find("APPLE_texture_2D_limited_npot") != extensionsSet.end() ||
+						extensionsSet.find("GL_NV_texture_npot_2D_mipmap") != extensionsSet.end() ||
+						extensionsSet.find("GL_IMG_texture_npot") != extensionsSet.end() ||
+						extensionsSet.find("GL_ARB_texture_non_power_of_two") != extensionsSet.end();
+
 		npotChecked = true;
 	}
 
 	return npotSupported;
-#else
-	return true;
 #endif
 }
 
