@@ -126,28 +126,28 @@ public:
 class ofGLESWindowSettings: public ofWindowSettings{
 public:
     ofGLESWindowSettings()
-        :mGlesVersionMajor(1), mGlesVersionMinor(0){}
+        :glesVersion(1), glesVersionMinor(0){}
     
     ofGLESWindowSettings(const ofWindowSettings & settings)
-	:ofWindowSettings(settings), mGlesVersionMajor(1), mGlesVersionMinor(0) {
+	:ofWindowSettings(settings), glesVersion(1), glesVersionMinor(0) {
         const ofGLESWindowSettings * glesSettings = dynamic_cast<const ofGLESWindowSettings*>(&settings);
         if(glesSettings){
-            mGlesVersionMajor = glesSettings->mGlesVersionMajor;
-            mGlesVersionMinor = glesSettings->mGlesVersionMinor;
+            glesVersion = glesSettings->glesVersion;
+            glesVersionMinor = glesSettings->mGlesVersionMinor;
         }
     }
     
     virtual ~ofGLESWindowSettings(){};
     
     void setGLESVersion(int versionMajor, int versionMinor = 0){
-        mGlesVersionMajor = versionMajor;
-        mGlesVersionMinor = versionMinor;
+        glesVersion = versionMajor;
+        glesVersionMinor = versionMinor;
     }
 
-    int glesVersionMajor() const { return mGlesVersionMajor; }
-    int glesVersionMinor() const { return mGlesVersionMinor ; }
+    int glesVersionMajor() const { return glesVersion; }
+    int glesVersionMinor() const { return glesVersionMinor ; }
 
 private:
-    int mGlesVersionMajor;
-    int mGlesVersionMinor;
+    int glesVersion;
+    int glesVersionMinor;
 };
