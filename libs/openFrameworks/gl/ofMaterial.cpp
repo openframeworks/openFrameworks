@@ -110,38 +110,33 @@ std::string ofMaterial::getTextureTypeAsString(const ofMaterialTextureType & aMa
 
 //----------------------------------------------------------
 bool ofMaterial::isPBRSupported() {
-	#if defined(TARGET_OPENGLES) && !defined(TARGET_EMSCRIPTEN)
-	return false;
+	#if defined(TARGET_OPENGLES) && !defined(GL_ES_VERSION_3_0)
+	return false;   // pure GLES 2.0 does not support PBR
 	#endif
-
-	if( !ofIsGLProgrammableRenderer() ) {
-		return false;
-	}
-	return true;
+	return ofIsGLProgrammableRenderer();
 }
 
 //----------------------------------------------------------
 void ofMaterial::setPBR(bool ab) {
-	if( ab && !ofIsGLProgrammableRenderer() ) {
-		if( !bPrintedPBRRenderWarning ) {
-			bPrintedPBRRenderWarning=true;
-			ofLogWarning("ofMaterial::setPBR") << " PBR material must be used with Programmable Renderer.";
+	if (ab && !ofIsGLProgrammableRenderer()) {
+		if (!bPrintedPBRRenderWarning) {
+			bPrintedPBRRenderWarning = true;
+			ofLogWarning("ofMaterial::setPBR") << "PBR material must be used with Programmable Renderer.";
 		}
 		data.isPbr = false;
 		return;
 	}
 
-	#if defined(TARGET_OPENGLES) && !defined(TARGET_EMSCRIPTEN)
-	if( ab ) {
-		if( !bPrintedPBRRenderWarning ) {
-			bPrintedPBRRenderWarning=true;
-			ofLogWarning("ofMaterial::setPBR") << " PBR material is not supported on this OPENGL ES platform.";
+	#if defined(TARGET_OPENGLES) && !defined(GL_ES_VERSION_3_0)
+	if (ab) {
+		if (!bPrintedPBRRenderWarning) {
+			bPrintedPBRRenderWarning = true;
+			ofLogWarning("ofMaterial::setPBR") << "PBR material is not supported on OpenGL ES < 3.0.";
 		}
 		data.isPbr = false;
 		return;
 	}
 	#endif
-
 
 	data.isPbr = ab;
 }
@@ -1544,18 +1539,15 @@ namespace{
 		}
 
 
-		if( ofIsGLProgrammableRenderer() ) {
-			#if defined(TARGET_OPENGLES)
-				#if defined(TARGET_EMSCRIPTEN)
-					ofStringReplace(source, "%shader_shadow_include%", shadow_shader_include );
-				#else
-					ofStringReplace(source, "%shader_shadow_include%", "" );
-				#endif
+		if (ofIsGLProgrammableRenderer()) {
+			// Shadows require programmable renderer + GLES 3.0+ (or desktop)
+			#if !defined(TARGET_OPENGLES) || defined(GL_ES_VERSION_3_0)
+				ofStringReplace(source, "%shader_shadow_include%", shadow_shader_include);
 			#else
-				ofStringReplace(source, "%shader_shadow_include%", shadow_shader_include );
+				ofStringReplace(source, "%shader_shadow_include%", "");
 			#endif
 		} else {
-			ofStringReplace(source, "%shader_shadow_include%", "" );
+			ofStringReplace(source, "%shader_shadow_include%", "");
 		}
 
         source = shaderHeader(defaultHeader, maxLights, hasTexture, hasColor) + definesString + source;
