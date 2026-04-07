@@ -1,5 +1,5 @@
 #!/bin/bash
-VERSION=4.6.0
+VERSION=4.7.0
 printDownloaderHelp() {
     cat <<EOF
     
@@ -73,7 +73,7 @@ check_remote_vs_local() {
         if [[ $VERBOSE == 1 ]]; then
             echo "  [downloader] No download cache"
         fi
-        echo "  [downloader] Downloading ..."
+        echo "  [downloader] Downloading ... [$REMOTE_URL]"
         CHECK_RESULT=0
         return
     else
