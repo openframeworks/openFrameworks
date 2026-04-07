@@ -205,3 +205,8 @@ void ofDisableGLDebugLog();
 		#endif
 	#endif
 #endif
+
+// Rounds an integer value up to the next multiple of 2,4 and 8.
+#define OF_ROUND_UP_2(num)  (((num)+1)&~1)
+#define OF_ROUND_UP_4(num)  (((num)+3)&~3)
+#define OF_ROUND_UP_8(num)  (((num)+7)&~7)
