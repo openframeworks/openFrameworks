@@ -404,7 +404,7 @@ void ofAppEGLWindow::setup(const ofAppEGLWindowSettings & _settings) {
 	eglVersionMajor = -1;
 	eglVersionMinor = -1;
 	glesVersionMajor = 1;
-        glesVersionMinor = 0;
+    glesVersionMinor = 0;
 
 	// X11 check
 	// char * pDisplay;
