@@ -391,7 +391,7 @@ int ofGetGLType(const ofFloatPixels & pixels) {
 }
 
 //---------------------------------
-oofImageType ofGetImageTypeFromGLType(int glType){
+ofImageType ofGetImageTypeFromGLType(int glType){
     switch(glType){
     case GL_LUMINANCE:
     #if !defined(TARGET_OPENGLES) || defined(GL_ES_VERSION_3_0)
