@@ -65,7 +65,7 @@ public:
 	void destroy();
 	void clear();
 
-#ifndef TARGET_OPENGLES
+#if !defined(TARGET_OPENGLES) || defined(GL_ES_VERSION_3_0)
 	/// glClearBufferfv(GL_COLOR, 0...)
 	///
 	/// @see: https://www.opengl.org/wiki/GLAPI/glClearBuffer
@@ -122,7 +122,7 @@ public:
 
 	/// Sets up the framebuffer and binds it for rendering.
 	///
-	/// \warning  This is a convenience method, and is considered unsafe 
+	/// \warning  This is a convenience method, and is considered unsafe
 	///           in multi-window and/or multi-renderer scenarios.
 	///           If you use more than one renderer, use each renderer's
 	///           explicit void ofBaseGLRenderer::begin(const ofFbo & fbo, ofFboMode mode)
@@ -166,7 +166,7 @@ public:
 	void readToPixels(ofShortPixels & pixels, int attachmentPoint = 0) const;
 	void readToPixels(ofFloatPixels & pixels, int attachmentPoint = 0) const;
 
-#ifndef TARGET_OPENGLES
+#if !defined(TARGET_OPENGLES) || defined(GL_ES_VERSION_3_0)
 	/// \brief Copy the fbo to an ofBufferObject.
 	/// \param buffer the target buffer to copy to.
 	void copyTo(ofBufferObject & buffer) const;
@@ -189,7 +189,7 @@ public:
 	/// \sa       virtual void ofBaseGLRenderer::bind(const ofFbo & fbo)
 	void bind() const;
 
-	/// \brief    Unbinds OpenGL framebuffer target and restores the OpenGL framebuffer 
+	/// \brief    Unbinds OpenGL framebuffer target and restores the OpenGL framebuffer
 	///           render target to whatever this ofFbo stores in previousFramebufferBinding.
 	/// \sa       bind()
 	/// \sa       void setPreviousFramebufferBinding(const GLuint& previousFramebufferBinding_) const
@@ -197,9 +197,9 @@ public:
 
 	void flagDirty() const; ///< check whether attached MSAA buffers need updating
 
-	/// \brief    Explicityl resolve MSAA render buffers into textures 
-	/// \note     if using MSAA, we will have rendered into a colorbuffer, not directly 
-	///           into the texture call this to blit from the colorbuffer into the texture 
+	/// \brief    Explicityl resolve MSAA render buffers into textures
+	/// \note     if using MSAA, we will have rendered into a colorbuffer, not directly
+	///           into the texture call this to blit from the colorbuffer into the texture
 	///           so we can use the results for rendering, or input to a shader etc.
 	/// \note     This will get called implicitly upon getTexture();
 	void updateTexture(int attachmentPoint);
@@ -244,7 +244,7 @@ private:
 	GLuint				stencilBuffer;
 
 	std::vector<GLuint>		colorBuffers;
-	std::vector<ofTexture>	textures;			
+	std::vector<ofTexture>	textures;
 
 	ofTexture			depthBufferTex;
 
@@ -255,9 +255,9 @@ private:
 	std::vector<GLenum>		activeDrawBuffers;  ///< table of currently active color draw buffers, allocate() defaults it to size(textures), with GL_COLOR_ATTACHMENT0..n as members, in order of allocation
 
 	/// \brief  Flags used internally to keep track of MSAA renderbuffers / textures
-	/// \note   The dirty flags are only used when dealing if the framebuffer has MSAA 
+	/// \note   The dirty flags are only used when dealing if the framebuffer has MSAA
 	///         enabled attachments, i.e. numSamples is > 0 and extra Textures have
-	///         been bound so that the multisampled renderbuffers can be resolved to 
+	///         been bound so that the multisampled renderbuffers can be resolved to
 	///         textures.
 	///         The flags are read whenever an attached texture is accessed. If the texture
 	///         is dirty, i.e. it has not yet been resolved from its associated renderbuffer
@@ -267,7 +267,7 @@ private:
 	int 				defaultTextureIndex; //used for getTextureReference
 	bool				bIsAllocated;
 	void reloadFbo();
-#ifdef TARGET_OPENGLES
+#if !defined(TARGET_OPENGLES) || defined(GL_ES_VERSION_3_0)
 	static bool bglFunctionsInitialized;
 #endif
 
