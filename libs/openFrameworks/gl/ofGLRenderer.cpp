@@ -42,21 +42,19 @@ ofGLRenderer::ofGLRenderer(const ofAppBaseWindow * _window)
 
 void ofGLRenderer::setup() {
 #ifdef TARGET_OPENGLES
-	// OpenGL ES might have set a default frame buffer for
-	// MSAA rendering to the window, bypassing ofFbo, so we
-	// can't trust ofFbo to have correctly tracked the bind
-	// state. Therefore, we are forced to use the slower glGet() method
-	// to be sure to get the correct default framebuffer.
-	GLint currentFrameBuffer;
-	glGetIntegerv(GL_FRAMEBUFFER_BINDING, &currentFrameBuffer);
-	defaultFramebufferId = currentFrameBuffer;
+	// OpenGL ES might have set a default frame buffer for MSAA rendering to the window,
+	// bypassing ofFbo, so we can't trust ofFbo to have correctly tracked the bind state.
+	// Therefore we are forced to use the slower glGet() method to be sure.
+	GLint currentFramebuffer;
+	glGetIntegerv(GL_FRAMEBUFFER_BINDING, &currentFramebuffer);
+	defaultFramebufferId = currentFramebuffer;
 	currentFramebufferId = defaultFramebufferId;
 #endif
+
 	setupGraphicDefaults();
 	viewport();
 	setupScreenPerspective();
 }
-
 void ofGLRenderer::startRender() {
 	currentFramebufferId = defaultFramebufferId;
 	framebufferIdStack.push_back(defaultFramebufferId);
@@ -2027,5 +2025,3 @@ const of3dGraphics & ofGLRenderer::get3dGraphics() const {
 of3dGraphics & ofGLRenderer::get3dGraphics() {
 	return graphics3d;
 }
-
-#endif
