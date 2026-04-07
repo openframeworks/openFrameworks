@@ -302,43 +302,32 @@ void ofGLProgrammableRenderer::draw(const ofNode & node) const {
 void ofGLProgrammableRenderer::draw(const ofPolyline & poly) const {
 	if (poly.getVertices().empty()) return;
 
-	// use smoothness, if requested:
-	//if (bSmoothHinted) startSmoothing();
-
-#if defined(TARGET_OPENGLES) && !defined(TARGET_EMSCRIPTEN)
-
+#if defined(TARGET_OPENGLES)
+	// OpenGL ES path - direct vertex attrib arrays (fast for frequently updated polylines)
 	glEnableVertexAttribArray(ofShader::POSITION_ATTRIBUTE);
 	glVertexAttribPointer(ofShader::POSITION_ATTRIBUTE, 3, GL_FLOAT, GL_FALSE, sizeof(typename ofPolyline::VertexType), &poly[0]);
 
-	// const_cast<ofGLProgrammableRenderer *>(this)->setAttributes(true, false, false, false);
-
 	GLenum drawMode = poly.isClosed() ? GL_LINE_LOOP : GL_LINE_STRIP;
-	const_cast<ofGLProgrammableRenderer *>(this)->setAttributes(true, false, false, false, drawMode);
-
+	const_cast<ofGLProgrammableRenderer *>(this)->setAttributes(true, false, false, false);
 	glDrawArrays(drawMode, 0, poly.size());
 
 #else
-
-//	polylineMesh.clear();
-//	polylineMesh.addVertices(poly.getVertices());
-
-
+	// Desktop GL path - use VBO mesh
 	polylineMesh.getVertices() = poly.getVertices();
-	// check if it is closed and the last point is the same as the first
-	if( poly.isClosed() ) {
-		if(polylineMesh.getNumVertices() > 1 && polylineMesh.getVertices().front() == polylineMesh.getVertices().back() ) {
+	if (poly.isClosed()) {
+		if (polylineMesh.getNumVertices() > 1 && polylineMesh.getVertices().front() == polylineMesh.getVertices().back()) {
 			polylineMesh.getVertices().pop_back();
 		}
 	}
 
-	if( currentTextureTarget != OF_NO_TEXTURE ) {
+	if (currentTextureTarget != OF_NO_TEXTURE) {
 		// TODO: Should we be able to set tex coords on polylines somehow??
-		polylineMesh.getTexCoords().resize( polylineMesh.getNumVertices(), glm::vec2(0.f, 0.f));
+		polylineMesh.getTexCoords().resize(polylineMesh.getNumVertices(), glm::vec2(0.f, 0.f));
 		auto& tcs = polylineMesh.getTexCoords();
 		int numtxs = (int)polylineMesh.getNumVertices();
 		float numTxsF = (float)numtxs - 1.f;
-		if( numTxsF > 0.0f ) {
-			for( int ix = 0; ix < numtxs; ix++ ) {
+		if (numTxsF > 0.0f) {
+			for (int ix = 0; ix < numtxs; ix++) {
 				tcs[ix].x = (float)ix / numTxsF;
 			}
 		}
@@ -346,21 +335,11 @@ void ofGLProgrammableRenderer::draw(const ofPolyline & poly) const {
 	} else {
 		polylineMesh.disableTextures();
 	}
-
-	polylineMesh.setMode( poly.isClosed() ? OF_PRIMITIVE_LINE_LOOP : OF_PRIMITIVE_LINE_STRIP );
-//	draw(const ofMesh & vertexData, ofPolyRenderMode renderType, bool useColors, bool useTextures, bool useNormals) const;
+	polylineMesh.setMode(poly.isClosed() ? OF_PRIMITIVE_LINE_LOOP : OF_PRIMITIVE_LINE_STRIP);
 	draw(polylineMesh, OF_MESH_FILL, false, false, false);
-
-
-//	meshVbo.setVertexData(&poly.getVertices()[0], poly.size(), GL_DYNAMIC_DRAW);
-//	meshVbo.draw(poly.isClosed() ? GL_LINE_LOOP : GL_LINE_STRIP, 0, poly.size());
-//	meshPolylineVbo.setVertexData(&poly.getVertices()[0], poly.size(), GL_DYNAMIC_DRAW);
-//	meshPolylineVbo.draw(poly.isClosed() ? GL_LINE_LOOP : GL_LINE_STRIP, 0, poly.size());
-
 #endif
-	// use smoothness, if requested:
-	//if (bSmoothHinted) endSmoothing();
 }
+
 
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::draw(const ofPath & shape) const {
