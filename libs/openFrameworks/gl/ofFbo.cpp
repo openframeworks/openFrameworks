@@ -1130,10 +1130,13 @@ void ofFbo::updateTexture(int attachmentPoint) {
 		// if fbo != fboTextures, we are dealing with an MSAA enabled FBO.
 		// we need to blit one fbo into another to update the texture content
 
+#ifndef TARGET_OPENGLES
+		// glPushAttrib / glPopAttrib are desktop fixed-function only
+		// save current drawbuffer (fixed-function desktop only)
 		if (!ofIsGLProgrammableRenderer()){
-			// save current drawbuffer (fixed-function desktop only)
 			glPushAttrib(GL_COLOR_BUFFER_BIT);
 		}
+#endif
 
 		auto renderer = settings.renderer.lock();
 		if(renderer){
@@ -1147,10 +1150,12 @@ void ofFbo::updateTexture(int attachmentPoint) {
 			glReadBuffer(readBuffer);
 		}
 
+#ifndef TARGET_OPENGLES
 		if(!ofIsGLProgrammableRenderer()){
 			// restore current drawbuffer
 			glPopAttrib();
 		}
+#endif
 
 		dirty[attachmentPoint] = false;
 	}
@@ -1223,7 +1228,7 @@ bool ofFbo::checkStatus() const {
 		ofLogError("ofFbo") << "FRAMEBUFFER_UNSUPPORTED";
 		break;
 
-#if !defined(TARGET_OPENGLES) || defined(GL_ES_VERSION_3_0)
+#if !defined(TARGET_OPENGLES)
 	// these error codes are available on desktop + GLES 3.0+
 	case GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER:
 		ofLogWarning("ofFbo") << "FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER";
@@ -1231,6 +1236,8 @@ bool ofFbo::checkStatus() const {
 	case GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER:
 		ofLogError("ofFbo") << "FRAMEBUFFER_INCOMPLETE_READ_BUFFER";
 		break;
+#endif
+#if !defined(TARGET_OPENGLES) || defined(GL_ES_VERSION_3_0)
 	case GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE:
 		ofLogError("ofFbo") << "GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE";
 		break;
