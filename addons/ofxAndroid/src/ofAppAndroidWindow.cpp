@@ -54,8 +54,6 @@ static bool accumulateAxisEvents = false;
 static bool multiWindowMode = false;
 
 AAssetManager* assetManager;
-static int sGLESVersionMajor = 2;
-static int sGLESVersionMinor = 0;
 
 void ofExitCallback();
 
@@ -340,6 +338,11 @@ shared_ptr<ofBaseRenderer> & ofAppAndroidWindow::renderer(){
 int ofAppAndroidWindow::getGlesVersion()
 {
 	return glesVersion;
+}
+
+int ofAppAndroidWindow::getGlesVersionMinor()
+{
+	return glesVersionMinor;
 }
 
 extern "C"{
