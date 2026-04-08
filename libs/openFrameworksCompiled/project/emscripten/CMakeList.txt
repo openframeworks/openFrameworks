@@ -1,18 +1,8 @@
- ################################################################################
-# CONFIGURE CORE PLATFORM MAKEFILE
-#   This file has linux common rules for all the platforms (x86_64, i386,armv6l
-#   and armv7l)
-#
-################################################################################
+# Sets the minimum version of CMake required to build the native
+# library.
+cmake_minimum_required(VERSION  3.22.1)
 
-################################################################################
-# PLATFORM SPECIFIC CHECKS
-#   This is a platform defined section to create internal flags to enable or
-#   disable the addition of various features within this makefile.  For
-#   instance, on Linux, we check to see if there GTK+-2.0 is defined, allowing
-#   us to include that library and generate DEFINES that are interpreted as
-#   ifdefs within the openFrameworks core source code.
-################################################################################
+project(openFrameworksAndroid LANGUAGES CXX)
 
 PLATFORM_PROJECT_RELEASE_TARGET = bin/em/$(BIN_NAME)/index.html
 PLATFORM_PROJECT_DEBUG_TARGET = bin/em/$(BIN_NAME)/index.html
@@ -112,8 +102,7 @@ endif
 
 #PLATFORM_LDFLAGS += -s EMBIND_AOT=1
 PLATFORM_LDFLAGS = --preload-file bin/data@data --emrun --bind --profiling-funcs
-# PLATFORM_LDFLAGS += -s MAX_WEBGL_VERSION=2 -s WEBGL2_BACKWARDS_COMPATIBILITY_EMULATION=1 -s FULL_ES2
-PLATFORM_LDFLAGS += -s MAX_WEBGL_VERSION=1 -s MIN_WEBGL_VERSION=1 -s FULL_ES2=1
+PLATFORM_LDFLAGS += -s MAX_WEBGL_VERSION=2 -s WEBGL2_BACKWARDS_COMPATIBILITY_EMULATION=1 -s FULL_ES2
 PLATFORM_LDFLAGS += -s AUTO_NATIVE_LIBRARIES=1
 PLATFORM_LDFLAGS += -s AUTO_JS_LIBRARIES=1
 
