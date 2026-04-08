@@ -1137,7 +1137,7 @@ void ofGLProgrammableRenderer::setBlendMode(ofBlendMode blendMode) {
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::enablePointSprites() {
 	pointSpritesEnabled = true;
-#if !defined(TARGET_OPENGLES) || defined(GL_ES_VERSION_3_0)
+#if !defined(TARGET_OPENGLES)
 	glEnable(GL_PROGRAM_POINT_SIZE);
 #else
 	glEnable(GL_POINT_SPRITE_OES);
@@ -1147,7 +1147,7 @@ void ofGLProgrammableRenderer::enablePointSprites() {
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::disablePointSprites() {
 	pointSpritesEnabled = false;
-#if !defined(TARGET_OPENGLES) || defined(GL_ES_VERSION_3_0)
+#if !defined(TARGET_OPENGLES)
 	glDisable(GL_PROGRAM_POINT_SIZE);
 #else
 	glDisable(GL_POINT_SPRITE_OES);
@@ -1527,17 +1527,18 @@ void ofGLProgrammableRenderer::bindForBlitting(const ofFbo & fboSrc, ofFbo & fbo
 					   << "Most probably you forgot to end() the current framebuffer before calling getTexture().";
 		return;
 	}
-	// this method could just as well have been placed in ofBaseGLRenderer
-	// and shared over both programmable and fixed function renderer.
-	// I'm keeping it here, so that if we want to do more fancyful
-	// named framebuffers with GL 4.5+, we can have
-	// different implementations.
+
 	framebufferIdStack.push_back(currentFramebufferId);
 	currentFramebufferId = fboSrc.getId();
+
 	glBindFramebuffer(GL_READ_FRAMEBUFFER, currentFramebufferId);
-	glReadBuffer(GL_COLOR_ATTACHMENT0 + attachmentPoint);
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fboDst.getIdDrawBuffer());
+
+#ifndef TARGET_OPENGLES
+	// glReadBuffer / glDrawBuffer are desktop-only (deprecated on iOS GLES)
+	glReadBuffer(GL_COLOR_ATTACHMENT0 + attachmentPoint);
 	glDrawBuffer(GL_COLOR_ATTACHMENT0 + attachmentPoint);
+#endif
 }
 #endif
 
@@ -2921,9 +2922,9 @@ static string shaderSource(const string & src, int major, int minor) {
 	}
 #else
 	#if !defined(GL_ES_VERSION_3_0)
-	ofStringReplace(header, "%extensions%", "#extension GL_OES_standard_derivatives : enable");
+	ofStringReplace(shaderSrc, "%extensions%", "#extension GL_OES_standard_derivatives : enable");
 	#else
-	ofStringReplace(header, "%extensions%", "");
+	ofStringReplace(shaderSrc, "%extensions%", "");
 	#endif
 #endif
 

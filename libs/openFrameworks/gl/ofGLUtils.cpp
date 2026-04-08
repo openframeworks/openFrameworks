@@ -467,7 +467,7 @@ GLuint ofGetGLPolyMode(ofPolyRenderMode mode){
 	}
 #else
 	ofLogError("ofGLUtils") << "ofGetGLPolyMode(): poly modes not supported in OpenGL ES < 3.0";
-	return GL_FILL;
+	return 0;
 #endif
 }
 
