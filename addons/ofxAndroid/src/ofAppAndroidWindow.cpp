@@ -185,15 +185,15 @@ bool ofAppAndroidWindow::isSurfaceDestroyed() {
 
 void ofAppAndroidWindow::setup(const ofGLESWindowSettings & settings)
 {
-	glesVersion = settings.glesVersionMajor();
-    glesVersionMinor = settings.glesVersionMinor();
+	glesVersion = settings.getGLESVersionMajor();
+    glesVersionMinor = settings.getGLESVersionMinor();
 	setup( (const ofxAndroidWindowSettings &)settings );
 }
 
 void ofAppAndroidWindow::setup(const ofxAndroidWindowSettings & settings){
 
-	glesVersion = settings.glesVersionMajor();
-    glesVersionMinor = settings.glesVersionMinor();
+	glesVersion = settings.getGLESVersionMajor();
+    glesVersionMinor = settings.getGLESVersionMinor();
 	if(window == nullptr) {
 		ofLogError("ofAppAndroidWindow") << "Setup and Window is nullptr ! Fixing";
 		setCurrentWindow();
