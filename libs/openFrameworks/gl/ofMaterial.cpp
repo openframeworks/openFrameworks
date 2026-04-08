@@ -897,42 +897,11 @@ void ofMaterial::initShaders(ofGLProgrammableRenderer & renderer) const{
         extraVertString += customUniforms;
 
         #ifndef TARGET_OPENGLES
-            string vertexRectHeader = renderer.defaultVertexShaderHeader(GL_TEXTURE_RECTANGLE);
-            string fragmentRectHeader = renderer.defaultFragmentShaderHeader(GL_TEXTURE_RECTANGLE);
+		string vertexRectHeader = renderer.defaultVertexShaderHeader(GL_TEXTURE_RECTANGLE);
+		string fragmentRectHeader = renderer.defaultFragmentShaderHeader(GL_TEXTURE_RECTANGLE);
         #endif
         string vertex2DHeader = renderer.defaultVertexShaderHeader(GL_TEXTURE_2D);
         string fragment2DHeader = renderer.defaultFragmentShaderHeader(GL_TEXTURE_2D);
-
-#if defined(TARGET_OPENGLES) && defined(TARGET_EMSCRIPTEN)
-        // TODO: Should this be in programmable renderer?
-        if(ofIsGLProgrammableRenderer()) {
-            vertex2DHeader = "#version "+ofGLSLVersionFromGL(renderer.getGLVersionMajor(), renderer.getGLVersionMinor())+"\n";
-            vertex2DHeader += "precision highp float;\n";
-            vertex2DHeader += "precision highp int;\n";
-            vertex2DHeader += "#define TARGET_OPENGLES\n";
-            vertex2DHeader += "#define IN in\n";
-            vertex2DHeader += "#define OUT out\n";
-            vertex2DHeader += "#define TEXTURE texture\n";
-            vertex2DHeader += "#define SAMPLER sampler2D\n";
-
-            fragment2DHeader = "#version "+ofGLSLVersionFromGL(renderer.getGLVersionMajor(), renderer.getGLVersionMinor())+"\n";
-            fragment2DHeader += "precision highp float;\n";
-            fragment2DHeader += "precision highp int;\n";
-            fragment2DHeader += "#define TARGET_OPENGLES\n";
-            fragment2DHeader += "#define IN in\n";
-            fragment2DHeader += "#define OUT out\n";
-            fragment2DHeader += "#define TEXTURE texture\n";
-            fragment2DHeader += "#define FRAG_COLOR fragColor\n";
-            fragment2DHeader += "out vec4 fragColor;\n";
-            fragment2DHeader += "#define SAMPLER sampler2D\n";
-            fragment2DHeader += "precision highp sampler2D;\n";
-            fragment2DHeader += "precision highp samplerCube;\n";
-            fragment2DHeader += "precision mediump sampler2DShadow;\n";
-#if defined( GL_TEXTURE_2D_ARRAY ) && defined(glTexImage3D)
-            fragment2DHeader += "precision mediump sampler2DArrayShadow;\n";
-#endif
-        }
-#endif
 
         shaders[&renderer].reset(new Shaders);
         shaders[&renderer]->numLights = numLights;
