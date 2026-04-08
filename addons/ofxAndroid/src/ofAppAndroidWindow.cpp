@@ -476,6 +476,7 @@ Java_cc_openframeworks_OFAndroid_onSurfaceCreated( JNIEnv* env, jclass thiz ){
 
     bSetupScreen = true;
     int glesVersion = window->getGlesVersion();
+    int glesVersionMinor = window->getGlesVersionMinor();
 
     if(glesVersion < 2){
         ofLogVerbose("ofAppAndroidWindow") << "onSurfaceCreated OpenGLES 1";
