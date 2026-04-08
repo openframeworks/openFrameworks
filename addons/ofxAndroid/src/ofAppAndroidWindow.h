@@ -110,16 +110,20 @@ public:
 
 
 	int 	getGlesVersion();
+	int     getGlesVersionMinor();
 
 	AAssetManager& getAssetManager();
 	void setAssetManager(AAssetManager* assetManager);
+
+	int glesVersion;
+	int glesVersionMinor;
 
 
 
 private:
 	ofCoreEvents coreEvents;
 	std::shared_ptr<ofBaseRenderer> currentRenderer;
-	int glesVersion;
+
 	int msaaSamples;
 	AAssetManager* assetManager = nullptr;
 
