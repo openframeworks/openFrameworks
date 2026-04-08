@@ -125,18 +125,16 @@ ofAppAndroidWindow::ofAppAndroidWindow()  {
 	msaaSamples = 1;
 	glesVersion = 2;
 #ifdef TARGET_PROGRAMMABLE_GL
-    :currentRenderer(new ofGLProgrammableRenderer(this)) {
     #ifdef GL_ES_VERSION_3_0
-        sGLESVersionMajor = 3;
+        glesVersion = 3;
         #ifdef GL_ES_VERSION_3_1
-            sGLESVersionMinor = 1;
+            glesVersionMinor = 1;
         #endif
     #else
-        sGLESVersionMajor = 2;
+        glesVersion = 2;
     #endif
 #else
-        :currentRenderer(new ofGLRenderer(this)) {
-    sGLESVersionMajor = 1;
+    glesVersion = 1;
 #endif
     window = this;
 	ofGetMainLoop()->setCurrentWindow(this);
@@ -187,15 +185,15 @@ bool ofAppAndroidWindow::isSurfaceDestroyed() {
 
 void ofAppAndroidWindow::setup(const ofGLESWindowSettings & settings)
 {
-	sGLESVersionMajor = settings.glesVersionMajor();
-    sGLESVersionMinor = settings.glesVersionMinor();
+	glesVersion = settings.glesVersionMajor();
+    glesVersionMinor = settings.glesVersionMinor();
 	setup( (const ofxAndroidWindowSettings &)settings );
 }
 
 void ofAppAndroidWindow::setup(const ofxAndroidWindowSettings & settings){
 
-	sGLESVersionMajor = settings.glesVersionMajor();
-    sGLESVersionMinor = settings.glesVersionMinor();
+	glesVersion = settings.glesVersionMajor();
+    glesVersionMinor = settings.glesVersionMinor();
 	if(window == nullptr) {
 		ofLogError("ofAppAndroidWindow") << "Setup and Window is nullptr ! Fixing";
 		setCurrentWindow();
@@ -344,7 +342,6 @@ int ofAppAndroidWindow::getGlesVersion()
 	return glesVersion;
 }
 
-
 extern "C"{
 
 JNIEXPORT jint JNICALL
@@ -491,11 +488,11 @@ Java_cc_openframeworks_OFAndroid_onSurfaceCreated( JNIEnv* env, jclass thiz ){
 JNIEXPORT jboolean JNICALL
 Java_cc_openframeworks_OFAndroid_isWindowReady( JNIEnv*  env, jclass  thiz) {
 
-          if(window != nullptr && window->renderer() != nullptr) {
-            return true;
-      } else {
+    if(window != nullptr && window->renderer() != nullptr) {
+        return true;
+    } else {
         return false;
-        }
+    }
 }
 
 JNIEXPORT void JNICALL
