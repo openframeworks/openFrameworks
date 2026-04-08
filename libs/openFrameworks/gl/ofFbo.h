@@ -267,7 +267,7 @@ private:
 	int 				defaultTextureIndex; //used for getTextureReference
 	bool				bIsAllocated;
 	void reloadFbo();
-#if !defined(TARGET_OPENGLES) || defined(GL_ES_VERSION_3_0)
+#if defined(TARGET_OPENGLES) && !defined(GL_ES_VERSION_3_0)
 	static bool bglFunctionsInitialized;
 #endif
 
