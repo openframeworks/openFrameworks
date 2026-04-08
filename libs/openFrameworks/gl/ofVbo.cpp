@@ -843,7 +843,7 @@ void ofVbo::bind() const {
 	// VAO handling
 	if (programmable && (vaoSupported || !vaoChecked)) {
 		if (vaoID == 0) {
-#if defined(TARGET_OPENGLES) && !defined(GL_ES_VERSION_3_0)
+#if defined(TARGET_OPENGLES) && !defined(TARGET_EMSCRIPTEN)
 			// Pure GLES 2.0 — try to load VAO extension via dlsym
 			if (glGenVertexArrays == 0 && !vaoChecked) {
 				glGenVertexArrays = (glGenVertexArraysType)dlsym(RTLD_DEFAULT, "glGenVertexArrays");
@@ -862,16 +862,19 @@ void ofVbo::bind() const {
 			vaoSupported = true;
 #endif
 
-			if (vaoSupported) {
+			if (vaoSupported && glGenVertexArrays != nullptr) {
 				glGenVertexArrays(1, &const_cast<ofVbo*>(this)->vaoID);
+			} else if (vaoSupported && glGenVertexArrays == nullptr) {
+				vaoSupported = false;
 			}
+			
 			if (vaoID != 0) {
 				retainVAO(vaoID);
 				vaoChanged = true;
 			}
 		}
 
-		if (vaoSupported) {
+		if (vaoSupported && glBindVertexArray != nullptr) {
 			glBindVertexArray(vaoID);
 		}
 	} else {
