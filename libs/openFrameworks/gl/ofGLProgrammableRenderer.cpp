@@ -156,7 +156,7 @@ void ofGLProgrammableRenderer::draw(const ofMesh & vertexData, ofPolyRenderMode 
 	default:                drawMode = ofGetGLPrimitiveMode(vertexData.getMode()); break;
 	}
 
-	const_cast<ofGLProgrammableRenderer *>(this)->setAttributes(true, useColors, useTextures, useNormals);
+	const_cast<ofGLProgrammableRenderer *>(this)->setAttributes(true, useColors, useTextures, useNormals, drawMode);
 
 	if (vertexData.getNumIndices()) {
 		glDrawElements(drawMode, vertexData.getNumIndices(), GL_UNSIGNED_SHORT, vertexData.getIndexPointer());
@@ -239,9 +239,11 @@ void ofGLProgrammableRenderer::drawInstanced(const ofVboMesh & mesh, ofPolyRende
 	}
 
 #if !defined(TARGET_OPENGLES) || defined(GL_ES_VERSION_3_0)
-	// Desktop + GLES 3.0+ (including Emscripten) — full polygon mode + instancing support
+	
+#ifndef TARGET_OPENGLES
 	glPolygonMode(GL_FRONT_AND_BACK, ofGetGLPolyMode(renderType));
-
+#endif
+	
 	if (mesh.getNumIndices() && renderType != OF_MESH_POINTS) {
 		if (primCount <= 1) {
 			drawElements(mesh.getVbo(), mode, mesh.getNumIndices());
@@ -255,10 +257,11 @@ void ofGLProgrammableRenderer::drawInstanced(const ofVboMesh & mesh, ofPolyRende
 			drawInstanced(mesh.getVbo(), mode, 0, mesh.getNumVertices(), primCount);
 		}
 	}
-
+#ifndef TARGET_OPENGLES
 	// restore polygon mode to match current fill state
 	glPolygonMode(GL_FRONT_AND_BACK, currentStyle.bFill ? GL_FILL : GL_LINE);
-
+#endif
+	
 #else
 	// Pure GLES 2.0 fallback — no polygon mode, no instancing
 	if (renderType == OF_MESH_POINTS) {
@@ -308,7 +311,7 @@ void ofGLProgrammableRenderer::draw(const ofPolyline & poly) const {
 	glVertexAttribPointer(ofShader::POSITION_ATTRIBUTE, 3, GL_FLOAT, GL_FALSE, sizeof(typename ofPolyline::VertexType), &poly[0]);
 
 	GLenum drawMode = poly.isClosed() ? GL_LINE_LOOP : GL_LINE_STRIP;
-	const_cast<ofGLProgrammableRenderer *>(this)->setAttributes(true, false, false, false);
+	const_cast<ofGLProgrammableRenderer *>(this)->setAttributes(true, false, false, false, drawMode);
 	glDrawArrays(drawMode, 0, poly.size());
 
 #else
@@ -994,15 +997,13 @@ void ofGLProgrammableRenderer::setFillMode(ofFillFlag fill) {
 	if (currentStyle.bFill) {
 		path.setFilled(true);
 		path.setStrokeWidth(0);
-#if !defined(TARGET_OPENGLES) || defined(GL_ES_VERSION_3_0)
-		// GLES 3.0+ (and desktop) support glPolygonMode
+#ifndef TARGET_OPENGLES
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 #endif
 	} else {
 		path.setFilled(false);
 		path.setStrokeWidth(currentStyle.lineWidth);
-#if !defined(TARGET_OPENGLES) || defined(GL_ES_VERSION_3_0)
-		// GLES 3.0+ (and desktop) support glPolygonMode
+#ifndef TARGET_OPENGLES
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 #endif
 	}

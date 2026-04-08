@@ -222,19 +222,20 @@ int ofGetGLFormatFromInternal(int glInternalFormat){
         return GL_STENCIL_INDEX;
 
     // modern red / RG formats (used for float + half-float textures)
-    #if !defined(TARGET_OPENGLES) || defined(GL_ES_VERSION_3_0)
-    case GL_R8:
-    case GL_R16F:
-    case GL_R32F:
-    case GL_RG8:
-    case GL_RG16F:
-    case GL_RG32F:
-    #endif
-    #ifndef TARGET_OPENGLES
-    case GL_R16:
-    case GL_RG16:
-    #endif
-        return (glInternalFormat == GL_R8 || glInternalFormat == GL_R16F || glInternalFormat == GL_R32F || glInternalFormat == GL_R16) ? GL_RED : GL_RG;
+	#if !defined(TARGET_OPENGLES) || defined(GL_ES_VERSION_3_0)
+	case GL_R8:
+	case GL_R16F:
+	case GL_R32F:
+	case GL_RG8:
+	case GL_RG16F:
+	case GL_RG32F:
+	#endif
+	#ifndef TARGET_OPENGLES
+	case GL_R16:
+	case GL_RG16:
+	#endif
+		// only use constants that exist on GLES
+		return (glInternalFormat == GL_R8 || glInternalFormat == GL_R16F || glInternalFormat == GL_R32F) ? GL_RED : GL_RG;
 
     #ifndef TARGET_OPENGLES
     case GL_ALPHA8:
@@ -452,7 +453,7 @@ ofImageType ofGetImageTypeFromGLType(int glType){
 }
 
 GLuint ofGetGLPolyMode(ofPolyRenderMode mode){
-#if !defined(TARGET_OPENGLES) || defined(GL_ES_VERSION_3_0)
+#if !defined(TARGET_OPENGLES)
 	switch(mode){
 		case OF_MESH_POINTS:
 			return GL_POINT;
@@ -471,7 +472,7 @@ GLuint ofGetGLPolyMode(ofPolyRenderMode mode){
 }
 
 ofPolyRenderMode ofGetOFPolyMode(GLuint mode){
-#if !defined(TARGET_OPENGLES) || defined(GL_ES_VERSION_3_0)
+#if !defined(TARGET_OPENGLES)
 	switch(mode){
 		case GL_POINT:
 			return OF_MESH_POINTS;
