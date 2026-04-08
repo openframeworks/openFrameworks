@@ -2126,52 +2126,23 @@ void ofGLProgrammableRenderer::drawString(const ofTrueTypeFont & font, string te
 // tig: GLSL #150 shaders written against spec:
 // http://www.opengl.org/registry/doc/GLSLangSpec.1.50.09.pdf
 
+
 #ifdef TARGET_OPENGLES
-    #if defined(GL_ES_VERSION_3_0)
-    static const string vertex_shader_header =
-        "#version %glsl_version% es\n"
-        "precision highp float;\n"
-        "#define IN in\n"
-        "#define OUT out\n"
-        "#define TEXTURE texture\n"
-        "#define TARGET_OPENGLES\n";
-
-    static const string fragment_shader_header =
-        "#version %glsl_version% es\n"
-        "precision highp float;\n"
-        "#define IN in\n"
-        "#define OUT out\n"
-        "#define TEXTURE texture\n"
-        "#define FRAG_COLOR outputColor\n"
-        "#define TARGET_OPENGLES\n"
-        "out vec4 outputColor;\n";
-    #else
-    // OpenGL ES 2.0 / GLSL ES 1.00
-    static const string vertex_shader_header =
-        "#version %glsl_version%\n"
-        "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
-        "precision highp float;\n"
-        "#else\n"
-        "precision mediump float;\n"
-        "#endif\n"
-        "#define IN attribute\n"
-        "#define OUT varying\n"
-        "#define TEXTURE texture2D\n"
-        "#define TARGET_OPENGLES\n";
-
-    static const string fragment_shader_header =
-        "#version %glsl_version%\n"
-        "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
-        "precision highp float;\n"
-        "#else\n"
-        "precision mediump float;\n"
-        "#endif\n"
-        "#define IN varying\n"
-        "#define OUT\n"
-        "#define TEXTURE texture2D\n"
-        "#define FRAG_COLOR gl_FragColor\n"
-        "#define TARGET_OPENGLES\n";
-    #endif
+static const string vertex_shader_header =
+		"%extensions%\n"
+		"precision highp float;\n"
+		"#define IN attribute\n"
+		"#define OUT varying\n"
+		"#define TEXTURE texture2D\n"
+		"#define TARGET_OPENGLES\n";
+static const string fragment_shader_header =
+		"%extensions%\n"
+		"precision highp float;\n"
+		"#define IN varying\n"
+		"#define OUT\n"
+		"#define TEXTURE texture2D\n"
+		"#define FRAG_COLOR gl_FragColor\n"
+		"#define TARGET_OPENGLES\n";
 #else
 static const string vertex_shader_header =
 		"#version %glsl_version%\n"
@@ -2188,6 +2159,8 @@ static const string fragment_shader_header =
 		"#define FRAG_COLOR fragColor\n"
 		"out vec4 fragColor;\n";
 #endif
+
+
 
 static const string defaultVertexShader = vertex_shader_header + STRINGIFY(
 	uniform mat4 projectionMatrix;
