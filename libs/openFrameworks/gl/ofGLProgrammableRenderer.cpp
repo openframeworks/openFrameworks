@@ -158,8 +158,14 @@ void ofGLProgrammableRenderer::draw(const ofMesh & vertexData, ofPolyRenderMode 
 
 	const_cast<ofGLProgrammableRenderer *>(this)->setAttributes(true, useColors, useTextures, useNormals, drawMode);
 
+	#if defined(TARGET_EMSCRIPTEN) || defined(TARGET_OPENGLES) && defined(GL_ES_VERSION_3_0)
+	    GLenum indexType = GL_UNSIGNED_INT;
+	#else
+	    GLenum indexType = GL_UNSIGNED_SHORT;
+	#endif
+
 	if (vertexData.getNumIndices()) {
-		glDrawElements(drawMode, vertexData.getNumIndices(), GL_UNSIGNED_SHORT, vertexData.getIndexPointer());
+		glDrawElements(drawMode, vertexData.getNumIndices(), indexType, vertexData.getIndexPointer());
 	} else {
 		glDrawArrays(drawMode, 0, vertexData.getNumVertices());
 	}
@@ -238,7 +244,7 @@ void ofGLProgrammableRenderer::drawInstanced(const ofVboMesh & mesh, ofPolyRende
 		}
 	}
 
-#if !defined(TARGET_OPENGLES) || defined(GL_ES_VERSION_3_0)
+#if !defined(TARGET_OPENGLES)
 	
 #ifndef TARGET_OPENGLES
 	glPolygonMode(GL_FRONT_AND_BACK, ofGetGLPolyMode(renderType));
@@ -461,11 +467,11 @@ void ofGLProgrammableRenderer::drawElements(const ofVbo & vbo, GLuint drawMode, 
 			vbo.getUsingTexCoords(),
 			vbo.getUsingNormals(), drawMode);
 
-#ifdef TARGET_OPENGLES
-		glDrawElements(drawMode, amt, GL_UNSIGNED_SHORT, (void *)(sizeof(ofIndexType) * offsetelements));
-#else
-		glDrawElements(drawMode, amt, GL_UNSIGNED_INT, (void *)(sizeof(ofIndexType) * offsetelements));
-#endif
+		#if defined(TARGET_EMSCRIPTEN) || defined(TARGET_OPENGLES) && defined(GL_ES_VERSION_3_0) && GL_ES_VERSION_3_0 == 1
+		    glDrawElements(drawMode, amt, GL_UNSIGNED_INT, (void *)(sizeof(ofIndexType) * offsetelements));
+		#else
+		    glDrawElements(drawMode, amt, GL_UNSIGNED_SHORT, (void *)(sizeof(ofIndexType) * offsetelements));
+		#endif
 		vbo.unbind();
 	}
 }
@@ -494,10 +500,11 @@ void ofGLProgrammableRenderer::drawElementsInstanced(const ofVbo & vbo, GLuint d
 		// https://www.khronos.org/opengles/sdk/docs/man3/xhtml/glDrawElementsInstanced.xml
 		ofLogWarning("ofVbo") << "drawElementsInstanced(): hardware instancing is not supported on OpenGL ES < 3.0";
 #else
-		#if defined(TARGET_OPENGLES)
-		glDrawElementsInstanced(drawMode, amt, GL_UNSIGNED_SHORT, nullptr, primCount);
+
+		#if defined(TARGET_EMSCRIPTEN) || defined(TARGET_OPENGLES) && defined(GL_ES_VERSION_3_0) && GL_ES_VERSION_3_0 == 1
+		    glDrawElements(drawMode, amt, GL_UNSIGNED_INT, nullptr, primCount);
 		#else
-		glDrawElementsInstanced(drawMode, amt, GL_UNSIGNED_INT, nullptr, primCount);
+		    glDrawElements(drawMode, amt, GL_UNSIGNED_SHORT, nullptr, primCount);
 		#endif
 #endif
 		vbo.unbind();
