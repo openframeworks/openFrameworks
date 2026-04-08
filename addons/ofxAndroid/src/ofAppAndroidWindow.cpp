@@ -482,7 +482,7 @@ Java_cc_openframeworks_OFAndroid_onSurfaceCreated( JNIEnv* env, jclass thiz ){
         dynamic_cast<ofGLRenderer*>(window->renderer().get())->setup();
     }else{
         ofLogVerbose("ofAppAndroidWindow") << "onSurfaceCreated OpenGLES 2.0+";
-        dynamic_cast<ofGLProgrammableRenderer*>(window->renderer().get())->setup(glesVersion, sGLESVersionMinor);
+        dynamic_cast<ofGLProgrammableRenderer*>(window->renderer().get())->setup(glesVersion, glesVersionMinor);
     }
 
     surfaceDestroyed = false;
