@@ -133,7 +133,7 @@ public:
         const ofGLESWindowSettings * glesSettings = dynamic_cast<const ofGLESWindowSettings*>(&settings);
         if(glesSettings){
             glesVersion = glesSettings->glesVersion;
-            glesVersionMinor = glesSettings->mGlesVersionMinor;
+            glesVersionMinor = glesSettings->glesVersionMinor;
         }
     }
     
@@ -144,10 +144,9 @@ public:
         glesVersionMinor = versionMinor;
     }
 
-    int glesVersionMajor() const { return glesVersion; }
-    int glesVersionMinor() const { return glesVersionMinor ; }
+    int getGLESVersionMajor() const { return glesVersion; }
+    int getGLESVersionMinor() const { return glesVersionMinor ; }
 
-private:
     int glesVersion;
     int glesVersionMinor;
 };
