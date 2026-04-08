@@ -233,9 +233,13 @@ int ofGetGLFormatFromInternal(int glInternalFormat){
 	#ifndef TARGET_OPENGLES
 	case GL_R16:
 	case GL_RG16:
-	#endif
-		// only use constants that exist on GLES
 		return (glInternalFormat == GL_R8 || glInternalFormat == GL_R16F || glInternalFormat == GL_R32F) ? GL_RED : GL_RG;
+	#endif
+
+	#if !defined(TARGET_OPENGLES) && defined(GL_RGB565)
+    case GL_RGB565:
+        return GL_UNSIGNED_SHORT_5_6_5;
+    #endif
 
     #ifndef TARGET_OPENGLES
     case GL_ALPHA8:
