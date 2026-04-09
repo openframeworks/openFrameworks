@@ -722,7 +722,7 @@ void ofTexture::generateMipmap(){
 	switch (texData.textureTarget) {
 			/// OpenGL ES only supports mipmap for the following two texture targets:
 		case GL_TEXTURE_2D:
-#if defined(GL_ES_VERSION_2_0) || defined(GL_ES_VERSION_3_0)
+#if defined(TARGET_OPENGLES) || (defined(GL_ES_VERSION_2_0) && defined(TARGET_OPENGLES_2))
 		case GL_TEXTURE_CUBE_MAP:
 #endif
 #ifndef TARGET_OPENGLES
@@ -730,7 +730,7 @@ void ofTexture::generateMipmap(){
 		case GL_TEXTURE_1D:
 		case GL_TEXTURE_1D_ARRAY:
 #endif
-#if !defined(TARGET_OPENGLES) || defined(GL_ES_VERSION_3_0)
+#if !defined(TARGET_OPENGLES) || (defined(GL_ES_VERSION_3_0) && defined(TARGET_OPENGLES_3))
 		case GL_TEXTURE_3D:
 		case GL_TEXTURE_2D_ARRAY:
 #endif

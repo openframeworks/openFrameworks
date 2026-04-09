@@ -341,7 +341,7 @@ std::string ofShadow::getShaderDefinesAsString() {
 
 //--------------------------------------------------------------
 bool ofShadow::areShadowsSupported() {
-	#if defined(TARGET_OPENGLES) && !defined(GL_ES_VERSION_3_0)
+	#if defined(TARGET_OPENGLES) && !(defined(GL_ES_VERSION_3_0) && defined(TARGET_OPENGLES_3))
 	return false;   // GLES 2.0 does not support shadows
 	#endif
 
@@ -984,7 +984,7 @@ void ofShadow::_allocateFbo() {
 	GLenum gl_read_status = GL_FRAMEBUFFER_UNSUPPORTED;
 	
 	GLenum textureTarget = getTextureTarget(data->lightType);
-#if !defined(TARGET_OPENGLES) || defined(GL_ES_VERSION_3_0)
+#if !defined(TARGET_OPENGLES) || (defined(GL_ES_VERSION_3_0) && defined(TARGET_OPENGLES_3))
 	GLenum depthComponent = GL_DEPTH_COMPONENT32F;
 	GLenum glType = GL_FLOAT;
 #else

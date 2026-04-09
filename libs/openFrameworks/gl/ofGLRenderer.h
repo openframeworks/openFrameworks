@@ -211,7 +211,7 @@ public:
 	void end(const ofFbo & fbo);
 
 	void bind(const ofFbo & fbo);
-#if !defined(TARGET_OPENGLES) || defined(GL_ES_VERSION_3_0)
+#if !defined(TARGET_OPENGLES) || (defined(GL_ES_VERSION_3_0) && defined(TARGET_OPENGLES_3))
 	void bindForBlitting(const ofFbo & fboSrc, ofFbo & fboDst, int attachmentPoint);
 #endif
 	void unbind(const ofFbo & fbo);

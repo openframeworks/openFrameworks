@@ -516,7 +516,7 @@ public:
 	/// \param fbo The frame buffer that is currently bound to this renderer.
 	virtual void unbind(const ofFbo & fbo)=0;
 
-#if !defined(TARGET_OPENGLES) || defined(GL_ES_VERSION_3_0)
+#if !defined(TARGET_OPENGLES) || (defined(GL_ES_VERSION_3_0) && defined(TARGET_OPENGLES_3))
 	/// \brief Bind source and destination frame buffers for blitting.
 	///
 	/// \param fboSrc The source frame buffer to bind for blitting.

@@ -569,7 +569,7 @@ class ofTexture : public ofBaseDraws {
 	/// \param glType the OpenGL type of the data.
     void loadData(const void * data, int w, int h, int glFormat, int glType);
 
-#if !defined(TARGET_OPENGLES) || defined(GL_ES_VERSION_3_0)
+#if !defined(TARGET_OPENGLES) || (defined(GL_ES_VERSION_3_0) && defined(TARGET_OPENGLES_3))
 	/// \brief Load pixels from an ofBufferObject
 	///
 	/// This is different to allocate(ofBufferObject,internal). That
