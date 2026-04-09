@@ -65,7 +65,7 @@ public:
 	void destroy();
 	void clear();
 
-#if !defined(TARGET_OPENGLES) || defined(GL_ES_VERSION_3_0)
+#if !defined(TARGET_OPENGLES) || (defined(GL_ES_VERSION_3_0) && defined(TARGET_OPENGLES_3))
 	/// glClearBufferfv(GL_COLOR, 0...)
 	///
 	/// @see: https://www.opengl.org/wiki/GLAPI/glClearBuffer
@@ -166,7 +166,7 @@ public:
 	void readToPixels(ofShortPixels & pixels, int attachmentPoint = 0) const;
 	void readToPixels(ofFloatPixels & pixels, int attachmentPoint = 0) const;
 
-#if !defined(TARGET_OPENGLES) || defined(GL_ES_VERSION_3_0)
+#if !defined(TARGET_OPENGLES) || (defined(GL_ES_VERSION_3_0) && defined(TARGET_OPENGLES_3))
 	/// \brief Copy the fbo to an ofBufferObject.
 	/// \param buffer the target buffer to copy to.
 	void copyTo(ofBufferObject & buffer) const;
@@ -267,7 +267,7 @@ private:
 	int 				defaultTextureIndex; //used for getTextureReference
 	bool				bIsAllocated;
 	void reloadFbo();
-#if defined(TARGET_OPENGLES) && !defined(GL_ES_VERSION_3_0)
+#if defined(TARGET_OPENGLES) && !(defined(GL_ES_VERSION_3_0) && defined(TARGET_OPENGLES_3))
 	static bool bglFunctionsInitialized;
 #endif
 
