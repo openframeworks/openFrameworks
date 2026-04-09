@@ -230,6 +230,12 @@ enum ofTargetPlatform{
 
 		#include <GLES/gl.h>
 		#include <GLES/glext.h>
+		#if defined(GL_ES_VERSION_3_0)
+		#include <GLES3/gl3.h>
+		#endif
+		#if defined(GL_ES_VERSION_3_1)
+		#include "GLES3/gl31.h"
+		#endif
 		#include <GLES2/gl2.h>
 		#include <GLES2/gl2ext.h>
 
@@ -280,13 +286,21 @@ enum ofTargetPlatform{
 
 #ifdef TARGET_ANDROID
 	#include <typeinfo>
+	#include <unistd.h>
 	#include <GLES/gl.h>
-	#define GL_GLEXT_PROTOTYPES
+ 	#define GL_GLEXT_PROTOTYPES
 	#include <GLES/glext.h>
-
+	#if __ANDROID_API__ >= 21
+		#if defined(GL_ES_VERSION_3_0)
+		#include "GLES3/gl3.h"
+		#include "GLES3/gl31.h" // only works on Android-21+
+		#include "GLES3/gl3ext.h"
+		#endif
+	#endif
+	#ifndef __gl3_h_
 	#include <GLES2/gl2.h>
 	#include <GLES2/gl2ext.h>
-
+	#endif
 	#define TARGET_LITTLE_ENDIAN
 #endif
 
@@ -294,14 +308,17 @@ enum ofTargetPlatform{
 	#define GL_GLEXT_PROTOTYPES
 	#include <GLES/gl.h>
 	#include <GLES/glext.h>
+	#if defined(GL_ES_VERSION_3_0)
+	#include <GLES3/gl3.h>
+	#endif
+	#if defined(GL_ES_VERSION_3_1)
+	#include "GLES3/gl31.h"
+	#endif
 	#include <GLES2/gl2.h>
 	#include <GLES2/gl2ext.h>
-	#include <GLES3/gl3.h>
 	#include <GL/glew.h>
-
 	#include "EGL/egl.h"
 	#include "EGL/eglext.h"
-
 	#define TARGET_LITTLE_ENDIAN
 #endif
 
@@ -320,6 +337,28 @@ typedef TESSindex ofIndexType;
 		#define OF_NO_FMOD
 	#endif
 	#include <arm64_neon.h> // intrinsics SIMD on https://learn.microsoft.com/en-us/cpp/intrinsics/arm64-intrinsics?view=msvc-170
+#endif
+
+#ifdef TARGET_OPENGLES
+	#if !defined(TARGET_OPENGLES_3)
+        #if defined(GL_ES_VERSION_3_0) || \
+            (defined(TARGET_EMSCRIPTEN) && defined(USE_WEBGL2)) || \
+            defined(TARGET_OPENGLES_3_1) || defined(TARGET_OPENGLES_3_2)
+            #define TARGET_OPENGLES_3
+            #if defined(GL_ES_VERSION_3_1)
+            	#define TARGET_OPENGLES_3_1
+            #endif
+            #if defined(GL_ES_VERSION_3_2)
+            	#define TARGET_OPENGLES_3_2
+            #endif
+        #endif
+    #endif
+    // User can force-disable GLES3
+    #if defined(TARGET_FORCE_GLES_2) || defined(TARGET_FORCE_GLES_1)
+        #undef TARGET_OPENGLES_3
+        #undef TARGET_OPENGLES_3_1
+        #undef TARGET_OPENGLES_3_2
+    #endif
 #endif
 
 //------------------------------------------------ soundplayer

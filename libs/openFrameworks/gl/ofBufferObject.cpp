@@ -81,7 +81,7 @@ void ofBufferObject::unbind(GLenum target) const{
 	}
 }
 
-#if !defined(TARGET_OPENGLES) || defined(TARGET_EMSCRIPTEN)
+#if !defined(TARGET_OPENGLES) || (defined(GL_ES_VERSION_3_0) && defined(TARGET_OPENGLES_3))
 void ofBufferObject::bindBase(GLenum target,GLuint index) const{
 	if(data){
 		glBindBufferBase(target,index,data->id);
@@ -187,7 +187,9 @@ void * ofBufferObject::map(GLenum access){
 
 	return ret;
 }
+#endif
 
+#if !defined(TARGET_OPENGLES) || (defined(GL_ES_VERSION_3_0) && defined(TARGET_OPENGLES_3))
 void ofBufferObject::unmap(){
 	if(!this->data) return;
 
@@ -262,9 +264,15 @@ void ofBufferObject::copyTo(ofBufferObject & dstBuffer, int readOffset, int writ
 
 
 void ofBufferObject::invalidate(){
-    glInvalidateBufferData(data->id);
+#if !defined(TARGET_OPENGLES) || defined(GL_ES_VERSION_3_1)
+	// Desktop + GLES 3.1+ support glInvalidateBufferData
+	if (data && data->id != 0) {
+		glInvalidateBufferData(data->id);
+	}
+#endif
+	// On GLES 2.0 / GLES 3.0 (including iOS with MetalANGLE) this is a no-op
+	// (the driver is free to ignore the hint anyway)
 }
-
 #endif
 
 GLsizeiptr ofBufferObject::size() const{

@@ -42,21 +42,19 @@ ofGLRenderer::ofGLRenderer(const ofAppBaseWindow * _window)
 
 void ofGLRenderer::setup() {
 #ifdef TARGET_OPENGLES
-	// OpenGL ES might have set a default frame buffer for
-	// MSAA rendering to the window, bypassing ofFbo, so we
-	// can't trust ofFbo to have correctly tracked the bind
-	// state. Therefore, we are forced to use the slower glGet() method
-	// to be sure to get the correct default framebuffer.
-	GLint currentFrameBuffer;
-	glGetIntegerv(GL_FRAMEBUFFER_BINDING, &currentFrameBuffer);
-	defaultFramebufferId = currentFrameBuffer;
+	// OpenGL ES might have set a default frame buffer for MSAA rendering to the window,
+	// bypassing ofFbo, so we can't trust ofFbo to have correctly tracked the bind state.
+	// Therefore we are forced to use the slower glGet() method to be sure.
+	GLint currentFramebuffer;
+	glGetIntegerv(GL_FRAMEBUFFER_BINDING, &currentFramebuffer);
+	defaultFramebufferId = currentFramebuffer;
 	currentFramebufferId = defaultFramebufferId;
 #endif
+
 	setupGraphicDefaults();
 	viewport();
 	setupScreenPerspective();
 }
-
 void ofGLRenderer::startRender() {
 	currentFramebufferId = defaultFramebufferId;
 	framebufferIdStack.push_back(defaultFramebufferId);
@@ -509,7 +507,7 @@ void ofGLRenderer::bind(const ofFbo & fbo) {
 	glBindFramebuffer(GL_FRAMEBUFFER, currentFramebufferId);
 }
 
-#ifndef TARGET_OPENGLES
+#if !defined(TARGET_OPENGLES) || (defined(GL_ES_VERSION_3_0) && defined(TARGET_OPENGLES_3))
 //----------------------------------------------------------
 void ofGLRenderer::bindForBlitting(const ofFbo & fboSrc, ofFbo & fboDst, int attachmentPoint) {
 	if (currentFramebufferId == fboSrc.getId()) {
@@ -517,17 +515,18 @@ void ofGLRenderer::bindForBlitting(const ofFbo & fboSrc, ofFbo & fboDst, int att
 					   << "Most probably you forgot to end() the current framebuffer before calling getTexture().";
 		return;
 	}
-	// this method could just as well have been placed in ofBaseGLRenderer
-	// and shared over both programmable and fixed function renderer.
-	// I'm keeping it here, so that if we want to do more fancyful
-	// named framebuffers with GL 4.5+, we can have
-	// different implementations.
+
 	framebufferIdStack.push_back(currentFramebufferId);
 	currentFramebufferId = fboSrc.getId();
+
 	glBindFramebuffer(GL_READ_FRAMEBUFFER, currentFramebufferId);
-	glReadBuffer(GL_COLOR_ATTACHMENT0 + attachmentPoint);
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fboDst.getIdDrawBuffer());
+
+#ifndef TARGET_OPENGLES
+	// glReadBuffer / glDrawBuffer are desktop-only
+	glReadBuffer(GL_COLOR_ATTACHMENT0 + attachmentPoint);
 	glDrawBuffer(GL_COLOR_ATTACHMENT0 + attachmentPoint);
+#endif
 }
 #endif
 

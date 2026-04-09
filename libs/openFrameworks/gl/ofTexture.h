@@ -555,6 +555,7 @@ class ofTexture : public ofBaseDraws {
 	/// \param glFormat GL pixel type: GL_RGBA, GL_LUMINANCE, etc.
 	void loadData(const ofFloatPixels & pix, int glFormat);
 
+
 	/// \brief Load byte pixel data.
 	///
 	/// glFormat can be different to the internal format of the texture on each
@@ -567,8 +568,8 @@ class ofTexture : public ofBaseDraws {
 	/// \param glFormat GL pixel type: GL_RGBA, GL_LUMINANCE, etc.
 	/// \param glType the OpenGL type of the data.
     void loadData(const void * data, int w, int h, int glFormat, int glType);
-	
-#ifndef TARGET_OPENGLES
+
+#if !defined(TARGET_OPENGLES) || (defined(GL_ES_VERSION_3_0) && defined(TARGET_OPENGLES_3))
 	/// \brief Load pixels from an ofBufferObject
 	///
 	/// This is different to allocate(ofBufferObject,internal). That
@@ -725,7 +726,10 @@ class ofTexture : public ofBaseDraws {
 	///
 	void unbind(int textureLocation=0) const;
 
-#if !defined(TARGET_OPENGLES) && defined(glBindImageTexture)
+#if !defined(TARGET_OPENGLES) || defined(GL_ES_VERSION_3_1)
+// TODO: check for availability of glBindImageTexture in a valid way
+//       defined(glBindImageTexture) does not actually work!
+//       there is no reliable way to check for a function being defined just with the preprocessor
 	/// Calls glBindImageTexture on the texture
 	///
 	/// Binds the texture as an read or write image, only available since OpenGL 4.2
@@ -952,7 +956,7 @@ class ofTexture : public ofBaseDraws {
 	/// \sa generateMipmap()
 	/// \sa enableMipmap()
 	bool hasMipmap() const;
-	
+
 	/// \internal
 	ofTextureData texData; ///< Internal texture data access.
 	                       ///< For backwards compatibility.

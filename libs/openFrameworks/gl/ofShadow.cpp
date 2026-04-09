@@ -341,14 +341,11 @@ std::string ofShadow::getShaderDefinesAsString() {
 
 //--------------------------------------------------------------
 bool ofShadow::areShadowsSupported() {
-	#if defined(TARGET_OPENGLES) && !defined(TARGET_EMSCRIPTEN)
-	return false;
+	#if defined(TARGET_OPENGLES) && !(defined(GL_ES_VERSION_3_0) && defined(TARGET_OPENGLES_3))
+	return false;   // GLES 2.0 does not support shadows
 	#endif
-	
-	if(!ofIsGLProgrammableRenderer() ) {
-		return false;
-	}
-	return true;
+
+	return ofIsGLProgrammableRenderer();
 }
 
 //--------------------------------------------------------------
@@ -987,15 +984,12 @@ void ofShadow::_allocateFbo() {
 	GLenum gl_read_status = GL_FRAMEBUFFER_UNSUPPORTED;
 	
 	GLenum textureTarget = getTextureTarget(data->lightType);
-#if !defined(TARGET_OPENGLES)
-	int depthComponent = GL_DEPTH_COMPONENT32F;
-	int glType = GL_FLOAT;
-#elif defined(TARGET_EMSCRIPTEN)
-	int depthComponent = GL_DEPTH_COMPONENT24;
-	int glType = GL_UNSIGNED_INT;
+#if !defined(TARGET_OPENGLES) || (defined(GL_ES_VERSION_3_0) && defined(TARGET_OPENGLES_3))
+	GLenum depthComponent = GL_DEPTH_COMPONENT32F;
+	GLenum glType = GL_FLOAT;
 #else
-	int depthComponent = GL_DEPTH_COMPONENT;
-	int glType = GL_UNSIGNED_SHORT;
+	GLenum depthComponent = GL_DEPTH_COMPONENT;
+	GLenum glType = GL_UNSIGNED_SHORT;
 #endif
 	
 	glBindTexture(textureTarget, getDepthMapTexId() );
