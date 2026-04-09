@@ -337,7 +337,6 @@ int ofGetGLTypeFromInternal(int glInternalFormat){
     #endif
 
     #ifndef TARGET_OPENGLES
-    case GL_DEPTH_COMPONENT24:
     case GL_DEPTH_COMPONENT32:
     case GL_R32UI:
     case GL_RG32UI:
