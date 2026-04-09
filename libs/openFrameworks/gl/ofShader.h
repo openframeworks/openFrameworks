@@ -75,7 +75,7 @@ public:
 
 	bool load(const of::filesystem::path& shaderName);
 	bool load(const of::filesystem::path& vertName, const of::filesystem::path& fragName, const of::filesystem::path& geomName="");
-#if !defined(TARGET_OPENGLES) || (defined(GL_ES_VERSION_3_1) && defined(TARGET_OPENGLES_3) && defined(glDispatchCompute)))
+#if !defined(TARGET_OPENGLES) || (defined(GL_ES_VERSION_3_1) && defined(TARGET_OPENGLES_3) && defined(glDispatchCompute))
 	bool loadCompute(const of::filesystem::path& shaderName);
 #endif
 
@@ -152,7 +152,7 @@ public:
 	void endTransformFeedback(const std::vector<TransformFeedbackBaseBinding> & binding) const;
 #endif
 
-#if !defined(TARGET_OPENGLES) || (defined(TARGET_OPENGLES_3) && defined(glDispatchCompute)) || defined(GL_ES_VERSION_3_1))
+#if !defined(TARGET_OPENGLES) || (defined(TARGET_OPENGLES_3) && defined(glDispatchCompute) && defined(GL_ES_VERSION_3_1))
 	void dispatchCompute(GLuint x, GLuint y, GLuint z) const;
 #endif
 
