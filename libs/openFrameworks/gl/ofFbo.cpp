@@ -34,7 +34,7 @@ using std::vector;
 
  */
 
-#if defined(TARGET_OPENGLES) || !(defined(GL_ES_VERSION_3_0) && defined(TARGET_OPENGLES_3))
+#if defined(TARGET_OPENGLES) && !(defined(GL_ES_VERSION_3_0) && defined(TARGET_OPENGLES_3))
 	bool ofFbo::bglFunctionsInitialized=false;
 
 	typedef void (* glGenFramebuffersType) (GLsizei n, GLuint* framebuffers);
