@@ -110,7 +110,7 @@ std::string ofMaterial::getTextureTypeAsString(const ofMaterialTextureType & aMa
 
 //----------------------------------------------------------
 bool ofMaterial::isPBRSupported() {
-	#if defined(TARGET_OPENGLES) && !defined(GL_ES_VERSION_3_0)
+	#if defined(TARGET_OPENGLES) && !(defined(GL_ES_VERSION_3_0) && defined(TARGET_OPENGLES_3))
 	return false;   // pure GLES 2.0 does not support PBR
 	#endif
 	return ofIsGLProgrammableRenderer();
@@ -127,7 +127,7 @@ void ofMaterial::setPBR(bool ab) {
 		return;
 	}
 
-	#if defined(TARGET_OPENGLES) && !defined(GL_ES_VERSION_3_0)
+	#if defined(TARGET_OPENGLES) && !(defined(GL_ES_VERSION_3_0) && defined(TARGET_OPENGLES_3))
 	if (ab) {
 		if (!bPrintedPBRRenderWarning) {
 			bPrintedPBRRenderWarning = true;
@@ -1510,7 +1510,7 @@ namespace{
 
 		if (ofIsGLProgrammableRenderer()) {
 			// Shadows require programmable renderer + GLES 3.0+ (or desktop)
-			#if !defined(TARGET_OPENGLES) || defined(GL_ES_VERSION_3_0)
+			#if !defined(TARGET_OPENGLES) || (defined(GL_ES_VERSION_3_0) && defined(TARGET_OPENGLES_3))
 				ofStringReplace(source, "%shader_shadow_include%", shadow_shader_include);
 			#else
 				ofStringReplace(source, "%shader_shadow_include%", "");
