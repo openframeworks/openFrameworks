@@ -339,6 +339,28 @@ typedef TESSindex ofIndexType;
 	#include <arm64_neon.h> // intrinsics SIMD on https://learn.microsoft.com/en-us/cpp/intrinsics/arm64-intrinsics?view=msvc-170
 #endif
 
+#ifdef TARGET_OPENGLES
+	#if !defined(TARGET_OPENGLES_3)
+        #if defined(GL_ES_VERSION_3_0) || \
+            (defined(TARGET_EMSCRIPTEN) && defined(USE_WEBGL2)) || \
+            defined(TARGET_OPENGLES_3_1) || defined(TARGET_OPENGLES_3_2)
+            #define TARGET_OPENGLES_3
+            #if defined(GL_ES_VERSION_3_1)
+            	#define TARGET_OPENGLES_3_1
+            #endif
+            #if defined(GL_ES_VERSION_3_2)
+            	#define TARGET_OPENGLES_3_2
+            #endif
+        #endif
+    #endif
+    // User can force-disable GLES3
+    #if defined(TARGET_FORCE_GLES_2) || defined(TARGET_FORCE_GLES_1)
+        #undef TARGET_OPENGLES_3
+        #undef TARGET_OPENGLES_3_1
+        #undef TARGET_OPENGLES_3_2
+    #endif
+#endif
+
 //------------------------------------------------ soundplayer
 //MAC_OS and IOS uncomment to enable AVEnginePlayer
 #ifdef OF_NO_FMOD

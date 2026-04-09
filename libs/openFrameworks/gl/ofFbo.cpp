@@ -34,7 +34,7 @@ using std::vector;
 
  */
 
-#if defined(TARGET_OPENGLES) && !defined(GL_ES_VERSION_3_0)
+#if defined(TARGET_OPENGLES) || !(defined(GL_ES_VERSION_3_0) && defined(TARGET_OPENGLES_3))
 	bool ofFbo::bglFunctionsInitialized=false;
 
 	typedef void (* glGenFramebuffersType) (GLsizei n, GLuint* framebuffers);
@@ -246,7 +246,7 @@ dirty(false),
 defaultTextureIndex(0),
 bIsAllocated(false)
 {
-#if defined(TARGET_OPENGLES) && !defined(GL_ES_VERSION_3_0)
+#if defined(TARGET_OPENGLES) && !(defined(GL_ES_VERSION_3_0) && defined(TARGET_OPENGLES_3))
 	if(!bglFunctionsInitialized){
 		if(ofIsGLProgrammableRenderer()){
 			glGenFramebuffers = (glGenFramebuffersType)dlsym(RTLD_DEFAULT, "glGenFramebuffers");
@@ -462,7 +462,7 @@ void ofFbo::clear() {
 }
 
 
-#if !defined(TARGET_OPENGLES) || defined(GL_ES_VERSION_3_0)
+#if !defined(TARGET_OPENGLES) || (defined(GL_ES_VERSION_3_0) && defined(TARGET_OPENGLES_3))
 //--------------------------------------------------------------
 void ofFbo::clearColorBuffer(const ofFloatColor & color){
 	glClearBufferfv(GL_COLOR, 0, &color.r);
@@ -496,7 +496,7 @@ void ofFbo::destroy() {
 
 //--------------------------------------------------------------
 bool ofFbo::checkGLSupport() {
-#if !defined(TARGET_OPENGLES) || defined(GL_ES_VERSION_3_0)
+#if !defined(TARGET_OPENGLES) || (defined(GL_ES_VERSION_3_0) && defined(TARGET_OPENGLES_3))
 	// Desktop + GLES 3.0+ (FBO is core spec — no extension check needed on ES3)
 	if (!ofIsGLProgrammableRenderer()){
 		if(ofGLCheckExtension("GL_EXT_framebuffer_object")){
@@ -541,7 +541,7 @@ void ofFbo::allocate(int width, int height, int internalformat, int numSamples) 
 	settings.textureTarget = ofGetUsingArbTex() ? GL_TEXTURE_RECTANGLE_ARB : GL_TEXTURE_2D;
 #endif
 
-#if !defined(TARGET_OPENGLES) || defined(GL_ES_VERSION_3_0)
+#if !defined(TARGET_OPENGLES) || (defined(GL_ES_VERSION_3_0) && defined(TARGET_OPENGLES_3))
 	// GLES 3.0+ (and desktop) can safely default to depth + stencil
 	settings.useDepth = true;
 	settings.useStencil = true;
@@ -582,7 +582,7 @@ void ofFbo::allocate(ofFboSettings _settings) {
 
 	//currently depth only works if stencil is enabled.
 	// http://forum.openframeworks.cc/index.php/topic,6837.0.html
-#if defined(TARGET_OPENGLES) && !defined(GL_ES_VERSION_3_0)
+#if defined(TARGET_OPENGLES) && !(defined(GL_ES_VERSION_3_0) && defined(TARGET_OPENGLES_3))
 	if(_settings.useDepth){
 		_settings.useStencil = true;
 	}
@@ -647,7 +647,7 @@ void ofFbo::allocate(ofFboSettings _settings) {
 	}else{
 		if(_settings.useDepth || _settings.useStencil){
 			createAndAttachDepthStencilTexture(_settings.textureTarget,_settings.depthStencilInternalFormat,depthAttachment);
-			#if defined(TARGET_OPENGLES) && !defined(GL_ES_VERSION_3_0)
+			#if defined(TARGET_OPENGLES) && !(defined(GL_ES_VERSION_3_0) && defined(TARGET_OPENGLES_3))
 					// GLES 2.0 only: OES_packed_depth_stencil extension requires separate stencil attachment
 					// http://www.khronos.org/registry/gles/extensions/OES/OES_packed_depth_stencil.txt
 					if(_settings.useDepth && _settings.useStencil){
@@ -671,7 +671,7 @@ void ofFbo::allocate(ofFboSettings _settings) {
 
 	// if we want MSAA, create a new fbo for textures
 	// (supported on desktop + GLES 3.0+; pure GLES 2.0 does not support multisampled FBOs reliably)
-	#if !defined(TARGET_OPENGLES) || defined(GL_ES_VERSION_3_0)
+	#if !defined(TARGET_OPENGLES) || (defined(GL_ES_VERSION_3_0) && defined(TARGET_OPENGLES_3))
 		if(_settings.numSamples){
 			glGenFramebuffers(1, &fboTextures);
 			retainFB(fboTextures);
@@ -692,11 +692,11 @@ void ofFbo::allocate(ofFboSettings _settings) {
 		for(int i=0; i<_settings.numColorbuffers; i++) createAndAttachTexture(_settings.internalformat, i);
 		_settings.colorFormats = settings.colorFormats;
 	} else {
-#ifndef TARGET_OPENGLES
+		#ifndef TARGET_OPENGLES
 		glDrawBuffer(GL_NONE);
-#else
+		#else
 		ofLogWarning("ofFbo") << "allocate(): no color buffers specified for frame buffer object " << fbo;
-#endif
+		#endif
 	}
 	settings.internalformat = _settings.internalformat;
 
@@ -742,7 +742,7 @@ GLuint ofFbo::createAndAttachRenderbuffer(GLenum internalFormat, GLenum attachme
 	glGenRenderbuffers(1, &buffer);
 	glBindRenderbuffer(GL_RENDERBUFFER, buffer);
 
-#if !defined(TARGET_OPENGLES) || defined(GL_ES_VERSION_3_0)
+#if !defined(TARGET_OPENGLES) || (defined(GL_ES_VERSION_3_0) && defined(TARGET_OPENGLES_3))
 	// Desktop + GLES 3.0+ support full multisampled renderbuffers
 	if (settings.numSamples == 0) {
 		glRenderbufferStorage(GL_RENDERBUFFER, internalFormat, settings.width, settings.height);
@@ -950,7 +950,7 @@ int ofFbo::getNumTextures() const {
 //----------------------------------------------------------
 void ofFbo::setActiveDrawBuffer(int i){
 	if(!bIsAllocated) return;
-#if !defined(TARGET_OPENGLES) || defined(GL_ES_VERSION_3_0)
+#if !defined(TARGET_OPENGLES) || (defined(GL_ES_VERSION_3_0) && defined(TARGET_OPENGLES_3))
 	vector<int> activebuffers(1, i);
 	setActiveDrawBuffers(activebuffers);
 #endif
@@ -960,7 +960,7 @@ void ofFbo::setActiveDrawBuffer(int i){
 void ofFbo::setActiveDrawBuffers(const vector<int>& ids){
 	if(!bIsAllocated) return;
 
-#if !defined(TARGET_OPENGLES) || defined(GL_ES_VERSION_3_0)
+#if !defined(TARGET_OPENGLES) || (defined(GL_ES_VERSION_3_0) && defined(TARGET_OPENGLES_3))
 	int numBuffers = activeDrawBuffers.size();
 	activeDrawBuffers.clear();
 	activeDrawBuffers.resize(numBuffers, GL_NONE); // we initialise the vector with GL_NONE, so a buffer will not be written to unless activated.
@@ -983,7 +983,7 @@ void ofFbo::setActiveDrawBuffers(const vector<int>& ids){
 //----------------------------------------------------------
 void ofFbo::activateAllDrawBuffers(){
 	if(!bIsAllocated) return;
-#if !defined(TARGET_OPENGLES) || defined(GL_ES_VERSION_3_0)
+#if !defined(TARGET_OPENGLES) || (defined(GL_ES_VERSION_3_0) && defined(TARGET_OPENGLES_3))
 	vector<int> activeBuffers(getNumTextures(), 0);
 	for(int i = 0; i < getNumTextures(); i++){
 		activeBuffers[i] = i;
@@ -1067,7 +1067,7 @@ void ofFbo::resetAnchor(){
 //----------------------------------------------------------
 void ofFbo::readToPixels(ofPixels & pixels, int attachmentPoint) const{
 	if(!bIsAllocated) return;
-#if !defined(TARGET_OPENGLES) || defined(GL_ES_VERSION_3_0)
+#if !defined(TARGET_OPENGLES) || (defined(GL_ES_VERSION_3_0) && defined(TARGET_OPENGLES_3))
 	// Desktop + GLES 3.0+
 	getTexture(attachmentPoint).readToPixels(pixels);
 #else
@@ -1083,7 +1083,7 @@ void ofFbo::readToPixels(ofPixels & pixels, int attachmentPoint) const{
 //----------------------------------------------------------
 void ofFbo::readToPixels(ofShortPixels & pixels, int attachmentPoint) const{
 	if(!bIsAllocated) return;
-#if !defined(TARGET_OPENGLES) || defined(GL_ES_VERSION_3_0)
+#if !defined(TARGET_OPENGLES) || (defined(GL_ES_VERSION_3_0) && defined(TARGET_OPENGLES_3))
 	getTexture(attachmentPoint).readToPixels(pixels);
 #else
 	pixels.allocate(settings.width, settings.height, ofGetImageTypeFromGLType(settings.internalformat));
@@ -1097,7 +1097,7 @@ void ofFbo::readToPixels(ofShortPixels & pixels, int attachmentPoint) const{
 //----------------------------------------------------------
 void ofFbo::readToPixels(ofFloatPixels & pixels, int attachmentPoint) const{
 	if(!bIsAllocated) return;
-#if !defined(TARGET_OPENGLES) || defined(GL_ES_VERSION_3_0)
+#if !defined(TARGET_OPENGLES) || (defined(GL_ES_VERSION_3_0) && defined(TARGET_OPENGLES_3))
 	getTexture(attachmentPoint).readToPixels(pixels);
 #else
 	pixels.allocate(settings.width,settings.height,ofGetImageTypeFromGLType(settings.internalformat));
@@ -1108,7 +1108,7 @@ void ofFbo::readToPixels(ofFloatPixels & pixels, int attachmentPoint) const{
 #endif
 }
 
-#if !defined(TARGET_OPENGLES) || defined(GL_ES_VERSION_3_0)
+#if !defined(TARGET_OPENGLES) || (defined(GL_ES_VERSION_3_0) && defined(TARGET_OPENGLES_3))
 //----------------------------------------------------------
 void ofFbo::copyTo(ofBufferObject & buffer) const{
 	if(!bIsAllocated) return;
@@ -1124,7 +1124,7 @@ void ofFbo::copyTo(ofBufferObject & buffer) const{
 void ofFbo::updateTexture(int attachmentPoint) {
 	if(!bIsAllocated) return;
 
-#if !defined(TARGET_OPENGLES) || defined(GL_ES_VERSION_3_0)
+#if !defined(TARGET_OPENGLES) || (defined(GL_ES_VERSION_3_0) && defined(TARGET_OPENGLES_3))
 	if(fbo != fboTextures && dirty[attachmentPoint]) {
 
 		// if fbo != fboTextures, we are dealing with an MSAA enabled FBO.
@@ -1237,7 +1237,7 @@ bool ofFbo::checkStatus() const {
 		ofLogError("ofFbo") << "FRAMEBUFFER_INCOMPLETE_READ_BUFFER";
 		break;
 #endif
-#if !defined(TARGET_OPENGLES) || defined(GL_ES_VERSION_3_0)
+#if !defined(TARGET_OPENGLES) || (defined(GL_ES_VERSION_3_0) && defined(TARGET_OPENGLES_3))
 	case GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE:
 		ofLogError("ofFbo") << "GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE";
 		break;

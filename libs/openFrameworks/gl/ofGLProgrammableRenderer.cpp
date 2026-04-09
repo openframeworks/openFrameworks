@@ -467,7 +467,7 @@ void ofGLProgrammableRenderer::drawElements(const ofVbo & vbo, GLuint drawMode, 
 			vbo.getUsingTexCoords(),
 			vbo.getUsingNormals(), drawMode);
 
-		#if defined(TARGET_EMSCRIPTEN) || defined(TARGET_OPENGLES) && defined(GL_ES_VERSION_3_0) && GL_ES_VERSION_3_0 == 1
+		#if defined(TARGET_OPENGLES) && !(defined(GL_ES_VERSION_3_0) && defined(TARGET_OPENGLES_3))
 		    glDrawElements(drawMode, amt, GL_UNSIGNED_INT, (void *)(sizeof(ofIndexType) * offsetelements));
 		#else
 		    glDrawElements(drawMode, amt, GL_UNSIGNED_SHORT, (void *)(sizeof(ofIndexType) * offsetelements));
@@ -481,9 +481,9 @@ void ofGLProgrammableRenderer::drawInstanced(const ofVbo & vbo, GLuint drawMode,
 	if (vbo.getUsingVerts()) {
 		vbo.bind();
 		const_cast<ofGLProgrammableRenderer *>(this)->setAttributes(vbo.getUsingVerts(), vbo.getUsingColors(), vbo.getUsingTexCoords(), vbo.getUsingNormals(), drawMode);
-#if defined(TARGET_OPENGLES) && !defined(GL_ES_VERSION_3_0)
+#if defined(TARGET_OPENGLES) && !(defined(GL_ES_VERSION_3_1) && defined(TARGET_OPENGLES_3_1))
 		// https://www.khronos.org/opengles/sdk/docs/man3/xhtml/glDrawElementsInstanced.xml
-		ofLogWarning("ofVbo") << "drawInstanced(): hardware instancing is not supported on OpenGL ES < 3.0";
+		ofLogWarning("ofVbo") << "drawInstanced(): hardware instancing is not supported on OpenGL ES <= 3.1";
 #else
 		glDrawArraysInstanced(drawMode, first, total, primCount);
 #endif
@@ -496,16 +496,11 @@ void ofGLProgrammableRenderer::drawElementsInstanced(const ofVbo & vbo, GLuint d
 	if (vbo.getUsingVerts()) {
 		vbo.bind();
 		const_cast<ofGLProgrammableRenderer *>(this)->setAttributes(vbo.getUsingVerts(), vbo.getUsingColors(), vbo.getUsingTexCoords(), vbo.getUsingNormals(), drawMode);
-#if defined(TARGET_OPENGLES) && !defined(GL_ES_VERSION_3_0) // TODO: Check against OPENGL_ES Version
+#if defined(TARGET_OPENGLES) && !(defined(GL_ES_VERSION_3_1) && defined(TARGET_OPENGLES_3_1))
 		// https://www.khronos.org/opengles/sdk/docs/man3/xhtml/glDrawElementsInstanced.xml
-		ofLogWarning("ofVbo") << "drawElementsInstanced(): hardware instancing is not supported on OpenGL ES < 3.0";
+		ofLogWarning("ofVbo") << "drawElementsInstanced(): hardware instancing is not supported on OpenGL ES <= 3.1";
 #else
-
-		#if defined(TARGET_EMSCRIPTEN) || defined(TARGET_OPENGLES) && defined(GL_ES_VERSION_3_0) && GL_ES_VERSION_3_0 == 1
-		    glDrawElements(drawMode, amt, GL_UNSIGNED_INT, nullptr, primCount);
-		#else
-		    glDrawElements(drawMode, amt, GL_UNSIGNED_SHORT, nullptr, primCount);
-		#endif
+		glDrawElementsInstanced(drawMode, amt, indexType, nullptr, primCount);
 #endif
 		vbo.unbind();
 	}
@@ -1119,7 +1114,7 @@ void ofGLProgrammableRenderer::setBlendMode(ofBlendMode blendMode) {
 
 	case OF_BLENDMODE_MAX:
 		glEnable(GL_BLEND);
-#if !defined(TARGET_OPENGLES) || defined(GL_ES_VERSION_3_0)
+#if !defined(TARGET_OPENGLES) || (defined(GL_ES_VERSION_3_0) && defined(TARGET_OPENGLES_3))
 		glBlendEquation(GL_MAX);
 #else
 		ofLogWarning("ofGLProgrammableRenderer") << "OF_BLENDMODE_MAX not currently supported on OpenGL ES < 3.0";
@@ -1128,7 +1123,7 @@ void ofGLProgrammableRenderer::setBlendMode(ofBlendMode blendMode) {
 
 	case OF_BLENDMODE_MIN:
 		glEnable(GL_BLEND);
-#if !defined(TARGET_OPENGLES) || defined(GL_ES_VERSION_3_0)
+#if !defined(TARGET_OPENGLES) || (defined(GL_ES_VERSION_3_0) && defined(TARGET_OPENGLES_3))
 		glBlendEquation(GL_MIN);
 #else
 		ofLogWarning("ofGLProgrammableRenderer") << "OF_BLENDMODE_MIN not currently supported on OpenGL ES < 3.0";
@@ -1163,14 +1158,14 @@ void ofGLProgrammableRenderer::disablePointSprites() {
 
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::enableAntiAliasing() {
-#if !defined(TARGET_OPENGLES) || defined(GL_ES_VERSION_3_0)
+#if !defined(TARGET_OPENGLES) || (defined(GL_ES_VERSION_3_0) && defined(TARGET_OPENGLES_3))
 	glEnable(GL_MULTISAMPLE);
 #endif
 }
 
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::disableAntiAliasing() {
-#if !defined(TARGET_OPENGLES) || defined(GL_ES_VERSION_3_0)
+#if !defined(TARGET_OPENGLES) || (defined(GL_ES_VERSION_3_0) && defined(TARGET_OPENGLES_3))
 	glDisable(GL_MULTISAMPLE);
 #endif
 }
@@ -1526,7 +1521,7 @@ void ofGLProgrammableRenderer::bind(const ofFbo & fbo) {
 	glBindFramebuffer(GL_FRAMEBUFFER, currentFramebufferId);
 }
 
-#if !defined(TARGET_OPENGLES) || defined(GL_ES_VERSION_3_0)
+#if !defined(TARGET_OPENGLES) || (defined(GL_ES_VERSION_3_0) && defined(TARGET_OPENGLES_3))
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::bindForBlitting(const ofFbo & fboSrc, ofFbo & fboDst, int attachmentPoint) {
 	if (currentFramebufferId == fboSrc.getId()) {
@@ -2875,7 +2870,7 @@ static string defaultShaderHeader(string header, GLenum textureTarget, int major
 		ofStringReplace(header, "%extensions%", "");
 	}
 #else
-	#if !defined(GL_ES_VERSION_3_0)
+	#if defined(TARGET_OPENGLES) && !(defined(GL_ES_VERSION_3_0) && defined(TARGET_OPENGLES_3))
 	ofStringReplace(header, "%extensions%", "#extension GL_OES_standard_derivatives : enable");
 	#else
 	ofStringReplace(header, "%extensions%", "");
@@ -2901,7 +2896,7 @@ static string shaderSource(const string & src, int major, int minor) {
 		ofStringReplace(shaderSrc, "%extensions%", "");
 	}
 #else
-	#if !defined(GL_ES_VERSION_3_0)
+	#if defined(TARGET_OPENGLES) && !(defined(GL_ES_VERSION_3_0) && defined(TARGET_OPENGLES_3))
 	ofStringReplace(shaderSrc, "%extensions%", "#extension GL_OES_standard_derivatives : enable");
 	#else
 	ofStringReplace(shaderSrc, "%extensions%", "");

@@ -200,7 +200,7 @@ void ofDisableGLDebugLog();
     #endif
 
 
-	#if defined(GL_ES_VERSION_3_0)
+	#if (defined(GL_ES_VERSION_3_0) && defined(TARGET_OPENGLES_3))
 	// === GLES 3.0 / 3.1 additional fallbacks ===
 	// High-precision depth (very useful for shadows / FBOs)
 	#ifndef GL_DEPTH_COMPONENT32F
