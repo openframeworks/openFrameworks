@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # -----------------------------------------------------------------------------
-# install_spine.sh
+# install_ofrasp_spine.sh
 #
 # Clone or update the ofRasp "spine" addons into <OF_ROOT>/addons.
 # Default remote: https://github.com/ofrasp/<repo>.git
@@ -9,12 +9,12 @@
 # Works from: MSYS2 UCRT64, Linux, macOS, WSL (anywhere git works).
 #
 # Usage (from openFrameworks repo root):
-#     ./scripts/install_spine.sh
-#     ./scripts/install_spine.sh --full          # full clone (no --depth)
+#     ./scripts/install_ofrasp_spine.sh
+#     ./scripts/install_ofrasp_spine.sh --full          # full clone (no --depth)
 #
 # Override org or URLs:
-#     OFRASP_ORG=myfork ./scripts/install_spine.sh
-#     OFRASP_GIT_BASE=https://github.com/ofrasp ./scripts/install_spine.sh
+#     OFRASP_ORG=myfork ./scripts/install_ofrasp_spine.sh
+#     OFRASP_GIT_BASE=https://github.com/ofrasp ./scripts/install_ofrasp_spine.sh
 #
 # Add or remove repos by editing SPINE_REPOS below.
 # -----------------------------------------------------------------------------
@@ -30,7 +30,7 @@ DO_PULL=1
 
 usage() {
 	cat <<'EOF'
-Usage: ./scripts/install_spine.sh [--full] [--no-pull]
+Usage: ./scripts/install_ofrasp_spine.sh [--full] [--no-pull]
 
   --full     Full clone (omit --depth 1)
   --no-pull  Skip git pull on existing clones
@@ -66,9 +66,12 @@ done
 
 # GitHub repo name = folder name under addons/ (OF convention).
 SPINE_REPOS=(
-	ofxImGui
-	ofxFft
+	ofxCMake
 	ofxEnTT
+	ofxEnTTKit
+	ofxFft
+	ofxImGui
+	ofxLibTess2
 )
 
 if [[ ${#DEPTH_ARG[@]} -eq 0 ]]; then
@@ -102,6 +105,19 @@ for repo in "${SPINE_REPOS[@]}"; do
 			echo ">>> ${repo}: existing clone — skipped (--no-pull)"
 		fi
 		continue
+	fi
+
+	# Vendored copy shipped in the ofRasp tree (or a manual checkout): do not clone over it.
+	if [[ "${repo}" == "ofxLibTess2" ]] && [[ -d "${dest}/libtess2/Source" ]]; then
+		echo ">>> ${repo}: vendored in-tree (libtess2 present), skip clone"
+		continue
+	fi
+
+	# Old skeleton without sources: move aside so we can clone the git addon.
+	if [[ "${repo}" == "ofxLibTess2" ]] && [[ -d "${dest}" ]] && [[ ! -d "${dest}/.git" ]]; then
+		backup="${dest}.pre_spine_$(date +%s)"
+		echo ">>> ${repo}: moving non-git folder aside -> ${backup}"
+		mv "${dest}" "${backup}"
 	fi
 
 	if [[ -e "${dest}" ]]; then

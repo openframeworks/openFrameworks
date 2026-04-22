@@ -9,7 +9,6 @@
 # Direct usage (MSYS2 UCRT64 shell only):
 #     ./scripts/msys2/install_ofrasp_deps.sh
 #
-# See also: scripts/ofrasp/deps_common.sh (shared ofxFft + ofxLibTess2/libtess2)
 # -----------------------------------------------------------------------------
 
 set -euo pipefail
@@ -17,9 +16,6 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 OF_ROOT="$(cd "${SCRIPT_DIR}/../.." && pwd)"
 export OF_ROOT
-
-# shellcheck source=scripts/ofrasp/deps_common.sh
-source "${SCRIPT_DIR}/../ofrasp/deps_common.sh"
 
 # --- sanity checks -----------------------------------------------------------
 
@@ -73,7 +69,5 @@ printf '  %s\n' "${full_pkgs[@]}"
 echo
 pacman -S --noconfirm --needed "${full_pkgs[@]}"
 
-ofrasp_deps_run_fixups
-
 echo
-echo "=== Done. Next: ./scripts/install_spine.sh (from openFrameworks repo root). ==="
+echo "=== Done. Next: ./scripts/install_ofrasp_spine.sh (ofxFft, ofxLibTess2, …) from repo root. ==="
