@@ -30,7 +30,7 @@ jobs:
     env:
       TARGET: ${{matrix.cfg.target}}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Docker Step
         run: "docker run -di --name emscripten -v $PWD:/src emscripten/emsdk:5.0.7 bash"
       # - name: Determine Release
@@ -75,13 +75,13 @@ jobs:
       - name: Check system
         shell: bash
         run: gcc -v
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: ccache
-        uses: hendrikmuhs/ccache-action@v1.2.17
+        uses: hendrikmuhs/ccache-action@v1.2.23
         with:
           # key: ${{ matrix.os }}-${{ matrix.type }}
           key: ${{ matrix.msystem }}
-      - uses: msys2/setup-msys2@v2.27.0
+      - uses: msys2/setup-msys2@v2
         with:
           cache: true
           release: true
@@ -124,8 +124,8 @@ jobs:
       BITS: ${{ matrix.bits }}
     steps:
       - name: Clone repository
-        uses: actions/checkout@v4
-      - uses: msys2/setup-msys2@v2.27.0
+        uses: actions/checkout@v6
+      - uses: msys2/setup-msys2@v2
         with:
           update: true
           install: >-
@@ -148,7 +148,7 @@ jobs:
         shell: msys2 {0}
         run: ./scripts/ci/vs/install.sh
       - name: Setup MSBuild
-        uses: microsoft/setup-msbuild@v2
+        uses: microsoft/setup-msbuild@v3
 
       - name: Build DEBUG and RELEASE emptyExample
         working-directory: ${{env.GITHUB_WORKSPACE}}
@@ -169,9 +169,9 @@ jobs:
         platform: [x64, ARM64, ARM64EC]
     steps:
       - name: Clone repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
-      - uses: msys2/setup-msys2@v2.27.0
+      - uses: msys2/setup-msys2@v2
         with:
           update: true
           install: >-
@@ -183,7 +183,7 @@ jobs:
         run: ./scripts/ci/vs/install.sh --vs2026 -a ${{ matrix.platform }}
 
       - name: Setup MSBuild
-        uses: microsoft/setup-msbuild@v2
+        uses: microsoft/setup-msbuild@v3
 
       - name: Build DEBUG and RELEASE emptyExample
         working-directory: ${{env.GITHUB_WORKSPACE}}
@@ -226,13 +226,13 @@ jobs:
       ALLADDONSEXAMPLE: ${{matrix.cfg.alladdons}}
     steps:
       - name: Cache Packages
-        uses: awalsh128/cache-apt-pkgs-action@latest
+        uses: awalsh128/cache-apt-pkgs-action@v1.6.0
         with:
           packages: multistrap unzip gcc-${{matrix.cfg.suffix}} g++-${{matrix.cfg.suffix}}
           version: 1.0
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: ccache
-        uses: hendrikmuhs/ccache-action@v1.2.17
+        uses: hendrikmuhs/ccache-action@v1.2.23
         with:
           key: ${{ matrix.cfg.libs }}
       # - name: Determine Release
@@ -270,9 +270,9 @@ jobs:
     env:
       TARGET: ${{matrix.cfg.target}}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: ccache
-        uses: hendrikmuhs/ccache-action@v1.2.17
+        uses: hendrikmuhs/ccache-action@v1.2.23
         with:
           key: ${{ matrix.cfg.target }}-${{ matrix.cfg.libs }}
       # - name: Determine Release
@@ -315,7 +315,7 @@ jobs:
       #          sudo apt-get remove libunwind-14 -y;
       #          fi
       - name: Cache Packages
-        uses: awalsh128/cache-apt-pkgs-action@latest
+        uses: awalsh128/cache-apt-pkgs-action@v1.6.0
         with:
           packages: aptitude aptitude-common libboost-iostreams1.83.0 libcwidget4 libsigc++-2.0-0v5 libxapian30 fonts-wine{a} libasound2-plugins{a} libcapi20-3t64{a} libosmesa6{a} libpcsclite1{a} libspeexdsp1{a} libwine{a} libxkbregistry0{a} libz-mingw-w64{a} wine{a} wine64 wget2 make libjack-jackd2-0 libjack-jackd2-dev freeglut3-dev libasound2-dev libxmu-dev libxxf86vm-dev g++ libgl1-mesa-dev libglu1-mesa-dev libraw1394-dev libudev-dev libdrm-dev libglew-dev libopenal-dev libsndfile1-dev libfreeimage-dev libcairo2-dev libfreetype6-dev libpulse-dev libusb-1.0-0-dev libgtk2.0-dev libopencv-dev libassimp-dev librtaudio-dev gdb libglfw3-dev liburiparser-dev libpugixml-dev libgconf-2-4 libgtk2.0-0 libpoco-dev libxcursor-dev libxi-dev libxinerama-dev libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev gstreamer1.0-libav gstreamer1.0-pulseaudio gstreamer1.0-x gstreamer1.0-plugins-bad gstreamer1.0-alsa gstreamer1.0-plugins-base gstreamer1.0-plugins-good
           version: 1.0
@@ -332,9 +332,9 @@ jobs:
       #     else
       #       echo "RELEASE=latest" >> $GITHUB_ENV
       #     fi
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: ccache
-        uses: hendrikmuhs/ccache-action@v1.2.17
+        uses: hendrikmuhs/ccache-action@v1.2.23
         with:
           key: ${{ matrix.cfg.target }}-${{ matrix.cfg.libs }}
 
@@ -399,9 +399,9 @@ jobs:
           - { target: osx, opt: "xcode" }
           - { target: osx, opt: "makefiles" }
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: ccache
-        uses: hendrikmuhs/ccache-action@v1.2.17
+        uses: hendrikmuhs/ccache-action@v1.2.23
         with:
           key: ${{ matrix.cfg.target }}-${{ matrix.cfg.opt }}
 
@@ -450,10 +450,10 @@ jobs:
 
     steps:
       - name: checkout openFrameworks
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Set Up JDK 17
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v5
         with:
           distribution: "temurin"
           java-version: "17"
