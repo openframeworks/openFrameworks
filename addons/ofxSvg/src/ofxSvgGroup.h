@@ -3,7 +3,9 @@
 
 class ofxSvgGroup : public ofxSvgElement {
 public:
-	
+	/// Set when parsed from Inkscape `inkscape:groupmode="layer"`.
+	bool inkscapeLayer = false;
+
 	virtual ofxSvgType getType() override {return OFXSVG_TYPE_GROUP;}
 	
 	ofxSvgGroup() = default;
@@ -21,6 +23,7 @@ public:
 		alpha = other.alpha;
 		layer = other.layer;
 		name = other.name;
+		inkscapeLayer = other.inkscapeLayer;
 		for (const auto& ptr : other.mChildren) {
 			// Create a new shared_ptr to a new item copy.
 			if( ptr ) {
@@ -44,6 +47,7 @@ public:
 			alpha = other.alpha;
 			layer = other.layer;
 			name = other.name;
+			inkscapeLayer = other.inkscapeLayer;
 			mChildren.clear();
 			mChildren.reserve(other.mChildren.size());
 			for (const auto& ptr : other.mChildren) {
