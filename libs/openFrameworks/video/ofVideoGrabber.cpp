@@ -7,7 +7,10 @@
 
 // ------------------------------------------------ capture
 // check if any video capture system is already defined from the compiler
-#if !defined(OF_VIDEO_CAPTURE_GSTREAMER) && !defined(OF_VIDEO_CAPTURE_QUICKTIME) && !defined(OF_VIDEO_CAPTURE_DIRECTSHOW) && !defined(OF_VIDEO_CAPTURE_ANDROID) && !defined(OF_VIDEO_CAPTURE_IOS)
+#if !defined(OF_VIDEO_CAPTURE_GSTREAMER) && \
+	!defined(OF_VIDEO_CAPTURE_DIRECTSHOW) && \
+	!defined(OF_VIDEO_CAPTURE_ANDROID) && \
+	!defined(OF_VIDEO_CAPTURE_IOS)
 	#ifdef TARGET_LINUX
 		#define OF_VIDEO_CAPTURE_GSTREAMER
 
@@ -15,35 +18,20 @@
 		#define OF_VIDEO_CAPTURE_AVF
 
 	#elif defined (TARGET_WIN32)
-		// comment out this following line, if you'd like to use the
-		// quicktime capture interface on windows
-		// if not, we default to videoInput library for
-		// direct show capture...
-
 		#define OF_SWITCH_TO_DSHOW_FOR_WIN_VIDCAP
-
-		#ifdef OF_SWITCH_TO_DSHOW_FOR_WIN_VIDCAP
-			#define OF_VIDEO_CAPTURE_DIRECTSHOW
-		#else
-			#define OF_VIDEO_CAPTURE_QUICKTIME
-		#endif
+		#define OF_VIDEO_CAPTURE_DIRECTSHOW
 
 	#elif defined(TARGET_ANDROID)
-
 		#define OF_VIDEO_CAPTURE_ANDROID
 
 	#elif defined(TARGET_EMSCRIPTEN)
-
 		#define OF_VIDEO_CAPTURE_EMSCRIPTEN
 
 	#elif defined(TARGET_OF_IOS)
-
 		#define OF_VIDEO_CAPTURE_IOS
 
 	#endif
 #endif
-
-
 
 #ifdef TARGET_OF_OSX
 #include <ApplicationServices/ApplicationServices.h>
@@ -53,16 +41,6 @@
 	#include "ofxiOSVideoGrabber.h"
 	#define OF_VID_GRABBER_TYPE ofxiOSVideoGrabber
 #endif
-
-// #ifdef OF_VIDEO_CAPTURE_QUICKTIME
-// 	#include "ofQuickTimeGrabber.h"
-// 	#define OF_VID_GRABBER_TYPE ofQuickTimeGrabber
-// #endif
-
-// #ifdef OF_VIDEO_CAPTURE_QTKIT
-// 	#include "ofQTKitGrabber.h"
-// 	#define OF_VID_GRABBER_TYPE ofQTKitGrabber
-// #endif
 
 #ifdef OF_VIDEO_CAPTURE_AVF
 	#include "ofAVFoundationGrabber.h"

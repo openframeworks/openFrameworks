@@ -33,11 +33,6 @@ using std::shared_ptr;
 #include "ofGstUtils.h"
 #endif
 
-// adding this for vc2010 compile: error C3861: 'closeQuicktime': identifier not found
-#if defined(OF_VIDEO_CAPTURE_QUICKTIME) || defined(OF_VIDEO_PLAYER_QUICKTIME)
-	#include "ofQtUtils.h"
-#endif
-
 #if defined (TARGET_WIN32)
 #include <mmsystem.h>
 #endif
@@ -247,12 +242,6 @@ void ofExitCallback(){
 		ofSoundShutdown();
 		//------------------------
 	#endif
-
-	// try to close quicktime, for non-linux systems:
-	#if defined(OF_VIDEO_CAPTURE_QUICKTIME) || defined(OF_VIDEO_PLAYER_QUICKTIME)
-	closeQuicktime();
-	#endif
-
 
 	//------------------------
 	// try to close freeImage:
