@@ -204,7 +204,7 @@ public:
 	void unbind(const ofCamera & camera);
 
 	void bind(const ofFbo & fbo);
-#ifndef TARGET_OPENGLES
+#if !defined(TARGET_OPENGLES) || (defined(GL_ES_VERSION_3_0) && defined(TARGET_OPENGLES_3))
 	void bindForBlitting(const ofFbo & fboSrc, ofFbo & fboDst, int attachmentPoint);
 #endif
 	void unbind(const ofFbo & fbo);

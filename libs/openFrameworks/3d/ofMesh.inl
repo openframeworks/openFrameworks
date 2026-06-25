@@ -2939,8 +2939,7 @@ template<class V, class N, class C, class T>
 ofMesh_<V,N,C,T> ofMesh_<V,N,C,T>::axis( float size ) {
 	ofMesh_<V,N,C,T> mesh;
 
-	// mesh only available as wireframe //
-	mesh.setMode(OF_PRIMITIVE_LINES);
+	mesh.setMode(OF_PRIMITIVE_TRIANGLES);
 
 	V vertices[6] = {
 		V(0,0,0),

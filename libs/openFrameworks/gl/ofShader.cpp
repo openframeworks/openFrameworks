@@ -83,7 +83,7 @@ static void releaseProgram(GLuint id) {
     }
 }
 
-#if !defined(TARGET_OPENGLES) || defined(TARGET_EMSCRIPTEN)
+#if !defined(TARGET_OPENGLES) || (defined(GL_ES_VERSION_3_0) && defined(TARGET_OPENGLES_3))
 //--------------------------------------------------------------
 ofShader::TransformFeedbackRangeBinding::TransformFeedbackRangeBinding(const ofBufferObject & buffer, GLuint offset, GLuint size)
     : offset(offset)
@@ -213,7 +213,7 @@ bool ofShader::load(const of::filesystem::path & vertName, const of::filesystem:
     return linkProgram();
 }
 
-#if !defined(TARGET_OPENGLES) && defined(glDispatchCompute)
+#if !defined(TARGET_OPENGLES) || (defined(GL_ES_VERSION_3_1) && defined(TARGET_OPENGLES_3) && defined(glDispatchCompute))
 //--------------------------------------------------------------
 bool ofShader::loadCompute(const of::filesystem::path & shaderName) {
     return setupShaderFromFile(GL_COMPUTE_SHADER, shaderName) && linkProgram();
@@ -251,7 +251,7 @@ bool ofShader::setup(const ofShaderSettings & settings) {
     return linkProgram();
 }
 
-#if !defined(TARGET_OPENGLES) || defined(TARGET_EMSCRIPTEN)
+#if !defined(TARGET_OPENGLES) || (defined(GL_ES_VERSION_3_0) && defined(TARGET_OPENGLES_3))
 //--------------------------------------------------------------
 bool ofShader::setup(const TransformFeedbackSettings & settings) {
     for (auto shader : settings.shaderFiles) {
@@ -851,7 +851,7 @@ void ofShader::end() const {
     ofGetGLRenderer()->unbind(*this);
 }
 
-#if !defined(TARGET_OPENGLES) || defined(TARGET_EMSCRIPTEN)
+#if !defined(TARGET_OPENGLES) || (defined(GL_ES_VERSION_3_0) && defined(TARGET_OPENGLES_3))
 //--------------------------------------------------------------
 void ofShader::beginTransformFeedback(GLenum mode) const {
     begin();
@@ -923,7 +923,7 @@ void ofShader::endTransformFeedback(const std::vector<TransformFeedbackBaseBindi
 }
 #endif
 
-#if !defined(TARGET_OPENGLES) && defined(glDispatchCompute)
+#if !defined(TARGET_OPENGLES) || (defined(TARGET_OPENGLES_3) && defined(glDispatchCompute) && defined(GL_ES_VERSION_3_1))
 //--------------------------------------------------------------
 void ofShader::dispatchCompute(GLuint x, GLuint y, GLuint z) const {
     glDispatchCompute(x, y, z);
@@ -1556,14 +1556,14 @@ string ofShader::nameForType(GLenum type) {
         return "GL_VERTEX_SHADER";
     case GL_FRAGMENT_SHADER:
         return "GL_FRAGMENT_SHADER";
-#ifndef TARGET_OPENGLES
-    case GL_GEOMETRY_SHADER_EXT:
-        return "GL_GEOMETRY_SHADER_EXT";
-    #ifdef glDispatchCompute
-    case GL_COMPUTE_SHADER:
-        return "GL_COMPUTE_SHADER";
+    #ifndef TARGET_OPENGLES
+        case GL_GEOMETRY_SHADER_EXT:
+        	return "GL_GEOMETRY_SHADER_EXT";
     #endif
-#endif
+    #if (!defined(TARGET_OPENGLES) && defined(glDispatchCompute)) || defined(GL_ES_VERSION_3_1)
+        case GL_COMPUTE_SHADER:
+        	return "GL_COMPUTE_SHADER";
+    #endif
     default:
         return "UNKNOWN SHADER TYPE";
     }
