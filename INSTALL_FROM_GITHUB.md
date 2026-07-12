@@ -23,21 +23,21 @@ it means you need a form of authentication into github. This implies you have a 
 
 ### Download dependencies
 
-As the external dependencies are not found in the repository, you need to download them. To make things simpler, use the bash script called `download_libs.sh` which can be found in the `scripts/dev/` folder. Assuming you are, for example, using OSX, you need to run 
+As the external dependencies are not found in the repository, you need to download them. To make things simpler, use the bash script called `download_libs.sh` which can be found in the `scripts/dev/` folder. Assuming you are, for example, using OSX, you need to run
 ```
 scripts/dev/download_libs.sh -p osx
 ```
-or for say Raspberry Pi 
+or for say Raspberry Pi
 ```
 scripts/dev/download_libs.sh -p linuxaarch64
 ```
 
-Some of the platforms you can download: 
+Some of the platforms you can download:
 ```
 linux64 linuxarmv6l linuxarmv7l linuxaarch64 osx msys2 vs ios tvos android emscripten
 ```
 
-there are additional flags you can pass to the script ie: 
+there are additional flags you can pass to the script ie:
 ```
 scripts/dev/download_libs.sh -p osx -t latest -n
 ```
@@ -75,7 +75,7 @@ Once the success message appears you are done.
 It's likely that at some point you will want to update your local openFrameworks to include new changes available in github. To update openFrameworks, we first need to figure out if you have several remotes already configured. Run
 
     git remote -v
-    
+
 And study the output. It may look something like this:
 
 ```
@@ -102,7 +102,7 @@ Note that `upstream` is a name you choose, and it's how you will refer to the of
 The openFrameworks git repository has submodules (so far the Project Generator). The submodules rarely change, but if they did, you can update them too. If you never downloaded the submodules, do it now:
 
     git submodule update --init --recursive
-    
+
 If you did already download them, this is how you update them:
 
     git submodule update --recursive
@@ -117,7 +117,7 @@ Finally, if your setup depends on some of the scripts from the scripts folder, y
 
 After an openFrameworks release, bug fixes will be eventually added to the `patch-release` branch while new features will land in the `master` branch instead.
 
-If you need the recent bug fixes, run `git branch` to see if `patch-release` is already in your system. 
+If you need the recent bug fixes, run `git branch` to see if `patch-release` is already in your system.
 
 A. If it's not, get that branch:
 
@@ -135,7 +135,7 @@ $ git checkout patch-release
 Finally run
 ```
 $ git pull
-``` 
+```
 to download those bug fixes to your local `patch-release` branch, then try compile your program and see if the bug that was troubling you is now gone.
 
 # How to submit your pull requests
