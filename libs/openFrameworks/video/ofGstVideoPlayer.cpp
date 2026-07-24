@@ -344,8 +344,10 @@ void ofGstVideoPlayer::previousFrame(){
 }
 
 void ofGstVideoPlayer::setFrame(int frame){ // frame 0 = first frame...
-	float pct = (float)frame / (float)nFrames;
-	setPosition(pct);
+	if(nFrames > 0){ //just in case. avoid dividing by zero
+		float pct = (float)frame / (float)nFrames;
+		setPosition(pct);
+	}
 }
 
 bool ofGstVideoPlayer::isStream() const {
