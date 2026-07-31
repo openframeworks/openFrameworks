@@ -571,7 +571,8 @@ void ofGLProgrammableRenderer::drawElements(const ofVbo & vbo, GLuint drawMode, 
 #ifdef TARGET_OPENGLES
 		glDrawElements(drawMode, amt, GL_UNSIGNED_SHORT, (void *)(sizeof(ofIndexType) * offsetelements));
 #else
-		glDrawElements(drawMode, amt, GL_UNSIGNED_INT, (void *)(sizeof(ofIndexType) * offsetelements));
+		// GL index type must match sizeof(ofIndexType) (16-bit on macOS via tess2); see commit message.
+		glDrawElements(drawMode, amt, sizeof(ofIndexType) == 2 ? GL_UNSIGNED_SHORT : GL_UNSIGNED_INT, (void *)(sizeof(ofIndexType) * offsetelements));
 #endif
 		vbo.unbind();
 	}
@@ -610,7 +611,8 @@ void ofGLProgrammableRenderer::drawElementsInstanced(const ofVbo & vbo, GLuint d
 		#if defined(TARGET_OPENGLES)
 		glDrawElementsInstanced(drawMode, amt, GL_UNSIGNED_SHORT, nullptr, primCount);
 		#else
-		glDrawElementsInstanced(drawMode, amt, GL_UNSIGNED_INT, nullptr, primCount);
+		// GL index type must match sizeof(ofIndexType); see drawElements above.
+		glDrawElementsInstanced(drawMode, amt, sizeof(ofIndexType) == 2 ? GL_UNSIGNED_SHORT : GL_UNSIGNED_INT, nullptr, primCount);
 		#endif
 #endif
 		vbo.unbind();
