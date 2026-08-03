@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# of.sh - openFrameworks CLI (Dan Rosser 2025)
-OF_SCRIPT_VERSION=0.2.5
+# of.sh - openFrameworks CLI  |  Dan Rosser 2025
+OF_SCRIPT_VERSION=0.3.0
 
 OF_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 OF_DIR="$(realpath "$OF_DIR/../")"
@@ -19,12 +19,11 @@ OF_LIB_PLATFORMS=(osx macos ios android linux vs emscripten msys2)
 OF_HAS_GUM=0
 command -v gum >/dev/null 2>&1 && OF_HAS_GUM=1
 
-# Cache TTY state once — [[ -t 1 ]] fails inside $(...)
 OF_COLOR=0
 OF_INTERACTIVE=0
 if [[ -t 1 && -z "${NO_COLOR:-}" ]]; then
 	OF_COLOR=1
-	[[ "${OF_ANIM}" = 1 ]] && OF_INTERACTIVE=1
+	[[ "$OF_ANIM" = 1 ]] && OF_INTERACTIVE=1
 fi
 
 OF_SPIN_FRAMES=(⠋ ⠙ ⠹ ⠸ ⠼ ⠴ ⠦ ⠧ ⠇ ⠏)
@@ -37,6 +36,7 @@ OF_TASK_COUNT=0
 OF_TASK_DRAWN=0
 OF_TASK_FRAME=0
 OF_MENU_RESULT=""
+OF_LINUX_DISTRO="${OF_LINUX_DISTRO:-}"
 
 if [[ "$OF_COLOR" -eq 1 ]]; then
 	C_RESET=$'\033[0m'
@@ -54,6 +54,7 @@ else
 fi
 
 isInteractive(){ [[ "$OF_INTERACTIVE" -eq 1 ]]; }
+menuCanRun(){ [[ -t 0 && -t 1 ]]; }
 
 echoVerbose(){
 	[[ "$VERBOSE" = 1 ]] && printf '%s·%s %s\n' "$C_MUTED" "$C_RESET" "$*"
@@ -87,12 +88,12 @@ cleanupUI(){
 }
 trap cleanupUI EXIT INT TERM
 
-ofInfo(){  printf '%s›%s %s\n' "$C_ACCENT" "$C_RESET" "$*"; }
-ofOk(){    printf '%s✓%s %s\n' "$C_OK"     "$C_RESET" "$*"; }
-ofWarn(){  printf '%s!%s %s\n' "$C_WARN"   "$C_RESET" "$*"; }
-ofErr(){   printf '%s✗%s %s\n' "$C_ERR"    "$C_RESET" "$*" >&2; }
-ofNote(){  printf '%s│%s %s%s%s\n' "$C_ACCENT" "$C_RESET" "$C_MUTED" "$*" "$C_RESET"; }
-ofKV(){    printf '  %s%-14s%s %s\n' "$C_MUTED" "$1" "$C_RESET" "$2"; }
+ofInfo(){ printf '%s›%s %s\n' "$C_ACCENT" "$C_RESET" "$*"; }
+ofOk(){   printf '%s✓%s %s\n' "$C_OK"     "$C_RESET" "$*"; }
+ofWarn(){ printf '%s!%s %s\n' "$C_WARN"   "$C_RESET" "$*"; }
+ofErr(){  printf '%s✗%s %s\n' "$C_ERR"    "$C_RESET" "$*" >&2; }
+ofNote(){ printf '%s│%s %s%s%s\n' "$C_ACCENT" "$C_RESET" "$C_MUTED" "$*" "$C_RESET"; }
+ofKV(){   printf '  %s%-14s%s %s\n' "$C_MUTED" "$1" "$C_RESET" "$2"; }
 
 ofBanner(){
 	local subtitle="${1:-cli}"
@@ -117,6 +118,7 @@ ofConfirm(){
 	[[ -z "$confirm" || "$confirm" =~ ^[Yy]$ ]]
 }
 
+# -----------------------------------------------------------------------------
 tasksReset(){
 	OF_TASK_LABELS=()
 	OF_TASK_STATUS=()
@@ -142,7 +144,8 @@ tasksBegin(){
 }
 
 taskIcon(){
-	local status="$1" frame="${2:-0}"
+	local status="$1"
+	local frame="${2:-0}"
 	case "$status" in
 		pending) printf '%s○%s' "$C_MUTED" "$C_RESET" ;;
 		running)
@@ -177,7 +180,9 @@ tasksDraw(){
 	local i
 	if ! isInteractive; then
 		if [[ "$OF_TASK_DRAWN" -eq 0 ]]; then
-			for i in "${!OF_TASK_LABELS[@]}"; do taskPrintLine "$i"; done
+			for i in "${!OF_TASK_LABELS[@]}"; do
+				taskPrintLine "$i"
+			done
 			OF_TASK_DRAWN=1
 		fi
 		return
@@ -191,7 +196,9 @@ tasksDraw(){
 }
 
 taskSet(){
-	local idx="$1" status="$2" detail="${3:-}"
+	local idx="$1"
+	local status="$2"
+	local detail="${3:-}"
 	OF_TASK_STATUS[$idx]="$status"
 	[[ -n "$detail" || $# -ge 3 ]] && OF_TASK_DETAIL[$idx]="$detail"
 	if isInteractive; then
@@ -202,7 +209,9 @@ taskSet(){
 }
 
 taskRun(){
-	local idx="$1" code=0 cmd_pid frame=0
+	local idx="$1"
+	local code=0
+	local cmd_pid frame=0
 	shift
 	[[ "$1" == "--" ]] && shift
 
@@ -252,7 +261,8 @@ taskTickLine(){
 }
 
 taskLive(){
-	local idx="$1" code=0
+	local idx="$1"
+	local code=0
 	shift
 	[[ "$1" == "--" ]] && shift
 
@@ -304,6 +314,7 @@ tasksSummary(){
 	return 0
 }
 
+# -----------------------------------------------------------------------------
 autoDetectOS(){
 	if [[ -z "$PLATFORM" ]]; then
 		export OF_OS
@@ -337,6 +348,117 @@ autoDetectOS(){
 	fi
 }
 
+detectLinuxDistro(){
+	[[ "$OF_PLATFORM" == "linux" ]] || return 0
+	[[ -n "$OF_LINUX_DISTRO" ]] && return 0
+
+	local id="" id_like="" like distro=""
+	if [[ -r /etc/os-release ]]; then
+		. /etc/os-release
+		id=$(echo "${ID:-}" | tr '[:upper:]' '[:lower:]')
+		id_like=$(echo "${ID_LIKE:-}" | tr '[:upper:]' '[:lower:]')
+	elif [[ -r /etc/lsb-release ]]; then
+		. /etc/lsb-release
+		id=$(echo "${DISTRIB_ID:-}" | tr '[:upper:]' '[:lower:]')
+	fi
+
+	case "$id" in
+		ubuntu|pop|linuxmint|elementary|zorin|neon|pop-os)
+			distro="ubuntu" ;;
+		debian|raspbian|kali|parrot)
+			distro="debian" ;;
+		fedora)
+			distro="fedora" ;;
+		rhel|centos|rocky|almalinux|ol|scientific)
+			distro="fedora" ;;
+		arch|manjaro|endeavouros|garuda|artix|cachyos)
+			if [[ "$OF_ARCH" == "armv7l" && -d "${OF_CORE_SCRIPT_DIR}/linux/archlinux_armv7" ]]; then
+				distro="archlinux_armv7"
+			else
+				distro="archlinux"
+			fi
+			;;
+		*)
+			for like in $id_like; do
+				case "$like" in
+					ubuntu) distro="ubuntu"; break ;;
+					debian) distro="debian"; break ;;
+					fedora|rhel|centos) distro="fedora"; break ;;
+					arch) distro="archlinux"; break ;;
+				esac
+			done
+			;;
+	esac
+
+	if [[ -n "$distro" && -d "${OF_CORE_SCRIPT_DIR}/linux/${distro}" ]]; then
+		OF_LINUX_DISTRO="$distro"
+	else
+		OF_LINUX_DISTRO=""
+	fi
+	export OF_LINUX_DISTRO
+}
+
+linuxDistroScriptDir(){
+	[[ -n "$OF_LINUX_DISTRO" ]] && printf '%s' "${OF_CORE_SCRIPT_DIR}/linux/${OF_LINUX_DISTRO}"
+}
+
+listLinuxDistros(){
+	local d
+	for d in "${OF_CORE_SCRIPT_DIR}/linux"/*/; do
+		[[ -d "$d" && -f "${d}install_dependencies.sh" ]] || continue
+		basename "$d"
+	done
+}
+
+pickLinuxDistro(){
+	local -a opts=()
+	local d
+	while IFS= read -r d; do
+		[[ -n "$d" ]] && opts+=("${d}|${d}")
+	done < <(listLinuxDistros)
+
+	if [[ ${#opts[@]} -eq 0 ]]; then
+		ofErr "no linux distro install scripts found"
+		return 1
+	fi
+	if menuCanRun; then
+		menuPick "Select Linux distro install scripts" "${opts[@]}" || return 1
+		OF_LINUX_DISTRO="$OF_MENU_RESULT"
+	else
+		ofErr "could not detect linux distro; set OF_LINUX_DISTRO=ubuntu|debian|fedora|archlinux"
+		ofNote "available: $(listLinuxDistros | tr '\n' ' ')"
+		return 1
+	fi
+	export OF_LINUX_DISTRO
+}
+
+runAsRoot(){
+	if [[ "$(id -u)" -eq 0 ]]; then
+		"$@"
+	elif command -v sudo >/dev/null 2>&1; then
+		sudo "$@"
+	else
+		ofErr "root or sudo required to run: $*"
+		return 1
+	fi
+}
+
+runDistroInstallScript(){
+	local script="$1"
+	shift
+	if [[ ! -f "$script" ]]; then
+		ofErr "install script not found: ${script}"
+		return 1
+	fi
+	[[ -x "$script" ]] || chmod +x "$script" 2>/dev/null || true
+	if [[ "$(id -u)" -eq 0 ]]; then
+		"$script" -y "$@"
+	else
+		ofNote "requesting sudo for $(basename "$script")"
+		runAsRoot "$script" -y "$@"
+	fi
+}
+
 coreScriptPath(){
 	case "$OF_PLATFORM" in
 		linux)
@@ -360,36 +482,46 @@ coreScriptPath(){
 }
 
 autoDetectOS
+detectLinuxDistro
 coreScriptPath
-echoVerbose "platform:[${OF_PLATFORM}] arch:[${OF_ARCH}] path:[${OF_SCRIPT_PATH}] gum:[${OF_HAS_GUM}]"
+echoVerbose "platform:[${OF_PLATFORM}] arch:[${OF_ARCH}] distro:[${OF_LINUX_DISTRO}] path:[${OF_SCRIPT_PATH}]"
 
+# -----------------------------------------------------------------------------
 printHelp(){
 	local prog
 	prog=$(basename "${0:-of}")
 	ofBanner "cli"
-	printf '\n'
-	printf '  %sUsage%s\n' "$C_BOLD" "$C_RESET"
-	printf '    %s%s%s                        Interactive menu (TTY)\n' "$C_ACCENT" "$prog" "$C_RESET"
-	printf '    %s%s%s <command> [args]      Run a command directly\n\n' "$C_ACCENT" "$prog" "$C_RESET"
-	printf '  %sCommands%s\n' "$C_BOLD" "$C_RESET"
-	printf '    %smenu%s                      Open interactive menu\n' "$C_ACCENT" "$C_RESET"
-	printf '    %ssetup%s                     First-time: libs + Project Generator\n' "$C_ACCENT" "$C_RESET"
-	printf '    %supdate%s    libs | pg          Download libs or Project Generator\n' "$C_ACCENT" "$C_RESET"
-	printf '    %sversion%s   of  | pg          Show version information\n' "$C_ACCENT" "$C_RESET"
-	printf '    %supgrade%s   addons | apps     Upgrade tree (backup first)\n' "$C_ACCENT" "$C_RESET"
-	printf '    %sdemo%s                        Preview task list + animations\n\n' "$C_ACCENT" "$C_RESET"
-	printf '  %sOptions%s\n' "$C_BOLD" "$C_RESET"
-	printf '    %s-h, --help%s               Show this help\n' "$C_MUTED" "$C_RESET"
-	printf '    %sVERBOSE=1%s                Debug / path details\n' "$C_MUTED" "$C_RESET"
-	printf '    %sNO_COLOR=1%s               Disable color\n' "$C_MUTED" "$C_RESET"
-	printf '    %sOF_ANIM=0%s                Disable spinners / list animation\n\n' "$C_MUTED" "$C_RESET"
-	printf '  %sExamples%s\n' "$C_BOLD" "$C_RESET"
-	printf '    %s%s%s                       # interactive menu\n' "$C_DIM" "$prog" "$C_RESET"
-	printf '    %s%s setup%s                  # libs + project generator\n' "$C_DIM" "$prog" "$C_RESET"
-	printf '    %s%s update%s                 # download libraries\n' "$C_DIM" "$prog" "$C_RESET"
-	printf '    %s%s update pg%s              # download Project Generator\n' "$C_DIM" "$prog" "$C_RESET"
-	printf '    %s%s update libs ios%s        # libs for another platform\n' "$C_DIM" "$prog" "$C_RESET"
-	printf '    %s%s version%s                # openFrameworks version\n\n' "$C_DIM" "$prog" "$C_RESET"
+	cat << EOF
+
+  Usage
+    ${prog}                        Interactive menu (TTY)
+    ${prog} <command> [args]       Run a command directly
+
+  Commands
+    menu                      Open interactive menu
+    setup                     First-time setup (linux: distro deps + libs + PG)
+    update    libs | pg       Download libs or Project Generator
+    version   of  | pg        Show version information
+    upgrade   addons | apps   Upgrade tree (backup first)
+    demo                      Preview task list + animations
+
+  Options
+    -h, --help                Show this help
+    VERBOSE=1                 Debug / path details
+    NO_COLOR=1                Disable color
+    OF_ANIM=0                 Disable spinners / list animation
+    OF_LINUX_DISTRO=name      Force distro scripts (ubuntu, fedora, …)
+    OF_SETUP_CODECS=0|1       Skip/force codecs install on linux setup
+
+  Examples
+    ${prog}
+    ${prog} setup
+    ${prog} update
+    ${prog} update pg
+    ${prog} update libs ios
+    ${prog} version
+
+EOF
 	if [[ "$OF_HAS_GUM" -eq 1 ]]; then
 		ofNote "gum detected — menus, confirms, banner"
 	else
@@ -397,6 +529,7 @@ printHelp(){
 	fi
 	printf '\n'
 	ofKV "platform" "${OF_PLATFORM}${OF_ARCH:+ / ${OF_ARCH}}"
+	[[ "$OF_PLATFORM" == "linux" && -n "$OF_LINUX_DISTRO" ]] && ofKV "distro" "$OF_LINUX_DISTRO"
 	printf '\n'
 }
 
@@ -407,6 +540,9 @@ ensureScript(){
 		return 1
 	fi
 	if [[ ! -x "$script" ]]; then
+		chmod +x "$script" 2>/dev/null || true
+	fi
+	if [[ ! -x "$script" ]]; then
 		ofErr "Not executable: ${script}"
 		return 1
 	fi
@@ -414,8 +550,8 @@ ensureScript(){
 }
 
 resolvePGScript(){
-	local platformDir="$1" script
-	script="${OF_CORE_SCRIPT_DIR}/${platformDir}/download_projectGenerator.sh"
+	local platformDir="$1"
+	local script="${OF_CORE_SCRIPT_DIR}/${platformDir}/download_projectGenerator.sh"
 	if [[ ! -f "$script" && -f "${OF_CORE_SCRIPT_DIR}/osx/download_projectGenerator.sh" ]]; then
 		script="${OF_CORE_SCRIPT_DIR}/osx/download_projectGenerator.sh"
 	fi
@@ -425,6 +561,7 @@ resolvePGScript(){
 	printf '%s' "$script"
 }
 
+# -----------------------------------------------------------------------------
 cmdDemo(){
 	ofBanner "demo"
 	tasksBegin "Tasks" \
@@ -542,7 +679,9 @@ cmdVersionPG(){
 }
 
 cmdUpdate(){
-	local subcmd="$1" platformDir="${2:-$OF_PLATFORM}" script title
+	local subcmd="$1"
+	local platformDir="${2:-$OF_PLATFORM}"
+	local script title
 
 	case "$subcmd" in
 		""|libs)
@@ -588,7 +727,8 @@ cmdUpdate(){
 }
 
 cmdUpgrade(){
-	local subcmd="$1" script="${OF_CORE_SCRIPT_DIR}/dev/upgrade.sh"
+	local subcmd="$1"
+	local script="${OF_CORE_SCRIPT_DIR}/dev/upgrade.sh"
 
 	case "$subcmd" in
 		addons|apps) ;;
@@ -637,60 +777,131 @@ cmdUpgrade(){
 cmdSetup(){
 	local platformDir="${1:-$OF_PLATFORM}"
 	local libsScript="${OF_CORE_SCRIPT_DIR}/${platformDir}/download_libs.sh"
-	local pgScript
+	local pgScript distroDir depsScript codecsScript
+	local doCodecs=0 taskN=0
+	local -a taskNames=()
+
 	pgScript=$(resolvePGScript "$platformDir")
 
 	ofBanner "setup"
 	ofInfo "first-time install  ·  platform ${platformDir}"
-	tasksBegin "Tasks" \
-		"Detect platform" \
-		"Download libraries" \
-		"Download Project Generator" \
-		"Finish"
 
-	taskSet 0 done "${OF_PLATFORM}${OF_ARCH:+ / ${OF_ARCH}} → ${platformDir}"
+	if [[ "$OF_PLATFORM" == "linux" ]]; then
+		detectLinuxDistro
+		if [[ -z "$OF_LINUX_DISTRO" ]]; then
+			ofWarn "linux distro not detected automatically"
+			pickLinuxDistro || return 1
+		fi
+		distroDir=$(linuxDistroScriptDir)
+		depsScript="${distroDir}/install_dependencies.sh"
+		codecsScript="${distroDir}/install_codecs.sh"
+		ofKV "distro" "$OF_LINUX_DISTRO"
+		ofNote "deps: ${depsScript}"
+
+		if [[ -f "$codecsScript" ]]; then
+			if [[ "${OF_SETUP_CODECS:-}" = 1 ]]; then
+				doCodecs=1
+			elif [[ "${OF_SETUP_CODECS:-}" = 0 ]]; then
+				doCodecs=0
+			elif menuCanRun && ofConfirm "Also install media codecs (mp3 etc; patent caveats in some countries)?"; then
+				doCodecs=1
+			fi
+		fi
+	fi
+
+	taskNames+=("Detect platform")
+	if [[ "$OF_PLATFORM" == "linux" ]]; then
+		taskNames+=("Install dependencies (${OF_LINUX_DISTRO})")
+		[[ "$doCodecs" -eq 1 ]] && taskNames+=("Install codecs (${OF_LINUX_DISTRO})")
+	fi
+	taskNames+=("Download libraries")
+	taskNames+=("Download Project Generator")
+	taskNames+=("Finish")
+
+	tasksBegin "Tasks" "${taskNames[@]}"
+	taskSet 0 done "${OF_PLATFORM}${OF_ARCH:+ / ${OF_ARCH}}${OF_LINUX_DISTRO:+ · ${OF_LINUX_DISTRO}} → ${platformDir}"
+	taskN=1
+
+	if [[ "$OF_PLATFORM" == "linux" ]]; then
+		if [[ ! -f "$depsScript" ]]; then
+			taskSet "$taskN" fail "missing install_dependencies.sh"
+			tasksSkipRest
+			tasksSummary
+			ofErr "no install_dependencies.sh for distro '${OF_LINUX_DISTRO}'"
+			ofNote "set OF_LINUX_DISTRO=…  available: $(listLinuxDistros | tr '\n' ' ')"
+			return 1
+		fi
+		echoVerbose "run: ${depsScript}"
+		if ! taskLive "$taskN" -- runDistroInstallScript "$depsScript"; then
+			tasksSkipRest
+			tasksSummary
+			return 1
+		fi
+		taskN=$((taskN + 1))
+
+		if [[ "$doCodecs" -eq 1 ]]; then
+			if [[ ! -f "$codecsScript" ]]; then
+				taskTickLine "$taskN" skip "no install_codecs.sh"
+			else
+				echoVerbose "run: ${codecsScript}"
+				if ! taskLive "$taskN" -- runDistroInstallScript "$codecsScript"; then
+					tasksSkipRest
+					tasksSummary
+					return 1
+				fi
+			fi
+			taskN=$((taskN + 1))
+		fi
+	fi
 
 	if ! ensureScript "$libsScript"; then
-		taskSet 1 fail "no download_libs.sh for ${platformDir}"
+		taskSet "$taskN" fail "no download_libs.sh for ${platformDir}"
 		tasksSkipRest
 		tasksSummary
 		return 1
 	fi
-
 	echoVerbose "run: ${libsScript}"
-	if ! taskLive 1 -- "$libsScript"; then
-		taskTickLine 2 skip
-		taskTickLine 3 skip
+	if ! taskLive "$taskN" -- "$libsScript"; then
+		tasksSkipRest
 		tasksSummary
 		return 1
 	fi
+	taskN=$((taskN + 1))
 
-	if [[ ! -x "$pgScript" ]]; then
-		taskTickLine 2 skip "no PG script for ${platformDir}"
-		taskTickLine 3 done "libs only"
+	if ! ensureScript "$pgScript"; then
+		taskTickLine "$taskN" skip "no PG script for ${platformDir}"
+		taskN=$((taskN + 1))
+		taskTickLine "$taskN" done "libs only"
 		tasksSummary
 		ofWarn "Project Generator script missing — try: of update pg"
+		[[ "$OF_PLATFORM" == "linux" ]] && ofNote "next: scripts/linux/compileOF.sh  ·  compilePG.sh"
 		return 0
 	fi
-
 	echoVerbose "run: ${pgScript}"
-	if ! taskLive 2 -- "$pgScript"; then
-		taskTickLine 3 skip
+	if ! taskLive "$taskN" -- "$pgScript"; then
+		tasksSkipRest
 		tasksSummary
 		return 1
 	fi
-	taskTickLine 3 done
+	taskN=$((taskN + 1))
+	taskTickLine "$taskN" done
 	tasksSummary
+
 	printf '\n'
 	ofOk "setup complete — open Project Generator or start coding"
-	ofNote "hint: of version   ·   of update libs   ·   of menu"
+	if [[ "$OF_PLATFORM" == "linux" ]]; then
+		ofNote "next: cd scripts/linux && ./compileOF.sh -j\$(nproc)"
+		ofNote "then: ./compilePG.sh   (optional project generator CLI)"
+	else
+		ofNote "hint: of version   ·   of update libs   ·   of menu"
+	fi
 	printf '\n'
 }
 
-menuCanRun(){ [[ -t 0 && -t 1 ]]; }
-
+# -----------------------------------------------------------------------------
 menuPick(){
-	local header="$1" item label id i choice
+	local header="$1"
+	local item label id i choice
 	local -a items labels ids
 	shift
 	items=("$@")
@@ -776,6 +987,7 @@ cmdMenu(){
 		printf '\n'
 		ofKV "host" "${OF_PLATFORM}${OF_ARCH:+ / ${OF_ARCH}}"
 		ofKV "of dir" "$OF_DIR"
+		[[ "$OF_PLATFORM" == "linux" && -n "$OF_LINUX_DISTRO" ]] && ofKV "distro" "$OF_LINUX_DISTRO"
 		if [[ -x "${OF_PG_INSTALLED_DIR}/projectGenerator" || -x "${OF_DIR}/projectGenerator/projectGenerator" ]]; then
 			ofKV "pg" "installed"
 		else
@@ -784,7 +996,7 @@ cmdMenu(){
 		printf '\n'
 
 		if ! menuPick "What do you want to do?" \
-			"Setup (download libs + Project Generator)|setup" \
+			"Setup (linux: distro deps + libs + PG)|setup" \
 			"Download libraries (this platform)|libs" \
 			"Download libraries (choose platform)|libs-platform" \
 			"Download Project Generator|pg" \
@@ -820,23 +1032,15 @@ cmdMenu(){
 }
 
 runCommand(){
-	local cmd=$1 subcmd=$2 subcmd2=$3
+	local cmd=$1
+	local subcmd=$2
+	local subcmd2=$3
 	case "$cmd" in
-		help|-h|--help)
-			printHelp
-			;;
-		menu)
-			cmdMenu
-			;;
-		setup|install)
-			cmdSetup "${subcmd:-$OF_PLATFORM}"
-			;;
-		demo)
-			cmdDemo
-			;;
-		update)
-			cmdUpdate "$subcmd" "$subcmd2"
-			;;
+		help|-h|--help) printHelp ;;
+		menu)           cmdMenu ;;
+		setup|install)  cmdSetup "${subcmd:-$OF_PLATFORM}" ;;
+		demo)           cmdDemo ;;
+		update)         cmdUpdate "$subcmd" "$subcmd2" ;;
 		version)
 			case "$subcmd" in
 				""|of) cmdVersion ;;
@@ -848,9 +1052,7 @@ runCommand(){
 					;;
 			esac
 			;;
-		upgrade)
-			cmdUpgrade "$subcmd"
-			;;
+		upgrade) cmdUpgrade "$subcmd" ;;
 		*)
 			ofErr "Unknown command: ${cmd}"
 			ofNote "valid: menu, setup, update, version, upgrade, demo, help"
