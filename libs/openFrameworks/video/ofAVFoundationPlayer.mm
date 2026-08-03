@@ -185,7 +185,10 @@ void ofAVFoundationPlayer::close() {
         pixels.clear();
         videoTexture.clear();
 
-		[videoPlayer close];
+		// Pause, unload synchronously, clear the handle: one teardown, completed before close() returns (see commit message).
+		[videoPlayer pause];
+		[videoPlayer unloadVideo];
+		videoPlayer = nullptr;
     }
 
     bFrameNew = false;
