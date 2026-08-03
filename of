@@ -1,13 +1,12 @@
 #!/usr/bin/env bash
 # of - openFrameworks CLI entrypoint
-_OF_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-_OF_DIR="$(realpath "$_OF_DIR")"
-_OF_SCRIPT="$(realpath "$_OF_DIR/scripts/of.sh")"
+ROOT="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+ROOT="$(realpath "$ROOT")"
+OF_SCRIPT="$(realpath "$ROOT/scripts/of.sh")"
 
-if [[ ! -f "$_OF_SCRIPT" ]]; then
-	echo "Error: of.sh not found at ${_OF_SCRIPT}" >&2
+if [[ ! -f "$OF_SCRIPT" ]]; then
+	echo "Error: of.sh not found at ${OF_SCRIPT}" >&2
 	exit 1
 fi
 
-# shellcheck source=scripts/of.sh
-source "$_OF_SCRIPT" "$@"
+. "$OF_SCRIPT" "$@"
