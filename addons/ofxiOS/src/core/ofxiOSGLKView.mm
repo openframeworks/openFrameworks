@@ -99,7 +99,10 @@ static ofxiOSGLKView * _instanceRef = nil;
 
         window = dynamic_pointer_cast<ofAppiOSWindow>(ofCreateWindow(windowSettings));
 
-        ofRunApp(app);
+        // UIKit already owns the application loop when a custom app delegate
+        // installs this view. Register the app with the recreated window
+        // without starting the main loop again.
+        ofRunApp(window, std::static_pointer_cast<ofBaseApp>(app));
     }
     
     if(window->isProgrammableRenderer() == true) {
