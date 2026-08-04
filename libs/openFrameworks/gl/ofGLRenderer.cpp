@@ -121,7 +121,8 @@ void ofGLRenderer::draw(const ofMesh & vertexData, ofPolyRenderMode renderType, 
 	#ifdef TARGET_OPENGLES
 		glDrawElements(ofGetGLPrimitiveMode(vertexData.getMode()), vertexData.getNumIndices(), GL_UNSIGNED_SHORT, vertexData.getIndexPointer());
 	#else
-		glDrawElements(ofGetGLPrimitiveMode(vertexData.getMode()), vertexData.getNumIndices(), GL_UNSIGNED_INT, vertexData.getIndexPointer());
+		// GL index type must match sizeof(ofIndexType); see ofGLProgrammableRenderer::drawElements.
+		glDrawElements(ofGetGLPrimitiveMode(vertexData.getMode()), vertexData.getNumIndices(), sizeof(ofIndexType) == 2 ? GL_UNSIGNED_SHORT : GL_UNSIGNED_INT, vertexData.getIndexPointer());
 	#endif
 	} else {
 		glDrawArrays(ofGetGLPrimitiveMode(vertexData.getMode()), 0, vertexData.getNumVertices());
@@ -389,7 +390,8 @@ void ofGLRenderer::drawElements(const ofVbo & vbo, GLuint drawMode, int amt, int
 #ifdef TARGET_OPENGLES
 		glDrawElements(drawMode, amt, GL_UNSIGNED_SHORT, (void *)(sizeof(ofIndexType) * offsetelements));
 #else
-		glDrawElements(drawMode, amt, GL_UNSIGNED_INT, (void *)(sizeof(ofIndexType) * offsetelements));
+		// Index type follows sizeof(ofIndexType); see ofGLProgrammableRenderer::drawElements.
+		glDrawElements(drawMode, amt, sizeof(ofIndexType) == 2 ? GL_UNSIGNED_SHORT : GL_UNSIGNED_INT, (void *)(sizeof(ofIndexType) * offsetelements));
 #endif
 		vbo.unbind();
 	}
@@ -423,7 +425,8 @@ void ofGLRenderer::drawElementsInstanced(const ofVbo & vbo, GLuint drawMode, int
 		ofLogWarning("ofVbo") << "drawElementsInstanced(): hardware instancing is not supported on OpenGL ES < 3.0";
 		// glDrawElementsInstanced(drawMode, amt, GL_UNSIGNED_SHORT, nullptr, primCount);
 #else
-		glDrawElementsInstanced(drawMode, amt, GL_UNSIGNED_INT, nullptr, primCount);
+		// Index type follows sizeof(ofIndexType); see ofGLProgrammableRenderer::drawElements.
+		glDrawElementsInstanced(drawMode, amt, sizeof(ofIndexType) == 2 ? GL_UNSIGNED_SHORT : GL_UNSIGNED_INT, nullptr, primCount);
 #endif
 		vbo.unbind();
 	}
