@@ -461,17 +461,13 @@ void ofGLProgrammableRenderer::draw(const ofVbo & vbo, GLuint drawMode, int firs
 void ofGLProgrammableRenderer::drawElements(const ofVbo & vbo, GLuint drawMode, int amt, int offsetelements) const {
 	if (vbo.getUsingVerts()) {
 		vbo.bind();
-		const_cast<ofGLProgrammableRenderer *>(this)->setAttributes(
-			vbo.getUsingVerts(),
-			vbo.getUsingColors(),
-			vbo.getUsingTexCoords(),
-			vbo.getUsingNormals(), drawMode);
-
-		#if defined(TARGET_OPENGLES) && !(defined(GL_ES_VERSION_3_0) && defined(TARGET_OPENGLES_3))
-		    glDrawElements(drawMode, amt, GL_UNSIGNED_INT, (void *)(sizeof(ofIndexType) * offsetelements));
-		#else
-		    glDrawElements(drawMode, amt, GL_UNSIGNED_SHORT, (void *)(sizeof(ofIndexType) * offsetelements));
-		#endif
+		const_cast<ofGLProgrammableRenderer *>(this)->setAttributes(vbo.getUsingVerts(), vbo.getUsingColors(), vbo.getUsingTexCoords(), vbo.getUsingNormals(), drawMode);
+#ifdef TARGET_OPENGLES
+		glDrawElements(drawMode, amt, GL_UNSIGNED_SHORT, (void *)(sizeof(ofIndexType) * offsetelements));
+#else
+		// GL index type must match sizeof(ofIndexType) (16-bit on macOS via tess2); see commit message.
+		glDrawElements(drawMode, amt, sizeof(ofIndexType) == 2 ? GL_UNSIGNED_SHORT : GL_UNSIGNED_INT, (void *)(sizeof(ofIndexType) * offsetelements));
+#endif
 		vbo.unbind();
 	}
 }
@@ -481,9 +477,9 @@ void ofGLProgrammableRenderer::drawInstanced(const ofVbo & vbo, GLuint drawMode,
 	if (vbo.getUsingVerts()) {
 		vbo.bind();
 		const_cast<ofGLProgrammableRenderer *>(this)->setAttributes(vbo.getUsingVerts(), vbo.getUsingColors(), vbo.getUsingTexCoords(), vbo.getUsingNormals(), drawMode);
-#if defined(TARGET_OPENGLES) && !(defined(GL_ES_VERSION_3_1) && defined(TARGET_OPENGLES_3_1))
+#if defined(TARGET_OPENGLES) && !(defined(GL_ES_VERSION_3_0) && defined(TARGET_OPENGLES_3))
 		// https://www.khronos.org/opengles/sdk/docs/man3/xhtml/glDrawElementsInstanced.xml
-		ofLogWarning("ofVbo") << "drawInstanced(): hardware instancing is not supported on OpenGL ES <= 3.1";
+		ofLogWarning("ofVbo") << "drawInstanced(): hardware instancing requires OpenGL ES 3.0";
 #else
 		glDrawArraysInstanced(drawMode, first, total, primCount);
 #endif
@@ -496,11 +492,16 @@ void ofGLProgrammableRenderer::drawElementsInstanced(const ofVbo & vbo, GLuint d
 	if (vbo.getUsingVerts()) {
 		vbo.bind();
 		const_cast<ofGLProgrammableRenderer *>(this)->setAttributes(vbo.getUsingVerts(), vbo.getUsingColors(), vbo.getUsingTexCoords(), vbo.getUsingNormals(), drawMode);
-#if defined(TARGET_OPENGLES) && !(defined(GL_ES_VERSION_3_1) && defined(TARGET_OPENGLES_3_1))
+#if defined(TARGET_OPENGLES) && !(defined(GL_ES_VERSION_3_0) && defined(TARGET_OPENGLES_3))
 		// https://www.khronos.org/opengles/sdk/docs/man3/xhtml/glDrawElementsInstanced.xml
-		ofLogWarning("ofVbo") << "drawElementsInstanced(): hardware instancing is not supported on OpenGL ES <= 3.1";
+		ofLogWarning("ofVbo") << "drawElementsInstanced(): hardware instancing requires OpenGL ES 3.0";
 #else
-		glDrawElementsInstanced(drawMode, amt, GL_UNSIGNED_INT, nullptr, primCount);
+		#if defined(TARGET_OPENGLES)
+		glDrawElementsInstanced(drawMode, amt, GL_UNSIGNED_SHORT, nullptr, primCount);
+		#else
+		// GL index type must match sizeof(ofIndexType); see drawElements above.
+		glDrawElementsInstanced(drawMode, amt, sizeof(ofIndexType) == 2 ? GL_UNSIGNED_SHORT : GL_UNSIGNED_INT, nullptr, primCount);
+		#endif
 #endif
 		vbo.unbind();
 	}

@@ -40,6 +40,12 @@ using std::vector;
 namespace of{
 	namespace priv{
 		bool InitGLFW(){
+			#if defined(TARGET_LINUX) && defined(GLFW_PLATFORM_X11)
+			// GLFW 3.4+ auto-detects Wayland when $WAYLAND_DISPLAY is set,
+			// Force the X11 backend so XWayland bridges us into the Wayland
+			// session transparently — no sudo required.
+			glfwInitHint(GLFW_PLATFORM, GLFW_PLATFORM_X11);
+			#endif
 			return glfwInit();
 		}
 	}

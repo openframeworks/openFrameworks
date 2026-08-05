@@ -726,14 +726,11 @@ class ofTexture : public ofBaseDraws {
 	///
 	void unbind(int textureLocation=0) const;
 
-#if !defined(TARGET_OPENGLES) || defined(GL_ES_VERSION_3_1)
-// TODO: check for availability of glBindImageTexture in a valid way
-//       defined(glBindImageTexture) does not actually work!
-//       there is no reliable way to check for a function being defined just with the preprocessor
+#if (!defined(TARGET_OPENGLES) && defined(glBindImageTexture)) || (defined(GL_ES_VERSION_3_1) && defined(TARGET_OPENGLES_3_1))
 	/// Calls glBindImageTexture on the texture
 	///
 	/// Binds the texture as an read or write image, only available since OpenGL 4.2
-	/// \warning This is not available in OpenGLES
+	/// \warning This requires OpenGL 4.2 or OpenGL ES 3.1.
 	/// \sa http://www.opengl.org/wiki/GLAPI/glBindImageTexture
 	void bindAsImage(GLuint unit, GLenum access, GLint level=0, GLboolean layered=0, GLint layer=0);
 #endif

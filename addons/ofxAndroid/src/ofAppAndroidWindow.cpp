@@ -122,6 +122,7 @@ ofAppAndroidWindow::ofAppAndroidWindow()  {
 	window = this;
 	msaaSamples = 1;
 	glesVersion = 2;
+	glesVersionMinor = 0;
 #ifdef TARGET_PROGRAMMABLE_GL
     #ifdef GL_ES_VERSION_3_0
         glesVersion = 3;
@@ -142,6 +143,7 @@ ofAppAndroidWindow::ofAppAndroidWindow(ofAppBaseWindow & other) {
 	window = this;
 	msaaSamples = 1;
 	glesVersion = 2;
+	glesVersionMinor = 0;
 	setMultiWindowMode(other.getWindowMode());
 	ofGetMainLoop()->setCurrentWindow(this);
 }

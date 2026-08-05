@@ -365,7 +365,16 @@ OF_PROJECT_CFLAGS += $(PROJECT_CFLAGS)
 OF_PROJECT_CFLAGS += $(PROJECT_ADDONS_CFLAGS)
 OF_PROJECT_CFLAGS += $(USER_CFLAGS) # legacy
 OF_PROJECT_CFLAGS += $(OF_PROJECT_DEFINES_CFLAGS)
-OF_PROJECT_CXXFLAGS = $(OF_CORE_BASE_CXXFLAGS)
+_addon_std_flags := $(filter -std=%,$(PROJECT_ADDONS_CFLAGS))
+ifneq ($(_addon_std_flags),)
+	# Forward addon -std=* into CXXFLAGS (ADDON_CFLAGS only land in CFLAGS today).
+	OF_PROJECT_CFLAGS := $(filter-out -std=%,$(OF_PROJECT_CFLAGS))
+	OF_PROJECT_CFLAGS += $(lastword $(_addon_std_flags))
+	OF_PROJECT_CXXFLAGS := $(filter-out -std=%,$(OF_CORE_BASE_CXXFLAGS))
+	OF_PROJECT_CXXFLAGS += $(lastword $(_addon_std_flags))
+else
+	OF_PROJECT_CXXFLAGS = $(OF_CORE_BASE_CXXFLAGS)
+endif
 
 
 ################################################################################

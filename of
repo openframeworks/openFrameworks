@@ -1,8 +1,12 @@
-# pipe commands to core oF script
-_OF_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-_OF_DIR="$(realpath "$_OF_DIR")"
-_OF_SCRIPT="$(realpath "$_OF_DIR/scripts/of.sh")"
-echo "$(date): [openFrameworks: $@]"
-source "$_OF_SCRIPT" $@
-EXIT_CODE=$?
-exit ${EXIT_CODE}
+#!/usr/bin/env bash
+# of - openFrameworks CLI entrypoint
+ROOT="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+ROOT="$(realpath "$ROOT")"
+OF_SCRIPT="$(realpath "$ROOT/scripts/of.sh")"
+
+if [[ ! -f "$OF_SCRIPT" ]]; then
+	echo "Error: of.sh not found at ${OF_SCRIPT}" >&2
+	exit 1
+fi
+
+. "$OF_SCRIPT" "$@"

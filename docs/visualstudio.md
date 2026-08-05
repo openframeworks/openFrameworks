@@ -1,58 +1,83 @@
-[openFrameworks](http://openframeworks.cc/) | [Documentation table of contents](table_of_contents.md)
+# Visual Studio
 
-Visual Studio
-=============
+## Prerequisites
+- Git - [Git for Windows] (https://git-scm.com/install/windows)
 
-Installation
+## Visual Studio Installation
 ------------
-To getting started with openFrameworks and Visual Studio, you need to have [Visual Studio 2015](https://www.visualstudio.com) installed.
-Any version should work, Express included.  
-There are many versions of Visual Studio. If you don't know which one to install, then we recommend [Visual Studio Community 2015](https://www.visualstudio.com/products/visual-studio-community-vs.aspx).
-Each generation of Visual Studio (i.e. 2010, 2012, 2015) comes with a different C++ compiler (a compiler is what makes your c++ code into an executable that you can run).
-Generally, projects created in different generations of Visual Studio are not compatible with each other, but you can upgrade files from old generations to new generations.  
 
-**See [setup guide](http://openframeworks.cc/setup/vs) for more detailed instructions.**
+Download and install **Visual Studio 2022** or **Visual Studio 2026**.  
 
-_Visual Studio Community is free for individual developers, open source projects, academic research, education, and small professional teams.  
-Community versions have a reduced feature set whilst sharing the same compiler and general interface of the more premium versions (e.g. Professional, Enterprise etc).
-The premium versions are only really recommended for more commercial oF users, for students who can otherwise get these versions for free, or for users who know for definite that they need
-the premium features which aren't available in the Community distributions._
+We recommend the free **Community** edition.
 
-Creating a new openFrameworks project
+- [Visual Studio 2022 Community](https://visualstudio.microsoft.com/downloads/)  
+- [Visual Studio 2026 Community](https://visualstudio.microsoft.com/downloads/)  
+
+During installation, select the **Desktop development with C++** workload.
+
+## Install openFrameworks
+- Download openFrameworks 0.12.1 or later from the [download page](http://openframeworks.cc/download/) or from [github](https://github.com/openframeworks/openFrameworks/).
+- If you got openFrameworks from git: https://github.com/openframeworks/openFrameworks
+	- Run `scripts/android/download_libs.sh` to download libraries.
+	- Use the Project Generator to generate Visual Studio project files for examples.
+
+## Libraries
+------------
+
+If missing any libraries or want to update them run the script at **vs/scripts/**
+- **download_libs.sh**
+
+## Creating a new openFrameworks project
 -------------------------------------
-See [projectGenerator page](projectgenerator.md), to understand the usage of this tool.
 
-Open your new Solution
+1. Open the **Project Generator** (ofxImGui interface).  
+2. Enter your **Project name**.  
+3. Choose your **Project path**.  
+4. Under **Platforms**, select **Windows (Visual Studio)**.  
+5. Under **Template**:  
+   - For **Visual Studio 2022** → leave the Template field empty (default)  
+   - For **Visual Studio 2026** → select **`vs2026`** from the dropdown  
+6. Click **Generate**.
+
+![Project Generator — Visual Studio 2022 (default template)](/images/vs/pg-vs2022.png)
+
+![Project Generator — selecting the vs2026 template](/images/vs/pg-vs2026.png)
+
+## Open and Run your project
 ----------------------
-Every openFrameworks application is represented by a **'Solution'** and a **'Project'**. A solution is a collection of (generally) co-dependent projects.
-The solution for your project contains your project, and the openFrameworks project, which is a library of all openFrameworks functions and classes
-which can be used by your project.  
-Your solution filename will be `openFrameworks/apps/[your name]/[project name]/[project name].sln`. Open this file with Visual Studio either by double
-clicking on it in Explorer, or selecting File>Open>Project/Solution... inside Visual Studio.
 
-Compile and Run
----------------
-Open your solution file `[project].sln`, and hit **F5**. This should compile and run your project. You should see a blank OpenGL window appear.  
-_If Visual Studio complains that your project cannot be started, try right clicking on your project in the 'Solution Explorer' and select 'Set as startup project' and then try F5 again._
+![Project Generator success screen](/images/vs/pg-success.png)
 
-The difference between Debug and Release mode
----------------------------------------------
-These are two build configurations, **"Debug"** and **"Release"**:
+You can run by clicking Open in IDE in Project Generator or Open Folder to access directory.
 
-* **Debug** is useful when developing your project, as it will _provide the most information_ about where and why something crashed.
-* **Release** is useful when you're done developing your project. Release will create a _smaller_, _faster_ app, but it _won't give you much information_ if it crashes.
-
-Change the world
-----------------
-Now it's time to get to work coding with openFrameworks. Hit 'Esc' to exit the blank, boring application you just built, and start editing `testApp.cpp`
-and `testApp.h` to finally put to rest your critics and friends and make that generative/interactive/totally awesome piece of work that you've been wanting
-to get out.  
-Just be careful not to forget your friends and critics in the process!
-
-openFrameworks resources
-------------------------
-If you have questions or issues, the best place to look is the [openFrameworks forum](http://forum.openframeworks.cc/).
+Your project solution file is located at:  
+`openFrameworks/apps/[yourFolder]/[projectName]/[projectName].sln`
 
 
-Thanks for reading this and enjoy!  
-_The OF Team_
+Double-click the `.sln` file to open it in the matching version of Visual Studio (2022 or 2026).
+
+
+![Visual Studio 2026 loading](/images/vs/vs2026.png)
+
+Press **F5** to build and run in Debug mode.
+
+## Debug vs Release
+-------------------
+
+- **Debug** — best while developing (full error info).  
+- **Release** — smaller and faster (use when finished).  
+
+Switch between them using the dropdown at the top of Visual Studio.
+
+## Architectures
+-------------------
+- Targets are x86_64 - x64 - Default Windows
+- ARM64 - for arm64 processors (native arm)
+- ARM64EC - a mixture of both x64/arm64 for Windows 11
+
+## Start coding
+-------------
+
+Hit **Esc** to close the window, then edit your code in `src/ofApp.cpp` and `src/ofApp.h`.
+
+![Visual Studio 2026 Running](/images/vs/vs-2026-example.png)

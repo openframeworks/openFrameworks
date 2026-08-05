@@ -213,7 +213,7 @@ bool ofShader::load(const of::filesystem::path & vertName, const of::filesystem:
     return linkProgram();
 }
 
-#if !defined(TARGET_OPENGLES) || (defined(GL_ES_VERSION_3_1) && defined(TARGET_OPENGLES_3) && defined(glDispatchCompute))
+#if (!defined(TARGET_OPENGLES) && defined(glDispatchCompute)) || (defined(GL_ES_VERSION_3_1) && defined(TARGET_OPENGLES_3_1))
 //--------------------------------------------------------------
 bool ofShader::loadCompute(const of::filesystem::path & shaderName) {
     return setupShaderFromFile(GL_COMPUTE_SHADER, shaderName) && linkProgram();
@@ -923,7 +923,7 @@ void ofShader::endTransformFeedback(const std::vector<TransformFeedbackBaseBindi
 }
 #endif
 
-#if !defined(TARGET_OPENGLES) || (defined(TARGET_OPENGLES_3) && defined(glDispatchCompute) && defined(GL_ES_VERSION_3_1))
+#if (!defined(TARGET_OPENGLES) && defined(glDispatchCompute)) || (defined(GL_ES_VERSION_3_1) && defined(TARGET_OPENGLES_3_1))
 //--------------------------------------------------------------
 void ofShader::dispatchCompute(GLuint x, GLuint y, GLuint z) const {
     glDispatchCompute(x, y, z);
@@ -1560,7 +1560,7 @@ string ofShader::nameForType(GLenum type) {
         case GL_GEOMETRY_SHADER_EXT:
         	return "GL_GEOMETRY_SHADER_EXT";
     #endif
-    #if (!defined(TARGET_OPENGLES) && defined(glDispatchCompute)) || defined(GL_ES_VERSION_3_1)
+    #if (!defined(TARGET_OPENGLES) && defined(glDispatchCompute)) || (defined(GL_ES_VERSION_3_1) && defined(TARGET_OPENGLES_3_1))
         case GL_COMPUTE_SHADER:
         	return "GL_COMPUTE_SHADER";
     #endif

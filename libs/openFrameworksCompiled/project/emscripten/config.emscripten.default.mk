@@ -85,6 +85,14 @@ ifdef EMSCRIPTEN_MEMORY64
 endif
 
 ################################################################################
+# EMBIND_AOT CONFIGURATION
+# OFF by default (recommended). It frequently breaks addons (FreeImage, ofxJSON, etc.).
+# Set PROJECT_EMSCRIPTEN_EMBIND_AOT=1 in your project/config.make or pass it to make
+# if you need CSP compliance and know your code is fully compatible.
+################################################################################
+PROJECT_EMSCRIPTEN_EMBIND_AOT ?= 1
+
+################################################################################
 # PLATFORM LDFLAGS
 #   This is a list of fully qualified LDFLAGS required when linking for this
 #   platform. These flags will always be added when linking a project.
@@ -93,9 +101,9 @@ endif
 ################################################################################
 
 ifdef PROJECT_EMSCRIPTEN_TOTAL_MEMORY
-	PLATFORM_EMSCRIPTEN_TOTAL_MEMORY=$(PROJECT_EMSCRIPTEN_TOTAL_MEMORY)
+	PLATFORM_EMSCRIPTEN_INITIAL_MEMORY=$(PROJECT_EMSCRIPTEN_TOTAL_MEMORY)
 else
-	PLATFORM_EMSCRIPTEN_TOTAL_MEMORY=134217728
+	PLATFORM_EMSCRIPTEN_INITIAL_MEMORY=134217728
 endif
 
 CUR_CC = $(CC)
@@ -112,40 +120,44 @@ endif
 
 #PLATFORM_LDFLAGS += -s EMBIND_AOT=1
 PLATFORM_LDFLAGS = --preload-file bin/data@data --emrun --bind --profiling-funcs
-PLATFORM_LDFLAGS += -s USE_WEBGPU=1
+PLATFORM_LDFLAGS += --use-port=emdawnwebgpu
 PLATFORM_LDFLAGS += -s MAX_WEBGL_VERSION=2 -s WEBGL2_BACKWARDS_COMPATIBILITY_EMULATION=1 -s FULL_ES2
 PLATFORM_LDFLAGS += -s AUTO_NATIVE_LIBRARIES=1
 PLATFORM_LDFLAGS += -s AUTO_JS_LIBRARIES=1
 
-PLATFORM_LDFLAGS += -s GL_ASSERTIONS=1
 PLATFORM_LDFLAGS += -s VERBOSE=1
 
-
 PLATFORM_LDFLAGS +=  $(PLATFORM_PTHREAD)
-# PLATFORM_LDFLAGS += -lGL
-# PLATFORM_LDFLAGS += -lhtml5
-#PLATFORM_LDFLAGS += -lopenal
 
 PLATFORM_LDFLAGS += --js-library $(OF_ADDONS_PATH)/ofxEmscripten/libs/html5video/lib/emscripten/library_html5video.js
 # PLATFORM_LDFLAGS += --js-library $(OF_ADDONS_PATH)/ofxEmscripten/libs/html5audio/lib/emscripten/library_html5audio.js
-PLATFORM_LDFLAGS += -s MINIFY_HTML=0
+
 PLATFORM_LDFLAGS += -s MAIN_MODULE=1 -DEMCC_FORCE_STDLIBS=1
 PLATFORM_LDFLAGS += -s EXPORT_ALL=1
 PLATFORM_LDFLAGS += -s NO_DYNAMIC_EXECUTION=1
-PLATFORM_LDFLAGS += -s ALLOW_MEMORY_GROWTH=1
-PLATFORM_LDFLAGS += -sABORT_ON_WASM_EXCEPTIONS=0
-PLATFORM_LDFLAGS += -s DYNAMIC_EXECUTION=0 -s EMBIND_AOT=1
+PLATFORM_LDFLAGS += -s ABORT_ON_WASM_EXCEPTIONS=0
 PLATFORM_LDFLAGS += -s FILESYSTEM=1
-# PLATFORM_LDFLAGS += -s SINGLE_FILE=1
+
+PLATFORM_LDFLAGS += -s MINIFY_HTML=0
+#PLATFORM_LDFLAGS += -s SINGLE_FILE=1
 #PLATFORM_LDFLAGS += -s MODULARIZE=1
+
+ifeq ($(PROJECT_EMSCRIPTEN_EMBIND_AOT),1)
+    PLATFORM_LDFLAGS += -s EMBIND_AOT=1 -s DYNAMIC_EXECUTION=0
+    $(info === EMBIND_AOT ENABLED === (faster startup / CSP safe))
+else
+    PLATFORM_LDFLAGS += -s DYNAMIC_EXECUTION=1
+    $(info EMBIND_AOT disabled (safer for addons))
+endif
+
 #PLATFORM_LDFLAGS += -s EVAL_CTORS=1 -s ERROR_ON_UNDEFINED_SYMBOLS=1
 # PLATFORM_LDFLAGS += -s WASM_WORKERS=1 -s ENVIRONMENT="web,worker"
-PLATFORM_LDFLAGS += -s USE_GLFW=3 -lglfw
-# PLATFORM_LDFLAGS += -sEXPORTED_FUNCTIONS=all
-#PLATFORM_LDFLAGS += -sEXPORTED_FUNCTIONS='["_main", "_malloc", "_free"]'
 
-#Do not change this!  
-#If there are errors we need to see them! 
+PLATFORM_LDFLAGS += -s USE_GLFW=3 -lglfw
+PLATFORM_LDFLAGS += -s EXPORTED_RUNTIME_METHODS=['ccall','cwrap','FS','UTF8ToString','stringToUTF8','lengthBytesUTF8']
+
+
+# If there are errors we need to see them! Do not change this!
 PLATFORM_LDFLAGS += -sERROR_ON_UNDEFINED_SYMBOLS=1
 
 #PLATFORM_LDFLAGS += -s AUDIO_WORKLET=1 -s WASM_WORKERS=1 -sENVIRONMENT="web,worker" -s WEBAUDIO_DEBUG=1
@@ -161,10 +173,19 @@ EMSCRIPTEN_CSS = $(OF_LIBS_PATH)/openFrameworksCompiled/project/emscripten/style
 EMSCRIPTEN_HTACCESS = $(OF_LIBS_PATH)/openFrameworksCompiled/project/emscripten/.htaccess
 OUTPUT_DIR = output
 
-PLATFORM_OPTIMIZATION_LDFLAGS_RELEASE = -O3 -s TOTAL_MEMORY=$(PLATFORM_EMSCRIPTEN_TOTAL_MEMORY) -s WASM=1 -fPIC -gsource-map
+PLATFORM_OPTIMIZATION_LDFLAGS_RELEASE = -O3 \
+  -s INITIAL_MEMORY=$(PLATFORM_EMSCRIPTEN_INITIAL_MEMORY) \
+  -s ALLOW_MEMORY_GROWTH=1 \
+  -s WASM=1
 
-PLATFORM_OPTIMIZATION_LDFLAGS_DEBUG = -O1 -g -s ALLOW_MEMORY_GROWTH=1 -s TOTAL_MEMORY=134217728 -s WASM=1 -fPIC -s VERBOSE=1 -s GL_ASSERTIONS=1 -gsource-map
-
+PLATFORM_OPTIMIZATION_LDFLAGS_DEBUG = -O1 -g \
+  -s INITIAL_MEMORY=$(PLATFORM_EMSCRIPTEN_INITIAL_MEMORY) \
+  -s ALLOW_MEMORY_GROWTH=1 \
+  -s WASM=1 \
+  -s VERBOSE=1 \
+  -s GL_ASSERTIONS=1 \
+  -s ASSERTIONS=2 \
+  -gsource-map
 ################################################################################
 # PLATFORM OPTIMIZATION CFLAGS
 #   These are lists of CFLAGS that are target-specific.  While any flags could
@@ -278,7 +299,7 @@ PLATFORM_STATIC_LIBRARIES =
 
 # shared libraries
 PLATFORM_SHARED_LIBRARIES =
-#PLATFORM_SHARED_LIBRARIES += $(OF_LIBS_PATH)/freetype/lib/$(ABI_LIB_SUBPATH)/libfreetype.bc
+#PLATFORM_SHARED_LIBRARIES += $(OF_LIBS_PATH)/freetype/lib/$(ABI_LIB_SUBPATH)/libfreetype.a
 
 
 ################################################################################
