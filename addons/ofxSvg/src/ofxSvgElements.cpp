@@ -187,6 +187,15 @@ void ofxSvgPath::applyStyle(ofxSvgCssClass& aclass) {
 			path.setStrokeColor( scolor );
 		}
 	}
+
+	if( aclass.hasProperty("fill-rule") ) {
+		const std::string rule = ofToLower( aclass.getValue( "fill-rule", "nonzero" ) );
+		if( rule == "evenodd" ) {
+			path.setPolyWindingMode( OF_POLY_WINDING_ODD );
+		} else if( rule == "nonzero" ) {
+			path.setPolyWindingMode( OF_POLY_WINDING_NONZERO );
+		}
+	}
 	
 }
 

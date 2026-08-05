@@ -1,5 +1,6 @@
 #include "ofxSvg.h"
 #include "ofUtils.h"
+#include <deque>
 #include <regex>
 #include "ofGraphics.h"
 #include "ofxSvgUtils.h"
@@ -14,6 +15,125 @@ struct Measurement {
 	double value;
 	std::string unit;
 };
+
+static void appendSvgPathArc(std::stringstream& vstr, const ofPath::Command& command) {
+	const bool isNegative = (command.type == ofPath::Command::arcNegative);
+	const glm::vec2 center(command.to.x, command.to.y);
+	float a1 = command.angleBegin;
+	float a2 = command.angleEnd;
+
+	if (isNegative) {
+		while (a2 > a1) a2 -= 360.f;
+	} else {
+		while (a2 < a1) a2 += 360.f;
+	}
+
+	const float span = std::abs(a2 - a1);
+	const auto endPoint = [&](float deg) -> glm::vec2 {
+		const float rad = glm::radians(deg);
+		return center + glm::vec2(
+			std::cos(rad) * command.radiusX,
+			std::sin(rad) * command.radiusY);
+	};
+
+	const auto writeArc = [&](float endDeg, float arcSpan) {
+		if (std::abs(arcSpan) < 1e-4f) return;
+		const int largeArc = (std::abs(arcSpan) > 180.f) ? 1 : 0;
+		const int sweep = isNegative ? 0 : 1;
+		const glm::vec2 ept = endPoint(endDeg);
+		vstr << "A" << command.radiusX << " " << command.radiusY << " 0 "
+		     << largeArc << " " << sweep << " " << ept.x << " " << ept.y << " ";
+	};
+
+	if (span >= 359.9f) {
+		const float mid = isNegative ? (a1 - 180.f) : (a1 + 180.f);
+		writeArc(mid, isNegative ? -180.f : 180.f);
+		writeArc(a2, isNegative ? -180.f : 180.f);
+	} else {
+		writeArc(a2, a2 - a1);
+	}
+}
+
+static void appendCatmullRomCurveTo(std::stringstream& vstr,
+                                    const glm::vec3& p0, const glm::vec3& p1,
+                                    const glm::vec3& p2, const glm::vec3& p3) {
+	const glm::vec2 cp1 = glm::vec2(p1) + (glm::vec2(p2) - glm::vec2(p0)) / 6.f;
+	const glm::vec2 cp2 = glm::vec2(p2) - (glm::vec2(p3) - glm::vec2(p1)) / 6.f;
+	vstr << "C" << cp1.x << " " << cp1.y << " "
+	     << cp2.x << " " << cp2.y << " "
+	     << p2.x << " " << p2.y << " ";
+}
+
+static std::string ofPathCommandsToSvgD(const ofPath& path) {
+	std::stringstream vstr;
+
+	if (path.getMode() == ofPath::Mode::POLYLINES) {
+		for (const auto& polyline : path.getOutline()) {
+			const auto& pverts = polyline.getVertices();
+			if (pverts.size() < 2) continue;
+			for (std::size_t i = 0; i < pverts.size(); i++) {
+				if (i == 0) {
+					vstr << "M" << pverts[i].x << " " << pverts[i].y << " ";
+				} else {
+					vstr << "L" << pverts[i].x << " " << pverts[i].y << " ";
+				}
+			}
+			if (polyline.isClosed()) {
+				vstr << "Z ";
+			}
+		}
+		return vstr.str();
+	}
+
+	const auto& commands = path.getCommands();
+	if (commands.empty()) return {};
+
+	std::deque<glm::vec3> curveVertices;
+
+	for (const auto& command : commands) {
+		switch (command.type) {
+		case ofPath::Command::moveTo:
+			curveVertices.clear();
+			vstr << "M" << command.to.x << " " << command.to.y << " ";
+			break;
+		case ofPath::Command::lineTo:
+			curveVertices.clear();
+			vstr << "L" << command.to.x << " " << command.to.y << " ";
+			break;
+		case ofPath::Command::curveTo:
+			curveVertices.push_back(command.to);
+			if (curveVertices.size() == 4) {
+				appendCatmullRomCurveTo(vstr,
+				                        curveVertices[0], curveVertices[1],
+				                        curveVertices[2], curveVertices[3]);
+				curveVertices.pop_front();
+			}
+			break;
+		case ofPath::Command::bezierTo:
+			curveVertices.clear();
+			vstr << "C" << command.cp1.x << " " << command.cp1.y << " "
+			     << command.cp2.x << " " << command.cp2.y << " "
+			     << command.to.x << " " << command.to.y << " ";
+			break;
+		case ofPath::Command::quadBezierTo:
+			curveVertices.clear();
+			vstr << "Q" << command.cp2.x << " " << command.cp2.y << " "
+			     << command.to.x << " " << command.to.y << " ";
+			break;
+		case ofPath::Command::arc:
+		case ofPath::Command::arcNegative:
+			curveVertices.clear();
+			appendSvgPathArc(vstr, command);
+			break;
+		case ofPath::Command::close:
+			curveVertices.clear();
+			vstr << "Z ";
+			break;
+		}
+	}
+
+	return vstr.str();
+}
 
 //--------------------------------------------------------------
 Measurement parseMeasurement(const std::string& input) {
@@ -543,9 +663,15 @@ void ofxSvg::_parseXmlNode( ofXml& aParentNode, vector< shared_ptr<ofxSvgElement
 			if( fkid ) {
 				auto tgroup = std::make_shared<ofxSvgGroup>();
 				tgroup->layer = mCurrentLayer += 1.0;
-				auto idattr = kid.getAttribute("id");
-				if( idattr ) {
+				if( auto labelAttr = kid.getAttribute("inkscape:label") ) {
+					tgroup->name = labelAttr.getValue();
+				} else if( auto idattr = kid.getAttribute("id") ) {
 					tgroup->name = idattr.getValue();
+				}
+				if( auto groupmodeAttr = kid.getAttribute("inkscape:groupmode") ) {
+					if( groupmodeAttr.getValue() == "layer" ) {
+						tgroup->inkscapeLayer = true;
+					}
 				}
 				
 				auto kidStyle = _parseStyle(kid);
@@ -593,7 +719,9 @@ shared_ptr<ofxSvgElement> ofxSvg::_addElementFromXmlNode( ofXml& tnode, vector< 
 	}
 	
 	if( tnode.getName() == "use") {
-		if( auto hrefAtt = tnode.getAttribute("xlink:href")) {
+		ofXml::Attribute hrefAtt = tnode.getAttribute("xlink:href");
+		if( !hrefAtt ) hrefAtt = tnode.getAttribute("href");
+		if( hrefAtt ) {
 			ofLogVerbose("ofxSvg") << "found a use node with href " << hrefAtt.getValue();
 			std::string href = hrefAtt.getValue();
 			if( href.size() > 1 && href[0] == '#' ) {
@@ -860,6 +988,28 @@ shared_ptr<ofxSvgElement> ofxSvg::_addElementFromXmlNode( ofXml& tnode, vector< 
     if( idAttr ) {
         telement->name = idAttr.getValue();
     }
+
+	// <use x="…" y="…"> placement (SVG 1.1/2) — must run before transform on this node.
+	if( tnode.getName() == "use" && telement ) {
+		float ux = 0.f, uy = 0.f;
+		if( auto xattr = tnode.getAttribute("x") ) ux = xattr.getFloatValue();
+		if( auto yattr = tnode.getAttribute("y") ) uy = yattr.getFloatValue();
+		if( ux != 0.f || uy != 0.f ) {
+			const bool useHasTransform = (bool)tnode.getAttribute("transform");
+			if( useHasTransform ) {
+				if( auto pathEle = std::dynamic_pointer_cast<ofxSvgPath>( telement ) ) {
+					const glm::vec3 off = pathEle->getOffsetPathPosition();
+					pathEle->setOffsetPathPosition( off.x + ux, off.y + uy );
+				} else {
+					const glm::vec3 p = telement->getPosition();
+					telement->setPosition( p.x + ux, p.y + uy, p.z );
+				}
+			} else {
+				const glm::vec3 p = telement->getPosition();
+				telement->setPosition( p.x + ux, p.y + uy, p.z );
+			}
+		}
+	}
     
 //    if( telement->getType() == OFXSVG_TYPE_RECTANGLE || telement->getType() == OFXSVG_TYPE_IMAGE || telement->getType() == OFXSVG_TYPE_TEXT || telement->getType() == OFXSVG_TYPE_CIRCLE || telement->getType() == OFXSVG_TYPE_ELLIPSE ) {
 	if( telement->getType() != OFXSVG_TYPE_DOCUMENT ) {
@@ -885,10 +1035,12 @@ shared_ptr<ofxSvgElement> ofxSvg::_addElementFromXmlNode( ofXml& tnode, vector< 
 		ofLogVerbose("ofxSvg::_addElementFromXmlNode") << "rect->pos: " << rect->getGlobalPosition() << " shape: " << rect->getOffsetPathPosition();
 	}
 	
-	if( mGroupStack.size() > 0 ) {
-		auto pgroup = mGroupStack.back();
-		ofLogVerbose("ofxSvg::_addElementFromXmlNode") << "element: " << telement->getTypeAsString() << " -" << telement->getCleanName() << "- pos: " << telement->getPosition() << "- parent: " << pgroup->getCleanName();
-		telement->setParent(*_getPushedGroup(), false);
+	{
+		auto* parentGroup = _getPushedGroup();
+		ofLogVerbose("ofxSvg::_addElementFromXmlNode")
+			<< "element: " << telement->getTypeAsString() << " -" << telement->getCleanName()
+			<< "- pos: " << telement->getPosition() << "- parent: " << parentGroup->getCleanName();
+		telement->setParent( *parentGroup, false );
 	}
 	
     return telement;
@@ -2425,6 +2577,9 @@ ofxSvgCssClass& ofxSvg::_addCssClassFromPath( std::shared_ptr<ofxSvgPath> aSvgPa
 	} else {
 		tcss.setNoStroke();
 	}
+	if( aSvgPath->path.getWindingMode() == OF_POLY_WINDING_ODD ) {
+		tcss.addProperty("fill-rule", "evenodd");
+	}
 	if( !aSvgPath->isVisible() ) {
 		tcss.addProperty("display", "none" );
 	}
@@ -2495,6 +2650,16 @@ bool ofxSvg::_toXml( ofXml& aParentNode, std::shared_ptr<ofxSvgElement> aele ) {
 	if( aele->getType() == OFXSVG_TYPE_GROUP ) {
 		auto tgroup = std::dynamic_pointer_cast<ofxSvgGroup>(aele);
 		if( tgroup ) {
+			if( tgroup->inkscapeLayer ) {
+				if( auto layerAttr = txml.appendAttribute("inkscape:groupmode") ) {
+					layerAttr.set("layer");
+				}
+				if( !tgroup->getName().empty() ) {
+					if( auto labelAttr = txml.appendAttribute("inkscape:label") ) {
+						labelAttr.set(tgroup->getName());
+					}
+				}
+			}
 			if( tgroup->getNumChildren() > 0 ) {
 				for( auto& kid : tgroup->getChildren() ) {
 					_toXml( txml, kid );
@@ -2592,68 +2757,7 @@ bool ofxSvg::_toXml( ofXml& aParentNode, std::shared_ptr<ofxSvgElement> aele ) {
 		
 		_addCssClassFromPath( tpath, txml );
 		
-		std::stringstream vstr;
-		
-		if( tpath->path.getMode() == ofPath::Mode::POLYLINES ) {
-			
-			auto outlines = tpath->path.getOutline();
-			for( auto& polyline : outlines ) {
-				const auto& pverts = polyline.getVertices();
-				if( pverts.size() > 1 ) {
-					for( std::size_t i = 0; i < pverts.size(); i++ ) {
-						if( i == 0 ) {
-							vstr << "M"<<pverts[i].x << " " << pverts[i].y << " ";
-						} else {
-							vstr << "L"<<pverts[i].x << " " << pverts[i].y << " ";
-						}
-					}
-					if( polyline.isClosed() ) {
-						vstr << "Z ";
-					}
-				}
-			}
-		} else {
-			
-//			moveTo,
-//			lineTo,
-//			curveTo,
-//			bezierTo,
-//			quadBezierTo,
-//			arc,
-//			arcNegative,
-//			close
-			
-			// https://www.w3.org/TR/SVG2/paths.html#PathElement
-			// add based on the ofPath commands //
-			auto& commands = tpath->path.getCommands();
-			if( commands.size() > 1 ) {
-//				std::stringstream vstr;
-				for( auto& command : commands ) {
-					if( command.type == ofPath::Command::moveTo ) {
-						vstr << "M" << command.to.x << "," << command.to.y << " ";
-					} else if( command.type == ofPath::Command::lineTo ) {
-						vstr << "L" << command.to.x << "," << command.to.y << " ";
-					} else if( command.type == ofPath::Command::curveTo ) {
-						// hmm, not sure how to handle this at the moment
-					} else if( command.type == ofPath::Command::bezierTo ) {
-						vstr << "C" << command.cp1.x << "," << command.cp1.y << " " << command.cp2.x << "," << command.cp2.y << " " << command.to.x << "," << command.to.y << " ";
-					} else if( command.type == ofPath::Command::quadBezierTo ) {
-						vstr << "Q" << command.cp2.x << "," << command.cp2.y << " " << command.to.x << "," << command.to.y << " ";
-					} else if( command.type == ofPath::Command::arc ) {
-						// TODO: Not so sure about these
-						glm::vec2 ept = glm::vec2(command.to.x + cosf( command.radiusX ), command.to.y + sinf(command.radiusY ));
-						vstr << "A" << command.radiusX << "," << command.radiusY << " 0 " << "0,1 " << ept.x << "," <<ept.y << " ";
-					} else if( command.type == ofPath::Command::arcNegative ) {
-						glm::vec2 ept = glm::vec2(command.to.x + cosf( command.radiusX ), command.to.y + sinf(command.radiusY ));
-						vstr << "A" << command.radiusX << "," << command.radiusY << " 0 " << "0,0 " << ept.x << "," <<ept.y << " ";
-					} else if( command.type == ofPath::Command::close ) {
-						vstr << "Z ";
-					}
-				}
-			}
-		}
-		
-		auto vstring = vstr.str();
+		const auto vstring = ofPathCommandsToSvgD(tpath->path);
 		if( !vstring.empty() ) {
 			if( auto xattr = txml.appendAttribute("d")) {
 				xattr.set(vstring);
