@@ -126,6 +126,25 @@ confirmNo(){
 	[[ "$confirm" =~ ^[Yy]$ ]]
 }
 
+# Free-text input. Sets UI_INPUT_RESULT. Returns 1 on empty/cancel.
+# Usage: menuInput "Prompt" ["default"]
+menuInput(){
+	local prompt="$1"
+	local default="${2:-}"
+	UI_INPUT_RESULT=""
+	if [[ "$UI_HAS_GUM" -eq 1 ]] && menuCanRun; then
+		UI_INPUT_RESULT=$(gum input --prompt "> " --placeholder "$prompt" --value "$default" 2>/dev/null) || return 1
+	else
+		if [[ -n "$default" ]]; then
+			read -r -p "$(printf '%s›%s %s [%s]: ' "$C_ACCENT" "$C_RESET" "$prompt" "$default")" UI_INPUT_RESULT
+			[[ -z "$UI_INPUT_RESULT" ]] && UI_INPUT_RESULT="$default"
+		else
+			read -r -p "$(printf '%s›%s %s: ' "$C_ACCENT" "$C_RESET" "$prompt")" UI_INPUT_RESULT
+		fi
+	fi
+	[[ -n "$UI_INPUT_RESULT" ]]
+}
+
 tasksReset(){
 	UI_TASK_LABELS=()
 	UI_TASK_STATUS=()

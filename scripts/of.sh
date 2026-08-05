@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # of.sh - openFrameworks CLI  |  Dan Rosser 2025
-OF_SCRIPT_VERSION=0.3.0
+OF_SCRIPT_VERSION=0.4.0
 
 OF_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 OF_DIR="$(realpath "$OF_DIR/../")"
@@ -17,6 +17,7 @@ UI_APP_VERSION="$OF_SCRIPT_VERSION"
 UI_ANIM="${OF_ANIM:-1}"
 . "$OF_CORE_SCRIPT_DIR/ui.sh"
 . "$OF_CORE_SCRIPT_DIR/dev/lib_sources.sh"
+. "$OF_CORE_SCRIPT_DIR/of_build.sh"
 
 OF_LIB_PLATFORMS=(osx macos ios android linux vs emscripten msys2)
 OF_LINUX_DISTRO="${OF_LINUX_DISTRO:-}"
@@ -708,16 +709,18 @@ printHelp(){
     status                    System checker + full library list
     setup                     Install deps/libs/PG if missing or outdated
     update    libs | pg | all Prompt source; refresh libs/PG as needed
+    build     …               Build core / projects / emscripten / cmake (see of build help)
     version   of  | pg        Version info
     upgrade   addons | apps   Upgrade tree
     installed                 Alias for status
-    apothecary                Build via apothecary submodule
+    apothecary                Build libraries via apothecary submodule
 
   Env
     LIB_SOURCE=apothecary|oflibs|archive
     LIB_TAG=latest|v12.1.0|v0.11.2
     LIB_LIBS=core|all|"glfw glm"
     OF_LINUX_DISTRO=ubuntu    Force linux distro scripts
+    OF_JOBS=8                 Parallel build jobs
     VERBOSE=1  NO_COLOR=1  OF_ANIM=0
 
   Examples
@@ -725,11 +728,15 @@ printHelp(){
     ${prog} status
     ${prog} update libs
     LIB_SOURCE=oflibs LIB_LIBS=core ${prog} update libs
+    ${prog} build core Debug
+    ${prog} build project apps/myApps/mySketch
+    ${prog} build emscripten examples/graphics/graphicsExample
     ${prog} apothecary build
 
 EOF
 	echoKV "platform" "${OF_PLATFORM}${OF_ARCH:+ / ${OF_ARCH}}"
 	echoKV "libs source" "${LIB_SOURCE} / ${LIB_TAG}"
+	echoNote "build details: ${prog} build help"
 	printf '\n'
 }
 
@@ -1464,6 +1471,7 @@ cmdMenu(){
 			"Status  — system checker|status" \
 			"${setupLabel}|setup" \
 			"Update  — libs / PG (choose source)|update" \
+			"Build…  — core / projects / examples / emscripten / cmake|build" \
 			"Build libraries (Apothecary)…|apothecary" \
 			"Show openFrameworks version|version" \
 			"Show Project Generator version|version-pg" \
@@ -1481,6 +1489,7 @@ cmdMenu(){
 			status)         cmdStatus; menuPause ;;
 			setup)          cmdSetup "$OF_PLATFORM"; menuPause ;;
 			update)         menuUpdate; menuPause ;;
+			build)          menuBuild ;;
 			apothecary)     menuApothecary; menuPause ;;
 			version)        cmdVersion; menuPause ;;
 			version-pg)     cmdVersionPG; menuPause ;;
@@ -1524,6 +1533,88 @@ menuUpdate(){
 	esac
 }
 
+# of build <subcmd> …
+cmdBuild(){
+	local sub="${1:-}"
+	shift || true
+	case "$sub" in
+		""|menu) menuBuild ;;
+		help|-h|--help) printHelpBuild ;;
+		core|lib|library)
+			cmdBuildCore "${1:-Release}"
+			;;
+		project|app|proj)
+			local path="${1:-}" system="make" config="Release"
+			[[ -n "$path" ]] || { echoError "usage: of build project <path> [system] [Debug|Release]"; return 1; }
+			shift || true
+			# optional system then config, or config alone
+			if [[ "${1:-}" =~ ^(make|xcode|xcodebuild|emscripten|em|wasm|cmake|generate|pg|host)$ ]]; then
+				system="$1"; shift || true
+			fi
+			[[ -n "${1:-}" ]] && config="$1"
+			cmdBuildProject "$path" "$system" "$config" 0
+			;;
+		example|examples)
+			local path="${1:-}" system="make" config="Release"
+			[[ -n "$path" ]] || { echoError "usage: of build example <path> [system] [cfg]"; return 1; }
+			shift || true
+			if [[ "${1:-}" =~ ^(make|xcode|xcodebuild|emscripten|em|wasm|cmake|generate|pg|host)$ ]]; then
+				system="$1"; shift || true
+			fi
+			[[ -n "${1:-}" ]] && config="$1"
+			# allow short example paths
+			if [[ ! -d "$path" && -d "${OF_DIR}/examples/$path" ]]; then
+				path="${OF_DIR}/examples/$path"
+			fi
+			cmdBuildProject "$path" "$system" "$config" 0
+			;;
+		emscripten|em|wasm)
+			local path="${1:-}" config="${2:-Debug}"
+			[[ -n "$path" ]] || { echoError "usage: of build emscripten <path> [Debug|Release]"; return 1; }
+			cmdBuildProject "$path" emscripten "$config" 0
+			;;
+		open-em|emrun|open-emscripten)
+			local path="${1:-}"
+			[[ -n "$path" ]] || { echoError "usage: of build open-em <path>"; return 1; }
+			path=$(resolveProjectPath "$path") || { echoError "not found: $1"; return 1; }
+			ensureEmscriptenEnv || true
+			runEmscriptenOpen "$path"
+			;;
+		generate|pg)
+			local path="${1:-}" platforms="${2:-}"
+			[[ -n "$path" ]] || { echoError "usage: of build generate <path> [platforms]"; return 1; }
+			cmdBuildGenerate "$path" "$platforms"
+			;;
+		cmake)
+			case "${1:-}" in
+				""|status|info) runCmakeStatus ;;
+				android) runCmakeAndroidCore "${2:-Debug}" ;;
+				*)
+					local path="$1" config="${2:-Release}"
+					path=$(resolveProjectPath "$path") || { echoError "not found: $1"; return 1; }
+					runCmakeProject "$path" "$config"
+					;;
+			esac
+			;;
+		clean)
+			local path="${1:-}"
+			[[ -n "$path" ]] || { echoError "usage: of build clean <path>"; return 1; }
+			path=$(resolveProjectPath "$path") || { echoError "not found: $1"; return 1; }
+			runCleanProject "$path"
+			;;
+		*)
+			# bare path → treat as project with make
+			if [[ -n "$sub" ]] && { [[ -d "$sub" ]] || [[ -d "${OF_DIR}/$sub" ]] || [[ -d "${OF_DIR}/examples/$sub" ]] || [[ -d "${OF_DIR}/apps/$sub" ]]; }; then
+				cmdBuildProject "$sub" "${1:-make}" "${2:-Release}" 0
+				return $?
+			fi
+			echoError "unknown build subcommand: ${sub:-}"
+			printHelpBuild
+			return 1
+			;;
+	esac
+}
+
 runCommand(){
 	local cmd=$1 subcmd=$2 subcmd2=$3 subcmd3=$4
 	case "$cmd" in
@@ -1532,6 +1623,10 @@ runCommand(){
 		status|check|doctor|installed|libs-status) cmdStatus ;;
 		setup|install) cmdSetup "${subcmd:-$OF_PLATFORM}" ;;
 		update) cmdUpdate "$subcmd" "$subcmd2" ;;
+		build)
+			shift
+			cmdBuild "$@"
+			;;
 		version)
 			case "$subcmd" in
 				""|of) cmdVersion ;;
@@ -1550,7 +1645,7 @@ runCommand(){
 			;;
 		*)
 			echoError "Unknown command: $cmd"
-			echoNote "valid: menu status setup update version upgrade apothecary help"
+			echoNote "valid: menu status setup update build version upgrade apothecary help"
 			printHelp
 			return 1
 			;;
