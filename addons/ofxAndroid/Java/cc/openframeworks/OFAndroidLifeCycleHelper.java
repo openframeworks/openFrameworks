@@ -273,14 +273,14 @@ public class OFAndroidLifeCycleHelper
 				OFAndroid.onStart();
 			}
 		}
-		else if( glView.getRenderer() == null){
+		else if(glView == null || glView.getRenderer() == null){
 			Log.w(TAG,"onResume glView is null or not setup");
 			OFAndroid.setupGL(OFAndroid.eglVersion, true);
 			if(OFAndroidLifeCycle.coreLibraryLoaded && OFAndroidLifeCycle.appLibraryLoaded) {
 				OFAndroid.onStart();
 			}
 		}
-		else if( glView != null && glView.getDisplay() == null) {
+		else if(glView.getDisplay() == null) {
 			Log.w(TAG,"onResume glView has a null display");
 			OFAndroid.setupGL(OFAndroid.eglVersion, true);
 			if(OFAndroidLifeCycle.coreLibraryLoaded && OFAndroidLifeCycle.appLibraryLoaded) {
