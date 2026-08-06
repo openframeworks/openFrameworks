@@ -158,8 +158,9 @@ void ofGLProgrammableRenderer::draw(const ofMesh & vertexData, ofPolyRenderMode 
 
 	const_cast<ofGLProgrammableRenderer *>(this)->setAttributes(true, useColors, useTextures, useNormals, drawMode);
 
-	// GL index type must match sizeof(ofIndexType); see drawElements in this file.
-	GLenum indexType = sizeof(ofIndexType) == 2 ? GL_UNSIGNED_SHORT : GL_UNSIGNED_INT;
+	// Match the type of the client-side index data. Platform headers can expose
+	// GLES 3 declarations even when the active context is GLES 1 or GLES 2.
+	const GLenum indexType = sizeof(ofIndexType) == 2 ? GL_UNSIGNED_SHORT : GL_UNSIGNED_INT;
 
 	if (vertexData.getNumIndices()) {
 		glDrawElements(drawMode, vertexData.getNumIndices(), indexType, vertexData.getIndexPointer());
