@@ -359,7 +359,7 @@ EM_BOOL ofxAppEmscriptenWindow::mousedown_cb(int eventType, const EmscriptenMous
 	return true;
 }
 EM_BOOL ofxAppEmscriptenWindow::rescale(int* x, int* y) {
-
+	return false;
 }
 
 //------------------------------------------------------------
