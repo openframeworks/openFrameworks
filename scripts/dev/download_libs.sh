@@ -4,11 +4,12 @@ VER=latest
 PLATFORM=""
 ARCH=""
 OVERWRITE=1
+FULL_CLEAN=0
 LEGACY=0
 SILENT_ARGS=""
 NO_SSL=""
 BLEEDING_EDGE=0
-DL_VERSION=2.7.1
+DL_VERSION=2.7.2
 TAG=""
 
 printHelp(){
@@ -25,8 +26,12 @@ cat << EOF
                                     msys2: 64
                                     android: armv7, arm64, and x86 (if not specified will download all)
                                     linux: 64gcc6, armv6l or armv7l
-    -n, --no-overwrite          Merge new libraries with existing ones, use only to download same version for different platforms
-                                If not set deletes any existing libraries
+    -n, --no-overwrite          Pure merge: do not delete anything before extract.
+                                Default (without -n) only removes libs/<lib>/lib/\$PLATFORM so other
+                                platforms (android + ios + macos + emscripten …) can coexist.
+    --full-clean                Also remove shared include/ (and bin/ for vs|msys2) for libs being
+                                installed. Use for a hard reset of one platform install; not needed
+                                for multi-platform side-by-side installs.
     -s, --silent                Silent download progress
     -h, --help                  Shows this message
     -k, --no-ssl                Allow no SSL validation
@@ -106,6 +111,10 @@ while [[ $# -gt 0 ]]; do
         ;;
         -n|--no-overwrite)
         OVERWRITE=0
+        ;;
+        --full-clean)
+        FULL_CLEAN=1
+        OVERWRITE=1
         ;;
         -b|--bleeding-edge)
         BLEEDING_EDGE=1
@@ -350,31 +359,49 @@ download "${PKGS[@]}"
 
 cd ../ # back to libs
 libs=("cairo" "curl" "FreeImage" "brotli" "fmod" "freetype" "glew" "glfw" "json" "libpng" "openssl" "pixman" "poco" "rtAudio" "tess2" "uriparser" "utf8" "videoInput" "zlib" "opencv" "ippicv" "assimp" "libxml2" "svgtiny" "fmt")
+
+# Resolve which lib/<name> folder this package uses.
+# Apple multi-target packages (macos, and ios/tvos/… wrappers that pass -p macos)
+# install under lib/macos/*.xcframework. Plain "osx" may use lib/osx and/or a
+# macos-arm64_x86_64 slice — never wipe the whole lib/macos tree for -p osx.
+LIB_PLATFORM_DIR="$PLATFORM"
+case "$PLATFORM" in
+    ios|tvos|xros|catos|watchos|macos) LIB_PLATFORM_DIR="macos" ;;
+esac
+
 if [ $OVERWRITE -eq 1 ]; then
     echo " "
-    echo " Overwrite - Removing prior libraries for [$PLATFORM]"
+    if [ $FULL_CLEAN -eq 1 ]; then
+        echo " Full-clean - Removing platform libs + shared include/bin for [$PLATFORM]"
+    else
+        echo " Platform-clean - Removing prior libs only under lib/[$LIB_PLATFORM_DIR] (other platforms kept)"
+    fi
     for ((i=0;i<${#libs[@]};++i)); do
-        if [ -e "${libs[i]}/lib/$PLATFORM" ]; then
-            echo "  Removing: [${libs[i]}/lib/$PLATFORM]"
-            rm -rf "${libs[i]}/lib/$PLATFORM"
+        if [ -e "${libs[i]}/lib/$LIB_PLATFORM_DIR" ]; then
+            echo "  Removing: [${libs[i]}/lib/$LIB_PLATFORM_DIR]"
+            rm -rf "${libs[i]}/lib/$LIB_PLATFORM_DIR"
         fi
-        if [ "$PLATFORM" == "msys2" ] || [ "$PLATFORM" == "vs" ]; then
-            if [ -e "${libs[i]}/bin" ]; then
-                echo "  Removing: [${libs[i]}/bin]"
-                rm -rf "${libs[i]}/bin"
+        # Shared include/ + vs|msys2 bin/ only with --full-clean (not for multi-platform installs)
+        if [ $FULL_CLEAN -eq 1 ]; then
+            if [ "$PLATFORM" == "msys2" ] || [ "$PLATFORM" == "vs" ]; then
+                if [ -e "${libs[i]}/bin" ]; then
+                    echo "  Removing: [${libs[i]}/bin]"
+                    rm -rf "${libs[i]}/bin"
+                fi
+            fi
+            if [ -e "${libs[i]}/include" ]; then
+                echo "  Removing: [${libs[i]}/include]"
+                rm -rf "${libs[i]}/include"
             fi
         fi
-        if [ -e "${libs[i]}/include" ]; then
-            echo "  Removing: [${libs[i]}/include]"
-            rm -rf "${libs[i]}/include"
-        fi
-
     done
 fi
 
+# osx host packages may also refresh the desktop slice inside lib/macos/*.xcframework
+# without deleting ios/tvos/… sibling slices in the same xcframework.
 if [ "$PLATFORM" == "osx" ]; then
     echo " "
-    echo " Overwrite - Removing prior libraries for [$PLATFORM]"
+    echo " xcframework - refresh macos host slice (ios/tvos/… slices kept)"
     for ((i=0;i<${#libs[@]};++i)); do
         xcframework_path="${libs[i]}/lib/macos/${libs[i]}.xcframework/macos-arm64_x86_64"
         if [ $OVERWRITE -eq 1 ]; then
@@ -385,7 +412,16 @@ if [ "$PLATFORM" == "osx" ]; then
         fi
         info_plist_path="${libs[i]}/lib/macos/${libs[i]}.xcframework/Info.plist"
         if [ -e "$info_plist_path" ]; then
-            #echo "  Backing up: [${info_plist_path}] to [${info_plist_path}.bak]"
+            cp "$info_plist_path" "${info_plist_path}.bak"
+        fi
+    done
+elif [ "$PLATFORM" == "macos" ]; then
+    # Full lib/macos already cleared above when OVERWRITE=1; only need Info.plist backup if merge
+    echo " "
+    echo " xcframework - macos multi-target package (lib/macos)"
+    for ((i=0;i<${#libs[@]};++i)); do
+        info_plist_path="${libs[i]}/lib/macos/${libs[i]}.xcframework/Info.plist"
+        if [ -e "$info_plist_path" ]; then
             cp "$info_plist_path" "${info_plist_path}.bak"
         fi
     done
@@ -457,36 +493,47 @@ fi
 echo "   ------ "
 if [ "$PLATFORM" == "osx" ]; then
     if [ $OVERWRITE -eq 1 ]; then
-        echo " Overwrite - addon xCFramework: [${addons[i]} - ${addonslibs[i]}]"
-        xcframework_path="../addons/${addons[i]}/libs/${addonslibs[i]}/lib/macos/${addonslibs[i]}.xcframework/macos-arm64_x86_64"
-        if [ -e "$xcframework_path" ]; then
-            echo "  Removing: [$xcframework_path]"
-            rm -rf "$xcframework_path"
+        # Refresh desktop slice only — keep ios/tvos/… slices in the same xcframework
+        for ((i=0;i<${#addonslibs[@]};++i)); do
+            xcframework_path="../addons/${addons[i]}/libs/${addonslibs[i]}/lib/macos/${addonslibs[i]}.xcframework/macos-arm64_x86_64"
+            if [ -e "$xcframework_path" ]; then
+                echo "  Removing addon host slice: [$xcframework_path]"
+                rm -rf "$xcframework_path"
+            fi
+            info_plist_path="../addons/${addons[i]}/libs/${addonslibs[i]}/lib/macos/${addonslibs[i]}.xcframework/Info.plist"
+            if [ -e "$info_plist_path" ]; then
+                cp "$info_plist_path" "${info_plist_path}.bak"
+            fi
+        done
+    fi
+elif [ "$PLATFORM" == "macos" ]; then
+    for ((i=0;i<${#addonslibs[@]};++i)); do
+        info_plist_path="../addons/${addons[i]}/libs/${addonslibs[i]}/lib/macos/${addonslibs[i]}.xcframework/Info.plist"
+        if [ -e "$info_plist_path" ]; then
+            cp "$info_plist_path" "${info_plist_path}.bak"
         fi
-    fi
-    info_plist_path="../addons/${addons[i]}/libs/${addonslibs[i]}/lib/macos/${addonslibs[i]}.xcframework/Info.plist"
-    if [ -e "$info_plist_path" ]; then
-        cp "$info_plist_path" "${info_plist_path}.bak"
-    fi
+    done
 fi
 
 
-if [ $OVERWRITE -eq 1 ]; then 
+if [ $OVERWRITE -eq 1 ]; then
     for ((i=0;i<${#addonslibs[@]};++i)); do
         if [ -e ${addonslibs[i]} ] ; then
 
-            echo " Overwrite - addon: [${addons[i]} - ${addonslibs[i]}]"
-            if [ -e ../addons/${addons[i]}/libs/${addonslibs[i]}/lib/$PLATFORM ]; then
-                echo "   Remove binaries: [${addons[i]}/libs/${addonslibs[i]}/lib/$PLATFORM]"
-                rm -rf ../addons/${addons[i]}/libs/${addonslibs[i]}/lib/$PLATFORM
+            echo " Platform-clean - addon: [${addons[i]} - ${addonslibs[i]}] → lib/$LIB_PLATFORM_DIR"
+            if [ -e ../addons/${addons[i]}/libs/${addonslibs[i]}/lib/$LIB_PLATFORM_DIR ]; then
+                echo "   Remove binaries: [${addons[i]}/libs/${addonslibs[i]}/lib/$LIB_PLATFORM_DIR]"
+                rm -rf ../addons/${addons[i]}/libs/${addonslibs[i]}/lib/$LIB_PLATFORM_DIR
             fi
-            if [ -e ../addons/${addons[i]}/libs/${addonslibs[i]}/bin ]; then
-                echo "   Remove binaries: [${addons[i]}/libs/${addonslibs[i]}/bin]"
-                rm -rf ../addons/${addons[i]}/libs/${addonslibs[i]}/bin
-            fi
-            if [ -e ../addons/${addons[i]}/libs/${addonslibs[i]}/include ]; then
-                echo "   Remove include: [${addons[i]}/libs/include]"
-                rm -rf ../addons/${addons[i]}/libs/${addonslibs[i]}/include
+            if [ $FULL_CLEAN -eq 1 ]; then
+                if [ -e ../addons/${addons[i]}/libs/${addonslibs[i]}/bin ]; then
+                    echo "   Remove binaries: [${addons[i]}/libs/${addonslibs[i]}/bin]"
+                    rm -rf ../addons/${addons[i]}/libs/${addonslibs[i]}/bin
+                fi
+                if [ -e ../addons/${addons[i]}/libs/${addonslibs[i]}/include ]; then
+                    echo "   Remove include: [${addons[i]}/libs/${addonslibs[i]}/include]"
+                    rm -rf ../addons/${addons[i]}/libs/${addonslibs[i]}/include
+                fi
             fi
         fi
     done
