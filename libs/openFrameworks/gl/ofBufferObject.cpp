@@ -264,14 +264,14 @@ void ofBufferObject::copyTo(ofBufferObject & dstBuffer, int readOffset, int writ
 
 
 void ofBufferObject::invalidate(){
-#if !defined(TARGET_OPENGLES) || defined(GL_ES_VERSION_3_1)
-	// Desktop + GLES 3.1+ support glInvalidateBufferData
+#ifndef TARGET_OPENGLES
+	// glInvalidateBufferData is a desktop OpenGL 4.3 API; OpenGL ES has no
+	// equivalent buffer invalidation entry point.
 	if (data && data->id != 0) {
 		glInvalidateBufferData(data->id);
 	}
 #endif
-	// On GLES 2.0 / GLES 3.0 (including iOS with MetalANGLE) this is a no-op
-	// (the driver is free to ignore the hint anyway)
+	// On OpenGL ES this is a no-op (the driver may ignore this hint anyway).
 }
 #endif
 
