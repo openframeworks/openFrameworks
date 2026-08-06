@@ -1,8 +1,10 @@
 #!/usr/bin/env bash
+# Platform-clean removes only lib/vs; shared include/bin need --full-clean.
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-cd $SCRIPT_DIR
+cd "$SCRIPT_DIR"
 if [ ! -z ${BITS+x} ]; then
-    ../dev/download_libs.sh -p vs -b -a $BITS -n $@
+    ../dev/download_libs.sh -p vs -b -a $BITS "$@"
 else
-    ../dev/download_libs.sh -p vs -b -n $@
-fi 
+    ../dev/download_libs.sh -p vs -b "$@"
+fi
+

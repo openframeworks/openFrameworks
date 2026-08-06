@@ -719,6 +719,7 @@ printHelp(){
     LIB_SOURCE=apothecary|oflibs|archive
     LIB_TAG=latest|v12.1.0|v0.11.2
     LIB_LIBS=core|all|"glfw glm"
+    LIB_CLEAN_MODE=platform|merge|full   # default platform: only lib/<plat>
     OF_LINUX_DISTRO=ubuntu    Force linux distro scripts
     OF_JOBS=8                 Parallel build jobs
     VERBOSE=1  NO_COLOR=1  OF_ANIM=0
@@ -1152,6 +1153,20 @@ menuDownloadLibs(){
 				echoNote "macos packages → lib/macos/*.xcframework (osx · ios · tvos · …)"
 				;;
 		esac
+		# Default is platform-scoped clean (safe multi-platform). Optional full wipe of shared include/.
+		if menuCanRun; then
+			menuPick "Clean mode before install · ${platformDir}" \
+				"Platform only — keep other platforms (Recommended)|platform" \
+				"Merge only — never delete before extract|merge" \
+				"Full clean — also wipe shared include/ (+ bin on vs/msys2)|full" \
+				|| return 1
+			case "$UI_MENU_RESULT" in
+				merge) export LIB_CLEAN_MODE=merge ;;
+				full)  export LIB_CLEAN_MODE=full ;;
+				*)     export LIB_CLEAN_MODE=platform ;;
+			esac
+			echoSuccess "clean → $LIB_CLEAN_MODE"
+		fi
 	fi
 	[[ "$LIB_SOURCE" == "oflibs" ]] && { menuPickOfLibs "$LIB_TAG" "$platformDir" || return 1; }
 

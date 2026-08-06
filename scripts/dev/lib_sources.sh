@@ -133,6 +133,12 @@ downloadApothecaryLibs(){
 	else
 		args+=( -b )
 	fi
+	# LIB_CLEAN_MODE: platform (default) | merge (-n) | full (--full-clean)
+	case "${LIB_CLEAN_MODE:-platform}" in
+		merge|no-overwrite|n) args+=( -n ) ;;
+		full|full-clean)      args+=( --full-clean ) ;;
+		platform|*)           ;; # default platform-scoped clean in download_libs.sh
+	esac
 	"$script" "${args[@]}"
 }
 
@@ -188,18 +194,33 @@ downloadOfLibs(){
 		rm -rf "${tmp}/extract"
 		mkdir -p "${tmp}/extract" "$dest"
 		unzip -qo "${dlDir}/${pkg}" -d "${tmp}/extract"
+		# Merge into libs/<name> so other platforms under lib/<platform>/ are kept.
+		# Headers are shared and replaced; only this package's lib/* children are replaced.
 		if [[ -d "${tmp}/extract/include" ]]; then
-			rm -rf "${dest}/include"
-			mv "${tmp}/extract/include" "${dest}/include"
+			mkdir -p "${dest}/include"
+			if command -v rsync &>/dev/null; then
+				rsync -a --delete "${tmp}/extract/include/" "${dest}/include/"
+			else
+				rm -rf "${dest}/include"
+				mv "${tmp}/extract/include" "${dest}/include"
+			fi
 		fi
 		if [[ -d "${tmp}/extract/lib" ]]; then
-			rm -rf "${dest}/lib"
-			mv "${tmp}/extract/lib" "${dest}/lib"
+			mkdir -p "${dest}/lib"
+			# Replace only platform subdirs present in the package (e.g. lib/macos, lib/android)
+			local child
+			for child in "${tmp}/extract/lib"/*; do
+				[[ -e "$child" ]] || continue
+				local base
+				base=$(basename "$child")
+				rm -rf "${dest}/lib/${base}"
+				mv "$child" "${dest}/lib/${base}"
+			done
 		fi
 		[[ -f "${tmp}/extract/copying.txt" ]] && cp "${tmp}/extract/copying.txt" "${dest}/" 2>/dev/null || true
 		ok=$((ok + 1))
 	done
-	echo " ofLibs install complete  ok=${ok}  skipped=${skip}  (libs/<lib>/{include,lib})"
+	echo " ofLibs install complete  ok=${ok}  skipped=${skip}  (libs/<lib>/{include,lib/<platform>})"
 	echo " note: ofLibs is ofWorks-oriented; stock oF may need path tweaks for some libs."
 	[[ $ok -gt 0 ]]
 }
