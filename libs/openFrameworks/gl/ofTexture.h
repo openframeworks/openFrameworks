@@ -555,6 +555,7 @@ class ofTexture : public ofBaseDraws {
 	/// \param glFormat GL pixel type: GL_RGBA, GL_LUMINANCE, etc.
 	void loadData(const ofFloatPixels & pix, int glFormat);
 
+
 	/// \brief Load byte pixel data.
 	///
 	/// glFormat can be different to the internal format of the texture on each
@@ -567,8 +568,8 @@ class ofTexture : public ofBaseDraws {
 	/// \param glFormat GL pixel type: GL_RGBA, GL_LUMINANCE, etc.
 	/// \param glType the OpenGL type of the data.
     void loadData(const void * data, int w, int h, int glFormat, int glType);
-	
-#ifndef TARGET_OPENGLES
+
+#if !defined(TARGET_OPENGLES) || (defined(GL_ES_VERSION_3_0) && defined(TARGET_OPENGLES_3))
 	/// \brief Load pixels from an ofBufferObject
 	///
 	/// This is different to allocate(ofBufferObject,internal). That
@@ -725,11 +726,11 @@ class ofTexture : public ofBaseDraws {
 	///
 	void unbind(int textureLocation=0) const;
 
-#if !defined(TARGET_OPENGLES) && defined(glBindImageTexture)
+#if (!defined(TARGET_OPENGLES) && defined(glBindImageTexture)) || (defined(GL_ES_VERSION_3_1) && defined(TARGET_OPENGLES_3_1))
 	/// Calls glBindImageTexture on the texture
 	///
 	/// Binds the texture as an read or write image, only available since OpenGL 4.2
-	/// \warning This is not available in OpenGLES
+	/// \warning This requires OpenGL 4.2 or OpenGL ES 3.1.
 	/// \sa http://www.opengl.org/wiki/GLAPI/glBindImageTexture
 	void bindAsImage(GLuint unit, GLenum access, GLint level=0, GLboolean layered=0, GLint layer=0);
 #endif
@@ -952,7 +953,7 @@ class ofTexture : public ofBaseDraws {
 	/// \sa generateMipmap()
 	/// \sa enableMipmap()
 	bool hasMipmap() const;
-	
+
 	/// \internal
 	ofTextureData texData; ///< Internal texture data access.
 	                       ///< For backwards compatibility.
