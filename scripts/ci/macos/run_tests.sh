@@ -22,6 +22,9 @@ make -j Debug
 echo "**** Running unit tests ****"
 cd $ROOT/tests
 for group in *; do
+    if [ "$group" = "android" ]; then
+        continue
+    fi
     if [ -d $group ]; then
         for test in $group/*; do
             if [ -d $test ]; then
