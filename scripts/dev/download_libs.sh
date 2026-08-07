@@ -5,12 +5,22 @@ PLATFORM=""
 ARCH=""
 OVERWRITE=1
 FULL_CLEAN=0
+# SHA: VERIFY_SHA=1 (default) check GitHub release asset digests when present
+#      VERIFY_SHA=0 (--skip-sha) never verify
+#      REQUIRE_SHA=1 (--require-sha) fail if digest missing or tools unavailable
+VERIFY_SHA=1
+REQUIRE_SHA=0
 LEGACY=0
 SILENT_ARGS=""
 NO_SSL=""
 BLEEDING_EDGE=0
-DL_VERSION=2.7.2
+DL_VERSION=2.7.4
 TAG=""
+REPO="latest"
+SHA_VERIFIED=0
+SHA_SKIPPED=0
+SHA_FAILED=0
+SHA_STATUS="unchecked"
 
 printHelp(){
 cat << EOF
@@ -32,6 +42,8 @@ cat << EOF
     --full-clean                Also remove shared include/ (and bin/ for vs|msys2) for libs being
                                 installed. Use for a hard reset of one platform install; not needed
                                 for multi-platform side-by-side installs.
+    --skip-sha                  Do not verify package SHA-256 against GitHub release digests
+    --require-sha               Fail if a package has no digest or local hash tools are missing
     -s, --silent                Silent download progress
     -h, --help                  Shows this message
     -k, --no-ssl                Allow no SSL validation
@@ -43,26 +55,50 @@ SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 if [[ ! -d "$SCRIPT_DIR" ]]; then SCRIPT_DIR="$PWD"; fi
 . "$SCRIPT_DIR/downloader.sh"
 
+# Resolve apothecary release tag used for package URLs
+resolveRepo(){
+    if [[ $BLEEDING_EDGE = 1 ]] ; then
+        REPO="latest"
+    else
+        REPO="nightly"
+    fi
+    #FIXME: remove later, now forcing "latest"
+    REPO="latest"
+    if [[ $TAG != "" ]] ; then
+        REPO="$TAG"
+    fi
+}
+
+# Shared SHA-256 helpers (GitHub digests + sidecars)
+. "$SCRIPT_DIR/sha_verify.sh"
+
+# Apothecary-specific: map REPO tag → digest map, then verify packages in cwd
+fetchReleaseDigests(){
+    local tag="$1"
+    local out="$2"
+    fetchGithubReleaseDigests "openframeworks/apothecary" "$tag" "$out"
+}
+
+verifyPackageDigests(){
+    local pkgs="$1"
+    local map
+    map=$(mktemp 2>/dev/null || mktemp -t ofdigestmap)
+    if ! fetchReleaseDigests "$REPO" "$map"; then
+        : > "$map"
+    fi
+    verifyPackagesAgainstMap "$pkgs" "$map" "GitHub apothecary release digests"
+    local rc=$?
+    rm -f "$map"
+    return $rc
+}
+
 download(){
     echo ' -----'
     #echo " Downloading $1"
     # downloader ci.openframeworks.cc/libs/$1 $SILENT_ARGS
 
     COMMAND=" "
-
-    if [[ $BLEEDING_EDGE = 1 ]] ; then
-        REPO="latest"
-    else
-        REPO="nightly"
-    fi
-
-    #FIXME: remove later, now forcing "latest"
-    REPO="latest"
-
-
-    if [[ $TAG != "" ]] ; then
-        REPO="$TAG"
-    fi
+    resolveRepo
 
     for PKG in $1; do
         COMMAND+="https://github.com/openframeworks/apothecary/releases/download/$REPO/$PKG "
@@ -115,6 +151,13 @@ while [[ $# -gt 0 ]]; do
         --full-clean)
         FULL_CLEAN=1
         OVERWRITE=1
+        ;;
+        --skip-sha)
+        VERIFY_SHA=0
+        ;;
+        --require-sha)
+        REQUIRE_SHA=1
+        VERIFY_SHA=1
         ;;
         -b|--bleeding-edge)
         BLEEDING_EDGE=1
@@ -170,6 +213,32 @@ if [ "$PLATFORM" == "" ]; then
     fi
 fi
 
+# Visual Studio package arch for this machine: 64 | arm64
+# (arm64 host also pulls arm64ec — see VS package selection below)
+detectHostVsArch(){
+    local m pa
+    # Windows env (Git Bash / MSYS often set these)
+    pa="${PROCESSOR_ARCHITECTURE:-}"
+    [[ -n "${PROCESSOR_ARCHITEW6432:-}" ]] && pa="${PROCESSOR_ARCHITEW6432}"
+    case "${MSYSTEM:-}" in
+        CLANGARM64|clangarm64) echo "arm64"; return 0 ;;
+    esac
+    case "$(echo "$pa" | tr '[:lower:]' '[:upper:]')" in
+        ARM64) echo "arm64"; return 0 ;;
+        AMD64|X86) echo "64"; return 0 ;;
+    esac
+    m=$(uname -m 2>/dev/null || echo "")
+    case "$m" in
+        aarch64|arm64|ARM64) echo "arm64"; return 0 ;;
+        x86_64|amd64|i686|i386|x86) echo "64"; return 0 ;;
+    esac
+    # uname -s might be MINGW64_NT-… on x64
+    case "$(uname -s 2>/dev/null)" in
+        *ARM64*|*arm64*) echo "arm64"; return 0 ;;
+    esac
+    echo "64"
+}
+
 if [ "$ARCH" == "" ]; then
     if [ "$PLATFORM" == "linux" ]; then
         ARCH=$(uname -m)
@@ -212,11 +281,25 @@ EOF
         else
             ARCH=clang64
         fi
+    elif [ "$PLATFORM" == "vs" ]; then
+        # Default: host arch only (not every VS package). Use -a all for 64+arm64+arm64ec.
+        ARCH=$(detectHostVsArch)
+        echo " VS host arch → ${ARCH} (pass -a all for every VS arch, or -a 64|arm64|arm64ec)"
     fi
 
     if [ "$PLATFORM" == "osx" ]; then
         ARCH=x86_64
     fi
+fi
+
+# Normalize aliases for VS package names
+if [ "$PLATFORM" == "vs" ]; then
+    case "$ARCH" in
+        x64|x86_64|amd64|win64) ARCH=64 ;;
+        aarch64|ARM64|clangarm64) ARCH=arm64 ;;
+        all|multi|host-all) ARCH=all ;;
+        host) ARCH=$(detectHostVsArch) ;;
+    esac
 fi
 
 
@@ -255,50 +338,51 @@ if [ "$PLATFORM" == "msys2" ]; then
     else    
         PKGS="openFrameworksLibs_${VER}_${PLATFORM}_${ARCH}.zip"
     fi
-elif [ "$ARCH" == "" ] && [ "$PLATFORM" == "vs" ]; then
+elif [ "$PLATFORM" == "vs" ]; then
+    if [[ $VS_2026 == 1 ]]; then
+        VS_PLATFORM="${PLATFORM}_2026"
+    else
+        VS_PLATFORM="${PLATFORM}"
+    fi
     if [[ $BLEEDING_EDGE = 1 ]]; then
         if [[ $LEGACY == 1 ]]; then
             PKGS="openFrameworksLibs_${VER}_${PLATFORM}_2019_64_1.zip \
                   openFrameworksLibs_${VER}_${PLATFORM}_2019_64_2.zip"
+        elif [[ "$ARCH" == "all" ]]; then
+            # Explicit multi-arch (CI / packagers)
+            PKGS="openFrameworksLibs_${VER}_${VS_PLATFORM}_64_1.zip \
+                  openFrameworksLibs_${VER}_${VS_PLATFORM}_64_2.zip \
+                  openFrameworksLibs_${VER}_${VS_PLATFORM}_arm64_1.zip \
+                  openFrameworksLibs_${VER}_${VS_PLATFORM}_arm64_2.zip \
+                  openFrameworksLibs_${VER}_${VS_PLATFORM}_arm64ec_1.zip \
+                  openFrameworksLibs_${VER}_${VS_PLATFORM}_arm64ec_2.zip"
+        elif [[ "$ARCH" == "arm64" ]]; then
+            # Windows on ARM: native arm64 + arm64ec (x64-compat) for Win11 ARM
+            echo " VS packages: arm64 + arm64ec (Windows on ARM host)"
+            PKGS="openFrameworksLibs_${VER}_${VS_PLATFORM}_arm64_1.zip \
+                  openFrameworksLibs_${VER}_${VS_PLATFORM}_arm64_2.zip \
+                  openFrameworksLibs_${VER}_${VS_PLATFORM}_arm64ec_1.zip \
+                  openFrameworksLibs_${VER}_${VS_PLATFORM}_arm64ec_2.zip"
+        elif [[ "$ARCH" == "arm64ec" ]]; then
+            PKGS="openFrameworksLibs_${VER}_${VS_PLATFORM}_arm64ec_1.zip \
+                  openFrameworksLibs_${VER}_${VS_PLATFORM}_arm64ec_2.zip"
         else
-            if [[ $VS_2026 == 1 ]]; then
-                VS_PLATFORM="${PLATFORM}_2026"
-            else
-                VS_PLATFORM="${PLATFORM}"
-            fi
-                PKGS="openFrameworksLibs_${VER}_${VS_PLATFORM}_64_1.zip \
-                      openFrameworksLibs_${VER}_${VS_PLATFORM}_64_2.zip \
-                      openFrameworksLibs_${VER}_${VS_PLATFORM}_arm64_1.zip \
-                      openFrameworksLibs_${VER}_${VS_PLATFORM}_arm64_2.zip \
-                      openFrameworksLibs_${VER}_${VS_PLATFORM}_arm64ec_1.zip \
-                      openFrameworksLibs_${VER}_${VS_PLATFORM}_arm64ec_2.zip"
-            
+            # x64 host (default)
+            PKGS="openFrameworksLibs_${VER}_${VS_PLATFORM}_64_1.zip \
+                  openFrameworksLibs_${VER}_${VS_PLATFORM}_64_2.zip"
         fi
     else
-        PKGS="openFrameworksLibs_${VER}_${PLATFORM}_64_1.zip \
-          openFrameworksLibs_${VER}_${PLATFORM}_64_2.zip \
-          openFrameworksLibs_${VER}_${PLATFORM}_64_3.zip \
-          openFrameworksLibs_${VER}_${PLATFORM}_64_4.zip"
-      fi
-elif [ "$PLATFORM" == "vs" ]; then
-    if [[ $BLEEDING_EDGE = 1 ]] ; then
-        if [[ $VS_2026 == 1 ]]; then
-            VS_PLATFORM="${PLATFORM}_2026"
+        if [[ "$ARCH" == "all" ]]; then
+            PKGS="openFrameworksLibs_${VER}_${PLATFORM}_64_1.zip \
+                  openFrameworksLibs_${VER}_${PLATFORM}_64_2.zip \
+                  openFrameworksLibs_${VER}_${PLATFORM}_64_3.zip \
+                  openFrameworksLibs_${VER}_${PLATFORM}_64_4.zip"
         else
-            VS_PLATFORM="${PLATFORM}"
+            PKGS="openFrameworksLibs_${VER}_${PLATFORM}_${ARCH}_1.zip \
+                  openFrameworksLibs_${VER}_${PLATFORM}_${ARCH}_2.zip \
+                  openFrameworksLibs_${VER}_${PLATFORM}_${ARCH}_3.zip \
+                  openFrameworksLibs_${VER}_${PLATFORM}_${ARCH}_4.zip"
         fi
-        if [[ $LEGACY == 1 ]]; then
-            PKGS="openFrameworksLibs_${VER}_${PLATFORM}_2019_64_1.zip \
-                  openFrameworksLibs_${VER}_${PLATFORM}_2019_64_2.zip"
-        else
-            PKGS="openFrameworksLibs_${VER}_${VS_PLATFORM}_${ARCH}_1.zip \
-                  openFrameworksLibs_${VER}_${VS_PLATFORM}_${ARCH}_2.zip"
-        fi
-    else       
-        PKGS="openFrameworksLibs_${VER}_${PLATFORM}_${ARCH}_1.zip \
-              openFrameworksLibs_${VER}_${PLATFORM}_${ARCH}_2.zip \
-              openFrameworksLibs_${VER}_${PLATFORM}_${ARCH}_3.zip \
-              openFrameworksLibs_${VER}_${PLATFORM}_${ARCH}_4.zip"
     fi
 elif [[ "$PLATFORM" =~ ^(osx|ios|tvos|xros|catos|watchos|macos)$ ]]; then
     if [[ $BLEEDING_EDGE = 1 ]] ; then
@@ -356,6 +440,13 @@ cd download
 # fi
 
 download "${PKGS[@]}"
+
+# Integrity: GitHub release asset digests (sha256:…) when published
+if ! verifyPackageDigests "$PKGS"; then
+    writeVerifyState "$(pwd)" "$REPO" "$PLATFORM" "$ARCH"
+    exit 1
+fi
+writeVerifyState "$(pwd)" "$REPO" "$PLATFORM" "$ARCH"
 
 cd ../ # back to libs
 libs=("cairo" "curl" "FreeImage" "brotli" "fmod" "freetype" "glew" "glfw" "json" "libpng" "openssl" "pixman" "poco" "rtAudio" "tess2" "uriparser" "utf8" "videoInput" "zlib" "opencv" "ippicv" "assimp" "libxml2" "svgtiny" "fmt")
@@ -567,4 +658,10 @@ if [ "$PLATFORM" == "osx" ]; then
 fi
 
 echo " ------ "
-echo " openFrameworks download_libs and install complete!"
+if [[ "$SHA_STATUS" == "verified" ]]; then
+    echo " openFrameworks download_libs complete — secure (SHA-256 verified: ${SHA_VERIFIED} package(s))"
+elif [[ "$SHA_STATUS" == "skipped" || "$SHA_STATUS" == "no-digest" || "$SHA_STATUS" == "no-remote" || "$SHA_STATUS" == "no-tools" ]]; then
+    echo " openFrameworks download_libs complete — integrity not fully verified (${SHA_STATUS})"
+else
+    echo " openFrameworks download_libs and install complete!"
+fi
