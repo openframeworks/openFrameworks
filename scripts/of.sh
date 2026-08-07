@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # of.sh - openFrameworks CLI  |  Dan Rosser 2025
-OF_SCRIPT_VERSION=0.3.0
+OF_SCRIPT_VERSION=0.4.0
 
 OF_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 OF_DIR="$(realpath "$OF_DIR/../")"
@@ -17,6 +17,7 @@ UI_APP_VERSION="$OF_SCRIPT_VERSION"
 UI_ANIM="${OF_ANIM:-1}"
 . "$OF_CORE_SCRIPT_DIR/ui.sh"
 . "$OF_CORE_SCRIPT_DIR/dev/lib_sources.sh"
+. "$OF_CORE_SCRIPT_DIR/of_build.sh"
 
 OF_LIB_PLATFORMS=(osx macos ios android linux vs emscripten msys2)
 OF_LINUX_DISTRO="${OF_LINUX_DISTRO:-}"
@@ -103,6 +104,25 @@ resolveApothecary(){
 }
 resolveApothecary
 
+# Host VS package arch: 64 | arm64 (for download_libs / status display)
+detectHostVsArch(){
+	local m pa
+	pa="${PROCESSOR_ARCHITECTURE:-}"
+	[[ -n "${PROCESSOR_ARCHITEW6432:-}" ]] && pa="${PROCESSOR_ARCHITEW6432}"
+	case "${MSYSTEM:-}" in
+		CLANGARM64|clangarm64) echo "arm64"; return 0 ;;
+	esac
+	case "$(echo "$pa" | tr '[:lower:]' '[:upper:]')" in
+		ARM64) echo "arm64"; return 0 ;;
+		AMD64|X86) echo "64"; return 0 ;;
+	esac
+	m=$(uname -m 2>/dev/null || echo "")
+	case "$m" in
+		aarch64|arm64|ARM64) echo "arm64" ;;
+		*) echo "64" ;;
+	esac
+}
+
 autoDetectOS(){
 	if [[ -z "$PLATFORM" ]]; then
 		export OF_OS OF_PLATFORM OF_ARCH
@@ -110,7 +130,12 @@ autoDetectOS(){
 		case "$OF_OS" in
 			darwin|dawin) OF_PLATFORM="osx"; OF_ARCH=$(uname -m) ;;
 			linux) OF_PLATFORM="linux"; OF_ARCH=$(uname -m) ;;
-			mingw*|cygwin*|msys*) OF_PLATFORM="vs"; OF_ARCH=${MSYSTEM,,} ;;
+			mingw*|cygwin*|msys*)
+				# Prefer VS toolchain path on Windows shells; arch is CPU not MSYSTEM name
+				OF_PLATFORM="vs"
+				OF_ARCH=$(detectHostVsArch)
+				export OF_MSYSTEM="${MSYSTEM:-}"
+				;;
 			*) echoError "Unsupported platform: $OF_OS"; exit 1 ;;
 		esac
 	else
@@ -118,6 +143,9 @@ autoDetectOS(){
 		OF_OS=$(echo "${PLATFORM}" | tr '[:upper:]' '[:lower:]')
 		OF_PLATFORM="$PLATFORM"
 		OF_ARCH=""
+		if [[ "$OF_PLATFORM" == "vs" ]]; then
+			OF_ARCH=$(detectHostVsArch)
+		fi
 	fi
 }
 
@@ -293,14 +321,73 @@ readOfVersion(){
 	fi
 }
 
+# True CLI projectGenerator only — never the Electron GUI host.
+# Windows GUI package layout (download_pg.sh):
+#   projectGenerator/projectGenerator.exe          → Electron GUI (opens UI; EPIPE on --version)
+#   projectGenerator/projectGeneratorCmd.exe       → CLI copy (preferred)
+#   projectGenerator/resources/app/app/projectGenerator.exe → CLI
+# macOS:
+#   projectGenerator/projectGenerator              → CLI copy from app resources
+#   …/Contents/Resources/app/app/projectGenerator  → CLI inside .app
+#   …/Contents/MacOS/projectGenerator              → Electron host (skip)
 findPGBinary(){
-	local p
-	for p in \
-		"${OF_DIR}/projectGenerator/projectGenerator" \
-		"${OF_PG_INSTALLED_DIR}/projectGenerator" \
-		"${OF_DIR}/projectGenerator/projectGenerator.app/Contents/MacOS/projectGenerator"
-	do
-		[[ -x "$p" || -f "$p" ]] && { printf '%s' "$p"; return 0; }
+	local root p
+	local -a roots=()
+	[[ -n "${OF_DIR:-}" ]] && roots+=("${OF_DIR}/projectGenerator")
+	[[ -n "${OF_PG_INSTALLED_DIR:-}" && "${OF_PG_INSTALLED_DIR}" != "${OF_DIR}/projectGenerator" ]] && \
+		roots+=("${OF_PG_INSTALLED_DIR}")
+	# de-dupe while preserving order
+	local -a seen=() uniq=()
+	for root in "${roots[@]}"; do
+		[[ -d "$root" ]] || continue
+		local r
+		r=$(cd "$root" 2>/dev/null && pwd -P) || r="$root"
+		local s
+		for s in "${seen[@]+"${seen[@]}"}"; do [[ "$s" == "$r" ]] && continue 2; done
+		seen+=("$r")
+		uniq+=("$root")
+	done
+
+	for root in "${uniq[@]+"${uniq[@]}"}"; do
+		for p in \
+			"${root}/projectGeneratorCmd.exe" \
+			"${root}/projectGeneratorCmd" \
+			"${root}/resources/app/app/projectGenerator.exe" \
+			"${root}/resources/app/app/projectGenerator" \
+			"${root}/projectGenerator.app/Contents/Resources/app/app/projectGenerator" \
+			"${root}/projectGenerator"
+		do
+			# Prefer real files. On Windows, bare "projectGenerator" must NOT
+			# resolve via PATHEXT to projectGenerator.exe (Electron host).
+			if [[ -f "$p" ]]; then
+				# Reject Electron hosts if we accidentally hit them
+				case "$p" in
+					*/Contents/MacOS/projectGenerator) continue ;;
+					*/projectGenerator.exe)
+						# root-level .exe is the GUI; only accept under resources/app/app/
+						[[ "$p" == */resources/app/app/projectGenerator.exe ]] || continue
+						;;
+				esac
+				printf '%s' "$p"
+				return 0
+			fi
+		done
+	done
+	return 1
+}
+
+# Optional: path to GUI (for messages only — do not exec for status/version)
+findPGGui(){
+	local root p
+	for root in "${OF_DIR}/projectGenerator" "${OF_PG_INSTALLED_DIR}"; do
+		[[ -d "$root" ]] || continue
+		for p in \
+			"${root}/projectGenerator.exe" \
+			"${root}/projectGenerator.app" \
+			"${root}/projectGenerator.app/Contents/MacOS/projectGenerator"
+		do
+			[[ -e "$p" ]] && { printf '%s' "$p"; return 0; }
+		done
 	done
 	return 1
 }
@@ -308,10 +395,24 @@ findPGBinary(){
 readPGVersion(){
 	local bin ver
 	bin=$(findPGBinary) || return 1
-	ver=$("$bin" --version 2>/dev/null | head -1 | tr -d '\r')
-	[[ -z "$ver" ]] && ver=$("$bin" -v 2>/dev/null | head -1 | tr -d '\r')
+	# Bound runtime so a mis-resolved GUI cannot hang status (EPIPE / Electron)
+	if command -v timeout >/dev/null 2>&1; then
+		ver=$(timeout 5s "$bin" --version 2>/dev/null | head -1 | tr -d '\r')
+		[[ -z "$ver" ]] && ver=$(timeout 5s "$bin" -v 2>/dev/null | head -1 | tr -d '\r')
+	elif command -v gtimeout >/dev/null 2>&1; then
+		ver=$(gtimeout 5s "$bin" --version 2>/dev/null | head -1 | tr -d '\r')
+		[[ -z "$ver" ]] && ver=$(gtimeout 5s "$bin" -v 2>/dev/null | head -1 | tr -d '\r')
+	else
+		ver=$("$bin" --version 2>/dev/null | head -1 | tr -d '\r')
+		[[ -z "$ver" ]] && ver=$("$bin" -v 2>/dev/null | head -1 | tr -d '\r')
+	fi
 	if [[ "$ver" == *projectGenerator* ]]; then
 		ver=$(printf '%s' "$ver" | sed -E 's/.*"openFrameworks projectGenerator": *"([^"]+)".*/\1/')
+	fi
+	# Electron sometimes prints garbage / empty when invoked as CLI
+	if [[ -z "$ver" || "$ver" == *"Electron"* || "$ver" == *"chrome-error"* ]]; then
+		printf '%s' "installed (CLI: $(basename "$bin"))"
+		return 0
 	fi
 	printf '%s' "${ver:-installed}"
 }
@@ -655,6 +756,22 @@ cmdStatus(){
 	fi
 	echoKV "last update" "$lastUp"
 	echoKV "cli" "$OF_SCRIPT_VERSION"
+	local stSha stShaN
+	stSha=$(readLibStateField sha_status) || stSha=$(readVerifyField status) || stSha=""
+	stShaN=$(readLibStateField sha_verified) || stShaN=$(readVerifyField verified) || stShaN=""
+	case "$stSha" in
+		verified)
+			if [[ -n "$stShaN" && "$stShaN" != "0" ]]; then
+				echoKV "integrity" "SHA-256 verified (${stShaN} package(s)) · secure"
+			else
+				echoKV "integrity" "SHA-256 verified · secure"
+			fi
+			;;
+		failed) echoKV "integrity" "SHA-256 failed" ;;
+		no-digest|no-remote) echoKV "integrity" "SHA not available for last download" ;;
+		no-tools) echoKV "integrity" "no local sha256 tool" ;;
+		skipped) echoKV "integrity" "SHA check skipped" ;;
+	esac
 
 	printLibInlineSection "Core" "${SEC_CORE[@]}"
 	printLibInlineSection "Addons" "${SEC_ADDONS[@]}"
@@ -708,16 +825,20 @@ printHelp(){
     status                    System checker + full library list
     setup                     Install deps/libs/PG if missing or outdated
     update    libs | pg | all Prompt source; refresh libs/PG as needed
+    build     …               Build core / projects / emscripten / cmake (see of build help)
+    cleanup   projects|caches|libs   Free disk (artifacts / downloads / prebuilts)
     version   of  | pg        Version info
     upgrade   addons | apps   Upgrade tree
     installed                 Alias for status
-    apothecary                Build via apothecary submodule
+    apothecary                Build libraries via apothecary submodule
 
   Env
     LIB_SOURCE=apothecary|oflibs|archive
     LIB_TAG=latest|v12.1.0|v0.11.2
     LIB_LIBS=core|all|"glfw glm"
+    LIB_CLEAN_MODE=platform|merge|full   # default platform: only lib/<plat>
     OF_LINUX_DISTRO=ubuntu    Force linux distro scripts
+    OF_JOBS=8                 Parallel build jobs
     VERBOSE=1  NO_COLOR=1  OF_ANIM=0
 
   Examples
@@ -725,11 +846,18 @@ printHelp(){
     ${prog} status
     ${prog} update libs
     LIB_SOURCE=oflibs LIB_LIBS=core ${prog} update libs
+    ${prog} build core Debug
+    ${prog} build project apps/myApps/mySketch
+    ${prog} build emscripten examples/graphics/graphicsExample
+    ${prog} cleanup projects
+    ${prog} cleanup caches
+    ${prog} cleanup libs other
     ${prog} apothecary build
 
 EOF
 	echoKV "platform" "${OF_PLATFORM}${OF_ARCH:+ / ${OF_ARCH}}"
 	echoKV "libs source" "${LIB_SOURCE} / ${LIB_TAG}"
+	echoNote "build details: ${prog} build help"
 	printf '\n'
 }
 
@@ -765,10 +893,22 @@ OF_LIB_STATE_FILE="${OF_DIR}/libs/.of-cli-state"
 # Essentials used to decide "installed"
 OF_LIBS_ESSENTIAL=(freetype glew glfw zlib tess2 uriparser utf8 json)
 
+# Merge last SHA verify result from download_libs (libs/download/.last-verify)
+readVerifyField(){
+	local key="$1"
+	local f="${OF_DIR}/libs/download/.last-verify"
+	[[ -f "$f" ]] || return 1
+	grep -E "^${key}=" "$f" 2>/dev/null | head -1 | cut -d= -f2-
+}
+
 writeLibState(){
 	local source="${1:-$LIB_SOURCE}"
 	local tag="${2:-$LIB_TAG}"
 	local platformDir="${3:-$OF_PLATFORM}"
+	local shaStatus shaVerified shaUpdated
+	shaStatus=$(readVerifyField status) || shaStatus=""
+	shaVerified=$(readVerifyField verified) || shaVerified=""
+	shaUpdated=$(readVerifyField updated) || shaUpdated=""
 	mkdir -p "${OF_DIR}/libs"
 	cat > "$OF_LIB_STATE_FILE" << EOF
 source=${source}
@@ -777,6 +917,9 @@ platform=${platformDir}
 arch=${OF_ARCH:-}
 updated=$(date -u +%Y-%m-%dT%H:%M:%SZ)
 of_cli=${OF_SCRIPT_VERSION}
+sha_status=${shaStatus}
+sha_verified=${shaVerified}
+sha_updated=${shaUpdated}
 EOF
 }
 
@@ -825,23 +968,44 @@ assessLibsState(){
 	stSource=$(readLibStateField source) || stSource="apothecary"
 	stTag=$(readLibStateField tag) || stTag="latest"
 	stUpdated=$(readLibStateField updated) || stUpdated=""
+	local stSha stShaN
+	stSha=$(readLibStateField sha_status) || stSha=$(readVerifyField status) || stSha=""
+	stShaN=$(readLibStateField sha_verified) || stShaN=$(readVerifyField verified) || stShaN=""
 	LIBS_STATE="ok"
 	if [[ -n "$stUpdated" ]]; then
 		LIBS_STATE_DETAIL="${stSource}@${stTag} · ${stUpdated}"
 	else
 		LIBS_STATE_DETAIL="detected · assume latest"
 	fi
+	case "$stSha" in
+		verified)
+			if [[ -n "$stShaN" && "$stShaN" != "0" ]]; then
+				LIBS_STATE_DETAIL+=" · SHA-256 secure (${stShaN} pkg)"
+			else
+				LIBS_STATE_DETAIL+=" · SHA-256 secure"
+			fi
+			;;
+		failed) LIBS_STATE_DETAIL+=" · SHA failed" ;;
+		no-digest|no-remote|no-tools|skipped|unchecked|"") ;;
+		*) LIBS_STATE_DETAIL+=" · SHA ${stSha}" ;;
+	esac
 }
 
 # Sets PG_STATE=ok|missing  PG_STATE_DETAIL=
 assessPGState(){
-	local bin ver
+	local bin ver gui
 	PG_STATE="ok"
 	PG_STATE_DETAIL=""
 	bin=$(findPGBinary) || bin=""
 	if [[ -z "$bin" ]]; then
 		PG_STATE="missing"
-		PG_STATE_DETAIL="Project Generator not installed"
+		gui=$(findPGGui) || gui=""
+		if [[ -n "$gui" ]]; then
+			# Windows/mac GUI package present but CLI path missing (old layout / incomplete extract)
+			PG_STATE_DETAIL="GUI found, CLI missing — re-run: of update pg  (need projectGeneratorCmd.exe)"
+		else
+			PG_STATE_DETAIL="Project Generator not installed"
+		fi
 		return 0
 	fi
 	ver=$(readPGVersion) || ver="installed"
@@ -1145,6 +1309,20 @@ menuDownloadLibs(){
 				echoNote "macos packages → lib/macos/*.xcframework (osx · ios · tvos · …)"
 				;;
 		esac
+		# Default is platform-scoped clean (safe multi-platform). Optional full wipe of shared include/.
+		if menuCanRun; then
+			menuPick "Clean mode before install · ${platformDir}" \
+				"Platform only — keep other platforms (Recommended)|platform" \
+				"Merge only — never delete before extract|merge" \
+				"Full clean — also wipe shared include/ (+ bin on vs/msys2)|full" \
+				|| return 1
+			case "$UI_MENU_RESULT" in
+				merge) export LIB_CLEAN_MODE=merge ;;
+				full)  export LIB_CLEAN_MODE=full ;;
+				*)     export LIB_CLEAN_MODE=platform ;;
+			esac
+			echoSuccess "clean → $LIB_CLEAN_MODE"
+		fi
 	fi
 	[[ "$LIB_SOURCE" == "oflibs" ]] && { menuPickOfLibs "$LIB_TAG" "$platformDir" || return 1; }
 
@@ -1160,7 +1338,7 @@ archesForApoType(){
 		android) echo "arm64 armv7 x86 x86_64" ;;
 		emscripten) echo "64 32" ;;
 		linux) echo "64 aarch64 armv7l armv6l" ;;
-		vs) echo "64 arm64" ;;
+		vs) echo "64 arm64 arm64ec all" ;;
 		msys2) echo "64" ;;
 		*) echo "${OF_ARCH:-64}" ;;
 	esac
@@ -1441,6 +1619,315 @@ cmdSetup(){
 	printf '\n'
 }
 
+# ---------------------------------------------------------------------------
+# Cleanup — projects / caches / libraries
+# ---------------------------------------------------------------------------
+
+# Clean build products under a project tree (obj, bin artifacts, Xcode/VS/cmake)
+cleanProjectTree(){
+	local project="$1"
+	local deep="${2:-0}"
+	[[ -d "$project" ]] || return 1
+	# Prefer makefile clean when available
+	if [[ -f "${project}/Makefile" ]] || [[ -f "${project}/makefile" ]]; then
+		( cd "$project" && make clean >/dev/null 2>&1 ) || true
+	fi
+	# Common OF build leftovers
+	rm -rf "${project}/obj" \
+		"${project}/bin/"*.app \
+		"${project}/bin/"*_debug \
+		"${project}/bin/"*_debug.exe \
+		"${project}/build" \
+		"${project}/cmake-build-debug" \
+		"${project}/cmake-build-release" \
+		"${project}/.vs" \
+		"${project}/DerivedData" 2>/dev/null || true
+	# Xcode user data / indexes (not the .xcodeproj itself)
+	find "$project" -maxdepth 3 \( \
+		-name 'xcuserdata' -o -name 'project.xcworkspace' -o \
+		-name '*.o' -o -name '*.d' -o -name '*.depend' -o -name '*.layout' \
+		\) -exec rm -rf {} + 2>/dev/null || true
+	# VS intermediate
+	find "$project" -maxdepth 3 \( \
+		-name 'x64' -o -name 'ARM64' -o -name 'Win32' -o \
+		-name 'Debug' -o -name 'Release' \
+		\) -type d \( -path '*/obj/*' -o -path '*/bin/*' -o -name 'obj' \) \
+		-exec rm -rf {} + 2>/dev/null || true
+	find "$project" -maxdepth 2 \( -name '*.exe' -o -name '*.pdb' -o -name '*.ilk' -o -name '*.obj' \) \
+		-path '*/bin/*' -delete 2>/dev/null || true
+	if [[ "$deep" == "1" ]]; then
+		# also strip empty bin/ data keepers stay if only data/
+		find "${project}/bin" -mindepth 1 -maxdepth 1 ! -name 'data' -exec rm -rf {} + 2>/dev/null || true
+	fi
+	return 0
+}
+
+# Walk apps/ or examples/ (or a custom root) and clean each project-like folder
+cleanProjectsScope(){
+	local scope="$1"   # apps|examples|all|path
+	local path="${2:-}"
+	local deep="${3:-0}"
+	local root count=0
+	local -a roots=()
+
+	case "$scope" in
+		apps) roots+=("${OF_DIR}/apps") ;;
+		examples) roots+=("${OF_DIR}/examples") ;;
+		all) roots+=("${OF_DIR}/apps" "${OF_DIR}/examples") ;;
+		path)
+			[[ -n "$path" && -d "$path" ]] || { echoError "path required"; return 1; }
+			roots+=("$path")
+			;;
+		*) echoError "scope: apps|examples|all|path"; return 1 ;;
+	esac
+
+	printBanner "clean"
+	echoInfo "cleanup projects · ${scope}${path:+ · $path}"
+	echoKV "deep" "$([[ "$deep" == "1" ]] && echo yes || echo no)"
+	printf '\n'
+
+	local cat ex proj rel
+	for root in "${roots[@]}"; do
+		[[ -d "$root" ]] || continue
+		# category / project  (apps/myApps/foo, examples/graphics/bar)
+		for cat in "$root"/*/; do
+			[[ -d "$cat" ]] || continue
+			# direct project under category
+			if [[ -d "${cat}src" || -f "${cat}Makefile" ]]; then
+				proj="${cat%/}"
+				rel="${proj#"$OF_DIR"/}"
+				echoNote "clean ${rel}"
+				cleanProjectTree "$proj" "$deep"
+				count=$((count + 1))
+				continue
+			fi
+			for ex in "$cat"*/; do
+				[[ -d "$ex" ]] || continue
+				if [[ -d "${ex}src" || -f "${ex}Makefile" || -f "${ex}makefile" ]] \
+					|| compgen -G "${ex}*.xcodeproj" >/dev/null 2>&1 \
+					|| compgen -G "${ex}*.vcxproj" >/dev/null 2>&1; then
+					proj="${ex%/}"
+					rel="${proj#"$OF_DIR"/}"
+					echoNote "clean ${rel}"
+					cleanProjectTree "$proj" "$deep"
+					count=$((count + 1))
+				fi
+			done
+		done
+	done
+	echoSuccess "cleaned ${count} project folder(s)"
+}
+
+cleanDownloadCaches(){
+	local mode="${1:-packages}" # packages|all
+	local dl="${OF_DIR}/libs/download"
+	local freed=0
+	printBanner "clean"
+	echoInfo "clean caches · ${mode}"
+	printf '\n'
+	if [[ ! -d "$dl" ]]; then
+		echoNote "no libs/download cache"
+		return 0
+	fi
+	case "$mode" in
+		packages)
+			# package archives + sidecars; keep folder
+			local f n=0
+			while IFS= read -r f; do
+				[[ -f "$f" ]] || continue
+				rm -f "$f"
+				n=$((n + 1))
+			done < <(find "$dl" -type f \( \
+				-name '*.tar.bz2' -o -name '*.tar.gz' -o -name '*.zip' -o \
+				-name '*.sha256' -o -name 'SHA256SUMS' -o -name '.last-verify' \
+				\) 2>/dev/null)
+			echoSuccess "removed ${n} cached package file(s) under libs/download"
+			;;
+		all)
+			echoWarning "removing entire libs/download/"
+			rm -rf "$dl"
+			mkdir -p "$dl"
+			echoSuccess "libs/download cleared"
+			;;
+		*) echoError "mode: packages|all"; return 1 ;;
+	esac
+	# optional compile junk under openFrameworksCompiled
+	if [[ "$mode" == "all" ]]; then
+		find "${OF_DIR}/libs/openFrameworksCompiled" -type d \( -name 'obj' -o -name 'intermediates' \) \
+			-exec rm -rf {} + 2>/dev/null || true
+		echoNote "also cleared openFrameworksCompiled obj/intermediates if present"
+	fi
+}
+
+# Remove prebuilt library binaries (minimise disk) — never deletes openFrameworks source
+cleanLibraries(){
+	local mode="$1" # other-platforms|platform|all-prebuilt|list
+	local plat="${2:-}"
+	local libDir d name p count=0
+
+	printBanner "clean"
+	echoInfo "libraries · ${mode}${plat:+ · $plat}"
+	printf '\n'
+
+	case "$mode" in
+		list)
+			echoNote "installed lib/<platform> folders:"
+			find "${OF_DIR}/libs" "${OF_DIR}/addons" -type d -path '*/lib/*' -mindepth 3 -maxdepth 4 2>/dev/null \
+				| sed "s|^${OF_DIR}/||" | sort -u | head -80
+			return 0
+			;;
+		other-platforms)
+			# keep host-related platform dirs; remove the rest
+			local keep=""
+			case "$OF_PLATFORM" in
+				vs) keep="vs" ;;
+				osx|macos) keep="macos|osx" ;;
+				ios) keep="macos|ios" ;;
+				android) keep="android" ;;
+				emscripten) keep="emscripten" ;;
+				msys2) keep="msys2|vs" ;;
+				linux) keep="linux|linux64|linuxaarch64" ;;
+				*) keep="$OF_PLATFORM" ;;
+			esac
+			echoKV "keep matching" "$keep"
+			confirmYes "Remove lib/* folders that are NOT for this host (${OF_PLATFORM})?" || {
+				echoInfo "cancelled"; return 0
+			}
+			while IFS= read -r d; do
+				name=$(basename "$d")
+				if echo "$name" | grep -Eq "^(${keep})$"; then
+					continue
+				fi
+				# skip non-platform utility dirs
+				case "$name" in
+					pkgconfig|cmake|cmake-build*|include) continue ;;
+				esac
+				echoNote "rm $d"
+				rm -rf "$d"
+				count=$((count + 1))
+			done < <(find "${OF_DIR}/libs" "${OF_DIR}/addons" -type d -path '*/lib/*' -mindepth 3 -maxdepth 4 2>/dev/null)
+			echoSuccess "removed ${count} non-host platform lib folder(s)"
+			;;
+		platform)
+			[[ -n "$plat" ]] || { echoError "platform name required"; return 1; }
+			confirmYes "Remove all libs/*/lib/${plat} and addons …/lib/${plat}?" || {
+				echoInfo "cancelled"; return 0
+			}
+			while IFS= read -r d; do
+				echoNote "rm $d"
+				rm -rf "$d"
+				count=$((count + 1))
+			done < <(find "${OF_DIR}/libs" "${OF_DIR}/addons" -type d -path "*/lib/${plat}" 2>/dev/null)
+			echoSuccess "removed ${count} path(s) for platform ${plat}"
+			;;
+		all-prebuilt)
+			echoWarning "This deletes downloaded prebuilts under libs/* and addon libs binaries."
+			echoWarning "Keeps: libs/openFrameworks, libs/openFrameworksCompiled (source/project)."
+			confirmYes "Really remove all other libs/* trees?" || { echoInfo "cancelled"; return 0; }
+			for d in "${OF_DIR}/libs"/*; do
+				[[ -d "$d" ]] || continue
+				name=$(basename "$d")
+				case "$name" in
+					openFrameworks|openFrameworksCompiled|download|scripts) continue ;;
+				esac
+				echoNote "rm libs/${name}"
+				rm -rf "$d"
+				count=$((count + 1))
+			done
+			# addon binary folders only
+			for d in "${OF_DIR}/addons"/*/libs; do
+				[[ -d "$d" ]] || continue
+				echoNote "rm ${d#"$OF_DIR"/}"
+				rm -rf "$d"
+				count=$((count + 1))
+			done
+			rm -f "${OF_DIR}/libs/.of-cli-state" 2>/dev/null || true
+			echoSuccess "removed ${count} prebuilt tree(s) — run Update libs to restore"
+			;;
+		*) echoError "mode: list|other-platforms|platform|all-prebuilt"; return 1 ;;
+	esac
+}
+
+menuCleanup(){
+	local choice scope deep=0 plat
+	printBanner "clean"
+	echoInfo "cleanup projects · caches · libraries"
+	printf '\n'
+
+	while true; do
+		menuPick "Cleanup" \
+			"Projects — obj/bin/build artifacts|projects" \
+			"Caches — libs/download packages|caches" \
+			"Libraries — remove / minimise prebuilts|libs" \
+			"Back|back" \
+			|| return 0
+		choice="$UI_MENU_RESULT"
+		case "$choice" in
+			projects)
+				menuPick "Project cleanup scope" \
+					"All apps + examples|all" \
+					"apps/ only|apps" \
+					"examples/ only|examples" \
+					"Single path…|path" \
+					"Back|back" || continue
+				scope="$UI_MENU_RESULT"
+				[[ "$scope" == "back" ]] && continue
+				if menuCanRun && confirmNo "Also clear bin/ executables (keep bin/data)?"; then
+					deep=1
+				else
+					deep=0
+				fi
+				if [[ "$scope" == "path" ]]; then
+					menuInput "Project or folder path" || continue
+					confirmYes "Clean projects under ${UI_INPUT_RESULT}?" || continue
+					cleanProjectsScope path "$UI_INPUT_RESULT" "$deep"
+				else
+					confirmYes "Clean ${scope} project build artifacts?" || continue
+					cleanProjectsScope "$scope" "" "$deep"
+				fi
+				menuPause
+				;;
+			caches)
+				menuPick "Cache cleanup" \
+					"Package downloads only (Recommended)|packages" \
+					"Wipe entire libs/download + compiled intermediates|all" \
+					"Back|back" || continue
+				[[ "$UI_MENU_RESULT" == "back" ]] && continue
+				confirmYes "Delete download cache (${UI_MENU_RESULT})?" || continue
+				cleanDownloadCaches "$UI_MENU_RESULT"
+				menuPause
+				;;
+			libs)
+				menuPick "Library cleanup" \
+					"List installed lib/<platform> folders|list" \
+					"Remove other platforms (keep this host) — Recommended|other" \
+					"Remove one platform…|one" \
+					"Remove ALL prebuilt libs (nuclear)|all" \
+					"Back|back" || continue
+				case "$UI_MENU_RESULT" in
+					list) cleanLibraries list; menuPause ;;
+					other) cleanLibraries other-platforms; menuPause ;;
+					one)
+						menuPick "Platform folder to remove" \
+							"vs|vs" "macos|macos" "osx|osx" "android|android" \
+							"emscripten|emscripten" "msys2|msys2" "linux|linux" \
+							"ios|ios" "Custom…|custom" || continue
+						plat="$UI_MENU_RESULT"
+						if [[ "$plat" == "custom" ]]; then
+							menuInput "lib/<name> folder" || continue
+							plat="$UI_INPUT_RESULT"
+						fi
+						cleanLibraries platform "$plat"
+						menuPause
+						;;
+					all) cleanLibraries all-prebuilt; menuPause ;;
+				esac
+				;;
+			back) return 0 ;;
+		esac
+	done
+}
+
 cmdMenu(){
 	local choice setupLabel="Setup"
 	if ! menuCanRun; then
@@ -1464,7 +1951,9 @@ cmdMenu(){
 			"Status  — system checker|status" \
 			"${setupLabel}|setup" \
 			"Update  — libs / PG (choose source)|update" \
+			"Build…  — core / projects / examples / emscripten / cmake|build" \
 			"Build libraries (Apothecary)…|apothecary" \
+			"Cleanup — projects / caches / libraries|cleanup" \
 			"Show openFrameworks version|version" \
 			"Show Project Generator version|version-pg" \
 			"Upgrade addons|upgrade-addons" \
@@ -1481,7 +1970,9 @@ cmdMenu(){
 			status)         cmdStatus; menuPause ;;
 			setup)          cmdSetup "$OF_PLATFORM"; menuPause ;;
 			update)         menuUpdate; menuPause ;;
+			build)          menuBuild ;;
 			apothecary)     menuApothecary; menuPause ;;
+			cleanup|clean)  menuCleanup ;;
 			version)        cmdVersion; menuPause ;;
 			version-pg)     cmdVersionPG; menuPause ;;
 			upgrade-addons) cmdUpgrade addons; menuPause ;;
@@ -1524,6 +2015,88 @@ menuUpdate(){
 	esac
 }
 
+# of build <subcmd> …
+cmdBuild(){
+	local sub="${1:-}"
+	shift || true
+	case "$sub" in
+		""|menu) menuBuild ;;
+		help|-h|--help) printHelpBuild ;;
+		core|lib|library)
+			cmdBuildCore "${1:-Release}"
+			;;
+		project|app|proj)
+			local path="${1:-}" system="make" config="Release"
+			[[ -n "$path" ]] || { echoError "usage: of build project <path> [system] [Debug|Release]"; return 1; }
+			shift || true
+			# optional system then config, or config alone
+			if [[ "${1:-}" =~ ^(make|xcode|xcodebuild|emscripten|em|wasm|cmake|generate|pg|host)$ ]]; then
+				system="$1"; shift || true
+			fi
+			[[ -n "${1:-}" ]] && config="$1"
+			cmdBuildProject "$path" "$system" "$config" 0
+			;;
+		example|examples)
+			local path="${1:-}" system="make" config="Release"
+			[[ -n "$path" ]] || { echoError "usage: of build example <path> [system] [cfg]"; return 1; }
+			shift || true
+			if [[ "${1:-}" =~ ^(make|xcode|xcodebuild|emscripten|em|wasm|cmake|generate|pg|host)$ ]]; then
+				system="$1"; shift || true
+			fi
+			[[ -n "${1:-}" ]] && config="$1"
+			# allow short example paths
+			if [[ ! -d "$path" && -d "${OF_DIR}/examples/$path" ]]; then
+				path="${OF_DIR}/examples/$path"
+			fi
+			cmdBuildProject "$path" "$system" "$config" 0
+			;;
+		emscripten|em|wasm)
+			local path="${1:-}" config="${2:-Debug}"
+			[[ -n "$path" ]] || { echoError "usage: of build emscripten <path> [Debug|Release]"; return 1; }
+			cmdBuildProject "$path" emscripten "$config" 0
+			;;
+		open-em|emrun|open-emscripten)
+			local path="${1:-}"
+			[[ -n "$path" ]] || { echoError "usage: of build open-em <path>"; return 1; }
+			path=$(resolveProjectPath "$path") || { echoError "not found: $1"; return 1; }
+			ensureEmscriptenEnv || true
+			runEmscriptenOpen "$path"
+			;;
+		generate|pg)
+			local path="${1:-}" platforms="${2:-}"
+			[[ -n "$path" ]] || { echoError "usage: of build generate <path> [platforms]"; return 1; }
+			cmdBuildGenerate "$path" "$platforms"
+			;;
+		cmake)
+			case "${1:-}" in
+				""|status|info) runCmakeStatus ;;
+				android) runCmakeAndroidCore "${2:-Debug}" ;;
+				*)
+					local path="$1" config="${2:-Release}"
+					path=$(resolveProjectPath "$path") || { echoError "not found: $1"; return 1; }
+					runCmakeProject "$path" "$config"
+					;;
+			esac
+			;;
+		clean)
+			local path="${1:-}"
+			[[ -n "$path" ]] || { echoError "usage: of build clean <path>"; return 1; }
+			path=$(resolveProjectPath "$path") || { echoError "not found: $1"; return 1; }
+			runCleanProject "$path"
+			;;
+		*)
+			# bare path → treat as project with make
+			if [[ -n "$sub" ]] && { [[ -d "$sub" ]] || [[ -d "${OF_DIR}/$sub" ]] || [[ -d "${OF_DIR}/examples/$sub" ]] || [[ -d "${OF_DIR}/apps/$sub" ]]; }; then
+				cmdBuildProject "$sub" "${1:-make}" "${2:-Release}" 0
+				return $?
+			fi
+			echoError "unknown build subcommand: ${sub:-}"
+			printHelpBuild
+			return 1
+			;;
+	esac
+}
+
 runCommand(){
 	local cmd=$1 subcmd=$2 subcmd2=$3 subcmd3=$4
 	case "$cmd" in
@@ -1532,6 +2105,10 @@ runCommand(){
 		status|check|doctor|installed|libs-status) cmdStatus ;;
 		setup|install) cmdSetup "${subcmd:-$OF_PLATFORM}" ;;
 		update) cmdUpdate "$subcmd" "$subcmd2" ;;
+		build)
+			shift
+			cmdBuild "$@"
+			;;
 		version)
 			case "$subcmd" in
 				""|of) cmdVersion ;;
@@ -1540,6 +2117,35 @@ runCommand(){
 			esac
 			;;
 		upgrade) cmdUpgrade "$subcmd" ;;
+		cleanup|clean)
+			case "${subcmd:-}" in
+				""|menu) menuCleanup ;;
+				projects|project)
+					case "${subcmd2:-all}" in
+						apps|examples|all) cleanProjectsScope "${subcmd2:-all}" "" 0 ;;
+						*) cleanProjectsScope path "${subcmd2}" 0 ;;
+					esac
+					;;
+				caches|cache)
+					cleanDownloadCaches "${subcmd2:-packages}"
+					;;
+				libs|libraries)
+					case "${subcmd2:-other}" in
+						list) cleanLibraries list ;;
+						other|other-platforms|host) cleanLibraries other-platforms ;;
+						all|nuclear) cleanLibraries all-prebuilt ;;
+						*) cleanLibraries platform "${subcmd2}" ;;
+					esac
+					;;
+				*)
+					echoError "usage: of cleanup [projects|caches|libs] …"
+					echoNote "  of cleanup projects [all|apps|examples|<path>]"
+					echoNote "  of cleanup caches [packages|all]"
+					echoNote "  of cleanup libs [other|list|all|vs|macos|…]"
+					return 1
+					;;
+			esac
+			;;
 		apothecary|apo)
 			case "$subcmd" in
 				""|menu) menuApothecary ;;
@@ -1550,7 +2156,7 @@ runCommand(){
 			;;
 		*)
 			echoError "Unknown command: $cmd"
-			echoNote "valid: menu status setup update version upgrade apothecary help"
+			echoNote "valid: menu status setup update build cleanup version upgrade apothecary help"
 			printHelp
 			return 1
 			;;
