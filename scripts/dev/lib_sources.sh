@@ -13,6 +13,11 @@ OFLIBS_REPO="${OFLIBS_REPO:-ofWorks/ofLibs}"
 ARCHIVE_BASE="${ARCHIVE_BASE:-https://libs.danoli3.com}"
 APOTHECARY_RELEASES="${APOTHECARY_RELEASES:-https://github.com/openframeworks/apothecary/releases/download}"
 
+# Shared SHA-256 helpers (GitHub digests + URL sidecars)
+_OF_SHA_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck source=sha_verify.sh
+. "${_OF_SHA_DIR}/sha_verify.sh"
+
 # ofLibs platform token for a host OF platform
 ofLibsPlatform(){
 	local p="${1:-osx}"
@@ -150,8 +155,9 @@ downloadOfLibs(){
 	local ofPlat="${3:-osx}"
 	shift 3 || true
 	local -a libs=("$@")
-	local plat pkg url tmp dest name ofName ok=0 skip=0
+	local plat pkg url tmp dest name ofName ok=0 skip=0 fail=0
 	local dlDir="${ofDir}/libs/download/oflibs"
+	local digestMap expected
 
 	plat=$(ofLibsPlatform "$ofPlat")
 	if [[ -z "$plat" ]]; then
@@ -177,6 +183,21 @@ downloadOfLibs(){
 	# shellcheck disable=SC2064
 	trap "rm -rf '$tmp'" RETURN
 
+	# Prefetch GitHub release digests once (ofLibs publishes digest on every asset)
+	digestMap=$(mktemp 2>/dev/null || mktemp -t oflibsdigest)
+	if [[ "${VERIFY_SHA:-1}" != "0" ]]; then
+		echo " ofLibs  fetching SHA-256 digests for ${OFLIBS_REPO}@${tag}…"
+		if ! fetchGithubReleaseDigests "$OFLIBS_REPO" "$tag" "$digestMap"; then
+			echo "    ! could not fetch ofLibs digests — packages will install without verify" >&2
+			: > "$digestMap"
+		fi
+	fi
+
+	SHA_VERIFIED=0
+	SHA_SKIPPED=0
+	SHA_FAILED=0
+	SHA_STATUS="unchecked"
+
 	echo " ofLibs  tag=${tag}  platform=${plat}  libs=${#libs[@]}  →  ${ofDir}/libs"
 	for name in "${libs[@]}"; do
 		[[ -n "$name" ]] || continue
@@ -191,6 +212,30 @@ downloadOfLibs(){
 			skip=$((skip + 1))
 			continue
 		fi
+
+		# SHA-256 against GitHub release asset digest when available
+		if [[ "${VERIFY_SHA:-1}" != "0" ]]; then
+			if ! sha_has_tools; then
+				SHA_STATUS="no-tools"
+				[[ "${REQUIRE_SHA:-0}" == "1" ]] && { rm -f "$digestMap"; return 1; }
+			else
+				expected=$(lookupDigest "$digestMap" "$pkg")
+				if [[ -z "$expected" ]]; then
+					SHA_SKIPPED=$((SHA_SKIPPED+1))
+					echo "    ~ no digest for ${pkg} — skip verify"
+				elif verifyFileSha256 "${dlDir}/${pkg}" "$expected"; then
+					SHA_VERIFIED=$((SHA_VERIFIED+1))
+					echo "    ✓ sha256 verified (secure)"
+				else
+					SHA_FAILED=$((SHA_FAILED+1))
+					fail=$((fail + 1))
+					echo "    ✗ SHA-256 MISMATCH — removing ${pkg}" >&2
+					rm -f "${dlDir}/${pkg}" "${dlDir}/${pkg}.sha256"
+					continue
+				fi
+			fi
+		fi
+
 		rm -rf "${tmp}/extract"
 		mkdir -p "${tmp}/extract" "$dest"
 		unzip -qo "${dlDir}/${pkg}" -d "${tmp}/extract"
@@ -220,9 +265,25 @@ downloadOfLibs(){
 		[[ -f "${tmp}/extract/copying.txt" ]] && cp "${tmp}/extract/copying.txt" "${dest}/" 2>/dev/null || true
 		ok=$((ok + 1))
 	done
-	echo " ofLibs install complete  ok=${ok}  skipped=${skip}  (libs/<lib>/{include,lib/<platform>})"
+
+	if [[ $SHA_FAILED -gt 0 ]]; then
+		SHA_STATUS="failed"
+	elif [[ $SHA_VERIFIED -gt 0 ]]; then
+		SHA_STATUS="verified"
+	elif [[ $SHA_SKIPPED -gt 0 ]]; then
+		SHA_STATUS="no-digest"
+	elif [[ "${VERIFY_SHA:-1}" == "0" ]]; then
+		SHA_STATUS="skipped"
+	fi
+	writeVerifyState "${ofDir}/libs/download" "oflibs:${tag}" "$ofPlat" ""
+	rm -f "$digestMap"
+
+	echo " ofLibs install complete  ok=${ok}  skipped=${skip}  sha_fail=${fail}  (libs/<lib>/{include,lib/<platform>})"
+	if [[ $SHA_VERIFIED -gt 0 ]]; then
+		echo " ✓ Secure download: ${SHA_VERIFIED} ofLibs package(s) verified SHA-256 against GitHub digests"
+	fi
 	echo " note: ofLibs is ofWorks-oriented; stock oF may need path tweaks for some libs."
-	[[ $ok -gt 0 ]]
+	[[ $fail -eq 0 && $ok -gt 0 ]]
 }
 
 # Download a historical full OF release package from danoli3 archive
@@ -257,6 +318,44 @@ downloadArchiveRelease(){
 		echo "download failed: $url" >&2
 		return 1
 	fi
+
+	# SHA when published on libs.danoli3.com (sidecar .sha256 or SHA256SUMS — see generate_sha256.php)
+	SHA_VERIFIED=0
+	SHA_SKIPPED=0
+	SHA_FAILED=0
+	SHA_STATUS="unchecked"
+	if [[ "${VERIFY_SHA:-1}" != "0" ]]; then
+		echo " archive  checking SHA-256 sidecars…"
+		if ! sha_has_tools; then
+			SHA_STATUS="no-tools"
+			echo "  ! no local sha256 tool — skip verify"
+			[[ "${REQUIRE_SHA:-0}" == "1" ]] && return 1
+		else
+			local expected
+			expected=$(fetchUrlSidecarDigest "$url") || expected=""
+			if [[ -z "$expected" ]]; then
+				SHA_SKIPPED=1
+				SHA_STATUS="no-digest"
+				echo "  ~ no SHA published for ${pkg} yet (add ${pkg}.sha256 or SHA256SUMS on server)"
+				[[ "${REQUIRE_SHA:-0}" == "1" ]] && return 1
+			elif verifyFileSha256 "${dlDir}/${pkg}" "$expected"; then
+				SHA_VERIFIED=1
+				SHA_STATUS="verified"
+				echo "  ✓ sha256 verified (secure)"
+				echo "      sha256:${expected}"
+			else
+				SHA_FAILED=1
+				SHA_STATUS="failed"
+				echo "  ✗ SHA-256 MISMATCH — removing corrupt download" >&2
+				rm -f "${dlDir}/${pkg}" "${dlDir}/${pkg}.sha256"
+				writeVerifyState "${ofDir}/libs/download" "archive:${ver}" "$ofPlat" "$arch"
+				return 1
+			fi
+		fi
+	else
+		SHA_STATUS="skipped"
+	fi
+	writeVerifyState "${ofDir}/libs/download" "archive:${ver}" "$ofPlat" "$arch"
 
 	tmp=$(mktemp -d "${TMPDIR:-/tmp}/ofarchive.XXXXXX")
 	# shellcheck disable=SC2064
