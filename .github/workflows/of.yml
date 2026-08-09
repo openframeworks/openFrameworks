@@ -118,13 +118,22 @@ jobs:
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  build-vs2022:
-    runs-on: windows-2022
+  build-vs:
+    runs-on: ${{ matrix.runner }}
     strategy:
+      fail-fast: false
       matrix:
         platform: [x64, ARM64, ARM64EC]
-    env:
-      BITS: ${{ matrix.bits }}
+        vsYear: [2022, 2026]
+        include:
+          - vsYear: 2022
+            runner: windows-2022
+            toolset: v143
+            installFlag: ""
+          - vsYear: 2026
+            runner: windows-2025-vs2026
+            toolset: v145
+            installFlag: "--vs2026"
     steps:
       - name: Clone repository
         uses: actions/checkout@v6
@@ -149,56 +158,20 @@ jobs:
       #     fi
       - name: Install dependencies
         shell: msys2 {0}
-        run: ./scripts/ci/vs/install.sh
+        run: ./scripts/ci/vs/install.sh ${{ matrix.installFlag }} -a ${{ matrix.platform }}
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v3
 
       - name: Build DEBUG and RELEASE emptyExample
         working-directory: ${{env.GITHUB_WORKSPACE}}
         run: |
-          msbuild examples/templates/emptyExample/emptyExample.vcxproj /p:configuration=debug /p:platform=${{ matrix.platform }} /p:PlatformToolset=v143
-          msbuild examples/templates/emptyExample/emptyExample.vcxproj /p:configuration=release /p:platform=${{ matrix.platform }} /p:PlatformToolset=v143
+          msbuild examples/templates/emptyExample/emptyExample.vcxproj /p:Configuration=Debug /p:Platform=${{ matrix.platform }} /p:PlatformToolset=${{ matrix.toolset }}
+          msbuild examples/templates/emptyExample/emptyExample.vcxproj /p:Configuration=Release /p:Platform=${{ matrix.platform }} /p:PlatformToolset=${{ matrix.toolset }}
       - name: Build DEBUG and RELEASE allAddonsExample
         working-directory: ${{env.GITHUB_WORKSPACE}}
         run: |
-          msbuild examples/templates/allAddonsExample/allAddonsExample.vcxproj /p:configuration=debug /p:platform=${{ matrix.platform }} /p:PlatformToolset=v143
-          msbuild examples/templates/allAddonsExample/allAddonsExample.vcxproj /p:configuration=release /p:platform=${{ matrix.platform }} /p:PlatformToolset=v143
-
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  build-vs2026:
-    runs-on: windows-2025-vs2026
-    strategy:
-      matrix:
-        platform: [x64, ARM64, ARM64EC]
-    steps:
-      - name: Clone repository
-        uses: actions/checkout@v6
-
-      - uses: msys2/setup-msys2@v2
-        with:
-          update: true
-          install: >-
-            git
-            unzip
-
-      - name: Install dependencies (VS2026 libs — only for this arch)
-        shell: msys2 {0}
-        run: ./scripts/ci/vs/install.sh --vs2026 -a ${{ matrix.platform }}
-
-      - name: Setup MSBuild
-        uses: microsoft/setup-msbuild@v3
-
-      - name: Build DEBUG and RELEASE emptyExample
-        working-directory: ${{env.GITHUB_WORKSPACE}}
-        run: |
-          msbuild examples/templates/emptyExample/emptyExample.vcxproj /p:Configuration=Debug /p:Platform=${{ matrix.platform }} /p:PlatformToolset=v145
-          msbuild examples/templates/emptyExample/emptyExample.vcxproj /p:Configuration=Release /p:Platform=${{ matrix.platform }} /p:PlatformToolset=v145
-
-      - name: Build DEBUG and RELEASE allAddonsExample
-        working-directory: ${{env.GITHUB_WORKSPACE}}
-        run: |
-          msbuild examples/templates/allAddonsExample/allAddonsExample.vcxproj /p:Configuration=Debug /p:Platform=${{ matrix.platform }} /p:PlatformToolset=v145
-          msbuild examples/templates/allAddonsExample/allAddonsExample.vcxproj /p:Configuration=Release /p:Platform=${{ matrix.platform }} /p:PlatformToolset=v145
+          msbuild examples/templates/allAddonsExample/allAddonsExample.vcxproj /p:Configuration=Debug /p:Platform=${{ matrix.platform }} /p:PlatformToolset=${{ matrix.toolset }}
+          msbuild examples/templates/allAddonsExample/allAddonsExample.vcxproj /p:Configuration=Release /p:Platform=${{ matrix.platform }} /p:PlatformToolset=${{ matrix.toolset }}
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   rpi-build:
     runs-on: ubuntu-24.04
