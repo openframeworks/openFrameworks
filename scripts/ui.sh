@@ -106,6 +106,7 @@ confirmYes(){
 		return $?
 	fi
 	read -r -p "$(printf '%s?%s %s [Y/n]: ' "$C_WARN" "$C_RESET" "$prompt")" confirm
+	confirm="${confirm%$'\r'}"
 	[[ -z "$confirm" || "$confirm" =~ ^[Yy]$ ]]
 }
 
@@ -383,8 +384,15 @@ menuPick(){
 	printf '  %s────────────────────────────────────────%s\n' "$C_MUTED" "$C_RESET"
 	printf '  %s›%s choose [1-%d, q]: ' "$C_ACCENT" "$C_RESET" "${#labels[@]}"
 	read -r choice
-	[[ -z "$choice" || "$choice" =~ ^[Qq]$ ]] && return 1
-	if [[ ! "$choice" =~ ^[0-9]+$ ]] || (( choice < 1 || choice > ${#labels[@]} )); then
+	[[ -z "$choice" || "$choice" =~ ^[[:space:]]*[Qq] ]] && return 1
+	# tolerate stray CR / whitespace / trailing junk (e.g. Windows consoles): use the first number typed
+	if [[ "$choice" =~ [0-9]+ ]]; then
+		choice="${BASH_REMATCH[0]}"
+	else
+		echoError "invalid choice: ${choice}"
+		return 1
+	fi
+	if (( choice < 1 || choice > ${#labels[@]} )); then
 		echoError "invalid choice: ${choice}"
 		return 1
 	fi
@@ -447,14 +455,15 @@ menuPickMulti(){
 	printf '  %s────────────────────────────────────────%s\n' "$C_MUTED" "$C_RESET"
 	printf '  %s›%s multi-select [e.g. 1 3 5, a=all, q=cancel]: ' "$C_ACCENT" "$C_RESET"
 	read -r choice
-	[[ -z "$choice" || "$choice" =~ ^[Qq]$ ]] && return 1
-	if [[ "$choice" =~ ^[Aa]$ ]]; then
+	[[ -z "$choice" || "$choice" =~ ^[[:space:]]*[Qq] ]] && return 1
+	if [[ "$choice" =~ ^[[:space:]]*[Aa] ]]; then
 		UI_MENU_RESULT="${ids[*]}"
 		return 0
 	fi
+	# tolerate stray CR / commas / trailing junk per token: use the first number in each
 	for n in $choice; do
-		n=${n//,/}
-		[[ "$n" =~ ^[0-9]+$ ]] || continue
+		[[ "$n" =~ [0-9]+ ]] || continue
+		n="${BASH_REMATCH[0]}"
 		if (( n >= 1 && n <= ${#ids[@]} )); then
 			selected+=("${ids[$((n - 1))]}")
 		fi
