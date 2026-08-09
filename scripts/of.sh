@@ -525,45 +525,11 @@ readLibVersionMeta(){
 	return 1
 }
 
-# Inline list: libpng (1.6.58), glfw (3.4), assimp (5.4.3 · ofxAssimpModelLoader), …
-# Sets FORMATTED_LIB_LINE and FORMATTED_LIB_COUNT
-formatLibInlineList(){
-	local -a items=("$@")
-	local path name note entry line="" n=0
-
-	FORMATTED_LIB_LINE=""
-	FORMATTED_LIB_COUNT=0
-
-	for path in "${items[@]}"; do
-		note=""
-		if [[ "$path" == *"|"* ]]; then
-			note="${path#*|}"
-			path="${path%%|*}"
-		fi
-		[[ -d "$path" ]] || continue
-		name=$(basename "$path")
-		if readLibVersionMeta "$path"; then
-			if [[ -n "$note" ]]; then
-				entry="${name} (${LIB_META_VER} · ${note})"
-			else
-				entry="${name} (${LIB_META_VER})"
-			fi
-		else
-			if [[ -n "$note" ]]; then
-				entry="${name} (? · ${note})"
-			else
-				entry="${name} (?)"
-			fi
-		fi
-		[[ -n "$line" ]] && line+=", "
-		line+="$entry"
-		n=$((n + 1))
-	done
-
-	FORMATTED_LIB_LINE="$line"
-	FORMATTED_LIB_COUNT=$n
-}
-
+# Streams "name (version · note)" one line at a time as each library is read,
+# instead of resolving the whole section silently before printing anything.
+# Version lookup does several `find` passes per lib (pkl/pkgconfig/cmake/header
+# fallbacks) which can be slow on Windows/MSYS2 filesystems — this keeps the
+# status command visibly moving instead of appearing to hang.
 printLibInlineSection(){
 	local title="$1"
 	shift
@@ -573,12 +539,38 @@ printLibInlineSection(){
 		printf '  %s—%s\n' "$C_MUTED" "$C_RESET"
 		return 0
 	fi
-	formatLibInlineList "$@"
-	if [[ "$FORMATTED_LIB_COUNT" -eq 0 ]]; then
-		printf '  %s—%s\n' "$C_MUTED" "$C_RESET"
-		return 0
-	fi
-	printf '  %s\n' "$FORMATTED_LIB_LINE"
+
+	local -a items=("$@")
+	local path name note entry n=0
+
+	for path in "${items[@]}"; do
+		note=""
+		if [[ "$path" == *"|"* ]]; then
+			note="${path#*|}"
+			path="${path%%|*}"
+		fi
+		[[ -d "$path" ]] || continue
+		name=$(basename "$path")
+
+		if isInteractive; then
+			printf '  %s·%s %s%s%s' "$C_MUTED" "$C_RESET" "$C_FG" "$name" "$C_RESET"
+		fi
+
+		if readLibVersionMeta "$path"; then
+			entry="${name} (${LIB_META_VER}${note:+ · ${note}})"
+		else
+			entry="${name} (?${note:+ · ${note}})"
+		fi
+
+		if isInteractive; then
+			printf '\r\033[K  %s·%s %s\n' "$C_MUTED" "$C_RESET" "$entry"
+		else
+			printf '  · %s\n' "$entry"
+		fi
+		n=$((n + 1))
+	done
+
+	[[ "$n" -eq 0 ]] && printf '  %s—%s\n' "$C_MUTED" "$C_RESET"
 }
 
 # bash-3.2 safe: track seen keys as newline-separated string
@@ -1546,9 +1538,11 @@ cmdSetup(){
 			elif menuCanRun && confirmYes "Install media codecs too?"; then doCodecs=1
 			fi
 		fi
+	elif [[ "$OF_PLATFORM" == "osx" ]]; then
+		depsScript="${OF_CORE_SCRIPT_DIR}/osx/install_dependencies.sh"
 	fi
 
-	if [[ "$needLibs" -eq 0 && "$needPG" -eq 0 && "$OF_PLATFORM" != "linux" ]]; then
+	if [[ "$needLibs" -eq 0 && "$needPG" -eq 0 && "$OF_PLATFORM" != "linux" && "$OF_PLATFORM" != "osx" ]]; then
 		echoSuccess "already set up — libs + PG look current"
 		echoNote "use Update to redownload from a chosen source"
 		printf '\n'
@@ -1558,6 +1552,7 @@ cmdSetup(){
 	taskNames+=("Detect platform")
 	[[ "$OF_PLATFORM" == "linux" ]] && taskNames+=("Install dependencies (${OF_LINUX_DISTRO})")
 	[[ "$doCodecs" -eq 1 ]] && taskNames+=("Install codecs (${OF_LINUX_DISTRO})")
+	[[ "$OF_PLATFORM" == "osx" ]] && taskNames+=("Xcode CLT / Homebrew (cmake, gum)")
 	if [[ "$needLibs" -eq 1 ]]; then
 		taskNames+=("Download libraries (apothecary @ latest)")
 	else
@@ -1590,6 +1585,16 @@ cmdSetup(){
 			fi
 			taskN=$((taskN + 1))
 		fi
+	elif [[ "$OF_PLATFORM" == "osx" ]]; then
+		if [[ -f "$depsScript" ]]; then
+			ensureScript "$depsScript" 2>/dev/null
+			# best-effort: CLT/Homebrew are checked, not required to proceed — libs/PG
+			# come from openFrameworks' own apothecary download either way.
+			taskLive "$taskN" -- "$depsScript" -y
+		else
+			taskTickLine "$taskN" skip
+		fi
+		taskN=$((taskN + 1))
 	fi
 
 	# libraries — only if missing/outdated
@@ -1623,51 +1628,192 @@ cmdSetup(){
 # Cleanup — projects / caches / libraries
 # ---------------------------------------------------------------------------
 
-# Clean build products under a project tree (obj, bin artifacts, Xcode/VS/cmake)
+# KB-on-disk for existing paths (0 for none) — one batched `du`, not per-path
+pathsSizeKB(){
+	local -a existing=()
+	local p
+	for p in "$@"; do
+		[[ -e "$p" ]] && existing+=("$p")
+	done
+	[[ ${#existing[@]} -eq 0 ]] && { printf '0'; return 0; }
+	du -ck "${existing[@]}" 2>/dev/null | tail -1 | awk '{print $1}'
+}
+
+formatKB(){
+	awk -v kb="${1:-0}" 'BEGIN{printf "%.1f MB", kb/1024}'
+}
+
+# True if $1 (or anything under it) is tracked by git — used to keep the
+# nuclear/platform lib-cleanup commands from deleting committed, vendored
+# addon source (e.g. addons/ofxKinect/libs/libfreenect, ofxEmscripten's
+# html5audio/html5video/cors) that happens to live under a libs/ or
+# lib/<platform>/ path alongside real downloaded prebuilt binaries.
+# Best-effort: if this isn't a git checkout (e.g. a release zip) or git
+# isn't available, returns 1 (not tracked) so behavior is unchanged there.
+pathIsGitTracked(){
+	local p="$1"
+	command -v git >/dev/null 2>&1 || return 1
+	git -C "$OF_DIR" rev-parse --is-inside-work-tree >/dev/null 2>&1 || return 1
+	[[ -n "$(git -C "$OF_DIR" ls-files -- "$p" 2>/dev/null | head -1)" ]]
+}
+
+# Best-effort "send to trash/recycle bin" for a batch of paths instead of a
+# permanent rm -rf — one external call for the whole batch (trashing dozens
+# of build artifacts one at a time would reintroduce the per-item slowness
+# cleanup was just fixed for). Falls back to permanent delete if no trash
+# mechanism is available. Sets TRASH_METHOD to "trash" or "rm" so callers can
+# report "moved to Trash" vs "freed" accurately — Trash/Recycle Bin doesn't
+# actually reclaim disk space until it's emptied.
+trashPaths(){
+	local -a paths=()
+	local p
+	for p in "$@"; do
+		[[ -e "$p" ]] && paths+=("$p")
+	done
+	TRASH_METHOD="rm"
+	[[ ${#paths[@]} -eq 0 ]] && return 0
+
+	case "$OF_PLATFORM" in
+		vs|msys2)
+			if command -v powershell.exe >/dev/null 2>&1; then
+				local wp psList=""
+				for p in "${paths[@]}"; do
+					wp=$(command -v cygpath >/dev/null 2>&1 && cygpath -w "$p" 2>/dev/null || printf '%s' "$p")
+					wp="${wp//\'/\'\'}"
+					psList+="'${wp}',"
+				done
+				psList="${psList%,}"
+				local psCmd="Add-Type -AssemblyName Microsoft.VisualBasic; foreach (\$p in @(${psList})) { if (Test-Path -LiteralPath \$p -PathType Container) { [Microsoft.VisualBasic.FileIO.FileSystem]::DeleteDirectory(\$p, 'OnlyErrorDialogs', 'SendToRecycleBin') } elseif (Test-Path -LiteralPath \$p) { [Microsoft.VisualBasic.FileIO.FileSystem]::DeleteFile(\$p, 'OnlyErrorDialogs', 'SendToRecycleBin') } }"
+				powershell.exe -NoProfile -NonInteractive -Command "$psCmd" >/dev/null 2>&1 && TRASH_METHOD="trash"
+			fi
+			;;
+		osx)
+			if command -v trash >/dev/null 2>&1 && trash -F "${paths[@]}" >/dev/null 2>&1; then
+				TRASH_METHOD="trash"
+			else
+				local asList="" esc
+				for p in "${paths[@]}"; do
+					esc="${p//\"/\\\"}"
+					asList+="POSIX file \"${esc}\", "
+				done
+				asList="${asList%, }"
+				osascript -e "tell application \"Finder\" to delete {${asList}}" >/dev/null 2>&1 && TRASH_METHOD="trash"
+			fi
+			;;
+		linux)
+			if command -v gio >/dev/null 2>&1 && gio trash "${paths[@]}" >/dev/null 2>&1; then
+				TRASH_METHOD="trash"
+			elif command -v trash-put >/dev/null 2>&1 && trash-put "${paths[@]}" >/dev/null 2>&1; then
+				TRASH_METHOD="trash"
+			elif command -v trash >/dev/null 2>&1 && trash "${paths[@]}" >/dev/null 2>&1; then
+				TRASH_METHOD="trash"
+			fi
+			;;
+	esac
+
+	[[ "$TRASH_METHOD" == "trash" ]] || rm -rf "${paths[@]}" 2>/dev/null || true
+}
+
+# Fast, stat-only check — no `find`, no `make clean` invocation. Lets callers
+# skip the expensive deep clean entirely for projects with nothing built
+# (this is what made "clean all examples" slow, especially over MSYS2/Windows
+# filesystems where every extra process/find is costly).
+projectHasBuildArtifacts(){
+	local project="$1"
+	[[ -d "${project}/obj" ]] && return 0
+	[[ -d "${project}/build" ]] && return 0
+	[[ -d "${project}/.vs" ]] && return 0
+	[[ -d "${project}/cmake-build-debug" ]] && return 0
+	[[ -d "${project}/cmake-build-release" ]] && return 0
+	[[ -d "${project}/DerivedData" ]] && return 0
+	compgen -G "${project}"/*.xcodeproj/xcuserdata >/dev/null 2>&1 && return 0
+	compgen -G "${project}"/*.xcodeproj/project.xcworkspace >/dev/null 2>&1 && return 0
+	return 1
+}
+
+# Cleans one project dir. Sets CLEAN_TREE_DID_CLEAN (0/1), CLEAN_TREE_FREED_KB,
+# and CLEAN_TREE_METHOD ("trash"|"rm"). Never touches <project>/bin — that's
+# where oF projects keep bin/data (assets) alongside the built binary, so it's
+# left alone entirely. `make clean` (the project's own Makefile) may still
+# remove its own built binary from bin/ — that's the Makefile's business, not
+# ours; we don't add any rm/find of our own under bin/.
 cleanProjectTree(){
 	local project="$1"
-	local deep="${2:-0}"
+	CLEAN_TREE_DID_CLEAN=0
+	CLEAN_TREE_FREED_KB=0
+	CLEAN_TREE_METHOD="rm"
 	[[ -d "$project" ]] || return 1
-	# Prefer makefile clean when available
+
+	# nothing built here — skip make/find entirely
+	projectHasBuildArtifacts "$project" || return 0
+
+	local -a targets=(
+		"${project}/obj"
+		"${project}/build"
+		"${project}/.vs"
+		"${project}/cmake-build-debug"
+		"${project}/cmake-build-release"
+		"${project}/DerivedData"
+	)
+
+	# exclude bin/ and anything already covered by $targets, so the deep finds
+	# below don't re-match (and double-count/double-trash) files inside them
+	local -a prune=(-not -path "${project}/bin/*")
+	local t
+	for t in "${targets[@]}"; do
+		prune+=(-not -path "${t}/*")
+	done
+
+	local -a deepTargets=()
+	local g
+	while IFS= read -r -d '' g; do
+		deepTargets+=("$g")
+	done < <(find "$project" -maxdepth 3 "${prune[@]}" \( \
+		-name 'xcuserdata' -o -name 'project.xcworkspace' -o \
+		-name '*.o' -o -name '*.d' -o -name '*.depend' -o -name '*.layout' \
+		\) -print0 2>/dev/null)
+	while IFS= read -r -d '' g; do
+		deepTargets+=("$g")
+	done < <(find "$project" -maxdepth 3 "${prune[@]}" \( \
+		-name 'x64' -o -name 'ARM64' -o -name 'Win32' -o \
+		-name 'Debug' -o -name 'Release' \
+		\) -type d -path '*/obj/*' -print0 2>/dev/null)
+
+	local freedKB
+	freedKB=$(pathsSizeKB "${targets[@]}" "${deepTargets[@]}")
+
 	if [[ -f "${project}/Makefile" ]] || [[ -f "${project}/makefile" ]]; then
 		( cd "$project" && make clean >/dev/null 2>&1 ) || true
 	fi
-	# Common OF build leftovers
-	rm -rf "${project}/obj" \
-		"${project}/bin/"*.app \
-		"${project}/bin/"*_debug \
-		"${project}/bin/"*_debug.exe \
-		"${project}/build" \
-		"${project}/cmake-build-debug" \
-		"${project}/cmake-build-release" \
-		"${project}/.vs" \
-		"${project}/DerivedData" 2>/dev/null || true
-	# Xcode user data / indexes (not the .xcodeproj itself)
-	find "$project" -maxdepth 3 \( \
-		-name 'xcuserdata' -o -name 'project.xcworkspace' -o \
-		-name '*.o' -o -name '*.d' -o -name '*.depend' -o -name '*.layout' \
-		\) -exec rm -rf {} + 2>/dev/null || true
-	# VS intermediate
-	find "$project" -maxdepth 3 \( \
-		-name 'x64' -o -name 'ARM64' -o -name 'Win32' -o \
-		-name 'Debug' -o -name 'Release' \
-		\) -type d \( -path '*/obj/*' -o -path '*/bin/*' -o -name 'obj' \) \
-		-exec rm -rf {} + 2>/dev/null || true
-	find "$project" -maxdepth 2 \( -name '*.exe' -o -name '*.pdb' -o -name '*.ilk' -o -name '*.obj' \) \
-		-path '*/bin/*' -delete 2>/dev/null || true
-	if [[ "$deep" == "1" ]]; then
-		# also strip empty bin/ data keepers stay if only data/
-		find "${project}/bin" -mindepth 1 -maxdepth 1 ! -name 'data' -exec rm -rf {} + 2>/dev/null || true
-	fi
+
+	trashPaths "${targets[@]}" "${deepTargets[@]}"
+	CLEAN_TREE_METHOD="$TRASH_METHOD"
+
+	CLEAN_TREE_DID_CLEAN=1
+	CLEAN_TREE_FREED_KB=$freedKB
 	return 0
+}
+
+# Clean one project dir and print its ✓/– result line
+cleanProjectsScopeOne(){
+	local proj="$1" rel="$2"
+	cleanProjectTree "$proj"
+	if [[ "$CLEAN_TREE_DID_CLEAN" == "1" ]]; then
+		local verb="freed"
+		[[ "$CLEAN_TREE_METHOD" == "trash" ]] && verb="moved to Trash"
+		printf '  %s✓%s %s%s%s  %s(%s %s)%s\n' \
+			"$C_OK" "$C_RESET" "$C_FG" "$rel" "$C_RESET" "$C_MUTED" "$(formatKB "$CLEAN_TREE_FREED_KB")" "$verb" "$C_RESET"
+	else
+		printf '  %s–%s %s%s%s  %s(nothing to clean)%s\n' \
+			"$C_MUTED" "$C_RESET" "$C_FG" "$rel" "$C_RESET" "$C_MUTED" "$C_RESET"
+	fi
 }
 
 # Walk apps/ or examples/ (or a custom root) and clean each project-like folder
 cleanProjectsScope(){
 	local scope="$1"   # apps|examples|all|path
 	local path="${2:-}"
-	local deep="${3:-0}"
-	local root count=0
+	local root cleaned=0 skipped=0 totalFreedKB=0
 	local -a roots=()
 
 	case "$scope" in
@@ -1683,7 +1829,7 @@ cleanProjectsScope(){
 
 	printBanner "clean"
 	echoInfo "cleanup projects · ${scope}${path:+ · $path}"
-	echoKV "deep" "$([[ "$deep" == "1" ]] && echo yes || echo no)"
+	echoNote "bin/ (incl. bin/data) is never touched — only obj/build/.vs/etc."
 	printf '\n'
 
 	local cat ex proj rel
@@ -1696,9 +1842,13 @@ cleanProjectsScope(){
 			if [[ -d "${cat}src" || -f "${cat}Makefile" ]]; then
 				proj="${cat%/}"
 				rel="${proj#"$OF_DIR"/}"
-				echoNote "clean ${rel}"
-				cleanProjectTree "$proj" "$deep"
-				count=$((count + 1))
+				cleanProjectsScopeOne "$proj" "$rel"
+				if [[ "$CLEAN_TREE_DID_CLEAN" == "1" ]]; then
+					cleaned=$((cleaned + 1))
+					totalFreedKB=$((totalFreedKB + CLEAN_TREE_FREED_KB))
+				else
+					skipped=$((skipped + 1))
+				fi
 				continue
 			fi
 			for ex in "$cat"*/; do
@@ -1708,20 +1858,25 @@ cleanProjectsScope(){
 					|| compgen -G "${ex}*.vcxproj" >/dev/null 2>&1; then
 					proj="${ex%/}"
 					rel="${proj#"$OF_DIR"/}"
-					echoNote "clean ${rel}"
-					cleanProjectTree "$proj" "$deep"
-					count=$((count + 1))
+					cleanProjectsScopeOne "$proj" "$rel"
+					if [[ "$CLEAN_TREE_DID_CLEAN" == "1" ]]; then
+						cleaned=$((cleaned + 1))
+						totalFreedKB=$((totalFreedKB + CLEAN_TREE_FREED_KB))
+					else
+						skipped=$((skipped + 1))
+					fi
 				fi
 			done
 		done
 	done
-	echoSuccess "cleaned ${count} project folder(s)"
+	printf '\n'
+	echoSuccess "cleaned ${cleaned} project(s) · skipped ${skipped} (nothing to clean) · freed $(formatKB "$totalFreedKB")"
 }
 
 cleanDownloadCaches(){
 	local mode="${1:-packages}" # packages|all
 	local dl="${OF_DIR}/libs/download"
-	local freed=0
+	local freedKB=0
 	printBanner "clean"
 	echoInfo "clean caches · ${mode}"
 	printf '\n'
@@ -1732,30 +1887,42 @@ cleanDownloadCaches(){
 	case "$mode" in
 		packages)
 			# package archives + sidecars; keep folder
+			local -a files=()
 			local f n=0
 			while IFS= read -r f; do
-				[[ -f "$f" ]] || continue
-				rm -f "$f"
-				n=$((n + 1))
+				[[ -f "$f" ]] && files+=("$f")
 			done < <(find "$dl" -type f \( \
 				-name '*.tar.bz2' -o -name '*.tar.gz' -o -name '*.zip' -o \
 				-name '*.sha256' -o -name 'SHA256SUMS' -o -name '.last-verify' \
 				\) 2>/dev/null)
-			echoSuccess "removed ${n} cached package file(s) under libs/download"
+			freedKB=$(pathsSizeKB "${files[@]}")
+			for f in "${files[@]}"; do
+				rm -f "$f"
+				n=$((n + 1))
+			done
+			echoSuccess "removed ${n} cached package file(s) under libs/download · freed $(formatKB "$freedKB")"
 			;;
 		all)
 			echoWarning "removing entire libs/download/"
+			freedKB=$(pathsSizeKB "$dl")
 			rm -rf "$dl"
 			mkdir -p "$dl"
-			echoSuccess "libs/download cleared"
+			echoSuccess "libs/download cleared · freed $(formatKB "$freedKB")"
 			;;
 		*) echoError "mode: packages|all"; return 1 ;;
 	esac
 	# optional compile junk under openFrameworksCompiled
 	if [[ "$mode" == "all" ]]; then
-		find "${OF_DIR}/libs/openFrameworksCompiled" -type d \( -name 'obj' -o -name 'intermediates' \) \
-			-exec rm -rf {} + 2>/dev/null || true
-		echoNote "also cleared openFrameworksCompiled obj/intermediates if present"
+		local -a junk=()
+		while IFS= read -r f; do
+			[[ -d "$f" ]] && junk+=("$f")
+		done < <(find "${OF_DIR}/libs/openFrameworksCompiled" -type d \( -name 'obj' -o -name 'intermediates' \) 2>/dev/null)
+		if [[ ${#junk[@]} -gt 0 ]]; then
+			local junkKB
+			junkKB=$(pathsSizeKB "${junk[@]}")
+			rm -rf "${junk[@]}" 2>/dev/null || true
+			echoNote "also cleared openFrameworksCompiled obj/intermediates · freed $(formatKB "$junkKB")"
+		fi
 	fi
 }
 
@@ -1763,7 +1930,7 @@ cleanDownloadCaches(){
 cleanLibraries(){
 	local mode="$1" # other-platforms|platform|all-prebuilt|list
 	local plat="${2:-}"
-	local libDir d name p count=0
+	local libDir d name p count=0 skipped=0 totalFreedKB=0 dKB
 
 	printBanner "clean"
 	echoInfo "libraries · ${mode}${plat:+ · $plat}"
@@ -1790,9 +1957,6 @@ cleanLibraries(){
 				*) keep="$OF_PLATFORM" ;;
 			esac
 			echoKV "keep matching" "$keep"
-			confirmYes "Remove lib/* folders that are NOT for this host (${OF_PLATFORM})?" || {
-				echoInfo "cancelled"; return 0
-			}
 			while IFS= read -r d; do
 				name=$(basename "$d")
 				if echo "$name" | grep -Eq "^(${keep})$"; then
@@ -1802,61 +1966,89 @@ cleanLibraries(){
 				case "$name" in
 					pkgconfig|cmake|cmake-build*|include) continue ;;
 				esac
-				echoNote "rm $d"
+				if pathIsGitTracked "$d"; then
+					skipped=$((skipped + 1))
+					printf '  %s–%s %s  %s(git-tracked source — skipped)%s\n' "$C_MUTED" "$C_RESET" "${d#"$OF_DIR"/}" "$C_MUTED" "$C_RESET"
+					continue
+				fi
+				dKB=$(pathsSizeKB "$d")
 				rm -rf "$d"
+				totalFreedKB=$((totalFreedKB + dKB))
 				count=$((count + 1))
+				printf '  %s✓%s %s  %s(%s freed)%s\n' "$C_OK" "$C_RESET" "${d#"$OF_DIR"/}" "$C_MUTED" "$(formatKB "$dKB")" "$C_RESET"
 			done < <(find "${OF_DIR}/libs" "${OF_DIR}/addons" -type d -path '*/lib/*' -mindepth 3 -maxdepth 4 2>/dev/null)
-			echoSuccess "removed ${count} non-host platform lib folder(s)"
+			printf '\n'
+			echoSuccess "removed ${count} non-host platform lib folder(s) · skipped ${skipped} (git-tracked) · freed $(formatKB "$totalFreedKB")"
 			;;
 		platform)
 			[[ -n "$plat" ]] || { echoError "platform name required"; return 1; }
-			confirmYes "Remove all libs/*/lib/${plat} and addons …/lib/${plat}?" || {
-				echoInfo "cancelled"; return 0
-			}
 			while IFS= read -r d; do
-				echoNote "rm $d"
+				if pathIsGitTracked "$d"; then
+					skipped=$((skipped + 1))
+					printf '  %s–%s %s  %s(git-tracked source — skipped)%s\n' "$C_MUTED" "$C_RESET" "${d#"$OF_DIR"/}" "$C_MUTED" "$C_RESET"
+					continue
+				fi
+				dKB=$(pathsSizeKB "$d")
 				rm -rf "$d"
+				totalFreedKB=$((totalFreedKB + dKB))
 				count=$((count + 1))
+				printf '  %s✓%s %s  %s(%s freed)%s\n' "$C_OK" "$C_RESET" "${d#"$OF_DIR"/}" "$C_MUTED" "$(formatKB "$dKB")" "$C_RESET"
 			done < <(find "${OF_DIR}/libs" "${OF_DIR}/addons" -type d -path "*/lib/${plat}" 2>/dev/null)
-			echoSuccess "removed ${count} path(s) for platform ${plat}"
+			printf '\n'
+			echoSuccess "removed ${count} path(s) for platform ${plat} · skipped ${skipped} (git-tracked) · freed $(formatKB "$totalFreedKB")"
 			;;
 		all-prebuilt)
 			echoWarning "This deletes downloaded prebuilts under libs/* and addon libs binaries."
 			echoWarning "Keeps: libs/openFrameworks, libs/openFrameworksCompiled (source/project)."
-			confirmYes "Really remove all other libs/* trees?" || { echoInfo "cancelled"; return 0; }
+			echoWarning "Also keeps anything git-tracked (vendored addon source, e.g. ofxKinect/libs/libfreenect)."
 			for d in "${OF_DIR}/libs"/*; do
 				[[ -d "$d" ]] || continue
 				name=$(basename "$d")
 				case "$name" in
 					openFrameworks|openFrameworksCompiled|download|scripts) continue ;;
 				esac
-				echoNote "rm libs/${name}"
+				if pathIsGitTracked "$d"; then
+					skipped=$((skipped + 1))
+					printf '  %s–%s libs/%s  %s(git-tracked source — skipped)%s\n' "$C_MUTED" "$C_RESET" "$name" "$C_MUTED" "$C_RESET"
+					continue
+				fi
+				dKB=$(pathsSizeKB "$d")
 				rm -rf "$d"
+				totalFreedKB=$((totalFreedKB + dKB))
 				count=$((count + 1))
+				printf '  %s✓%s libs/%s  %s(%s freed)%s\n' "$C_OK" "$C_RESET" "$name" "$C_MUTED" "$(formatKB "$dKB")" "$C_RESET"
 			done
 			# addon binary folders only
 			for d in "${OF_DIR}/addons"/*/libs; do
 				[[ -d "$d" ]] || continue
-				echoNote "rm ${d#"$OF_DIR"/}"
+				if pathIsGitTracked "$d"; then
+					skipped=$((skipped + 1))
+					printf '  %s–%s %s  %s(git-tracked source — skipped)%s\n' "$C_MUTED" "$C_RESET" "${d#"$OF_DIR"/}" "$C_MUTED" "$C_RESET"
+					continue
+				fi
+				dKB=$(pathsSizeKB "$d")
 				rm -rf "$d"
+				totalFreedKB=$((totalFreedKB + dKB))
 				count=$((count + 1))
+				printf '  %s✓%s %s  %s(%s freed)%s\n' "$C_OK" "$C_RESET" "${d#"$OF_DIR"/}" "$C_MUTED" "$(formatKB "$dKB")" "$C_RESET"
 			done
 			rm -f "${OF_DIR}/libs/.of-cli-state" 2>/dev/null || true
-			echoSuccess "removed ${count} prebuilt tree(s) — run Update libs to restore"
+			printf '\n'
+			echoSuccess "removed ${count} prebuilt tree(s) · skipped ${skipped} (git-tracked) · freed $(formatKB "$totalFreedKB") — run Update libs to restore"
 			;;
 		*) echoError "mode: list|other-platforms|platform|all-prebuilt"; return 1 ;;
 	esac
 }
 
 menuCleanup(){
-	local choice scope deep=0 plat
+	local choice scope plat
 	printBanner "clean"
 	echoInfo "cleanup projects · caches · libraries"
 	printf '\n'
 
 	while true; do
 		menuPick "Cleanup" \
-			"Projects — obj/bin/build artifacts|projects" \
+			"Projects — obj/build/.vs artifacts (bin/ untouched)|projects" \
 			"Caches — libs/download packages|caches" \
 			"Libraries — remove / minimise prebuilts|libs" \
 			"Back|back" \
@@ -1872,18 +2064,11 @@ menuCleanup(){
 					"Back|back" || continue
 				scope="$UI_MENU_RESULT"
 				[[ "$scope" == "back" ]] && continue
-				if menuCanRun && confirmNo "Also clear bin/ executables (keep bin/data)?"; then
-					deep=1
-				else
-					deep=0
-				fi
 				if [[ "$scope" == "path" ]]; then
 					menuInput "Project or folder path" || continue
-					confirmYes "Clean projects under ${UI_INPUT_RESULT}?" || continue
-					cleanProjectsScope path "$UI_INPUT_RESULT" "$deep"
+					cleanProjectsScope path "$UI_INPUT_RESULT"
 				else
-					confirmYes "Clean ${scope} project build artifacts?" || continue
-					cleanProjectsScope "$scope" "" "$deep"
+					cleanProjectsScope "$scope"
 				fi
 				menuPause
 				;;
@@ -1893,16 +2078,15 @@ menuCleanup(){
 					"Wipe entire libs/download + compiled intermediates|all" \
 					"Back|back" || continue
 				[[ "$UI_MENU_RESULT" == "back" ]] && continue
-				confirmYes "Delete download cache (${UI_MENU_RESULT})?" || continue
 				cleanDownloadCaches "$UI_MENU_RESULT"
 				menuPause
 				;;
 			libs)
 				menuPick "Library cleanup" \
-					"List installed lib/<platform> folders|list" \
+					"Remove ALL prebuilt libs (nuclear)|all" \
 					"Remove other platforms (keep this host) — Recommended|other" \
 					"Remove one platform…|one" \
-					"Remove ALL prebuilt libs (nuclear)|all" \
+					"List installed lib/<platform> folders|list" \
 					"Back|back" || continue
 				case "$UI_MENU_RESULT" in
 					list) cleanLibraries list; menuPause ;;
@@ -1929,13 +2113,13 @@ menuCleanup(){
 }
 
 cmdMenu(){
-	local choice setupLabel="Setup"
+	local choice setupLabel="Setup  — libs + Project Generator (apothecary @ latest)"
 	if ! menuCanRun; then
 		echoWarning "no TTY — showing status"
 		cmdStatus
 		return 0
 	fi
-	[[ "$OF_PLATFORM" == "linux" ]] && setupLabel="Setup (distro deps + libs + PG)"
+	[[ "$OF_PLATFORM" == "linux" ]] && setupLabel="Setup  — distro deps + libs + Project Generator"
 
 	while true; do
 		printf '\n'
@@ -2030,7 +2214,7 @@ cmdBuild(){
 			[[ -n "$path" ]] || { echoError "usage: of build project <path> [system] [Debug|Release]"; return 1; }
 			shift || true
 			# optional system then config, or config alone
-			if [[ "${1:-}" =~ ^(make|xcode|xcodebuild|emscripten|em|wasm|cmake|generate|pg|host)$ ]]; then
+			if [[ "${1:-}" =~ ^(make|msbuild|xcode|xcodebuild|emscripten|em|wasm|cmake|generate|pg|host)$ ]]; then
 				system="$1"; shift || true
 			fi
 			[[ -n "${1:-}" ]] && config="$1"
@@ -2040,7 +2224,7 @@ cmdBuild(){
 			local path="${1:-}" system="make" config="Release"
 			[[ -n "$path" ]] || { echoError "usage: of build example <path> [system] [cfg]"; return 1; }
 			shift || true
-			if [[ "${1:-}" =~ ^(make|xcode|xcodebuild|emscripten|em|wasm|cmake|generate|pg|host)$ ]]; then
+			if [[ "${1:-}" =~ ^(make|msbuild|xcode|xcodebuild|emscripten|em|wasm|cmake|generate|pg|host)$ ]]; then
 				system="$1"; shift || true
 			fi
 			[[ -n "${1:-}" ]] && config="$1"
@@ -2122,8 +2306,8 @@ runCommand(){
 				""|menu) menuCleanup ;;
 				projects|project)
 					case "${subcmd2:-all}" in
-						apps|examples|all) cleanProjectsScope "${subcmd2:-all}" "" 0 ;;
-						*) cleanProjectsScope path "${subcmd2}" 0 ;;
+						apps|examples|all) cleanProjectsScope "${subcmd2:-all}" ;;
+						*) cleanProjectsScope path "${subcmd2}" ;;
 					esac
 					;;
 				caches|cache)

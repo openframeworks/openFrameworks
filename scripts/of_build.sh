@@ -309,7 +309,17 @@ menuPickBuildSystem(){
 	local hostPg
 	hostPg=$(ofHostPgPlatform)
 
-	opts+=("make (${hostPg} / host)|make")
+	local hasVcxproj=0
+	compgen -G "${project}/*.vcxproj" >/dev/null 2>&1 && hasVcxproj=1
+
+	if [[ "$OF_PLATFORM" == "vs" || "$hasVcxproj" -eq 1 ]]; then
+		opts+=("msbuild (Visual Studio)|msbuild")
+	fi
+	# "make" needs a Makefile-based host toolchain; on native VS (MSVC) that's not
+	# the normal path, but keep it available for msys2/mingw-style builds.
+	if [[ "$OF_PLATFORM" != "vs" ]]; then
+		opts+=("make (${hostPg} / host)|make")
+	fi
 	if [[ "$(uname -s)" == "Darwin" ]] && compgen -G "${project}/*.xcodeproj" >/dev/null 2>&1; then
 		opts+=("xcodebuild|xcode")
 	fi
@@ -319,6 +329,134 @@ menuPickBuildSystem(){
 	fi
 	opts+=("Generate project files only (PG)|generate")
 	menuPick "Build system · $(basename "$project")" "${opts[@]}" || return 1
+}
+
+# ---------------------------------------------------------------------------
+# Visual Studio / MSBuild helpers
+# ---------------------------------------------------------------------------
+# Common vswhere.exe locations under MSYS2/Git-Bash (C:\ → /c/)
+vsWhereBinary(){
+	local c
+	for c in \
+		"/c/Program Files (x86)/Microsoft Visual Studio/Installer/vswhere.exe" \
+		"/c/Program Files/Microsoft Visual Studio/Installer/vswhere.exe"
+	do
+		[[ -f "$c" ]] && { printf '%s' "$c"; return 0; }
+	done
+	return 1
+}
+
+# Locate MSBuild.exe: PATH first (Developer Command Prompt), else vswhere
+findMsbuildBinary(){
+	if command -v msbuild.exe >/dev/null 2>&1; then
+		command -v msbuild.exe
+		return 0
+	fi
+	if command -v MSBuild.exe >/dev/null 2>&1; then
+		command -v MSBuild.exe
+		return 0
+	fi
+	local vswhere installPath candidate
+	vswhere=$(vsWhereBinary) || return 1
+	installPath=$("$vswhere" -latest -prerelease -products '*' \
+		-requires Microsoft.Component.MSBuild -property installationPath 2>/dev/null | tr -d '\r')
+	[[ -n "$installPath" ]] || return 1
+	command -v cygpath >/dev/null 2>&1 && installPath=$(cygpath -u "$installPath")
+	candidate="${installPath}/MSBuild/Current/Bin/MSBuild.exe"
+	[[ -f "$candidate" ]] && { printf '%s' "$candidate"; return 0; }
+	return 1
+}
+
+# Host MSBuild Platform token (x64 | ARM64) from detected VS arch (64 | arm64)
+vsPlatformFromArch(){
+	local arch
+	arch=$(command -v detectHostVsArch >/dev/null 2>&1 && detectHostVsArch || printf '64')
+	case "$arch" in
+		arm64) printf 'ARM64' ;;
+		*) printf 'x64' ;;
+	esac
+}
+
+# PlatformToolset default — v145 (VS2026) unless the newest installed VS is clearly 2022 (17.x)
+vsToolsetDefault(){
+	local vswhere major
+	vswhere=$(vsWhereBinary) || { printf 'v145'; return 0; }
+	major=$("$vswhere" -latest -prerelease -products '*' -property installationVersion 2>/dev/null | tr -d '\r' | cut -d. -f1)
+	case "$major" in
+		17) printf 'v143' ;;
+		*) printf 'v145' ;;
+	esac
+}
+
+menuPickVsToolset(){
+	local def
+	def=$(vsToolsetDefault)
+	menuPick "PlatformToolset  (detected: ${def})" \
+		"v145 — Visual Studio 2026|v145" \
+		"v143 — Visual Studio 2022|v143" \
+		"Custom…|custom" \
+		|| return 1
+	if [[ "$UI_MENU_RESULT" == "custom" ]]; then
+		menuInput "PlatformToolset (e.g. v143, v145, ClangCL)" "$def" || return 1
+		UI_MENU_RESULT="$UI_INPUT_RESULT"
+	fi
+	return 0
+}
+
+menuPickVsPlatform(){
+	local def
+	def=$(vsPlatformFromArch)
+	menuPick "Platform  (host: ${def})" \
+		"x64|x64" \
+		"ARM64|ARM64" \
+		"ARM64EC|ARM64EC" \
+		|| return 1
+	return 0
+}
+
+# PG "-t" template: vs2026 (default) vs vs2022 (empty → PG's legacy default)
+menuPickPgTemplate(){
+	menuPick "Visual Studio project template" \
+		"Visual Studio 2026 (default)|vs2026" \
+		"Visual Studio 2022|" \
+		|| return 1
+	return 0
+}
+
+findVcxproj(){
+	compgen -G "${1}/*.vcxproj" 2>/dev/null | head -1
+}
+
+runMsbuildProject(){
+	local project="$1"
+	local config="${2:-Release}"
+	local toolset="${3:-}"
+	local platform="${4:-}"
+	local vcxproj msbuild
+
+	vcxproj=$(findVcxproj "$project")
+	[[ -n "$vcxproj" ]] || {
+		echoError "no .vcxproj in $(basename "$project")"
+		echoNote "generate one first: of build generate \"$project\""
+		return 1
+	}
+
+	msbuild=$(findMsbuildBinary) || {
+		echoError "msbuild.exe not found"
+		echoNote "install the 'Desktop development with C++' workload, or run from a Developer Command Prompt with VS on PATH"
+		return 1
+	}
+
+	[[ -n "$toolset" ]] || toolset="${OF_VS_TOOLSET:-$(vsToolsetDefault)}"
+	[[ -n "$platform" ]] || platform="${OF_VS_PLATFORM:-$(vsPlatformFromArch)}"
+
+	echoInfo "msbuild ${config} · $(basename "$vcxproj") · ${platform} · toolset ${toolset}"
+	echoKV "msbuild" "$msbuild"
+	"$msbuild" "$vcxproj" \
+		"/p:Configuration=${config}" \
+		"/p:Platform=${platform}" \
+		"/p:PlatformToolset=${toolset}" \
+		/nologo /m
 }
 
 # ---------------------------------------------------------------------------
@@ -365,6 +503,7 @@ runProjectGenerator(){
 	local project="$1"
 	shift
 	local platforms="${1:-}"
+	local pgTemplate="${2:-}"
 	local bin
 	bin=$(findPGBinary) || {
 		echoError "Project Generator not found — run: of update pg"
@@ -374,9 +513,69 @@ runProjectGenerator(){
 	if [[ -n "$platforms" ]]; then
 		cmd+=( -p"$platforms" )
 	fi
+	if [[ -n "$pgTemplate" ]]; then
+		cmd+=( -t"$pgTemplate" )
+	fi
 	cmd+=( "$project" )
 	echoNote "${cmd[*]}"
 	PG_OF_PATH="$OF_DIR" "${cmd[@]}"
+}
+
+ideNameForPlatform(){
+	case "$OF_PLATFORM" in
+		vs) printf 'Visual Studio' ;;
+		osx|macos) printf 'Xcode' ;;
+		linux) printf 'Qt Creator / Code::Blocks' ;;
+		*) printf 'IDE' ;;
+	esac
+}
+
+# Best-effort native-IDE launch after generating project files
+openGeneratedProject(){
+	local project="$1"
+	local proj
+	case "$OF_PLATFORM" in
+		vs)
+			proj=$(compgen -G "${project}/*.sln" 2>/dev/null | head -1)
+			[[ -z "$proj" ]] && proj=$(findVcxproj "$project")
+			[[ -n "$proj" ]] || { echoWarning "no .sln/.vcxproj to open"; return 1; }
+			echoInfo "opening $(basename "$proj") in Visual Studio"
+			if command -v cygpath >/dev/null 2>&1; then
+				cmd.exe /c start "" "$(cygpath -w "$proj")" >/dev/null 2>&1 &
+			else
+				start "" "$proj" >/dev/null 2>&1 &
+			fi
+			disown 2>/dev/null || true
+			;;
+		osx|macos)
+			proj=$(compgen -G "${project}/*.xcodeproj" 2>/dev/null | head -1)
+			[[ -n "$proj" ]] || { echoWarning "no .xcodeproj to open"; return 1; }
+			echoInfo "opening $(basename "$proj") in Xcode"
+			open "$proj"
+			;;
+		linux)
+			proj=$(compgen -G "${project}/*.qbs" 2>/dev/null | head -1)
+			if [[ -n "$proj" ]] && command -v qtcreator >/dev/null 2>&1; then
+				echoInfo "opening $(basename "$proj") in Qt Creator"
+				qtcreator "$proj" >/dev/null 2>&1 &
+				disown 2>/dev/null || true
+				return 0
+			fi
+			proj=$(compgen -G "${project}/*.workspace" 2>/dev/null | head -1)
+			if [[ -n "$proj" ]] && command -v codeblocks >/dev/null 2>&1; then
+				echoInfo "opening $(basename "$proj") in Code::Blocks"
+				codeblocks "$proj" >/dev/null 2>&1 &
+				disown 2>/dev/null || true
+				return 0
+			fi
+			echoNote "no known IDE found on PATH — project files are in $(basename "$project")"
+			return 1
+			;;
+		*)
+			echoNote "no IDE launch wired up for platform '${OF_PLATFORM}'"
+			return 0
+			;;
+	esac
 }
 
 # ---------------------------------------------------------------------------
@@ -652,6 +851,9 @@ cmdBuildProject(){
 	local system="${2:-make}"
 	local config="${3:-Release}"
 	local openAfter="${4:-0}"
+	# system-specific extras: msbuild → toolset/platform; generate → PG template
+	local extra1="${5:-}"
+	local extra2="${6:-}"
 
 	project=$(resolveProjectPath "$project") || {
 		echoError "project not found: $1"
@@ -666,6 +868,10 @@ cmdBuildProject(){
 	printf '\n'
 
 	case "$system" in
+		msbuild|vs|vcxproj)
+			runMsbuildProject "$project" "$config" "$extra1" "$extra2" || return $?
+			[[ "$openAfter" == "1" ]] && runNativeApp "$project" "$config"
+			;;
 		make|host)
 			runMakeInProject "$project" "$config" || return $?
 			[[ "$openAfter" == "1" ]] && runNativeApp "$project" "$config"
@@ -690,14 +896,14 @@ cmdBuildProject(){
 		generate|pg)
 			local plats
 			plats=$(ofHostPgPlatform)
-			runProjectGenerator "$project" "$plats" || return $?
+			runProjectGenerator "$project" "$plats" "$extra1" || return $?
 			;;
 		clean)
 			runCleanProject "$project" || return $?
 			;;
 		*)
 			echoError "unknown build system: $system"
-			echoNote "valid: make xcode emscripten cmake generate clean"
+			echoNote "valid: make msbuild xcode emscripten cmake generate clean"
 			return 1
 			;;
 	esac
@@ -715,16 +921,24 @@ cmdBuildCore(){
 cmdBuildGenerate(){
 	local project="$1"
 	local platforms="${2:-}"
+	local pgTemplate="${3:-}"
+	local openAfter="${4:-0}"
 	project=$(resolveProjectPath "$project") || {
 		echoError "path not found: $1"
 		return 1
 	}
 	[[ -n "$platforms" ]] || platforms=$(ofHostPgPlatform)
+	# default the VS project template to 2026 when generating for vs and none was given
+	if [[ -z "$pgTemplate" && "$platforms" == *vs* && "$OF_PLATFORM" == "vs" ]]; then
+		pgTemplate="${OF_PG_TEMPLATE:-vs2026}"
+	fi
 	printBanner "generate"
 	echoKV "project" "$project"
 	echoKV "platforms" "$platforms"
-	runProjectGenerator "$project" "$platforms" || return $?
+	[[ -n "$pgTemplate" ]] && echoKV "vs template" "$pgTemplate"
+	runProjectGenerator "$project" "$platforms" "$pgTemplate" || return $?
 	echoSuccess "project files updated"
+	[[ "$openAfter" == "1" ]] && openGeneratedProject "$project"
 }
 
 # ---------------------------------------------------------------------------
@@ -741,7 +955,7 @@ menuBuildProjectActions(){
 
 	if [[ "$system" == "generate" ]]; then
 		local -a popts=()
-		local p plats=""
+		local p plats="" pgTemplate="" openAfterGen=0
 		for p in osx macos emscripten ios linux64 linux vs msys2 android tvos; do
 			popts+=("${p}|${p}")
 		done
@@ -752,7 +966,24 @@ menuBuildProjectActions(){
 			fi
 		fi
 		[[ -z "$plats" ]] && plats=$(ofHostPgPlatform)
-		cmdBuildGenerate "$project" "$plats"
+		if [[ "$OF_PLATFORM" == "vs" && "$plats" == *vs* ]] && menuCanRun; then
+			menuPickPgTemplate && pgTemplate="$UI_MENU_RESULT"
+		fi
+		if menuCanRun && confirmYes "Open generated project in $(ideNameForPlatform) when done?"; then
+			openAfterGen=1
+		fi
+		cmdBuildGenerate "$project" "$plats" "$pgTemplate" "$openAfterGen"
+		return $?
+	fi
+
+	if [[ "$system" == "msbuild" ]]; then
+		menuPickConfig || return 0
+		config="$UI_MENU_RESULT"
+		menuPickVsToolset || return 0
+		local toolset="$UI_MENU_RESULT"
+		menuPickVsPlatform || return 0
+		local platform="$UI_MENU_RESULT"
+		cmdBuildProject "$project" msbuild "$config" 0 "$toolset" "$platform"
 		return $?
 	fi
 
@@ -953,12 +1184,18 @@ menuBuild(){
 						;;
 					*) continue ;;
 				esac
-				local plats
+				local plats pgTemplate="" openAfterGen=0
 				plats=$(ofHostPgPlatform)
 				if confirmYes "Also add emscripten platform files?"; then
 					plats="${plats},emscripten"
 				fi
-				cmdBuildGenerate "$project" "$plats"
+				if [[ "$OF_PLATFORM" == "vs" && "$plats" == *vs* ]]; then
+					menuPickPgTemplate && pgTemplate="$UI_MENU_RESULT"
+				fi
+				if confirmYes "Open generated project in $(ideNameForPlatform) when done?"; then
+					openAfterGen=1
+				fi
+				cmdBuildGenerate "$project" "$plats" "$pgTemplate" "$openAfterGen"
 				menuPause
 				;;
 			cmake)
@@ -1012,12 +1249,15 @@ printHelpBuild(){
     ${prog} build open-em <path>          Open emscripten index.html (Chrome/emrun)
 
   Systems (project)
-    make (default)  xcode  emscripten  cmake  generate
+    make (default)  msbuild  xcode  emscripten  cmake  generate
 
   Env
     OF_JOBS=8              Parallel jobs
     OF_CMAKE_ARGS="..."    Extra cmake -S/-B flags
     EMCC_DEBUG=1           Emscripten debug logging
+    OF_VS_TOOLSET=v145     MSBuild PlatformToolset (v145=VS2026, v143=VS2022)
+    OF_VS_PLATFORM=x64     MSBuild Platform (x64 | ARM64 | ARM64EC)
+    OF_PG_TEMPLATE=vs2026  Project Generator "-t" template when generating for vs
 
   Examples
     ${prog} build core Debug
@@ -1025,6 +1265,7 @@ printHelpBuild(){
     ${prog} build project examples/graphics/graphicsExample xcode Debug
     ${prog} build emscripten examples/graphics/graphicsExample Debug
     ${prog} build generate apps/myApps/mySketch osx,emscripten
+    OF_VS_TOOLSET=v145 OF_VS_PLATFORM=x64 ${prog} build project apps/myApps/mySketch msbuild Release
 
 EOF
 }
