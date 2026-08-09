@@ -94,6 +94,7 @@ void ofAppGLFWWindow::close() {
 		glfwSetScrollCallback( windowP, nullptr );
 		glfwSetDropCallback( windowP, nullptr );
   	glfwSetWindowRefreshCallback(windowP, nullptr);
+		glfwSetWindowFocusCallback(windowP, nullptr);
 
 		//hide the window before we destroy it stops a flicker on OS X on exit.
 		glfwHideWindow(windowP);
@@ -411,6 +412,7 @@ void ofAppGLFWWindow::setup(const ofGLESWindowSettings & settings) {
         glfwSetScrollCallback(windowP, scroll_cb);
         glfwSetDropCallback(windowP, drop_cb);
         glfwSetWindowRefreshCallback(windowP, refresh_cb);
+        glfwSetWindowFocusCallback(windowP, focus_cb);
         
 #ifdef TARGET_LINUX
         XSetLocaleModifiers("");
@@ -1626,6 +1628,12 @@ void ofAppGLFWWindow::setup(const ofGLESWindowSettings & settings) {
     }
     
     //------------------------------------------------------------
+    void ofAppGLFWWindow::focus_cb(GLFWwindow * windowP_, int focused) {
+        ofAppGLFWWindow * instance = setCurrent(windowP_);
+        instance->bWindowFocused = focused == GLFW_TRUE;
+    }
+
+    //------------------------------------------------------------
     void ofAppGLFWWindow::resize_cb(GLFWwindow * windowP_, int w, int h) {
         ofAppGLFWWindow * instance = setCurrent(windowP_);
         
@@ -1729,8 +1737,7 @@ void ofAppGLFWWindow::setup(const ofGLESWindowSettings & settings) {
     
     //------------------------------------------------------------
     bool ofAppGLFWWindow::isWindowActive() {
-        //	return glfwGetWindowParam(GLFW_ACTIVE);
-        return true;
+        return bWindowFocused;
     }
     
     //------------------------------------------------------------
