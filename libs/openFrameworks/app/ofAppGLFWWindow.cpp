@@ -413,6 +413,7 @@ void ofAppGLFWWindow::setup(const ofGLESWindowSettings & settings) {
         glfwSetDropCallback(windowP, drop_cb);
         glfwSetWindowRefreshCallback(windowP, refresh_cb);
         glfwSetWindowFocusCallback(windowP, focus_cb);
+        bWindowFocused = glfwGetWindowAttrib(windowP, GLFW_FOCUSED);
         
 #ifdef TARGET_LINUX
         XSetLocaleModifiers("");
