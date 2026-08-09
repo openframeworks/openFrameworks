@@ -16,7 +16,10 @@
     #define USE_OLD_CV
 #else
     #include "opencv2/opencv.hpp"
-    #include "opencv2/imgproc/imgproc_c.h"
+    #if CV_MAJOR_VERSION < 5
+        // OpenCV 5 removed the legacy C API entirely, imgproc_c.h no longer exists.
+        #include "opencv2/imgproc/imgproc_c.h"
+    #endif
 #endif
 
 #include <vector>

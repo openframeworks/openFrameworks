@@ -87,7 +87,10 @@ jobs:
           release: true
           update: true
           msystem: ${{matrix.msystem}}
-          pacboy: openssl:p python:p gcc:p assimp:p cairo:p curl:p freeglut:p freeimage:p glew:p glfw:p glm:p libsndfile:p libusb:p libxml2:p mpg123:p nlohmann-json:p openal:p opencv:p pugixml:p rtaudio:p uriparser:p utf8cpp:p
+          # opencv is intentionally left out here and pinned to a 4.x build by
+          # scripts/msys2/install_dependencies.sh (ofxOpenCv isn't ported to
+          # OpenCV 5's C++-only API yet, and MSYS2's opencv package is now 5.x)
+          pacboy: openssl:p python:p gcc:p assimp:p cairo:p curl:p freeglut:p freeimage:p glew:p glfw:p glm:p libsndfile:p libusb:p libxml2:p mpg123:p nlohmann-json:p openal:p pugixml:p rtaudio:p uriparser:p utf8cpp:p
           install: >-
             unzip
             make
