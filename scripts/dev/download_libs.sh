@@ -109,6 +109,64 @@ download(){
     downloader $COMMAND $SILENT_ARGS $NO_SSL
 }
 
+linux_legacy_lib_subpath(){
+    case "$1" in
+        x86_64|64|64gcc6|64_gcc6) echo "linux64" ;;
+        armv6l) echo "linuxarmv6l" ;;
+        armv7l) echo "linuxarmv7l" ;;
+        *) echo "" ;;
+    esac
+}
+
+normalize_linux_lib_paths(){
+    if [ "$PLATFORM" != "linux" ]; then
+        return
+    fi
+
+    local source_arch
+    local source_path
+    local destination_path
+    local destination_subpath
+    local lib_root
+    local i
+    local normalized_count=0
+    local source_paths=()
+    local destination_paths=()
+    local source_arches=("x86_64" "armv6l" "armv7l")
+
+    for source_arch in "${source_arches[@]}"; do
+        destination_subpath=$(linux_legacy_lib_subpath "$source_arch")
+
+        while IFS= read -r source_path; do
+            lib_root="${source_path%/linux/$source_arch}"
+            destination_path="${lib_root}/${destination_subpath}"
+
+            if [ -e "$destination_path" ]; then
+                echo "Error: cannot normalize [$source_path] to [$destination_path]: destination already exists"
+                return 1
+            fi
+
+            source_paths+=("$source_path")
+            destination_paths+=("$destination_path")
+        done < <(find . -type d -path "*/lib/linux/$source_arch" -print)
+    done
+
+    for ((i=0;i<${#source_paths[@]};++i)); do
+        source_path="${source_paths[i]}"
+        destination_path="${destination_paths[i]}"
+        lib_root="${source_path%/linux/*}"
+
+        echo " Normalizing Linux libraries: [$source_path] -> [$destination_path]"
+        mv "$source_path" "$destination_path"
+        rmdir "${lib_root}/linux" 2>/dev/null || true
+        normalized_count=$((normalized_count + 1))
+    done
+
+    if [ $normalized_count -gt 0 ]; then
+        echo " Normalized $normalized_count Linux library path(s) to legacy makefile paths"
+    fi
+}
+
 # trap any script errors and exit
 trap 'trapError ${LINENO}' ERR
 trap "trapError" SIGINT SIGTERM
@@ -494,10 +552,18 @@ if [ $OVERWRITE -eq 1 ]; then
     else
         echo " Platform-clean - Removing prior libs only under lib/[$LIB_PLATFORM_DIR] (other platforms kept)"
     fi
+    LINUX_LEGACY_LIB_SUBPATH=""
+    if [ "$PLATFORM" == "linux" ]; then
+        LINUX_LEGACY_LIB_SUBPATH=$(linux_legacy_lib_subpath "$ARCH")
+    fi
     for ((i=0;i<${#libs[@]};++i)); do
         if [ -e "${libs[i]}/lib/$LIB_PLATFORM_DIR" ]; then
             echo "  Removing: [${libs[i]}/lib/$LIB_PLATFORM_DIR]"
             rm -rf "${libs[i]}/lib/$LIB_PLATFORM_DIR"
+        fi
+        if [ -n "$LINUX_LEGACY_LIB_SUBPATH" ] && [ -e "${libs[i]}/lib/$LINUX_LEGACY_LIB_SUBPATH" ]; then
+            echo "  Removing: [${libs[i]}/lib/$LINUX_LEGACY_LIB_SUBPATH]"
+            rm -rf "${libs[i]}/lib/$LINUX_LEGACY_LIB_SUBPATH"
         fi
         # Shared include/ + vs|msys2 bin/ only with --full-clean (not for multi-platform installs)
         if [ $FULL_CLEAN -eq 1 ]; then
@@ -571,6 +637,11 @@ for PKG in $PKGS; do
     fi
     echo " Deployed libraries from [download/$PKG] to [/libs]"
 done
+
+# Apothecary packages use OS/architecture paths. Preserve openFrameworks'
+# unambiguous legacy makefile paths; ARM64 remains structured because its
+# generic, Raspberry Pi, and Jetson targets need distinct destinations.
+normalize_linux_lib_paths
 
 if [ "$PLATFORM" == "osx" ]; then
     echo " "
