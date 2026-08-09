@@ -43,10 +43,11 @@ done
 msyspackages="unzip make"
 
 # List of MINGW packages to be installed (without prefix)
+# opencv is pinned separately below (ofxOpenCv isn't ported to OpenCV 5's C++-only API yet)
 mingwPackages="assimp cairo curl freeimage \
 	glew glfw glm fmt zlib brotli libpng \
 	harfbuzz libsndfile libusb libxml2 mpg123 \
-	nlohmann-json openal opencv \
+	nlohmann-json openal \
 	pkgconf pugixml rtaudio \
 	uriparser utf8cpp "
 if [[ "$msystem" == "clang64" ]] || [[ "$msystem" == "clangarm64" ]] ; then
@@ -81,6 +82,24 @@ fi
 exit_code=$?
 if [ $exit_code != 0 ]; then
 	echo "error installing packages, there could be an error with your internet connection"
+	exit $exit_code
+fi
+
+
+# Pin OpenCV to the last 4.x build: ofxOpenCv still relies on OpenCV's legacy
+# C API, which OpenCV 5 removed entirely. MSYS2's "opencv" package now resolves
+# to 5.x, so install this specific 4.x build directly instead.
+opencv4_pkg_version="4.13.0-7"
+opencv4_pkg_file="${MINGW_PACKAGE_PREFIX}-opencv-${opencv4_pkg_version}-any.pkg.tar.zst"
+opencv4_pkg_url="https://repo.msys2.org/mingw/${msystem}/${opencv4_pkg_file}"
+if [[ "${confirm}" == "yes" ]]; then
+	pacman -U --confirm --needed "$opencv4_pkg_url"
+else
+	pacman -U --noconfirm --needed "$opencv4_pkg_url"
+fi
+exit_code=$?
+if [ $exit_code != 0 ]; then
+	echo "error installing pinned OpenCV 4 package from $opencv4_pkg_url"
 	exit $exit_code
 fi
 
