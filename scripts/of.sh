@@ -573,6 +573,25 @@ printLibInlineSection(){
 	[[ "$n" -eq 0 ]] && printf '  %s—%s\n' "$C_MUTED" "$C_RESET"
 }
 
+# Plain name list (no version lookup — addon dirs don't carry one the way
+# bundled libs do). Used for the "Core Addons" section.
+printNameListSection(){
+	local title="$1"
+	shift
+	printf '\n'
+	printf '  %s%s%s  %s────────────────%s\n' "$C_ACCENT" "$title" "$C_RESET" "$C_MUTED" "$C_RESET"
+	if [[ $# -eq 0 ]]; then
+		printf '  %s—%s\n' "$C_MUTED" "$C_RESET"
+		return 0
+	fi
+	local line="" a
+	for a in "$@"; do
+		[[ -n "$line" ]] && line+=", "
+		line+="$a"
+	done
+	printf '  %s\n' "$line"
+}
+
 # bash-3.2 safe: track seen keys as newline-separated string
 _seenHas(){
 	[[ $'\n'"${_SEEN_KEYS}"$'\n' == *$'\n'"$1"$'\n'* ]]
@@ -589,7 +608,9 @@ collectLibSections(){
 	_SEEN_KEYS=""
 	local name path addon pair libname key
 
-	# core libs under libs/
+	# libs/* — single pass classifying core / core-addon / other (was two
+	# passes over the same directory; halves the stat cost here, which
+	# matters on slower filesystems like Windows/MSYS2)
 	if [[ -d "${OF_DIR}/libs" ]]; then
 		for path in "${OF_DIR}/libs"/*/; do
 			[[ -d "$path" ]] || continue
@@ -600,8 +621,13 @@ collectLibSections(){
 			[[ -d "${path}include" || -d "${path}lib" ]] || continue
 			if isCoreLibName "$name"; then
 				SEC_CORE+=("$path")
-				_seenAdd "libs/$name"
+			elif isCoreAddonLibName "$name"; then
+				addon=$(coreAddonForLib "$name" 2>/dev/null || echo "addon")
+				SEC_CORE+=("${path}|${addon}")
+			else
+				SEC_OTHER+=("$path")
 			fi
+			_seenAdd "libs/$name"
 		done
 	fi
 
@@ -650,36 +676,12 @@ collectLibSections(){
 			_seenAdd "$key"
 		done
 	fi
-
-	# others under libs/
-	if [[ -d "${OF_DIR}/libs" ]]; then
-		for path in "${OF_DIR}/libs"/*/; do
-			[[ -d "$path" ]] || continue
-			name=$(basename "$path")
-			case "$name" in
-				download|openFrameworks|openFrameworksCompiled|scripts) continue ;;
-			esac
-			[[ -d "${path}include" || -d "${path}lib" ]] || continue
-			_seenHas "libs/$name" && continue
-			if isCoreLibName "$name"; then
-				continue
-			fi
-			if isCoreAddonLibName "$name"; then
-				addon=$(coreAddonForLib "$name" 2>/dev/null || echo "addon")
-				SEC_CORE+=("${path}|${addon}")
-			else
-				SEC_OTHER+=("$path")
-			fi
-			_seenAdd "libs/$name"
-		done
-	fi
 }
 
 cmdStatus(){
 	local ofVer pgBin pgVer lastUp hostLine
 	local issues=0
 	local -a issueNotes=()
-	local total=0
 
 	printBanner "status"
 	printf '\n'
@@ -719,11 +721,13 @@ cmdStatus(){
 	fi
 
 	taskSet 3 running
-	collectLibSections
-	total=$(( ${#SEC_CORE[@]} + ${#SEC_ADDONS[@]} + ${#SEC_OTHER[@]} ))
+	# assessLibsState alone is a handful of stat() calls (essentials only) —
+	# fast even on slow filesystems. The full libs/addons enumeration
+	# (collectLibSections) is much heavier (every libs/* and addons/*/libs/*
+	# dir) and runs later, right before it's printed, so it doesn't sit
+	# behind this spinner making status feel like it's hung.
 	assessLibsState "$OF_PLATFORM"
-	# only flag libs if none detected
-	if [[ "$LIBS_STATE" == "missing" || "$total" -eq 0 ]]; then
+	if [[ "$LIBS_STATE" == "missing" ]]; then
 		taskSet 3 fail "${LIBS_STATE_DETAIL:-none found}"
 		issues=1
 		issueNotes+=("libraries missing")
@@ -765,9 +769,20 @@ cmdStatus(){
 		skipped) echoKV "integrity" "SHA check skipped" ;;
 	esac
 
+	# heavier enumeration deferred to here (see task-3 comment above) — every
+	# libs/* and addons/*/libs/* dir gets stat'd, which is the slow part on
+	# Windows/MSYS2, so it happens while printing rather than behind a spinner
+	collectLibSections
 	printLibInlineSection "Core" "${SEC_CORE[@]}"
 	printLibInlineSection "Addons" "${SEC_ADDONS[@]}"
 	printLibInlineSection "Other" "${SEC_OTHER[@]}"
+
+	local -a coreAddonNames=()
+	local a
+	while IFS= read -r a; do
+		[[ -n "$a" ]] && coreAddonNames+=("$a")
+	done < <(listAddons)
+	printNameListSection "Core Addons" "${coreAddonNames[@]}"
 
 	printf '\n'
 	if [[ "$issues" -eq 0 ]]; then
@@ -830,6 +845,7 @@ printHelp(){
     LIB_LIBS=core|all|"glfw glm"
     LIB_CLEAN_MODE=platform|merge|full   # default platform: only lib/<plat>
     OF_LINUX_DISTRO=ubuntu    Force linux distro scripts
+    OF_APO_VS_VER=18          apothecary VS toolchain (18=VS2026, 17=VS2022, 16=VS2019)
     OF_JOBS=8                 Parallel build jobs
     VERBOSE=1  NO_COLOR=1  OF_ANIM=0
 
@@ -873,6 +889,28 @@ cmdVersionPG(){
 		ver=$(readPGVersion)
 		echoKV "projectGenerator" "$ver"
 		echoKV "path" "$bin"
+	else
+		echoKV "projectGenerator" "not installed"
+		echoNote "try: of update pg"
+	fi
+	printf '\n'
+}
+
+# Combined openFrameworks + Project Generator version screen (menu entry point)
+menuVersion(){
+	local ofVer bin ver
+	printBanner "version"
+	ofVer=$(readOfVersion) || ofVer=""
+	bin=$(findPGBinary) || bin=""
+	printf '\n'
+	echoKV "openFrameworks" "${ofVer:-—}"
+	echoKV "platform" "${OF_PLATFORM}${OF_ARCH:+ / ${OF_ARCH}}"
+	echoKV "cli" "$OF_SCRIPT_VERSION"
+	printf '\n'
+	if [[ -n "$bin" ]]; then
+		ver=$(readPGVersion)
+		echoKV "projectGenerator" "$ver"
+		echoKV "pg path" "$bin"
 	else
 		echoKV "projectGenerator" "not installed"
 		echoNote "try: of update pg"
@@ -1336,6 +1374,18 @@ archesForApoType(){
 	esac
 }
 
+# Apothecary's own VS_VER env var picks the toolchain (17=VS2022, 18=VS2026,
+# 16=VS2019) — if unset it silently defaults to 17 inside apothecary itself,
+# regardless of what's actually installed. Default here to 18 (VS2026).
+menuPickApoVsVer(){
+	menuPick "Visual Studio version for apothecary build" \
+		"Visual Studio 2026 (18)|18" \
+		"Visual Studio 2022 (17)|17" \
+		"Visual Studio 2019 (16)|16" \
+		|| return 1
+	return 0
+}
+
 runApothecaryEngine(){
 	local type="$1" arch="$2"
 	shift 2
@@ -1350,7 +1400,13 @@ runApothecaryEngine(){
 	[[ "$VERBOSE" = 1 ]] && cmd+=( -v )
 	cmd+=( "$@" )
 	echoNote "${cmd[*]}"
-	( cd "${APO_HOME}/apothecary" 2>/dev/null || cd "$APO_HOME" || exit 1; "${cmd[@]}" )
+	if [[ "$type" == "vs" ]]; then
+		local vsVer="${OF_APO_VS_VER:-18}"
+		echoKV "VS_VER" "${vsVer} ($([[ "$vsVer" == 18 ]] && echo 2026 || { [[ "$vsVer" == 17 ]] && echo 2022 || echo 2019; }))"
+		( cd "${APO_HOME}/apothecary" 2>/dev/null || cd "$APO_HOME" || exit 1; VS_VER="$vsVer" "${cmd[@]}" )
+	else
+		( cd "${APO_HOME}/apothecary" 2>/dev/null || cd "$APO_HOME" || exit 1; "${cmd[@]}" )
+	fi
 }
 
 launchApoMenu(){
@@ -1416,7 +1472,13 @@ menuApothecary(){
 	choice="$UI_MENU_RESULT"
 
 	case "$choice" in
-		build-host) cmdApothecaryBuildAll "$OF_PLATFORM" "$OF_ARCH" ;;
+		build-host)
+			if [[ "$OF_PLATFORM" == "vs" ]]; then
+				menuPickApoVsVer || return 0
+				export OF_APO_VS_VER="$UI_MENU_RESULT"
+			fi
+			cmdApothecaryBuildAll "$OF_PLATFORM" "$OF_ARCH"
+			;;
 		build-type)
 			opts=()
 			for type in "${APO_BUILD_TYPES[@]}"; do
@@ -1431,6 +1493,10 @@ menuApothecary(){
 			[[ "$OF_PLATFORM" == "osx" ]] && echoNote "macos covers osx · ios · tvos · xros · watchos · catos"
 			menuPick "Build platform" "${opts[@]}" || return 0
 			type="$UI_MENU_RESULT"
+			if [[ "$type" == "vs" ]]; then
+				menuPickApoVsVer || return 0
+				export OF_APO_VS_VER="$UI_MENU_RESULT"
+			fi
 			aopts=()
 			read -r -a arches <<< "$(archesForApoType "$type")"
 			for a in "${arches[@]}"; do
@@ -1446,6 +1512,10 @@ menuApothecary(){
 			done
 			menuPick "Platform" "${opts[@]}" || return 0
 			type="$UI_MENU_RESULT"
+			if [[ "$type" == "vs" ]]; then
+				menuPickApoVsVer || return 0
+				export OF_APO_VS_VER="$UI_MENU_RESULT"
+			fi
 			aopts=()
 			read -r -a arches <<< "$(archesForApoType "$type")"
 			for a in "${arches[@]}"; do aopts+=("${a}|${a}"); done
@@ -1501,6 +1571,26 @@ cmdUpgrade(){
 	if ! taskLive 2 -- "$script" "$subcmd"; then taskTickLine 3 skip; tasksSummary; return 1; fi
 	taskTickLine 3 done
 	tasksSummary
+}
+
+# Single menu entry point for "Upgrade" — old-layout projects/addons
+# (pre-0.12 linux64 → linux/64 path style) up to the current SDK version.
+menuUpgrade(){
+	local ofVer choice
+	ofVer=$(readOfVersion) || ofVer=""
+	menuPick "Upgrade  — oF 7.0–11.0 → ${ofVer:+v${ofVer} }(Latest SDK)" \
+		"Addons only|addons" \
+		"Projects (apps/)|apps" \
+		"Both|both" \
+		"Back|back" \
+		|| return 0
+	choice="$UI_MENU_RESULT"
+	case "$choice" in
+		addons) cmdUpgrade addons ;;
+		apps)   cmdUpgrade apps ;;
+		both)   cmdUpgrade addons; cmdUpgrade apps ;;
+		back)   return 0 ;;
+	esac
 }
 
 cmdSetup(){
@@ -2152,10 +2242,8 @@ cmdMenu(){
 			"Build…  — core / projects / examples / emscripten / cmake|build" \
 			"Build libraries (Apothecary)…|apothecary" \
 			"Cleanup — projects / caches / libraries|cleanup" \
-			"Show openFrameworks version|version" \
-			"Show Project Generator version|version-pg" \
-			"Upgrade addons|upgrade-addons" \
-			"Upgrade apps|upgrade-apps" \
+			"Version info  — openFrameworks + Project Generator|version" \
+			"Upgrade  — Projects / Addons…|upgrade" \
 			"Help|help" \
 			"Quit|quit"
 		then
@@ -2165,19 +2253,17 @@ cmdMenu(){
 		choice="$UI_MENU_RESULT"
 		printf '\n'
 		case "$choice" in
-			status)         cmdStatus; menuPause ;;
-			setup)          cmdSetup "$OF_PLATFORM"; menuPause ;;
-			update)         menuUpdate; menuPause ;;
-			build)          menuBuild ;;
-			apothecary)     menuApothecary; menuPause ;;
-			cleanup|clean)  menuCleanup ;;
-			version)        cmdVersion; menuPause ;;
-			version-pg)     cmdVersionPG; menuPause ;;
-			upgrade-addons) cmdUpgrade addons; menuPause ;;
-			upgrade-apps)   cmdUpgrade apps; menuPause ;;
-			help)           printHelp; menuPause ;;
-			quit)           echoSuccess "bye"; return 0 ;;
-			*)              echoError "unknown: $choice"; menuPause ;;
+			status)     cmdStatus; menuPause ;;
+			setup)      cmdSetup "$OF_PLATFORM"; menuPause ;;
+			update)     menuUpdate; menuPause ;;
+			build)      menuBuild ;;
+			apothecary) menuApothecary; menuPause ;;
+			cleanup|clean) menuCleanup ;;
+			version)    menuVersion; menuPause ;;
+			upgrade)    menuUpgrade; menuPause ;;
+			help)       printHelp; menuPause ;;
+			quit)       echoSuccess "bye"; return 0 ;;
+			*)          echoError "unknown: $choice"; menuPause ;;
 		esac
 	done
 }
