@@ -232,10 +232,20 @@ fi
 apt-get -y -qq install ${PACKAGES}
 installPackages ${PACKAGES}
 
-# Install libgconf-2-4 only if its availble 
+# Install libgconf-2-4 only if its availble
 if apt-cache show libgconf-2-4 &>/dev/null; then
     echo "Package libgconf-2-4 is available. Installing..."
     installPackages libgconf-2-4
+fi
+
+# Optional: gum (nicer of.sh interactive menu) — only if already in apt's repos.
+# Not in default Ubuntu/Debian repos as of writing; we don't add third-party
+# repos automatically. If you want it, see https://github.com/charmbracelet/gum#installation
+if apt-cache show gum &>/dev/null; then
+    echo "Package gum is available. Installing..."
+    installPackages gum
+else
+    echo "gum not found in configured apt repos - skipping (optional, used for of.sh's nicer interactive menu)"
 fi
 
 if [[ $MAJOR_VERSION -lt 18 ]]; then
