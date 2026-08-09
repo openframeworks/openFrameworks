@@ -452,11 +452,15 @@ runMsbuildProject(){
 
 	echoInfo "msbuild ${config} · $(basename "$vcxproj") · ${platform} · toolset ${toolset}"
 	echoKV "msbuild" "$msbuild"
+	# dash-style switches, not /slash-style: under MSYS2/Git-Bash, a leading "/"
+	# looks like a POSIX absolute path and gets silently rewritten (e.g. "/m"
+	# becomes "M:/", "/nologo" becomes "C:/.../nologo"), which breaks msbuild's
+	# argument parsing entirely. MSBuild accepts "-switch" identically.
 	"$msbuild" "$vcxproj" \
-		"/p:Configuration=${config}" \
-		"/p:Platform=${platform}" \
-		"/p:PlatformToolset=${toolset}" \
-		/nologo /m
+		"-p:Configuration=${config}" \
+		"-p:Platform=${platform}" \
+		"-p:PlatformToolset=${toolset}" \
+		-nologo -m
 }
 
 # ---------------------------------------------------------------------------
@@ -540,11 +544,14 @@ openGeneratedProject(){
 			[[ -z "$proj" ]] && proj=$(findVcxproj "$project")
 			[[ -n "$proj" ]] || { echoWarning "no .sln/.vcxproj to open"; return 1; }
 			echoInfo "opening $(basename "$proj") in Visual Studio"
-			if command -v cygpath >/dev/null 2>&1; then
-				cmd.exe /c start "" "$(cygpath -w "$proj")" >/dev/null 2>&1 &
-			else
-				start "" "$proj" >/dev/null 2>&1 &
-			fi
+			# explorer.exe, not `cmd.exe /c start`: under MSYS2/Git-Bash a leading
+			# "/" (like /c) looks like a POSIX path and gets silently rewritten to
+			# a drive letter (e.g. "/c" -> "C:/"), so cmd.exe never sees a valid
+			# /c switch. explorer.exe takes a plain path — no flag to mangle —
+			# and Windows opens .sln with its registered handler (Visual Studio).
+			local winProj="$proj"
+			command -v cygpath >/dev/null 2>&1 && winProj=$(cygpath -w "$proj")
+			explorer.exe "$winProj" >/dev/null 2>&1 &
 			disown 2>/dev/null || true
 			;;
 		osx|macos)
