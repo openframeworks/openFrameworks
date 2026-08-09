@@ -38,6 +38,24 @@ ofHostPgPlatform(){
 	esac
 }
 
+# PG platform tokens, host-first: this host's own platform, then emscripten,
+# then android (the next-most-common cross-compile targets), then the rest.
+pgPlatformOrder(){
+	local host
+	host=$(ofHostPgPlatform)
+	local -a full=(osx macos emscripten ios linux64 linux vs msys2 android tvos)
+	local -a ordered=()
+	local seen=" "
+	local p
+	for p in "$host" emscripten android "${full[@]}"; do
+		[[ " ${full[*]} " == *" ${p} "* ]] || continue
+		[[ "$seen" == *" ${p} "* ]] && continue
+		ordered+=("$p")
+		seen+="${p} "
+	done
+	printf '%s\n' "${ordered[@]}"
+}
+
 # ---------------------------------------------------------------------------
 # Tool discovery
 # ---------------------------------------------------------------------------
@@ -963,9 +981,9 @@ menuBuildProjectActions(){
 	if [[ "$system" == "generate" ]]; then
 		local -a popts=()
 		local p plats="" pgTemplate="" openAfterGen=0
-		for p in osx macos emscripten ios linux64 linux vs msys2 android tvos; do
+		while IFS= read -r p; do
 			popts+=("${p}|${p}")
-		done
+		done < <(pgPlatformOrder)
 		if menuCanRun; then
 			if menuPickMulti "PG platforms (space-separated multi-select)" "${popts[@]}"; then
 				# ids are space-separated → comma list for projectGenerator

@@ -1540,9 +1540,12 @@ cmdSetup(){
 		fi
 	elif [[ "$OF_PLATFORM" == "osx" ]]; then
 		depsScript="${OF_CORE_SCRIPT_DIR}/osx/install_dependencies.sh"
+	elif [[ "$OF_PLATFORM" == "vs" || "$OF_PLATFORM" == "msys2" ]]; then
+		depsScript="${OF_CORE_SCRIPT_DIR}/vs/install_dependencies.sh"
 	fi
 
-	if [[ "$needLibs" -eq 0 && "$needPG" -eq 0 && "$OF_PLATFORM" != "linux" && "$OF_PLATFORM" != "osx" ]]; then
+	if [[ "$needLibs" -eq 0 && "$needPG" -eq 0 && "$OF_PLATFORM" != "linux" && "$OF_PLATFORM" != "osx" \
+		&& "$OF_PLATFORM" != "vs" && "$OF_PLATFORM" != "msys2" ]]; then
 		echoSuccess "already set up — libs + PG look current"
 		echoNote "use Update to redownload from a chosen source"
 		printf '\n'
@@ -1553,6 +1556,7 @@ cmdSetup(){
 	[[ "$OF_PLATFORM" == "linux" ]] && taskNames+=("Install dependencies (${OF_LINUX_DISTRO})")
 	[[ "$doCodecs" -eq 1 ]] && taskNames+=("Install codecs (${OF_LINUX_DISTRO})")
 	[[ "$OF_PLATFORM" == "osx" ]] && taskNames+=("Xcode CLT / Homebrew (cmake, gum)")
+	[[ "$OF_PLATFORM" == "vs" || "$OF_PLATFORM" == "msys2" ]] && taskNames+=("gum via winget/scoop (optional)")
 	if [[ "$needLibs" -eq 1 ]]; then
 		taskNames+=("Download libraries (apothecary @ latest)")
 	else
@@ -1590,6 +1594,16 @@ cmdSetup(){
 			ensureScript "$depsScript" 2>/dev/null
 			# best-effort: CLT/Homebrew are checked, not required to proceed — libs/PG
 			# come from openFrameworks' own apothecary download either way.
+			taskLive "$taskN" -- "$depsScript" -y
+		else
+			taskTickLine "$taskN" skip
+		fi
+		taskN=$((taskN + 1))
+	elif [[ "$OF_PLATFORM" == "vs" || "$OF_PLATFORM" == "msys2" ]]; then
+		if [[ -f "$depsScript" ]]; then
+			ensureScript "$depsScript" 2>/dev/null
+			# best-effort: gum is a nicety, not required — libs/PG come from
+			# openFrameworks' own apothecary download either way.
 			taskLive "$taskN" -- "$depsScript" -y
 		else
 			taskTickLine "$taskN" skip
