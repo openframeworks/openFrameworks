@@ -1,7 +1,7 @@
 #!/bin/bash
 UP_VERSION=0.0.1
 
-local BASE_DIR=$1
+BASE_DIR="$1"
 
 OF_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 OF_DIR="$(realpath "$OF_DIR/../../")"
@@ -9,8 +9,17 @@ OF_CORE_SCRIPT_DIR="$(realpath "$OF_DIR/scripts")"
 OF_CORE_CI_SCRIPT_DIR="$(realpath "$OF_DIR/scripts/ci")"
 OF_PG_INSTALLED_DIR="$(realpath "$OF_DIR/projectGenerator")"
 
-read -p "Enter the base directory to search for addon_config.mk files: " BASE_DIR
-if [[ ! -d "${OF_DIR}/$BASE_DIR" ]]; then
+if [[ -n "$BASE_DIR" ]]; then
+    read -p "Enter the base directory to search for addon_config.mk files [${BASE_DIR}]: " INPUT_DIR
+    [[ -n "$INPUT_DIR" ]] && BASE_DIR="$INPUT_DIR"
+else
+    read -p "Enter the base directory to search for addon_config.mk files: " BASE_DIR
+fi
+
+if [[ "$BASE_DIR" != /* ]]; then
+    BASE_DIR="${OF_DIR}/${BASE_DIR}"
+fi
+if [[ ! -d "$BASE_DIR" ]]; then
     echo "Error: Directory $BASE_DIR does not exist."
     exit 1
 fi
