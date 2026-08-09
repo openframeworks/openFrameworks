@@ -1632,6 +1632,7 @@ void ofAppGLFWWindow::setup(const ofGLESWindowSettings & settings) {
     void ofAppGLFWWindow::focus_cb(GLFWwindow * windowP_, int focused) {
         ofAppGLFWWindow * instance = setCurrent(windowP_);
         instance->bWindowFocused = focused == GLFW_TRUE;
+        ofNotifyEvent(instance->events().windowFocusChanged, instance->bWindowFocused, instance);
     }
 
     //------------------------------------------------------------
