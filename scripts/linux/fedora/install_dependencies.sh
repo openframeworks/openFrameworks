@@ -36,6 +36,16 @@ if [ $exit_code != 0 ]; then
 	exit $exit_code
 fi
 
+# Optional: gum (nicer of.sh interactive menu) — only if already in dnf's repos.
+# Not in default Fedora repos as of writing; we don't add third-party repos
+# automatically. If you want it, see https://github.com/charmbracelet/gum#installation
+if dnf list --available gum &>/dev/null; then
+	echo "Package gum is available. Installing..."
+	dnf install -y gum
+else
+	echo "gum not found in configured dnf repos - skipping (optional, used for of.sh's nicer interactive menu)"
+fi
+
 # Update addon_config.mk files to use OpenCV 3 or 4 depending on what's installed
 addons_dir="$(readlink -f "$ROOT/../../../addons")"
 $(pkg-config opencv4 --exists)

@@ -59,6 +59,15 @@ if [ $exit_code != 0 ]; then
   exit $exit_code
 fi
 
+# Optional: gum (nicer of.sh interactive menu) — only if already in apt's repos.
+# Not in default Debian repos as of writing; we don't add third-party repos
+# automatically. If you want it, see https://github.com/charmbracelet/gum#installation
+if apt-cache show gum &>/dev/null; then
+  echo "Package gum is available. Installing..."
+  apt-get install -y gum
+else
+  echo "gum not found in configured apt repos - skipping (optional, used for of.sh's nicer interactive menu)"
+fi
 
 echo "installing gstreamer"
 apt-get install libgstreamer${GSTREAMER_VERSION}-dev libgstreamer-plugins-base${GSTREAMER_VERSION}-dev  ${GSTREAMER_FFMPEG} gstreamer${GSTREAMER_VERSION}-pulseaudio gstreamer${GSTREAMER_VERSION}-x gstreamer${GSTREAMER_VERSION}-plugins-bad gstreamer${GSTREAMER_VERSION}-alsa gstreamer${GSTREAMER_VERSION}-plugins-base gstreamer${GSTREAMER_VERSION}-plugins-good
