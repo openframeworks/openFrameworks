@@ -330,7 +330,7 @@ bool SharedDXGLTexture::transferFrame(IMFMediaEngine* aengine) {
     if (!mBValid || !mGLDX_Handle) {
         return false;
     }
-    RECT targetRect{ 0, 0, mWidth, mHeight };
+    RECT targetRect{ 0, 0, static_cast<LONG>(mWidth), static_cast<LONG>(mHeight) };
     if ((aengine->TransferVideoFrame(
         getDXTexture(),
         &mNormalizedVidRect, &targetRect, &bgColor)) == S_OK) {
@@ -501,7 +501,7 @@ bool WICTextureManager::transferFrame(IMFMediaEngine* aengine) {
     if (!mBValid || !mWicBitmap) {
         return false;
     }
-    RECT targetRect{ 0, 0, mWidth, mHeight };
+    RECT targetRect{ 0, 0, static_cast<LONG>(mWidth), static_cast<LONG>(mHeight) };
     if ((aengine->TransferVideoFrame(
         mWicBitmap.Get(),
         &mNormalizedVidRect, &targetRect, &bgColor)) == S_OK) {
@@ -515,7 +515,7 @@ bool WICTextureManager::draw(ofPixels& apix) {
 
     ComPtr<IWICBitmapLock> lockedData;
     DWORD flags = WICBitmapLockRead;
-    WICRect srcRect{ 0, 0, mWidth, mHeight };
+    WICRect srcRect{ 0, 0, static_cast<INT>(mWidth), static_cast<INT>(mHeight) };
 
     if (FAILED(mWicBitmap->Lock(&srcRect, flags, lockedData.GetAddressOf()))) {
         return false;
