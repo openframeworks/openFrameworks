@@ -550,10 +550,10 @@ ofHttpRequest::ofHttpRequest(const string & url, const string & name, bool saveT
 	: url(url)
 	, name(name)
 	, saveTo(saveTo)
-	, method(GET)
-	, id(nextID++)
 	, close(autoClose)
-	, verbose(verbose){
+	, verbose(verbose)
+	, method(GET)
+	, id(nextID++){
 }
 
 int ofHttpRequest::getId() const {
