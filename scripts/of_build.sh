@@ -1112,6 +1112,8 @@ menuBuild(){
 			"Generate project files (PG)…|generate" \
 			"CMake…|cmake" \
 			"Clean project…|clean" \
+			"Apothecary — build libraries…|apothecary" \
+			"Upgrade — Projects / Addons…|upgrade" \
 			"Help|help" \
 			"Back|back" \
 			|| return 0
@@ -1246,6 +1248,16 @@ menuBuild(){
 				esac
 				runCleanProject "$project"
 				menuPause
+				;;
+			apothecary)
+				menuApothecary
+				# menuApothecary returns 2 for "back / cancelled, nothing ran" —
+				# skip the pause then instead of stopping on an empty screen
+				[[ $? -eq 2 ]] || menuPause
+				;;
+			upgrade)
+				menuUpgrade
+				[[ $? -eq 2 ]] || menuPause
 				;;
 			help)
 				printHelpBuild

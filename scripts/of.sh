@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # of.sh - openFrameworks CLI  |  Dan Rosser 2025
-OF_SCRIPT_VERSION=0.4.0
+OF_SCRIPT_VERSION=0.4.2
 
 OF_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 OF_DIR="$(realpath "$OF_DIR/../")"
@@ -1468,13 +1468,16 @@ menuApothecary(){
 	)
 	[[ -n "$APO_CLI" ]] && opts+=("Open Apothecary interactive menu|apo-menu")
 	opts+=("Status|status" "Back|back")
-	menuPick "Apothecary builds" "${opts[@]}" || return 0
+	# return 2 (not 0) for every "nothing happened, back/cancelled" exit below
+	# so the caller can skip the "press Enter to return" pause and go straight
+	# back up a level instead of pausing on an empty/unchanged screen.
+	menuPick "Apothecary builds" "${opts[@]}" || return 2
 	choice="$UI_MENU_RESULT"
 
 	case "$choice" in
 		build-host)
 			if [[ "$OF_PLATFORM" == "vs" ]]; then
-				menuPickApoVsVer || return 0
+				menuPickApoVsVer || return 2
 				export OF_APO_VS_VER="$UI_MENU_RESULT"
 			fi
 			cmdApothecaryBuildAll "$OF_PLATFORM" "$OF_ARCH"
@@ -1491,10 +1494,10 @@ menuApothecary(){
 				fi
 			done
 			[[ "$OF_PLATFORM" == "osx" ]] && echoNote "macos covers osx · ios · tvos · xros · watchos · catos"
-			menuPick "Build platform" "${opts[@]}" || return 0
+			menuPick "Build platform" "${opts[@]}" || return 2
 			type="$UI_MENU_RESULT"
 			if [[ "$type" == "vs" ]]; then
-				menuPickApoVsVer || return 0
+				menuPickApoVsVer || return 2
 				export OF_APO_VS_VER="$UI_MENU_RESULT"
 			fi
 			aopts=()
@@ -1502,7 +1505,7 @@ menuApothecary(){
 			for a in "${arches[@]}"; do
 				aopts+=("${a}|${a}")
 			done
-			menuPick "Architecture · ${type}" "${aopts[@]}" || return 0
+			menuPick "Architecture · ${type}" "${aopts[@]}" || return 2
 			cmdApothecaryBuildAll "$type" "$UI_MENU_RESULT"
 			;;
 		build-one)
@@ -1510,16 +1513,16 @@ menuApothecary(){
 			for type in "${APO_BUILD_TYPES[@]}"; do
 				opts+=("${type}|${type}")
 			done
-			menuPick "Platform" "${opts[@]}" || return 0
+			menuPick "Platform" "${opts[@]}" || return 2
 			type="$UI_MENU_RESULT"
 			if [[ "$type" == "vs" ]]; then
-				menuPickApoVsVer || return 0
+				menuPickApoVsVer || return 2
 				export OF_APO_VS_VER="$UI_MENU_RESULT"
 			fi
 			aopts=()
 			read -r -a arches <<< "$(archesForApoType "$type")"
 			for a in "${arches[@]}"; do aopts+=("${a}|${a}"); done
-			menuPick "Architecture · ${type}" "${aopts[@]}" || return 0
+			menuPick "Architecture · ${type}" "${aopts[@]}" || return 2
 			arch="$UI_MENU_RESULT"
 			opts=()
 			local f
@@ -1529,9 +1532,9 @@ menuApothecary(){
 				if [[ -d "$f" ]]; then opts+=("${name}|${name}")
 				elif [[ "$name" == *.sh ]]; then opts+=("${name%.sh}|${name%.sh}"); fi
 			done
-			menuPick "Formula · ${type}/${arch}" "${opts[@]}" || return 0
+			menuPick "Formula · ${type}/${arch}" "${opts[@]}" || return 2
 			name="$UI_MENU_RESULT"
-			confirmYes "Build ${name} for ${type}/${arch}?" || return 0
+			confirmYes "Build ${name} for ${type}/${arch}?" || return 2
 			tasksBegin "Tasks" "Resolve" "Build ${name}" "Finish"
 			taskSet 0 done "$APO_HOME"
 			if ! taskLive 1 -- runApothecaryEngine "$type" "$arch" update "$name"; then
@@ -1550,7 +1553,7 @@ menuApothecary(){
 			echoKV "libs out" "${OF_DIR}/libs"
 			printf '\n'
 			;;
-		back) return 0 ;;
+		back) return 2 ;;
 	esac
 }
 
@@ -1583,13 +1586,13 @@ menuUpgrade(){
 		"Projects (apps/)|apps" \
 		"Both|both" \
 		"Back|back" \
-		|| return 0
+		|| return 2
 	choice="$UI_MENU_RESULT"
 	case "$choice" in
-		addons) cmdUpgrade addons ;;
-		apps)   cmdUpgrade apps ;;
+		addons) cmdUpgrade addons; return $? ;;
+		apps)   cmdUpgrade apps; return $? ;;
 		both)   cmdUpgrade addons; cmdUpgrade apps ;;
-		back)   return 0 ;;
+		back)   return 2 ;;
 	esac
 }
 
@@ -2217,13 +2220,16 @@ menuCleanup(){
 }
 
 cmdMenu(){
-	local choice setupLabel="Setup  — libs + Project Generator (apothecary @ latest)"
+	# labelled like the ofBaseApp lifecycle (setup/update/draw/exit) since
+	# this is openFrameworks' own menu — fn name shown dim on the right
+	local choice
+	local setupDesc="libs + Project Generator (apothecary @ latest)"
 	if ! menuCanRun; then
 		echoWarning "no TTY — showing status"
 		cmdStatus
 		return 0
 	fi
-	[[ "$OF_PLATFORM" == "linux" ]] && setupLabel="Setup  — distro deps + libs + Project Generator"
+	[[ "$OF_PLATFORM" == "linux" ]] && setupDesc="distro deps + libs + Project Generator"
 
 	while true; do
 		printf '\n'
@@ -2236,16 +2242,14 @@ cmdMenu(){
 		printf '\n'
 
 		if ! menuPick "What do you want to do?" \
-			"Status  — system checker|status" \
-			"${setupLabel}|setup" \
-			"Update  — libs / PG (choose source)|update" \
-			"Build…  — core / projects / examples / emscripten / cmake|build" \
-			"Build libraries (Apothecary)…|apothecary" \
-			"Cleanup — projects / caches / libraries|cleanup" \
-			"Version info  — openFrameworks + Project Generator|version" \
-			"Upgrade  — Projects / Addons…|upgrade" \
-			"Help|help" \
-			"Quit|quit"
+			"status()   — system checker  (cmdStatus)|status" \
+			"setup()    — ${setupDesc}  (cmdSetup)|setup" \
+			"update()   — libs / PG (choose source)  (menuUpdate)|update" \
+			"draw()     — build: core / apothecary / upgrade / examples / cmake  (menuBuild)|build" \
+			"cleanup()  — projects / caches / libraries  (menuCleanup)|cleanup" \
+			"version()  — openFrameworks + Project Generator  (menuVersion)|version" \
+			"help()  (printHelp)|help" \
+			"exit()|exit"
 		then
 			echoInfo "bye"
 			return 0
@@ -2257,12 +2261,10 @@ cmdMenu(){
 			setup)      cmdSetup "$OF_PLATFORM"; menuPause ;;
 			update)     menuUpdate; menuPause ;;
 			build)      menuBuild ;;
-			apothecary) menuApothecary; menuPause ;;
 			cleanup|clean) menuCleanup ;;
 			version)    menuVersion; menuPause ;;
-			upgrade)    menuUpgrade; menuPause ;;
 			help)       printHelp; menuPause ;;
-			quit)       echoSuccess "bye"; return 0 ;;
+			exit|quit)  echoSuccess "bye"; return 0 ;;
 			*)          echoError "unknown: $choice"; menuPause ;;
 		esac
 	done
