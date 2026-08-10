@@ -46,6 +46,25 @@ OF_CORE_ADDON_MAP=(
 	oscpack:ofxOsc
 )
 
+# All addons that ship with vanilla openFrameworks — broader than
+# OF_CORE_ADDON_MAP (which only covers addons bundling a 3rd-party lib);
+# most core addons (ofxGui, ofxNetwork, ofxXmlSettings, …) are pure C++ /
+# OS-framework wrappers with nothing to download, so they'd otherwise never
+# show up anywhere in `of status`.
+OF_CORE_ADDON_NAMES=(
+	ofxAccelerometer ofxAndroid ofxAssimp ofxAssimpModelLoader ofxEmscripten
+	ofxGPS ofxGui ofxiOS ofxKinect ofxNetwork ofxOpenCv ofxOsc ofxPoco ofxSvg
+	ofxThreadedImageLoader ofxUnitTests ofxVectorGraphics ofxXmlSettings
+)
+
+isCoreAddonName(){
+	local n="$1" x
+	for x in "${OF_CORE_ADDON_NAMES[@]}"; do
+		[[ "$x" == "$n" ]] && return 0
+	done
+	return 1
+}
+
 APO_HOME=""
 APO_ENGINE=""
 APO_CLI=""
@@ -525,23 +544,62 @@ readLibVersionMeta(){
 	return 1
 }
 
-# Streams "name (version · note)" one line at a time as each library is read,
-# instead of resolving the whole section silently before printing anything.
-# Version lookup does several `find` passes per lib (pkl/pkgconfig/cmake/header
-# fallbacks) which can be slow on Windows/MSYS2 filesystems — this keeps the
-# status command visibly moving instead of appearing to hang.
+# Streams "name(version · note), name(version · note), …" onto one growing
+# line as each library is read, instead of resolving the whole section
+# silently before printing anything. Version lookup does several `find`
+# passes per lib (pkl/pkgconfig/cmake/header fallbacks) which can be slow on
+# Windows/MSYS2 filesystems — this keeps the status command visibly moving
+# (each entry appears the moment it's read) instead of appearing to hang.
 printLibInlineSection(){
 	local title="$1"
 	shift
+	# nothing to show — skip the whole section instead of a header + "—"
+	[[ $# -eq 0 ]] && return 0
+
 	printf '\n'
 	printf '  %s%s%s  %s────────────────%s\n' "$C_ACCENT" "$title" "$C_RESET" "$C_MUTED" "$C_RESET"
-	if [[ $# -eq 0 ]]; then
-		printf '  %s—%s\n' "$C_MUTED" "$C_RESET"
-		return 0
-	fi
 
 	local -a items=("$@")
 	local path name note entry n=0
+
+	# group entries by their addon note first (ofxEmscripten(html5audio 1.0.0,
+	# html5video 1.0.0)) instead of repeating the addon name per lib; entries
+	# with no note (plain core libs) print individually same as before
+	local -a noteOrder=()
+	local seenNotes=" "
+	for path in "${items[@]}"; do
+		note=""
+		[[ "$path" == *"|"* ]] && note="${path#*|}"
+		[[ -n "$note" && "$seenNotes" != *" ${note} "* ]] && { noteOrder+=("$note"); seenNotes+="${note} "; }
+	done
+
+	printf '  '
+	local grp gi
+	for grp in "${noteOrder[@]}"; do
+		[[ "$n" -gt 0 ]] && printf '%s,%s ' "$C_MUTED" "$C_RESET"
+		printf '%s%s%s(' "$C_FG" "$grp" "$C_RESET"
+		gi=0
+		for path in "${items[@]}"; do
+			note=""
+			if [[ "$path" == *"|"* ]]; then
+				note="${path#*|}"
+				path="${path%%|*}"
+			fi
+			[[ "$note" == "$grp" ]] || continue
+			[[ -d "$path" ]] || continue
+			name=$(basename "$path")
+			if readLibVersionMeta "$path"; then
+				entry="${name} ${LIB_META_VER}"
+			else
+				entry="${name} ?"
+			fi
+			[[ "$gi" -gt 0 ]] && printf '%s,%s ' "$C_MUTED" "$C_RESET"
+			printf '%s%s%s' "$C_FG" "$entry" "$C_RESET"
+			gi=$((gi + 1))
+		done
+		printf '%s)%s' "$C_FG" "$C_RESET"
+		n=$((n + 1))
+	done
 
 	for path in "${items[@]}"; do
 		note=""
@@ -549,47 +607,85 @@ printLibInlineSection(){
 			note="${path#*|}"
 			path="${path%%|*}"
 		fi
+		[[ -n "$note" ]] && continue
 		[[ -d "$path" ]] || continue
 		name=$(basename "$path")
-
-		if isInteractive; then
-			printf '  %s·%s %s%s%s' "$C_MUTED" "$C_RESET" "$C_FG" "$name" "$C_RESET"
-		fi
-
 		if readLibVersionMeta "$path"; then
-			entry="${name} (${LIB_META_VER}${note:+ · ${note}})"
+			entry="${name}(${LIB_META_VER})"
 		else
-			entry="${name} (?${note:+ · ${note}})"
+			entry="${name}(?)"
 		fi
-
-		if isInteractive; then
-			printf '\r\033[K  %s·%s %s\n' "$C_MUTED" "$C_RESET" "$entry"
-		else
-			printf '  · %s\n' "$entry"
-		fi
+		[[ "$n" -gt 0 ]] && printf '%s,%s ' "$C_MUTED" "$C_RESET"
+		printf '%s%s%s' "$C_FG" "$entry" "$C_RESET"
 		n=$((n + 1))
 	done
 
-	[[ "$n" -eq 0 ]] && printf '  %s—%s\n' "$C_MUTED" "$C_RESET"
+	[[ "$n" -eq 0 ]] && printf '%s—%s' "$C_MUTED" "$C_RESET"
+	printf '\n'
 }
 
-# Plain name list (no version lookup — addon dirs don't carry one the way
-# bundled libs do). Used for the "Core Addons" section.
-printNameListSection(){
+# Every addon name in $names shown as "name(lib version, …)" when it has
+# bundled libs among $items (path|note entries, same shape as SEC_CORE /
+# SEC_ADDONS), or plain "name" when it doesn't — most core addons (ofxGui,
+# ofxNetwork, …) have no bundled 3rd-party lib at all. Args: title, names...,
+# "--", items...
+printAddonGroupSection(){
 	local title="$1"
 	shift
+
+	local -a names=() items=()
+	local sawSep=0 a
+	for a in "$@"; do
+		if [[ "$sawSep" -eq 0 && "$a" == "--" ]]; then
+			sawSep=1
+			continue
+		fi
+		if [[ "$sawSep" -eq 0 ]]; then
+			names+=("$a")
+		else
+			items+=("$a")
+		fi
+	done
+
+	# nothing to show — skip the whole section instead of a header + "—"
+	[[ ${#names[@]} -eq 0 ]] && return 0
+
 	printf '\n'
 	printf '  %s%s%s  %s────────────────%s\n' "$C_ACCENT" "$title" "$C_RESET" "$C_MUTED" "$C_RESET"
-	if [[ $# -eq 0 ]]; then
-		printf '  %s—%s\n' "$C_MUTED" "$C_RESET"
-		return 0
-	fi
-	local line="" a
-	for a in "$@"; do
-		[[ -n "$line" ]] && line+=", "
-		line+="$a"
+	printf '  '
+	local nm path note libname n=0 gi
+	local -a libEntries
+	for nm in "${names[@]}"; do
+		[[ "$n" -gt 0 ]] && printf '%s,%s ' "$C_MUTED" "$C_RESET"
+		libEntries=()
+		for path in "${items[@]}"; do
+			note=""
+			if [[ "$path" == *"|"* ]]; then
+				note="${path#*|}"
+				path="${path%%|*}"
+			fi
+			[[ "$note" == "$nm" ]] || continue
+			[[ -d "$path" ]] || continue
+			libname=$(basename "$path")
+			if readLibVersionMeta "$path"; then
+				libEntries+=("${libname} ${LIB_META_VER}")
+			else
+				libEntries+=("${libname} ?")
+			fi
+		done
+		if [[ ${#libEntries[@]} -gt 0 ]]; then
+			printf '%s%s%s(' "$C_FG" "$nm" "$C_RESET"
+			for ((gi = 0; gi < ${#libEntries[@]}; gi++)); do
+				[[ "$gi" -gt 0 ]] && printf '%s,%s ' "$C_MUTED" "$C_RESET"
+				printf '%s%s%s' "$C_FG" "${libEntries[$gi]}" "$C_RESET"
+			done
+			printf '%s)%s' "$C_FG" "$C_RESET"
+		else
+			printf '%s%s%s' "$C_FG" "$nm" "$C_RESET"
+		fi
+		n=$((n + 1))
 	done
-	printf '  %s\n' "$line"
+	printf '\n'
 }
 
 # bash-3.2 safe: track seen keys as newline-separated string
@@ -773,16 +869,39 @@ cmdStatus(){
 	# libs/* and addons/*/libs/* dir gets stat'd, which is the slow part on
 	# Windows/MSYS2, so it happens while printing rather than behind a spinner
 	collectLibSections
-	printLibInlineSection "Core" "${SEC_CORE[@]}"
-	printLibInlineSection "Addons" "${SEC_ADDONS[@]}"
-	printLibInlineSection "Other" "${SEC_OTHER[@]}"
 
-	local -a coreAddonNames=()
+	# SEC_CORE mixes two things: plain core libs under libs/ (no note), and
+	# libs bundled specifically for one of OF's own core addons (note = addon
+	# name, e.g. assimp for ofxAssimpModelLoader). Split them into their own
+	# sections instead of showing them side by side under one "Core" header.
+	local -a coreLibsOnly=()
+	local p
+	for p in "${SEC_CORE[@]}"; do
+		[[ "$p" == *"|"* ]] || coreLibsOnly+=("$p")
+	done
+
+	# every installed addon, split into core vs other by name (not by whether
+	# it happens to bundle a 3rd-party lib — most core addons don't)
+	local -a installedAddons=() coreAddonNames=() otherAddonNames=()
 	local a
 	while IFS= read -r a; do
-		[[ -n "$a" ]] && coreAddonNames+=("$a")
+		[[ -n "$a" ]] && installedAddons+=("$a")
 	done < <(listAddons)
-	printNameListSection "Core Addons" "${coreAddonNames[@]}"
+	for a in "${installedAddons[@]}"; do
+		if isCoreAddonName "$a"; then
+			coreAddonNames+=("$a")
+		else
+			otherAddonNames+=("$a")
+		fi
+	done
+
+	printLibInlineSection "Core (Libraries)" "${coreLibsOnly[@]}"
+	# search both pools regardless of which one collectLibSections happened to
+	# put a given addon's libs into (its own addon-name list doesn't
+	# necessarily match OF_CORE_ADDON_NAMES, e.g. ofxEmscripten)
+	printAddonGroupSection "Core (Addons)" "${coreAddonNames[@]}" -- "${SEC_CORE[@]}" "${SEC_ADDONS[@]}"
+	printAddonGroupSection "Other Addons — every other addon under addons/" "${otherAddonNames[@]}" -- "${SEC_CORE[@]}" "${SEC_ADDONS[@]}"
+	printLibInlineSection "Other Libraries — libs/ not part of OF's core set" "${SEC_OTHER[@]}"
 
 	printf '\n'
 	if [[ "$issues" -eq 0 ]]; then
@@ -1284,51 +1403,20 @@ menuPickOfLibs(){
 	esac
 }
 
-menuPickPlatformForLibs(){
-	local -a opts=()
-	local p script label
-	for p in "${OF_LIB_PLATFORMS[@]}"; do
-		script="${OF_CORE_SCRIPT_DIR}/${p}/download_libs.sh"
-		if [[ "$LIB_SOURCE" != "apothecary" ]] || [[ -f "$script" ]]; then
-			label="$p"
-			if [[ "$LIB_SOURCE" == "apothecary" ]]; then
-				case "$p" in
-					macos) label="macos  — Apple multi-target (osx · ios · tvos · xros · watchos · catos)" ;;
-					osx)
-						label="osx  — desktop host package"
-						[[ "$p" == "$OF_PLATFORM" ]] && label+="  (this machine)"
-						;;
-					*) [[ "$p" == "$OF_PLATFORM" ]] && label="${p}  (this machine)" ;;
-				esac
-			else
-				[[ "$p" == "$OF_PLATFORM" ]] && label="${p}  (this machine)"
-			fi
-			opts+=("${label}|${p}")
-		fi
-	done
-	[[ "$LIB_SOURCE" == "apothecary" && "$OF_PLATFORM" == "osx" ]] && \
-		echoNote "macos packages install lib/macos/*.xcframework covering all Apple targets"
-	menuPick "Target platform" "${opts[@]}" || return 1
-}
-
 menuDownloadLibs(){
 	local platformDir="${1:-$OF_PLATFORM}"
 	printBanner "libs"
 	echoInfo "download libraries · choose source"
 	printf '\n'
 
-	menuPickLibSource || return 1
+	menuPickLibSource || return 2
 	echoSuccess "source → $LIB_SOURCE"
-	menuPickLibTag "$LIB_SOURCE" || return 1
+	menuPickLibTag "$LIB_SOURCE" || return 2
 	echoSuccess "tag → $LIB_TAG"
 
-	if [[ "$platformDir" == "$OF_PLATFORM" ]]; then
-		if menuCanRun && confirmNo "Download for another platform instead of ${platformDir}?"; then
-			menuPickPlatformForLibs || return 1
-			platformDir="$UI_MENU_RESULT"
-		fi
-	fi
-
+	# source + tag is enough to start — no extra gates after this. Cross-
+	# platform downloads and non-default clean modes are still available via
+	# `of update libs <platform>` / LIB_CLEAN_MODE for the cases that need them.
 	if [[ "$LIB_SOURCE" == "apothecary" ]]; then
 		case "$platformDir" in
 			osx)
@@ -1339,22 +1427,10 @@ menuDownloadLibs(){
 				echoNote "macos packages → lib/macos/*.xcframework (osx · ios · tvos · …)"
 				;;
 		esac
-		# Default is platform-scoped clean (safe multi-platform). Optional full wipe of shared include/.
-		if menuCanRun; then
-			menuPick "Clean mode before install · ${platformDir}" \
-				"Platform only — keep other platforms (Recommended)|platform" \
-				"Merge only — never delete before extract|merge" \
-				"Full clean — also wipe shared include/ (+ bin on vs/msys2)|full" \
-				|| return 1
-			case "$UI_MENU_RESULT" in
-				merge) export LIB_CLEAN_MODE=merge ;;
-				full)  export LIB_CLEAN_MODE=full ;;
-				*)     export LIB_CLEAN_MODE=platform ;;
-			esac
-			echoSuccess "clean → $LIB_CLEAN_MODE"
-		fi
+		export LIB_CLEAN_MODE="${LIB_CLEAN_MODE:-platform}"
+		echoKV "clean" "$LIB_CLEAN_MODE"
 	fi
-	[[ "$LIB_SOURCE" == "oflibs" ]] && { menuPickOfLibs "$LIB_TAG" "$platformDir" || return 1; }
+	[[ "$LIB_SOURCE" == "oflibs" ]] && { menuPickOfLibs "$LIB_TAG" "$platformDir" || return 2; }
 
 	# force download after explicit update path (user already chose source)
 	cmdUpdateLibs "$platformDir" 1
@@ -2241,14 +2317,15 @@ cmdMenu(){
 		[[ -n "$OF_LINUX_DISTRO" ]] && echoKV "distro" "$OF_LINUX_DISTRO"
 		printf '\n'
 
+		# short labels on purpose — long lines wrap/truncate differently across
+		# terminals and can desync gum's highlighted row from the real selection
 		if ! menuPick "What do you want to do?" \
-			"status()   — system checker  (cmdStatus)|status" \
-			"setup()    — ${setupDesc}  (cmdSetup)|setup" \
-			"update()   — libs / PG (choose source)  (menuUpdate)|update" \
-			"draw()     — build: core / apothecary / upgrade / examples / cmake  (menuBuild)|build" \
-			"cleanup()  — projects / caches / libraries  (menuCleanup)|cleanup" \
-			"version()  — openFrameworks + Project Generator  (menuVersion)|version" \
-			"help()  (printHelp)|help" \
+			"status()   — checker  (cmdStatus)|status" \
+			"setup()    — install  (cmdSetup)|setup" \
+			"update()   — refresh  (menuUpdate)|update" \
+			"draw()     — build  (menuBuild)|build" \
+			"cleanup()  — free space  (menuCleanup)|cleanup" \
+			"version()  — info  (menuVersion)|version" \
 			"exit()|exit"
 		then
 			echoInfo "bye"
@@ -2259,11 +2336,10 @@ cmdMenu(){
 		case "$choice" in
 			status)     cmdStatus; menuPause ;;
 			setup)      cmdSetup "$OF_PLATFORM"; menuPause ;;
-			update)     menuUpdate; menuPause ;;
+			update)     menuUpdate; [[ $? -eq 2 ]] || menuPause ;;
 			build)      menuBuild ;;
 			cleanup|clean) menuCleanup ;;
 			version)    menuVersion; menuPause ;;
-			help)       printHelp; menuPause ;;
 			exit|quit)  echoSuccess "bye"; return 0 ;;
 			*)          echoError "unknown: $choice"; menuPause ;;
 		esac
@@ -2282,22 +2358,24 @@ menuUpdate(){
 	echoKV "pg" "${PG_STATE} — ${PG_STATE_DETAIL}"
 	printf '\n'
 
+	# return 2 for "nothing happened, back/cancelled" so the caller can skip
+	# the "press Enter to return" pause, same convention as menuApothecary/menuUpgrade
 	menuPick "What to update?" \
 		"Libraries (choose source)…|libs" \
 		"Project Generator|pg" \
 		"Libraries + Project Generator|all" \
 		"Back|back" \
-		|| return 0
+		|| return 2
 	what="$UI_MENU_RESULT"
 	case "$what" in
-		libs) menuDownloadLibs "$OF_PLATFORM" ;;
+		libs) menuDownloadLibs "$OF_PLATFORM"; return $? ;;
 		pg)   cmdUpdatePG "$OF_PLATFORM" 1 ;;
 		all)
 			menuDownloadLibs "$OF_PLATFORM" || return $?
 			# after libs, refresh PG to latest
 			cmdUpdatePG "$OF_PLATFORM" 1
 			;;
-		back) return 0 ;;
+		back) return 2 ;;
 	esac
 }
 
