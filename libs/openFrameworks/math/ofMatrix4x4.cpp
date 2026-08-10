@@ -56,7 +56,7 @@ void ofMatrix4x4::set( float a00, float a01, float a02, float a03,
 
 void ofMatrix4x4::setRotate(const ofQuaternion& q)
 {
-    double length2 = q.length2();
+    double length2 = q.lengthSquared();
     if (std::abs(length2) <= std::numeric_limits<double>::min())
     {
         _mat[0][0] = 1.0; _mat[1][0] = 0.0; _mat[2][0] = 0.0;
