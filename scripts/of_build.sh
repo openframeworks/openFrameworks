@@ -153,11 +153,14 @@ listAppGroups(){
 	done | sort
 }
 
+# Every addon dir under addons/ — core ofx* ones and any other/ofxAddons-style
+# folder that doesn't follow the ofx naming convention
 listAddons(){
 	local d name
-	for d in "${OF_DIR}/addons"/ofx*/; do
+	for d in "${OF_DIR}/addons"/*/; do
 		[[ -d "$d" ]] || continue
 		name=$(basename "$d")
+		[[ "$name" == .* ]] && continue
 		printf '%s\n' "$name"
 	done | sort
 }
