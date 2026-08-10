@@ -17,7 +17,7 @@ public:
 	std::string url; ///< request url
 	std::string name; ///< optional name key for sorting
 	bool saveTo; ///< save to a file once the request is finished?
-	bool close; ///< auto close connection at each request - default true 
+	bool close; ///< auto close connection at each request - default true
 	bool verbose; ///< verbose packet logs
 	std::map<std::string, std::string> headers; ///< HTTP header keys & values
 	std::string body; ///< POST body data
@@ -27,17 +27,17 @@ public:
 	size_t timeoutSeconds = 0;
 	bool headerOnly = false;
 
-	/// \return the unique id for this request
-	int getId() const;
-	[[deprecated("Use getId().")]]
-	int getID();
-
 	/// HTTP request type
 	enum Method{
 		GET, //< request data from a specified resource (via url)
 		POST, //< submit data to be processed to a specified resource (via url)
 		PUT
 	} method;
+
+	/// \\return the unique id for this request
+	int getId() const;
+	[[deprecated("Use getId().")]]
+	int getID();
 
 private:
 	int id; ///< unique id for this request
