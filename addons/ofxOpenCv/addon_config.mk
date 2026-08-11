@@ -190,4 +190,3 @@ emscripten:
 ios:
 	# osx/iOS only, any framework that should be included in the project
 	ADDON_FRAMEWORKS = AssetsLibrary
-
