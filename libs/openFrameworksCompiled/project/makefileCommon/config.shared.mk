@@ -102,25 +102,43 @@ ifndef PLATFORM_LIB_SUBPATH
 	# determine from the arch
 	ifeq ($(PLATFORM_OS),Linux)
 		ifeq ($(RPI_DETECTED),yes)
-			else ifeq ($(PLATFORM_ARCH),armv6l)
+			PLATFORM_CONFIG_SUBPATH=linux/rasbian
+			ifeq ($(PLATFORM_ARCH),armv6l)
 				PLATFORM_LIB_SUBPATH=linux/armv6l
+				PLATFORM_CONFIG_ID=linuxarmv6l
 			else ifeq ($(PLATFORM_ARCH),armv7l)
 				PLATFORM_LIB_SUBPATH=linux/armv7l
+				PLATFORM_CONFIG_ID=linuxarmv7l
 			else ifeq ($(PLATFORM_ARCH),armv8l)
 				PLATFORM_LIB_SUBPATH=linux/armv8l
-			else ifeq ($(PLATFORM_ARCH),aarch64)
+				PLATFORM_CONFIG_ID=linuxarmv8l
+			else ifeq ($(PLATFORM_ARCH),arm64)
 				PLATFORM_LIB_SUBPATH=linux/aarch64
+				PLATFORM_CONFIG_ID=linuxaarch64
+			else
+				$(error This makefile does not support Raspberry Pi architecture $(PLATFORM_ARCH))
+			endif
 		else ifeq ($(JETSON_DETECTED),yes)
 			PLATFORM_LIB_SUBPATH=linux/jetson
+			PLATFORM_CONFIG_SUBPATH=linux/arm64
+			PLATFORM_CONFIG_ID=linuxarm64
 		else
 			ifeq ($(PLATFORM_ARCH),x86_64)
 				PLATFORM_LIB_SUBPATH=linux/64
+				PLATFORM_CONFIG_SUBPATH=linux/64
+				PLATFORM_CONFIG_ID=linux64
 			else ifeq ($(PLATFORM_ARCH),64)
 				PLATFORM_LIB_SUBPATH=linux/64
+				PLATFORM_CONFIG_SUBPATH=linux/64
+				PLATFORM_CONFIG_ID=linux64
 			else ifeq ($(PLATFORM_ARCH),arm64)
 				PLATFORM_LIB_SUBPATH=linux/arm64
+				PLATFORM_CONFIG_SUBPATH=linux/arm64
+				PLATFORM_CONFIG_ID=linuxarm64
 			else ifeq ($(PLATFORM_ARCH),aarch64)
 				PLATFORM_LIB_SUBPATH=linux/arm64
+				PLATFORM_CONFIG_SUBPATH=linux/arm64
+				PLATFORM_CONFIG_ID=linuxarm64
 			else
 				PLATFORM_LIB_SUBPATH=linux
 				$(error This makefile does not support your architecture $(PLATFORM_ARCH))
@@ -150,6 +168,25 @@ ifndef PLATFORM_LIB_SUBPATH
 	endif
 endif
 
+PLATFORM_CONFIG_SUBPATH ?= $(PLATFORM_LIB_SUBPATH)
+PLATFORM_CONFIG_ID ?= $(subst /,,$(PLATFORM_CONFIG_SUBPATH))
+
+# Canonical library paths follow Apothecary's OS/architecture layout. These
+# aliases keep existing addons with pre-0.13 flat Linux paths working.
+ifeq ($(PLATFORM_OS),Linux)
+	ifeq ($(PLATFORM_LIB_SUBPATH),linux/64)
+		PLATFORM_LEGACY_LIB_SUBPATHS ?= linux64
+	else ifeq ($(PLATFORM_LIB_SUBPATH),linux/armv6l)
+		PLATFORM_LEGACY_LIB_SUBPATHS ?= linuxarmv6l
+	else ifeq ($(PLATFORM_LIB_SUBPATH),linux/armv7l)
+		PLATFORM_LEGACY_LIB_SUBPATHS ?= linuxarmv7l
+	else ifeq ($(PLATFORM_LIB_SUBPATH),linux/aarch64)
+		PLATFORM_LEGACY_LIB_SUBPATHS ?= linuxaarch64
+	else ifeq ($(PLATFORM_LIB_SUBPATH),linux/arm64)
+		PLATFORM_LEGACY_LIB_SUBPATHS ?= linuxarm64 linuxaarch64
+	endif
+endif
+
 
 # TODO: add appropriate list of platform suffixes
 # these variables will actually be used during compilation
@@ -168,6 +205,9 @@ ifdef MAKEFILE_DEBUG
 	$(info PLATFORM_OS=$(PLATFORM_OS))
 	$(info PLATFORM_VARIANT=$(PLATFORM_VARIANT))
 	$(info PLATFORM_LIB_SUBPATH=$(PLATFORM_LIB_SUBPATH))
+	$(info PLATFORM_CONFIG_SUBPATH=$(PLATFORM_CONFIG_SUBPATH))
+	$(info PLATFORM_CONFIG_ID=$(PLATFORM_CONFIG_ID))
+	$(info PLATFORM_LEGACY_LIB_SUBPATHS=$(PLATFORM_LEGACY_LIB_SUBPATHS))
 endif
 
 
@@ -218,7 +258,7 @@ ifndef OF_SHARED_MAKEFILES_PATH
 endif
 
 ifdef OF_LIBS_OF_COMPILED_PROJECT_PATH
-	OF_PLATFORM_MAKEFILES=$(OF_LIBS_OF_COMPILED_PROJECT_PATH)/$(PLATFORM_LIB_SUBPATH)
+	OF_PLATFORM_MAKEFILES=$(OF_LIBS_OF_COMPILED_PROJECT_PATH)/$(PLATFORM_CONFIG_SUBPATH)
 else
 	$(error OF_LIBS_OF_COMPILED_PATH is not defined)
 endif
@@ -245,8 +285,8 @@ ifdef MAKEFILE_DEBUG
 	$(info OF_LIBS_OF_COMPILED_PROJECT_PATH=$(OF_LIBS_OF_COMPILED_PROJECT_PATH))
 endif
 
-ifeq ($(wildcard $(OF_LIBS_OF_COMPILED_PROJECT_PATH)/$(PLATFORM_LIB_SUBPATH)),)
-$(error This package doesn't support your platform, $(OF_LIBS_OF_COMPILED_PROJECT_PATH)/$(PLATFORM_LIB_SUBPATH) probably you downloaded the wrong package?)
+ifeq ($(wildcard $(OF_LIBS_OF_COMPILED_PROJECT_PATH)/$(PLATFORM_CONFIG_SUBPATH)),)
+$(error This package doesn't support your platform, $(OF_LIBS_OF_COMPILED_PROJECT_PATH)/$(PLATFORM_CONFIG_SUBPATH) probably you downloaded the wrong package?)
 endif
 
 # generate a list of valid core platform variants from the files in the platform makefiles directory
@@ -259,12 +299,12 @@ ifeq ($(findstring $(PLATFORM_VARIANT),$(AVAILABLE_PLATFORM_VARIANTS)),)
 endif
 
 # include the platform specific user and platform configuration files
-PLATFORM_LIB_SUBPATH_FIXED := $(subst /,,$(PLATFORM_LIB_SUBPATH))
-include $(OF_PLATFORM_MAKEFILES)/config.$(PLATFORM_LIB_SUBPATH_FIXED).$(PLATFORM_VARIANT).mk
+include $(OF_PLATFORM_MAKEFILES)/config.$(PLATFORM_CONFIG_ID).$(PLATFORM_VARIANT).mk
 
 
 ifdef ABI_PATH
 	ABI_LIB_SUBPATH=$(PLATFORM_LIB_SUBPATH)/$(strip $(ABI_PATH))
+	ABI_LEGACY_LIB_SUBPATHS=$(addsuffix /$(strip $(ABI_PATH)),$(PLATFORM_LEGACY_LIB_SUBPATHS))
 else
 	#hack to get makefiles working again
 	ifeq ($(PLATFORM_LIB_SUBPATH),osx)
@@ -272,6 +312,15 @@ else
 	else
 	ABI_LIB_SUBPATH=$(PLATFORM_LIB_SUBPATH)
 	endif
+	ABI_LEGACY_LIB_SUBPATHS=$(PLATFORM_LEGACY_LIB_SUBPATHS)
+endif
+
+# Ordered canonical-first candidates used only for addon compatibility.
+ABI_LIB_SUBPATHS=$(strip $(ABI_LIB_SUBPATH) $(ABI_LEGACY_LIB_SUBPATHS))
+ifeq ($(PLATFORM_OS),Linux)
+	PLATFORM_ADDON_KEYS=$(strip linux $(ABI_LIB_SUBPATHS))
+else
+	PLATFORM_ADDON_KEYS=$(strip $(ABI_LIB_SUBPATHS))
 endif
 
 PLATFORM_PKG_CONFIG ?= pkg-config
