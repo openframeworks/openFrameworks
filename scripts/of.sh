@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # of.sh - openFrameworks CLI  |  Dan Rosser 2025
-OF_SCRIPT_VERSION=0.4.2
+OF_SCRIPT_VERSION=0.4.3
 
 OF_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 OF_DIR="$(realpath "$OF_DIR/../")"
@@ -1341,6 +1341,50 @@ menuPickLibSource(){
 	export LIB_SOURCE
 }
 
+menuPickLibPlatform(){
+	local source="${1:-$LIB_SOURCE}"
+	local current="${2:-$OF_PLATFORM}"
+	local -a opts=()
+	case "$source" in
+		apothecary)
+			opts=(
+				"osx         — desktop host libraries|osx"
+				"macos       — multi-target XCFrameworks (iOS, macOS, tvOS)|macos"
+				"ios         — iPhone / iPad|ios"
+				"android|android"
+				"linux|linux"
+				"emscripten|emscripten"
+				"msys2|msys2"
+				"vs          — Visual Studio|vs"
+			)
+			;;
+		oflibs)
+			opts=(
+				"osx / macos|osx"
+				"linux|linux"
+				"linux aarch64|linuxaarch64"
+				"emscripten|emscripten"
+				"Visual Studio|vs"
+			)
+			;;
+		archive)
+			opts=(
+				"osx|osx"
+				"ios|ios"
+				"android|android"
+				"linux|linux"
+				"msys2|msys2"
+				"Visual Studio|vs"
+			)
+			;;
+	esac
+	[[ ${#opts[@]} -gt 0 ]] || return 1
+	echoNote "detected platform: ${current}${OF_ARCH:+ / ${OF_ARCH}}"
+	menuPick "Libraries for which platform?" "${opts[@]}" || return 1
+	LIB_PLATFORM="$UI_MENU_RESULT"
+	export LIB_PLATFORM
+}
+
 menuPickLibTag(){
 	local source="${1:-$LIB_SOURCE}"
 	local -a opts=()
@@ -1411,6 +1455,9 @@ menuDownloadLibs(){
 
 	menuPickLibSource || return 2
 	echoSuccess "source → $LIB_SOURCE"
+	menuPickLibPlatform "$LIB_SOURCE" "$platformDir" || return 2
+	platformDir="$LIB_PLATFORM"
+	echoSuccess "platform → $platformDir"
 	menuPickLibTag "$LIB_SOURCE" || return 2
 	echoSuccess "tag → $LIB_TAG"
 
