@@ -158,8 +158,11 @@ void ofGLProgrammableRenderer::draw(const ofMesh & vertexData, ofPolyRenderMode 
 
 	const_cast<ofGLProgrammableRenderer *>(this)->setAttributes(true, useColors, useTextures, useNormals, drawMode);
 
+	// GL index type must match sizeof(ofIndexType); see drawElements in this file.
+	GLenum indexType = sizeof(ofIndexType) == 2 ? GL_UNSIGNED_SHORT : GL_UNSIGNED_INT;
+
 	if (vertexData.getNumIndices()) {
-		glDrawElements(drawMode, vertexData.getNumIndices(), GL_UNSIGNED_SHORT, vertexData.getIndexPointer());
+		glDrawElements(drawMode, vertexData.getNumIndices(), indexType, vertexData.getIndexPointer());
 	} else {
 		glDrawArrays(drawMode, 0, vertexData.getNumVertices());
 	}
@@ -238,7 +241,7 @@ void ofGLProgrammableRenderer::drawInstanced(const ofVboMesh & mesh, ofPolyRende
 		}
 	}
 
-#if !defined(TARGET_OPENGLES) || defined(GL_ES_VERSION_3_0)
+#if !defined(TARGET_OPENGLES)
 	
 #ifndef TARGET_OPENGLES
 	glPolygonMode(GL_FRONT_AND_BACK, ofGetGLPolyMode(renderType));
@@ -495,12 +498,8 @@ void ofGLProgrammableRenderer::drawElementsInstanced(const ofVbo & vbo, GLuint d
 		// https://www.khronos.org/opengles/sdk/docs/man3/xhtml/glDrawElementsInstanced.xml
 		ofLogWarning("ofVbo") << "drawElementsInstanced(): hardware instancing is not supported on OpenGL ES < 3.0";
 #else
-		#if defined(TARGET_OPENGLES)
-		glDrawElementsInstanced(drawMode, amt, GL_UNSIGNED_SHORT, nullptr, primCount);
-		#else
 		// GL index type must match sizeof(ofIndexType); see drawElements above.
 		glDrawElementsInstanced(drawMode, amt, sizeof(ofIndexType) == 2 ? GL_UNSIGNED_SHORT : GL_UNSIGNED_INT, nullptr, primCount);
-		#endif
 #endif
 		vbo.unbind();
 	}
