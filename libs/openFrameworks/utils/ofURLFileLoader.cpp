@@ -324,6 +324,18 @@ ofHttpResponse ofURLFileLoaderImpl::handleRequest(const ofHttpRequest & request)
 	}
 	curl_slist * headers = nullptr;
 	curl_version_info_data *version = curl_version_info( CURLVERSION_NOW );
+	ofLogVerbose("ofURLFileLoader") << "handleRequest: url='" << request.url << "' method=" << (int)request.method << " timeout=" << request.timeoutSeconds << " headers=" << request.headers.size() << " saveTo=" << request.saveTo << " name='" << request.name << "'";
+	if(version) {
+		std::string protos;
+		for(int i=0; version->protocols[i]; ++i) protos += std::string(version->protocols[i]) + " ";
+		ofLogVerbose("ofURLFileLoader") << "curl version " << version->version << " ssl_version " << (version->ssl_version ? version->ssl_version : "none") << " protocols: " << protos << " features: " << version->features << " host=" << (version->host ? version->host : "none");
+		ofLogVerbose("ofURLFileLoader") << "Request URL: '" << request.url << "'";
+		for(auto &h: request.headers) {
+			ofLogVerbose("ofURLFileLoader") << "  header: " << h.first << ": " << h.second;
+		}
+	} else {
+		ofLogError("ofURLFileLoader") << "curl_version_info returned null!";
+	}
 	if(request.verbose) {
 		CURLcode ret = curl_easy_setopt(curl.get(), CURLOPT_VERBOSE, 1L);
 		if (ret != CURLE_OK) {
@@ -341,7 +353,11 @@ ofHttpResponse ofURLFileLoaderImpl::handleRequest(const ofHttpRequest & request)
 		curl_easy_setopt(curl.get(), CURLOPT_SSL_VERIFYPEER, 0L);
 		curl_easy_setopt(curl.get(), CURLOPT_SSL_VERIFYHOST, 0L);
 	}
-	curl_easy_setopt(curl.get(), CURLOPT_URL, request.url.c_str());
+	CURLcode urlRes = curl_easy_setopt(curl.get(), CURLOPT_URL, request.url.c_str());
+	if(urlRes != CURLE_OK) {
+		ofLogError("ofURLFileLoader") << "CURLOPT_URL failed for '" << request.url << "': " << curl_easy_strerror(urlRes);
+		return ofHttpResponse(request, -1, curl_easy_strerror(urlRes));
+	}
 	curl_easy_setopt(curl.get(), CURLOPT_FOLLOWLOCATION, 1L);
 	curl_easy_setopt(curl.get(), CURLOPT_MAXREDIRS, 20L);
 
@@ -445,17 +461,28 @@ ofHttpResponse ofURLFileLoaderImpl::handleRequest(const ofHttpRequest & request)
 		curl_easy_setopt(curl.get(), CURLOPT_WRITEFUNCTION, saveToMemory_cb);
 		err = curl_easy_perform(curl.get());
 	}
+	ofLogVerbose("ofURLFileLoader") << "curl_easy_perform result: " << curl_easy_strerror(err) << " (" << err << ") for " << request.url;
 	if (err == CURLE_OK) {
 		long http_code = 0;
 		curl_easy_getinfo(curl.get(), CURLINFO_RESPONSE_CODE, &http_code);
 		response.status = http_code;
+		ofLogVerbose("ofURLFileLoader") << "HTTP " << http_code << " for " << request.url << " response.size=" << response.data.size() << " headers=" << response.headers.size();
 		if (http_code < 200 || http_code >= 300) {
-			ofLogWarning("ofURLFileLoader") << "HTTP " << http_code << " for " << request.url << " err=" << response.error;
+			ofLogWarning("ofURLFileLoader") << "HTTP " << http_code << " for " << request.url << " err=" << response.error << " data.size=" << response.data.size();
+			if(response.data.size() < 500) {
+				ofLogVerbose("ofURLFileLoader") << "Response data: " << response.data.getText();
+			}
+		} else {
+			ofLogVerbose("ofURLFileLoader") << "Success for " << request.url << " status " << http_code << " data.size " << response.data.size();
 		}
 	} else {
 		response.error = curl_easy_strerror(err);
 		response.status = -1;
-		ofLogError("ofURLFileLoader") << "curl error " << response.error << " for " << request.url;
+		ofLogError("ofURLFileLoader") << "curl error " << response.error << " (" << err << ") for " << request.url;
+		// Also log curl version info again for debug
+		if(version) {
+			ofLogError("ofURLFileLoader") << "curl version " << version->version << " ssl " << (version->ssl_version ? version->ssl_version : "none");
+		}
 	}
 
 	if (headers) {
