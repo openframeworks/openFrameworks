@@ -329,12 +329,13 @@ ofHttpResponse ofURLFileLoaderImpl::handleRequest(const ofHttpRequest & request)
 		if (ret != CURLE_OK) {
 			ofLogWarning() << "cURL error: " << curl_easy_strerror(ret);
 		}
-		if (version) {
-			std::string userAgent = std::string("curl/") + version->version;
-			curl_easy_setopt(curl.get(), CURLOPT_USERAGENT, userAgent.c_str());
-		} else {
-			curl_easy_setopt(curl.get(), CURLOPT_USERAGENT, "curl/unknown");
-		}
+	}
+	// Always set User-Agent - some hosts (Cloudflare, GitHub) block empty UA and cause http->https redirect test to fail
+	if (version) {
+		std::string userAgent = std::string("curl/") + version->version;
+		curl_easy_setopt(curl.get(), CURLOPT_USERAGENT, userAgent.c_str());
+	} else {
+		curl_easy_setopt(curl.get(), CURLOPT_USERAGENT, "curl/unknown");
 	}
 	if(version->features & CURL_VERSION_SSL) {
 		curl_easy_setopt(curl.get(), CURLOPT_SSL_VERIFYPEER, 0L);
@@ -448,9 +449,13 @@ ofHttpResponse ofURLFileLoaderImpl::handleRequest(const ofHttpRequest & request)
 		long http_code = 0;
 		curl_easy_getinfo(curl.get(), CURLINFO_RESPONSE_CODE, &http_code);
 		response.status = http_code;
+		if (http_code < 200 || http_code >= 300) {
+			ofLogWarning("ofURLFileLoader") << "HTTP " << http_code << " for " << request.url << " err=" << response.error;
+		}
 	} else {
 		response.error = curl_easy_strerror(err);
 		response.status = -1;
+		ofLogError("ofURLFileLoader") << "curl error " << response.error << " for " << request.url;
 	}
 
 	if (headers) {
