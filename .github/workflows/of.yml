@@ -226,6 +226,11 @@ jobs:
       #     fi
       - name: Download libs
         run: ./scripts/linux/download_libs.sh -t $RELEASE -a ${{matrix.cfg.libs}}
+      - name: Curl library check (before tests)
+        run: |
+          echo "=== libs/curl ==="; ls -lh libs/curl/lib/*/* 2>&1 | head -n 20
+          echo "=== curl ver ==="; cat libs/curl/include/curl/curlver.h 2>&1 | head -n 5
+          echo "=== system curl ==="; curl --version 2>&1 | head -n1
       - name: Install dependencies
         run: ./scripts/ci/linuxrpi/install.sh;
       - name: LS
@@ -316,6 +321,11 @@ jobs:
 
       - name: Download libs
         run: ./scripts/linux/download_libs.sh -t $RELEASE -a ${{matrix.cfg.libs}}
+      - name: Curl library check (before tests)
+        run: |
+          echo "=== libs/curl ==="; ls -lh libs/curl/lib/*/* 2>&1 | head -n 20
+          echo "=== curl ver ==="; cat libs/curl/include/curl/curlver.h 2>&1 | head -n 5
+          echo "=== system curl ==="; curl --version 2>&1 | head -n1
       - name: Install dependencies
         run: ./scripts/ci/$TARGET/install.sh;
       - name: Build
@@ -397,6 +407,14 @@ jobs:
 
       - name: Download libs
         run: ./scripts/${{ matrix.cfg.target }}/download_libs.sh -t $RELEASE
+
+      - name: Curl library check (before tests)
+        run: |
+          echo "=== libs/curl ==="; ls -lh libs/curl/lib/*/* 2>&1 | head -n 30
+          echo "=== curl ver ==="; cat libs/curl/include/curl/curlver.h 2>&1 | grep LIBCURL_VERSION | head -n 5
+          echo "=== openssl ==="; cat libs/openssl/include/openssl/opensslv.h 2>&1 | grep OPENSSL_VERSION_MAJOR | head -n 5
+          echo "=== apothecary curl protocols ==="; strings libs/curl/lib/macos/curl.xcframework/macos-arm64_x86_64/curl.a 2>&1 | grep -i "_Curl_http" | head -n 5; echo "http? $(strings libs/curl/lib/macos/curl.xcframework/macos-arm64_x86_64/curl.a 2>&1 | grep -q _Curl_http && echo yes || echo no)"
+          echo "=== system curl ==="; curl --version 2>&1 | head -n1
 
       - name: Build
         run: if [ ${{ matrix.cfg.opt }} = "xcode" ]; then
