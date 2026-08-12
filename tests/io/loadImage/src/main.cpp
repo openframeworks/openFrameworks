@@ -12,13 +12,13 @@ class ofApp: public ofxUnitTestsApp{
 		{
 			ofHttpRequest req("http://openframeworks.cc/about/0.jpg", "http", false, true, true);
 			auto resp = ofURLFileLoader().handleRequest(req);
-			ofLogNotice() << "http resp status=" << resp.status << " error='" << resp.error << "' data.size=" << resp.data.size() << " headers=" << resp.headers.size();
+			ofLogNotice() << "http resp status=" << resp.status << " error='" << resp.error << "' data.size=" << resp.data.size();
 			ofxTest(resp.status==200 && resp.data.size()>0, "load from http");
 		}
 		{
 			ofHttpRequest req("https://avatars.githubusercontent.com/u/48240?v=4", "https", false, true, true);
 			auto resp = ofURLFileLoader().handleRequest(req);
-			ofLogNotice() << "https resp status=" << resp.status << " error='" << resp.error << "' data.size=" << resp.data.size() << " headers=" << resp.headers.size();
+			ofLogNotice() << "https resp status=" << resp.status << " error='" << resp.error << "' data.size=" << resp.data.size();
 			ofxTest(resp.status==200 && resp.data.size()>0, "load from https");
 		}
 	}
