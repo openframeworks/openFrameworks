@@ -341,9 +341,16 @@ ofHttpResponse ofURLFileLoaderImpl::handleRequest(const ofHttpRequest & request)
 		curl_easy_setopt(curl.get(), CURLOPT_SSL_VERIFYPEER, 0L);
 		curl_easy_setopt(curl.get(), CURLOPT_SSL_VERIFYHOST, 0L);
 	}
-	curl_easy_setopt(curl.get(), CURLOPT_URL, request.url.c_str());
+	ofLogVerbose("ofURLFileLoader") << "Request URL: '" << request.url << "'";
+	CURLcode urlRes = curl_easy_setopt(curl.get(), CURLOPT_URL, request.url.c_str());
+	if(urlRes != CURLE_OK) {
+		ofLogError("ofURLFileLoader") << "CURLOPT_URL failed for '" << request.url << "': " << curl_easy_strerror(urlRes);
+		return ofHttpResponse(request, -1, curl_easy_strerror(urlRes));
+	}
 	curl_easy_setopt(curl.get(), CURLOPT_FOLLOWLOCATION, 1L);
 	curl_easy_setopt(curl.get(), CURLOPT_MAXREDIRS, 20L);
+	curl_easy_setopt(curl.get(), CURLOPT_REDIR_PROTOCOLS, CURLPROTO_HTTP | CURLPROTO_HTTPS);
+	curl_easy_setopt(curl.get(), CURLOPT_PROTOCOLS, CURLPROTO_HTTP | CURLPROTO_HTTPS);
 
 	if (request.contentType != "") {
 		headers = curl_slist_append(headers, ("Content-Type: " + request.contentType).c_str());
