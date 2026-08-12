@@ -8,11 +8,19 @@ class ofApp: public ofxUnitTestsApp{
 		img.setUseTexture(false);
 		ofxTest(img.load("indispensable.jpg"), "load from fs");
 		ofxTest(img.load(ofToDataPath("indispensable.jpg", true)), "load from fs");
-		ofxTest(img.load("http://openframeworks.cc/about/0.jpg"), "load from http");
-		// ofxTest(img.load("https://forum.openframeworks.cc/user_avatar/forum.openframeworks.cc/arturo/45/3965_1.png"), "load from https");
-		// ar 48240 / th 144000 / dm 58289
-		ofxTest(img.load("https://avatars.githubusercontent.com/u/48240?v=4"), "load from https");
-		
+		// verbose http debug - logs status/error/data.size for CI 2/4 diagnosis (safe, no version->host)
+		{
+			ofHttpRequest req("http://openframeworks.cc/about/0.jpg", "http", false, true, true);
+			auto resp = ofURLFileLoader().handleRequest(req);
+			ofLogNotice() << "http resp status=" << resp.status << " error='" << resp.error << "' data.size=" << resp.data.size() << " headers=" << resp.headers.size();
+			ofxTest(resp.status==200 && resp.data.size()>0, "load from http");
+		}
+		{
+			ofHttpRequest req("https://avatars.githubusercontent.com/u/48240?v=4", "https", false, true, true);
+			auto resp = ofURLFileLoader().handleRequest(req);
+			ofLogNotice() << "https resp status=" << resp.status << " error='" << resp.error << "' data.size=" << resp.data.size() << " headers=" << resp.headers.size();
+			ofxTest(resp.status==200 && resp.data.size()>0, "load from https");
+		}
 	}
 };
 
