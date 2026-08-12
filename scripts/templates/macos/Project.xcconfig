@@ -1,19 +1,19 @@
-//THE PATH TO THE ROOT OF OUR OF PATH RELATIVE TO THIS PROJECT.
-//THIS NEEDS TO BE DEFINED BEFORE CoreOF.xcconfig IS INCLUDED
+// OpenFrameworks root path, relative to this project path.
+// This needs to be defined before CoreOF.xcconfig is included
 OF_PATH = ../../..
 
-//THIS HAS ALL THE HEADER AND LIBS FOR OF CORE
-#include "../../../libs/openFrameworksCompiled/project/macos/CoreOF.xcconfig"
+// OpenFrameworks Core headers and libs
+#include "../../../libs/openFrameworksCompiled/project/osx/CoreOF.xcconfig"
 
-//UNCOMMENT BELOW TO ENABLE C++ 17 and std::filesystem
-CLANG_CXX_LANGUAGE_STANDARD = c++17
+// Project settings. Changes here will recompile OF Core
+CLANG_CXX_LANGUAGE_STANDARD = c++23
+CLANG_C_LANGUAGE_STANDARD = c17
 MACOSX_DEPLOYMENT_TARGET = 10.15
 
-// App Settings
+// App Settings - overridden if changed in Xcode UI
 PRODUCT_NAME = $(TARGET_NAME)
 PRODUCT_NAME[config=Debug] = $(TARGET_NAME)Debug
 PRODUCT_BUNDLE_IDENTIFIER = cc.openFrameworks.${TARGET_NAME:rfc1034identifier}
-//PRODUCT_BUNDLE_IDENTIFIER[config=Debug] = cc.openFrameworks.$(TARGET_NAME)Debug
 DEVELOPMENT_LANGUAGE = English
 CODE_SIGN_IDENTITY = -
 INFOPLIST_FILE = openFrameworks-Info.plist
@@ -23,28 +23,25 @@ GENERATE_INFOPLIST_FILE = YES
 // note: this sets the initial value in the Xcode UI
 INFOPLIST_KEY_LSApplicationCategoryType = public.app-category.games
 
-// VERSIONING - overridden if changed in Xcode UI
-
+// Versioning 
 // this is "Version" in the Xcode target Identity UI
 // suggested to use semantic versioning format ala #.#.#
 MARKETING_VERSION = 0.1.0
-
-// If users upgrade project to recommended settings it enables script sandboxing which breaks our post build script 
-ENABLE_USER_SCRIPT_SANDBOXING=NO
 
 // this is "Build" in the Xcode target Identity UI, an incremental build number
 // important for the App Store as new build submissions need a diff number even
 // if MARKETING_VERSION is the same
 CURRENT_PROJECT_VERSION = 1
 
-// ICONS
+// If users upgrade project to recommended settings it enables script sandboxing which breaks our post build script 
+ENABLE_USER_SCRIPT_SANDBOXING=NO
 
-// default oF app icon
+// Icons - default oF app icon
 ICON_NAME = of.icns
 ICON_NAME[config=Debug] = of_debug.icns
-ICON_FILE = $(OF_PATH)/libs/openFrameworksCompiled/project/macos/$(ICON_NAME)
+ICON_FILE = $(OF_PATH)/libs/openFrameworksCompiled/project/osx/$(ICON_NAME)
 
-// custom app icon, placed in main project folder
+// Icons - custom app icon, placed in main project folder
 //ICON_NAME = MyApp.icns
 //ICON_FILE = $(ICON_NAME)
 
@@ -53,16 +50,7 @@ ICON_FILE = $(OF_PATH)/libs/openFrameworksCompiled/project/macos/$(ICON_NAME)
 //ICON_NAME[config=Debug] = icon-debug.icns
 //ICON_FILE = bin/data/$(ICON_NAME)
 
-// note: oF 0.7.2 - 0.11 used ICON_FILE_PATH which is no longer used in oF 0.12+
-// ex. change ICON_FILE_PATH = bin/data/ -> ICON_FILE = bin/data/$(ICON_NAME) &
-// in a custom openFrameworks-Info.plist, set CFBundleIconFile to ICON_NAME
-
-//FOR AV ENGINE SOUND PLAYER UNCOMMENT TWO LINES BELOW
-OF_NO_FMOD=1
-USER_PREPROCESSOR_DEFINITIONS="OF_NO_FMOD=1"
-GCC_PREPROCESSOR_DEFINITIONS=$(inherited)$(USER_PREPROCESSOR_DEFINITIONS)
-
-//APPSTORE, uncomment next lines to bundle data folder and code sign
+// App Store, uncomment next lines to bundle data folder and code sign
 //OF_CODESIGN = 1
 //OF_BUNDLE_DATA_FOLDER = 1
 //OF_BUNDLE_DYLIBS = 1
@@ -70,6 +58,10 @@ GCC_PREPROCESSOR_DEFINITIONS=$(inherited)$(USER_PREPROCESSOR_DEFINITIONS)
 // Optional include to keep any permanent settings as CODE_SIGN_IDENTITY. 
 #include? "App.xcconfig"
 
+GCC_PREPROCESSOR_DEFINITIONS=$(inherited) $(USER_PREPROCESSOR_DEFINITIONS)
+
 OTHER_CFLAGS = $(OF_CORE_CFLAGS)
 OTHER_LDFLAGS = $(OF_CORE_LIBS) $(OF_CORE_FRAMEWORKS)
 HEADER_SEARCH_PATHS = $(OF_CORE_HEADERS)
+
+OF_CORE_BUILD_COMMAND = xcodebuild -project $OF_PATH/libs/openFrameworksCompiled/project/osx/openFrameworksLib.xcodeproj -target openFrameworks -configuration ${CONFIGURATION} CLANG_CXX_LANGUAGE_STANDARD=$CLANG_CXX_LANGUAGE_STANDARD MACOSX_DEPLOYMENT_TARGET=$MACOSX_DEPLOYMENT_TARGET GCC_PREPROCESSOR_DEFINITIONS=$USER_PREPROCESSOR_DEFINITIONS

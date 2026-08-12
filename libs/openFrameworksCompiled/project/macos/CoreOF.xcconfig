@@ -51,10 +51,12 @@ OF_CORE_LIBS = $(MISC_FLAGS)
 OF_CORE_HEADERS = $(HEADER_OF) $(HEADER_FREEIMAGE)  $(HEADER_UTF8) $(HEADER_JSON) $(HEADER_GLM) $(HEADER_TESS2) $(HEADER_CAIRO) $(HEADER_RTAUDIO) $(HEADER_GLFW) $(HEADER_FREETYPE) $(HEADER_FREETYPE2) $(HEADER_CURL) $(HEADER_URIPARSER) $(HEADER_PUGIXML) $(HEADER_GLEW) $(HEADER_CURL) $(HEADER_OPENSSL) $(HEADER_BROTLI)
 
 OF_CORE_FRAMEWORKS = -framework Accelerate -framework AGL -framework AppKit -framework ApplicationServices -framework AudioToolbox -framework AVFoundation -framework Cocoa -framework CoreAudio -framework CoreFoundation -framework CoreMedia -framework CoreServices -framework CoreVideo -framework IOKit -framework OpenGL -framework QuartzCore -framework Security
-//-framework AudioToolbox -framework Accelerate -framework AVFoundation -framework CoreAudio -framework CoreGraphics -framework CoreLocation -framework CoreMotion -framework CoreMedia -framework CoreVideo -framework Foundation -framework GameController -framework GLKit -framework MapKit -framework OpenAL -framework OpenGLES -framework UIKit -framework Security -framework QuartzCore -framework CoreHaptics
-//
 
-
+//FMOD can be enabled in OF Core by uncommenting this block
+//USE_FMOD=1
+//USER_PREPROCESSOR_DEFINITIONS=USE_FMOD=1 $(inherited)
+//OF_CORE_HEADERS = $(OF_PATH)/libs/fmod/include $(inherited)
+//OF_CORE_LIBS=$(OF_PATH)/libs/fmod/lib/macos/libfmod.dylib $(inherited)
 
 ALWAYS_SEARCH_USER_PATHS = NO
 DISABLE_MANUAL_TARGET_ORDER_BUILD_WARNING = YES
