@@ -337,14 +337,8 @@ ofHttpResponse ofURLFileLoaderImpl::handleRequest(const ofHttpRequest & request)
 		}
 	}
 	if(version->features & CURL_VERSION_SSL) {
-#if LIBCURL_VERSION_NUM >= 0x080000
-		// curl 8.x+ enforces VERIFYPEER/VERIFYHOST consistency - 0/2 was rejected after OpenSSL 3.4 upgrade
 		curl_easy_setopt(curl.get(), CURLOPT_SSL_VERIFYPEER, 0L);
 		curl_easy_setopt(curl.get(), CURLOPT_SSL_VERIFYHOST, 0L);
-#else
-		curl_easy_setopt(curl.get(), CURLOPT_SSL_VERIFYPEER, false);
-		curl_easy_setopt(curl.get(), CURLOPT_SSL_VERIFYHOST, 2L);
-#endif
 	}
 	curl_easy_setopt(curl.get(), CURLOPT_URL, request.url.c_str());
 	curl_easy_setopt(curl.get(), CURLOPT_FOLLOWLOCATION, 1L);
