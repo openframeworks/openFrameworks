@@ -356,11 +356,6 @@ PLATFORM_FRAMEWORKS += Security
 PLATFORM_FRAMEWORKS += CFNetwork
 PLATFORM_FRAMEWORKS += SystemConfiguration
 
-# use apothecary curl/openssl for make (Xcode uses embedded CA, make was using system LibreSSL -> SSL connect error / Unsupported protocol)
-PLATFORM_LIBRARIES += curl ssl crypto
-PLATFORM_HEADER_SEARCH_PATHS += $(OF_LIBS_PATH)/curl/include $(OF_LIBS_PATH)/openssl/include
-PLATFORM_LIBRARY_SEARCH_PATHS += $(OF_LIBS_PATH)/curl/lib/macos $(OF_LIBS_PATH)/curl/lib/osx $(OF_LIBS_PATH)/openssl/lib/macos $(OF_LIBS_PATH)/openssl/lib/osx
-
 
 ifeq ($(USE_GST),1)
 	PLATFORM_FRAMEWORKS += GStreamer
