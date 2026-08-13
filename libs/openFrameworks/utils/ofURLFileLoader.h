@@ -23,11 +23,8 @@ public:
 	std::string body; ///< POST body data
 	std::string contentType; ///< POST data mime type
 	std::function<void(const ofHttpResponse &)> done;
-	/// Called with transfer progress in the range [0, 1] when the total size is known.
-	/// For GET requests this reports download progress; for POST and PUT requests
-	/// it reports upload progress. Asynchronous requests invoke this callback from
-	/// the URL loader's worker thread.
-	std::function<void(const ofHttpRequest &, float)> progressCallback;
+	/// the URL loader's worker thread. range [0, 1]
+	std::function<void(const ofHttpRequest &, float)> progressCallback = nullptr; // it reports upload/download progress. Asynchronous requests invoke this callback 
 	size_t timeoutSeconds = 0;
 	bool headerOnly = false;
 
