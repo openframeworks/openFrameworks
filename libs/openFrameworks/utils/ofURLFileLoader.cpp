@@ -21,6 +21,7 @@ using std::string;
 	#include <openssl/x509.h>
 	#include <openssl/x509v3.h>
 	#include <openssl/err.h>
+	#include <openssl/rand.h>
 	#include <iostream>
 	#include <fstream>
 
@@ -72,6 +73,12 @@ private:
 ofURLFileLoaderImpl::ofURLFileLoaderImpl() {
 	if (!curlInited) {
 		curl_global_init(CURL_GLOBAL_ALL);
+#if !defined(NO_OPENSSL)
+		// OpenSSL 4.0.1 on macOS arm64 needs explicit RAND_poll for * Insufficient randomness
+		if(RAND_status() == 0) {
+			RAND_poll();
+		}
+#endif
 	}
 }
 
@@ -338,8 +345,8 @@ ofHttpResponse ofURLFileLoaderImpl::handleRequest(const ofHttpRequest & request)
 		curl_easy_setopt(curl.get(), CURLOPT_USERAGENT, "curl/unknown");
 	}
 	if(version->features & CURL_VERSION_SSL) {
-		curl_easy_setopt(curl.get(), CURLOPT_SSL_VERIFYPEER, 0L);
-		curl_easy_setopt(curl.get(), CURLOPT_SSL_VERIFYHOST, 0L);
+		curl_easy_setopt(curl.get(), CURLOPT_SSL_VERIFYPEER, 1L);
+		curl_easy_setopt(curl.get(), CURLOPT_SSL_VERIFYHOST, 2L);
 	}
 	ofLogVerbose("ofURLFileLoader") << "Request URL: '" << request.url << "'";
 	CURLcode urlRes = curl_easy_setopt(curl.get(), CURLOPT_URL, request.url.c_str());
