@@ -5,7 +5,7 @@
 #include "ofLog.h"
 #include <ctime>
 #include <cstdlib>
-#if !defined(TARGET_OS_WIN32)
+#if !defined(_WIN32) && !defined(TARGET_OS_WIN32)
 #include <unistd.h>
 #endif
 #if defined(TARGET_OSX)
@@ -406,7 +406,7 @@ ofHttpResponse ofURLFileLoaderImpl::handleRequest(const ofHttpRequest & request)
 			ofLogVerbose("ofURLFileLoader") << "RAND_load_file /dev/urandom 256 -> " << loaded << " status=" << RAND_status();
 			// also load EGD style fallback via time/pid/clock with full entropy estimate
 			unsigned int seed = (unsigned int)time(nullptr) ^ (unsigned int)clock();
-#if !defined(TARGET_OS_WIN32)
+#if !defined(_WIN32) && !defined(TARGET_OS_WIN32)
 			seed ^= (unsigned int)getpid();
 #endif
 			RAND_add(&seed, sizeof(seed), sizeof(seed));
