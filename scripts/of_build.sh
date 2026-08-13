@@ -871,6 +871,131 @@ runNativeApp(){
 	return 1
 }
 
+# Finds a project's Debug binary and runs it synchronously, returning its
+# exit code. Unlike runNativeApp (which `open`s GUI apps asynchronously and
+# can't report pass/fail), this is for headless test binaries built with
+# ofAppNoWindow — used by `of test`.
+findTestBinary(){
+	local project="$1" name
+	name=$(basename "$project")
+	local -a candidates=(
+		"${project}/bin/${name}_debug.app/Contents/MacOS/${name}_debug"
+		"${project}/bin/${name}_debug"
+		"${project}/bin/${name}_debug.exe"
+	)
+	local c
+	for c in "${candidates[@]}"; do
+		[[ -x "$c" ]] && { printf '%s' "$c"; return 0; }
+	done
+	return 1
+}
+
+# Builds (Debug) and runs one tests/<group>/<name> project, streaming its
+# ofxUnitTests output. Returns the test binary's exit code.
+runTestProject(){
+	local project="$1"
+	local buildLog
+	buildLog=$(mktemp)
+
+	ensureProjectMakefile "$project" || {
+		echoError "no Makefile and could not install template Makefile"
+		rm -f "$buildLog"
+		return 1
+	}
+	if ! ( cd "$project" && make -j"$(ofBuildJobs)" Debug ) >"$buildLog" 2>&1; then
+		echoError "build failed"
+		tail -25 "$buildLog" | sed 's/^/    /'
+		rm -f "$buildLog"
+		return 1
+	fi
+	rm -f "$buildLog"
+
+	local bin
+	bin=$(findTestBinary "$project") || {
+		echoError "built but no debug binary found under bin/"
+		return 1
+	}
+	"$bin"
+}
+
+# Discovers and runs every tests/<group>/<name> project (or just tests/<group>
+# if $1 is given), mirroring what scripts/ci/*/run_tests.sh do in CI but
+# reusable from the CLI/menu. Prints a tick per test, full output only on
+# failure, and a pass/fail summary at the end.
+cmdTest(){
+	local filterGroup="${1:-}"
+	local testsDir="${OF_DIR}/tests"
+	[[ -d "$testsDir" ]] || { echoError "no tests/ directory found"; return 1; }
+
+	printBanner "test"
+	echoInfo "running smoke tests under tests/${filterGroup:+$filterGroup/}"
+	printf '\n'
+
+	local -a groups=()
+	local g
+	if [[ -n "$filterGroup" ]]; then
+		[[ -d "${testsDir}/${filterGroup}" ]] || { echoError "no tests/${filterGroup} folder"; return 1; }
+		groups=("${testsDir}/${filterGroup}")
+	else
+		for g in "${testsDir}"/*/; do
+			[[ -d "$g" ]] && groups+=("${g%/}")
+		done
+	fi
+
+	local total=0 passed=0 failed=0
+	local -a failedNames=()
+	local group groupName test name t0 t1 runLog
+
+	for group in "${groups[@]}"; do
+		groupName=$(basename "$group")
+		printf '  %s%s%s\n' "$C_BOLD" "$groupName" "$C_RESET"
+		for test in "$group"/*/; do
+			[[ -d "$test" && -d "${test}src" ]] || continue
+			test="${test%/}"
+			name=$(basename "$test")
+			total=$((total + 1))
+			# \r-overwrite the pending marker only when actually attached to a
+			# terminal -- otherwise (piped/logged output) it just garbles two
+			# lines together, so print plain sequential lines instead
+			if isInteractive; then
+				printf '  %s·%s %s/%s' "$C_MUTED" "$C_RESET" "$groupName" "$name"
+			else
+				printf '  · %s/%s ... ' "$groupName" "$name"
+			fi
+			runLog=$(mktemp)
+			t0=$(date +%s)
+			if runTestProject "$test" >"$runLog" 2>&1; then
+				t1=$(date +%s)
+				if isInteractive; then
+					printf '\r  %s✓%s %s/%s  %s(%ss)%s\n' "$C_OK" "$C_RESET" "$groupName" "$name" "$C_MUTED" "$((t1 - t0))" "$C_RESET"
+				else
+					printf 'ok (%ss)\n' "$((t1 - t0))"
+				fi
+				passed=$((passed + 1))
+			else
+				t1=$(date +%s)
+				if isInteractive; then
+					printf '\r  %s✗%s %s/%s  %s(%ss)%s\n' "$C_ERR" "$C_RESET" "$groupName" "$name" "$C_MUTED" "$((t1 - t0))" "$C_RESET"
+				else
+					printf 'FAILED (%ss)\n' "$((t1 - t0))"
+				fi
+				failed=$((failed + 1))
+				failedNames+=("${groupName}/${name}")
+				sed 's/^/      /' "$runLog"
+			fi
+			rm -f "$runLog"
+		done
+	done
+
+	printf '\n'
+	if [[ "$failed" -eq 0 ]]; then
+		echoSuccess "${passed}/${total} tests passed"
+		return 0
+	fi
+	echoError "${failed}/${total} tests failed: ${failedNames[*]}"
+	return 1
+}
+
 # ---------------------------------------------------------------------------
 # High-level command: build one project with a system
 # ---------------------------------------------------------------------------

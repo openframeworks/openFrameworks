@@ -955,6 +955,7 @@ printHelp(){
     cleanup   projects|caches|libs   Free disk (artifacts / downloads / prebuilts)
     version   of  | pg        Version info
     upgrade   addons | apps   Upgrade tree
+    test      [group]         Run tests/ smoke tests (build + run), or menu for bash smoke scripts too
     installed                 Alias for status
     apothecary                Build libraries via apothecary submodule
 
@@ -1035,6 +1036,56 @@ menuVersion(){
 		echoNote "try: of update pg"
 	fi
 	printf '\n'
+}
+
+# test() — runs either the tests/*/* smoke test projects (build + run,
+# reusing cmdTest from of_build.sh) or one of the standalone smoke_test_*.sh
+# bash scripts under scripts/dev/ (e.g. smoke_test_nightly.sh).
+menuTest(){
+	local choice
+	if ! menuCanRun; then
+		echoWarning "no TTY — running all tests/ smoke tests non-interactively"
+		cmdTest
+		return $?
+	fi
+	printBanner "test"
+
+	local -a opts=("All tests/ smoke tests (build + run)|tests-all")
+	local g gName
+	if [[ -d "${OF_DIR}/tests" ]]; then
+		for g in "${OF_DIR}/tests"/*/; do
+			[[ -d "$g" ]] || continue
+			gName=$(basename "${g%/}")
+			opts+=("tests/${gName} only|tests-${gName}")
+		done
+	fi
+	local -a smokeScripts=()
+	local s
+	for s in "${OF_CORE_SCRIPT_DIR}/dev"/smoke_test_*.sh; do
+		[[ -f "$s" ]] && smokeScripts+=("$(basename "$s")")
+	done
+	for s in "${smokeScripts[@]}"; do
+		opts+=("Smoke script — ${s}|script:${s}")
+	done
+	opts+=("Back|back")
+
+	menuPick "Run which tests?" "${opts[@]}" || return 2
+	choice="$UI_MENU_RESULT"
+	case "$choice" in
+		tests-all) cmdTest ;;
+		tests-*)   cmdTest "${choice#tests-}" ;;
+		script:*)
+			local scriptName="${choice#script:}"
+			local scriptPath="${OF_CORE_SCRIPT_DIR}/dev/${scriptName}"
+			local -a args=()
+			if menuCanRun && confirmYes "Include the real network/build checks (--real)?"; then
+				args+=(--real)
+			fi
+			ensureScript "$scriptPath" 2>/dev/null
+			bash "$scriptPath" "${args[@]}"
+			;;
+		back) return 2 ;;
+	esac
 }
 
 OF_LIB_STATE_FILE="${OF_DIR}/libs/.of-cli-state"
@@ -2373,6 +2424,7 @@ cmdMenu(){
 			"draw()     — build  (menuBuild)|build" \
 			"cleanup()  — free space  (menuCleanup)|cleanup" \
 			"version()  — info  (menuVersion)|version" \
+			"test()     — smoke tests  (menuTest)|test" \
 			"exit()|exit"
 		then
 			echoInfo "bye"
@@ -2387,6 +2439,7 @@ cmdMenu(){
 			build)      menuBuild ;;
 			cleanup|clean) menuCleanup ;;
 			version)    menuVersion; menuPause ;;
+			test)       menuTest; [[ $? -eq 2 ]] || menuPause ;;
 			exit|quit)  echoSuccess "bye"; return 0 ;;
 			*)          echoError "unknown: $choice"; menuPause ;;
 		esac
@@ -2528,6 +2581,12 @@ runCommand(){
 			esac
 			;;
 		upgrade) cmdUpgrade "$subcmd" ;;
+		test)
+			case "${subcmd:-}" in
+				""|menu) menuTest ;;
+				*) cmdTest "$subcmd" ;;
+			esac
+			;;
 		cleanup|clean)
 			case "${subcmd:-}" in
 				""|menu) menuCleanup ;;
