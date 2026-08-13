@@ -3,6 +3,15 @@
 #include "ofUtils.h"
 #include "ofFileUtils.h"
 #include "ofLog.h"
+#include <ctime>
+#include <cstdlib>
+#if !defined(TARGET_OS_WIN32)
+#include <unistd.h>
+#endif
+#if defined(TARGET_OSX)
+#include <stdlib.h>
+#include <sys/random.h>
+#endif
 
 using std::map;
 using std::set;
@@ -22,11 +31,40 @@ using std::string;
 	#include <openssl/x509v3.h>
 	#include <openssl/err.h>
 	#include <openssl/rand.h>
+	#include <openssl/crypto.h>
+	#include <openssl/provider.h>
 	#include <iostream>
 	#include <fstream>
 
 	#define CERTIFICATE_FILE "cacert.pem"
 	#define PRIVATE_KEY_FILE "cacert.key"
+
+	// OpenSSL 4.x static DRBG fallback - only for 4.0+ where provider DRBG fetch fails
+	#if OPENSSL_VERSION_MAJOR >= 4
+	static int custom_rand_seed(const void *buf, int num) { RAND_add(buf, num, (double)num); return 1; }
+	static int custom_rand_bytes(unsigned char *buf, int num) {
+	#if defined(TARGET_OSX)
+		if(getentropy(buf, (size_t)num)==0) return 1;
+		arc4random_buf(buf, (size_t)num);
+		return 1;
+	#else
+		for(int i=0;i<num;++i) buf[i]=(unsigned char)(rand() & 0xFF);
+		return 1;
+	#endif
+	}
+	static void custom_rand_cleanup(void) {}
+	static int custom_rand_add(const void *buf, int num, double entropy) { RAND_add(buf, num, entropy); return 1; }
+	static int custom_rand_pseudorand(unsigned char *buf, int num) { return custom_rand_bytes(buf, num); }
+	static int custom_rand_status(void) { return 1; }
+	static RAND_METHOD custom_rand_method = {
+		custom_rand_seed,
+		custom_rand_bytes,
+		custom_rand_cleanup,
+		custom_rand_add,
+		custom_rand_pseudorand,
+		custom_rand_status
+	};
+	#endif
 	
 #endif
 
@@ -74,9 +112,16 @@ ofURLFileLoaderImpl::ofURLFileLoaderImpl() {
 	if (!curlInited) {
 		curl_global_init(CURL_GLOBAL_ALL);
 #if !defined(NO_OPENSSL)
-		// OpenSSL 4.0.1 on macOS arm64 needs explicit RAND_poll for * Insufficient randomness
+#if OPENSSL_VERSION_MAJOR >= 4
+		// OpenSSL 4.0 DRBG is in default provider - must load config/provider before RAND
+		OPENSSL_init_crypto(OPENSSL_INIT_LOAD_CONFIG | OPENSSL_INIT_LOAD_CRYPTO_STRINGS | OPENSSL_INIT_ADD_ALL_CIPHERS | OPENSSL_INIT_ADD_ALL_DIGESTS, NULL);
+		OSSL_PROVIDER *def = OSSL_PROVIDER_load(NULL, "default");
+		if(def) ofLogVerbose("ofURLFileLoader") << "default provider loaded";
+		else ofLogError("ofURLFileLoader") << "default provider load failed " << ERR_get_error();
+#endif
 		if(RAND_status() == 0) {
-			RAND_poll();
+			int pr = RAND_poll();
+			ofLogVerbose("ofURLFileLoader") << "initial RAND_poll()=" << pr << " status=" << RAND_status() << " err=" << ERR_get_error();
 		}
 #endif
 	}
@@ -324,6 +369,61 @@ int progress_cb(void* ptr, curl_off_t dltotal, curl_off_t dlnow, curl_off_t ulto
 }
 
 ofHttpResponse ofURLFileLoaderImpl::handleRequest(const ofHttpRequest & request) {
+#if !defined(NO_OPENSSL)
+#if OPENSSL_VERSION_MAJOR >= 4
+	// OpenSSL 4.0 provider DRBG fetch fails on 4.0.1 apothecary static - arc4random fallback
+	if(RAND_status()==0) {
+		OPENSSL_init_crypto(OPENSSL_INIT_LOAD_CONFIG | OPENSSL_INIT_LOAD_CRYPTO_STRINGS | OPENSSL_INIT_ADD_ALL_CIPHERS | OPENSSL_INIT_ADD_ALL_DIGESTS, NULL);
+		OSSL_PROVIDER *def = OSSL_PROVIDER_load(NULL, "default");
+		if(def) ofLogVerbose("ofURLFileLoader") << "handleRequest default provider loaded " << def;
+		else ofLogError("ofURLFileLoader") << "default provider load failed err=" << ERR_get_error();
+		if(RAND_status()==0) {
+			// fallback bypasses broken DRBG - only for 4.0+
+			RAND_set_rand_method(&custom_rand_method);
+			ofLogVerbose("ofURLFileLoader") << "installed custom arc4random RAND_METHOD fallback, status=" << RAND_status();
+		}
+	}
+#endif
+	for(int i=0; i<3 && RAND_status()==0; ++i) {
+		int pr = RAND_poll();
+		ofLogVerbose("ofURLFileLoader") << "RAND_poll try " << i << " ret=" << pr << " status=" << RAND_status() << " err=" << ERR_get_error();
+		if(RAND_status()==0) {
+			unsigned char buf[256];
+#if defined(TARGET_OSX)
+			// getentropy is the preferred macOS entropy source (requires 256 bits)
+			if(getentropy(buf, sizeof(buf)) == 0) {
+				RAND_add(buf, sizeof(buf), sizeof(buf));
+				ofLogVerbose("ofURLFileLoader") << "seeded via getentropy 256B status=" << RAND_status();
+			} else {
+				arc4random_buf(buf, sizeof(buf));
+				RAND_add(buf, sizeof(buf), sizeof(buf));
+				ofLogVerbose("ofURLFileLoader") << "seeded via arc4random_buf 256B status=" << RAND_status();
+			}
+			// OPENSSL temp wipe
+			OPENSSL_cleanse(buf, sizeof(buf));
+#endif
+			int loaded = RAND_load_file("/dev/urandom", 256);
+			ofLogVerbose("ofURLFileLoader") << "RAND_load_file /dev/urandom 256 -> " << loaded << " status=" << RAND_status();
+			// also load EGD style fallback via time/pid/clock with full entropy estimate
+			unsigned int seed = (unsigned int)time(nullptr) ^ (unsigned int)clock();
+#if !defined(TARGET_OS_WIN32)
+			seed ^= (unsigned int)getpid();
+#endif
+			RAND_add(&seed, sizeof(seed), sizeof(seed));
+			OPENSSL_cleanse(&seed, sizeof(seed));
+			pr = RAND_poll();
+			ofLogVerbose("ofURLFileLoader") << "second RAND_poll ret=" << pr << " status=" << RAND_status();
+		}
+	}
+	if(RAND_status()==0) {
+		unsigned long e = ERR_get_error();
+		char ebuf[256]={0};
+		ERR_error_string_n(e, ebuf, sizeof(ebuf));
+		ofLogError("ofURLFileLoader") << "RAND_status still 0 after poll/seed err=" << e << " " << ebuf << " - https will fail Insufficient randomness";
+	} else {
+		ofLogVerbose("ofURLFileLoader") << "RAND_status OK=" << RAND_status();
+	}
+#endif
 	std::unique_ptr<CURL, void (*)(CURL *)> curl = std::unique_ptr<CURL, void (*)(CURL *)>(curl_easy_init(), curl_easy_cleanup);
 	if (!curl) {
 		ofLogError("ofURLFileLoader") << "curl_easy_init() failed!";
@@ -356,8 +456,14 @@ ofHttpResponse ofURLFileLoaderImpl::handleRequest(const ofHttpRequest & request)
 	}
 	curl_easy_setopt(curl.get(), CURLOPT_FOLLOWLOCATION, 1L);
 	curl_easy_setopt(curl.get(), CURLOPT_MAXREDIRS, 20L);
+	// curl 7.85.0+ uses _STR variants (deprecated bitmask); guard for 8.21+ / 7.85+
+#if LIBCURL_VERSION_NUM >= 0x075500
+	curl_easy_setopt(curl.get(), CURLOPT_REDIR_PROTOCOLS_STR, "http,https");
+	curl_easy_setopt(curl.get(), CURLOPT_PROTOCOLS_STR, "http,https");
+#else
 	curl_easy_setopt(curl.get(), CURLOPT_REDIR_PROTOCOLS, CURLPROTO_HTTP | CURLPROTO_HTTPS);
 	curl_easy_setopt(curl.get(), CURLOPT_PROTOCOLS, CURLPROTO_HTTP | CURLPROTO_HTTPS);
+#endif
 
 	if (request.contentType != "") {
 		headers = curl_slist_append(headers, ("Content-Type: " + request.contentType).c_str());
