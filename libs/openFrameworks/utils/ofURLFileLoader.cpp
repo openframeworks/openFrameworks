@@ -348,18 +348,12 @@ size_t readBody_cb(void * ptr, size_t size, size_t nmemb, void * userdata) {
 	}
 	return 0; /* no more data left to deliver */
 }
-int progress_cb(void* ptr, curl_off_t dltotal, curl_off_t dlnow, curl_off_t ultotal, curl_off_t ulnow) {
-	auto & request = *static_cast<ofHttpRequest*>(ptr);
-	if (request.progressCallback) {
-		float progress = 0.0f;
-		if (request.method == ofHttpRequest::GET && dltotal > 0) {
-			progress = (float)dlnow / (float)dltotal;
-			// note: we may want to support upload and download for POST
-		} else if ((request.method == ofHttpRequest::PUT || request.method == ofHttpRequest::POST) && ultotal > 0) {
-			progress = (float)ulnow / (float)ultotal;
-		}
-		
-		request.progressCallback(request, progress);
+int transferProgress_cb(void * userdata, curl_off_t downloadTotal, curl_off_t downloaded, curl_off_t uploadTotal, curl_off_t uploaded) {
+	const auto & request = *static_cast<const ofHttpRequest *>(userdata);
+	if (request.method == ofHttpRequest::GET && downloadTotal > 0) {
+		request.progressCallback(request, static_cast<float>(downloaded) / static_cast<float>(downloadTotal));
+	} else if ((request.method == ofHttpRequest::PUT || request.method == ofHttpRequest::POST) && uploadTotal > 0) {
+		request.progressCallback(request, static_cast<float>(uploaded) / static_cast<float>(uploadTotal));
 	}
 	return 0;
 }
@@ -536,13 +530,13 @@ ofHttpResponse ofURLFileLoaderImpl::handleRequest(const ofHttpRequest & request)
 	// start request and receive response
 	ofHttpResponse response(request, 0, "");
 	CURLcode err = CURLE_OK;
-	
+
 	if (request.progressCallback) {
-		curl_easy_setopt(curl.get(), CURLOPT_XFERINFOFUNCTION, progress_cb);
+		curl_easy_setopt(curl.get(), CURLOPT_XFERINFOFUNCTION, transferProgress_cb);
 		curl_easy_setopt(curl.get(), CURLOPT_XFERINFODATA, &request);
 		curl_easy_setopt(curl.get(), CURLOPT_NOPROGRESS, 0L);
 	}
-	
+
 	if (request.saveTo) {
 		ofFile saveTo(request.name, ofFile::WriteOnly, true);
 		curl_easy_setopt(curl.get(), CURLOPT_WRITEDATA, &saveTo);
