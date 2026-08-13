@@ -115,13 +115,10 @@ ofURLFileLoaderImpl::ofURLFileLoaderImpl() {
 #if OPENSSL_VERSION_MAJOR >= 4
 		// OpenSSL 4.0 DRBG is in default provider - must load config/provider before RAND
 		OPENSSL_init_crypto(OPENSSL_INIT_LOAD_CONFIG | OPENSSL_INIT_LOAD_CRYPTO_STRINGS | OPENSSL_INIT_ADD_ALL_CIPHERS | OPENSSL_INIT_ADD_ALL_DIGESTS, NULL);
-		OSSL_PROVIDER *def = OSSL_PROVIDER_load(NULL, "default");
-		if(def) ofLogVerbose("ofURLFileLoader") << "default provider loaded";
-		else ofLogError("ofURLFileLoader") << "default provider load failed " << ERR_get_error();
+		OSSL_PROVIDER_load(NULL, "default");
 #endif
 		if(RAND_status() == 0) {
-			int pr = RAND_poll();
-			ofLogVerbose("ofURLFileLoader") << "initial RAND_poll()=" << pr << " status=" << RAND_status() << " err=" << ERR_get_error();
+			RAND_poll();
 		}
 #endif
 	}
@@ -371,58 +368,49 @@ int progress_cb(void* ptr, curl_off_t dltotal, curl_off_t dlnow, curl_off_t ulto
 ofHttpResponse ofURLFileLoaderImpl::handleRequest(const ofHttpRequest & request) {
 #if !defined(NO_OPENSSL)
 #if OPENSSL_VERSION_MAJOR >= 4
-	// OpenSSL 4.0 provider DRBG fetch fails on 4.0.1 apothecary static - arc4random fallback
+	// OpenSSL 4.0 static provider DRBG - fallback to arc4random when fetch fails
 	if(RAND_status()==0) {
 		OPENSSL_init_crypto(OPENSSL_INIT_LOAD_CONFIG | OPENSSL_INIT_LOAD_CRYPTO_STRINGS | OPENSSL_INIT_ADD_ALL_CIPHERS | OPENSSL_INIT_ADD_ALL_DIGESTS, NULL);
-		OSSL_PROVIDER *def = OSSL_PROVIDER_load(NULL, "default");
-		if(def) ofLogVerbose("ofURLFileLoader") << "handleRequest default provider loaded " << def;
-		else ofLogError("ofURLFileLoader") << "default provider load failed err=" << ERR_get_error();
+		OSSL_PROVIDER_load(NULL, "default");
 		if(RAND_status()==0) {
-			// fallback bypasses broken DRBG - only for 4.0+
 			RAND_set_rand_method(&custom_rand_method);
-			ofLogVerbose("ofURLFileLoader") << "installed custom arc4random RAND_METHOD fallback, status=" << RAND_status();
+#ifdef DEBUG_CURL
+			ofLogVerbose("ofURLFileLoader") << "installed custom arc4random RAND_METHOD fallback";
+#endif
 		}
 	}
 #endif
 	for(int i=0; i<3 && RAND_status()==0; ++i) {
-		int pr = RAND_poll();
-		ofLogVerbose("ofURLFileLoader") << "RAND_poll try " << i << " ret=" << pr << " status=" << RAND_status() << " err=" << ERR_get_error();
+		RAND_poll();
 		if(RAND_status()==0) {
 			unsigned char buf[256];
 #if defined(TARGET_OSX)
-			// getentropy is the preferred macOS entropy source (requires 256 bits)
 			if(getentropy(buf, sizeof(buf)) == 0) {
 				RAND_add(buf, sizeof(buf), sizeof(buf));
-				ofLogVerbose("ofURLFileLoader") << "seeded via getentropy 256B status=" << RAND_status();
 			} else {
 				arc4random_buf(buf, sizeof(buf));
 				RAND_add(buf, sizeof(buf), sizeof(buf));
-				ofLogVerbose("ofURLFileLoader") << "seeded via arc4random_buf 256B status=" << RAND_status();
 			}
-			// OPENSSL temp wipe
 			OPENSSL_cleanse(buf, sizeof(buf));
 #endif
-			int loaded = RAND_load_file("/dev/urandom", 256);
-			ofLogVerbose("ofURLFileLoader") << "RAND_load_file /dev/urandom 256 -> " << loaded << " status=" << RAND_status();
-			// also load EGD style fallback via time/pid/clock with full entropy estimate
+			RAND_load_file("/dev/urandom", 256);
 			unsigned int seed = (unsigned int)time(nullptr) ^ (unsigned int)clock();
 #if !defined(_WIN32) && !defined(TARGET_OS_WIN32)
 			seed ^= (unsigned int)getpid();
 #endif
 			RAND_add(&seed, sizeof(seed), sizeof(seed));
 			OPENSSL_cleanse(&seed, sizeof(seed));
-			pr = RAND_poll();
-			ofLogVerbose("ofURLFileLoader") << "second RAND_poll ret=" << pr << " status=" << RAND_status();
+			RAND_poll();
 		}
 	}
+#ifdef DEBUG_CURL
 	if(RAND_status()==0) {
 		unsigned long e = ERR_get_error();
 		char ebuf[256]={0};
 		ERR_error_string_n(e, ebuf, sizeof(ebuf));
-		ofLogError("ofURLFileLoader") << "RAND_status still 0 after poll/seed err=" << e << " " << ebuf << " - https will fail Insufficient randomness";
-	} else {
-		ofLogVerbose("ofURLFileLoader") << "RAND_status OK=" << RAND_status();
+		ofLogError("ofURLFileLoader") << "RAND_status still 0 err=" << e << " " << ebuf;
 	}
+#endif
 #endif
 	std::unique_ptr<CURL, void (*)(CURL *)> curl = std::unique_ptr<CURL, void (*)(CURL *)>(curl_easy_init(), curl_easy_cleanup);
 	if (!curl) {
