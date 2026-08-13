@@ -5,8 +5,8 @@ void ofApp::setup() {
 	ofSetWindowTitle("URL file loader progress");
 	ofSetBackgroundColor(30);
 
-	const std::string url = "https://github.com/openframeworks/openFrameworks/archive/refs/heads/master.zip";
-	ofHttpRequest request(url, ofToDataPath("openFrameworks-master.zip"), true);
+	const std::string url = "https://raw.githubusercontent.com/openframeworks/openFrameworks/master/examples/graphics/fontShapesExample/bin/data/Batang.ttf";
+	ofHttpRequest request(url, ofToDataPath("Batang.ttf"), true);
 	request.progressCallback = [this](const ofHttpRequest &, float value) {
 		progress.store(value);
 	};
@@ -28,7 +28,7 @@ void ofApp::draw() {
 	ofDrawRectangle(40, 100, width * value, 24);
 
 	ofSetColor(255);
-	ofDrawBitmapString("Downloading openFrameworks-master.zip", 40, 70);
+	ofDrawBitmapString("Downloading Batang.ttf", 40, 70);
 	ofDrawBitmapString(ofToString(value * 100.0f, 1) + "%", 40, 150);
 	if (finished) {
 		ofDrawBitmapString("Finished with HTTP status " + ofToString(status), 40, 185);
