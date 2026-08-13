@@ -44,7 +44,9 @@
     const std::string appDelegateName = "ofxtvOSAppDelegate";
 #endif
 #include "ofxiOSGLKView.h"
+#if OF_METAL
 #include "MGLKView.h"
+#endif
 #include "ofxiOSEAGLView.h"
 
 //----------------------------------------------------------------------------------- instance.
@@ -170,7 +172,11 @@ void ofAppiOSWindow::setWindowShape(int w, int h) {
 
 glm::vec2	ofAppiOSWindow::getWindowPosition() {
 	if(settings.windowControllerType == METAL_KIT) {
+#if (OF_METAL)
         return *[[MGLKView getInstance] getWindowPosition];
+#else
+		return glm::vec2(0);
+#endif
     }else if(settings.windowControllerType == GL_KIT)
 		return *[[ofxiOSGLKView getInstance] getWindowPosition];
 	else
@@ -179,7 +185,11 @@ glm::vec2	ofAppiOSWindow::getWindowPosition() {
 
 glm::vec2	ofAppiOSWindow::getWindowSize() {
 	if(settings.windowControllerType == METAL_KIT) {
+#if (OF_METAL)
         return *[[MGLKView getInstance] getWindowSize];
+#else
+		return glm::vec2(0);
+#endif
     }else if(settings.windowControllerType == GL_KIT)
 		return *[[ofxiOSGLKView getInstance] getWindowSize];
 	else
@@ -188,7 +198,11 @@ glm::vec2	ofAppiOSWindow::getWindowSize() {
 
 glm::vec2	ofAppiOSWindow::getScreenSize() {
     if(settings.windowControllerType == METAL_KIT) {
+#if (OF_METAL)
         return *[[MGLKView getInstance] getScreenSize];
+#else
+		return glm::vec2(0);
+#endif
     } else if(settings.windowControllerType == GL_KIT)
 		return *[[ofxiOSGLKView getInstance] getScreenSize];
 	else
@@ -440,9 +454,11 @@ void ofAppiOSWindow::enableMultiTouch(bool isOn) {
 	settings.enableMultiTouch = isOn;
 #if TARGET_OS_IOS || (TARGET_OS_IPHONE && !TARGET_OS_TV)
     if(settings.windowControllerType == METAL_KIT) {
+#if (OF_METAL)
         if([MGLKView getInstance]) {
             [[MGLKView getInstance] setMultipleTouchEnabled:isOn];
         }
+#endif
     } else if(settings.windowControllerType == GL_KIT) {
 		if([ofxiOSGLKView getInstance]) {
 			[[ofxiOSGLKView getInstance] setMultipleTouchEnabled:isOn];
