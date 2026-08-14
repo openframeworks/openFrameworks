@@ -240,6 +240,11 @@ public:
 				}
 			}
 			
+			if( path.getCommands().size() && outlines.size() == 0 ){
+				ofLogError("ofxSvgPath::getBoundingBox()" ) << " path outline size is 0 - you may need to call this function in a main thread to get the correct bounds "; 
+				mBBoxNeedsRecalc = true;
+			}
+			
 			path.setStrokeWidth(prevStrokeWidth);
 		}
 		return mBounds;
@@ -576,9 +581,12 @@ public:
 	virtual ofxSvgType getType() override {return OFXSVG_TYPE_TEXT;}
 	
 	ofTrueTypeFont& getFont();
-	
+	void setText( const std::string& astring );
+	void setText( const std::string& astring, float aMaxWidth );
 	void setText( const std::string& astring, std::string aFontFamily, int aFontSize, float aMaxWidth );
 	void setText( const std::string& astring, const ofxSvgCssClass& aSvgCssClass, float aMaxWidth );
+	void updateText( const std::string& astring, float aMaxWidth);
+
 	void create();
 	void customDraw() override;
 	// going to override
@@ -622,6 +630,15 @@ public:
 		}
 	}
 	
+	/// \ brief Applied when calling setText()
+	void setCreateNewTextSpansPerLine(bool ab) {
+		mBCreateNewTextSpanPerLine = ab;
+	}
+	
+	bool isCreatingNewTextSpanPerLine() {
+		return mBCreateNewTextSpanPerLine;
+	}
+	
 /// \brief Get the local bounding box of all of the text spans.
 	virtual ofRectangle getBoundingBox() override;
 	
@@ -660,6 +677,8 @@ protected:
 	SpanData extractSpanData(const std::string& spanTag);
 	bool endsWithLineEnding(const std::string& astr);
 	std::vector<std::string> splitWordsAndLineEndings(const std::string& input);
+	
+	bool mBCreateNewTextSpanPerLine = false;
 	
 };
 
