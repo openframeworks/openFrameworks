@@ -484,6 +484,75 @@ runMsbuildProject(){
 		-nologo -m
 }
 
+# Regenerate every unit-test project for Visual Studio, then compile it with
+# the same platform/toolset selection used by normal project builds.  Tests
+# are compile-only here: ARM64/ARM64EC binaries may be cross-built on x64.
+runVsTests(){
+	local config="${1:-Debug}"
+	local platform="${2:-${OF_VS_PLATFORM:-$(vsPlatformFromArch)}}"
+	local toolset="${3:-${OF_VS_TOOLSET:-$(vsToolsetDefault)}}"
+	local pgTemplate="${4:-${OF_PG_TEMPLATE:-vs2026}}"
+	local pg msbuild project count=0 failed=0
+
+	pg=$(findPGBinary) || { echoError "Project Generator missing — run: of update pg"; return 1; }
+	msbuild=$(findMsbuildBinary) || { echoError "msbuild.exe not found"; return 1; }
+	printBanner "tests"
+	echoKV "target" "${platform} · ${config} · ${toolset}"
+	echoInfo "regenerating Visual Studio projects under tests/"
+	local -a pgArgs=( -r -o"$OF_DIR" -pvs )
+	[[ -n "$pgTemplate" ]] && pgArgs+=( -t"$pgTemplate" )
+	PG_OF_PATH="$OF_DIR" "$pg" "${pgArgs[@]}" "${OF_DIR}/tests" || return $?
+
+	while IFS= read -r project; do
+		count=$((count + 1))
+		echoInfo "test ${count} · ${project#${OF_DIR}/}"
+		"$msbuild" "$project" -nologo -m \
+			"-p:Configuration=${config}" \
+			"-p:Platform=${platform}" \
+			"-p:PlatformToolset=${toolset}" || failed=$((failed + 1))
+	done < <(find "${OF_DIR}/tests" -mindepth 2 -name '*.vcxproj' -type f | sort)
+	[[ $count -gt 0 ]] || { echoError "no generated test projects found"; return 1; }
+	[[ $failed -eq 0 ]] || { echoError "${failed}/${count} test projects failed to compile"; return 1; }
+	echoSuccess "${count} test projects compiled · ${platform}/${config}"
+}
+
+menuVsTests(){
+	local config toolset platform template
+	menuPickConfig || return 0; config="$UI_MENU_RESULT"
+	menuPickVsToolset || return 0; toolset="$UI_MENU_RESULT"
+	menuPickVsPlatform || return 0; platform="$UI_MENU_RESULT"
+	menuPickPgTemplate || return 0; template="$UI_MENU_RESULT"
+	runVsTests "$config" "$platform" "$toolset" "$template"
+}
+
+runHostTests(){
+	case "$OF_PLATFORM" in
+		vs)
+			runVsTests "$@"
+			;;
+		osx|macos)
+			local runner="${OF_DIR}/scripts/ci/${OF_PLATFORM}/run_tests.sh"
+			[[ -f "$runner" ]] || runner="${OF_DIR}/scripts/ci/osx/run_tests.sh"
+			echoInfo "macOS tests · make Debug + RunDebug"
+			bash "$runner"
+			;;
+		*)
+			echoError "tests() is currently available for macOS and Visual Studio"
+			return 1
+			;;
+	esac
+}
+
+menuHostTests(){
+	case "$OF_PLATFORM" in
+		vs) menuVsTests ;;
+		osx|macos)
+			confirmYes "Build and run the macOS unit tests?" || return 0
+			runHostTests
+			;;
+	esac
+}
+
 # ---------------------------------------------------------------------------
 # Project file helpers
 # ---------------------------------------------------------------------------
@@ -1230,7 +1299,7 @@ menuBuild(){
 		echoKV "cmake" "$(command -v cmake >/dev/null 2>&1 && cmake --version 2>/dev/null | head -1 || echo 'not installed')"
 		printf '\n'
 
-		menuPick "Build…" \
+		local -a buildOpts=(
 			"OF core library (make)|core" \
 			"Project under apps/…|apps" \
 			"Example under examples/…|examples" \
@@ -1240,15 +1309,26 @@ menuBuild(){
 			"Generate project files (PG)…|generate" \
 			"CMake…|cmake" \
 			"Clean project…|clean" \
-			"Apothecary — build libraries…|apothecary" \
+			"Apothecary — build libraries…|apothecary"
+		)
+		case "$OF_PLATFORM" in
+			vs) buildOpts+=("Tests — PG + MSBuild…|tests") ;;
+			osx|macos) buildOpts+=("Tests — make + run…|tests") ;;
+		esac
+		buildOpts+=( \
 			"Upgrade — Projects / Addons…|upgrade" \
 			"Help|help" \
-			"Back|back" \
-			|| return 0
+			"Back|back"
+		)
+		menuPick "Build…" "${buildOpts[@]}" || return 0
 		choice="$UI_MENU_RESULT"
 		printf '\n'
 
 		case "$choice" in
+			tests)
+				menuHostTests
+				menuPause
+				;;
 			core)
 				menuPickConfig || continue
 				cmdBuildCore "$UI_MENU_RESULT"
@@ -1410,6 +1490,9 @@ printHelpBuild(){
     ${prog} build generate <path> [platforms]
     ${prog} build cmake <path> [Debug|Release]
     ${prog} build cmake status
+    ${prog} build tests                    macOS: make + run all unit tests
+    ${prog} build tests [cfg] [platform] [toolset]
+                                           Windows: PG + MSBuild (compile)
     ${prog} build clean <path>
     ${prog} build open-em <path>          Open emscripten index.html (Chrome/emrun)
 

@@ -1560,9 +1560,52 @@ menuPickApoVsVer(){
 	return 0
 }
 
+menuPickApoArch(){
+	local type="$1" a
+	local -a choices=() arches=()
+	if [[ "$type" == "vs" ]]; then
+		choices=(
+			"All (x64 + ARM64 + ARM64EC)|all"
+			"x64 (64)|64"
+			"ARM64|arm64"
+			"ARM64EC|arm64ec"
+			"ARM64 + ARM64EC|arm64+arm64ec"
+		)
+	else
+		read -r -a arches <<< "$(archesForApoType "$type")"
+		for a in "${arches[@]}"; do choices+=("${a}|${a}"); done
+	fi
+	menuPick "Target architecture · ${type}" "${choices[@]}"
+}
+
+# Keep the native platform first in Apothecary's platform menus.  In
+# particular, Windows users should see Visual Studio before Apple targets.
+apoBuildTypesOrdered(){
+	local type
+	if [[ "$OF_PLATFORM" == "vs" ]]; then
+		printf '%s\n' vs
+	fi
+	for type in "${APO_BUILD_TYPES[@]}"; do
+		[[ "$OF_PLATFORM" == "vs" && "$type" == "vs" ]] && continue
+		printf '%s\n' "$type"
+	done
+}
+
 runApothecaryEngine(){
 	local type="$1" arch="$2"
 	shift 2
+	# Apothecary accepts one VS architecture per invocation.  Let the oF menu
+	# expose useful groups while keeping the underlying calls conventional.
+	if [[ "$type" == "vs" && ( "$arch" == "all" || "$arch" == *","* || "$arch" == *"+"* ) ]]; then
+		local expanded="$arch" vsArch
+		[[ "$expanded" == "all" ]] && expanded="64,arm64,arm64ec"
+		expanded="${expanded//+/,}"
+		for vsArch in ${expanded//,/ }; do
+			echoInfo "Visual Studio libraries · ${vsArch}"
+			runApothecaryEngine "$type" "$vsArch" "$@" || return $?
+		done
+		return 0
+	fi
 	local -a cmd=()
 	resolveApothecary
 	[[ -f "$APO_ENGINE" ]] || { echoError "apothecary engine missing — git submodule update --init scripts/apothecary"; return 1; }
@@ -1658,7 +1701,7 @@ menuApothecary(){
 			;;
 		build-type)
 			opts=()
-			for type in "${APO_BUILD_TYPES[@]}"; do
+			while IFS= read -r type; do
 				if [[ "$type" == "macos" ]]; then
 					opts+=("macos  — Apple multi-target xcframeworks|macos")
 				elif [[ "$type" == "osx" ]]; then
@@ -1666,7 +1709,7 @@ menuApothecary(){
 				else
 					opts+=("${type}|${type}")
 				fi
-			done
+			done < <(apoBuildTypesOrdered)
 			[[ "$OF_PLATFORM" == "osx" ]] && echoNote "macos covers osx · ios · tvos · xros · watchos · catos"
 			menuPick "Build platform" "${opts[@]}" || return 2
 			type="$UI_MENU_RESULT"
@@ -1674,29 +1717,21 @@ menuApothecary(){
 				menuPickApoVsVer || return 2
 				export OF_APO_VS_VER="$UI_MENU_RESULT"
 			fi
-			aopts=()
-			read -r -a arches <<< "$(archesForApoType "$type")"
-			for a in "${arches[@]}"; do
-				aopts+=("${a}|${a}")
-			done
-			menuPick "Architecture · ${type}" "${aopts[@]}" || return 2
+			menuPickApoArch "$type" || return 2
 			cmdApothecaryBuildAll "$type" "$UI_MENU_RESULT"
 			;;
 		build-one)
 			opts=()
-			for type in "${APO_BUILD_TYPES[@]}"; do
+			while IFS= read -r type; do
 				opts+=("${type}|${type}")
-			done
+			done < <(apoBuildTypesOrdered)
 			menuPick "Platform" "${opts[@]}" || return 2
 			type="$UI_MENU_RESULT"
 			if [[ "$type" == "vs" ]]; then
 				menuPickApoVsVer || return 2
 				export OF_APO_VS_VER="$UI_MENU_RESULT"
 			fi
-			aopts=()
-			read -r -a arches <<< "$(archesForApoType "$type")"
-			for a in "${arches[@]}"; do aopts+=("${a}|${a}"); done
-			menuPick "Architecture · ${type}" "${aopts[@]}" || return 2
+			menuPickApoArch "$type" || return 2
 			arch="$UI_MENU_RESULT"
 			opts=()
 			local f
@@ -2541,6 +2576,13 @@ cmdBuild(){
 					runCmakeProject "$path" "$config"
 					;;
 			esac
+			;;
+		tests|test)
+			if [[ "$OF_PLATFORM" == "vs" ]]; then
+				runHostTests "${1:-Debug}" "${2:-${OF_VS_PLATFORM:-$(vsPlatformFromArch)}}" "${3:-${OF_VS_TOOLSET:-$(vsToolsetDefault)}}"
+			else
+				runHostTests "$@"
+			fi
 			;;
 		clean)
 			local path="${1:-}"
