@@ -77,6 +77,7 @@ public:
 	ofColor getColor(const std::string& akey, const ofColor& adefault);
 	
 	std::string toString(bool aBPrettyPrint=true);
+	std::string toString(bool aBPrettyPrint=true) const;
 	
 protected:
 	Property dummyProp;

@@ -437,6 +437,18 @@ std::string ofxSvgCssClass::toString(bool aBPrettyPrint) {
 }
 
 //--------------------------------------------------
+std::string ofxSvgCssClass::toString(bool aBPrettyPrint) const {
+	std::stringstream ss;
+	for( auto& piter : properties ) {
+		if(aBPrettyPrint) {
+			ss << std::endl << "    ";
+		}
+		ss << piter.first << ":" << piter.second.srcString << ";";
+	}
+	return ss.str();
+}
+
+//--------------------------------------------------
 bool ofxSvgCssStyleSheet::parse( std::string aCssString ) {
 	if( aCssString.empty() ) {
 		return false;
