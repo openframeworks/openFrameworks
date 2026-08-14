@@ -418,7 +418,7 @@ protected:
 		for( const auto& ptr : mChildren ) {
 			if( ptr ) {
 				auto newKid = ptr->clone();
-				newKid->setParent(*this);
+				newKid->setParent(*newEle);
 				newEle->mChildren.push_back(newKid);
 			}
 		}
