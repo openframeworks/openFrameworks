@@ -6,6 +6,9 @@ ROOT=$(pwd -P)
 echo "##[group]**** Running unit tests ****"
 cd $ROOT/tests
 for group in *; do
+	if [ "$group" = "android" ]; then
+		continue
+	fi
 	if [ -d $group ]; then
 		echo "##[group] $group"
 		for test in $group/*; do

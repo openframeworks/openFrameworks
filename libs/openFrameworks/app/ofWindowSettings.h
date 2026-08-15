@@ -49,7 +49,10 @@ public:
 	,height(768)
 	,sizeSet(false)
 	,position(0,0)
-	,positionSet(false){}
+	,positionSet(false)
+	,hiDPI(false) {}
+
+	ofWindowSettings(const ofWindowSettings& other) = default;
 
 	virtual ~ofWindowSettings(){};
 
@@ -87,12 +90,21 @@ public:
 		return positionSet;
 	}
 
+	bool isHiDPI() const {
+		return hiDPI;
+	}
+
+	void setHiDPI(const bool isHighDPI=true) {
+		hiDPI=isHighDPI;
+	}
+
 protected:
 	int width;
 	int height;
 	bool sizeSet;
 	glm::vec2 position;
 	bool positionSet;
+	bool hiDPI;
 };
 
 class ofGLWindowSettings: public ofWindowSettings{
@@ -100,6 +112,8 @@ public:
 	ofGLWindowSettings()
 	:glVersionMajor(2)
 	,glVersionMinor(1){}
+
+	ofGLWindowSettings(const ofGLWindowSettings& other) = default;
 
 	ofGLWindowSettings(const ofWindowSettings & settings)
 	:ofWindowSettings(settings)
@@ -125,22 +139,30 @@ public:
 
 class ofGLESWindowSettings: public ofWindowSettings{
 public:
-	ofGLESWindowSettings()
-	:glesVersion(1){}
+    ofGLESWindowSettings()
+        :glesVersion(1), glesVersionMinor(0){}
 
-	ofGLESWindowSettings(const ofWindowSettings & settings)
-	:ofWindowSettings(settings), glesVersion(1) {
+    ofGLESWindowSettings(const ofGLESWindowSettings& other) = default;
+    
+    ofGLESWindowSettings(const ofWindowSettings & settings)
+	:ofWindowSettings(settings), glesVersion(1), glesVersionMinor(0) {
         const ofGLESWindowSettings * glesSettings = dynamic_cast<const ofGLESWindowSettings*>(&settings);
         if(glesSettings){
             glesVersion = glesSettings->glesVersion;
+            glesVersionMinor = glesSettings->glesVersionMinor;
         }
     }
+    
+    virtual ~ofGLESWindowSettings(){};
+    
+    void setGLESVersion(int versionMajor, int versionMinor = 0){
+        glesVersion = versionMajor;
+        glesVersionMinor = versionMinor;
+    }
 
-	virtual ~ofGLESWindowSettings(){};
+    int getGLESVersionMajor() const { return glesVersion; }
+    int getGLESVersionMinor() const { return glesVersionMinor ; }
 
-	void setGLESVersion(int version){
-		glesVersion = version;
-	}
-
-	int glesVersion;
+    int glesVersion;
+    int glesVersionMinor;
 };

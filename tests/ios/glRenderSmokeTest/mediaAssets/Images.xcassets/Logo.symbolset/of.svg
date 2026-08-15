@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0" y="0" width="420" height="420" viewBox="0, 0, 420, 420">
+  <g id="Regular-M">
+    <path d="M228.5,121.167 L304.5,121.167 L304.5,297.5 L228.5,297.5 L228.5,121.167 z" fill="#8400FF"/>
+    <path d="M312.833,190.167 L359.5,190.167 L359.5,238.167 L312.833,238.167 L312.833,190.167 z" fill="#8400FF"/>
+    <path d="M312.833,121.167 L379.167,121.167 L312.833,188.167 L312.833,121.167 z" fill="#8400FF"/>
+    <path d="M129.667,298.833 C80.605,298.833 40.833,259.061 40.833,210 C40.833,160.939 80.605,121.167 129.667,121.167 C178.728,121.167 218.5,160.939 218.5,210 C218.5,259.061 178.728,298.833 129.667,298.833 z" fill="#8400FF"/>
+  </g>
+  <g id="Guides">
+    <path d="M-1177,299.333 L1596,299.333" fill-opacity="0" stroke="#27AAE1" stroke-width="0.5" id="Baseline-M"/>
+    <path d="M-1177,121.667 L1596,121.667" fill-opacity="0" stroke="#27AAE1" stroke-width="0.5" id="Capline-M"/>
+    <path d="M-1177,298 L1596,298" fill-opacity="0" stroke="#27AAE1" stroke-width="0.5" id="Baseline-S"/>
+    <path d="M-1177,120.334 L1596,120.334" fill-opacity="0" stroke="#27AAE1" stroke-width="0.5" id="Capline-S"/>
+    <path d="M-1177,298 L1596,298" fill-opacity="0" stroke="#27AAE1" stroke-width="0.5" id="Baseline-L"/>
+    <path d="M-1177,120.334 L1596,120.334" fill-opacity="0" stroke="#27AAE1" stroke-width="0.5" id="Capline-L"/>
+  </g>
+</svg>
