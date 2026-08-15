@@ -1,6 +1,6 @@
 #!/bin/bash
-OFDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-OFDIR="$(realpath "$OF_DIR/../..")"
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+OFDIR="$(cd "$SCRIPT_DIR/../.." && pwd)"
 
 if [ -d "${OFDIR}/libs/fmod" ]; then
     rm -r "${OFDIR}/libs/fmod"
