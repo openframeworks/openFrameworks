@@ -208,6 +208,7 @@ private:
 	static void 	drop_cb(GLFWwindow* windowP_, int numFiles, const char** dropString);
 	static void		error_cb(int errorCode, const char* errorDescription);
  	static void   refresh_cb(GLFWwindow * windowP_);
+	static void   focus_cb(GLFWwindow * windowP_, int focused);
 
 	void close();
 
@@ -234,6 +235,7 @@ private:
 
 	int nFramesSinceWindowResized;
 	bool bWindowNeedsShowing;
+	bool bWindowFocused = true;
 
 #ifdef TARGET_RASPBERRY_PI
 	bool needsResizeCheck = false; /// Just for RPI at this point

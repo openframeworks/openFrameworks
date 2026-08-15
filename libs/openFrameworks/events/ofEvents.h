@@ -333,6 +333,7 @@ public:
 
 	ofEvent<ofResizeEventArgs> windowResized;
 	ofEvent<ofWindowPosEventArgs> windowMoved;
+	ofEvent<bool> windowFocusChanged;
 
 	ofEvent<ofKeyEventArgs> keyPressed;
 	ofEvent<ofKeyEventArgs> keyReleased;
