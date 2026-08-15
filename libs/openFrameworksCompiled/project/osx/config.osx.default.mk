@@ -101,7 +101,19 @@ ifeq ($(shell xcode-select -print-path 2> /dev/null; echo $$?),0)
 	MAC_OS_SDK_PATH=$(MAC_OS_XCODE_ROOT)/Platforms/MacOSX.platform/Developer/SDKs
 
 	ifndef MAC_OS_SDK
-		ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX14.5.sdk),$(MAC_OS_SDK_PATH)/MacOSX14.5.sdk)
+		ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX15.5.sdk),$(MAC_OS_SDK_PATH)/MacOSX15.5.sdk)
+            MAC_OS_SDK=15.5
+		else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX15.4.sdk),$(MAC_OS_SDK_PATH)/MacOSX15.4.sdk)
+            MAC_OS_SDK=15.4
+		else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX15.3.sdk),$(MAC_OS_SDK_PATH)/MacOSX15.3.sdk)
+            MAC_OS_SDK=15.3
+		else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX15.2.sdk),$(MAC_OS_SDK_PATH)/MacOSX15.2.sdk)
+            MAC_OS_SDK=15.2
+		else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX15.1.sdk),$(MAC_OS_SDK_PATH)/MacOSX15.1.sdk)
+            MAC_OS_SDK=15.1
+		else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX15.0.sdk),$(MAC_OS_SDK_PATH)/MacOSX15.0.sdk)
+            MAC_OS_SDK=15.0
+		else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX14.5.sdk),$(MAC_OS_SDK_PATH)/MacOSX14.5.sdk)
             MAC_OS_SDK=14.5
 		else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX14.4.sdk),$(MAC_OS_SDK_PATH)/MacOSX14.4.sdk)
             MAC_OS_SDK=14.4
@@ -353,6 +365,7 @@ PLATFORM_FRAMEWORKS += IOKit
 PLATFORM_FRAMEWORKS += OpenGL
 PLATFORM_FRAMEWORKS += QuartzCore
 PLATFORM_FRAMEWORKS += Security
+PLATFORM_FRAMEWORKS += CFNetwork
 PLATFORM_FRAMEWORKS += SystemConfiguration
 
 

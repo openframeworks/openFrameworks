@@ -3,6 +3,15 @@
 #include "ofUtils.h"
 #include "ofFileUtils.h"
 #include "ofLog.h"
+#include <ctime>
+#include <cstdlib>
+#if !defined(_WIN32) && !defined(TARGET_OS_WIN32)
+#include <unistd.h>
+#endif
+#if defined(TARGET_OSX)
+#include <stdlib.h>
+#include <sys/random.h>
+#endif
 
 using std::map;
 using std::set;
@@ -21,11 +30,41 @@ using std::string;
 	#include <openssl/x509.h>
 	#include <openssl/x509v3.h>
 	#include <openssl/err.h>
+	#include <openssl/rand.h>
+	#include <openssl/crypto.h>
+	#include <openssl/provider.h>
 	#include <iostream>
 	#include <fstream>
 
 	#define CERTIFICATE_FILE "cacert.pem"
 	#define PRIVATE_KEY_FILE "cacert.key"
+
+	// OpenSSL 4.x static DRBG fallback - only for 4.0+ where provider DRBG fetch fails
+	#if OPENSSL_VERSION_MAJOR >= 4
+	static int custom_rand_seed(const void *buf, int num) { RAND_add(buf, num, (double)num); return 1; }
+	static int custom_rand_bytes(unsigned char *buf, int num) {
+	#if defined(TARGET_OSX)
+		if(getentropy(buf, (size_t)num)==0) return 1;
+		arc4random_buf(buf, (size_t)num);
+		return 1;
+	#else
+		for(int i=0;i<num;++i) buf[i]=(unsigned char)(rand() & 0xFF);
+		return 1;
+	#endif
+	}
+	static void custom_rand_cleanup(void) {}
+	static int custom_rand_add(const void *buf, int num, double entropy) { RAND_add(buf, num, entropy); return 1; }
+	static int custom_rand_pseudorand(unsigned char *buf, int num) { return custom_rand_bytes(buf, num); }
+	static int custom_rand_status(void) { return 1; }
+	static RAND_METHOD custom_rand_method = {
+		custom_rand_seed,
+		custom_rand_bytes,
+		custom_rand_cleanup,
+		custom_rand_add,
+		custom_rand_pseudorand,
+		custom_rand_status
+	};
+	#endif
 	
 #endif
 
@@ -72,6 +111,16 @@ private:
 ofURLFileLoaderImpl::ofURLFileLoaderImpl() {
 	if (!curlInited) {
 		curl_global_init(CURL_GLOBAL_ALL);
+#if !defined(NO_OPENSSL)
+#if OPENSSL_VERSION_MAJOR >= 4
+		// OpenSSL 4.0 DRBG is in default provider - must load config/provider before RAND
+		OPENSSL_init_crypto(OPENSSL_INIT_LOAD_CONFIG | OPENSSL_INIT_LOAD_CRYPTO_STRINGS | OPENSSL_INIT_ADD_ALL_CIPHERS | OPENSSL_INIT_ADD_ALL_DIGESTS, NULL);
+		OSSL_PROVIDER_load(NULL, "default");
+#endif
+		if(RAND_status() == 0) {
+			RAND_poll();
+		}
+#endif
 	}
 }
 
@@ -183,7 +232,7 @@ void ofURLFileLoaderImpl::createSSLCertificate() {
 		X509_gmtime_adj(X509_get_notBefore(x509), 0);
 		X509_gmtime_adj(X509_get_notAfter(x509), 31536000L); // 1 year
 		X509_set_pubkey(x509, pkey);
-		X509_NAME * name = X509_get_subject_name(x509);
+		X509_NAME * name = const_cast<X509_NAME *>(X509_get_subject_name(x509));
 		if (!name) {
 			X509_free(x509);
 			EVP_PKEY_free(pkey);
@@ -299,24 +348,64 @@ size_t readBody_cb(void * ptr, size_t size, size_t nmemb, void * userdata) {
 	}
 	return 0; /* no more data left to deliver */
 }
-int progress_cb(void* ptr, curl_off_t dltotal, curl_off_t dlnow, curl_off_t ultotal, curl_off_t ulnow) {
-	auto & request = *static_cast<ofHttpRequest*>(ptr);
-	if (request.progressCallback) {
-		float progress = 0.0f;
-		if (request.method == ofHttpRequest::GET && dltotal > 0) {
-			progress = (float)dlnow / (float)dltotal;
-			// note: we may want to support upload and download for POST
-		} else if ((request.method == ofHttpRequest::PUT || request.method == ofHttpRequest::POST) && ultotal > 0) {
-			progress = (float)ulnow / (float)ultotal;
-		}
-		
-		request.progressCallback(request, progress);
+int transferProgress_cb(void * userdata, curl_off_t downloadTotal, curl_off_t downloaded, curl_off_t uploadTotal, curl_off_t uploaded) {
+	const auto & request = *static_cast<const ofHttpRequest *>(userdata);
+	if (request.method == ofHttpRequest::GET && downloadTotal > 0) {
+		request.progressCallback(request, static_cast<float>(downloaded) / static_cast<float>(downloadTotal));
+	} else if ((request.method == ofHttpRequest::PUT || request.method == ofHttpRequest::POST) && uploadTotal > 0) {
+		request.progressCallback(request, static_cast<float>(uploaded) / static_cast<float>(uploadTotal));
 	}
 	return 0;
 }
 }
 
 ofHttpResponse ofURLFileLoaderImpl::handleRequest(const ofHttpRequest & request) {
+#if !defined(NO_OPENSSL)
+#if OPENSSL_VERSION_MAJOR >= 4
+	// OpenSSL 4.0 static provider DRBG - fallback to arc4random when fetch fails
+	if(RAND_status()==0) {
+		OPENSSL_init_crypto(OPENSSL_INIT_LOAD_CONFIG | OPENSSL_INIT_LOAD_CRYPTO_STRINGS | OPENSSL_INIT_ADD_ALL_CIPHERS | OPENSSL_INIT_ADD_ALL_DIGESTS, NULL);
+		OSSL_PROVIDER_load(NULL, "default");
+		if(RAND_status()==0) {
+			RAND_set_rand_method(&custom_rand_method);
+#ifdef DEBUG_CURL
+			ofLogVerbose("ofURLFileLoader") << "installed custom arc4random RAND_METHOD fallback";
+#endif
+		}
+	}
+#endif
+	for(int i=0; i<3 && RAND_status()==0; ++i) {
+		RAND_poll();
+		if(RAND_status()==0) {
+			unsigned char buf[256];
+#if defined(TARGET_OSX)
+			if(getentropy(buf, sizeof(buf)) == 0) {
+				RAND_add(buf, sizeof(buf), sizeof(buf));
+			} else {
+				arc4random_buf(buf, sizeof(buf));
+				RAND_add(buf, sizeof(buf), sizeof(buf));
+			}
+			OPENSSL_cleanse(buf, sizeof(buf));
+#endif
+			RAND_load_file("/dev/urandom", 256);
+			unsigned int seed = (unsigned int)time(nullptr) ^ (unsigned int)clock();
+#if !defined(_WIN32) && !defined(TARGET_OS_WIN32)
+			seed ^= (unsigned int)getpid();
+#endif
+			RAND_add(&seed, sizeof(seed), sizeof(seed));
+			OPENSSL_cleanse(&seed, sizeof(seed));
+			RAND_poll();
+		}
+	}
+#ifdef DEBUG_CURL
+	if(RAND_status()==0) {
+		unsigned long e = ERR_get_error();
+		char ebuf[256]={0};
+		ERR_error_string_n(e, ebuf, sizeof(ebuf));
+		ofLogError("ofURLFileLoader") << "RAND_status still 0 err=" << e << " " << ebuf;
+	}
+#endif
+#endif
 	std::unique_ptr<CURL, void (*)(CURL *)> curl = std::unique_ptr<CURL, void (*)(CURL *)>(curl_easy_init(), curl_easy_cleanup);
 	if (!curl) {
 		ofLogError("ofURLFileLoader") << "curl_easy_init() failed!";
@@ -329,20 +418,34 @@ ofHttpResponse ofURLFileLoaderImpl::handleRequest(const ofHttpRequest & request)
 		if (ret != CURLE_OK) {
 			ofLogWarning() << "cURL error: " << curl_easy_strerror(ret);
 		}
-		if (version) {
-			std::string userAgent = std::string("curl/") + version->version;
-			curl_easy_setopt(curl.get(), CURLOPT_USERAGENT, userAgent.c_str());
-		} else {
-			curl_easy_setopt(curl.get(), CURLOPT_USERAGENT, "curl/unknown");
-		}
+	}
+	// Always set User-Agent - some hosts (Cloudflare, GitHub) block empty UA and cause http->https redirect test to fail
+	if (version) {
+		std::string userAgent = std::string("curl/") + version->version;
+		curl_easy_setopt(curl.get(), CURLOPT_USERAGENT, userAgent.c_str());
+	} else {
+		curl_easy_setopt(curl.get(), CURLOPT_USERAGENT, "curl/unknown");
 	}
 	if(version->features & CURL_VERSION_SSL) {
-		curl_easy_setopt(curl.get(), CURLOPT_SSL_VERIFYPEER, false);
+		curl_easy_setopt(curl.get(), CURLOPT_SSL_VERIFYPEER, 1L);
 		curl_easy_setopt(curl.get(), CURLOPT_SSL_VERIFYHOST, 2L);
 	}
-	curl_easy_setopt(curl.get(), CURLOPT_URL, request.url.c_str());
+	ofLogVerbose("ofURLFileLoader") << "Request URL: '" << request.url << "'";
+	CURLcode urlRes = curl_easy_setopt(curl.get(), CURLOPT_URL, request.url.c_str());
+	if(urlRes != CURLE_OK) {
+		ofLogError("ofURLFileLoader") << "CURLOPT_URL failed for '" << request.url << "': " << curl_easy_strerror(urlRes);
+		return ofHttpResponse(request, -1, curl_easy_strerror(urlRes));
+	}
 	curl_easy_setopt(curl.get(), CURLOPT_FOLLOWLOCATION, 1L);
 	curl_easy_setopt(curl.get(), CURLOPT_MAXREDIRS, 20L);
+	// curl 7.85.0+ uses _STR variants (deprecated bitmask); guard for 8.21+ / 7.85+
+#if LIBCURL_VERSION_NUM >= 0x075500
+	curl_easy_setopt(curl.get(), CURLOPT_REDIR_PROTOCOLS_STR, "http,https");
+	curl_easy_setopt(curl.get(), CURLOPT_PROTOCOLS_STR, "http,https");
+#else
+	curl_easy_setopt(curl.get(), CURLOPT_REDIR_PROTOCOLS, CURLPROTO_HTTP | CURLPROTO_HTTPS);
+	curl_easy_setopt(curl.get(), CURLOPT_PROTOCOLS, CURLPROTO_HTTP | CURLPROTO_HTTPS);
+#endif
 
 	if (request.contentType != "") {
 		headers = curl_slist_append(headers, ("Content-Type: " + request.contentType).c_str());
@@ -427,13 +530,13 @@ ofHttpResponse ofURLFileLoaderImpl::handleRequest(const ofHttpRequest & request)
 	// start request and receive response
 	ofHttpResponse response(request, 0, "");
 	CURLcode err = CURLE_OK;
-	
+
 	if (request.progressCallback) {
-		curl_easy_setopt(curl.get(), CURLOPT_XFERINFOFUNCTION, progress_cb);
+		curl_easy_setopt(curl.get(), CURLOPT_XFERINFOFUNCTION, transferProgress_cb);
 		curl_easy_setopt(curl.get(), CURLOPT_XFERINFODATA, &request);
 		curl_easy_setopt(curl.get(), CURLOPT_NOPROGRESS, 0L);
 	}
-	
+
 	if (request.saveTo) {
 		ofFile saveTo(request.name, ofFile::WriteOnly, true);
 		curl_easy_setopt(curl.get(), CURLOPT_WRITEDATA, &saveTo);

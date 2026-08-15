@@ -484,6 +484,75 @@ runMsbuildProject(){
 		-nologo -m
 }
 
+# Regenerate every unit-test project for Visual Studio, then compile it with
+# the same platform/toolset selection used by normal project builds.  Tests
+# are compile-only here: ARM64/ARM64EC binaries may be cross-built on x64.
+runVsTests(){
+	local config="${1:-Debug}"
+	local platform="${2:-${OF_VS_PLATFORM:-$(vsPlatformFromArch)}}"
+	local toolset="${3:-${OF_VS_TOOLSET:-$(vsToolsetDefault)}}"
+	local pgTemplate="${4:-${OF_PG_TEMPLATE:-vs2026}}"
+	local pg msbuild project count=0 failed=0
+
+	pg=$(findPGBinary) || { echoError "Project Generator missing — run: of update pg"; return 1; }
+	msbuild=$(findMsbuildBinary) || { echoError "msbuild.exe not found"; return 1; }
+	printBanner "tests"
+	echoKV "target" "${platform} · ${config} · ${toolset}"
+	echoInfo "regenerating Visual Studio projects under tests/"
+	local -a pgArgs=( -r -o"$OF_DIR" -pvs )
+	[[ -n "$pgTemplate" ]] && pgArgs+=( -t"$pgTemplate" )
+	PG_OF_PATH="$OF_DIR" "$pg" "${pgArgs[@]}" "${OF_DIR}/tests" || return $?
+
+	while IFS= read -r project; do
+		count=$((count + 1))
+		echoInfo "test ${count} · ${project#${OF_DIR}/}"
+		"$msbuild" "$project" -nologo -m \
+			"-p:Configuration=${config}" \
+			"-p:Platform=${platform}" \
+			"-p:PlatformToolset=${toolset}" || failed=$((failed + 1))
+	done < <(find "${OF_DIR}/tests" -mindepth 2 -name '*.vcxproj' -type f | sort)
+	[[ $count -gt 0 ]] || { echoError "no generated test projects found"; return 1; }
+	[[ $failed -eq 0 ]] || { echoError "${failed}/${count} test projects failed to compile"; return 1; }
+	echoSuccess "${count} test projects compiled · ${platform}/${config}"
+}
+
+menuVsTests(){
+	local config toolset platform template
+	menuPickConfig || return 0; config="$UI_MENU_RESULT"
+	menuPickVsToolset || return 0; toolset="$UI_MENU_RESULT"
+	menuPickVsPlatform || return 0; platform="$UI_MENU_RESULT"
+	menuPickPgTemplate || return 0; template="$UI_MENU_RESULT"
+	runVsTests "$config" "$platform" "$toolset" "$template"
+}
+
+runHostTests(){
+	case "$OF_PLATFORM" in
+		vs)
+			runVsTests "$@"
+			;;
+		osx|macos)
+			local runner="${OF_DIR}/scripts/ci/${OF_PLATFORM}/run_tests.sh"
+			[[ -f "$runner" ]] || runner="${OF_DIR}/scripts/ci/osx/run_tests.sh"
+			echoInfo "macOS tests · make Debug + RunDebug"
+			bash "$runner"
+			;;
+		*)
+			echoError "tests() is currently available for macOS and Visual Studio"
+			return 1
+			;;
+	esac
+}
+
+menuHostTests(){
+	case "$OF_PLATFORM" in
+		vs) menuVsTests ;;
+		osx|macos)
+			confirmYes "Build and run the macOS unit tests?" || return 0
+			runHostTests
+			;;
+	esac
+}
+
 # ---------------------------------------------------------------------------
 # Project file helpers
 # ---------------------------------------------------------------------------
@@ -871,6 +940,139 @@ runNativeApp(){
 	return 1
 }
 
+# Finds a project's Debug binary and runs it synchronously, returning its
+# exit code. Unlike runNativeApp (which `open`s GUI apps asynchronously and
+# can't report pass/fail), this is for headless test binaries built with
+# ofAppNoWindow — used by `of test`.
+findTestBinary(){
+	local project="$1" name
+	name=$(basename "$project")
+	local -a candidates=(
+		"${project}/bin/${name}_debug.app/Contents/MacOS/${name}_debug"
+		"${project}/bin/${name}_debug"
+		"${project}/bin/${name}_debug.exe"
+	)
+	local c
+	for c in "${candidates[@]}"; do
+		[[ -x "$c" ]] && { printf '%s' "$c"; return 0; }
+	done
+	return 1
+}
+
+# Builds (Debug) and runs one tests/<group>/<name> project, streaming its
+# ofxUnitTests output. Returns the test binary's exit code.
+runTestProject(){
+	local project="$1"
+	local buildLog
+	buildLog=$(mktemp)
+
+	ensureProjectMakefile "$project" || {
+		echoError "no Makefile and could not install template Makefile"
+		rm -f "$buildLog"
+		return 1
+	}
+	if ! ( cd "$project" && make -j"$(ofBuildJobs)" Debug ) >"$buildLog" 2>&1; then
+		echoError "build failed"
+		tail -25 "$buildLog" | sed 's/^/    /'
+		rm -f "$buildLog"
+		return 1
+	fi
+	rm -f "$buildLog"
+
+	local bin
+	bin=$(findTestBinary "$project") || {
+		echoError "built but no debug binary found under bin/"
+		return 1
+	}
+	"$bin"
+}
+
+# Discovers and runs every tests/<group>/<name> project (or just tests/<group>
+# if $1 is given), mirroring what scripts/ci/*/run_tests.sh do in CI but
+# reusable from the CLI/menu. Prints a tick per test, full output only on
+# failure, and a pass/fail summary at the end.
+cmdTest(){
+	local filter="${1:-}"
+	local filterGroup="${filter%%/*}"
+	local filterTest=""
+	[[ "$filter" == */* ]] && filterTest="${filter#*/}"
+	local testsDir="${OF_DIR}/tests"
+	[[ -d "$testsDir" ]] || { echoError "no tests/ directory found"; return 1; }
+
+	printBanner "test"
+	echoInfo "running smoke tests under tests/${filter:+$filter/}"
+	printf '\n'
+
+	local -a groups=()
+	local g
+	if [[ -n "$filterGroup" ]]; then
+		[[ -d "${testsDir}/${filterGroup}" ]] || { echoError "no tests/${filterGroup} folder"; return 1; }
+		if [[ -n "$filterTest" && ! -d "${testsDir}/${filterGroup}/${filterTest}/src" ]]; then
+			echoError "no tests/${filterGroup}/${filterTest} project"
+			return 1
+		fi
+		groups=("${testsDir}/${filterGroup}")
+	else
+		for g in "${testsDir}"/*/; do
+			[[ -d "$g" ]] && groups+=("${g%/}")
+		done
+	fi
+
+	local total=0 passed=0 failed=0
+	local -a failedNames=()
+	local group groupName test name t0 t1 runLog
+
+	for group in "${groups[@]}"; do
+		groupName=$(basename "$group")
+		printf '  %s%s%s\n' "$C_BOLD" "$groupName" "$C_RESET"
+		for test in "$group"/*/; do
+			[[ -d "$test" && -d "${test}src" ]] || continue
+			test="${test%/}"
+			name=$(basename "$test")
+			[[ -n "$filterTest" && "$name" != "$filterTest" ]] && continue
+			total=$((total + 1))
+			# \r-overwrite the pending marker only when actually attached to a
+			# terminal -- otherwise (piped/logged output) it just garbles two
+			# lines together, so print plain sequential lines instead
+			if isInteractive; then
+				printf '  %s·%s %s/%s' "$C_MUTED" "$C_RESET" "$groupName" "$name"
+			else
+				printf '  · %s/%s ... ' "$groupName" "$name"
+			fi
+			runLog=$(mktemp)
+			t0=$(date +%s)
+			if runTestProject "$test" >"$runLog" 2>&1; then
+				t1=$(date +%s)
+				if isInteractive; then
+					printf '\r  %s✓%s %s/%s  %s(%ss)%s\n' "$C_OK" "$C_RESET" "$groupName" "$name" "$C_MUTED" "$((t1 - t0))" "$C_RESET"
+				else
+					printf 'ok (%ss)\n' "$((t1 - t0))"
+				fi
+				passed=$((passed + 1))
+			else
+				t1=$(date +%s)
+				if isInteractive; then
+					printf '\r  %s✗%s %s/%s  %s(%ss)%s\n' "$C_ERR" "$C_RESET" "$groupName" "$name" "$C_MUTED" "$((t1 - t0))" "$C_RESET"
+				else
+					printf 'FAILED (%ss)\n' "$((t1 - t0))"
+				fi
+				failed=$((failed + 1))
+				failedNames+=("${groupName}/${name}")
+				sed 's/^/      /' "$runLog"
+			fi
+			rm -f "$runLog"
+		done
+	done
+
+	printf '\n'
+	if [[ "$failed" -eq 0 ]]; then
+		echoSuccess "${passed}/${total} tests passed"
+		return 0
+	fi
+	echoError "${failed}/${total} tests failed: ${failedNames[*]}"
+	return 1
+}
+
 # ---------------------------------------------------------------------------
 # High-level command: build one project with a system
 # ---------------------------------------------------------------------------
@@ -1105,7 +1307,7 @@ menuBuild(){
 		echoKV "cmake" "$(command -v cmake >/dev/null 2>&1 && cmake --version 2>/dev/null | head -1 || echo 'not installed')"
 		printf '\n'
 
-		menuPick "Build…" \
+		local -a buildOpts=(
 			"OF core library (make)|core" \
 			"Project under apps/…|apps" \
 			"Example under examples/…|examples" \
@@ -1115,15 +1317,26 @@ menuBuild(){
 			"Generate project files (PG)…|generate" \
 			"CMake…|cmake" \
 			"Clean project…|clean" \
-			"Apothecary — build libraries…|apothecary" \
+			"Apothecary — build libraries…|apothecary"
+		)
+		case "$OF_PLATFORM" in
+			vs) buildOpts+=("Tests — PG + MSBuild…|tests") ;;
+			osx|macos) buildOpts+=("Tests — make + run…|tests") ;;
+		esac
+		buildOpts+=( \
 			"Upgrade — Projects / Addons…|upgrade" \
 			"Help|help" \
-			"Back|back" \
-			|| return 0
+			"Back|back"
+		)
+		menuPick "Build…" "${buildOpts[@]}" || return 0
 		choice="$UI_MENU_RESULT"
 		printf '\n'
 
 		case "$choice" in
+			tests)
+				menuHostTests
+				menuPause
+				;;
 			core)
 				menuPickConfig || continue
 				cmdBuildCore "$UI_MENU_RESULT"
@@ -1285,6 +1498,9 @@ printHelpBuild(){
     ${prog} build generate <path> [platforms]
     ${prog} build cmake <path> [Debug|Release]
     ${prog} build cmake status
+    ${prog} build tests                    macOS: make + run all unit tests
+    ${prog} build tests [cfg] [platform] [toolset]
+                                           Windows: PG + MSBuild (compile)
     ${prog} build clean <path>
     ${prog} build open-em <path>          Open emscripten index.html (Chrome/emrun)
 

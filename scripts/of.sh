@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # of.sh - openFrameworks CLI  |  Dan Rosser 2025
-OF_SCRIPT_VERSION=0.4.2
+OF_SCRIPT_VERSION=0.4.4
 
 OF_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 OF_DIR="$(realpath "$OF_DIR/../")"
@@ -955,6 +955,7 @@ printHelp(){
     cleanup   projects|caches|libs   Free disk (artifacts / downloads / prebuilts)
     version   of  | pg        Version info
     upgrade   addons | apps   Upgrade tree
+    test      [group]         Run tests/ smoke tests (build + run), or menu for bash smoke scripts too
     installed                 Alias for status
     apothecary                Build libraries via apothecary submodule
 
@@ -1035,6 +1036,68 @@ menuVersion(){
 		echoNote "try: of update pg"
 	fi
 	printf '\n'
+}
+
+# test() — runs either the tests/*/* smoke test projects (build + run,
+# reusing cmdTest from of_build.sh) or one of the standalone smoke_test_*.sh
+# bash scripts under scripts/dev/ (e.g. smoke_test_nightly.sh).
+menuTest(){
+	local choice
+	if ! menuCanRun; then
+		echoWarning "no TTY — running all tests/ smoke tests non-interactively"
+		cmdTest
+		return $?
+	fi
+	printBanner "test"
+
+	local -a opts=("All tests/ smoke tests (build + run)|tests-all")
+	local -a testOpts=()
+	local -a groupOpts=()
+	local g gName test testName
+	if [[ -d "${OF_DIR}/tests" ]]; then
+		for g in "${OF_DIR}/tests"/*/; do
+			[[ -d "$g" ]] || continue
+			gName=$(basename "${g%/}")
+			groupOpts+=("All tests/${gName}|tests-${gName}")
+			for test in "$g"*/; do
+				[[ -d "${test}src" ]] || continue
+				testName=$(basename "${test%/}")
+				testOpts+=("${gName}/${testName}|test:${gName}/${testName}")
+			done
+		done
+	fi
+	# Keep every directly runnable project together at the top of the menu;
+	# broader group runs follow them.
+	opts+=("${testOpts[@]}")
+	opts+=("${groupOpts[@]}")
+	local -a smokeScripts=()
+	local s
+	for s in "${OF_CORE_SCRIPT_DIR}/dev"/smoke_test_*.sh; do
+		[[ -f "$s" ]] && smokeScripts+=("$(basename "$s")")
+	done
+	for s in "${smokeScripts[@]}"; do
+		opts+=("Smoke script — ${s}|script:${s}")
+	done
+	opts+=("Back|back")
+
+	menuPick "Run which tests?" "${opts[@]}" || return 2
+	choice="$UI_MENU_RESULT"
+	case "$choice" in
+		tests-all) cmdTest ;;
+		tests-*)   cmdTest "${choice#tests-}" ;;
+		test:*)    cmdTest "${choice#test:}" ;;
+		script:*)
+			local scriptName="${choice#script:}"
+			local scriptPath="${OF_CORE_SCRIPT_DIR}/dev/${scriptName}"
+			local -a args=()
+			if menuCanRun && confirmYes "Include the real network/build checks (--real)?"; then
+				args+=(--real)
+			fi
+			ensureScript "$scriptPath" 2>/dev/null
+			bash "$scriptPath" "${args[@]}"
+			;;
+		back) return 2 ;;
+	esac
 }
 
 OF_LIB_STATE_FILE="${OF_DIR}/libs/.of-cli-state"
@@ -1341,6 +1404,50 @@ menuPickLibSource(){
 	export LIB_SOURCE
 }
 
+menuPickLibPlatform(){
+	local source="${1:-$LIB_SOURCE}"
+	local current="${2:-$OF_PLATFORM}"
+	local -a opts=()
+	case "$source" in
+		apothecary)
+			opts=(
+				"osx         — desktop host libraries|osx"
+				"macos       — multi-target XCFrameworks (iOS, macOS, tvOS)|macos"
+				"ios         — iPhone / iPad|ios"
+				"android|android"
+				"linux|linux"
+				"emscripten|emscripten"
+				"msys2|msys2"
+				"vs          — Visual Studio|vs"
+			)
+			;;
+		oflibs)
+			opts=(
+				"osx / macos|osx"
+				"linux|linux"
+				"linux aarch64|linuxaarch64"
+				"emscripten|emscripten"
+				"Visual Studio|vs"
+			)
+			;;
+		archive)
+			opts=(
+				"osx|osx"
+				"ios|ios"
+				"android|android"
+				"linux|linux"
+				"msys2|msys2"
+				"Visual Studio|vs"
+			)
+			;;
+	esac
+	[[ ${#opts[@]} -gt 0 ]] || return 1
+	echoNote "detected platform: ${current}${OF_ARCH:+ / ${OF_ARCH}}"
+	menuPick "Libraries for which platform?" "${opts[@]}" || return 1
+	LIB_PLATFORM="$UI_MENU_RESULT"
+	export LIB_PLATFORM
+}
+
 menuPickLibTag(){
 	local source="${1:-$LIB_SOURCE}"
 	local -a opts=()
@@ -1411,6 +1518,9 @@ menuDownloadLibs(){
 
 	menuPickLibSource || return 2
 	echoSuccess "source → $LIB_SOURCE"
+	menuPickLibPlatform "$LIB_SOURCE" "$platformDir" || return 2
+	platformDir="$LIB_PLATFORM"
+	echoSuccess "platform → $platformDir"
 	menuPickLibTag "$LIB_SOURCE" || return 2
 	echoSuccess "tag → $LIB_TAG"
 
@@ -1462,9 +1572,52 @@ menuPickApoVsVer(){
 	return 0
 }
 
+menuPickApoArch(){
+	local type="$1" a
+	local -a choices=() arches=()
+	if [[ "$type" == "vs" ]]; then
+		choices=(
+			"All (x64 + ARM64 + ARM64EC)|all"
+			"x64 (64)|64"
+			"ARM64|arm64"
+			"ARM64EC|arm64ec"
+			"ARM64 + ARM64EC|arm64+arm64ec"
+		)
+	else
+		read -r -a arches <<< "$(archesForApoType "$type")"
+		for a in "${arches[@]}"; do choices+=("${a}|${a}"); done
+	fi
+	menuPick "Target architecture · ${type}" "${choices[@]}"
+}
+
+# Keep the native platform first in Apothecary's platform menus.  In
+# particular, Windows users should see Visual Studio before Apple targets.
+apoBuildTypesOrdered(){
+	local type
+	if [[ "$OF_PLATFORM" == "vs" ]]; then
+		printf '%s\n' vs
+	fi
+	for type in "${APO_BUILD_TYPES[@]}"; do
+		[[ "$OF_PLATFORM" == "vs" && "$type" == "vs" ]] && continue
+		printf '%s\n' "$type"
+	done
+}
+
 runApothecaryEngine(){
 	local type="$1" arch="$2"
 	shift 2
+	# Apothecary accepts one VS architecture per invocation.  Let the oF menu
+	# expose useful groups while keeping the underlying calls conventional.
+	if [[ "$type" == "vs" && ( "$arch" == "all" || "$arch" == *","* || "$arch" == *"+"* ) ]]; then
+		local expanded="$arch" vsArch
+		[[ "$expanded" == "all" ]] && expanded="64,arm64,arm64ec"
+		expanded="${expanded//+/,}"
+		for vsArch in ${expanded//,/ }; do
+			echoInfo "Visual Studio libraries · ${vsArch}"
+			runApothecaryEngine "$type" "$vsArch" "$@" || return $?
+		done
+		return 0
+	fi
 	local -a cmd=()
 	resolveApothecary
 	[[ -f "$APO_ENGINE" ]] || { echoError "apothecary engine missing — git submodule update --init scripts/apothecary"; return 1; }
@@ -1560,7 +1713,7 @@ menuApothecary(){
 			;;
 		build-type)
 			opts=()
-			for type in "${APO_BUILD_TYPES[@]}"; do
+			while IFS= read -r type; do
 				if [[ "$type" == "macos" ]]; then
 					opts+=("macos  — Apple multi-target xcframeworks|macos")
 				elif [[ "$type" == "osx" ]]; then
@@ -1568,7 +1721,7 @@ menuApothecary(){
 				else
 					opts+=("${type}|${type}")
 				fi
-			done
+			done < <(apoBuildTypesOrdered)
 			[[ "$OF_PLATFORM" == "osx" ]] && echoNote "macos covers osx · ios · tvos · xros · watchos · catos"
 			menuPick "Build platform" "${opts[@]}" || return 2
 			type="$UI_MENU_RESULT"
@@ -1576,29 +1729,21 @@ menuApothecary(){
 				menuPickApoVsVer || return 2
 				export OF_APO_VS_VER="$UI_MENU_RESULT"
 			fi
-			aopts=()
-			read -r -a arches <<< "$(archesForApoType "$type")"
-			for a in "${arches[@]}"; do
-				aopts+=("${a}|${a}")
-			done
-			menuPick "Architecture · ${type}" "${aopts[@]}" || return 2
+			menuPickApoArch "$type" || return 2
 			cmdApothecaryBuildAll "$type" "$UI_MENU_RESULT"
 			;;
 		build-one)
 			opts=()
-			for type in "${APO_BUILD_TYPES[@]}"; do
+			while IFS= read -r type; do
 				opts+=("${type}|${type}")
-			done
+			done < <(apoBuildTypesOrdered)
 			menuPick "Platform" "${opts[@]}" || return 2
 			type="$UI_MENU_RESULT"
 			if [[ "$type" == "vs" ]]; then
 				menuPickApoVsVer || return 2
 				export OF_APO_VS_VER="$UI_MENU_RESULT"
 			fi
-			aopts=()
-			read -r -a arches <<< "$(archesForApoType "$type")"
-			for a in "${arches[@]}"; do aopts+=("${a}|${a}"); done
-			menuPick "Architecture · ${type}" "${aopts[@]}" || return 2
+			menuPickApoArch "$type" || return 2
 			arch="$UI_MENU_RESULT"
 			opts=()
 			local f
@@ -2326,6 +2471,7 @@ cmdMenu(){
 			"draw()     — build  (menuBuild)|build" \
 			"cleanup()  — free space  (menuCleanup)|cleanup" \
 			"version()  — info  (menuVersion)|version" \
+			"test()     — smoke tests  (menuTest)|test" \
 			"exit()|exit"
 		then
 			echoInfo "bye"
@@ -2340,6 +2486,7 @@ cmdMenu(){
 			build)      menuBuild ;;
 			cleanup|clean) menuCleanup ;;
 			version)    menuVersion; menuPause ;;
+			test)       menuTest; [[ $? -eq 2 ]] || menuPause ;;
 			exit|quit)  echoSuccess "bye"; return 0 ;;
 			*)          echoError "unknown: $choice"; menuPause ;;
 		esac
@@ -2442,6 +2589,13 @@ cmdBuild(){
 					;;
 			esac
 			;;
+		tests|test)
+			if [[ "$OF_PLATFORM" == "vs" ]]; then
+				runHostTests "${1:-Debug}" "${2:-${OF_VS_PLATFORM:-$(vsPlatformFromArch)}}" "${3:-${OF_VS_TOOLSET:-$(vsToolsetDefault)}}"
+			else
+				runHostTests "$@"
+			fi
+			;;
 		clean)
 			local path="${1:-}"
 			[[ -n "$path" ]] || { echoError "usage: of build clean <path>"; return 1; }
@@ -2481,6 +2635,12 @@ runCommand(){
 			esac
 			;;
 		upgrade) cmdUpgrade "$subcmd" ;;
+		test)
+			case "${subcmd:-}" in
+				""|menu) menuTest ;;
+				*) cmdTest "$subcmd" ;;
+			esac
+			;;
 		cleanup|clean)
 			case "${subcmd:-}" in
 				""|menu) menuCleanup ;;
