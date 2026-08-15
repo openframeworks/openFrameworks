@@ -1,11 +1,17 @@
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 PARENT_DIR="$(dirname "$DIR")"
 
-OFDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-OFDIR="$(realpath "$OF_DIR/../..")"
-OFCORE_EXAMPLES_DIR="$(realpath "$OF_DIR/examples")"
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+OFDIR="$(cd "$SCRIPT_DIR/../.." && pwd)"
+OFCORE_EXAMPLES_DIR="${OFDIR}/examples"
 
-MAKEFILE_PATH=$PARENT_DIR/templates/linuxarmv6l/Makefile
+ARCH="${ARCH:-$(uname -m)}"
+case "$ARCH" in
+        aarch64|arm64) TEMPLATE=linuxaarch64 ;;
+        armv7l) TEMPLATE=linuxarmv7l ;;
+        *) TEMPLATE=linuxarmv6l ;;
+esac
+MAKEFILE_PATH=$PARENT_DIR/templates/${TEMPLATE}/Makefile
 cd ${OFCORE_EXAMPLES_DIR}
 
 for category in $(ls -1d *)

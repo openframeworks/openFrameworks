@@ -2,9 +2,9 @@
 
 export LC_ALL=C
 
-OFDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-OF_ROOT="$(realpath "$OF_DIR/../..")"
-OF_PG_DIR="$(realpath "$OF_DIR/apps/projectGenerator")"
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+OF_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
+OF_PG_DIR="${OF_ROOT}/apps/projectGenerator"
 
 make Release -C ${OF_PG_DIR}/commandLine
 ret=$?
