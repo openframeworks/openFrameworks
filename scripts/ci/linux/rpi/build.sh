@@ -13,7 +13,7 @@ export PLATFORM_ARCH=armv6l
 # export PLATFORM_ARCH=aarch64
 fi
 
-export RPI_ROOT=${OF_ROOT}/scripts/ci/linuxrpi/raspbian
+export RPI_ROOT=${OF_ROOT}/scripts/ci/linux/rpi/raspbian
 echo "${RPI_ROOT}"
 
 if [ ${PLATFORM_ARCH} = "aarch64" ]; then
