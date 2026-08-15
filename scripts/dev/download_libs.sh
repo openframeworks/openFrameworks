@@ -36,7 +36,7 @@ cat << EOF
                                     vs: 64
                                     msys2: 64
                                     android: armv7, arm64, and x86 (if not specified will download all)
-                                    linux: 64, armv6l or armv7l
+                                    linux: 64, arm64, aarch64, armv6l or armv7l
     -n, --no-overwrite          Pure merge: do not delete anything before extract.
                                 Default (without -n) only removes libs/<lib>/lib/\$PLATFORM so other
                                 platforms (android + ios + macos + emscripten …) can coexist.
@@ -109,61 +109,81 @@ download(){
     downloader $COMMAND $SILENT_ARGS $NO_SSL
 }
 
+is_raspberry_pi(){
+    local model=""
+    if [ -f /proc/device-tree/model ]; then
+        model="$(tr -d '\0' </proc/device-tree/model 2>/dev/null || true)"
+    elif [ -f /sys/firmware/devicetree/base/model ]; then
+        model="$(tr -d '\0' </sys/firmware/devicetree/base/model 2>/dev/null || true)"
+    fi
+    if echo "$model" | grep -qi raspberry; then
+        return 0
+    fi
+    if [ -f /etc/os-release ] && grep -qiE '^(ID=raspbian|PRETTY_NAME=.*Raspberry Pi)' /etc/os-release; then
+        return 0
+    fi
+    return 1
+}
+
+# Canonical apothecary / linux2026 makefile paths: lib/linux/<arch>
+linux_canonical_lib_subpath(){
+    case "$1" in
+        x86_64|64|64gcc6|64_gcc6) echo "linux/64" ;;
+        arm64) echo "linux/arm64" ;;
+        aarch64) echo "linux/aarch64" ;;
+        armv6l) echo "linux/armv6l" ;;
+        armv7l) echo "linux/armv7l" ;;
+        jetson) echo "linux/jetson" ;;
+        *) echo "" ;;
+    esac
+}
+
 linux_legacy_lib_subpath(){
     case "$1" in
         x86_64|64|64gcc6|64_gcc6) echo "linux64" ;;
+        arm64) echo "linuxarm64" ;;
+        aarch64) echo "linuxaarch64" ;;
         armv6l) echo "linuxarmv6l" ;;
         armv7l) echo "linuxarmv7l" ;;
         *) echo "" ;;
     esac
 }
 
+# Keep structured apothecary paths. If only a pre-0.13 flat folder exists,
+# promote it so the linux2026 makefile (lib/linux/<arch>) can find it.
 normalize_linux_lib_paths(){
     if [ "$PLATFORM" != "linux" ]; then
         return
     fi
 
-    local source_arch
     local source_path
     local destination_path
     local destination_subpath
+    local legacy_subpath
     local lib_root
-    local i
-    local normalized_count=0
-    local source_paths=()
-    local destination_paths=()
-    local source_arches=("x86_64" "armv6l" "armv7l")
+    local arch
+    local promoted=0
 
-    for source_arch in "${source_arches[@]}"; do
-        destination_subpath=$(linux_legacy_lib_subpath "$source_arch")
-
+    for arch in 64 arm64 aarch64 armv6l armv7l; do
+        destination_subpath=$(linux_canonical_lib_subpath "$arch")
+        legacy_subpath=$(linux_legacy_lib_subpath "$arch")
+        [ -n "$legacy_subpath" ] || continue
         while IFS= read -r source_path; do
-            lib_root="${source_path%/linux/$source_arch}"
-            destination_path="${lib_root}/${destination_subpath}"
-
+            lib_root="${source_path%/lib/$legacy_subpath}"
+            destination_path="${lib_root}/lib/${destination_subpath}"
             if [ -e "$destination_path" ]; then
-                echo "Error: cannot normalize [$source_path] to [$destination_path]: destination already exists"
-                return 1
+                echo " Keeping structured [$destination_path] (legacy [$source_path] also present)"
+                continue
             fi
-
-            source_paths+=("$source_path")
-            destination_paths+=("$destination_path")
-        done < <(find . -type d -path "*/lib/linux/$source_arch" -print)
+            echo " Promoting Linux libraries: [$source_path] -> [$destination_path]"
+            mkdir -p "$(dirname "$destination_path")"
+            mv "$source_path" "$destination_path"
+            promoted=$((promoted + 1))
+        done < <(find . -type d -path "*/lib/${legacy_subpath}" -print)
     done
 
-    for ((i=0;i<${#source_paths[@]};++i)); do
-        source_path="${source_paths[i]}"
-        destination_path="${destination_paths[i]}"
-        lib_root="${source_path%/linux/*}"
-
-        echo " Normalizing Linux libraries: [$source_path] -> [$destination_path]"
-        mv "$source_path" "$destination_path"
-        rmdir "${lib_root}/linux" 2>/dev/null || true
-        normalized_count=$((normalized_count + 1))
-    done
-
-    if [ $normalized_count -gt 0 ]; then
-        echo " Normalized $normalized_count Linux library path(s) to legacy makefile paths"
+    if [ $promoted -gt 0 ]; then
+        echo " Promoted $promoted Linux library path(s) to linux2026 structured paths"
     fi
 }
 
@@ -306,11 +326,16 @@ detectHostVsArch(){
 if [ "$ARCH" == "" ]; then
     if [ "$PLATFORM" == "linux" ]; then
         ARCH=$(uname -m)
-        if [ "$ARCH" == "x86_64" ]; then
+        if is_raspberry_pi; then
+            case "$ARCH" in
+                aarch64|arm64) ARCH=aarch64 ;;
+                armv7l) ARCH=armv7l ;;
+                armv6l) ARCH=armv6l ;;
+            esac
+            echo " Raspberry Pi detected → ARCH=${ARCH}"
+        elif [ "$ARCH" == "x86_64" ]; then
             ARCH=64
-        elif [ "$ARCH" == "arm64" ]; then
-            ARCH=arm64
-        elif [ "$ARCH" == "aarch64" ]; then
+        elif [ "$ARCH" == "arm64" ] || [ "$ARCH" == "aarch64" ]; then
             ARCH=arm64
         elif [ "$ARCH" == "i686" ] || [ "$ARCH" == "i386" ]; then
             echo "32bit linux is not officially supported anymore but compiling the libraries using the build script in apothecary/scripts should compile all the dependencies without problem"
@@ -349,35 +374,28 @@ if [ "$PLATFORM" == "vs" ]; then
 fi
 
 if [ "$PLATFORM" == "linux" ]; then
+	# Official apothecary Linux archives are the GCC 10 baseline. A newer
+	# host compiler can still consume them (_GLIBCXX_USE_CXX11_ABI=1).
 	if [ "$GCC_VERSION" == 0 ]; then
-		if command -v gcc &> /dev/null; then
-			GCC_VERSION=$(gcc -dumpversion | cut -f1 -d.)
-			echo "GCC_VERSION from bash: [$GCC_VERSION]"
-		else
-			GCC_VERSION=10
-		fi
-		if [ "$GCC_VERSION" -gt 14 ]; then
-			echo "GCC version is greater than 14. latest supported"
-			GCC_VERSION=14
-		fi
+		GCC_VERSION=10
+	fi
+	if [ "$GCC_VERSION" -gt 14 ]; then
+		echo "GCC version is greater than 14. latest supported"
+		GCC_VERSION=14
 	fi
 	echo "GCC_VERSION: [$GCC_VERSION]"
 	GCC_VERSION="gcc${GCC_VERSION}"
-	if [ "$ARCH" == "x86_64" ] || [ "$ARCH" == "64" ]; then
-        OPT="_${GCC_VERSION}"
-    elif [ "$ARCH" == "arm64" ]; then
-		OPT="_${GCC_VERSION}"
-	elif [ "$ARCH" == "aarch64" ]; then
-		OPT="_${GCC_VERSION}"
-	elif [ "$ARCH" == "armv8l" ]; then
-	    OPT=""
-	elif [ "$ARCH" == "armv7l" ]; then
-	    OPT=""
-	elif [ "$ARCH" == "armv6l" ]; then
-		OPT=""
-	elif [ "$ARCH" == "jetson" ]; then
-		OPT=""
-	fi
+	case "$ARCH" in
+		64|x86_64|arm64|aarch64|armv6l|armv7l)
+			OPT="_${GCC_VERSION}"
+			;;
+		jetson|armv8l)
+			OPT=""
+			;;
+		*)
+			OPT="_${GCC_VERSION}"
+			;;
+	esac
 fi
 
 
@@ -552,12 +570,19 @@ if [ $OVERWRITE -eq 1 ]; then
     else
         echo " Platform-clean - Removing prior libs only under lib/[$LIB_PLATFORM_DIR] (other platforms kept)"
     fi
+    LINUX_CANONICAL_LIB_SUBPATH=""
     LINUX_LEGACY_LIB_SUBPATH=""
     if [ "$PLATFORM" == "linux" ]; then
+        LINUX_CANONICAL_LIB_SUBPATH=$(linux_canonical_lib_subpath "$ARCH")
         LINUX_LEGACY_LIB_SUBPATH=$(linux_legacy_lib_subpath "$ARCH")
     fi
     for ((i=0;i<${#libs[@]};++i)); do
-        if [ -e "${libs[i]}/lib/$LIB_PLATFORM_DIR" ]; then
+        if [ "$PLATFORM" == "linux" ] && [ -n "$LINUX_CANONICAL_LIB_SUBPATH" ]; then
+            if [ -e "${libs[i]}/lib/$LINUX_CANONICAL_LIB_SUBPATH" ]; then
+                echo "  Removing: [${libs[i]}/lib/$LINUX_CANONICAL_LIB_SUBPATH]"
+                rm -rf "${libs[i]}/lib/$LINUX_CANONICAL_LIB_SUBPATH"
+            fi
+        elif [ -e "${libs[i]}/lib/$LIB_PLATFORM_DIR" ]; then
             echo "  Removing: [${libs[i]}/lib/$LIB_PLATFORM_DIR]"
             rm -rf "${libs[i]}/lib/$LIB_PLATFORM_DIR"
         fi
@@ -624,23 +649,15 @@ for PKG in $PKGS; do
         # rm -r download/$PKG
     else
 
-        # FIXME: this if can be removed after this is fixed properly on apothecary, see:
-        # https://github.com/openframeworks/openFrameworks/issues/8206
-
-        if [ "$PLATFORM" == "linux" ] && { [ "$ARCH" == "aarch64" ] || [ "$ARCH" == "armv7l" ] || [ "$ARCH" == "armv6l" ]; }; then
-            echo "tar xjfv download/$PKG  --strip-components=1"
-            tar xf download/$PKG --strip-components=1 > /dev/null 2>&1
-        else
-            tar xf download/$PKG > /dev/null 2>&1
-        fi
+        # Apothecary linux2026 archives unpack as lib/<name>/lib/linux/<arch>/.
+        tar xf download/$PKG > /dev/null 2>&1
         # rm -r download/$PKG
     fi
     echo " Deployed libraries from [download/$PKG] to [/libs]"
 done
 
-# Apothecary packages use OS/architecture paths. Preserve openFrameworks'
-# unambiguous legacy makefile paths; ARM64 remains structured because its
-# generic, Raspberry Pi, and Jetson targets need distinct destinations.
+# Apothecary linux2026 packages already use lib/linux/<arch>. Promote any
+# leftover pre-0.13 flat folders (linux64, linuxarmv6l, …) to that layout.
 normalize_linux_lib_paths
 
 if [ "$PLATFORM" == "osx" ]; then
