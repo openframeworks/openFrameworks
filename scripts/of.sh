@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # of.sh - openFrameworks CLI  |  Dan Rosser 2025
-OF_SCRIPT_VERSION=0.4.3
+OF_SCRIPT_VERSION=0.4.4
 
 OF_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 OF_DIR="$(realpath "$OF_DIR/../")"
@@ -1051,14 +1051,25 @@ menuTest(){
 	printBanner "test"
 
 	local -a opts=("All tests/ smoke tests (build + run)|tests-all")
-	local g gName
+	local -a testOpts=()
+	local -a groupOpts=()
+	local g gName test testName
 	if [[ -d "${OF_DIR}/tests" ]]; then
 		for g in "${OF_DIR}/tests"/*/; do
 			[[ -d "$g" ]] || continue
 			gName=$(basename "${g%/}")
-			opts+=("tests/${gName} only|tests-${gName}")
+			groupOpts+=("All tests/${gName}|tests-${gName}")
+			for test in "$g"*/; do
+				[[ -d "${test}src" ]] || continue
+				testName=$(basename "${test%/}")
+				testOpts+=("${gName}/${testName}|test:${gName}/${testName}")
+			done
 		done
 	fi
+	# Keep every directly runnable project together at the top of the menu;
+	# broader group runs follow them.
+	opts+=("${testOpts[@]}")
+	opts+=("${groupOpts[@]}")
 	local -a smokeScripts=()
 	local s
 	for s in "${OF_CORE_SCRIPT_DIR}/dev"/smoke_test_*.sh; do
@@ -1074,6 +1085,7 @@ menuTest(){
 	case "$choice" in
 		tests-all) cmdTest ;;
 		tests-*)   cmdTest "${choice#tests-}" ;;
+		test:*)    cmdTest "${choice#test:}" ;;
 		script:*)
 			local scriptName="${choice#script:}"
 			local scriptPath="${OF_CORE_SCRIPT_DIR}/dev/${scriptName}"

@@ -195,3 +195,4 @@ libs/openFrameworksCompiled/project/android/build-*/
 
 
 examples/utils/urlFileLoaderExample/bin/data
+tests/graphics/imageFormats/bin/data/*

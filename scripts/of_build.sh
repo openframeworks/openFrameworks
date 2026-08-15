@@ -992,18 +992,25 @@ runTestProject(){
 # reusable from the CLI/menu. Prints a tick per test, full output only on
 # failure, and a pass/fail summary at the end.
 cmdTest(){
-	local filterGroup="${1:-}"
+	local filter="${1:-}"
+	local filterGroup="${filter%%/*}"
+	local filterTest=""
+	[[ "$filter" == */* ]] && filterTest="${filter#*/}"
 	local testsDir="${OF_DIR}/tests"
 	[[ -d "$testsDir" ]] || { echoError "no tests/ directory found"; return 1; }
 
 	printBanner "test"
-	echoInfo "running smoke tests under tests/${filterGroup:+$filterGroup/}"
+	echoInfo "running smoke tests under tests/${filter:+$filter/}"
 	printf '\n'
 
 	local -a groups=()
 	local g
 	if [[ -n "$filterGroup" ]]; then
 		[[ -d "${testsDir}/${filterGroup}" ]] || { echoError "no tests/${filterGroup} folder"; return 1; }
+		if [[ -n "$filterTest" && ! -d "${testsDir}/${filterGroup}/${filterTest}/src" ]]; then
+			echoError "no tests/${filterGroup}/${filterTest} project"
+			return 1
+		fi
 		groups=("${testsDir}/${filterGroup}")
 	else
 		for g in "${testsDir}"/*/; do
@@ -1022,6 +1029,7 @@ cmdTest(){
 			[[ -d "$test" && -d "${test}src" ]] || continue
 			test="${test%/}"
 			name=$(basename "$test")
+			[[ -n "$filterTest" && "$name" != "$filterTest" ]] && continue
 			total=$((total + 1))
 			# \r-overwrite the pending marker only when actually attached to a
 			# terminal -- otherwise (piped/logged output) it just garbles two
