@@ -1,0 +1,23 @@
+name: Linux lib paths
+
+on:
+  push:
+    paths-ignore:
+      - "**/*.md"
+      - "examples/**"
+  pull_request:
+    paths-ignore:
+      - "**/*.md"
+      - "examples/**"
+
+concurrency:
+  group: linux-lib-paths-${{ github.event.pull_request.number || github.sha }}
+  cancel-in-progress: true
+
+jobs:
+  test-old-and-new-lib-paths:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v6
+      - name: New lib/linux/<arch> and legacy lib/linux64 both resolve
+        run: ./scripts/ci/linux/test_lib_paths.sh
