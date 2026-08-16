@@ -78,9 +78,16 @@ else
 			CROSS_COMPILING=0
 		endif
 	endif
+	# Generic ARM Linux (uname -m = aarch64) uses the linux/arm64 artifact.
+	# Raspberry Pi 64-bit keeps the distinct linux/aarch64 artifact.
+	# RPI_ROOT is set by CI cross-compiles; RPI_DETECTED is set on Pi hardware.
 	ifeq ($(PLATFORM_OS),Linux)
 		ifeq ($(PLATFORM_ARCH),aarch64)
-			PLATFORM_ARCH=arm64
+			ifneq ($(RPI_DETECTED),yes)
+				ifeq ($(strip $(RPI_ROOT)),)
+					override PLATFORM_ARCH=arm64
+				endif
+			endif
 		endif
 	endif
 endif
@@ -95,13 +102,29 @@ ifdef MAKEFILE_DEBUG
 	$(info PLATFORM_VARIANT=$(PLATFORM_VARIANT))
 	$(info IS_RASPBIAN=$(IS_RASPBIAN))
 	$(info JETSON_DETECTED=$(JETSON_DETECTED))
+	$(info RPI_DETECTED=$(RPI_DETECTED))
+	$(info RPI_ROOT=$(RPI_ROOT))
+endif
+
+# Raspberry Pi: Pi hardware, or the explicit RPi arch names used by apothecary
+# (aarch64 / armv6l / armv7l), including CI CROSS_COMPILING. Generic ARM
+# desktop stays linux/arm64 after the aarch64->arm64 remap above.
+USE_RPI_LIB_PATHS :=
+ifneq ($(filter $(PLATFORM_ARCH),armv6l armv7l armv8l aarch64),)
+	USE_RPI_LIB_PATHS := yes
+endif
+ifeq ($(RPI_DETECTED),yes)
+	USE_RPI_LIB_PATHS := yes
+endif
+ifneq ($(strip $(RPI_ROOT)),)
+	USE_RPI_LIB_PATHS := yes
 endif
 
 # if not defined, construct the default PLATFORM_LIB_SUBPATH
 ifndef PLATFORM_LIB_SUBPATH
 	# determine from the arch
 	ifeq ($(PLATFORM_OS),Linux)
-		ifeq ($(RPI_DETECTED),yes)
+		ifeq ($(USE_RPI_LIB_PATHS),yes)
 			PLATFORM_CONFIG_SUBPATH=linux/rasbian
 			ifeq ($(PLATFORM_ARCH),armv6l)
 				PLATFORM_LIB_SUBPATH=linux/armv6l
@@ -112,11 +135,14 @@ ifndef PLATFORM_LIB_SUBPATH
 			else ifeq ($(PLATFORM_ARCH),armv8l)
 				PLATFORM_LIB_SUBPATH=linux/armv8l
 				PLATFORM_CONFIG_ID=linuxarmv8l
+			else ifeq ($(PLATFORM_ARCH),aarch64)
+				PLATFORM_LIB_SUBPATH=linux/aarch64
+				PLATFORM_CONFIG_ID=linuxaarch64
 			else ifeq ($(PLATFORM_ARCH),arm64)
 				PLATFORM_LIB_SUBPATH=linux/aarch64
 				PLATFORM_CONFIG_ID=linuxaarch64
 			else
-				$(error This makefile does not support Raspberry Pi architecture $(PLATFORM_ARCH))
+$(error This makefile does not support Raspberry Pi architecture $(PLATFORM_ARCH))
 			endif
 		else ifeq ($(JETSON_DETECTED),yes)
 			PLATFORM_LIB_SUBPATH=linux/jetson
@@ -141,7 +167,7 @@ ifndef PLATFORM_LIB_SUBPATH
 				PLATFORM_CONFIG_ID=linuxarm64
 			else
 				PLATFORM_LIB_SUBPATH=linux
-				$(error This makefile does not support your architecture $(PLATFORM_ARCH))
+$(error This makefile does not support your architecture $(PLATFORM_ARCH))
 			endif
 		endif
 		SHARED_LIB_EXTENSION=so
@@ -164,7 +190,7 @@ ifndef PLATFORM_LIB_SUBPATH
 		PLATFORM_LIB_SUBPATH=emscripten
 		SHARED_LIB_EXTENSION=so
 	else
-		$(error This makefile does not support your operating system)
+$(error This makefile does not support your operating system)
 	endif
 endif
 
@@ -315,13 +341,20 @@ else
 	ABI_LEGACY_LIB_SUBPATHS=$(PLATFORM_LEGACY_LIB_SUBPATHS)
 endif
 
-# Ordered canonical-first candidates used only for addon compatibility.
+# Canonical path first, then pre-0.13 flat aliases (linux/64 then linux64).
+# Used for core third-party libs, addon libs, and addon_config.mk section keys.
 ABI_LIB_SUBPATHS=$(strip $(ABI_LIB_SUBPATH) $(ABI_LEGACY_LIB_SUBPATHS))
 ifeq ($(PLATFORM_OS),Linux)
 	PLATFORM_ADDON_KEYS=$(strip linux $(ABI_LIB_SUBPATHS))
 else
 	PLATFORM_ADDON_KEYS=$(strip $(ABI_LIB_SUBPATHS))
 endif
+
+# $1 = library root (libs/tess2 or addons/ofxSvg/libs/svgtiny).
+# First existing lib/<subpath> wins so old flat folders still link.
+define find_platform_lib_path
+$(firstword $(foreach subpath,$(ABI_LIB_SUBPATHS),$(wildcard $1/lib/$(subpath))))
+endef
 
 PLATFORM_PKG_CONFIG ?= pkg-config
 
