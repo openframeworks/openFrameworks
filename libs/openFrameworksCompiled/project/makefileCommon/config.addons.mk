@@ -53,13 +53,9 @@ endef
 # parses addons libraries, in PARSED_ADDON_LIBS receives full PATHS to addons and libs_exclude
 # Select exactly one platform directory per addon library. Canonical structured
 # paths have priority; legacy flat paths are fallbacks for existing addons.
-define find_addon_platform_lib_path
-$(firstword $(foreach subpath,$(ABI_LIB_SUBPATHS),$(wildcard $1/lib/$(subpath))))
-endef
-
 define parse_addons_libraries
 	$(eval PARSED_ADDONS_LIB_ROOTS = $(wildcard $1/libs/*)) \
-	$(eval PARSED_ADDONS_LIBS_PLATFORM_LIB_PATHS = $(filter-out $(ADDON_LIBS_EXCLUDE),$(foreach addon_lib_root,$(PARSED_ADDONS_LIB_ROOTS),$(call find_addon_platform_lib_path,$(addon_lib_root))))) \
+	$(eval PARSED_ADDONS_LIBS_PLATFORM_LIB_PATHS = $(filter-out $(ADDON_LIBS_EXCLUDE),$(foreach addon_lib_root,$(PARSED_ADDONS_LIB_ROOTS),$(call find_platform_lib_path,$(addon_lib_root))))) \
 	$(eval PARSED_ADDONS_LIBS_PLATFORM_LIB_PATHS += $(filter-out $(ADDON_LIBS_EXCLUDE),$(addsuffix /libs/*/lib/$(PLATFORM_ALTERNATIVE), $1))) \
 	$(eval PARSED_ALL_PLATFORM_LIBS = $(shell $(FIND) $(PARSED_ADDONS_LIBS_PLATFORM_LIB_PATHS) -type d 2> /dev/null | $(EXCLUDE_PATHS_GREP))) \
 	$(if $(PARSED_ALL_PLATFORM_LIBS), \
