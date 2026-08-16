@@ -1,6 +1,7 @@
 #!/bin/bash
 set -ev
-OF_ROOT=$( cd "$(dirname "$0")/../../.." ; pwd -P )
+# scripts/ci/linux/rpi/build.sh → repo root is four levels up
+OF_ROOT=$( cd "$(dirname "$0")/../../../.." ; pwd -P )
 
 export CROSS_COMPILING=1
 
