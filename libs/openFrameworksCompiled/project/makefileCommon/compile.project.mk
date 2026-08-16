@@ -436,7 +436,7 @@ endif
 	@rm -rf bin/libs
 
 after: $(TARGET_NAME)
-	-cp ${OF_LIBS_PATH}/*/lib/${PLATFORM_LIB_SUBPATH}/*.${SHARED_LIB_EXTENSION} bin/ ; true
+	-$(foreach subpath,$(ABI_LIB_SUBPATHS),cp ${OF_LIBS_PATH}/*/lib/$(subpath)/*.${SHARED_LIB_EXTENSION} bin/ 2>/dev/null; ) true
 	@echo
 	@echo "     compiling done"
 	@echo "     to launch the application"

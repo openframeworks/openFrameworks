@@ -32,34 +32,47 @@ EXCLUDE_PATHS_GREP =  grep -v "/tvos-arm64" | \
 											grep -v "/\.[^\.]"
 
 # construct the full paths of the core's platform specific static libs
-ALL_OF_CORE_LIBS_PLATFORM_LIB_PATHS = $(OF_LIBS_PATH)/*/lib/$(ABI_LIB_SUBPATH)
+# Prefer lib/linux/<arch>; fall back to pre-0.13 lib/linux64 (and friends).
+OF_CORE_THIRDPARTY_LIB_ROOTS = $(filter-out $(OF_LIBS_PATH)/openFrameworks $(OF_LIBS_PATH)/openFrameworksCompiled,$(wildcard $(OF_LIBS_PATH)/*))
+ALL_OF_CORE_LIBS_PLATFORM_LIB_PATHS = $(foreach lib_root,$(OF_CORE_THIRDPARTY_LIB_ROOTS),$(call find_platform_lib_path,$(lib_root)))
 
 # create a list of all core platform libraries
 # grep -v "/\.[^\.]" will exclude all .hidden folders and files
+ifneq ($(strip $(ALL_OF_CORE_LIBS_PLATFORM_LIB_PATHS)),)
 ALL_OF_CORE_LIBS_PATHS = $(shell $(FIND) $(ALL_OF_CORE_LIBS_PLATFORM_LIB_PATHS) -type d -not -path "*/openFrameworksCompiled/*" 2> /dev/null | $(EXCLUDE_PATHS_GREP))
+else
+ALL_OF_CORE_LIBS_PATHS =
+endif
 
 ifdef MAKEFILE_DEBUG
+$(info ---ALL_OF_CORE_LIBS_PLATFORM_LIB_PATHS---)
+$(foreach v, $(ALL_OF_CORE_LIBS_PLATFORM_LIB_PATHS),$(info $(v)))
 $(info ---ALL_OF_CORE_LIBS_PATHS---)
 $(foreach v, $(ALL_OF_CORE_LIBS_PATHS),$(info $(v)))
 endif
 
 # create a list of all core lib directories that have libsorder.make
 # grep -v "/\.[^\.]" will exclude all .hidden folders and files
+ifneq ($(strip $(ALL_OF_CORE_LIBS_PLATFORM_LIB_PATHS)),)
 ALL_OF_CORE_LIBSORDER_MAKE_FILES = $(shell $(FIND) $(ALL_OF_CORE_LIBS_PLATFORM_LIB_PATHS) -name libsorder.make -not -path "*/openFrameworksCompiled/*" 2> /dev/null | $(EXCLUDE_PATHS_GREP))
+else
+ALL_OF_CORE_LIBSORDER_MAKE_FILES =
+endif
 
-# create a list of all of the core libs that require ordering
-OF_CORE_LIBS_THAT_NEED_ORDER = $(subst /lib/$(ABI_LIB_SUBPATH)/libsorder.make,,$(ALL_OF_CORE_LIBSORDER_MAKE_FILES))
-
-# create a list of all of the platform libs that DO NOT require ordering
-# by removing those that do from the list of all platform libraries
-OF_CORE_LIBS_THAT_DONT_NEED_ORDER = $(filter-out $(OF_CORE_LIBS_THAT_NEED_ORDER),$(subst /lib/$(ABI_LIB_SUBPATH),,$(ALL_OF_CORE_LIBS_PATHS)))
+# Platform lib dirs that list an explicit link order
+OF_CORE_LIBS_WITH_ORDER = $(patsubst %/libsorder.make,%,$(ALL_OF_CORE_LIBSORDER_MAKE_FILES))
+OF_CORE_LIBS_WITHOUT_ORDER = $(filter-out $(OF_CORE_LIBS_WITH_ORDER),$(ALL_OF_CORE_LIBS_PLATFORM_LIB_PATHS))
 
 # create a list of all static libs in the core lib dir, using only
 # the static libs that don't need order
 # 2> /dev/null consumes file not found errors from find searches
 # grep -v "/\.[^\.]" will exclude all .hidden folders and files
 # TODO: create a varaible for core specific static lib suffix
-OF_CORE_LIBS_PLATFORM_LIBS_STATICS = $(shell $(FIND) $(addsuffix /lib/$(ABI_LIB_SUBPATH),$(OF_CORE_LIBS_THAT_DONT_NEED_ORDER)) -name *.a -o -name *.bc 2> /dev/null  | $(EXCLUDE_PATHS_GREP))
+ifneq ($(strip $(OF_CORE_LIBS_WITHOUT_ORDER)),)
+OF_CORE_LIBS_PLATFORM_LIBS_STATICS = $(shell $(FIND) $(OF_CORE_LIBS_WITHOUT_ORDER) -name *.a -o -name *.bc 2> /dev/null  | $(EXCLUDE_PATHS_GREP))
+else
+OF_CORE_LIBS_PLATFORM_LIBS_STATICS =
+endif
 # create a list of all static lib files for the libs that need order
 # NOTE. this is the most unintuitive line of make script magic in here
 # How does it work?
@@ -83,10 +96,14 @@ endif
 
 # grep -v "/\.[^\.]" will exclude all .hidden folders and files
 ifeq ($(PLATFORM_OS),Linux)
-	ALL_OF_CORE_THIRDPARTY_SHARED_LIBS := $(shell $(FIND) $(OF_LIBS_PATH)/*/lib/$(ABI_LIB_SUBPATH)/*.so -not -path "*/openFrameworksCompiled/*" 2> /dev/null | grep -v "/\.[^\.]")
+	ifneq ($(strip $(ALL_OF_CORE_LIBS_PLATFORM_LIB_PATHS)),)
+		ALL_OF_CORE_THIRDPARTY_SHARED_LIBS := $(shell $(FIND) $(ALL_OF_CORE_LIBS_PLATFORM_LIB_PATHS) -name '*.so' -o -name '*.so.*' 2> /dev/null | grep -v "/\.[^\.]")
+	endif
 else
 	ifeq ($(PLATFORM_OS),Darwin)
-		ALL_OF_CORE_THIRDPARTY_SHARED_LIBS := $(shell $(FIND) $(OF_LIBS_PATH)/*/lib/$(ABI_LIB_SUBPATH)/*.dylib -not -path "*/openFrameworksCompiled/*" 2> /dev/null | grep -v "/\.[^\.]")
+		ifneq ($(strip $(ALL_OF_CORE_LIBS_PLATFORM_LIB_PATHS)),)
+			ALL_OF_CORE_THIRDPARTY_SHARED_LIBS := $(shell $(FIND) $(ALL_OF_CORE_LIBS_PLATFORM_LIB_PATHS) -name '*.dylib' 2> /dev/null | grep -v "/\.[^\.]")
+		endif
 	endif
 endif
 

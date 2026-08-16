@@ -374,14 +374,15 @@ if [ "$PLATFORM" == "vs" ]; then
 fi
 
 if [ "$PLATFORM" == "linux" ]; then
-	# Official apothecary Linux archives are the GCC 10 baseline. A newer
-	# host compiler can still consume them (_GLIBCXX_USE_CXX11_ABI=1).
+	# Official apothecary Linux archives are the GCC 10 baseline only:
+	#   openFrameworksLibs_<tag>_linux_<ARCH>_gcc10.tar.bz2
+	# A newer host compiler can still consume them (_GLIBCXX_USE_CXX11_ABI=1).
+	OFFICIAL_LINUX_GCC=10
 	if [ "$GCC_VERSION" == 0 ]; then
-		GCC_VERSION=10
-	fi
-	if [ "$GCC_VERSION" -gt 14 ]; then
-		echo "GCC version is greater than 14. latest supported"
-		GCC_VERSION=14
+		GCC_VERSION=$OFFICIAL_LINUX_GCC
+	elif [ "$GCC_VERSION" != "$OFFICIAL_LINUX_GCC" ]; then
+		echo " Official Linux archives are GCC ${OFFICIAL_LINUX_GCC} (requested gcc${GCC_VERSION} is not published). Using gcc${OFFICIAL_LINUX_GCC}."
+		GCC_VERSION=$OFFICIAL_LINUX_GCC
 	fi
 	echo "GCC_VERSION: [$GCC_VERSION]"
 	GCC_VERSION="gcc${GCC_VERSION}"
