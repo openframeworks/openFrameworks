@@ -1,6 +1,8 @@
 #!/bin/bash
-# set -ev
+# Native Linux unit tests only. Other groups have their own CI jobs and
+# often need a display, NDK, or emscripten toolchain.
 ROOT=${TRAVIS_BUILD_DIR:-"$( cd "$(dirname "$0")/../../../.." ; pwd -P )"}
+TEMPLATE="$ROOT/scripts/templates/linux64"
 
 # if [ "$OPT" == "qbs" ]; then
 	# exit 0
@@ -9,23 +11,25 @@ ROOT=${TRAVIS_BUILD_DIR:-"$( cd "$(dirname "$0")/../../../.." ; pwd -P )"}
 echo "##[group]**** Running unit tests ****"
 cd $ROOT/tests
 for group in *; do
-	# android / ios / emscripten have their own CI jobs; native linux Makefile can't run them
 	case "$group" in
-		android|ios|tvOS|emscripten) continue ;;
+		android|emscripten|ios|tvOS|tvos)
+			echo "Skipping $group (not a native Linux unit-test group)"
+			continue
+			;;
 	esac
 	if [ -d $group ]; then
 		echo "##[group] $group"
 		for test in $group/*; do
 			if [ -d $test ]; then
 				cd $test
-				cp ../../../scripts/templates/linux/Makefile .
-				cp ../../../scripts/templates/linux/config.make .
-				sleep 0.3 
+				cp "$TEMPLATE/Makefile" .
+				cp "$TEMPLATE/config.make" .
+				sleep 0.3
 				make -j2 Debug
-				sleep 0.3 
+				sleep 0.3
 				cd bin
 				binname=$(basename ${test})
-				
+
 				if [[ -f ./${binname}_debug ]]; then
 					# GitHub linux runners have no DISPLAY; xvfb gives GLFW a software GL context
 					if [ -z "${DISPLAY:-}" ] && command -v xvfb-run >/dev/null 2>&1; then
