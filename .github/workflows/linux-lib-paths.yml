@@ -20,4 +20,4 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - name: New lib/linux/<arch> and legacy lib/linux64 both resolve
-        run: ./scripts/ci/linux/test_lib_paths.sh
+        run: bash scripts/ci/linux/test_lib_paths.sh
