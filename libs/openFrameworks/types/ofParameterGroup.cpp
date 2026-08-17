@@ -5,6 +5,7 @@ ofParameterGroup::ofParameterGroup()
 	: obj(new Value) {
 }
 
+
 void ofParameterGroup::add(ofAbstractParameter & parameter) {
 	auto param = parameter.newReference();
 	auto escaped_name = param->getEscapedName();
@@ -479,7 +480,11 @@ const void * ofParameterGroup::getInternalObject() const {
 	return obj.get();
 }
 
-std::shared_ptr<ofAbstractParameter> ofParameterGroup::newReference() const {
+std::shared_ptr<ofAbstractParameter> ofParameterGroup::newReference() const{
+	return getSharedPtr();
+}
+
+std::shared_ptr<ofAbstractParameter> ofParameterGroup::getSharedPtr() const{
 	return std::make_shared<ofParameterGroup>(*this);
 }
 
