@@ -212,8 +212,19 @@ std::string ofxSvgUtils::base64_decode(std::string const& encoded_string, bool r
 
 //---------------------------------------------------------------
 std::string ofxSvgUtils::base64_encode( const ofPixels& apixels ) {
+	return base64_encode( apixels, OF_IMAGE_FORMAT_PNG, OF_IMAGE_QUALITY_BEST );
+}
+
+//---------------------------------------------------------------
+std::string ofxSvgUtils::base64_encode( const ofPixels& apixels, ofImageQualityType aImgQuality ) {
+	return base64_encode( apixels, OF_IMAGE_FORMAT_PNG, aImgQuality );
+}
+
+//---------------------------------------------------------------
+std::string ofxSvgUtils::base64_encode( const ofPixels& apixels, ofImageFormat aImgFormat, ofImageQualityType aImgQuality ) {
 	ofBuffer tbuffer;
-	ofSaveImage(apixels, tbuffer);
+	// ofSaveImage(const ofPixels & pix, ofBuffer & buffer, ofImageFormat format = OF_IMAGE_FORMAT_PNG, ofImageQualityType qualityLevel = OF_IMAGE_QUALITY_BEST);
+	ofSaveImage(apixels, tbuffer, aImgFormat, aImgQuality);
 	auto buffStr = tbuffer.getText();
 	const unsigned char* data = reinterpret_cast<const unsigned char*>(buffStr.data());
 	return ofxSvgUtils::base64_encode( data, tbuffer.size(), false );

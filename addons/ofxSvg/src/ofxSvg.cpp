@@ -1093,6 +1093,9 @@ void ofxSvg::_parsePolylinePolygon( ofXml& tnode, std::shared_ptr<ofxSvgPath> aS
 			aSvgPath->path.close();
 		}
 	}
+	if( aSvgPath ){
+		aSvgPath->getBoundingBox();
+	}
 }
 // reference: https://www.w3.org/TR/SVG2/paths.html#PathData
 //--------------------------------------------------------------
@@ -1654,6 +1657,9 @@ void ofxSvg::_parsePath( ofXml& tnode, std::shared_ptr<ofxSvgPath> aSvgPath ) {
 		
 		justInCase++;
 	}
+	if( aSvgPath ){
+		aSvgPath->getBoundingBox();
+	}
 }
 
 //--------------------------------------------------------------
@@ -1806,7 +1812,7 @@ glm::mat4 ofxSvg::setTransformFromSvgMatrixString( string aStr, std::shared_ptr<
 	
 	if( ofIsStringInString(aStr, "translate")) {
 		auto transStr = aStr;
-		auto tp = _parseMatrixString(transStr, "translate", false );
+		auto tp = _parseMatrixString(transStr, "translate", true );
 		tp.z = 0.f;
 		ofLogVerbose("ofxSvg::setTransformFromSvgMatrixString") << aele->getTypeAsString() << " name: " << aele->getName() << " translate: " << tp;
 //		apos += tp;
@@ -2172,6 +2178,9 @@ std::shared_ptr<ofxSvgPath> ofxSvg::add( const ofPath& apath ) {
 	auto path = std::make_shared<ofxSvgPath>();
 	path->path = apath;
 	path->applyStyle(mCurrentCss);
+	
+	path->getBoundingBox(); //force the generation of the bounding box in the main thread.
+	
 	_getPushedGroup()->add(path);
 	recalculateLayers();
 	mPaths.clear();

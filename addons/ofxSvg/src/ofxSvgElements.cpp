@@ -96,7 +96,9 @@ string ofxSvgElement::getCleanName() {
 		{std::regex("_x28_"), "("},
 		{std::regex("_x29_"), ")"},
 		{std::regex("_x3B_"), ";"},
-		{std::regex("_x2C_"), ","}
+		{std::regex("_x2C_"), ","},
+		{std::regex("_x5B_"), "["},
+		{std::regex("_x5D_"), "]"}
 	};
 	
 	for (const auto& [regexPattern, replacement] : tregs) {
@@ -357,6 +359,21 @@ std::vector<std::string> ofxSvgText::splitWordsAndLineEndings(const std::string&
 
 // build the text spans from a string and not from xml / svg file structure //
 //--------------------------------------------------------------
+void ofxSvgText::setText( const std::string& astring ) {
+	setText(astring, -1.f);
+}
+
+//--------------------------------------------------------------
+void ofxSvgText::setText( const std::string& astring, float aMaxWidth ) {
+	if( textSpans.size() > 0 ) {
+		auto tspanClass = textSpans[0]->getCssClass();
+		setText(astring, tspanClass, aMaxWidth );
+	} else {
+		setText(astring, mSvgCssClass.getFontFamily("Arial"), mSvgCssClass.getFontSize(18), aMaxWidth );
+	}
+}
+
+//--------------------------------------------------------------
 void ofxSvgText::setText( const std::string& astring, std::string aFontFamily, int aFontSize, float aMaxWidth ) {
 	ofxSvgCssClass css;
 	css.addProperty("font-family", aFontFamily);
@@ -369,14 +386,19 @@ void ofxSvgText::setText( const std::string& astring, std::string aFontFamily, i
 void ofxSvgText::setText( const std::string& astring, const ofxSvgCssClass& aSvgCssClass, float aMaxWidth ) {
 	meshes.clear();
 	textSpans.clear();
-
+	
 	if( astring.empty() ) {
 		ofLogWarning("ofxSvgText::setText") << "string argument is empty. ";
 		return;
 	}
+	
+	// set the true for debugging.
+	bool bVerbose = false;
+	
+	bool bCreateNewTextSpanPerLine = mBCreateNewTextSpanPerLine;
 
 	auto spanStrings = splitBySpanTags(astring);
-	// ofLogNotice("ofxSvgText") << "number of strings: " << spanStrings.size();
+//	ofLogNotice("ofxSvgText") << "number of strings: " << spanStrings.size();
 	float ex = 0.f;
 	float ey = 0.f;
 	int spanCounter = 0;
@@ -396,9 +418,11 @@ void ofxSvgText::setText( const std::string& astring, const ofxSvgCssClass& aSvg
 //		css.addProperty("color", getColor() );
 		if (spanString.find("<span") != std::string::npos) {
             SpanData data = extractSpanData(spanString);
-//            std::cout << "Found <span> tag.\n";
-//            std::cout << "  Style: [" << data.style << "]\n";
-//            std::cout << "  Content: [" << data.content << "]\n";
+			if(bVerbose) {
+				std::cout << "Found <span> tag.\n";
+				std::cout << "  Style: [" << data.style << "]\n";
+				std::cout << "  Content: [" << data.content << "]\n";
+			}
 			css.addProperties(data.style);
 			if (!data.content.empty() && data.content.back() == ' ') {
 				bLastCharIsSpace = true;
@@ -421,9 +445,40 @@ void ofxSvgText::setText( const std::string& astring, const ofxSvgCssClass& aSvg
 
 		auto cspan = std::make_shared<ofxSvgText::TextSpan>();
 		cspan->applyStyle(css);
-
+		
 		ofLogVerbose("ofxSvgText" ) << "going to try and load: " << spanString << " bold: " << cspan->isBold() << " italic: " << cspan->isItalic();
-		if(!ofxSvgFontBook::loadFont(fdirectory, cspan->getFontFamily(), cspan->getFontSize(), cspan->isBold(), cspan->isItalic() )) {
+		if( spanStrings.size() > 1 ) {
+			if(bVerbose) {
+				std::cout << "-------------------------------------" << std::endl;
+				ofLogNotice("ofxSvgText" ) << "going to try and load: " << spanString << std::endl << "css: " << css.toString();
+				for( auto& tw : twords ) {
+					std::cout << "|" << tw << "|";
+				}
+				std::cout << std::endl << "-------------------------------------" << std::endl;
+			}
+		}
+		
+		// build a quick string from the words.
+		std::string tempStr;
+		for( auto& tw : twords ) {
+			tempStr += tw;
+		}
+		
+//		if(!ofxSvgFontBook::loadFont(fdirectory, cspan->getFontFamily(), cspan->getFontSize(), cspan->isBold(), cspan->isItalic() )) {
+		ofTrueTypeFontSettings fsettings(fdirectory, cspan->getFontSize());
+		// now determine if there is other languages to load.
+		// TODO: Add more language support.
+		auto detectedLang = ofxSvgFontBook::detectLanguage(tempStr);
+		if( detectedLang == ofxSvgFontBook::TextLanguage::JAPANESE ) {
+			fsettings.addRanges(ofAlphabet::Japanese);
+		} else if( detectedLang == ofxSvgFontBook::TextLanguage::CHINESE ) {
+			fsettings.addRanges(ofAlphabet::Chinese);
+		} else if( detectedLang == ofxSvgFontBook::TextLanguage::KOREAN ) {
+			fsettings.addRanges(ofAlphabet::Korean);
+		}
+		
+		if( !ofxSvgFontBook::loadFont(fdirectory, cspan->getCssClass(), fsettings )) {
+			
 			continue;
 		}
 
@@ -453,21 +508,6 @@ void ofxSvgText::setText( const std::string& astring, const ofxSvgCssClass& aSvg
 
 		bool bWasAStringLineBreak = false;
 
-		// std::cout << "_____________________________________________________" << std::endl;
-		// for( std::size_t i = 0; i < twords.size(); i++ ) {
-		// 	auto& token = twords[i];
-		// 	if (token == "\n") {
-		// 		std::cout << "[\\n]" << std::endl;
-		// 	} else if (token == "\r\n") {
-		// 		std::cout << "[\\r\\n]" << std::endl;
-		// 	} else if (token == "\r") {
-		// 		std::cout << "[\\r]" << std::endl;
-		// 	} else {
-		// 		std::cout << "[" << token << "]" << std::endl;
-		// 	}
-		// }
-		// std::cout << "_____________________________________________________" << std::endl;
-
 		for( std::size_t i = 0; i < twords.size(); i++ ) {
 
 			bool bFinalWord = (i == twords.size()-1);
@@ -490,7 +530,7 @@ void ofxSvgText::setText( const std::string& astring, const ofxSvgCssClass& aSvg
 			// ofLogNotice("textSpan word string") << "|"<<tCurrentString << "|";;
 			// ex = font.stringWidth(tCurrentString);
 			ex = font.getStringBoundingBox(tCurrentString,0,0,true).getRight();
-			if(ex + cspan->rect.x > aMaxWidth || bIsAStringLineBreak > 0 ) {
+			if( (aMaxWidth > 0.f && ex + cspan->rect.x > aMaxWidth) || bIsAStringLineBreak > 0 ) {
 			// if( ex > aMaxWidth ) {
 				
 				tCurrentString = twords[i];
@@ -517,7 +557,12 @@ void ofxSvgText::setText( const std::string& astring, const ofxSvgCssClass& aSvg
 						ey += font.getLineHeight();
 
 						if( ss.str().size() > 0 ) {
-							// ofLogNotice("ofxSvgText") << "LINE Break: adding cspan: " << textSpans.size() << " x: " << cspan->rect.x << " text: |" << cspan->text << "|";
+//							 ofLogNotice("ofxSvgText") << "LINE Break: adding cspan: " << textSpans.size() << " x: " << cspan->rect.x << " text: |" << cspan->text << "|";
+							if( spanStrings.size() > 1 ) {
+								if(bVerbose) {
+									ofLogNotice("ofxSvgText") << "LINE Break: adding cspan: " << textSpans.size() << " x: " << cspan->rect.x << " text: |" << cspan->text << "|";
+								}
+							}
 							textSpans.push_back(cspan);
 						}
 
@@ -535,10 +580,30 @@ void ofxSvgText::setText( const std::string& astring, const ofxSvgCssClass& aSvg
 					//ey += font.stringHeight("M");
 					bAddedBreak = true;
 					if( spanCounter == 0 && i == 0 ) {
-
+						cspan->text = ss.str();
 					} else {
 						ey += font.getLineHeight();
-						ss << std::endl;
+						if(bCreateNewTextSpanPerLine) {
+							cspan->text = ss.str();
+							if( ss.str().size() > 0 ) {
+								if( spanStrings.size() > 1 ) {
+									if(bVerbose) {
+										ofLogNotice("ofxSvgText") << "LINE Break: adding cspan: " << textSpans.size() << " x: " << cspan->rect.x << " text: |" << cspan->text << "|";
+									}
+								}
+								textSpans.push_back(cspan);
+							}
+							
+							cspan = std::make_shared<ofxSvgText::TextSpan>();
+							cspan->applyStyle(css);
+							ss.str("");
+							ss.clear();
+							// ofLogNotice("Adding a new line I think") << "ss: " <<ss.str();
+							// cspan->rect.x = ex;
+							cspan->rect.y = ey;
+						} else {
+							ss << std::endl;
+						}
 					}
 				}
 
@@ -582,7 +647,7 @@ void ofxSvgText::setText( const std::string& astring, const ofxSvgCssClass& aSvg
 				// ex += font.getCharWidth('f');
 			// }
 			cspan->text = ss.str();
-			// ofLogNotice("ofxSvgText") << "adding cspan: " << textSpans.size() << " x: " << cspan->rect.x << " text: |" << cspan->text << "|";
+//			 ofLogNotice("ofxSvgText") << "adding cspan: " << textSpans.size() << " x: " << cspan->rect.x << " text: |" << cspan->text << "|";
 			cspan->rect.height = font.getStringBoundingBox(cspan->text, 0.f, 0.f ).getHeight();//font.stringHeight(cspan->text);
 			if( bFirstBreak ) {
 				cspan->rect.height = font.getLineHeight();
@@ -592,6 +657,11 @@ void ofxSvgText::setText( const std::string& astring, const ofxSvgCssClass& aSvg
 			}
 			// ey = cspan->rect.y + cspan->rect.height;
 			//ey += cspan->rect.height;
+			if( spanStrings.size() > 1 ) {
+				if(bVerbose) {
+					ofLogNotice("ofxSvgText") << "Adding cspan: " << textSpans.size() << " x: " << cspan->rect.x << " text: |" << cspan->text << "|";
+				}
+			}
 			textSpans.push_back(cspan);
 		}
 
@@ -604,6 +674,15 @@ void ofxSvgText::setText( const std::string& astring, const ofxSvgCssClass& aSvg
 
 	create();
 }
+
+//--------------------------------------------------------------
+void ofxSvgText::updateText( const std::string& astring, float aMaxWidth) {
+	if( textSpans.size() ){
+		auto css = textSpans[0]->getCssClass();
+		setText( astring, css, aMaxWidth );
+	}
+}
+
 
 //--------------------------------------------------------------
 void ofxSvgText::create() {

@@ -16,14 +16,27 @@ public:
         bool italic = false;
 		of::filesystem::path pathToFont;
     };
+	
+	enum class TextLanguage {
+		ENGLISH,
+		JAPANESE,
+		CHINESE,
+		KOREAN,
+		OTHER
+	};
 
     static void setFontDirectory( std::string adir ) {
         mFontDirectory = adir;
     }
 	
+	// simple language detection for Japanese, Korean and Chinese
+	static TextLanguage detectLanguage(const std::string& utf8Text);
+	
 	static bool loadFont(const std::string& aFontFamily, int aFontSize, bool aBBold, bool aBItalic );
-    static bool loadFont(const of::filesystem::path& aDirectory, ofxSvgCssClass& aCssClass );
     static bool loadFont(const of::filesystem::path& aDirectory, const std::string& aFontFamily, int aFontSize, bool aBBold, bool aBItalic );
+	static bool loadFont(const of::filesystem::path& aDirectory, ofxSvgCssClass& aCssClass );
+	static bool loadFont(ofxSvgCssClass& aCssClass, ofxSvgFontBook::TextLanguage alanguage );
+	static bool loadFont(const of::filesystem::path& aDirectory, ofxSvgCssClass& aCssClass, ofTrueTypeFontSettings aFontSettings );
 
     static std::string getFontKey( const std::string& aFontFamily, bool aBBold, bool aBItalic ) {
         auto fkey = aFontFamily;
@@ -66,6 +79,9 @@ protected:
     static Font defaultBookFont;
     static std::string mFontDirectory;
     static std::map< std::string, Font > fonts;
+	
+	static std::vector<uint32_t> _utf8ToCodepoints(const std::string& str);
+	
     static bool _recursiveFontDirSearch(const std::string& afile, const std::string& aFontFamToLookFor,
 										std::string& fontpath,
                                         const std::vector<std::string>& aAddNames,

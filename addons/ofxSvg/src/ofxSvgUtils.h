@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include "ofPixels.h"
+#include "ofImage.h"
 
 // adding this Optional class since std::optional is not a part of all std:: distributions at the moment, looking at you gcc < 10 nh
 // and not included in older versions of OF on Windows, ie. 12.0.
@@ -62,6 +63,8 @@ public:
 	static std::string base64_decode(std::string const& encoded_string, bool remove_linebreaks);
 	
 	static std::string base64_encode( const ofPixels& apixels );
+	static std::string base64_encode( const ofPixels& apixels, ofImageQualityType aImgQuality );
+	static std::string base64_encode( const ofPixels& apixels, ofImageFormat aImgFormat, ofImageQualityType aImgQuality );
 	static ofPixels base64_decode(std::string const& encoded_string );
 	
 	
