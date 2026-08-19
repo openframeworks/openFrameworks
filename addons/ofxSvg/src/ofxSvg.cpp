@@ -185,7 +185,7 @@ ofxSvg::ofxSvg(const of::filesystem::path & fileName) {
 
 //--------------------------------------------------------------
 bool ofxSvg::load( const of::filesystem::path& fileName ) {
-	ofFile mainXmlFile( fileName, ofFile::ReadWrite );
+	ofFile mainXmlFile( fileName, ofFile::ReadOnly );
 	ofBuffer tMainXmlBuffer( mainXmlFile );
 	
 	svgPath     = fileName;
