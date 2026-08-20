@@ -14,7 +14,7 @@ LEGACY=0
 SILENT_ARGS=""
 NO_SSL=""
 BLEEDING_EDGE=0
-DL_VERSION=2.8.3
+DL_VERSION=2.8.4
 GCC_VERSION=0
 TAG=""
 REPO="latest"
@@ -34,7 +34,6 @@ cat << EOF
                                 If not specified tries to autodetect the platform.
     -a, --arch ARCH             Architecture:
                                     vs: 64, arm64, arm64ec, all
-                                      arm64 also downloads x64 (and arm64ec)
                                     msys2: 64
                                     android: armv7, arm64, and x86 (if not specified will download all)
                                     linux: 64, arm64, aarch64, armv6l or armv7l
@@ -583,8 +582,13 @@ elif [ "$PLATFORM" == "vs" ]; then
                   openFrameworksLibs_${VER}_${VS_PLATFORM}_arm64ec_1.zip \
                   openFrameworksLibs_${VER}_${VS_PLATFORM}_arm64ec_2.zip"
         elif [[ "$ARCH" == "arm64" ]]; then
+<<<<<<< HEAD
             # Windows on ARM: include x64 alongside native arm64 and arm64ec.
             echo " VS packages: 64 + arm64 + arm64ec (Windows on ARM host)"
+=======
+            # Windows on ARM: native arm64 + arm64ec + x64 (x64-compat / VS x64 tools)
+            echo " VS packages: 64 + arm64 + arm64ec (arm64 also downloads 64 for now)"
+>>>>>>> 07dbee037 (download_libs [2.8.3 ~ 2.8.4] VS arm64 also pulls 64)
             PKGS="openFrameworksLibs_${VER}_${VS_PLATFORM}_64_1.zip \
                   openFrameworksLibs_${VER}_${VS_PLATFORM}_64_2.zip \
                   openFrameworksLibs_${VER}_${VS_PLATFORM}_arm64_1.zip \
@@ -606,7 +610,11 @@ elif [ "$PLATFORM" == "vs" ]; then
                   openFrameworksLibs_${VER}_${PLATFORM}_64_3.zip \
                   openFrameworksLibs_${VER}_${PLATFORM}_64_4.zip"
         elif [[ "$ARCH" == "arm64" ]]; then
+<<<<<<< HEAD
             echo " VS packages: 64 + arm64 (Windows on ARM host)"
+=======
+            echo " VS packages: 64 + arm64 (arm64 also downloads 64 for now)"
+>>>>>>> 07dbee037 (download_libs [2.8.3 ~ 2.8.4] VS arm64 also pulls 64)
             PKGS="openFrameworksLibs_${VER}_${PLATFORM}_64_1.zip \
                   openFrameworksLibs_${VER}_${PLATFORM}_64_2.zip \
                   openFrameworksLibs_${VER}_${PLATFORM}_64_3.zip \
