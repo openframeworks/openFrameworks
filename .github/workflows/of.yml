@@ -106,9 +106,8 @@ jobs:
       - name: Install dependencies
         run: ./scripts/ci/msys2/install.sh --msystem=${{ matrix.msystem }}
 
-      - name: List Directories
-        shell: bash
-        run: find . -type d
+      - name: Check deployed libraries
+        run: bash scripts/ci/check_deployed_libs.sh --platform msys2 --arch x86_64
 
       - name: Build
         run: ./scripts/ci/msys2/build.sh
@@ -227,17 +226,8 @@ jobs:
       #     fi
       - name: Download libs
         run: ./scripts/linux/download_libs.sh -t $RELEASE -a ${{matrix.cfg.libs}} -g 10
-      - name: Library path check
-        run: |
-          echo "=== lib/linux/${{ matrix.cfg.libs }} ==="
-          find libs -type d -path "*/lib/linux/${{ matrix.cfg.libs }}" | sort
-          echo "=== zlib ==="; ls -lh libs/zlib/lib/linux/${{ matrix.cfg.libs }}
-          if [ -f libs/glm/include/glm/vec2.hpp ]; then
-            echo "=== glm present ==="
-          else
-            echo "=== glm missing — RPi apothecary latest is still the zlib smoke-test archive ==="
-          fi
-          echo "=== system curl ==="; curl --version 2>&1 | head -n1
+      - name: Check deployed libraries
+        run: bash scripts/ci/check_deployed_libs.sh --platform linux --arch ${{ matrix.cfg.libs }} --allow-incomplete
       - name: Install dependencies
         run: ./scripts/ci/linux/rpi/install.sh;
       - name: LS
@@ -344,14 +334,8 @@ jobs:
 
       - name: Download libs
         run: ./scripts/linux/download_libs.sh -t $RELEASE -a ${{matrix.cfg.arch}} -g ${{matrix.cfg.GCC}}
-      - name: Library path check
-        run: |
-          echo "=== lib/linux/${{ matrix.cfg.arch }} ==="
-          find libs -type d -path "*/lib/linux/${{ matrix.cfg.arch }}" | sort
-          echo "=== glm ==="; test -f libs/glm/include/glm/vec2.hpp
-          echo "=== tess2 ==="; ls -lh libs/tess2/lib/linux/${{ matrix.cfg.arch }}
-          echo "=== zlib ==="; ls -lh libs/zlib/lib/linux/${{ matrix.cfg.arch }}
-          echo "=== system curl ==="; curl --version 2>&1 | head -n1
+      - name: Check deployed libraries
+        run: bash scripts/ci/check_deployed_libs.sh --platform linux --arch ${{ matrix.cfg.arch }}
       - name: Build
         run: |
           if [ "$TARGET" = "linux" ]; then
@@ -393,12 +377,8 @@ jobs:
       - name: Download libs
         run: ./scripts/linux/download_libs.sh -t $RELEASE -a ${{matrix.cfg.arch}} -g ${{matrix.cfg.GCC}}
 
-      - name: Library path check
-        run: |
-          echo "=== lib/linux/${{ matrix.cfg.arch }} ==="
-          find libs -type d -path "*/lib/linux/${{ matrix.cfg.arch }}" | sort
-          echo "=== glm ==="; test -f libs/glm/include/glm/vec2.hpp
-          echo "=== tess2 ==="; ls -lh libs/tess2/lib/linux/${{ matrix.cfg.arch }}
+      - name: Check deployed libraries
+        run: bash scripts/ci/check_deployed_libs.sh --platform linux --arch ${{ matrix.cfg.arch }}
 
       - name: Build
         run: |
