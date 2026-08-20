@@ -187,6 +187,59 @@ normalize_linux_lib_paths(){
     fi
 }
 
+# Latest apothecary msys2 archives ship both a GNU and an MSVC symbol index.
+# MinGW ld then reports "file format not recognized; treating as linker script"
+# and lld reports "unknown file type". Rebuild with GNU ar/ranlib.
+reindex_msys2_static_libs(){
+    if [ "$PLATFORM" != "msys2" ]; then
+        return
+    fi
+
+    local ar_bin ranlib_bin archive tmpdir
+    ar_bin=$(command -v ar || true)
+    ranlib_bin=$(command -v ranlib || true)
+    if [ -z "$ar_bin" ]; then
+        echo " No ar on PATH; skip MSYS2 static-lib reindex"
+        return
+    fi
+
+    echo " Re-indexing MSYS2 static libraries with $(basename "$ar_bin") (GNU ld / lld)"
+    while IFS= read -r archive; do
+        [ -n "$archive" ] || continue
+        case "$archive" in
+            *.dll.a) continue ;;
+        esac
+        local archive_abs tmpdir
+        archive_abs="$(cd "$(dirname "$archive")" && pwd)/$(basename "$archive")"
+        tmpdir=$(mktemp -d 2>/dev/null || mktemp -d -t ofar)
+        if (
+            cd "$tmpdir" || exit 1
+            "$ar_bin" x "$archive_abs" >/dev/null 2>&1 || exit 1
+            objs=""
+            for f in *; do
+                case "$f" in
+                    *.o|*.obj|*.O) objs="$objs $f" ;;
+                esac
+            done
+            if [ -z "$objs" ]; then
+                echo "  skip [$archive] (no object members)"
+                exit 0
+            fi
+            # shellcheck disable=SC2086
+            "$ar_bin" rcs "$archive_abs" $objs || exit 1
+            if [ -n "$ranlib_bin" ]; then
+                "$ranlib_bin" "$archive_abs" >/dev/null 2>&1 || true
+            fi
+            echo "  reindexed [$archive]"
+        ); then
+            :
+        else
+            echo "  warning: could not reindex [$archive] (linker may reject it)"
+        fi
+        rm -rf "$tmpdir"
+    done < <(find . -type f -name '*.a' ! -name '*.dll.a' -path '*/lib/msys2/*' -print 2>/dev/null)
+}
+
 # trap any script errors and exit
 trap 'trapError ${LINENO}' ERR
 trap "trapError" SIGINT SIGTERM
@@ -660,6 +713,7 @@ done
 # Apothecary linux2026 packages already use lib/linux/<arch>. Promote any
 # leftover pre-0.13 flat folders (linux64, linuxarmv6l, …) to that layout.
 normalize_linux_lib_paths
+reindex_msys2_static_libs
 
 if [ "$PLATFORM" == "osx" ]; then
     echo " "
