@@ -62,17 +62,17 @@ common:
 	# a specific platform
 	# ADDON_LIBS_EXCLUDE =
 
-linuxarmv6l:
+linux/armv6l:
 	ADDON_PKG_CONFIG_LIBRARIES = assimp
 	ADDON_LIBS_EXCLUDE = ../ofxAssimpModelLoader/libs/assimp
 	ADDON_INCLUDES_EXCLUDE = ../ofxAssimpModelLoader/libs/assimp/%
 
-linuxarmv7l:
+linux/armv7l:
 	ADDON_PKG_CONFIG_LIBRARIES = assimp
 	ADDON_LIBS_EXCLUDE = ../ofxAssimpModelLoader/libs/assimp
 	ADDON_INCLUDES_EXCLUDE = ../ofxAssimpModelLoader/libs/assimp/%
 
-linuxaarch64:
+linux/aarch64:
 	ADDON_PKG_CONFIG_LIBRARIES = assimp
 	ADDON_LIBS_EXCLUDE = ../ofxAssimpModelLoader/libs/assimp
 	ADDON_INCLUDES_EXCLUDE = ../ofxAssimpModelLoader/libs/assimp/%
@@ -82,7 +82,7 @@ linux:
 	ADDON_LIBS_EXCLUDE = ../ofxAssimpModelLoader/libs/assimp
 	ADDON_INCLUDES_EXCLUDE = ../ofxAssimpModelLoader/libs/assimp/%
 
-linux64:
+linux/64:
 	ADDON_PKG_CONFIG_LIBRARIES = assimp
 	ADDON_LIBS_EXCLUDE = ../ofxAssimpModelLoader/libs/assimp
 	ADDON_INCLUDES_EXCLUDE = ../ofxAssimpModelLoader/libs/assimp/%
@@ -101,7 +101,6 @@ android/x86:
 	ADDON_LIBS=
 	ADDON_LIBS+=../ofxAssimpModelLoader/libs/assimp/lib/android/x86/libassimp.a
 	ADDON_LIBS+=../ofxAssimpModelLoader/libs/assimp/lib/android/x86/libIrrXML.a
-
 osx:
 	ADDON_LIBS=
 	ADDON_LIBS=../ofxAssimpModelLoader/libs/assimp/lib/macos/assimp.xcframework/macos-arm64_x86_64/assimp.a

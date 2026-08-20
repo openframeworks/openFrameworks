@@ -72,7 +72,7 @@ ADDONS=(
 )
 
 echo "Updating projects with PG at:${PG_OF_PATH}"
-if [[ "$VS_TARGET" == "vs2026" ]]; then
+if [[ "$VS_TARGET" == "--vs2026" ]]; then
     for i in "${!PROJECTS[@]}"; do
       PROJECT=${PROJECTS[i]}
       ADDON=${ADDONS[i]}

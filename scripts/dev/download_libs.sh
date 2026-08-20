@@ -14,7 +14,8 @@ LEGACY=0
 SILENT_ARGS=""
 NO_SSL=""
 BLEEDING_EDGE=0
-DL_VERSION=2.7.4
+DL_VERSION=2.8.4
+GCC_VERSION=0
 TAG=""
 REPO="latest"
 SHA_VERIFIED=0
@@ -32,10 +33,11 @@ cat << EOF
     -p, --platform PLATFORM     Platorm among: android, emscritpen, ios, linux, linux64, linuxarmv6l, linuxarmv7l, msys2, osx, tvos, vs
                                 If not specified tries to autodetect the platform.
     -a, --arch ARCH             Architecture:
-                                    vs: 64
+                                    vs: 64, arm64, arm64ec, all
+                                      arm64 also pulls 64 (and arm64ec) for now
                                     msys2: 64
                                     android: armv7, arm64, and x86 (if not specified will download all)
-                                    linux: 64gcc6, armv6l or armv7l
+                                    linux: 64, arm64, aarch64, armv6l or armv7l
     -n, --no-overwrite          Pure merge: do not delete anything before extract.
                                 Default (without -n) only removes libs/<lib>/lib/\$PLATFORM so other
                                 platforms (android + ios + macos + emscripten …) can coexist.
@@ -48,6 +50,7 @@ cat << EOF
     -h, --help                  Shows this message
     -k, --no-ssl                Allow no SSL validation
     -t, --tag                   tag release for libraries
+    -g, --gcc-version           GCC Version
 EOF
 }
 
@@ -105,6 +108,216 @@ download(){
     done
     # echo $COMMAND;
     downloader $COMMAND $SILENT_ARGS $NO_SSL
+}
+
+is_raspberry_pi(){
+    local model=""
+    if [ -f /proc/device-tree/model ]; then
+        model="$(tr -d '\0' </proc/device-tree/model 2>/dev/null || true)"
+    elif [ -f /sys/firmware/devicetree/base/model ]; then
+        model="$(tr -d '\0' </sys/firmware/devicetree/base/model 2>/dev/null || true)"
+    fi
+    if echo "$model" | grep -qi raspberry; then
+        return 0
+    fi
+    if [ -f /etc/os-release ] && grep -qiE '^(ID=raspbian|PRETTY_NAME=.*Raspberry Pi)' /etc/os-release; then
+        return 0
+    fi
+    return 1
+}
+
+# Canonical apothecary / linux2026 makefile paths: lib/linux/<arch>
+linux_canonical_lib_subpath(){
+    case "$1" in
+        x86_64|64|64gcc6|64_gcc6) echo "linux/64" ;;
+        arm64) echo "linux/arm64" ;;
+        aarch64) echo "linux/aarch64" ;;
+        armv6l) echo "linux/armv6l" ;;
+        armv7l) echo "linux/armv7l" ;;
+        jetson) echo "linux/jetson" ;;
+        *) echo "" ;;
+    esac
+}
+
+linux_legacy_lib_subpath(){
+    case "$1" in
+        x86_64|64|64gcc6|64_gcc6) echo "linux64" ;;
+        arm64) echo "linuxarm64" ;;
+        aarch64) echo "linuxaarch64" ;;
+        armv6l) echo "linuxarmv6l" ;;
+        armv7l) echo "linuxarmv7l" ;;
+        *) echo "" ;;
+    esac
+}
+
+# Keep structured apothecary paths. If only a pre-0.13 flat folder exists,
+# promote it so the linux2026 makefile (lib/linux/<arch>) can find it.
+normalize_linux_lib_paths(){
+    if [ "$PLATFORM" != "linux" ]; then
+        return
+    fi
+
+    local source_path
+    local destination_path
+    local destination_subpath
+    local legacy_subpath
+    local lib_root
+    local arch
+    local promoted=0
+
+    for arch in 64 arm64 aarch64 armv6l armv7l; do
+        destination_subpath=$(linux_canonical_lib_subpath "$arch")
+        legacy_subpath=$(linux_legacy_lib_subpath "$arch")
+        [ -n "$legacy_subpath" ] || continue
+        while IFS= read -r source_path; do
+            lib_root="${source_path%/lib/$legacy_subpath}"
+            destination_path="${lib_root}/lib/${destination_subpath}"
+            if [ -e "$destination_path" ]; then
+                echo " Keeping structured [$destination_path] (legacy [$source_path] also present)"
+                continue
+            fi
+            echo " Promoting Linux libraries: [$source_path] -> [$destination_path]"
+            mkdir -p "$(dirname "$destination_path")"
+            mv "$source_path" "$destination_path"
+            promoted=$((promoted + 1))
+        done < <(find . -type d -path "*/lib/${legacy_subpath}" -print)
+    done
+
+    if [ $promoted -gt 0 ]; then
+        echo " Promoted $promoted Linux library path(s) to linux2026 structured paths"
+    fi
+}
+
+# Prefer binutils/gcc-ar. clang64's ar is llvm-ar, which can write the mixed
+# GNU/MSVC index that MinGW ld and lld reject ("unknown file type").
+findGnuAr(){
+    local CANDIDATE
+    local AR_PATH
+    for CANDIDATE in \
+        x86_64-w64-mingw32-gcc-ar \
+        x86_64-w64-mingw32-ar \
+        aarch64-w64-mingw32-gcc-ar \
+        aarch64-w64-mingw32-ar \
+        gcc-ar \
+        /usr/bin/ar \
+        ar
+    do
+        if command -v "$CANDIDATE" >/dev/null 2>&1; then
+            AR_PATH=$(command -v "$CANDIDATE")
+            if "$AR_PATH" --version 2>/dev/null | grep -qi llvm; then
+                continue
+            fi
+            echo "$AR_PATH"
+            return 0
+        fi
+    done
+    return 1
+}
+
+findGnuRanlib(){
+    local CANDIDATE
+    local RANLIB_PATH
+    for CANDIDATE in \
+        x86_64-w64-mingw32-gcc-ranlib \
+        x86_64-w64-mingw32-ranlib \
+        aarch64-w64-mingw32-gcc-ranlib \
+        aarch64-w64-mingw32-ranlib \
+        gcc-ranlib \
+        /usr/bin/ranlib \
+        ranlib
+    do
+        if command -v "$CANDIDATE" >/dev/null 2>&1; then
+            RANLIB_PATH=$(command -v "$CANDIDATE")
+            if "$RANLIB_PATH" --version 2>/dev/null | grep -qi llvm; then
+                continue
+            fi
+            echo "$RANLIB_PATH"
+            return 0
+        fi
+    done
+    return 1
+}
+
+findLlvmAr(){
+    local CANDIDATE
+    local AR_PATH
+    for CANDIDATE in llvm-ar ar; do
+        if command -v "$CANDIDATE" >/dev/null 2>&1; then
+            AR_PATH=$(command -v "$CANDIDATE")
+            if "$AR_PATH" --version 2>/dev/null | grep -qi llvm; then
+                echo "$AR_PATH"
+                return 0
+            fi
+        fi
+    done
+    return 1
+}
+
+# Latest apothecary msys2 archives ship both a GNU and an MSVC symbol index.
+# MinGW ld then reports "file format not recognized; treating as linker script"
+# and lld reports "unknown file type". Rebuild as a GNU archive.
+reindexMsys2StaticLibs(){
+    if [ "$PLATFORM" != "msys2" ]; then
+        return
+    fi
+
+    local AR_BIN
+    local RANLIB_BIN=""
+    local AR_KIND="gnu"
+    local ARCHIVE
+    local ARCHIVE_ABS
+    local TMPDIR
+    local OBJS
+    local F
+
+    if AR_BIN=$(findGnuAr); then
+        RANLIB_BIN=$(findGnuRanlib || true)
+    elif AR_BIN=$(findLlvmAr); then
+        AR_KIND="llvm"
+    else
+        echo " No ar on PATH; skip MSYS2 static-lib reindex"
+        return
+    fi
+
+    echo " Re-indexing MSYS2 static libraries with $(basename "$AR_BIN") ($AR_KIND, GNU ld / lld)"
+    while IFS= read -r ARCHIVE; do
+        [ -n "$ARCHIVE" ] || continue
+        case "$ARCHIVE" in
+            *.dll.a) continue ;;
+        esac
+        ARCHIVE_ABS="$(cd "$(dirname "$ARCHIVE")" && pwd)/$(basename "$ARCHIVE")"
+        TMPDIR=$(mktemp -d 2>/dev/null || mktemp -d -t ofar)
+        if (
+            cd "$TMPDIR" || exit 1
+            "$AR_BIN" x "$ARCHIVE_ABS" >/dev/null 2>&1 || exit 1
+            OBJS=""
+            for F in *; do
+                case "$F" in
+                    *.o|*.obj|*.O) OBJS="$OBJS $F" ;;
+                esac
+            done
+            if [ -z "$OBJS" ]; then
+                echo "  skip [$ARCHIVE] (no object members)"
+                exit 0
+            fi
+            rm -f "$ARCHIVE_ABS"
+            # shellcheck disable=SC2086
+            if [ "$AR_KIND" = "llvm" ]; then
+                "$AR_BIN" --format=gnu rcs "$ARCHIVE_ABS" $OBJS || exit 1
+            else
+                "$AR_BIN" rcs "$ARCHIVE_ABS" $OBJS || exit 1
+                if [ -n "$RANLIB_BIN" ]; then
+                    "$RANLIB_BIN" "$ARCHIVE_ABS" >/dev/null 2>&1 || true
+                fi
+            fi
+            echo "  reindexed [$ARCHIVE]"
+        ); then
+            :
+        else
+            echo "  warning: could not reindex [$ARCHIVE] (linker may reject it)"
+        fi
+        rm -rf "$TMPDIR"
+    done < <(find . -type f -name '*.a' ! -name '*.dll.a' -path '*/lib/msys2/*' -print 2>/dev/null)
 }
 
 # trap any script errors and exit
@@ -170,6 +383,10 @@ while [[ $# -gt 0 ]]; do
         ;;
         -m|--msystem)
         MSYSTEM="$2"
+        shift # past argument
+        ;;
+        -g|--gcc-version)
+        GCC_VERSION="$2"
         shift # past argument
         ;;
         -t|--tag)
@@ -242,31 +459,19 @@ detectHostVsArch(){
 if [ "$ARCH" == "" ]; then
     if [ "$PLATFORM" == "linux" ]; then
         ARCH=$(uname -m)
-        if [ "$ARCH" == "x86_64" ]; then
-            if command -v gcc &> /dev/null
-            then
-                GCC_VERSION=$(gcc -dumpversion | cut -f1 -d.)
-            else
-                GCC_VERSION=6
-            fi
-            if [ $GCC_VERSION -eq 4 ]; then
-                ARCH=64gcc6
-            elif [ $GCC_VERSION -eq 5 ]; then
-                ARCH=64gcc6
-            else
-                ARCH=64gcc6
-            fi
-        elif [ "$ARCH" == "armv7l" ]; then
-            # Check for Raspberry Pi
-            if [ -f /opt/vc/include/bcm_host.h ]; then
-                ARCH=armv6l
-            fi
+        if is_raspberry_pi; then
+            case "$ARCH" in
+                aarch64|arm64) ARCH=aarch64 ;;
+                armv7l) ARCH=armv7l ;;
+                armv6l) ARCH=armv6l ;;
+            esac
+            echo " Raspberry Pi detected → ARCH=${ARCH}"
+        elif [ "$ARCH" == "x86_64" ]; then
+            ARCH=64
+        elif [ "$ARCH" == "arm64" ] || [ "$ARCH" == "aarch64" ]; then
+            ARCH=arm64
         elif [ "$ARCH" == "i686" ] || [ "$ARCH" == "i386" ]; then
-            cat << EOF
-32bit linux is not officially supported anymore but compiling
-the libraries using the build script in apothecary/scripts
-should compile all the dependencies without problem
-EOF
+            echo "32bit linux is not officially supported anymore but compiling the libraries using the build script in apothecary/scripts should compile all the dependencies without problem"
             exit 1
         fi
     elif [ "$PLATFORM" == "msys2" ]; then
@@ -286,7 +491,6 @@ EOF
         ARCH=$(detectHostVsArch)
         echo " VS host arch → ${ARCH} (pass -a all for every VS arch, or -a 64|arm64|arm64ec)"
     fi
-
     if [ "$PLATFORM" == "osx" ]; then
         ARCH=x86_64
     fi
@@ -302,6 +506,33 @@ if [ "$PLATFORM" == "vs" ]; then
     esac
 fi
 
+if [ "$PLATFORM" == "linux" ]; then
+	# Official apothecary Linux archives are the GCC 10 baseline only:
+	#   openFrameworksLibs_<tag>_linux_<ARCH>_gcc10.tar.bz2
+	# A newer host compiler can still consume them (_GLIBCXX_USE_CXX11_ABI=1).
+	OFFICIAL_LINUX_GCC=10
+	if [ "$GCC_VERSION" == 0 ]; then
+		GCC_VERSION=$OFFICIAL_LINUX_GCC
+	elif [ "$GCC_VERSION" != "$OFFICIAL_LINUX_GCC" ]; then
+		echo " Official Linux archives are GCC ${OFFICIAL_LINUX_GCC} (requested gcc${GCC_VERSION} is not published). Using gcc${OFFICIAL_LINUX_GCC}."
+		GCC_VERSION=$OFFICIAL_LINUX_GCC
+	fi
+	echo "GCC_VERSION: [$GCC_VERSION]"
+	GCC_VERSION="gcc${GCC_VERSION}"
+	case "$ARCH" in
+		64|x86_64|arm64|aarch64|armv6l|armv7l)
+			OPT="_${GCC_VERSION}"
+			;;
+		jetson|armv8l)
+			OPT=""
+			;;
+		*)
+			OPT="_${GCC_VERSION}"
+			;;
+	esac
+fi
+
+
 
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd "$SCRIPT_DIR"
@@ -314,20 +545,15 @@ if [[ $TAG != "" ]] && [[ $TAG != "nightly" ]] ; then
     VER="$TAG"
 fi
 
-if [ "$PLATFORM" == "linux" ] && [ "$ARCH" == "64" ]; then
-    if [[ $BLEEDING_EDGE = 1 ]] ; then
-        ARCH=64_gcc6
-    else
-        ARCH=64gcc6
-    fi
-fi
-
 echo " openFrameworks download_libs.sh v$DL_VERSION args=$@"
 
 if [ "$PLATFORM" == "emscripten" ]; then
     if [[ $BLEEDING_EDGE = 1 ]] ; then
         if [[ $ARCH = "" ]] ; then
             ARCH="32"
+        fi
+        if [[ $ARCH = "64" ]] ; then
+            ARCH="_64"
         fi
     fi
 fi
@@ -357,9 +583,11 @@ elif [ "$PLATFORM" == "vs" ]; then
                   openFrameworksLibs_${VER}_${VS_PLATFORM}_arm64ec_1.zip \
                   openFrameworksLibs_${VER}_${VS_PLATFORM}_arm64ec_2.zip"
         elif [[ "$ARCH" == "arm64" ]]; then
-            # Windows on ARM: native arm64 + arm64ec (x64-compat) for Win11 ARM
-            echo " VS packages: arm64 + arm64ec (Windows on ARM host)"
-            PKGS="openFrameworksLibs_${VER}_${VS_PLATFORM}_arm64_1.zip \
+            # Windows on ARM: native arm64 + arm64ec + x64 (x64-compat / VS x64 tools)
+            echo " VS packages: 64 + arm64 + arm64ec (arm64 also downloads 64 for now)"
+            PKGS="openFrameworksLibs_${VER}_${VS_PLATFORM}_64_1.zip \
+                  openFrameworksLibs_${VER}_${VS_PLATFORM}_64_2.zip \
+                  openFrameworksLibs_${VER}_${VS_PLATFORM}_arm64_1.zip \
                   openFrameworksLibs_${VER}_${VS_PLATFORM}_arm64_2.zip \
                   openFrameworksLibs_${VER}_${VS_PLATFORM}_arm64ec_1.zip \
                   openFrameworksLibs_${VER}_${VS_PLATFORM}_arm64ec_2.zip"
@@ -377,6 +605,16 @@ elif [ "$PLATFORM" == "vs" ]; then
                   openFrameworksLibs_${VER}_${PLATFORM}_64_2.zip \
                   openFrameworksLibs_${VER}_${PLATFORM}_64_3.zip \
                   openFrameworksLibs_${VER}_${PLATFORM}_64_4.zip"
+        elif [[ "$ARCH" == "arm64" ]]; then
+            echo " VS packages: 64 + arm64 (arm64 also downloads 64 for now)"
+            PKGS="openFrameworksLibs_${VER}_${PLATFORM}_64_1.zip \
+                  openFrameworksLibs_${VER}_${PLATFORM}_64_2.zip \
+                  openFrameworksLibs_${VER}_${PLATFORM}_64_3.zip \
+                  openFrameworksLibs_${VER}_${PLATFORM}_64_4.zip \
+                  openFrameworksLibs_${VER}_${PLATFORM}_arm64_1.zip \
+                  openFrameworksLibs_${VER}_${PLATFORM}_arm64_2.zip \
+                  openFrameworksLibs_${VER}_${PLATFORM}_arm64_3.zip \
+                  openFrameworksLibs_${VER}_${PLATFORM}_arm64_4.zip"
         else
             PKGS="openFrameworksLibs_${VER}_${PLATFORM}_${ARCH}_1.zip \
                   openFrameworksLibs_${VER}_${PLATFORM}_${ARCH}_2.zip \
@@ -413,7 +651,7 @@ elif [ "$PLATFORM" == "emscripten" ]; then
     fi
 else # Linux
     if [[ $BLEEDING_EDGE = 1 ]] ; then
-        PKGS="openFrameworksLibs_${VER}_${PLATFORM}${ARCH}.tar.bz2"
+        PKGS="openFrameworksLibs_${VER}_${PLATFORM}_${ARCH}${OPT}.tar.bz2"
     else
         PKGS="openFrameworksLibs_${VER}_${PLATFORM}${ARCH}.tar.bz2"
     fi
@@ -449,7 +687,18 @@ fi
 writeVerifyState "$(pwd)" "$REPO" "$PLATFORM" "$ARCH"
 
 cd ../ # back to libs
-libs=("cairo" "curl" "FreeImage" "brotli" "fmod" "freetype" "glew" "glfw" "json" "libpng" "openssl" "pixman" "poco" "rtAudio" "tess2" "uriparser" "utf8" "videoInput" "zlib" "opencv" "ippicv" "assimp" "libxml2" "svgtiny" "fmt")
+VALID=1
+for PKG in $PKGS; do
+    echo " Validate libraries [${PLATFORM}] from [$PKG]"
+    if [ ! -f "download/$PKG" ]; then
+        echo "Error: File 'download/$PKG' does not exist!" >&2
+        VALID=0
+    fi
+done
+if [ $VALID -eq 0 ]; then
+    exit 71
+fi
+libs=("cairo" "curl" "FreeImage" "brotli" "fmod" "freetype" "glew" "glfw" "glm" "json" "kiss" "libpng" "openssl" "pixman" "poco" "rtAudio" "tess2" "uriparser" "utf8" "videoInput" "zlib" "opencv" "ippicv" "assimp" "libxml2" "svgtiny" "fmt")
 
 # Resolve which lib/<name> folder this package uses.
 # Apple multi-target packages (macos, and ios/tvos/… wrappers that pass -p macos)
@@ -460,32 +709,61 @@ case "$PLATFORM" in
     ios|tvos|xros|catos|watchos|macos) LIB_PLATFORM_DIR="macos" ;;
 esac
 
+LOG_LIB_SUBPATH="$LIB_PLATFORM_DIR"
+LINUX_CANONICAL_LIB_SUBPATH=""
+LINUX_LEGACY_LIB_SUBPATH=""
+if [ "$PLATFORM" == "linux" ]; then
+    LINUX_CANONICAL_LIB_SUBPATH=$(linux_canonical_lib_subpath "$ARCH")
+    LINUX_LEGACY_LIB_SUBPATH=$(linux_legacy_lib_subpath "$ARCH")
+    if [ -n "$LINUX_CANONICAL_LIB_SUBPATH" ]; then
+        LOG_LIB_SUBPATH="$LINUX_CANONICAL_LIB_SUBPATH"
+    fi
+fi
+
 if [ $OVERWRITE -eq 1 ]; then
     echo " "
     if [ $FULL_CLEAN -eq 1 ]; then
         echo " Full-clean - Removing platform libs + shared include/bin for [$PLATFORM]"
     else
-        echo " Platform-clean - Removing prior libs only under lib/[$LIB_PLATFORM_DIR] (other platforms kept)"
+        echo " Platform-clean - core libs → lib/$LOG_LIB_SUBPATH (other platforms kept)"
     fi
     for ((i=0;i<${#libs[@]};++i)); do
-        if [ -e "${libs[i]}/lib/$LIB_PLATFORM_DIR" ]; then
-            echo "  Removing: [${libs[i]}/lib/$LIB_PLATFORM_DIR]"
+        CORE_HAD_BINARIES=0
+        if [ "$PLATFORM" == "linux" ] && [ -n "$LINUX_CANONICAL_LIB_SUBPATH" ]; then
+            if [ -e "${libs[i]}/lib/$LINUX_CANONICAL_LIB_SUBPATH" ]; then
+                echo " Platform-clean - core: [${libs[i]}] → lib/$LINUX_CANONICAL_LIB_SUBPATH"
+                echo "   Remove binaries: [${libs[i]}/lib/$LINUX_CANONICAL_LIB_SUBPATH]"
+                rm -rf "${libs[i]}/lib/$LINUX_CANONICAL_LIB_SUBPATH"
+                CORE_HAD_BINARIES=1
+            fi
+        elif [ -e "${libs[i]}/lib/$LIB_PLATFORM_DIR" ]; then
+            echo " Platform-clean - core: [${libs[i]}] → lib/$LIB_PLATFORM_DIR"
+            echo "   Remove binaries: [${libs[i]}/lib/$LIB_PLATFORM_DIR]"
             rm -rf "${libs[i]}/lib/$LIB_PLATFORM_DIR"
+            CORE_HAD_BINARIES=1
+        fi
+        if [ -n "$LINUX_LEGACY_LIB_SUBPATH" ] && [ -e "${libs[i]}/lib/$LINUX_LEGACY_LIB_SUBPATH" ]; then
+            if [ $CORE_HAD_BINARIES -eq 0 ]; then
+                echo " Platform-clean - core: [${libs[i]}] → lib/$LINUX_LEGACY_LIB_SUBPATH"
+            fi
+            echo "   Remove binaries: [${libs[i]}/lib/$LINUX_LEGACY_LIB_SUBPATH]"
+            rm -rf "${libs[i]}/lib/$LINUX_LEGACY_LIB_SUBPATH"
         fi
         # Shared include/ + vs|msys2 bin/ only with --full-clean (not for multi-platform installs)
         if [ $FULL_CLEAN -eq 1 ]; then
             if [ "$PLATFORM" == "msys2" ] || [ "$PLATFORM" == "vs" ]; then
                 if [ -e "${libs[i]}/bin" ]; then
-                    echo "  Removing: [${libs[i]}/bin]"
+                    echo "   Remove binaries: [${libs[i]}/bin]"
                     rm -rf "${libs[i]}/bin"
                 fi
             fi
             if [ -e "${libs[i]}/include" ]; then
-                echo "  Removing: [${libs[i]}/include]"
+                echo "   Remove include: [${libs[i]}/include]"
                 rm -rf "${libs[i]}/include"
             fi
         fi
     done
+    echo "   ------ "
 fi
 
 # osx host packages may also refresh the desktop slice inside lib/macos/*.xcframework
@@ -521,24 +799,46 @@ fi
 echo " ------ "
 for PKG in $PKGS; do
     echo " Uncompressing libraries [${PLATFORM}] from [$PKG]"
+    if [ ! -f "download/$PKG" ]; then
+        echo "Error: File 'download/$PKG' does not exist!" >&2
+        exit 71
+    fi
+
     if [ "$PLATFORM" == "msys2" ] || [ "$PLATFORM" == "vs" ]; then
         unzip -qo download/$PKG
         # rm -r download/$PKG
     else
 
-        # FIXME: this if can be removed after this is fixed properly on apothecary, see:
-        # https://github.com/openframeworks/openFrameworks/issues/8206
-
-        if [ "$PLATFORM" == "linux" ] && { [ "$ARCH" == "aarch64" ] || [ "$ARCH" == "armv7l" ] || [ "$ARCH" == "armv6l" ]; }; then
-            echo "tar xjfv download/$PKG  --strip-components=1"
-            tar xf download/$PKG --strip-components=1 > /dev/null 2>&1
-        else
-            tar xf download/$PKG > /dev/null 2>&1
-        fi
+        # Apothecary linux2026 archives unpack as lib/<name>/lib/linux/<arch>/.
+        tar xf download/$PKG > /dev/null 2>&1
         # rm -r download/$PKG
     fi
     echo " Deployed libraries from [download/$PKG] to [/libs]"
 done
+
+echo "   ------ "
+for ((i=0;i<${#libs[@]};++i)); do
+    if [ -e "${libs[i]}" ]; then
+        CORE_BIN_PATH=""
+        if [ -n "$LINUX_CANONICAL_LIB_SUBPATH" ] && [ -e "${libs[i]}/lib/$LINUX_CANONICAL_LIB_SUBPATH" ]; then
+            CORE_BIN_PATH="lib/$LINUX_CANONICAL_LIB_SUBPATH"
+        elif [ -e "${libs[i]}/lib/$LIB_PLATFORM_DIR" ]; then
+            CORE_BIN_PATH="lib/$LIB_PLATFORM_DIR"
+        elif [ -n "$LINUX_LEGACY_LIB_SUBPATH" ] && [ -e "${libs[i]}/lib/$LINUX_LEGACY_LIB_SUBPATH" ]; then
+            CORE_BIN_PATH="lib/$LINUX_LEGACY_LIB_SUBPATH"
+        fi
+        if [ -n "$CORE_BIN_PATH" ]; then
+            echo "   Deploying [${libs[i]}] to [libs/${libs[i]}] → $CORE_BIN_PATH"
+        else
+            echo "   Deploying [${libs[i]}] to [libs/${libs[i]}]"
+        fi
+    fi
+done
+
+# Apothecary linux2026 packages already use lib/linux/<arch>. Promote any
+# leftover pre-0.13 flat folders (linux64, linuxarmv6l, …) to that layout.
+normalize_linux_lib_paths
+reindexMsys2StaticLibs
 
 if [ "$PLATFORM" == "osx" ]; then
     echo " "

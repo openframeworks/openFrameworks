@@ -10,6 +10,8 @@
 #if defined(TARGET_LINUX) && !defined(TARGET_RASPBERRY_PI_LEGACY)
 typedef struct _XIM * XIM;
 typedef struct _XIC * XIC;
+typedef struct wl_display wl_display;
+typedef struct wl_surface wl_surface;
 #endif
 
 class ofBaseApp;
@@ -171,6 +173,12 @@ public:
 
 	void setWindowIcon(const of::filesystem::path & path);
 	void setWindowIcon(const ofPixels & iconPixels);
+
+	wl_display * getWaylandDisplay();
+	wl_surface * getWaylandSurface();
+
+	// Helper to detect the current backend
+	bool isUsingWayland() const;
 #endif
 
 #if defined(TARGET_LINUX) && !defined(TARGET_OPENGLES)
@@ -214,6 +222,7 @@ private:
 #if defined(TARGET_LINUX) && !defined(TARGET_RASPBERRY_PI_LEGACY)
 	XIM xim;
 	XIC xic;
+	bool usingWayland;
 #endif
 
 	std::unique_ptr<ofCoreEvents> coreEvents;

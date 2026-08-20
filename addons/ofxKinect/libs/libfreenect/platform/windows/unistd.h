@@ -26,6 +26,8 @@
 
 #pragma once
 
+#ifdef _WIN32
+
 #include <stdint.h>
 #include <windows.h>
 
@@ -53,3 +55,4 @@ static void usleep(__int64 usec)
 	WaitForSingleObject(timer, INFINITE);
 	CloseHandle(timer);
 }
+#endif

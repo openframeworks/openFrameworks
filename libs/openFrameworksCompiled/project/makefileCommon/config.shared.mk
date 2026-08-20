@@ -31,7 +31,7 @@ PLATFORM_OS ?= $(shell uname -s)
 HOST_OS=$(shell uname -s)
 
 ifdef MAKEFILE_DEBUG
-    $(info HOST_OS=${HOST_OS})
+	$(info HOST_OS=${HOST_OS})
 endif
 
 ifneq (,$(findstring MSYS_NT,$(HOST_OS)))
@@ -39,6 +39,18 @@ ifneq (,$(findstring MSYS_NT,$(HOST_OS)))
 else
 	FIND=find
 endif
+
+RPI_DETECTED := $(shell \
+	if [ -f /proc/device-tree/model ]; then file=/proc/device-tree/model; \
+	elif [ -f /sys/firmware/devicetree/base/model ]; then file=/sys/firmware/devicetree/base/model; \
+	else file=""; fi; \
+	if [ -n "$$file" ] && grep -qi 'Raspberry' $$file; then echo yes; else echo no; fi)
+
+JETSON_DETECTED := $(shell \
+	if [ -f /proc/device-tree/model ]; then file=/proc/device-tree/model; \
+	elif [ -f /sys/firmware/devicetree/base/model ]; then file=/sys/firmware/devicetree/base/model; \
+	else file=""; fi; \
+	if [ -n "$$file" ] && grep -qi -e 'Jetson' -e 'Tegra' $$file; then echo yes; else echo no; fi)
 
 #check for Raspbian as armv7l needs to use armv6l architecture
 ifeq ($(wildcard $(RPI_ROOT)/etc/*-release), /etc/os-release)
@@ -66,37 +78,97 @@ else
 			CROSS_COMPILING=0
 		endif
 	endif
+	# Generic ARM Linux (uname -m = aarch64) uses the linux/arm64 artifact.
+	# Raspberry Pi 64-bit keeps the distinct linux/aarch64 artifact.
+	# RPI_ROOT is set by CI cross-compiles; RPI_DETECTED is set on Pi hardware.
+	ifeq ($(PLATFORM_OS),Linux)
+		ifeq ($(PLATFORM_ARCH),aarch64)
+			ifneq ($(RPI_DETECTED),yes)
+				ifeq ($(strip $(RPI_ROOT)),)
+					override PLATFORM_ARCH=arm64
+				endif
+			endif
+		endif
+	endif
 endif
 
 
 ifdef MAKEFILE_DEBUG
-    $(info PLATFORM_ARCH=$(PLATFORM_ARCH))
-    $(info PLATFORM_OS=$(PLATFORM_OS))
-    $(info HOST_ARCH=$(HOST_ARCH))
-    $(info HOST_OS=$(HOST_OS))
-    $(info CROSS_COMPILING=$(CROSS_COMPILING))
-    $(info PLATFORM_VARIANT=$(PLATFORM_VARIANT))
-    $(info IS_RASPBIAN=$(IS_RASPBIAN))
+	$(info PLATFORM_ARCH=$(PLATFORM_ARCH))
+	$(info PLATFORM_OS=$(PLATFORM_OS))
+	$(info HOST_ARCH=$(HOST_ARCH))
+	$(info HOST_OS=$(HOST_OS))
+	$(info CROSS_COMPILING=$(CROSS_COMPILING))
+	$(info PLATFORM_VARIANT=$(PLATFORM_VARIANT))
+	$(info IS_RASPBIAN=$(IS_RASPBIAN))
+	$(info JETSON_DETECTED=$(JETSON_DETECTED))
+	$(info RPI_DETECTED=$(RPI_DETECTED))
+	$(info RPI_ROOT=$(RPI_ROOT))
+endif
+
+# Raspberry Pi: Pi hardware, or the explicit RPi arch names used by apothecary
+# (aarch64 / armv6l / armv7l), including CI CROSS_COMPILING. Generic ARM
+# desktop stays linux/arm64 after the aarch64->arm64 remap above.
+USE_RPI_LIB_PATHS :=
+ifneq ($(filter $(PLATFORM_ARCH),armv6l armv7l armv8l aarch64),)
+	USE_RPI_LIB_PATHS := yes
+endif
+ifeq ($(RPI_DETECTED),yes)
+	USE_RPI_LIB_PATHS := yes
+endif
+ifneq ($(strip $(RPI_ROOT)),)
+	USE_RPI_LIB_PATHS := yes
 endif
 
 # if not defined, construct the default PLATFORM_LIB_SUBPATH
 ifndef PLATFORM_LIB_SUBPATH
 	# determine from the arch
 	ifeq ($(PLATFORM_OS),Linux)
-		ifeq ($(PLATFORM_ARCH),x86_64)
-			PLATFORM_LIB_SUBPATH=linux64
-		else ifeq ($(PLATFORM_ARCH),armv6l)
-			PLATFORM_LIB_SUBPATH=linuxarmv6l
-		else ifeq ($(PLATFORM_ARCH),armv7l)
-			PLATFORM_LIB_SUBPATH=linuxarmv7l
-		else ifeq ($(PLATFORM_ARCH),i386)
-			PLATFORM_LIB_SUBPATH=linux
-		else ifeq ($(PLATFORM_ARCH),i686)
-			PLATFORM_LIB_SUBPATH=linux
-		else ifeq ($(PLATFORM_ARCH),aarch64)
-			PLATFORM_LIB_SUBPATH=linuxaarch64
+		ifeq ($(USE_RPI_LIB_PATHS),yes)
+			PLATFORM_CONFIG_SUBPATH=linux/rasbian
+			ifeq ($(PLATFORM_ARCH),armv6l)
+				PLATFORM_LIB_SUBPATH=linux/armv6l
+				PLATFORM_CONFIG_ID=linuxarmv6l
+			else ifeq ($(PLATFORM_ARCH),armv7l)
+				PLATFORM_LIB_SUBPATH=linux/armv7l
+				PLATFORM_CONFIG_ID=linuxarmv7l
+			else ifeq ($(PLATFORM_ARCH),armv8l)
+				PLATFORM_LIB_SUBPATH=linux/armv8l
+				PLATFORM_CONFIG_ID=linuxarmv8l
+			else ifeq ($(PLATFORM_ARCH),aarch64)
+				PLATFORM_LIB_SUBPATH=linux/aarch64
+				PLATFORM_CONFIG_ID=linuxaarch64
+			else ifeq ($(PLATFORM_ARCH),arm64)
+				PLATFORM_LIB_SUBPATH=linux/aarch64
+				PLATFORM_CONFIG_ID=linuxaarch64
+			else
+$(error This makefile does not support Raspberry Pi architecture $(PLATFORM_ARCH))
+			endif
+		else ifeq ($(JETSON_DETECTED),yes)
+			PLATFORM_LIB_SUBPATH=linux/jetson
+			PLATFORM_CONFIG_SUBPATH=linux/arm64
+			PLATFORM_CONFIG_ID=linuxarm64
 		else
-			$(error This makefile does not support your architecture $(PLATFORM_ARCH))
+			ifeq ($(PLATFORM_ARCH),x86_64)
+				PLATFORM_LIB_SUBPATH=linux/64
+				PLATFORM_CONFIG_SUBPATH=linux/64
+				PLATFORM_CONFIG_ID=linux64
+			else ifeq ($(PLATFORM_ARCH),64)
+				PLATFORM_LIB_SUBPATH=linux/64
+				PLATFORM_CONFIG_SUBPATH=linux/64
+				PLATFORM_CONFIG_ID=linux64
+			else ifeq ($(PLATFORM_ARCH),arm64)
+				PLATFORM_LIB_SUBPATH=linux/arm64
+				PLATFORM_CONFIG_SUBPATH=linux/arm64
+				PLATFORM_CONFIG_ID=linuxarm64
+			else ifeq ($(PLATFORM_ARCH),aarch64)
+				PLATFORM_LIB_SUBPATH=linux/arm64
+				PLATFORM_CONFIG_SUBPATH=linux/arm64
+				PLATFORM_CONFIG_ID=linuxarm64
+			else
+				PLATFORM_LIB_SUBPATH=linux
+$(error This makefile does not support your architecture $(PLATFORM_ARCH))
+			endif
 		endif
 		SHARED_LIB_EXTENSION=so
 	else ifneq (,$(findstring MINGW32_NT,$(PLATFORM_OS)))
@@ -118,7 +190,26 @@ ifndef PLATFORM_LIB_SUBPATH
 		PLATFORM_LIB_SUBPATH=emscripten
 		SHARED_LIB_EXTENSION=so
 	else
-		$(error This makefile does not support your operating system)
+$(error This makefile does not support your operating system)
+	endif
+endif
+
+PLATFORM_CONFIG_SUBPATH ?= $(PLATFORM_LIB_SUBPATH)
+PLATFORM_CONFIG_ID ?= $(subst /,,$(PLATFORM_CONFIG_SUBPATH))
+
+# Canonical library paths follow Apothecary's OS/architecture layout. These
+# aliases keep existing addons with pre-0.13 flat Linux paths working.
+ifeq ($(PLATFORM_OS),Linux)
+	ifeq ($(PLATFORM_LIB_SUBPATH),linux/64)
+		PLATFORM_LEGACY_LIB_SUBPATHS ?= linux64
+	else ifeq ($(PLATFORM_LIB_SUBPATH),linux/armv6l)
+		PLATFORM_LEGACY_LIB_SUBPATHS ?= linuxarmv6l
+	else ifeq ($(PLATFORM_LIB_SUBPATH),linux/armv7l)
+		PLATFORM_LEGACY_LIB_SUBPATHS ?= linuxarmv7l
+	else ifeq ($(PLATFORM_LIB_SUBPATH),linux/aarch64)
+		PLATFORM_LEGACY_LIB_SUBPATHS ?= linuxaarch64
+	else ifeq ($(PLATFORM_LIB_SUBPATH),linux/arm64)
+		PLATFORM_LEGACY_LIB_SUBPATHS ?= linuxarm64 linuxaarch64
 	endif
 endif
 
@@ -135,11 +226,14 @@ endif
 
 # if desired, print the variables
 ifdef MAKEFILE_DEBUG
-    $(info =================== config.mk platform detection ================)
-    $(info PLATFORM_ARCH=$(PLATFORM_ARCH))
-    $(info PLATFORM_OS=$(PLATFORM_OS))
-    $(info PLATFORM_VARIANT=$(PLATFORM_VARIANT))
-    $(info PLATFORM_LIB_SUBPATH=$(PLATFORM_LIB_SUBPATH))
+	$(info =================== config.mk platform detection ================)
+	$(info PLATFORM_ARCH=$(PLATFORM_ARCH))
+	$(info PLATFORM_OS=$(PLATFORM_OS))
+	$(info PLATFORM_VARIANT=$(PLATFORM_VARIANT))
+	$(info PLATFORM_LIB_SUBPATH=$(PLATFORM_LIB_SUBPATH))
+	$(info PLATFORM_CONFIG_SUBPATH=$(PLATFORM_CONFIG_SUBPATH))
+	$(info PLATFORM_CONFIG_ID=$(PLATFORM_CONFIG_ID))
+	$(info PLATFORM_LEGACY_LIB_SUBPATHS=$(PLATFORM_LEGACY_LIB_SUBPATHS))
 endif
 
 
@@ -190,7 +284,7 @@ ifndef OF_SHARED_MAKEFILES_PATH
 endif
 
 ifdef OF_LIBS_OF_COMPILED_PROJECT_PATH
-	OF_PLATFORM_MAKEFILES=$(OF_LIBS_OF_COMPILED_PROJECT_PATH)/$(PLATFORM_LIB_SUBPATH)
+	OF_PLATFORM_MAKEFILES=$(OF_LIBS_OF_COMPILED_PROJECT_PATH)/$(PLATFORM_CONFIG_SUBPATH)
 else
 	$(error OF_LIBS_OF_COMPILED_PATH is not defined)
 endif
@@ -202,22 +296,23 @@ endif
 ################################################################################
 # print debug information if needed
 ifdef MAKEFILE_DEBUG
-    $(info =================== config.mk paths =============================)
-    $(info OF_ADDONS_PATH=$(OF_ADDONS_PATH))
-    $(info OF_EXAMPLES_PATH=$(OF_EXAMPLES_PATH))
-    $(info OF_APPS_PATH=$(OF_APPS_PATH))
-    $(info OF_LIBS_PATH=$(OF_LIBS_PATH))
-    $(info OF_LIBS_OPENFRAMEWORKS_PATH=$(OF_LIBS_OPENFRAMEWORKS_PATH))
-    $(info OF_LIBS_OF_COMPILED_PATH=$(OF_LIBS_OF_COMPILED_PATH))
-    $(info OF_LIBS_OF_COMPILED_PROJECT_PATH=$(OF_LIBS_OF_COMPILED_PROJECT_PATH))
-    $(info OF_SHARED_MAKEFILES_PATH=$(OF_SHARED_MAKEFILES_PATH))
-    $(info OF_PLATFORM_MAKEFILES=$(OF_PLATFORM_MAKEFILES))
-    $(info OF_CORE_LIB_PATH=$(OF_CORE_LIB_PATH))
+	$(info =================== config.mk paths =============================)
+	$(info OF_ADDONS_PATH=$(OF_ADDONS_PATH))
+	$(info OF_EXAMPLES_PATH=$(OF_EXAMPLES_PATH))
+	$(info OF_APPS_PATH=$(OF_APPS_PATH))
+	$(info OF_LIBS_PATH=$(OF_LIBS_PATH))
+	$(info OF_LIBS_OPENFRAMEWORKS_PATH=$(OF_LIBS_OPENFRAMEWORKS_PATH))
+	$(info OF_LIBS_OF_COMPILED_PATH=$(OF_LIBS_OF_COMPILED_PATH))
+	$(info OF_LIBS_OF_COMPILED_PROJECT_PATH=$(OF_LIBS_OF_COMPILED_PROJECT_PATH))
+	$(info OF_SHARED_MAKEFILES_PATH=$(OF_SHARED_MAKEFILES_PATH))
+	$(info OF_PLATFORM_MAKEFILES=$(OF_PLATFORM_MAKEFILES))
+	$(info OF_CORE_LIB_PATH=$(OF_CORE_LIB_PATH))
+	$(info PLATFORM_LIB_SUBPATH=$(PLATFORM_LIB_SUBPATH))
+	$(info OF_LIBS_OF_COMPILED_PROJECT_PATH=$(OF_LIBS_OF_COMPILED_PROJECT_PATH))
 endif
 
-
-ifeq ($(wildcard $(OF_LIBS_OF_COMPILED_PROJECT_PATH)/$(PLATFORM_LIB_SUBPATH)),)
-$(error This package doesn't support your platform, $(OF_LIBS_OF_COMPILED_PROJECT_PATH) probably you downloaded the wrong package?)
+ifeq ($(wildcard $(OF_LIBS_OF_COMPILED_PROJECT_PATH)/$(PLATFORM_CONFIG_SUBPATH)),)
+$(error This package doesn't support your platform, $(OF_LIBS_OF_COMPILED_PROJECT_PATH)/$(PLATFORM_CONFIG_SUBPATH) probably you downloaded the wrong package?)
 endif
 
 # generate a list of valid core platform variants from the files in the platform makefiles directory
@@ -230,10 +325,12 @@ ifeq ($(findstring $(PLATFORM_VARIANT),$(AVAILABLE_PLATFORM_VARIANTS)),)
 endif
 
 # include the platform specific user and platform configuration files
-include $(OF_PLATFORM_MAKEFILES)/config.$(PLATFORM_LIB_SUBPATH).$(PLATFORM_VARIANT).mk
+include $(OF_PLATFORM_MAKEFILES)/config.$(PLATFORM_CONFIG_ID).$(PLATFORM_VARIANT).mk
+
 
 ifdef ABI_PATH
 	ABI_LIB_SUBPATH=$(PLATFORM_LIB_SUBPATH)/$(strip $(ABI_PATH))
+	ABI_LEGACY_LIB_SUBPATHS=$(addsuffix /$(strip $(ABI_PATH)),$(PLATFORM_LEGACY_LIB_SUBPATHS))
 else
 	#hack to get makefiles working again
 	ifeq ($(PLATFORM_LIB_SUBPATH),osx)
@@ -241,7 +338,31 @@ else
 	else
 	ABI_LIB_SUBPATH=$(PLATFORM_LIB_SUBPATH)
 	endif
+	ABI_LEGACY_LIB_SUBPATHS=$(PLATFORM_LEGACY_LIB_SUBPATHS)
 endif
+
+# Canonical path first, then pre-0.13 flat aliases (linux/64 then linux64).
+# Used for core third-party libs, addon libs, and addon_config.mk section keys.
+ABI_LIB_SUBPATHS=$(strip $(ABI_LIB_SUBPATH) $(ABI_LEGACY_LIB_SUBPATHS))
+ifeq ($(PLATFORM_LIB_SUBPATH),msys2)
+	# Apothecary also writes lib/msys2/<arch>/ (e.g. videoInput).
+	ifeq ($(HOST_ARCH),aarch64)
+		ABI_LIB_SUBPATHS=$(strip msys2/aarch64 msys2/arm64 $(ABI_LIB_SUBPATHS))
+	else
+		ABI_LIB_SUBPATHS=$(strip msys2/x86_64 $(ABI_LIB_SUBPATHS))
+	endif
+endif
+ifeq ($(PLATFORM_OS),Linux)
+	PLATFORM_ADDON_KEYS=$(strip linux $(ABI_LIB_SUBPATHS))
+else
+	PLATFORM_ADDON_KEYS=$(strip $(ABI_LIB_SUBPATHS))
+endif
+
+# $1 = library root (libs/tess2 or addons/ofxSvg/libs/svgtiny).
+# First existing lib/<subpath> wins so old flat folders still link.
+define find_platform_lib_path
+$(firstword $(foreach subpath,$(ABI_LIB_SUBPATHS),$(wildcard $1/lib/$(subpath))))
+endef
 
 PLATFORM_PKG_CONFIG ?= pkg-config
 
@@ -301,14 +422,14 @@ CORE_PKG_CONFIG_LIBRARIES += $(PROJECT_PKG_CONFIG_LIBRARIES)
 ifneq ($(strip $(CORE_PKG_CONFIG_LIBRARIES)),)
 ifneq ($(strip $(PKG_CONFIG_LIBDIR)),)
 ifdef MAKEFILE_DEBUG
-    $(info checking pkg-config libraries: $(CORE_PKG_CONFIG_LIBRARIES))
-    $(info with PKG_CONFIG_LIBDIR=$(PKG_CONFIG_LIBDIR))
+	$(info checking pkg-config libraries: $(CORE_PKG_CONFIG_LIBRARIES))
+	$(info with PKG_CONFIG_LIBDIR=$(PKG_CONFIG_LIBDIR))
 endif
 FAILED_PKG=$(shell export PKG_CONFIG_LIBDIR=$(PKG_CONFIG_LIBDIR); for pkg in $(CORE_PKG_CONFIG_LIBRARIES); do $(PLATFORM_PKG_CONFIG) $$pkg --cflags > /dev/null; if [ $$? -ne 0 ]; then echo $$pkg; return; fi; done; echo 0)
 else
 ifdef MAKEFILE_DEBUG
-    $(info checking pkg-config libraries: $(CORE_PKG_CONFIG_LIBRARIES))
-    $(info with PKG_CONFIG_LIBDIR=$(PKG_CONFIG_LIBDIR))
+	$(info checking pkg-config libraries: $(CORE_PKG_CONFIG_LIBRARIES))
+	$(info with PKG_CONFIG_LIBDIR=$(PKG_CONFIG_LIBDIR))
 endif
 FAILED_PKG=$(shell for pkg in $(CORE_PKG_CONFIG_LIBRARIES); do $(PLATFORM_PKG_CONFIG) $$pkg --cflags > /dev/null; if [ $$? -ne 0 ]; then echo $$pkg; return; fi; done; echo 0)
 endif
@@ -360,22 +481,22 @@ OF_CORE_HEADER_FILES=$(filter-out $(CORE_EXCLUSIONS),$(shell $(FIND) $(OF_CORE_S
 # DEBUG INFO
 ################################################################################
 ifdef MAKEFILE_DEBUG
-    $(info ========================= config.mk flags ========================)
-    $(info ---OF_CORE_DEFINES_CFLAGS---)
-    $(foreach v, $(OF_CORE_DEFINES_CFLAGS),$(info $(v)))
+	$(info ========================= config.mk flags ========================)
+	$(info ---OF_CORE_DEFINES_CFLAGS---)
+	$(foreach v, $(OF_CORE_DEFINES_CFLAGS),$(info $(v)))
 
-    $(info ---OF_CORE_INCLUDES_CFLAGS---)
-    $(foreach v, $(OF_CORE_INCLUDES_CFLAGS),$(info $(v)))
+	$(info ---OF_CORE_INCLUDES_CFLAGS---)
+	$(foreach v, $(OF_CORE_INCLUDES_CFLAGS),$(info $(v)))
 
-    $(info ---OF_CORE_FRAMEWORKS_CFLAGS---)
-    $(foreach v, $(OF_CORE_FRAMEWORKS_CFLAGS),$(info $(v)))
+	$(info ---OF_CORE_FRAMEWORKS_CFLAGS---)
+	$(foreach v, $(OF_CORE_FRAMEWORKS_CFLAGS),$(info $(v)))
 
-    $(info ---OF_CORE_SOURCE_FILES---)
-    $(foreach v, $(OF_CORE_SOURCE_FILES),$(info $(v)))
+	$(info ---OF_CORE_SOURCE_FILES---)
+	$(foreach v, $(OF_CORE_SOURCE_FILES),$(info $(v)))
 
-    $(info ---OF_CORE_HEADER_FILES---)
-    $(foreach v, $(OF_CORE_HEADER_FILES),$(info $(v)))
+	$(info ---OF_CORE_HEADER_FILES---)
+	$(foreach v, $(OF_CORE_HEADER_FILES),$(info $(v)))
 
-    $(info ---PLATFORM_CORE_EXCLUSIONS---)
-    $(foreach v, $(PLATFORM_CORE_EXCLUSIONS),$(info $(v)))
+	$(info ---PLATFORM_CORE_EXCLUSIONS---)
+	$(foreach v, $(PLATFORM_CORE_EXCLUSIONS),$(info $(v)))
 endif
