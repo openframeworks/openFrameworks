@@ -92,6 +92,7 @@ jobs:
             unzip
             make
             pactoys
+            binutils
           # lld
           # gcc:p gdb:p zlib:p poco:p pkgconf:p harfbuzz:p ntldd-git:p
           # boost:p tools:p
