@@ -344,6 +344,14 @@ endif
 # Canonical path first, then pre-0.13 flat aliases (linux/64 then linux64).
 # Used for core third-party libs, addon libs, and addon_config.mk section keys.
 ABI_LIB_SUBPATHS=$(strip $(ABI_LIB_SUBPATH) $(ABI_LEGACY_LIB_SUBPATHS))
+ifeq ($(PLATFORM_LIB_SUBPATH),msys2)
+	# Apothecary also writes lib/msys2/<arch>/ (e.g. videoInput).
+	ifeq ($(HOST_ARCH),aarch64)
+		ABI_LIB_SUBPATHS=$(strip msys2/aarch64 msys2/arm64 $(ABI_LIB_SUBPATHS))
+	else
+		ABI_LIB_SUBPATHS=$(strip msys2/x86_64 $(ABI_LIB_SUBPATHS))
+	endif
+endif
 ifeq ($(PLATFORM_OS),Linux)
 	PLATFORM_ADDON_KEYS=$(strip linux $(ABI_LIB_SUBPATHS))
 else
