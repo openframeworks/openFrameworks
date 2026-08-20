@@ -187,23 +187,90 @@ normalize_linux_lib_paths(){
     fi
 }
 
+# Prefer binutils/gcc-ar. clang64's ar is llvm-ar, which can write the mixed
+# GNU/MSVC index that MinGW ld and lld reject ("unknown file type").
+find_gnu_ar(){
+    local c path
+    for c in \
+        x86_64-w64-mingw32-gcc-ar \
+        x86_64-w64-mingw32-ar \
+        aarch64-w64-mingw32-gcc-ar \
+        aarch64-w64-mingw32-ar \
+        gcc-ar \
+        /usr/bin/ar \
+        ar
+    do
+        if command -v "$c" >/dev/null 2>&1; then
+            path=$(command -v "$c")
+            if "$path" --version 2>/dev/null | grep -qi llvm; then
+                continue
+            fi
+            echo "$path"
+            return 0
+        fi
+    done
+    return 1
+}
+
+find_gnu_ranlib(){
+    local c path
+    for c in \
+        x86_64-w64-mingw32-gcc-ranlib \
+        x86_64-w64-mingw32-ranlib \
+        aarch64-w64-mingw32-gcc-ranlib \
+        aarch64-w64-mingw32-ranlib \
+        gcc-ranlib \
+        /usr/bin/ranlib \
+        ranlib
+    do
+        if command -v "$c" >/dev/null 2>&1; then
+            path=$(command -v "$c")
+            if "$path" --version 2>/dev/null | grep -qi llvm; then
+                continue
+            fi
+            echo "$path"
+            return 0
+        fi
+    done
+    return 1
+}
+
+find_llvm_ar(){
+    local c
+    for c in llvm-ar ar; do
+        if command -v "$c" >/dev/null 2>&1; then
+            local path
+            path=$(command -v "$c")
+            if "$path" --version 2>/dev/null | grep -qi llvm; then
+                echo "$path"
+                return 0
+            fi
+        fi
+    done
+    return 1
+}
+
 # Latest apothecary msys2 archives ship both a GNU and an MSVC symbol index.
 # MinGW ld then reports "file format not recognized; treating as linker script"
-# and lld reports "unknown file type". Rebuild with GNU ar/ranlib.
+# and lld reports "unknown file type". Rebuild as a GNU archive.
 reindex_msys2_static_libs(){
     if [ "$PLATFORM" != "msys2" ]; then
         return
     fi
 
-    local ar_bin ranlib_bin archive tmpdir
-    ar_bin=$(command -v ar || true)
-    ranlib_bin=$(command -v ranlib || true)
-    if [ -z "$ar_bin" ]; then
+    local ar_bin ranlib_bin ar_kind archive
+    ar_kind=gnu
+    ranlib_bin=""
+    if ar_bin=$(find_gnu_ar); then
+        ranlib_bin=$(find_gnu_ranlib || true)
+    elif ar_bin=$(find_llvm_ar); then
+        ar_kind=llvm
+    else
         echo " No ar on PATH; skip MSYS2 static-lib reindex"
         return
     fi
 
-    echo " Re-indexing MSYS2 static libraries with $(basename "$ar_bin") (GNU ld / lld)"
+    echo " Re-indexing MSYS2 static libraries with $(basename "$ar_bin") ($ar_kind, GNU ld / lld)"
     while IFS= read -r archive; do
         [ -n "$archive" ] || continue
         case "$archive" in
@@ -225,10 +292,15 @@ reindex_msys2_static_libs(){
                 echo "  skip [$archive] (no object members)"
                 exit 0
             fi
+            rm -f "$archive_abs"
             # shellcheck disable=SC2086
-            "$ar_bin" rcs "$archive_abs" $objs || exit 1
-            if [ -n "$ranlib_bin" ]; then
-                "$ranlib_bin" "$archive_abs" >/dev/null 2>&1 || true
+            if [ "$ar_kind" = llvm ]; then
+                "$ar_bin" --format=gnu rcs "$archive_abs" $objs || exit 1
+            else
+                "$ar_bin" rcs "$archive_abs" $objs || exit 1
+                if [ -n "$ranlib_bin" ]; then
+                    "$ranlib_bin" "$archive_abs" >/dev/null 2>&1 || true
+                fi
             fi
             echo "  reindexed [$archive]"
         ); then
