@@ -685,7 +685,7 @@ done
 if [ $VALID -eq 0 ]; then
     exit 71
 fi
-libs=("cairo" "curl" "FreeImage" "brotli" "fmod" "freetype" "glew" "glfw" "json" "libpng" "openssl" "pixman" "poco" "rtAudio" "tess2" "uriparser" "utf8" "videoInput" "zlib" "opencv" "ippicv" "assimp" "libxml2" "svgtiny" "fmt")
+libs=("cairo" "curl" "FreeImage" "brotli" "fmod" "freetype" "glew" "glfw" "glm" "json" "kiss" "libpng" "openssl" "pixman" "poco" "rtAudio" "tess2" "uriparser" "utf8" "videoInput" "zlib" "opencv" "ippicv" "assimp" "libxml2" "svgtiny" "fmt")
 
 # Resolve which lib/<name> folder this package uses.
 # Apple multi-target packages (macos, and ios/tvos/… wrappers that pass -p macos)
@@ -696,47 +696,61 @@ case "$PLATFORM" in
     ios|tvos|xros|catos|watchos|macos) LIB_PLATFORM_DIR="macos" ;;
 esac
 
+LOG_LIB_SUBPATH="$LIB_PLATFORM_DIR"
+LINUX_CANONICAL_LIB_SUBPATH=""
+LINUX_LEGACY_LIB_SUBPATH=""
+if [ "$PLATFORM" == "linux" ]; then
+    LINUX_CANONICAL_LIB_SUBPATH=$(linux_canonical_lib_subpath "$ARCH")
+    LINUX_LEGACY_LIB_SUBPATH=$(linux_legacy_lib_subpath "$ARCH")
+    if [ -n "$LINUX_CANONICAL_LIB_SUBPATH" ]; then
+        LOG_LIB_SUBPATH="$LINUX_CANONICAL_LIB_SUBPATH"
+    fi
+fi
+
 if [ $OVERWRITE -eq 1 ]; then
     echo " "
     if [ $FULL_CLEAN -eq 1 ]; then
         echo " Full-clean - Removing platform libs + shared include/bin for [$PLATFORM]"
     else
-        echo " Platform-clean - Removing prior libs only under lib/[$LIB_PLATFORM_DIR] (other platforms kept)"
-    fi
-    LINUX_CANONICAL_LIB_SUBPATH=""
-    LINUX_LEGACY_LIB_SUBPATH=""
-    if [ "$PLATFORM" == "linux" ]; then
-        LINUX_CANONICAL_LIB_SUBPATH=$(linux_canonical_lib_subpath "$ARCH")
-        LINUX_LEGACY_LIB_SUBPATH=$(linux_legacy_lib_subpath "$ARCH")
+        echo " Platform-clean - core libs → lib/$LOG_LIB_SUBPATH (other platforms kept)"
     fi
     for ((i=0;i<${#libs[@]};++i)); do
+        CORE_HAD_BINARIES=0
         if [ "$PLATFORM" == "linux" ] && [ -n "$LINUX_CANONICAL_LIB_SUBPATH" ]; then
             if [ -e "${libs[i]}/lib/$LINUX_CANONICAL_LIB_SUBPATH" ]; then
-                echo "  Removing: [${libs[i]}/lib/$LINUX_CANONICAL_LIB_SUBPATH]"
+                echo " Platform-clean - core: [${libs[i]}] → lib/$LINUX_CANONICAL_LIB_SUBPATH"
+                echo "   Remove binaries: [${libs[i]}/lib/$LINUX_CANONICAL_LIB_SUBPATH]"
                 rm -rf "${libs[i]}/lib/$LINUX_CANONICAL_LIB_SUBPATH"
+                CORE_HAD_BINARIES=1
             fi
         elif [ -e "${libs[i]}/lib/$LIB_PLATFORM_DIR" ]; then
-            echo "  Removing: [${libs[i]}/lib/$LIB_PLATFORM_DIR]"
+            echo " Platform-clean - core: [${libs[i]}] → lib/$LIB_PLATFORM_DIR"
+            echo "   Remove binaries: [${libs[i]}/lib/$LIB_PLATFORM_DIR]"
             rm -rf "${libs[i]}/lib/$LIB_PLATFORM_DIR"
+            CORE_HAD_BINARIES=1
         fi
         if [ -n "$LINUX_LEGACY_LIB_SUBPATH" ] && [ -e "${libs[i]}/lib/$LINUX_LEGACY_LIB_SUBPATH" ]; then
-            echo "  Removing: [${libs[i]}/lib/$LINUX_LEGACY_LIB_SUBPATH]"
+            if [ $CORE_HAD_BINARIES -eq 0 ]; then
+                echo " Platform-clean - core: [${libs[i]}] → lib/$LINUX_LEGACY_LIB_SUBPATH"
+            fi
+            echo "   Remove binaries: [${libs[i]}/lib/$LINUX_LEGACY_LIB_SUBPATH]"
             rm -rf "${libs[i]}/lib/$LINUX_LEGACY_LIB_SUBPATH"
         fi
         # Shared include/ + vs|msys2 bin/ only with --full-clean (not for multi-platform installs)
         if [ $FULL_CLEAN -eq 1 ]; then
             if [ "$PLATFORM" == "msys2" ] || [ "$PLATFORM" == "vs" ]; then
                 if [ -e "${libs[i]}/bin" ]; then
-                    echo "  Removing: [${libs[i]}/bin]"
+                    echo "   Remove binaries: [${libs[i]}/bin]"
                     rm -rf "${libs[i]}/bin"
                 fi
             fi
             if [ -e "${libs[i]}/include" ]; then
-                echo "  Removing: [${libs[i]}/include]"
+                echo "   Remove include: [${libs[i]}/include]"
                 rm -rf "${libs[i]}/include"
             fi
         fi
     done
+    echo "   ------ "
 fi
 
 # osx host packages may also refresh the desktop slice inside lib/macos/*.xcframework
@@ -787,6 +801,25 @@ for PKG in $PKGS; do
         # rm -r download/$PKG
     fi
     echo " Deployed libraries from [download/$PKG] to [/libs]"
+done
+
+echo "   ------ "
+for ((i=0;i<${#libs[@]};++i)); do
+    if [ -e "${libs[i]}" ]; then
+        CORE_BIN_PATH=""
+        if [ -n "$LINUX_CANONICAL_LIB_SUBPATH" ] && [ -e "${libs[i]}/lib/$LINUX_CANONICAL_LIB_SUBPATH" ]; then
+            CORE_BIN_PATH="lib/$LINUX_CANONICAL_LIB_SUBPATH"
+        elif [ -e "${libs[i]}/lib/$LIB_PLATFORM_DIR" ]; then
+            CORE_BIN_PATH="lib/$LIB_PLATFORM_DIR"
+        elif [ -n "$LINUX_LEGACY_LIB_SUBPATH" ] && [ -e "${libs[i]}/lib/$LINUX_LEGACY_LIB_SUBPATH" ]; then
+            CORE_BIN_PATH="lib/$LINUX_LEGACY_LIB_SUBPATH"
+        fi
+        if [ -n "$CORE_BIN_PATH" ]; then
+            echo "   Deploying [${libs[i]}] to [libs/${libs[i]}] → $CORE_BIN_PATH"
+        else
+            echo "   Deploying [${libs[i]}] to [libs/${libs[i]}]"
+        fi
+    fi
 done
 
 # Apothecary linux2026 packages already use lib/linux/<arch>. Promote any
