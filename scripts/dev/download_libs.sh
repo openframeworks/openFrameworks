@@ -189,9 +189,10 @@ normalize_linux_lib_paths(){
 
 # Prefer binutils/gcc-ar. clang64's ar is llvm-ar, which can write the mixed
 # GNU/MSVC index that MinGW ld and lld reject ("unknown file type").
-find_gnu_ar(){
-    local c path
-    for c in \
+findGnuAr(){
+    local CANDIDATE
+    local AR_PATH
+    for CANDIDATE in \
         x86_64-w64-mingw32-gcc-ar \
         x86_64-w64-mingw32-ar \
         aarch64-w64-mingw32-gcc-ar \
@@ -200,21 +201,22 @@ find_gnu_ar(){
         /usr/bin/ar \
         ar
     do
-        if command -v "$c" >/dev/null 2>&1; then
-            path=$(command -v "$c")
-            if "$path" --version 2>/dev/null | grep -qi llvm; then
+        if command -v "$CANDIDATE" >/dev/null 2>&1; then
+            AR_PATH=$(command -v "$CANDIDATE")
+            if "$AR_PATH" --version 2>/dev/null | grep -qi llvm; then
                 continue
             fi
-            echo "$path"
+            echo "$AR_PATH"
             return 0
         fi
     done
     return 1
 }
 
-find_gnu_ranlib(){
-    local c path
-    for c in \
+findGnuRanlib(){
+    local CANDIDATE
+    local RANLIB_PATH
+    for CANDIDATE in \
         x86_64-w64-mingw32-gcc-ranlib \
         x86_64-w64-mingw32-ranlib \
         aarch64-w64-mingw32-gcc-ranlib \
@@ -223,26 +225,26 @@ find_gnu_ranlib(){
         /usr/bin/ranlib \
         ranlib
     do
-        if command -v "$c" >/dev/null 2>&1; then
-            path=$(command -v "$c")
-            if "$path" --version 2>/dev/null | grep -qi llvm; then
+        if command -v "$CANDIDATE" >/dev/null 2>&1; then
+            RANLIB_PATH=$(command -v "$CANDIDATE")
+            if "$RANLIB_PATH" --version 2>/dev/null | grep -qi llvm; then
                 continue
             fi
-            echo "$path"
+            echo "$RANLIB_PATH"
             return 0
         fi
     done
     return 1
 }
 
-find_llvm_ar(){
-    local c
-    for c in llvm-ar ar; do
-        if command -v "$c" >/dev/null 2>&1; then
-            local path
-            path=$(command -v "$c")
-            if "$path" --version 2>/dev/null | grep -qi llvm; then
-                echo "$path"
+findLlvmAr(){
+    local CANDIDATE
+    local AR_PATH
+    for CANDIDATE in llvm-ar ar; do
+        if command -v "$CANDIDATE" >/dev/null 2>&1; then
+            AR_PATH=$(command -v "$CANDIDATE")
+            if "$AR_PATH" --version 2>/dev/null | grep -qi llvm; then
+                echo "$AR_PATH"
                 return 0
             fi
         fi
@@ -253,62 +255,67 @@ find_llvm_ar(){
 # Latest apothecary msys2 archives ship both a GNU and an MSVC symbol index.
 # MinGW ld then reports "file format not recognized; treating as linker script"
 # and lld reports "unknown file type". Rebuild as a GNU archive.
-reindex_msys2_static_libs(){
+reindexMsys2StaticLibs(){
     if [ "$PLATFORM" != "msys2" ]; then
         return
     fi
 
-    local ar_bin ranlib_bin ar_kind archive
-    ar_kind=gnu
-    ranlib_bin=""
-    if ar_bin=$(find_gnu_ar); then
-        ranlib_bin=$(find_gnu_ranlib || true)
-    elif ar_bin=$(find_llvm_ar); then
-        ar_kind=llvm
+    local AR_BIN
+    local RANLIB_BIN=""
+    local AR_KIND="gnu"
+    local ARCHIVE
+    local ARCHIVE_ABS
+    local TMPDIR
+    local OBJS
+    local F
+
+    if AR_BIN=$(findGnuAr); then
+        RANLIB_BIN=$(findGnuRanlib || true)
+    elif AR_BIN=$(findLlvmAr); then
+        AR_KIND="llvm"
     else
         echo " No ar on PATH; skip MSYS2 static-lib reindex"
         return
     fi
 
-    echo " Re-indexing MSYS2 static libraries with $(basename "$ar_bin") ($ar_kind, GNU ld / lld)"
-    while IFS= read -r archive; do
-        [ -n "$archive" ] || continue
-        case "$archive" in
+    echo " Re-indexing MSYS2 static libraries with $(basename "$AR_BIN") ($AR_KIND, GNU ld / lld)"
+    while IFS= read -r ARCHIVE; do
+        [ -n "$ARCHIVE" ] || continue
+        case "$ARCHIVE" in
             *.dll.a) continue ;;
         esac
-        local archive_abs tmpdir
-        archive_abs="$(cd "$(dirname "$archive")" && pwd)/$(basename "$archive")"
-        tmpdir=$(mktemp -d 2>/dev/null || mktemp -d -t ofar)
+        ARCHIVE_ABS="$(cd "$(dirname "$ARCHIVE")" && pwd)/$(basename "$ARCHIVE")"
+        TMPDIR=$(mktemp -d 2>/dev/null || mktemp -d -t ofar)
         if (
-            cd "$tmpdir" || exit 1
-            "$ar_bin" x "$archive_abs" >/dev/null 2>&1 || exit 1
-            objs=""
-            for f in *; do
-                case "$f" in
-                    *.o|*.obj|*.O) objs="$objs $f" ;;
+            cd "$TMPDIR" || exit 1
+            "$AR_BIN" x "$ARCHIVE_ABS" >/dev/null 2>&1 || exit 1
+            OBJS=""
+            for F in *; do
+                case "$F" in
+                    *.o|*.obj|*.O) OBJS="$OBJS $F" ;;
                 esac
             done
-            if [ -z "$objs" ]; then
-                echo "  skip [$archive] (no object members)"
+            if [ -z "$OBJS" ]; then
+                echo "  skip [$ARCHIVE] (no object members)"
                 exit 0
             fi
-            rm -f "$archive_abs"
+            rm -f "$ARCHIVE_ABS"
             # shellcheck disable=SC2086
-            if [ "$ar_kind" = llvm ]; then
-                "$ar_bin" --format=gnu rcs "$archive_abs" $objs || exit 1
+            if [ "$AR_KIND" = "llvm" ]; then
+                "$AR_BIN" --format=gnu rcs "$ARCHIVE_ABS" $OBJS || exit 1
             else
-                "$ar_bin" rcs "$archive_abs" $objs || exit 1
-                if [ -n "$ranlib_bin" ]; then
-                    "$ranlib_bin" "$archive_abs" >/dev/null 2>&1 || true
+                "$AR_BIN" rcs "$ARCHIVE_ABS" $OBJS || exit 1
+                if [ -n "$RANLIB_BIN" ]; then
+                    "$RANLIB_BIN" "$ARCHIVE_ABS" >/dev/null 2>&1 || true
                 fi
             fi
-            echo "  reindexed [$archive]"
+            echo "  reindexed [$ARCHIVE]"
         ); then
             :
         else
-            echo "  warning: could not reindex [$archive] (linker may reject it)"
+            echo "  warning: could not reindex [$ARCHIVE] (linker may reject it)"
         fi
-        rm -rf "$tmpdir"
+        rm -rf "$TMPDIR"
     done < <(find . -type f -name '*.a' ! -name '*.dll.a' -path '*/lib/msys2/*' -print 2>/dev/null)
 }
 
@@ -785,7 +792,7 @@ done
 # Apothecary linux2026 packages already use lib/linux/<arch>. Promote any
 # leftover pre-0.13 flat folders (linux64, linuxarmv6l, …) to that layout.
 normalize_linux_lib_paths
-reindex_msys2_static_libs
+reindexMsys2StaticLibs
 
 if [ "$PLATFORM" == "osx" ]; then
     echo " "

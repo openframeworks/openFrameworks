@@ -10,37 +10,37 @@ TEMPLATE="$ROOT/scripts/templates/linux64"
 
 echo "##[group]**** Running unit tests ****"
 cd $ROOT/tests
-for group in *; do
-	case "$group" in
+for GROUP in *; do
+	case "$GROUP" in
 		android|emscripten|ios|tvOS|tvos)
-			echo "Skipping $group (not a native Linux unit-test group)"
+			echo "Skipping $GROUP (not a native Linux unit-test group)"
 			continue
 			;;
 	esac
-	if [ -d $group ]; then
-		echo "##[group] $group"
-		for test in $group/*; do
-			if [ -d $test ]; then
-				cd $test
+	if [ -d $GROUP ]; then
+		echo "##[group] $GROUP"
+		for TEST in $GROUP/*; do
+			if [ -d $TEST ]; then
+				cd $TEST
 				cp "$TEMPLATE/Makefile" .
 				cp "$TEMPLATE/config.make" .
 				sleep 0.3
 				make -j2 Debug
 				sleep 0.3
 				cd bin
-				binname=$(basename ${test})
+				BINNAME=$(basename ${TEST})
 
-				if [[ -f ./${binname}_debug ]]; then
-					gdb -batch -ex "run" -ex "bt" -ex "q \$_exitcode" ./${binname}_debug
-					#./${binname}_debug
+				if [[ -f ./${BINNAME}_debug ]]; then
+					gdb -batch -ex "run" -ex "bt" -ex "q \$_exitcode" ./${BINNAME}_debug
+					#./${BINNAME}_debug
 				else
-					echo "Binary not found: ${binname}_debug"
+					echo "Binary not found: ${BINNAME}_debug"
 					exit 1
 				fi
-				errorcode=$?
-				if [[ $errorcode -ne 0 ]]; then
-					echo "Test failed: ${binname}_debug with error code: $errorcode"
-					exit $errorcode
+				ERRORCODE=$?
+				if [[ $ERRORCODE -ne 0 ]]; then
+					echo "Test failed: ${BINNAME}_debug with error code: $ERRORCODE"
+					exit $ERRORCODE
 				fi
 				cd $ROOT/tests
 			fi
