@@ -2,23 +2,24 @@
 # Prove makefile lib discovery accepts both:
 #   new  libs/<lib>/lib/linux/<arch>
 #   old  libs/<lib>/lib/linux64  (and the other pre-0.13 flat names)
-set -euo pipefail
+set -e
 
 ROOT="$(cd "$(dirname "$0")/../../.." && pwd)"
 SHARED="$ROOT/libs/openFrameworksCompiled/project/makefileCommon/config.shared.mk"
 PROJECT="$ROOT/libs/openFrameworksCompiled/project/makefileCommon/config.project.mk"
 ADDONS="$ROOT/libs/openFrameworksCompiled/project/makefileCommon/config.addons.mk"
-
-fail=0
-pass=0
+PASS=0
+FAIL=0
+WORKDIR="$(mktemp -d)"
+trap 'rm -rf "$WORKDIR"' EXIT
 
 ok() {
-	pass=$((pass + 1))
+	PASS=$((PASS + 1))
 	echo "  OK  $*"
 }
 
 bad() {
-	fail=$((fail + 1))
+	FAIL=$((FAIL + 1))
 	echo "  FAIL  $*"
 }
 
@@ -39,9 +40,6 @@ else
 	bad "config.addons.mk does not call find_platform_lib_path"
 fi
 
-WORKDIR="$(mktemp -d)"
-trap 'rm -rf "$WORKDIR"' EXIT
-
 DEFINE="$(awk '/^define find_platform_lib_path/,/^endef/' "$SHARED")"
 if [[ -z "$DEFINE" ]]; then
 	echo "Could not extract find_platform_lib_path from $SHARED"
@@ -49,7 +47,7 @@ if [[ -z "$DEFINE" ]]; then
 fi
 
 # canonical -> legacy aliases (must match PLATFORM_LEGACY_LIB_SUBPATHS)
-pairs=(
+PAIRS=(
 	"linux/64|linux64"
 	"linux/arm64|linuxarm64"
 	"linux/aarch64|linuxaarch64"
@@ -58,76 +56,75 @@ pairs=(
 )
 
 resolve() {
-	local candidates="$1"
-	local libroot="$2"
-	local mk="$WORKDIR/resolve.mk"
-	cat >"$mk" <<EOF
-ABI_LIB_SUBPATHS = ${candidates}
+	local CANDIDATES="$1"
+	local LIBROOT="$2"
+	local MK="$WORKDIR/resolve.mk"
+	cat >"$MK" <<EOF
+ABI_LIB_SUBPATHS = ${CANDIDATES}
 ${DEFINE}
 all:
-	@printf '%s' '\$(call find_platform_lib_path,${libroot})'
+	@printf '%s' '\$(call find_platform_lib_path,${LIBROOT})'
 EOF
-	make -sf "$mk"
+	make -sf "$MK"
 }
 
 echo
 echo "== find_platform_lib_path (new wins, old is fallback) =="
-for pair in "${pairs[@]}"; do
-	canonical="${pair%%|*}"
-	legacy="${pair##*|}"
-	base="$WORKDIR/case-${canonical//\//-}"
-	mkdir -p "$base/both/lib/${canonical}" "$base/both/lib/${legacy}"
-	mkdir -p "$base/new/lib/${canonical}"
-	mkdir -p "$base/old/lib/${legacy}"
-	mkdir -p "$base/empty/lib"
-	touch "$base/both/lib/${canonical}/libtess2.a" "$base/both/lib/${legacy}/libtess2.a"
-	touch "$base/new/lib/${canonical}/libtess2.a"
-	touch "$base/old/lib/${legacy}/libtess2.a"
+for PAIR in "${PAIRS[@]}"; do
+	CANONICAL="${PAIR%%|*}"
+	LEGACY="${PAIR##*|}"
+	BASE="$WORKDIR/case-${CANONICAL//\//-}"
+	mkdir -p "$BASE/both/lib/${CANONICAL}" "$BASE/both/lib/${LEGACY}"
+	mkdir -p "$BASE/new/lib/${CANONICAL}"
+	mkdir -p "$BASE/old/lib/${LEGACY}"
+	mkdir -p "$BASE/empty/lib"
+	touch "$BASE/both/lib/${CANONICAL}/libtess2.a" "$BASE/both/lib/${LEGACY}/libtess2.a"
+	touch "$BASE/new/lib/${CANONICAL}/libtess2.a"
+	touch "$BASE/old/lib/${LEGACY}/libtess2.a"
 
-	candidates="${canonical} ${legacy}"
-	got_both="$(resolve "$candidates" "$base/both")"
-	got_new="$(resolve "$candidates" "$base/new")"
-	got_old="$(resolve "$candidates" "$base/old")"
-	got_empty="$(resolve "$candidates" "$base/empty")"
+	CANDIDATES="${CANONICAL} ${LEGACY}"
+	GOT_BOTH="$(resolve "$CANDIDATES" "$BASE/both")"
+	GOT_NEW="$(resolve "$CANDIDATES" "$BASE/new")"
+	GOT_OLD="$(resolve "$CANDIDATES" "$BASE/old")"
+	GOT_EMPTY="$(resolve "$CANDIDATES" "$BASE/empty")"
 
-	if [[ "$got_both" == "$base/both/lib/${canonical}" ]]; then
-		ok "${canonical}: both present -> new path"
+	if [[ "$GOT_BOTH" == "$BASE/both/lib/${CANONICAL}" ]]; then
+		ok "${CANONICAL}: both present -> new path"
 	else
-		bad "${canonical}: both present expected .../lib/${canonical} got '${got_both}'"
+		bad "${CANONICAL}: both present expected .../lib/${CANONICAL} got '${GOT_BOTH}'"
 	fi
-	if [[ "$got_new" == "$base/new/lib/${canonical}" ]]; then
-		ok "${canonical}: only new -> new path"
+	if [[ "$GOT_NEW" == "$BASE/new/lib/${CANONICAL}" ]]; then
+		ok "${CANONICAL}: only new -> new path"
 	else
-		bad "${canonical}: only new expected .../lib/${canonical} got '${got_new}'"
+		bad "${CANONICAL}: only new expected .../lib/${CANONICAL} got '${GOT_NEW}'"
 	fi
-	if [[ "$got_old" == "$base/old/lib/${legacy}" ]]; then
-		ok "${canonical}: only old ${legacy} -> old path"
+	if [[ "$GOT_OLD" == "$BASE/old/lib/${LEGACY}" ]]; then
+		ok "${CANONICAL}: only old ${LEGACY} -> old path"
 	else
-		bad "${canonical}: only old expected .../lib/${legacy} got '${got_old}'"
+		bad "${CANONICAL}: only old expected .../lib/${LEGACY} got '${GOT_OLD}'"
 	fi
-	if [[ -z "$got_empty" ]]; then
-		ok "${canonical}: neither -> empty"
+	if [[ -z "$GOT_EMPTY" ]]; then
+		ok "${CANONICAL}: neither -> empty"
 	else
-		bad "${canonical}: neither expected empty got '${got_empty}'"
+		bad "${CANONICAL}: neither expected empty got '${GOT_EMPTY}'"
 	fi
 done
 
 echo
 echo "== PLATFORM_LEGACY_LIB_SUBPATHS aliases in config.shared.mk =="
-for pair in "${pairs[@]}"; do
-	canonical="${pair%%|*}"
-	legacy="${pair##*|}"
-	# arm64 also lists linuxaarch64 as a second alias
-	if grep -q "PLATFORM_LIB_SUBPATH),${canonical})" "$SHARED" && grep -q "${legacy}" "$SHARED"; then
-		ok "makefile still maps ${canonical} <-> ${legacy}"
+for PAIR in "${PAIRS[@]}"; do
+	CANONICAL="${PAIR%%|*}"
+	LEGACY="${PAIR##*|}"
+	if grep -q "PLATFORM_LIB_SUBPATH),${CANONICAL})" "$SHARED" && grep -q "${LEGACY}" "$SHARED"; then
+		ok "makefile still maps ${CANONICAL} <-> ${LEGACY}"
 	else
-		bad "makefile missing ${canonical} / ${legacy} alias"
+		bad "makefile missing ${CANONICAL} / ${LEGACY} alias"
 	fi
 done
 
 echo
-echo "Passed: ${pass}  Failed: ${fail}"
-if [[ "$fail" -ne 0 ]]; then
+echo "Passed: ${PASS}  Failed: ${FAIL}"
+if [[ "$FAIL" -ne 0 ]]; then
 	exit 1
 fi
 echo "Linux lib path fallbacks OK"
