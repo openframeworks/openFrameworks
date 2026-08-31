@@ -6,7 +6,11 @@ BASE_DIR="$1"
 OF_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 OF_DIR="$(realpath "$OF_DIR/../../")"
 OF_CORE_SCRIPT_DIR="$(realpath "$OF_DIR/scripts")"
-OF_CORE_CI_SCRIPT_DIR="$(realpath "$OF_DIR/scripts/ci")"
+if [[ -d "$OF_DIR/scripts/ci" ]]; then
+    OF_CORE_CI_SCRIPT_DIR="$(realpath "$OF_DIR/scripts/ci")"
+else
+    OF_CORE_CI_SCRIPT_DIR="${OF_CORE_SCRIPT_DIR}/ci"
+fi
 OF_PG_INSTALLED_DIR="$(realpath "$OF_DIR/projectGenerator")"
 
 if [[ -n "$BASE_DIR" ]]; then
