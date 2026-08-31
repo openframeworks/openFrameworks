@@ -1,6 +1,9 @@
 #pragma once
 
 #include "ofMain.h"
+#ifdef TARGET_EMSCRIPTEN
+#include "emscripten.h"
+#endif
 
 class ofApp : public ofBaseApp{
 
