@@ -582,13 +582,8 @@ elif [ "$PLATFORM" == "vs" ]; then
                   openFrameworksLibs_${VER}_${VS_PLATFORM}_arm64ec_1.zip \
                   openFrameworksLibs_${VER}_${VS_PLATFORM}_arm64ec_2.zip"
         elif [[ "$ARCH" == "arm64" ]]; then
-<<<<<<< HEAD
             # Windows on ARM: include x64 alongside native arm64 and arm64ec.
             echo " VS packages: 64 + arm64 + arm64ec (Windows on ARM host)"
-=======
-            # Windows on ARM: native arm64 + arm64ec + x64 (x64-compat / VS x64 tools)
-            echo " VS packages: 64 + arm64 + arm64ec (arm64 also downloads 64 for now)"
->>>>>>> 07dbee037 (download_libs [2.8.3 ~ 2.8.4] VS arm64 also pulls 64)
             PKGS="openFrameworksLibs_${VER}_${VS_PLATFORM}_64_1.zip \
                   openFrameworksLibs_${VER}_${VS_PLATFORM}_64_2.zip \
                   openFrameworksLibs_${VER}_${VS_PLATFORM}_arm64_1.zip \
@@ -610,11 +605,7 @@ elif [ "$PLATFORM" == "vs" ]; then
                   openFrameworksLibs_${VER}_${PLATFORM}_64_3.zip \
                   openFrameworksLibs_${VER}_${PLATFORM}_64_4.zip"
         elif [[ "$ARCH" == "arm64" ]]; then
-<<<<<<< HEAD
             echo " VS packages: 64 + arm64 (Windows on ARM host)"
-=======
-            echo " VS packages: 64 + arm64 (arm64 also downloads 64 for now)"
->>>>>>> 07dbee037 (download_libs [2.8.3 ~ 2.8.4] VS arm64 also pulls 64)
             PKGS="openFrameworksLibs_${VER}_${PLATFORM}_64_1.zip \
                   openFrameworksLibs_${VER}_${PLATFORM}_64_2.zip \
                   openFrameworksLibs_${VER}_${PLATFORM}_64_3.zip \
