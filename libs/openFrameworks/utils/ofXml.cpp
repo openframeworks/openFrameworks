@@ -7,6 +7,7 @@ using std::string;
 ofXml::ofXml()
 :doc(new pugi::xml_document){
 	xml = doc->root();
+	parsing_options = OF_PARSE_DEFAULT;	
 }
 
 ofXml::ofXml(std::shared_ptr<pugi::xml_document> doc, const pugi::xml_node & xml)
@@ -15,9 +16,13 @@ ofXml::ofXml(std::shared_ptr<pugi::xml_document> doc, const pugi::xml_node & xml
 
 }
 
+void ofXml::setParsingOptions(unsigned int l_parsing_options) {
+	parsing_options = l_parsing_options;
+}
+
 bool ofXml::load(const of::filesystem::path & file){
 	auto auxDoc = std::make_shared<pugi::xml_document>();
-	auto res = auxDoc->load_file(ofToDataPath(file).c_str());
+	auto res = auxDoc->load_file(ofToDataPath(file).c_str(), parsing_options);
 	if( res ){
 		doc = auxDoc;
 		xml = doc->root();
@@ -35,9 +40,9 @@ bool ofXml::load(const ofBuffer & buffer){
 bool ofXml::parse(const std::string & xmlStr){
 	auto auxDoc { std::make_shared<pugi::xml_document>() };
     #if ( defined(PUGIXML_VERSION) && PUGIXML_VERSION >= 150 )
-        if(auxDoc->load_string(xmlStr.c_str())){
+        if(auxDoc->load_string(xmlStr.c_str(), parsing_options)){
     #else
-        if(auxDoc->load(xmlStr.c_str())){
+        if(auxDoc->load(xmlStr.c_str(), parsing_options)){
     #endif
 		doc = auxDoc;
 		xml = doc->root();
