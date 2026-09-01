@@ -40,6 +40,35 @@ else
 	bad "config.addons.mk does not call find_platform_lib_path"
 fi
 
+echo
+echo "== MSYS2 ABI library paths expand without recursion =="
+MSYS_MK="$WORKDIR/msys-paths.mk"
+MSYS_PATH_BLOCK="$(awk '
+	/^# Canonical path first/ { capture=1 }
+	/^ifeq \(\$\(PLATFORM_OS\),Linux\)/ { capture=0 }
+	capture
+' "$SHARED")"
+cat >"$MSYS_MK" <<EOF
+PLATFORM_LIB_SUBPATH := msys2
+ABI_LIB_SUBPATH := msys2
+ABI_LEGACY_LIB_SUBPATHS :=
+$MSYS_PATH_BLOCK
+all:
+	@printf '%s' '\$(ABI_LIB_SUBPATHS)'
+EOF
+GOT_MSYS_X64="$(make -sf "$MSYS_MK" HOST_ARCH=x86_64)"
+GOT_MSYS_ARM64="$(make -sf "$MSYS_MK" HOST_ARCH=aarch64)"
+if [[ "$GOT_MSYS_X64" == "msys2/x86_64 msys2" ]]; then
+	ok "MSYS2 x86_64 paths expand"
+else
+	bad "MSYS2 x86_64 paths expected 'msys2/x86_64 msys2' got '$GOT_MSYS_X64'"
+fi
+if [[ "$GOT_MSYS_ARM64" == "msys2/aarch64 msys2/arm64 msys2" ]]; then
+	ok "MSYS2 arm64 paths expand"
+else
+	bad "MSYS2 arm64 paths expected 'msys2/aarch64 msys2/arm64 msys2' got '$GOT_MSYS_ARM64'"
+fi
+
 DEFINE="$(awk '/^define find_platform_lib_path/,/^endef/' "$SHARED")"
 if [[ -z "$DEFINE" ]]; then
 	echo "Could not extract find_platform_lib_path from $SHARED"
