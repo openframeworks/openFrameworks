@@ -77,7 +77,10 @@ public:
 
 	virtual bool isSerializable() const = 0;
 	virtual bool isReadOnly() const = 0;
+	
+	[[deprecated("use getSharedPtr")]]
 	virtual std::shared_ptr<ofAbstractParameter> newReference() const = 0;
+	virtual std::shared_ptr<ofAbstractParameter> getSharedPtr() const = 0;
 
 	virtual bool isReferenceTo(const ofAbstractParameter & other) const;
 
@@ -260,7 +263,10 @@ public:
 	void setSerializable(bool serializable);
 	bool isSerializable() const;
 	bool isReadOnly() const;
+	
+	[[deprecated("use getSharedPtr")]]
 	std::shared_ptr<ofAbstractParameter> newReference() const;
+	std::shared_ptr<ofAbstractParameter> getSharedPtr() const;
 
 	void setParent(ofParameterGroup & parent);
 
@@ -672,7 +678,10 @@ public:
 	void reInit();
 
 	void setSerializable(bool serializable);
+	
+	[[deprecated("use getSharedPtr")]]
 	std::shared_ptr<ofAbstractParameter> newReference() const;
+	std::shared_ptr<ofAbstractParameter> getSharedPtr() const;
 
 	void setParent(ofParameterGroup & _parent);
 
@@ -1110,6 +1119,11 @@ void ofParameter<ParameterType>::makeReferenceTo(ofParameter<ParameterType> & mo
 
 template <typename ParameterType>
 std::shared_ptr<ofAbstractParameter> ofParameter<ParameterType>::newReference() const {
+	return getSharedPtr();
+}
+
+template <typename ParameterType>
+std::shared_ptr<ofAbstractParameter> ofParameter<ParameterType>::getSharedPtr() const {
 	return std::make_shared<ofParameter<ParameterType>>(*this);
 }
 
@@ -1184,7 +1198,10 @@ public:
 	void makeReferenceTo(ofParameter<void> & mom);
 
 	void setSerializable(bool serializable);
+	
+	[[deprecated("use getSharedPtr")]]
 	std::shared_ptr<ofAbstractParameter> newReference() const;
+	std::shared_ptr<ofAbstractParameter> getSharedPtr() const;
 
 	void setParent(ofParameterGroup & _parent);
 
@@ -1259,7 +1276,9 @@ public:
 	template <class ListenerClass, typename ListenerMethod>
 	void removeListener(ListenerClass * listener, ListenerMethod method, int prio = OF_EVENT_ORDER_AFTER_APP);
 
+	[[deprecated("use getSharedPtr")]]
 	std::shared_ptr<ofAbstractParameter> newReference() const;
+	std::shared_ptr<ofAbstractParameter> getSharedPtr() const;
 
 	template <typename... Args>
 	std::unique_ptr<of::priv::AbstractEventToken> newListener(Args... args);
@@ -1604,6 +1623,11 @@ inline void ofReadOnlyParameter<ParameterType, Friend>::fromString(const std::st
 
 template <typename ParameterType, typename Friend>
 std::shared_ptr<ofAbstractParameter> ofReadOnlyParameter<ParameterType, Friend>::newReference() const {
+	return getSharedPtr();
+}
+
+template <typename ParameterType, typename Friend>
+std::shared_ptr<ofAbstractParameter> ofReadOnlyParameter<ParameterType, Friend>::getSharedPtr() const {
 	return std::make_shared<ofReadOnlyParameter<ParameterType, Friend>>(*this);
 }
 
