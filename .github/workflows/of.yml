@@ -331,20 +331,17 @@ jobs:
         with:
           key: ${{ matrix.cfg.target }}
 
-      - name: Download libs
-        run: ./scripts/linux/download_libs.sh -t $RELEASE -a ${{matrix.cfg.libs}}
-      - name: Curl library check (before tests)
-        run: |
-          echo "=== libs/curl ==="; ls -lh libs/curl/lib/*/* 2>&1 | head -n 20
-          echo "=== curl ver ==="; cat libs/curl/include/curl/curlver.h 2>&1 | head -n 5
-          echo "=== system curl ==="; curl --version 2>&1 | head -n1
-
       - name: Install dependencies
         run: ./scripts/ci/$TARGET/$ARCH/install.sh;
 
       - name: Download libs
-        run: ./scripts/linux/download_libs.sh -t $RELEASE -a ${{matrix.cfg.arch}} -g ${{matrix.cfg.GCC}}
+        run: ./scripts/linux/download_libs.sh -t "$RELEASE" -a "$ARCH" -g "$GCC"
 
+      - name: Curl library check (before tests)
+        run: |
+          echo "=== libs/curl ==="; ls -lh libs/curl/lib/*/* 2>&1 | head -n 20
+          echo "=== curl ver ==="; head -n 5 libs/curl/include/curl/curlver.h
+          echo "=== system curl ==="; curl --version 2>&1 | head -n1
 
       - name: Library path check
         run: |
@@ -398,7 +395,7 @@ jobs:
         run: ./scripts/ci/$TARGET/$ARCH/install.sh;
 
       - name: Download libs
-        run: ./scripts/linux/download_libs.sh -t $RELEASE -a ${{matrix.cfg.arch}} -g ${{matrix.cfg.GCC}}
+        run: ./scripts/linux/download_libs.sh -t "$RELEASE" -a "$ARCH" -g "$GCC"
 
       - name: Check deployed libraries
         run: bash scripts/ci/check_deployed_libs.sh --platform linux --arch ${{ matrix.cfg.arch }}
