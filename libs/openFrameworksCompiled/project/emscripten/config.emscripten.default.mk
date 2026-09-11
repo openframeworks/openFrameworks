@@ -131,6 +131,7 @@ PLATFORM_LDFLAGS += -s AUTO_JS_LIBRARIES=1
 PLATFORM_LDFLAGS += -s VERBOSE=1
 
 PLATFORM_LDFLAGS +=  $(PLATFORM_PTHREAD)
+PLATFORM_LDFLAGS += -s AUDIO_WORKLET=1 -s WASM_WORKERS=1 -s ENVIRONMENT="web,worker" -s WEBAUDIO_DEBUG=1
 
 PLATFORM_LDFLAGS += --js-library $(OF_ADDONS_PATH)/ofxEmscripten/libs/html5video/lib/emscripten/library_html5video.js
 PLATFORM_LDFLAGS += --pre-js $(OF_ADDONS_PATH)/ofxEmscripten/libs/html5video/lib/emscripten/recordVideo.js
