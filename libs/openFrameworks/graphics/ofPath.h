@@ -1,7 +1,8 @@
 #pragma once
 
 #include "ofPolyline.h"
-#include "ofVboMesh.h"
+//#include "ofVboMesh.h"
+#include "ofMesh.h"
 #include "ofTessellator.h"
 // MARK: ofConstants targets
 #include "ofConstants.h"
@@ -432,11 +433,11 @@ private:
 	std::vector<ofPolyline>  polylines;
 	std::vector<ofPolyline>  tessellatedContour; // if winding mode != ODD
 
-#ifdef TARGET_OPENGLES
+//#ifdef TARGET_OPENGLES
 	ofMesh				cachedTessellation;
-#else
-	ofVboMesh			cachedTessellation;
-#endif
+//#else
+//	ofVboMesh			cachedTessellation;
+//#endif
 #if defined(TARGET_EMSCRIPTEN)
 	static ofTessellator tessellator;
 #elif HAS_TLS

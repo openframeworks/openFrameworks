@@ -10,6 +10,7 @@
 #include "ofTexture.h"
 #include "ofFileUtils.h"
 #include "ofMaterial.h"
+#include "ofVboMesh.h"
 
 #ifdef TARGET_ANDROID
 #include "ofAppAndroidWindow.h"

@@ -1,8 +1,8 @@
 #pragma once
-
 #include "ofParameter.h"
 #include "ofxBaseGui.h"
 #include "ofPath.h"
+#include "ofVboMesh.h"
 
 class ofxToggle : public ofxBaseGui{
 public:

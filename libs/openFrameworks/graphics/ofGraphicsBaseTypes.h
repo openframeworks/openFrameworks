@@ -861,6 +861,10 @@ public:
 	///
 	/// \param pointSize The points size to request this renderer to use.
 	virtual void setPointSize(float pointSize) = 0;
+	/// \brief Enable point sprites via a shader.
+	virtual void enablePointSprites() = 0;
+	/// \brief Disable point sprites via a shader.
+	virtual void disablePointSprites() = 0;
 
 	/// \brief Enable/disable depth testing with this renderer.
 	///
@@ -1137,6 +1141,18 @@ public:
 	/// \param x The x position for the bottom of \p text.
 	/// \param y The y position for the left alignment of \p text.
 	virtual void drawString(const ofTrueTypeFont & font, std::string text, float x, float y) const = 0;
+	
+	/// \brief Sets the background color to a gradient.
+	///
+	/// It takes as input 2 ofColor() objects and a Gradient Mode.
+	/// Must be called in the draw() function.
+	///
+	/// Accepted modes are:
+	///
+	/// - Circular: `OF_GRADIENT_CIRCULAR`
+	/// - Linear: `OF_GRADIENT_LINEAR`
+	/// - Bar: `OF_GRADIENT_BAR`
+	virtual void drawBackgroundGradient(const ofFloatColor& start, const ofFloatColor& end, ofGradientMode mode) const = 0;
 
 	// returns true an ofPath to draw with, this allows to keep
 	// immediate mode rendering working in multiwindow with multiple

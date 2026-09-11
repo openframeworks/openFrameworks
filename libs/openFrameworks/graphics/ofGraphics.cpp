@@ -1,4 +1,4 @@
-#include "ofGLRenderer.h"
+//#include "ofGLRenderer.h"
 #include "ofGraphics.h"
 #include "ofRendererCollection.h"
 #include "ofRectangle.h"
@@ -11,7 +11,7 @@ using std::shared_ptr;
 using std::string;
 using std::vector;
 
-static ofVboMesh gradientMesh;
+//static ofVboMesh gradientMesh;
 
 void ofSetCurrentRenderer(shared_ptr<ofBaseRenderer> renderer, bool setDefaults) {
 	if (setDefaults) {
@@ -409,66 +409,7 @@ void ofBackgroundHex(int hexColor, int alpha){
 
 //----------------------------------------------------------
 void ofBackgroundGradient(const ofFloatColor& start, const ofFloatColor& end, ofGradientMode mode) {
-	float w = ofGetViewportWidth(), h = ofGetViewportHeight();
-	gradientMesh.clear();
-	gradientMesh.setMode(OF_PRIMITIVE_TRIANGLE_FAN);
-#ifndef TARGET_EMSCRIPTEN
-	#ifdef TARGET_OPENGLES
-	if (ofIsGLProgrammableRenderer()) gradientMesh.setUsage(GL_STREAM_DRAW);
-	#else
-	gradientMesh.setUsage(GL_STREAM_DRAW);
-	#endif
-#endif
-	if (mode == OF_GRADIENT_CIRCULAR) {
-		// this could be optimized by building a single mesh once, then copying
-		// it and just adding the colors whenever the function is called.
-		///TODO: revert to glm::vec2!!
-		glm::vec2 center(w / 2, h / 2);
-		gradientMesh.addVertex(glm::vec3(center, 0.f));
-		gradientMesh.addColor(start);
-		float n = 32; // circular gradient resolution
-		float angleBisector = glm::two_pi<float>() / (n * 2.0);
-		float smallRadius = ofDist(0, 0, w / 2, h / 2);
-		float bigRadius = smallRadius / std::cos(angleBisector);
-		for (int i = 0; i <= n; i++) {
-			float theta = i * glm::two_pi<float>() / n;
-			gradientMesh.addVertex(glm::vec3(center + glm::vec2(std::sin(theta), std::cos(theta)) * bigRadius, 0));
-			gradientMesh.addColor(end);
-		}
-	} else if (mode == OF_GRADIENT_LINEAR) {
-		gradientMesh.addVertex({ 0.f, 0.f, 0.f });
-		gradientMesh.addVertex({ w, 0.f, 0.f });
-		gradientMesh.addVertex({ w, h, 0.f });
-		gradientMesh.addVertex({ 0.f, h, 0.f });
-		gradientMesh.addColor(start);
-		gradientMesh.addColor(start);
-		gradientMesh.addColor(end);
-		gradientMesh.addColor(end);
-	} else if (mode == OF_GRADIENT_BAR) {
-		gradientMesh.addVertex({ w / 2.f, h / 2.f, 0.f });
-		gradientMesh.addVertex({ 0.f, h / 2.f, 0.f });
-		gradientMesh.addVertex({ 0.f, 0.f, 0.f });
-		gradientMesh.addVertex({ w, 0.f, 0.f });
-		gradientMesh.addVertex({ w, h / 2.f, 0.f });
-		gradientMesh.addVertex({ w, h, 0.f });
-		gradientMesh.addVertex({ 0.f, h, 0.f });
-		gradientMesh.addVertex({ 0.f, h / 2, 0.f });
-		gradientMesh.addColor(start);
-		gradientMesh.addColor(start);
-		gradientMesh.addColor(end);
-		gradientMesh.addColor(end);
-		gradientMesh.addColor(start);
-		gradientMesh.addColor(end);
-		gradientMesh.addColor(end);
-		gradientMesh.addColor(start);
-	}
-	GLboolean depthMaskEnabled;
-	glGetBooleanv(GL_DEPTH_WRITEMASK, &depthMaskEnabled);
-	glDepthMask(GL_FALSE);
-	gradientMesh.draw();
-	if (depthMaskEnabled) {
-		glDepthMask(GL_TRUE);
-	}
+	ofGetCurrentRenderer()->drawBackgroundGradient(start, end, mode);
 }
 
 //----------------------------------------------------------
@@ -638,16 +579,12 @@ void ofEnableBlendMode(ofBlendMode blendMode){
 
 //----------------------------------------------------------
 void ofEnablePointSprites() {
-	if (ofGetCurrentRenderer()->getType() == "GL" || ofGetCurrentRenderer()->getType() == "ProgrammableGL") {
-		static_cast<ofBaseGLRenderer *>(ofGetCurrentRenderer().get())->enablePointSprites();
-	}
+	ofGetCurrentRenderer()->enablePointSprites();
 }
 
 //----------------------------------------------------------
 void ofDisablePointSprites() {
-	if (ofGetCurrentRenderer()->getType() == "GL" || ofGetCurrentRenderer()->getType() == "ProgrammableGL") {
-		static_cast<ofBaseGLRenderer *>(ofGetCurrentRenderer().get())->disablePointSprites();
-	}
+	ofGetCurrentRenderer()->disablePointSprites();
 }
 
 //----------------------------------------------------------
