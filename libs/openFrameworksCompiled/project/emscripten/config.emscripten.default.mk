@@ -133,6 +133,7 @@ PLATFORM_LDFLAGS += -s VERBOSE=1
 PLATFORM_LDFLAGS +=  $(PLATFORM_PTHREAD)
 
 PLATFORM_LDFLAGS += --js-library $(OF_ADDONS_PATH)/ofxEmscripten/libs/html5video/lib/emscripten/library_html5video.js
+PLATFORM_LDFLAGS += --post-js $(OF_ADDONS_PATH)/ofxEmscripten/libs/html5audio/lib/emscripten/library_audioDeviceSelect.js
 # PLATFORM_LDFLAGS += --js-library $(OF_ADDONS_PATH)/ofxEmscripten/libs/html5audio/lib/emscripten/library_html5audio.js
 
 PLATFORM_LDFLAGS += -s MAIN_MODULE=1 -DEMCC_FORCE_STDLIBS=1
