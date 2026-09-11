@@ -7,8 +7,7 @@ MSYS2
 Installing msys2
 ----------------
 
-First, install MSYS2 using the [one-click installer](https://msys2.github.io/) or
-directly unzipping the archive from their [repository](http://sourceforge.net/projects/msys2/files/Base/x86_64/)
+First, install MSYS2 from [https://www.msys2.org/](https://www.msys2.org/).
 
 If you have an old install of MSYS2 (before 2018), it's recommended to do a fresh install.
 
