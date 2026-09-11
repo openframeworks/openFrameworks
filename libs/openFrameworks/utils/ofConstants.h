@@ -121,7 +121,8 @@ enum ofTargetPlatform{
 #elif defined (__ANDROID__)
 	#define TARGET_ANDROID
 	#define TARGET_OPENGLES
-//#elif defined(__ARMEL__)
+#elif defined(__aarch64__) || defined(__ARM64__)
+	#define TARGET_LINUX // desktop GLFW (X11/Wayland), not EGL/GLES armv6/v7
 #elif defined(__ARM__)
 	#define TARGET_LINUX
 	#define TARGET_OPENGLES

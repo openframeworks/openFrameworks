@@ -33,6 +33,8 @@
 	#include <GLFW/glfw3native.h>
 #endif
 
+#include <cstdlib>
+
 using std::numeric_limits;
 using std::shared_ptr;
 using std::vector;
@@ -40,10 +42,18 @@ using std::vector;
 namespace of{
 	namespace priv{
 		bool InitGLFW(){
-			#if defined(TARGET_LINUX) && defined(GLFW_PLATFORM_X11)
-			// GLFW 3.4+ auto-detects Wayland when $WAYLAND_DISPLAY is set,
-			// Force the X11 backend so XWayland bridges us into the Wayland
-			// session transparently — no sudo required.
+			#if defined(TARGET_LINUX) && defined(GLFW_PLATFORM_WAYLAND) && defined(GLFW_PLATFORM_X11)
+			const char *waylandDisplay = getenv("WAYLAND_DISPLAY");
+			if (waylandDisplay && waylandDisplay[0] != '\0') {
+				glfwInitHint(GLFW_PLATFORM, GLFW_PLATFORM_WAYLAND);
+				if (glfwInit()) {
+					return true;
+				}
+				glfwTerminate();
+				ofLogNotice("ofAppGLFWWindow") << "Wayland init failed, trying X11";
+			}
+			glfwInitHint(GLFW_PLATFORM, GLFW_PLATFORM_X11);
+			#elif defined(TARGET_LINUX) && defined(GLFW_PLATFORM_X11)
 			glfwInitHint(GLFW_PLATFORM, GLFW_PLATFORM_X11);
 			#endif
 			return glfwInit();

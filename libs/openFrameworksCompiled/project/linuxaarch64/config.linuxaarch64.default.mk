@@ -70,9 +70,7 @@ PLATFORM_CFLAGS += -pipe
 # Note: Leave a leading space when adding list items with the += operator
 ################################################################################
 
-PLATFORM_PKG_CONFIG_LIBRARIES += glesv1_cm
-PLATFORM_PKG_CONFIG_LIBRARIES += glesv2
-PLATFORM_PKG_CONFIG_LIBRARIES += egl
+# GLFW + desktop GL (X11/Wayland), same as linux64 — not EGL/GLES like armv6/v7
 
 
 ################################################################################
