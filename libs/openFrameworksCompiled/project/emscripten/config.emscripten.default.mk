@@ -119,9 +119,12 @@ ifdef USE_CCACHE
 endif
 
 #PLATFORM_LDFLAGS += -s EMBIND_AOT=1
-PLATFORM_LDFLAGS = --preload-file bin/data@data --emrun --bind --profiling-funcs
+PLATFORM_LDFLAGS = --emrun --bind --profiling-funcs
+ifneq ($(strip $(wildcard bin/data/*)),)
+	PLATFORM_LDFLAGS += --preload-file bin/data@data
+endif
 PLATFORM_LDFLAGS += --use-port=emdawnwebgpu
-PLATFORM_LDFLAGS += -s MAX_WEBGL_VERSION=2 -s WEBGL2_BACKWARDS_COMPATIBILITY_EMULATION=1 -s FULL_ES2
+PLATFORM_LDFLAGS += -s MAX_WEBGL_VERSION=2 -s WEBGL2_BACKWARDS_COMPATIBILITY_EMULATION=1 -s FULL_ES3
 PLATFORM_LDFLAGS += -s AUTO_NATIVE_LIBRARIES=1
 PLATFORM_LDFLAGS += -s AUTO_JS_LIBRARIES=1
 

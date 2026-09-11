@@ -2,7 +2,7 @@
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd $SCRIPT_DIR
 
-VERSION=5.0.7
+VERSION=6.0.6
 
 CHECKOUT=$1
 
@@ -17,14 +17,13 @@ install_emscripten_source() {
 
 		echo "if any issues with python - make sure to add python paths to bash environment Variables:"
 	  python -m pip install --upgrade pip setuptools virtualenv
-	  ./emsdk install latest
-	  ./emsdk activate latest --permanent
-	   ./emsdk_env.sh
-	  # ./emsdk install ${VERSION}
+	  ./emsdk install "${VERSION}"
+	  ./emsdk activate "${VERSION}" --permanent
+	  source ./emsdk_env.sh
 
 	else
 	  echo "Emscripten SDK found at $EMSDK"
-	  source "$EMSDK/emsdk_env"
+	  source "$EMSDK/emsdk_env.sh"
 	fi
 }
 
@@ -32,7 +31,7 @@ install_emscripten_package() {
     if [[ "$OSTYPE" == "darwin"* ]]; then
         # macOS
         echo "Detected macOS. Checking for Emscripten..."
-        if ! command_exists emcc; then
+        if ! command -v emcc >/dev/null 2>&1; then
             echo "Emscripten not found. Installing via Homebrew..."
             brew install emscripten
         else
@@ -45,7 +44,7 @@ install_emscripten_package() {
     elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
         # Linux
         echo "Detected Linux. Checking for Emscripten..."
-        if ! command_exists emcc; then
+        if ! command -v emcc >/dev/null 2>&1; then
             echo "Emscripten not found. Installing via apt..."
             sudo apt update
             sudo apt install -y emscripten
@@ -56,7 +55,7 @@ install_emscripten_package() {
     elif [[ "$OSTYPE" == "cygwin" || "$OSTYPE" == "msys" || "$OSTYPE" == "win32" ]]; then
         # Windows (assuming Git Bash or similar)
         echo "Detected Windows. Checking for Emscripten..."
-        if ! command_exists emcc; then
+        if ! command -v emcc >/dev/null 2>&1; then
             echo "Emscripten not found. Installing via winget..."
             winget install -e --id emscripten.emsdk
         else
@@ -75,5 +74,3 @@ else
     echo "Installing Emscripten from Source"
     install_emscripten_source
 fi
-
-
