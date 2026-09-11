@@ -139,7 +139,7 @@ PLATFORM_LDFLAGS += --pre-js $(OF_ADDONS_PATH)/ofxEmscripten/libs/html5video/lib
 PLATFORM_LDFLAGS += --post-js $(OF_ADDONS_PATH)/ofxEmscripten/libs/html5audio/lib/emscripten/library_audioDeviceSelect.js
 # PLATFORM_LDFLAGS += --js-library $(OF_ADDONS_PATH)/ofxEmscripten/libs/html5audio/lib/emscripten/library_html5audio.js
 
-PLATFORM_LDFLAGS += -s MAIN_MODULE=1 -DEMCC_FORCE_STDLIBS=1
+PLATFORM_LDFLAGS += -s MAIN_MODULE=2 -DEMCC_FORCE_STDLIBS=1
 PLATFORM_LDFLAGS += -s EXPORT_ALL=1
 PLATFORM_LDFLAGS += -s NO_DYNAMIC_EXECUTION=1
 PLATFORM_LDFLAGS += -s ABORT_ON_WASM_EXCEPTIONS=0
