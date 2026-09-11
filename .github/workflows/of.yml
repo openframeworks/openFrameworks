@@ -337,12 +337,6 @@ jobs:
       - name: Download libs
         run: ./scripts/linux/download_libs.sh -t "$RELEASE" -a "$ARCH" -g "$GCC"
 
-      - name: Curl library check (before tests)
-        run: |
-          echo "=== libs/curl ==="; ls -lh libs/curl/lib/*/* 2>&1 | head -n 20
-          echo "=== curl ver ==="; head -n 5 libs/curl/include/curl/curlver.h
-          echo "=== system curl ==="; curl --version 2>&1 | head -n1
-
       - name: Library path check
         run: |
           echo "=== lib/linux/${{ matrix.cfg.arch }} ==="
