@@ -423,7 +423,7 @@ endif
 ifdef ${ccache} 
 $(info 💿 Using CCACHE -- config.project.mk )
 	CXX := ${ccache} $(CXX)
-	CC := ${ccache} $(CXX)
+	CC := ${ccache} $(CC)
 endif	
 
 ifdef PROJECT_RESOURCE_COMPILER

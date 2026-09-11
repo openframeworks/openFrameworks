@@ -48,7 +48,7 @@ endif
 ifdef ${ccache}
 $(info 💿 Using CCACHE - compile.core.mk )
 	CXX := ${ccache} $(CXX)
-	CC := ${ccache} $(CXX)
+	CC := ${ccache} $(CC)
 endif
 
 $(info 💾 CXX = $(CXX))

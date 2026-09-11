@@ -22,6 +22,9 @@ make -j Debug
 echo "**** Running unit tests ****"
 cd $ROOT/tests
 for group in *; do
+    case "$group" in
+        android|ios|tvOS|emscripten) continue ;;
+    esac
     if [ -d $group ]; then
         for test in $group/*; do
             if [ -d $test ]; then
