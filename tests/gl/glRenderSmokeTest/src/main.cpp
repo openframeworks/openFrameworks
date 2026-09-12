@@ -8,6 +8,9 @@ int main() {
 	ofGLWindowSettings settings;
 	settings.setSize(320, 240);
 	settings.windowMode = OF_WINDOW;
+#ifndef TARGET_OPENGLES
+	settings.setGLVersion(3, 2);
+#endif
 
 	auto window = ofCreateWindow(settings);
 #if defined(TARGET_GLFW_WINDOW)
