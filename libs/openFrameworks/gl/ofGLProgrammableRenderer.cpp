@@ -245,11 +245,7 @@ void ofGLProgrammableRenderer::drawInstanced(const ofVboMesh & mesh, ofPolyRende
 	}
 
 #if !defined(TARGET_OPENGLES)
-	
-#ifndef TARGET_OPENGLES
 	glPolygonMode(GL_FRONT_AND_BACK, ofGetGLPolyMode(renderType));
-#endif
-	
 	if (mesh.getNumIndices() && renderType != OF_MESH_POINTS) {
 		if (primCount <= 1) {
 			drawElements(mesh.getVbo(), mode, mesh.getNumIndices());
@@ -263,27 +259,28 @@ void ofGLProgrammableRenderer::drawInstanced(const ofVboMesh & mesh, ofPolyRende
 			drawInstanced(mesh.getVbo(), mode, 0, mesh.getNumVertices(), primCount);
 		}
 	}
-#ifndef TARGET_OPENGLES
-	// restore polygon mode to match current fill state
 	glPolygonMode(GL_FRONT_AND_BACK, currentStyle.bFill ? GL_FILL : GL_LINE);
-#endif
-	
 #else
-	// Pure GLES 2.0 fallback — no polygon mode, no instancing
+	// GLES has no glPolygonMode. Instancing is ES 3.0+ / WebGL2, not ES1/ES2.
+	GLuint glesMode = mode;
 	if (renderType == OF_MESH_POINTS) {
-		draw(mesh.getVbo(), GL_POINTS, 0, mesh.getNumVertices());
+		glesMode = GL_POINTS;
 	} else if (renderType == OF_MESH_WIREFRAME) {
-		if (mesh.getNumIndices()) {
-			drawElements(mesh.getVbo(), GL_LINES, mesh.getNumIndices());
+		glesMode = GL_LINES;
+	}
+	const bool useIndices = mesh.getNumIndices() && renderType != OF_MESH_POINTS;
+	const int esMajor = const_cast<ofGLProgrammableRenderer *>(this)->getGLVersionMajor();
+	const bool canInstance = primCount > 1 && esMajor >= 3;
+	if (useIndices) {
+		if (canInstance) {
+			drawElementsInstanced(mesh.getVbo(), glesMode, mesh.getNumIndices(), primCount);
 		} else {
-			draw(mesh.getVbo(), GL_LINES, 0, mesh.getNumVertices());
+			drawElements(mesh.getVbo(), glesMode, mesh.getNumIndices());
 		}
+	} else if (canInstance) {
+		drawInstanced(mesh.getVbo(), glesMode, 0, mesh.getNumVertices(), primCount);
 	} else {
-		if (mesh.getNumIndices()) {
-			drawElements(mesh.getVbo(), mode, mesh.getNumIndices());
-		} else {
-			draw(mesh.getVbo(), mode, 0, mesh.getNumVertices());
-		}
+		draw(mesh.getVbo(), glesMode, 0, mesh.getNumVertices());
 	}
 #endif
 }
@@ -467,12 +464,7 @@ void ofGLProgrammableRenderer::drawElements(const ofVbo & vbo, GLuint drawMode, 
 			vbo.getUsingTexCoords(),
 			vbo.getUsingNormals(), drawMode);
 
-#ifdef TARGET_OPENGLES
-		glDrawElements(drawMode, amt, GL_UNSIGNED_SHORT, (void *)(sizeof(ofIndexType) * offsetelements));
-#else
-		// GL index type must match sizeof(ofIndexType) (16-bit on macOS via tess2); see commit message.
 		glDrawElements(drawMode, amt, sizeof(ofIndexType) == 2 ? GL_UNSIGNED_SHORT : GL_UNSIGNED_INT, (void *)(sizeof(ofIndexType) * offsetelements));
-#endif
 		vbo.unbind();
 	}
 }
@@ -482,12 +474,18 @@ void ofGLProgrammableRenderer::drawInstanced(const ofVbo & vbo, GLuint drawMode,
 	if (vbo.getUsingVerts()) {
 		vbo.bind();
 		const_cast<ofGLProgrammableRenderer *>(this)->setAttributes(vbo.getUsingVerts(), vbo.getUsingColors(), vbo.getUsingTexCoords(), vbo.getUsingNormals(), drawMode);
-#if defined(TARGET_OPENGLES) && !(defined(GL_ES_VERSION_3_1) && defined(TARGET_OPENGLES_3_1))
-		// https://www.khronos.org/opengles/sdk/docs/man3/xhtml/glDrawElementsInstanced.xml
-		ofLogWarning("ofVbo") << "drawInstanced(): hardware instancing is not supported on OpenGL ES <= 3.1";
-#else
-		glDrawArraysInstanced(drawMode, first, total, primCount);
+#ifdef TARGET_OPENGLES
+		if (const_cast<ofGLProgrammableRenderer *>(this)->getGLVersionMajor() < 3) {
+			ofLogWarning("ofVbo") << "drawInstanced(): hardware instancing is not supported on OpenGL ES < 3.0";
+		} else
 #endif
+		{
+#if defined(TARGET_OPENGLES) && !defined(GL_ES_VERSION_3_0) && !defined(TARGET_OPENGLES_3)
+			ofLogWarning("ofVbo") << "drawInstanced(): GLES 3 headers not available";
+#else
+			glDrawArraysInstanced(drawMode, first, total, primCount);
+#endif
+		}
 		vbo.unbind();
 	}
 }
@@ -497,13 +495,18 @@ void ofGLProgrammableRenderer::drawElementsInstanced(const ofVbo & vbo, GLuint d
 	if (vbo.getUsingVerts()) {
 		vbo.bind();
 		const_cast<ofGLProgrammableRenderer *>(this)->setAttributes(vbo.getUsingVerts(), vbo.getUsingColors(), vbo.getUsingTexCoords(), vbo.getUsingNormals(), drawMode);
-#if defined(TARGET_OPENGLES) && !(defined(GL_ES_VERSION_3_1) && defined(TARGET_OPENGLES_3_1))
-		// https://www.khronos.org/opengles/sdk/docs/man3/xhtml/glDrawElementsInstanced.xml
-		ofLogWarning("ofVbo") << "drawElementsInstanced(): hardware instancing is not supported on OpenGL ES <= 3.1";
-#else
-		// GL index type must match sizeof(ofIndexType); see drawElements above.
-		glDrawElementsInstanced(drawMode, amt, sizeof(ofIndexType) == 2 ? GL_UNSIGNED_SHORT : GL_UNSIGNED_INT, nullptr, primCount);
+#ifdef TARGET_OPENGLES
+		if (const_cast<ofGLProgrammableRenderer *>(this)->getGLVersionMajor() < 3) {
+			ofLogWarning("ofVbo") << "drawElementsInstanced(): hardware instancing is not supported on OpenGL ES < 3.0";
+		} else
 #endif
+		{
+#if defined(TARGET_OPENGLES) && !defined(GL_ES_VERSION_3_0) && !defined(TARGET_OPENGLES_3)
+			ofLogWarning("ofVbo") << "drawElementsInstanced(): GLES 3 headers not available";
+#else
+			glDrawElementsInstanced(drawMode, amt, sizeof(ofIndexType) == 2 ? GL_UNSIGNED_SHORT : GL_UNSIGNED_INT, nullptr, primCount);
+#endif
+		}
 		vbo.unbind();
 	}
 }

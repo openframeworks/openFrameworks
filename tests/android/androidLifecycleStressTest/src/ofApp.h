@@ -35,4 +35,5 @@ private:
 	int unloadCount = 0;
 	int reloadCount = 0;
 	bool resourcesAllocated = false;
+	bool usesShader = false;
 };

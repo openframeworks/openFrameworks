@@ -1,7 +1,7 @@
 #include "ofApp.h"
 
 namespace {
-constexpr auto vertexShader = R"(
+constexpr auto vertexShaderES3 = R"(
 #version 300 es
 uniform mat4 modelViewProjectionMatrix;
 in vec4 position;
@@ -13,13 +13,34 @@ void main() {
 }
 )";
 
-constexpr auto fragmentShader = R"(
+constexpr auto fragmentShaderES3 = R"(
 #version 300 es
 precision highp float;
 in vec4 vertexColor;
 out vec4 outputColor;
 void main() {
 	outputColor = vertexColor;
+}
+)";
+
+constexpr auto vertexShaderES2 = R"(
+#version 100
+uniform mat4 modelViewProjectionMatrix;
+attribute vec4 position;
+attribute vec4 color;
+varying vec4 vertexColor;
+void main() {
+	vertexColor = color;
+	gl_Position = modelViewProjectionMatrix * position;
+}
+)";
+
+constexpr auto fragmentShaderES2 = R"(
+#version 100
+precision mediump float;
+varying vec4 vertexColor;
+void main() {
+	gl_FragColor = vertexColor;
 }
 )";
 }
@@ -65,12 +86,28 @@ void ofApp::allocateGLResources() {
 	settings.numSamples = 0;
 	fbo.allocate(settings);
 
-	shader.setupShaderFromSource(GL_VERTEX_SHADER, vertexShader);
-	shader.setupShaderFromSource(GL_FRAGMENT_SHADER, fragmentShader);
-	shader.bindDefaults();
-	resourcesAllocated = shader.linkProgram() && fbo.isAllocated();
+	int glesMajor = 2;
+	if (ofGetGLRenderer()) {
+		glesMajor = ofGetGLRenderer()->getGLVersionMajor();
+	}
+	usesShader = glesMajor >= 2;
+	if (usesShader) {
+		if (glesMajor >= 3) {
+			shader.setupShaderFromSource(GL_VERTEX_SHADER, vertexShaderES3);
+			shader.setupShaderFromSource(GL_FRAGMENT_SHADER, fragmentShaderES3);
+		} else {
+			shader.setupShaderFromSource(GL_VERTEX_SHADER, vertexShaderES2);
+			shader.setupShaderFromSource(GL_FRAGMENT_SHADER, fragmentShaderES2);
+		}
+		shader.bindDefaults();
+		resourcesAllocated = shader.linkProgram() && fbo.isAllocated();
+	} else {
+		resourcesAllocated = fbo.isAllocated();
+	}
 	ofLogNotice("androidLifecycleStressTest")
 		<< "GL resources allocated=" << resourcesAllocated
+		<< " gles=" << glesMajor
+		<< " shader=" << usesShader
 		<< " renderer=" << glGetString(GL_RENDERER)
 		<< " version=" << glGetString(GL_VERSION);
 }
@@ -96,9 +133,13 @@ void ofApp::draw() {
 	ofPushMatrix();
 	ofTranslate(fbo.getWidth() * 0.5f, fbo.getHeight() * 0.5f);
 	ofRotateDeg(ofGetElapsedTimef() * 40.f);
-	shader.begin();
+	if (usesShader) {
+		shader.begin();
+	}
 	indexedMesh.draw();
-	shader.end();
+	if (usesShader) {
+		shader.end();
+	}
 	ofPopMatrix();
 	fbo.end();
 
