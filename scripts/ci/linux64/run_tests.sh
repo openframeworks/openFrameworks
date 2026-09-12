@@ -9,6 +9,10 @@ ROOT=${TRAVIS_BUILD_DIR:-"$( cd "$(dirname "$0")/../../.." ; pwd -P )"}
 echo "##[group]**** Running unit tests ****"
 cd $ROOT/tests
 for group in *; do
+	# android / ios / emscripten have their own CI jobs; native linux Makefile can't run them
+	case "$group" in
+		android|ios|tvOS|emscripten) continue ;;
+	esac
 	if [ -d $group ]; then
 		echo "##[group] $group"
 		for test in $group/*; do
@@ -23,8 +27,12 @@ for group in *; do
 				binname=$(basename ${test})
 				
 				if [[ -f ./${binname}_debug ]]; then
-					gdb -batch -ex "run" -ex "bt" -ex "q \$_exitcode" ./${binname}_debug
-					#./${binname}_debug
+					# GitHub linux runners have no DISPLAY; xvfb gives GLFW a software GL context
+					if [ -z "${DISPLAY:-}" ] && command -v xvfb-run >/dev/null 2>&1; then
+						xvfb-run -a gdb -batch -ex "run" -ex "bt" -ex "q \$_exitcode" ./${binname}_debug
+					else
+						gdb -batch -ex "run" -ex "bt" -ex "q \$_exitcode" ./${binname}_debug
+					fi
 				else
 					echo "Binary not found: ${binname}_debug"
 					exit 1

@@ -19,6 +19,7 @@ echo "checking assimp versions"
 apt-cache policy libassimp-dev
 
 sudo $OF_ROOT/scripts/linux/ubuntu/install_dependencies.sh -y;
+sudo apt-get install -y xvfb || true
 
 #commenting out below so we can get it working with default in Ubuntu 18.04
 #sudo add-apt-repository -y ppa:dns/gnu
