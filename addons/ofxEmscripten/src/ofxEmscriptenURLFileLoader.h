@@ -3,9 +3,11 @@
  *
  *  Created on: May 30, 2014
  *      Author: arturo
+ *  Updated for Emscripten 3.1+ fetch + ASYNCIFY (6.0.6)
  */
 #pragma once
 #include "ofURLFileLoader.h"
+struct emscripten_fetch_t;
 
 class ofxEmscriptenURLFileLoader: public ofBaseURLFileLoader {
 public:
@@ -26,4 +28,8 @@ private:
 	static void onerror_cb(unsigned, void* request, int status, const char* msg);
 	static void onload_file_cb(unsigned, void* request, const char* file);
 	static void onerror_file_cb(unsigned, void* request, int status);
+	static void onload_fetch(emscripten_fetch_t *fetch);
+	static void onerror_fetch(emscripten_fetch_t *fetch);
+	static void onload_file_fetch(emscripten_fetch_t *fetch);
+	static void onerror_file_fetch(emscripten_fetch_t *fetch);
 };
