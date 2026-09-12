@@ -131,6 +131,8 @@ PLATFORM_LDFLAGS += -s AUTO_JS_LIBRARIES=1
 PLATFORM_LDFLAGS += -s VERBOSE=1
 
 PLATFORM_LDFLAGS +=  $(PLATFORM_PTHREAD)
+PLATFORM_LDFLAGS += -s PTHREAD_POOL_SIZE=4 -s PTHREAD_POOL_SIZE_STRICT=0
+PLATFORM_LDFLAGS += -s PROXY_TO_PTHREAD=1
 
 PLATFORM_LDFLAGS += --js-library $(OF_ADDONS_PATH)/ofxEmscripten/libs/html5video/lib/emscripten/library_html5video.js
 # PLATFORM_LDFLAGS += --js-library $(OF_ADDONS_PATH)/ofxEmscripten/libs/html5audio/lib/emscripten/library_html5audio.js
