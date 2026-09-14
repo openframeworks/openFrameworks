@@ -138,8 +138,8 @@ osx:
 	ADDON_LIBS += libs/poco/lib/osx/PocoJSON.a
 	ADDON_LIBS += libs/poco/lib/osx/PocoXML.a
 	ADDON_LIBS += libs/poco/lib/osx/PocoFoundation.a
-	ADDON_LIBS += libs/openssl/lib/osx/crypto.a
-	ADDON_LIBS += libs/openssl/lib/osx/ssl.a
+	ADDON_LIBS += libs/openssl/lib/macos/libcrypto.xcframework
+	ADDON_LIBS += libs/openssl/lib/macos/libssl.xcframework
 
 ios:
 	ADDON_INCLUDES += libs/openssl/include
@@ -150,8 +150,8 @@ ios:
 	ADDON_LIBS += libs/poco/lib/ios/PocoJSON.a
 	ADDON_LIBS += libs/poco/lib/ios/PocoXML.a
 	ADDON_LIBS += libs/poco/lib/ios/PocoFoundation.a
-	ADDON_LIBS += libs/openssl/lib/ios/crypto.a
-	ADDON_LIBS += libs/openssl/lib/ios/ssl.a
+	ADDON_LIBS += libs/openssl/lib/macos/libcrypto.xcframework
+	ADDON_LIBS += libs/openssl/lib/macos/libssl.xcframework
 
 tvos:
 	ADDON_INCLUDES += libs/openssl/include
@@ -162,8 +162,8 @@ tvos:
 	ADDON_LIBS += libs/poco/lib/tvos/PocoJSON.a
 	ADDON_LIBS += libs/poco/lib/tvos/PocoXML.a
 	ADDON_LIBS += libs/poco/lib/tvos/PocoFoundation.a
-	ADDON_LIBS += libs/openssl/lib/tvos/crypto.a
-	ADDON_LIBS += libs/openssl/lib/tvos/ssl.a
+	ADDON_LIBS += libs/openssl/lib/macos/libcrypto.xcframework
+	ADDON_LIBS += libs/openssl/lib/macos/libssl.xcframework
 
 msys2:
 	ADDON_LDFLAGS = -lPocoNetSSL

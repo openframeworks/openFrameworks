@@ -60,6 +60,8 @@
 		9979E8241A1CCC44007E55D1 /* ofMainLoop.h in Headers */ = {isa = PBXBuildFile; fileRef = 9979E8211A1CCC44007E55D1 /* ofMainLoop.h */; };
 		BBA81C431FFBE4DB0064EA94 /* ofBaseApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BBA81C421FFBE4DB0064EA94 /* ofBaseApp.cpp */; };
 		BF6276AA2BADB16E008864C1 /* openssl.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF6276A92BADB16E008864C1 /* openssl.xcframework */; };
+		BF8551612BADB16E008864C1 /* libssl.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF8551602BADB16E008864C1 /* libssl.xcframework */; };
+		BF8551642BADB16E008864C1 /* libcrypto.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF8551632BADB16E008864C1 /* libcrypto.xcframework */; };
 		BF6276B52BADC774008864C1 /* ofBaseTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = BF6276B42BADC774008864C1 /* ofBaseTypes.h */; };
 		BF6276BB2BADCF7C008864C1 /* ofxiOSSoundStream.h in Headers */ = {isa = PBXBuildFile; fileRef = BF23BF642BAC872D000E2E0E /* ofxiOSSoundStream.h */; };
 		BF6276BC2BADCF7C008864C1 /* ofxiOSExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = BF23BF862BAC872D000E2E0E /* ofxiOSExtras.h */; };
@@ -330,6 +332,8 @@
 		BF6277C72BADCF7C008864C1 /* libpng.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF6609EE2BA1DC91005FA2B1 /* libpng.xcframework */; };
 		BF6277C82BADCF7C008864C1 /* freetype.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF6609E82BA1DC4B005FA2B1 /* freetype.xcframework */; };
 		BF6277C92BADCF7C008864C1 /* openssl.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF6276A92BADB16E008864C1 /* openssl.xcframework */; platformFilters = (ios, macos, xros, ); settings = {ATTRIBUTES = (Weak, ); }; };
+		BF8551622BADB16E008864C1 /* libssl.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF8551602BADB16E008864C1 /* libssl.xcframework */; platformFilters = (ios, macos, xros, ); settings = {ATTRIBUTES = (Weak, ); }; };
+		BF8551652BADB16E008864C1 /* libcrypto.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF8551632BADB16E008864C1 /* libcrypto.xcframework */; platformFilters = (ios, macos, xros, ); settings = {ATTRIBUTES = (Weak, ); }; };
 		BF6277CA2BADCF7C008864C1 /* TVUIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23C0292BAD0954000E2E0E /* TVUIKit.framework */; platformFilters = (tvos, ); };
 		BF6277CB2BADCF7C008864C1 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23C02A2BAD0955000E2E0E /* UIKit.framework */; platformFilters = (ios, maccatalyst, tvos, watchos, xros, ); };
 		BF6277CC2BADCF7C008864C1 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF23C0272BAD02DE000E2E0E /* IOKit.framework */; platformFilters = (ios, maccatalyst, macos, xros, ); settings = {ATTRIBUTES = (Weak, ); }; };
@@ -684,6 +688,8 @@
 		BF23C0292BAD0954000E2E0E /* TVUIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = TVUIKit.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS17.4.sdk/System/Library/Frameworks/TVUIKit.framework; sourceTree = DEVELOPER_DIR; };
 		BF23C02A2BAD0955000E2E0E /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/iOSSupport/System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		BF6276A92BADB16E008864C1 /* openssl.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = openssl.xcframework; path = ../../../openssl/lib/macos/openssl.xcframework; sourceTree = "<group>"; };
+		BF8551602BADB16E008864C1 /* libssl.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = libssl.xcframework; path = ../../../openssl/lib/macos/libssl.xcframework; sourceTree = "<group>"; };
+		BF8551632BADB16E008864C1 /* libcrypto.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = libcrypto.xcframework; path = ../../../openssl/lib/macos/libcrypto.xcframework; sourceTree = "<group>"; };
 		BF6276AF2BADB855008864C1 /* openFrameworksDebug.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = openFrameworksDebug.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		BF6276B22BADC6C9008864C1 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
 		BF6276B32BADC6C9008864C1 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
@@ -856,7 +862,8 @@
 				BF6277C62BADCF7C008864C1 /* uriparser.xcframework in Frameworks */,
 				BF6277C72BADCF7C008864C1 /* libpng.xcframework in Frameworks */,
 				BF6277C82BADCF7C008864C1 /* freetype.xcframework in Frameworks */,
-				BF6277C92BADCF7C008864C1 /* openssl.xcframework in Frameworks */,
+				BF8551622BADB16E008864C1 /* libssl.xcframework in Frameworks */,
+				BF8551652BADB16E008864C1 /* libcrypto.xcframework in Frameworks */,
 				BF6277CA2BADCF7C008864C1 /* TVUIKit.framework in Frameworks */,
 				BF6277CB2BADCF7C008864C1 /* UIKit.framework in Frameworks */,
 				BF6277CC2BADCF7C008864C1 /* IOKit.framework in Frameworks */,
@@ -898,7 +905,8 @@
 			files = (
 				BF660A472BA1DD1D005FA2B1 /* zlib.xcframework in Frameworks */,
 				BF6609F32BA1DCAD005FA2B1 /* pugixml.xcframework in Frameworks */,
-				BF6276AA2BADB16E008864C1 /* openssl.xcframework in Frameworks */,
+				BF8551612BADB16E008864C1 /* libssl.xcframework in Frameworks */,
+				BF8551642BADB16E008864C1 /* libcrypto.xcframework in Frameworks */,
 				BF6609F12BA1DC9F005FA2B1 /* pixman.xcframework in Frameworks */,
 				BF6609E72BA1DC13005FA2B1 /* cairo.xcframework in Frameworks */,
 				BF8D1B102D6AF3EE007984A0 /* brotli.xcframework in Frameworks */,
@@ -1174,6 +1182,8 @@
 				BF6609E42BA1DB6F005FA2B1 /* FreeImage.xcframework */,
 				BF6609E82BA1DC4B005FA2B1 /* freetype.xcframework */,
 				BF6276A92BADB16E008864C1 /* openssl.xcframework */,
+				BF8551602BADB16E008864C1 /* libssl.xcframework */,
+				BF8551632BADB16E008864C1 /* libcrypto.xcframework */,
 				BF6609F22BA1DCAD005FA2B1 /* pugixml.xcframework */,
 				BF6609F02BA1DC9F005FA2B1 /* pixman.xcframework */,
 				BF660A442BA1DD04005FA2B1 /* uriparser.xcframework */,

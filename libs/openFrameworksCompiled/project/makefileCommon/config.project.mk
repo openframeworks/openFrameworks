@@ -29,6 +29,7 @@ EXCLUDE_PATHS_GREP =  grep -v "/tvos-arm64" | \
 											grep -v "/xros-arm64_x86_64-simulator" | \
 											grep -v "/watchos-arm64_32_armv7k" | \
 											grep -v "/watchos-arm64_i386-simulator" | \
+											grep -v "/openssl.xcframework/" | \
 											grep -v "/\.[^\.]"
 
 # construct the full paths of the core's platform specific static libs
