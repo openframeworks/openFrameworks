@@ -2,24 +2,17 @@
 
 #include "ofMain.h"
 
-// Shared by every platform target of glRenderSmokeTest (desktop, Emscripten,
-// iOS, Android). Exercises the code paths touched by the OpenGL ES 3.0/3.1
-// support work: indexed ofVboMesh draw + drawInstanced (drawElements /
-// drawElementsInstanced), a tessellated ofPath (tess2 / ofIndexType), and an
-// ofFbo round trip, on whatever GL/GLES context the host window created.
-//
-// No custom shader is used deliberately: the GLSL version/#define story
-// differs per platform (desktop core profile vs GLES2 vs GLES3 "300 es" vs
-// Emscripten) and isn't what this PR touches. Using the renderer's own
-// default shader keeps the test focused on the index-type and tess2 paths
-// while still exercising the ES-version #ifdef branches in
-// ofGLProgrammableRenderer indirectly (every draw call goes through them).
+// Shared by desktop / Emscripten / iOS. Indexed VBO + tess2 ofPath + FBO
+// readback on ES1, ES2, ES3 and desktop GL. Instancing only when the context
+// actually has it (GL 3.1+ / ES 3.0+); ES1/ES2/GL 2.1 skip that call.
 class GLSmokeTestCore {
 public:
 	static constexpr int framesToRun = 12;
 
 	void allocate() {
 		release();
+		usedInstancing = false;
+		detectAPI();
 
 		indexedMesh.setMode(OF_PRIMITIVE_TRIANGLES);
 		indexedMesh.addVertices({
@@ -57,6 +50,11 @@ public:
 		if (!allocated) {
 			fail("ofFbo failed to allocate");
 		}
+
+		ofLogNotice("glRenderSmokeTest") << "api=" << apiLabel()
+			<< " programmable=" << (ofIsGLProgrammableRenderer() ? 1 : 0)
+			<< " instancing=" << (instancingAvailable ? 1 : 0)
+			<< " ofIndexTypeBytes=" << sizeof(ofIndexType);
 	}
 
 	void release() {
@@ -77,8 +75,11 @@ public:
 		ofSetColor(255);
 		ofPushMatrix();
 		ofTranslate(fbo.getWidth() * 0.5f, fbo.getHeight() * 0.5f);
-		indexedMesh.draw();                          // ofGLProgrammableRenderer::draw(ofVboMesh) -> drawElements
-		indexedMesh.drawInstanced(OF_MESH_FILL, 2);   // forces the drawElementsInstanced path (primCount > 1)
+		indexedMesh.draw();
+		if (instancingAvailable) {
+			indexedMesh.drawInstanced(OF_MESH_FILL, 2);
+			usedInstancing = true;
+		}
 		ofPopMatrix();
 		fbo.end();
 		checkGLErrors("after mesh draw");
@@ -88,7 +89,7 @@ public:
 
 		ofPushMatrix();
 		ofTranslate(180.f, 160.f);
-		tessellatedPath.draw();                       // tess2 triangulation -> ofIndexType-sized indices
+		tessellatedPath.draw();
 		ofPopMatrix();
 		checkGLErrors("after path draw");
 
@@ -107,8 +108,11 @@ public:
 	}
 
 	std::string resultLine() const {
+		const std::string suffix = " frames=" + ofToString(frame)
+			+ " api=" + apiLabel()
+			+ " instancing=" + ofToString(usedInstancing ? 1 : 0);
 		if (passed()) {
-			return "GL_SMOKE_TEST RESULT=PASS frames=" + ofToString(frame);
+			return "GL_SMOKE_TEST RESULT=PASS" + suffix;
 		}
 		std::string reason = failureReason;
 		if (reason.empty() && glErrorCount > 0) {
@@ -117,10 +121,34 @@ public:
 		if (reason.empty() && !pixelCheckPassed) {
 			reason = "FBO readback did not contain the expected non-background color";
 		}
-		return "GL_SMOKE_TEST RESULT=FAIL reason=" + reason;
+		return "GL_SMOKE_TEST RESULT=FAIL reason=" + reason + suffix;
 	}
 
 private:
+	void detectAPI() {
+		glMajor = 0;
+		glMinor = 0;
+		instancingAvailable = false;
+		auto renderer = ofGetGLRenderer();
+		if (renderer) {
+			glMajor = renderer->getGLVersionMajor();
+			glMinor = renderer->getGLVersionMinor();
+		}
+#ifdef TARGET_OPENGLES
+		instancingAvailable = glMajor >= 3;
+#else
+		instancingAvailable = ofIsGLProgrammableRenderer() && (glMajor > 3 || (glMajor == 3 && glMinor >= 1));
+#endif
+	}
+
+	std::string apiLabel() const {
+#ifdef TARGET_OPENGLES
+		return "ES" + ofToString(glMajor) + "." + ofToString(glMinor);
+#else
+		return std::string(ofIsGLProgrammableRenderer() ? "GL" : "GL-FF") + ofToString(glMajor) + "." + ofToString(glMinor);
+#endif
+	}
+
 	void fail(const std::string & reason) {
 		if (failureReason.empty()) {
 			failureReason = reason;
@@ -166,6 +194,10 @@ private:
 
 	bool allocated = false;
 	bool pixelCheckPassed = false;
+	bool instancingAvailable = false;
+	bool usedInstancing = false;
+	int glMajor = 0;
+	int glMinor = 0;
 	int frame = 0;
 	int glErrorCount = 0;
 	GLenum lastGLError = GL_NO_ERROR;

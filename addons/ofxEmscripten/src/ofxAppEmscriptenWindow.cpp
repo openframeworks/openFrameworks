@@ -43,12 +43,18 @@ void ofxAppEmscriptenWindow::setup(const ofGLESWindowSettings & settings){
 	attrs.alpha = 0;
 
 	context = emscripten_webgl_create_context("#canvas", &attrs);
+	int glesMajor = 3; // WebGL 2 == GLES 3
+	if (!context) {
+		attrs.majorVersion = 1;
+		context = emscripten_webgl_create_context("#canvas", &attrs);
+		glesMajor = 2; // WebGL 1 == GLES 2
+	}
 	assert(context);
 	  
 	makeCurrent();
 
 	_renderer = std::make_shared<ofGLProgrammableRenderer>(this);
-	((ofGLProgrammableRenderer*)_renderer.get())->setup(2,0);
+	((ofGLProgrammableRenderer*)_renderer.get())->setup(glesMajor, 0);
 
     emscripten_set_keydown_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW,this,useCapture,&keydown_cb);
     emscripten_set_keyup_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW,this,useCapture,&keyup_cb);
@@ -359,7 +365,7 @@ EM_BOOL ofxAppEmscriptenWindow::mousedown_cb(int eventType, const EmscriptenMous
 	return true;
 }
 EM_BOOL ofxAppEmscriptenWindow::rescale(int* x, int* y) {
-
+	return false;
 }
 
 //------------------------------------------------------------

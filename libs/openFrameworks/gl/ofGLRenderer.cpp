@@ -20,8 +20,6 @@ using std::vector;
 
 const std::string ofGLRenderer::TYPE = "GL";
 
-static ofVboMesh gradientMesh;
-
 //----------------------------------------------------------
 ofGLRenderer::ofGLRenderer(const ofAppBaseWindow * _window)
 	: matrixStack(_window)
@@ -44,21 +42,19 @@ ofGLRenderer::ofGLRenderer(const ofAppBaseWindow * _window)
 
 void ofGLRenderer::setup() {
 #ifdef TARGET_OPENGLES
-	// OpenGL ES might have set a default frame buffer for
-	// MSAA rendering to the window, bypassing ofFbo, so we
-	// can't trust ofFbo to have correctly tracked the bind
-	// state. Therefore, we are forced to use the slower glGet() method
-	// to be sure to get the correct default framebuffer.
-	GLint currentFrameBuffer;
-	glGetIntegerv(GL_FRAMEBUFFER_BINDING, &currentFrameBuffer);
-	defaultFramebufferId = currentFrameBuffer;
+	// OpenGL ES might have set a default frame buffer for MSAA rendering to the window,
+	// bypassing ofFbo, so we can't trust ofFbo to have correctly tracked the bind state.
+	// Therefore we are forced to use the slower glGet() method to be sure.
+	GLint currentFramebuffer;
+	glGetIntegerv(GL_FRAMEBUFFER_BINDING, &currentFramebuffer);
+	defaultFramebufferId = currentFramebuffer;
 	currentFramebufferId = defaultFramebufferId;
 #endif
+
 	setupGraphicDefaults();
 	viewport();
 	setupScreenPerspective();
 }
-
 void ofGLRenderer::startRender() {
 	currentFramebufferId = defaultFramebufferId;
 	framebufferIdStack.push_back(defaultFramebufferId);
@@ -188,7 +184,7 @@ void ofGLRenderer::draw(const ofMesh & vertexData, ofPolyRenderMode renderType, 
 	}
 
 	if (vertexData.getNumIndices()) {
-		glDrawElements(drawMode, vertexData.getNumIndices(), GL_UNSIGNED_SHORT, vertexData.getIndexPointer());
+		glDrawElements(drawMode, vertexData.getNumIndices(), sizeof(ofIndexType) == 2 ? GL_UNSIGNED_SHORT : GL_UNSIGNED_INT, vertexData.getIndexPointer());
 	} else {
 		glDrawArrays(drawMode, 0, vertexData.getNumVertices());
 	}
@@ -389,12 +385,7 @@ void ofGLRenderer::draw(const ofVbo & vbo, GLuint drawMode, int first, int total
 void ofGLRenderer::drawElements(const ofVbo & vbo, GLuint drawMode, int amt, int offsetelements) const {
 	if (vbo.getUsingVerts()) {
 		vbo.bind();
-#ifdef TARGET_OPENGLES
-		glDrawElements(drawMode, amt, GL_UNSIGNED_SHORT, (void *)(sizeof(ofIndexType) * offsetelements));
-#else
-		// Index type follows sizeof(ofIndexType); see ofGLProgrammableRenderer::drawElements.
 		glDrawElements(drawMode, amt, sizeof(ofIndexType) == 2 ? GL_UNSIGNED_SHORT : GL_UNSIGNED_INT, (void *)(sizeof(ofIndexType) * offsetelements));
-#endif
 		vbo.unbind();
 	}
 }
@@ -404,11 +395,7 @@ void ofGLRenderer::drawInstanced(const ofVbo & vbo, GLuint drawMode, int first, 
 	if (vbo.getUsingVerts()) {
 		vbo.bind();
 #ifdef TARGET_OPENGLES
-		// todo: activate instancing once OPENGL ES supports instancing, starting with version 3.0
-		// unfortunately there is currently no easy way within oF to query the current OpenGL version.
-		// https://www.khronos.org/opengles/sdk/docs/man3/xhtml/glDrawElementsInstanced.xml
 		ofLogWarning("ofVbo") << "drawInstanced(): hardware instancing is not supported on OpenGL ES < 3.0";
-		// glDrawArraysInstanced(drawMode, first, total, primCount);
 #else
 		glDrawArraysInstanced(drawMode, first, total, primCount);
 #endif
@@ -421,76 +408,11 @@ void ofGLRenderer::drawElementsInstanced(const ofVbo & vbo, GLuint drawMode, int
 	if (vbo.getUsingVerts()) {
 		vbo.bind();
 #ifdef TARGET_OPENGLES
-		// todo: activate instancing once OPENGL ES supports instancing, starting with version 3.0
-		// unfortunately there is currently no easy way within oF to query the current OpenGL version.
-		// https://www.khronos.org/opengles/sdk/docs/man3/xhtml/glDrawElementsInstanced.xml
 		ofLogWarning("ofVbo") << "drawElementsInstanced(): hardware instancing is not supported on OpenGL ES < 3.0";
-		// glDrawElementsInstanced(drawMode, amt, GL_UNSIGNED_SHORT, nullptr, primCount);
 #else
-		// Index type follows sizeof(ofIndexType); see ofGLProgrammableRenderer::drawElements.
 		glDrawElementsInstanced(drawMode, amt, sizeof(ofIndexType) == 2 ? GL_UNSIGNED_SHORT : GL_UNSIGNED_INT, nullptr, primCount);
 #endif
 		vbo.unbind();
-	}
-}
-
-//----------------------------------------------------------
-void ofGLRenderer::drawBackgroundGradient(const ofFloatColor& start, const ofFloatColor& end, ofGradientMode mode) const {
-	float w = getViewportWidth(), h = getViewportHeight();
-	gradientMesh.clear();
-	gradientMesh.setMode(OF_PRIMITIVE_TRIANGLE_FAN);
-#ifndef TARGET_EMSCRIPTEN
-	gradientMesh.setUsage(GL_STREAM_DRAW);
-#endif
-	if (mode == OF_GRADIENT_CIRCULAR) {
-		// this could be optimized by building a single mesh once, then copying
-		// it and just adding the colors whenever the function is called.
-		///TODO: revert to glm::vec2!!
-		glm::vec2 center(w / 2, h / 2);
-		gradientMesh.addVertex(glm::vec3(center, 0.f));
-		gradientMesh.addColor(start);
-		float n = 32; // circular gradient resolution
-		float angleBisector = glm::two_pi<float>() / (n * 2.0);
-		float smallRadius = ofDist(0, 0, w / 2, h / 2);
-		float bigRadius = smallRadius / std::cos(angleBisector);
-		for (int i = 0; i <= n; i++) {
-			float theta = i * glm::two_pi<float>() / n;
-			gradientMesh.addVertex(glm::vec3(center + glm::vec2(std::sin(theta), std::cos(theta)) * bigRadius, 0));
-			gradientMesh.addColor(end);
-		}
-	} else if (mode == OF_GRADIENT_LINEAR) {
-		gradientMesh.addVertex({ 0.f, 0.f, 0.f });
-		gradientMesh.addVertex({ w, 0.f, 0.f });
-		gradientMesh.addVertex({ w, h, 0.f });
-		gradientMesh.addVertex({ 0.f, h, 0.f });
-		gradientMesh.addColor(start);
-		gradientMesh.addColor(start);
-		gradientMesh.addColor(end);
-		gradientMesh.addColor(end);
-	} else if (mode == OF_GRADIENT_BAR) {
-		gradientMesh.addVertex({ w / 2.f, h / 2.f, 0.f });
-		gradientMesh.addVertex({ 0.f, h / 2.f, 0.f });
-		gradientMesh.addVertex({ 0.f, 0.f, 0.f });
-		gradientMesh.addVertex({ w, 0.f, 0.f });
-		gradientMesh.addVertex({ w, h / 2.f, 0.f });
-		gradientMesh.addVertex({ w, h, 0.f });
-		gradientMesh.addVertex({ 0.f, h, 0.f });
-		gradientMesh.addVertex({ 0.f, h / 2, 0.f });
-		gradientMesh.addColor(start);
-		gradientMesh.addColor(start);
-		gradientMesh.addColor(end);
-		gradientMesh.addColor(end);
-		gradientMesh.addColor(start);
-		gradientMesh.addColor(end);
-		gradientMesh.addColor(end);
-		gradientMesh.addColor(start);
-	}
-	GLboolean depthMaskEnabled;
-	glGetBooleanv(GL_DEPTH_WRITEMASK, &depthMaskEnabled);
-	glDepthMask(GL_FALSE);
-	gradientMesh.draw();
-	if (depthMaskEnabled) {
-		glDepthMask(GL_TRUE);
 	}
 }
 
@@ -574,7 +496,7 @@ void ofGLRenderer::bind(const ofFbo & fbo) {
 	glBindFramebuffer(GL_FRAMEBUFFER, currentFramebufferId);
 }
 
-#ifndef TARGET_OPENGLES
+#if !defined(TARGET_OPENGLES) || (defined(GL_ES_VERSION_3_0) && defined(TARGET_OPENGLES_3))
 //----------------------------------------------------------
 void ofGLRenderer::bindForBlitting(const ofFbo & fboSrc, ofFbo & fboDst, int attachmentPoint) {
 	if (currentFramebufferId == fboSrc.getId()) {
@@ -582,17 +504,18 @@ void ofGLRenderer::bindForBlitting(const ofFbo & fboSrc, ofFbo & fboDst, int att
 					   << "Most probably you forgot to end() the current framebuffer before calling getTexture().";
 		return;
 	}
-	// this method could just as well have been placed in ofBaseGLRenderer
-	// and shared over both programmable and fixed function renderer.
-	// I'm keeping it here, so that if we want to do more fancyful
-	// named framebuffers with GL 4.5+, we can have
-	// different implementations.
+
 	framebufferIdStack.push_back(currentFramebufferId);
 	currentFramebufferId = fboSrc.getId();
+
 	glBindFramebuffer(GL_READ_FRAMEBUFFER, currentFramebufferId);
-	glReadBuffer(GL_COLOR_ATTACHMENT0 + attachmentPoint);
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fboDst.getIdDrawBuffer());
+
+#ifndef TARGET_OPENGLES
+	// glReadBuffer / glDrawBuffer are desktop-only
+	glReadBuffer(GL_COLOR_ATTACHMENT0 + attachmentPoint);
 	glDrawBuffer(GL_COLOR_ATTACHMENT0 + attachmentPoint);
+#endif
 }
 #endif
 

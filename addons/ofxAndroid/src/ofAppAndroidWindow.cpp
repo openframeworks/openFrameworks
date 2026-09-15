@@ -122,7 +122,19 @@ ofAppAndroidWindow::ofAppAndroidWindow()  {
 	window = this;
 	msaaSamples = 1;
 	glesVersion = 2;
-
+#ifdef TARGET_PROGRAMMABLE_GL
+    #ifdef GL_ES_VERSION_3_0
+        glesVersion = 3;
+        #ifdef GL_ES_VERSION_3_1
+            glesVersionMinor = 1;
+        #endif
+    #else
+        glesVersion = 2;
+    #endif
+#else
+    glesVersion = 1;
+#endif
+    window = this;
 	ofGetMainLoop()->setCurrentWindow(this);
 }
 
@@ -164,17 +176,22 @@ ofAppAndroidWindow::~ofAppAndroidWindow() {
 	// TODO Auto-generated destructor stub
 }
 
+
 bool ofAppAndroidWindow::isSurfaceDestroyed() {
 	return surfaceDestroyed;
 }
 
 void ofAppAndroidWindow::setup(const ofGLESWindowSettings & settings)
 {
+	glesVersion = settings.getGLESVersionMajor();
+    glesVersionMinor = settings.getGLESVersionMinor();
 	setup( (const ofxAndroidWindowSettings &)settings );
 }
 
 void ofAppAndroidWindow::setup(const ofxAndroidWindowSettings & settings){
 
+	glesVersion = settings.getGLESVersionMajor();
+    glesVersionMinor = settings.getGLESVersionMinor();
 	if(window == nullptr) {
 		ofLogError("ofAppAndroidWindow") << "Setup and Window is nullptr ! Fixing";
 		setCurrentWindow();
@@ -186,25 +203,18 @@ void ofAppAndroidWindow::setup(const ofxAndroidWindowSettings & settings){
 	}else{
 		currentRenderer = std::make_shared<ofGLProgrammableRenderer>(this);
 	}
-
 	jclass javaClass = ofGetJNIEnv()->FindClass("cc/openframeworks/OFAndroid");
-
 	if(javaClass==nullptr){
 		ofLogError("ofAppAndroidWindow") << "setupOpenGL(): couldn't find OFAndroid java class";
 		return;
 	}
-
 	makeCurrent();
-
 	jmethodID method = ofGetJNIEnv()->GetStaticMethodID(javaClass,"setupGL","(IZ)V");
 	if(!method){
 		ofLogError("ofAppAndroidWindow") << "setupOpenGL(): couldn't find OFAndroid setupGL method";
 		return;
 	}
-
 	ofGetJNIEnv()->CallStaticVoidMethod(javaClass,method,glesVersion,settings.preserveContextOnPause);
-
-
 }
 
 void ofAppAndroidWindow::update(){
@@ -330,6 +340,10 @@ int ofAppAndroidWindow::getGlesVersion()
 	return glesVersion;
 }
 
+int ofAppAndroidWindow::getGlesVersionMinor()
+{
+	return glesVersionMinor;
+}
 
 extern "C"{
 
@@ -443,57 +457,46 @@ Java_cc_openframeworks_OFAndroid_onSurfaceDestroyed( JNIEnv*  env, jclass  thiz 
 	}
 }
 
+
 JNIEXPORT void JNICALL
-Java_cc_openframeworks_OFAndroid_onSurfaceCreated( JNIEnv*  env, jclass  thiz ){
-	if(appSetup){
-		ofLogVerbose("ofAppAndroidWindow") << "onSurfaceCreated";
-		if(!surfaceDestroyed){
-			ofNotifyEvent(ofxAndroidEvents().unloadGL);
-		}
-		ofNotifyEvent(ofxAndroidEvents().reloadGL);
-		window->renderer()->pushStyle();
-		window->renderer()->setupGraphicDefaults();
-		window->renderer()->popStyle();
-		window->setThreadedEvents(false);
-        int glesVersion = window->getGlesVersion();
-		bSetupScreen = true;
-		if( glesVersion < 2 )
-		{
-			ofLogVerbose("ofAppAndroidWindow") << "onSurfaceCreated OpenGLES 1";
-			dynamic_cast<ofGLRenderer*>(window->renderer().get())->setup();
-		}
-		else
-		{
-			ofLogVerbose("ofAppAndroidWindow") << "onSurfaceCreated OpenGLES 2.0";
-			dynamic_cast<ofGLProgrammableRenderer*>(window->renderer().get())->setup(glesVersion,0);
-		}
+Java_cc_openframeworks_OFAndroid_onSurfaceCreated( JNIEnv* env, jclass thiz ){
+    ofLogVerbose("ofAppAndroidWindow") << "onSurfaceCreated";
 
-	}else{
-		if(window != nullptr) {
-			int glesVersion = window->getGlesVersion();
-			bSetupScreen = true;
-			if (glesVersion < 2) {
-				ofLogVerbose("ofAppAndroidWindow") << "onSurfaceCreated OpenGLES 1";
-				dynamic_cast<ofGLRenderer *>(window->renderer().get())->setup();
-			} else {
-				ofLogVerbose("ofAppAndroidWindow") << "onSurfaceCreated OpenGLES 2.0";
-				dynamic_cast<ofGLProgrammableRenderer *>(window->renderer().get())->setup(
-						glesVersion, 0);
-			}
-		}
-	}
+    if(!surfaceDestroyed && appSetup){
+        ofNotifyEvent(ofxAndroidEvents().unloadGL);
+    }
+    ofNotifyEvent(ofxAndroidEvents().reloadGL);
 
-	surfaceDestroyed = false;
+    if(appSetup){
+        window->renderer()->pushStyle();
+        window->renderer()->setupGraphicDefaults();
+        window->renderer()->popStyle();
+        window->setThreadedEvents(false);
+    }
+
+    bSetupScreen = true;
+    int glesVersion = window->getGlesVersion();
+    int glesVersionMinor = window->getGlesVersionMinor();
+
+    if(glesVersion < 2){
+        ofLogVerbose("ofAppAndroidWindow") << "onSurfaceCreated OpenGLES 1";
+        dynamic_cast<ofGLRenderer*>(window->renderer().get())->setup();
+    }else{
+        ofLogVerbose("ofAppAndroidWindow") << "onSurfaceCreated OpenGLES 2.0+";
+        dynamic_cast<ofGLProgrammableRenderer*>(window->renderer().get())->setup(glesVersion, glesVersionMinor);
+    }
+
+    surfaceDestroyed = false;
 }
 
 JNIEXPORT jboolean JNICALL
 Java_cc_openframeworks_OFAndroid_isWindowReady( JNIEnv*  env, jclass  thiz) {
 
-          if(window != nullptr && window->renderer() != nullptr) {
-            return true;
-      } else {
+    if(window != nullptr && window->renderer() != nullptr) {
+        return true;
+    } else {
         return false;
-        }
+    }
 }
 
 JNIEXPORT void JNICALL
@@ -554,24 +557,18 @@ Java_cc_openframeworks_OFAndroid_setAssetManager(JNIEnv *env, jclass thiz,
 		jobject jAssetManager) {
 
 	env->NewGlobalRef(jAssetManager);
-
 	AAssetManager *aaAssetManager = AAssetManager_fromJava(env, jAssetManager);
 	if (aaAssetManager == nullptr) {
 		ofLogError("ofAppAndroidWindow") << "Could not obtain the AAssetManager";
 		return;
 	}
-
 	assetManager = aaAssetManager;
 
 	if(window == nullptr || (window != nullptr && window->renderer() == nullptr)) {
 		ofLogVerbose("ofAppAndroidWindow") << "setAssetManager window is null";
 		return;
 	}
-
 	window->setAssetManager(assetManager);
-
-
-
 
 }
 

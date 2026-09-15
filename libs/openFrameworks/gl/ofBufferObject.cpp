@@ -81,7 +81,7 @@ void ofBufferObject::unbind(GLenum target) const{
 	}
 }
 
-#if !defined(TARGET_OPENGLES) || defined(TARGET_EMSCRIPTEN)
+#if !defined(TARGET_OPENGLES) || (defined(GL_ES_VERSION_3_0) && defined(TARGET_OPENGLES_3))
 void ofBufferObject::bindBase(GLenum target,GLuint index) const{
 	if(data){
 		glBindBufferBase(target,index,data->id);
@@ -187,7 +187,9 @@ void * ofBufferObject::map(GLenum access){
 
 	return ret;
 }
+#endif
 
+#if !defined(TARGET_OPENGLES) || (defined(GL_ES_VERSION_3_0) && defined(TARGET_OPENGLES_3))
 void ofBufferObject::unmap(){
 	if(!this->data) return;
 
@@ -262,9 +264,15 @@ void ofBufferObject::copyTo(ofBufferObject & dstBuffer, int readOffset, int writ
 
 
 void ofBufferObject::invalidate(){
-    glInvalidateBufferData(data->id);
+#ifndef TARGET_OPENGLES
+	// glInvalidateBufferData is a desktop OpenGL 4.3 API; OpenGL ES has no
+	// equivalent buffer invalidation entry point.
+	if (data && data->id != 0) {
+		glInvalidateBufferData(data->id);
+	}
+#endif
+	// On OpenGL ES this is a no-op (the driver may ignore this hint anyway).
 }
-
 #endif
 
 GLsizeiptr ofBufferObject::size() const{

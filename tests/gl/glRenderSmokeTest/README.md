@@ -1,10 +1,13 @@
 # GL render smoke test
 
 Exercises the code paths touched by the OpenGL ES 3.0/3.1 support work:
-an indexed `ofVboMesh` drawn both directly (`drawElements`) and instanced
-(`drawElementsInstanced`), a tessellated `ofPath` (tess2 / `ofIndexType`),
-and an `ofFbo` round trip with a pixel readback to catch garbage/blank
-triangles caused by an index-type/size mismatch.
+an indexed `ofVboMesh` (`drawElements`), a tessellated `ofPath` (tess2 /
+`ofIndexType`), and an `ofFbo` round trip with a pixel readback to catch
+garbage/blank triangles caused by an index-type/size mismatch.
+
+Works on ES1, ES2, ES3 and desktop OpenGL. Instancing
+(`drawElementsInstanced`) is only called when the context has it
+(GL 3.1+ / ES 3.0+ / WebGL2); ES1, ES2 and GL 2.1 skip that call.
 
 The actual test logic lives in `src/GLSmokeTestCore.h` and is shared,
 unmodified, by every platform target (desktop here, `tests/emscripten/glRenderSmokeTest`,
