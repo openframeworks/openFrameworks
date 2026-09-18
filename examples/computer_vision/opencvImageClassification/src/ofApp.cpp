@@ -23,7 +23,7 @@ void ofApp::update(){
 		colorImg.setFromPixels(pixels);
 
 		//get the ofCvColorImage as a cv::Mat image to pass to the classifier
-		auto cvMat = cv::cvarrToMat(colorImg.getCvImage());
+		auto cvMat = colorImg.getCvMat();
 		
 		//get the restuls as a vector of detected items.
 		//each result has an ofRectangle for the bounds, a label which identifies the object and the confidence of the classifier

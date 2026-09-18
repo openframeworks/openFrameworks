@@ -149,7 +149,7 @@ echo "using pacman: $PACMAN"
 MSYS_PACKAGES="unzip make"
 
 # List of MINGW packages to be installed (without prefix)
-# opencv is pinned separately below (ofxOpenCv isn't ported to OpenCV 5's C++-only API yet)
+# opencv is pinned separately below (prefer 4.x; ofxOpenCv also compiles against 5)
 MINGW_PACKAGES="assimp cairo curl freeimage \
 	glew glfw glm fmt zlib brotli libpng \
 	harfbuzz libsndfile libusb libxml2 mpg123 \
@@ -205,9 +205,9 @@ if [ $exit_code != 0 ]; then
 fi
 
 
-# Pin OpenCV to the last 4.x build: ofxOpenCv still relies on OpenCV's legacy
-# C API, which OpenCV 5 removed entirely. MSYS2's "opencv" package now resolves
-# to 5.x, so install this specific 4.x build directly instead.
+# Prefer the last 4.x build (smaller / known-good). ofxOpenCv has an OpenCV 5
+# compatibility layer, so falling back to current "opencv" (5.x) still compiles.
+# MSYS2's unpinned "opencv" package now resolves to 5.x.
 OPENCV4_PKG_VERSION="4.13.0-7"
 OPENCV_REPO="${msystem:-ucrt64}"
 OPENCV4_PKG_FILE="${MINGW_PACKAGE_PREFIX}-opencv-${OPENCV4_PKG_VERSION}-any.pkg.tar.zst"

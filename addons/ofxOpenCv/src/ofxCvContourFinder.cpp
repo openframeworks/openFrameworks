@@ -1,6 +1,7 @@
 
 #include "ofxCvContourFinder.h"
 
+#if CV_MAJOR_VERSION < 5
 //--------------------------------------------------------------------------------
 static bool sort_carea_compare( const CvSeq* a, const CvSeq* b) {
 	// use opencv to calc size, then sort based on size
@@ -8,23 +9,30 @@ static bool sort_carea_compare( const CvSeq* a, const CvSeq* b) {
 	float areab = cvContourArea(b, CV_WHOLE_SEQ);
 	return (areaa > areab);
 }
+#endif
 
 //--------------------------------------------------------------------------------
 ofxCvContourFinder::ofxCvContourFinder() {
     _width = 0;
     _height = 0;
+#if CV_MAJOR_VERSION < 5
 	myMoments = (CvMoments*)malloc( sizeof(CvMoments) );
+#endif
 	reset();
 }
 
 //--------------------------------------------------------------------------------
 ofxCvContourFinder::~ofxCvContourFinder() {
+#if CV_MAJOR_VERSION < 5
 	free( myMoments );
+#endif
 }
 
 //--------------------------------------------------------------------------------
 void ofxCvContourFinder::reset() {
+#if CV_MAJOR_VERSION < 5
     cvSeqBlobs.clear();
+#endif
     blobs.clear();
     nBlobs = 0;
 }
@@ -66,6 +74,66 @@ int ofxCvContourFinder::findContours( ofxCvGrayscaleImage&  input,
     inputCopy.setROI( input.getROI() );
     inputCopy = input;
 
+#if CV_MAJOR_VERSION >= 5
+	cv::Mat src = ofxCvToMat(inputCopy.getCvImage()).clone();
+	std::vector<std::vector<cv::Point>> contours;
+	int retrieve_mode = bFindHoles ? cv::RETR_LIST : cv::RETR_EXTERNAL;
+	int method = bUseApproximation ? cv::CHAIN_APPROX_SIMPLE : cv::CHAIN_APPROX_NONE;
+	cv::findContours(src, contours, retrieve_mode, method);
+
+	struct Candidate {
+		size_t idx;
+		double area;
+	};
+	std::vector<Candidate> candidates;
+	for(size_t i = 0; i < contours.size(); ++i) {
+		double area = cv::contourArea(contours[i], bFindHoles);
+		double absArea = (bFindHoles && area < 0) ? fabs(area) : area;
+		if((absArea > minArea) && (absArea < maxArea)) {
+			candidates.push_back({i, area});
+		}
+	}
+	if(candidates.size() > 1) {
+		sort(candidates.begin(), candidates.end(), [](const Candidate & a, const Candidate & b) {
+			return fabs(a.area) > fabs(b.area);
+		});
+	}
+
+	int nKeep = MIN(nConsidered, (int)candidates.size());
+	for(int i = 0; i < nKeep; i++) {
+		const std::vector<cv::Point> & contour = contours[candidates[i].idx];
+		double area = candidates[i].area;
+		cv::Rect rect = cv::boundingRect(contour);
+		cv::Moments moments = cv::moments(contour);
+
+		blobs.push_back(ofxCvBlob());
+		blobs[i].area = bFindHoles ? fabs(area) : area;
+		blobs[i].length = contour.empty() ? 0 : cv::arcLength(contour, true);
+		blobs[i].boundingRect.x = rect.x;
+		blobs[i].boundingRect.y = rect.y;
+		blobs[i].boundingRect.width = rect.width;
+		blobs[i].boundingRect.height = rect.height;
+		if(moments.m00 != 0) {
+			blobs[i].centroid.x = moments.m10 / moments.m00;
+			blobs[i].centroid.y = moments.m01 / moments.m00;
+		} else {
+			blobs[i].centroid.x = rect.x + rect.width * 0.5;
+			blobs[i].centroid.y = rect.y + rect.height * 0.5;
+		}
+		if(bFindHoles) {
+			blobs[i].hole = -area < 0 ? true : false;
+		} else {
+			blobs[i].hole = false;
+		}
+		for(size_t j = 0; j < contour.size(); ++j) {
+			blobs[i].pts.push_back(ofPoint((float)contour[j].x, (float)contour[j].y));
+		}
+		blobs[i].nPts = blobs[i].pts.size();
+	}
+
+	nBlobs = blobs.size();
+	return nBlobs;
+#else
 	CvSeq* contour_list = NULL;
 	contour_storage = cvCreateMemStorage( 1000 );
 	storage	= cvCreateMemStorage( 1000 );
@@ -144,7 +212,7 @@ int ofxCvContourFinder::findContours( ofxCvGrayscaleImage&  input,
 	if( storage != NULL ) { cvReleaseMemStorage(&storage); }
 
 	return nBlobs;
-
+#endif
 }
 
 //--------------------------------------------------------------------------------

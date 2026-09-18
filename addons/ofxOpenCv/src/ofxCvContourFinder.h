@@ -53,10 +53,14 @@ public:
 		int  _width;
 		int  _height;
 		ofxCvGrayscaleImage     inputCopy;
+#if CV_MAJOR_VERSION >= 5
+		// OpenCV 5 dropped CvSeq / CvMemStorage; findContours uses cv::findContours.
+#else
 		CvMemStorage*           contour_storage;
 		CvMemStorage*           storage;
 		CvMoments*              myMoments;
 		std::vector<CvSeq*>     cvSeqBlobs;  //these will become blobs
+#endif
 		
 		ofPoint anchor;
 		bool  bAnchorIsPct;      

@@ -53,7 +53,7 @@ void ofApp::update(){
 
 	if (bNewFrame){
 		//can be a ofCvColorImage or a ofxCvGrayscaleImage
-		cv::Mat frame = cv::cvarrToMat(colorImg.getCvImage());
+		cv::Mat frame = colorImg.getCvMat();
 		
 		//get back the people detected as a vector of ofRectangle
 		peopleRects = detector.detect(frame);

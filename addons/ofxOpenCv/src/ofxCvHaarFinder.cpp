@@ -296,7 +296,7 @@ int ofxCvHaarFinder::findHaarObjects(const ofxCvGrayscaleImage& input,
 	*/
 
 	std::vector<cv::Rect> haarResults;
-	cascade.detectMultiScale(cv::cvarrToMat(img.getCvImage()), haarResults, scaleHaar, neighbors, cv::CASCADE_DO_CANNY_PRUNING, 
+	cascade.detectMultiScale(ofxCvToMat(img.getCvImage()), haarResults, scaleHaar, neighbors, cv::CASCADE_DO_CANNY_PRUNING, 
 		cv::Size(minWidth, minHeight) );
 	
 	nHaarResults = haarResults.size();
