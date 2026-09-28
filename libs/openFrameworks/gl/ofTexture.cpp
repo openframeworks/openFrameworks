@@ -720,11 +720,10 @@ void ofTexture::generateMipmap(){
 	// 2. Check whether the texture's texture target supports mipmap generation.
 	
 	switch (texData.textureTarget) {
-			/// OpenGL ES only supports mipmap for the following two texture targets:
+			/// OpenGL ES 2 supports mipmaps for the following two texture targets.
+			/// OpenGL ES 3 additionally supports 3D and 2D array textures (see below):
 		case GL_TEXTURE_2D:
-#if defined(TARGET_OPENGLES) || (defined(GL_ES_VERSION_2_0) && defined(TARGET_OPENGLES_2))
 		case GL_TEXTURE_CUBE_MAP:
-#endif
 #ifndef TARGET_OPENGLES
 			/// OpenGL supports mipmaps for additional texture targets:
 		case GL_TEXTURE_1D:
@@ -843,7 +842,7 @@ void ofTexture::unbind(int textureLocation) const{
 	ofGetGLRenderer()->unbind(*this,textureLocation);
 }
 
-#if (!defined(TARGET_OPENGLES) && defined(glBindImageTexture)) || defined(GL_ES_VERSION_3_1)
+#if !defined(TARGET_OPENGLES) || defined(GL_ES_VERSION_3_1)
 //----------------------------------------------------------
 void ofTexture::bindAsImage(GLuint unit, GLenum access, GLint level, GLboolean layered, GLint layer){
 	glBindImageTexture(unit,texData.textureID,level,layered,layer,access,texData.glInternalFormat);

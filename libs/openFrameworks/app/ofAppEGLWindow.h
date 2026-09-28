@@ -278,7 +278,7 @@ protected:
 
 private:
 	ofAppEGLWindowSettings settings;
-	int glesVersion;  ///< \brief Indicate the version of OpenGL for Embedded Systems.
+	int glesVersionMajor;  ///< \brief Indicate the major version of OpenGL for Embedded Systems.
     int glesVersionMinor;
 	bool keyboardDetected;
 	bool mouseDetected;

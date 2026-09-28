@@ -122,6 +122,7 @@ ofAppAndroidWindow::ofAppAndroidWindow()  {
 	window = this;
 	msaaSamples = 1;
 	glesVersion = 2;
+	glesVersionMinor = 0;
 #ifdef TARGET_PROGRAMMABLE_GL
     #ifdef GL_ES_VERSION_3_0
         glesVersion = 3;
@@ -134,7 +135,6 @@ ofAppAndroidWindow::ofAppAndroidWindow()  {
 #else
     glesVersion = 1;
 #endif
-    window = this;
 	ofGetMainLoop()->setCurrentWindow(this);
 }
 
@@ -142,6 +142,7 @@ ofAppAndroidWindow::ofAppAndroidWindow(ofAppBaseWindow & other) {
 	window = this;
 	msaaSamples = 1;
 	glesVersion = 2;
+	glesVersionMinor = 0;
 	setMultiWindowMode(other.getWindowMode());
 	ofGetMainLoop()->setCurrentWindow(this);
 }
@@ -196,7 +197,6 @@ void ofAppAndroidWindow::setup(const ofxAndroidWindowSettings & settings){
 		ofLogError("ofAppAndroidWindow") << "Setup and Window is nullptr ! Fixing";
 		setCurrentWindow();
 	}
-	glesVersion = settings.glesVersion;
 	ofLogError("ofAppAndroidWindow") << "Setup OpenGLES:" << glesVersion;
 	if(glesVersion<2){
 		currentRenderer = std::make_shared<ofGLRenderer>(this);
