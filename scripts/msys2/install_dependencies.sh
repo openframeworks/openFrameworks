@@ -149,7 +149,8 @@ echo "using pacman: $PACMAN"
 MSYS_PACKAGES="unzip make"
 
 # List of MINGW packages to be installed (without prefix)
-# opencv is pinned separately below (prefer 4.x; ofxOpenCv also compiles against 5)
+# NB: no opencv here — ofxOpenCv uses the Apothecary-built static libraries
+# bundled under addons/ofxOpenCv/libs/opencv (see below)
 MINGW_PACKAGES="assimp cairo curl freeimage \
 	glew glfw glm fmt zlib brotli libpng \
 	harfbuzz libsndfile libusb libxml2 mpg123 \
@@ -205,42 +206,10 @@ if [ $exit_code != 0 ]; then
 fi
 
 
-# Prefer the last 4.x build (smaller / known-good). ofxOpenCv has an OpenCV 5
-# compatibility layer, so falling back to current "opencv" (5.x) still compiles.
-# MSYS2's unpinned "opencv" package now resolves to 5.x.
-OPENCV4_PKG_VERSION="4.13.0-7"
-OPENCV_REPO="${msystem:-ucrt64}"
-OPENCV4_PKG_FILE="${MINGW_PACKAGE_PREFIX}-opencv-${OPENCV4_PKG_VERSION}-any.pkg.tar.zst"
-OPENCV4_PKG_URL="https://repo.msys2.org/mingw/${OPENCV_REPO}/${OPENCV4_PKG_FILE}"
-echo "Installing pinned OpenCV 4 from $OPENCV4_PKG_URL"
-OPENCV_FLAGS=(-U --needed)
-[[ "$FORCE_YES" == "1" ]] && OPENCV_FLAGS+=(--noconfirm)
-"$PACMAN" "${OPENCV_FLAGS[@]}" "$OPENCV4_PKG_URL"
-exit_code=$?
-if [ $exit_code != 0 ]; then
-	echo "error installing pinned OpenCV 4 from $OPENCV4_PKG_URL"
-	echo "repo.msys2.org is up; that exact filename may have been removed."
-	echo "falling back to current ${MINGW_PACKAGE_PREFIX}-opencv from the synced database"
-	"$PACMAN" "${PACMAN_FLAGS[@]}" "${MINGW_PACKAGE_PREFIX}-opencv" || {
-		echo "error installing opencv — try: pacman -Syu"
-		exit 1
-	}
-fi
-
-
-# Update addon_config.mk files to use OpenCV 5, 4 or 3 depending on what's installed
-ADDONS_DIR="$(cd "$SCRIPT_DIR/../../addons" && pwd)"
-ADDON_CONFIG="$ADDONS_DIR/ofxOpenCv/addon_config.mk"
-if pkg-config opencv5 --exists; then
-	echo "Updating ofxOpenCV to use openCV5"
-	sed -i -E 's/(ADDON_PKG_CONFIG_LIBRARIES =.*)\bopencv[45]?\b/\1opencv5/' "$ADDON_CONFIG"
-elif pkg-config opencv4 --exists; then
-	echo "Updating ofxOpenCV to use openCV4"
-	sed -i -E 's/(ADDON_PKG_CONFIG_LIBRARIES =.*)\bopencv[45]?\b/\1opencv4/' "$ADDON_CONFIG"
-else
-	echo "Updating ofxOpenCV to use openCV3"
-	sed -i -E 's/(ADDON_PKG_CONFIG_LIBRARIES =.*)\bopencv[45]?\b/\1opencv/' "$ADDON_CONFIG"
-fi
+# OpenCV is intentionally NOT installed from pacman here.
+# ofxOpenCv links the Apothecary-built OpenCV 4 static libraries bundled under
+# addons/ofxOpenCv/libs/opencv (see the msys2 section of addon_config.mk),
+# so no system opencv (4.x, 5.x, pinned or otherwise) is required.
 
 if [[ "${FROM_MSYS_SHELL:-0}" == "1" ]]; then
 	echo "done — open MSYS2 UCRT64 to compile"

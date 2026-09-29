@@ -93,11 +93,14 @@ linuxaarch64:
 	ADDON_LDFLAGS = -lblas -llapack
 
 msys2:
-	# opencv4 by default; install_dependencies.sh rewrites to opencv5 or opencv if needed
-	ADDON_PKG_CONFIG_LIBRARIES = opencv4
-	ADDON_LIBS_EXCLUDE = libs/opencv/%
-	ADDON_INCLUDES_EXCLUDE = libs/opencv
-	ADDON_INCLUDES_EXCLUDE += libs/opencv/%
+	# Apothecary-built OpenCV 4 static libraries; no system opencv required.
+	# install_dependencies.sh deliberately installs no opencv package.
+	ADDON_LIBS =
+	ADDON_LIBS += libs/opencv/lib/msys2/x86_64/libopencv_world.a
+	ADDON_LIBS += libs/opencv/lib/msys2/x86_64/liblibprotobuf.a
+	ADDON_LIBS += libs/opencv/lib/msys2/x86_64/libittnotify.a
+	ADDON_LIBS += libs/opencv/lib/msys2/x86_64/liblibpng.a
+	ADDON_LDFLAGS = -lzlib
 
 android/x86:
 	ADDON_LIBS =
