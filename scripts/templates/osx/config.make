@@ -144,5 +144,5 @@
 # osx template
 
 # Default is C++23 (falls back to c++2b on older Apple Clang). Uncomment to override.
-# export MAC_OS_MIN_VERSION = 10.15
+# export MAC_OS_MIN_VERSION = 12.0
 # export MAC_OS_CPP_VER = -std=c++23
