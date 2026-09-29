@@ -95,11 +95,13 @@ linuxaarch64:
 msys2:
 	# Apothecary-built OpenCV 4 static libraries; no system opencv required.
 	# install_dependencies.sh deliberately installs no opencv package.
+	# % expands to the architecture directory shipped by the package
+	# (x86_64, aarch64, ...), so this works for every msystem.
 	ADDON_LIBS =
-	ADDON_LIBS += libs/opencv/lib/msys2/x86_64/libopencv_world.a
-	ADDON_LIBS += libs/opencv/lib/msys2/x86_64/liblibprotobuf.a
-	ADDON_LIBS += libs/opencv/lib/msys2/x86_64/libittnotify.a
-	ADDON_LIBS += libs/opencv/lib/msys2/x86_64/liblibpng.a
+	ADDON_LIBS += libs/opencv/lib/msys2/%/libopencv_world.a
+	ADDON_LIBS += libs/opencv/lib/msys2/%/liblibprotobuf.a
+	ADDON_LIBS += libs/opencv/lib/msys2/%/libittnotify.a
+	ADDON_LIBS += libs/opencv/lib/msys2/%/liblibpng.a
 	ADDON_LDFLAGS = -lzlib
 
 android/x86:
