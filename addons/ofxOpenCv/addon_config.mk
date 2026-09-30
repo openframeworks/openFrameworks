@@ -102,7 +102,8 @@ msys2:
 	ADDON_LIBS += libs/opencv/lib/msys2/%/liblibprotobuf.a
 	ADDON_LIBS += libs/opencv/lib/msys2/%/libittnotify.a
 	ADDON_LIBS += libs/opencv/lib/msys2/%/liblibpng.a
-	ADDON_LDFLAGS = -lzlib
+	# zlib comes from the msys2 pacman package (libz.a), not the bundle
+	ADDON_LDFLAGS = -lz
 
 android/x86:
 	ADDON_LIBS =
