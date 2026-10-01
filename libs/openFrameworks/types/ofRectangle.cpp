@@ -714,7 +714,7 @@ float ofRectangle::getVertAnchor(ofAlignVert anchor) const {
 
 //----------------------------------------------------------
 bool ofRectangle::operator != (const ofRectangle& rect) const {
-	return (x != rect.x) || (y != rect.y) || (width != rect.width) || (height != rect.height);
+	return !(*this == rect);
 }
 
 //----------------------------------------------------------
