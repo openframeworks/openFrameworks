@@ -62,6 +62,7 @@ jobs:
   build-msys2:
     runs-on: windows-latest
     strategy:
+      fail-fast: false
       matrix:
         msystem:
           - mingw64
@@ -81,15 +82,29 @@ jobs:
         with:
           # key: ${{ matrix.os }}-${{ matrix.type }}
           key: ${{ matrix.msystem }}
+      # pacman aborts the whole transaction when one mirror stalls
+      # ("Operation too slow"), so retry the setup once before failing.
       - uses: msys2/setup-msys2@v2
+        id: msys2
+        continue-on-error: true
         with:
           cache: true
           release: true
           update: true
           msystem: ${{matrix.msystem}}
-          # opencv is intentionally left out here and pinned to a 4.x build by
-          # scripts/msys2/install_dependencies.sh (ofxOpenCv isn't ported to
-          # OpenCV 5's C++-only API yet, and MSYS2's opencv package is now 5.x)
+          # no opencv package: ofxOpenCv links the Apothecary-built OpenCV 4
+          # static libs bundled in addons/ofxOpenCv/libs/opencv
+          pacboy: openssl:p python:p gcc:p assimp:p cairo:p curl:p freeglut:p freeimage:p glew:p glfw:p glm:p libsndfile:p libusb:p libxml2:p mpg123:p nlohmann-json:p openal:p pugixml:p rtaudio:p uriparser:p utf8cpp:p
+          install: >-
+            unzip
+            make
+      - uses: msys2/setup-msys2@v2
+        if: steps.msys2.outcome == 'failure'
+        with:
+          cache: false
+          release: true
+          update: true
+          msystem: ${{matrix.msystem}}
           pacboy: openssl:p python:p gcc:p assimp:p cairo:p curl:p freeglut:p freeimage:p glew:p glfw:p glm:p libsndfile:p libusb:p libxml2:p mpg123:p nlohmann-json:p openal:p pugixml:p rtaudio:p uriparser:p utf8cpp:p
           install: >-
             unzip
