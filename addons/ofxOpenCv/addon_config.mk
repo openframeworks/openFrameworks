@@ -93,11 +93,17 @@ linuxaarch64:
 	ADDON_LDFLAGS = -lblas -llapack
 
 msys2:
-	# opencv4 by default; install_dependencies.sh rewrites to opencv5 or opencv if needed
-	ADDON_PKG_CONFIG_LIBRARIES = opencv4
-	ADDON_LIBS_EXCLUDE = libs/opencv/%
-	ADDON_INCLUDES_EXCLUDE = libs/opencv
-	ADDON_INCLUDES_EXCLUDE += libs/opencv/%
+	# Apothecary-built OpenCV 4 static libraries; no system opencv required.
+	# install_dependencies.sh deliberately installs no opencv package.
+	# % expands to the architecture directory shipped by the package
+	# (x86_64, aarch64, ...), so this works for every msystem.
+	ADDON_LIBS =
+	ADDON_LIBS += libs/opencv/lib/msys2/%/libopencv_world.a
+	ADDON_LIBS += libs/opencv/lib/msys2/%/liblibprotobuf.a
+	ADDON_LIBS += libs/opencv/lib/msys2/%/libittnotify.a
+	ADDON_LIBS += libs/opencv/lib/msys2/%/liblibpng.a
+	# zlib comes from the msys2 pacman package (libz.a), not the bundle
+	ADDON_LDFLAGS = -lz
 
 android/x86:
 	ADDON_LIBS =
