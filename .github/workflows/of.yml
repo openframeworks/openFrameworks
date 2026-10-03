@@ -82,33 +82,16 @@ jobs:
         with:
           # key: ${{ matrix.os }}-${{ matrix.type }}
           key: ${{ matrix.msystem }}
-      # pacman aborts the whole transaction when one mirror stalls
-      # ("Operation too slow"), so retry the setup once before failing.
       - uses: msys2/setup-msys2@v2
-        id: msys2
-        continue-on-error: true
         with:
           cache: true
           release: true
           update: true
           msystem: ${{matrix.msystem}}
-          # no opencv package: ofxOpenCv links the Apothecary-built OpenCV 4
-          # static libs bundled in addons/ofxOpenCv/libs/opencv
-          pacboy: openssl:p python:p gcc:p assimp:p cairo:p curl:p freeglut:p freeimage:p glew:p glfw:p glm:p libsndfile:p libusb:p libxml2:p mpg123:p nlohmann-json:p openal:p pugixml:p rtaudio:p uriparser:p utf8cpp:p
           install: >-
             unzip
             make
-      - uses: msys2/setup-msys2@v2
-        if: steps.msys2.outcome == 'failure'
-        with:
-          cache: false
-          release: true
-          update: true
-          msystem: ${{matrix.msystem}}
-          pacboy: openssl:p python:p gcc:p assimp:p cairo:p curl:p freeglut:p freeimage:p glew:p glfw:p glm:p libsndfile:p libusb:p libxml2:p mpg123:p nlohmann-json:p openal:p pugixml:p rtaudio:p uriparser:p utf8cpp:p
-          install: >-
-            unzip
-            make
+            pactoys
           # lld
           # gcc:p gdb:p zlib:p poco:p pkgconf:p harfbuzz:p ntldd-git:p
           # boost:p tools:p
@@ -117,6 +100,21 @@ jobs:
           # git
           # rsync
           # wget
+
+      # Installed here rather than via setup-msys2's pacboy input so a stalled
+      # mirror can be retried: pacman aborts the whole transaction on one
+      # "Operation too slow" download, and setup-msys2 cannot be run twice.
+      # No opencv package: ofxOpenCv links the Apothecary-built OpenCV 4
+      # static libs bundled in addons/ofxOpenCv/libs/opencv.
+      - name: Install packages
+        timeout-minutes: 30
+        run: |
+          for attempt in 1 2 3; do
+            pacboy -S --needed --noconfirm openssl:p python:p gcc:p assimp:p cairo:p curl:p freeglut:p freeimage:p glew:p glfw:p glm:p libsndfile:p libusb:p libxml2:p mpg123:p nlohmann-json:p openal:p pugixml:p rtaudio:p uriparser:p utf8cpp:p && exit 0
+            echo "pacman install failed (attempt $attempt), retrying..."
+            sleep $((attempt * 15))
+          done
+          exit 1
 
       - name: Install dependencies
         run: ./scripts/ci/msys2/install.sh --msystem=${{ matrix.msystem }}
