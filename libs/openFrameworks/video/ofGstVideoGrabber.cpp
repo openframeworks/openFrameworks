@@ -760,8 +760,7 @@ bool ofGstVideoGrabber::setup(int w, int h){
 		string scale = "";
 		if (format.mimetype == "image/jpeg") {
 			decodebin = "! jpegdec ";
-		}
-		if (format.mimetype == "video/x-bayer") {
+		}else if (format.mimetype == "video/x-bayer") {
 			decodebin = "! bayer2rgb ";
 		}else if(gst_video_format_from_string(format.format_name.c_str()) == GST_VIDEO_FORMAT_ENCODED || gst_video_format_from_string(format.format_name.c_str()) ==GST_VIDEO_FORMAT_UNKNOWN){
 			decodebin += "! decodebin ";
@@ -772,7 +771,7 @@ bool ofGstVideoGrabber::setup(int w, int h){
 		}
 
 		if( w!=format.width || h!=format.height ){
-			scale = "! videoscale method=2 ";
+			scale += "! videoscale method=2 ";
 		}
 
 		if(format.format_name==""){
