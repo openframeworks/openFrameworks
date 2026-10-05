@@ -244,6 +244,55 @@ else
 fi
 
 # ---------------------------------------------------------------------------
+section "7. nightly package keeps of Menu scripts + ./of launcher"
+# ---------------------------------------------------------------------------
+PKG=scripts/dev/create_package.sh
+if grep -qE 'rm[[:space:]]+\$PKG_OFROOT/of' "$PKG"; then
+	fail "create_package.sh still deletes ./of (of Menu launcher)"
+else
+	pass "create_package.sh no longer deletes ./of"
+fi
+for f in lib_sources.sh sha_verify.sh upgrade.sh download_libs.sh downloader.sh; do
+	if grep -q "$f" "$PKG"; then
+		pass "create_package.sh keep-list includes $f"
+	else
+		fail "create_package.sh keep-list missing $f"
+	fi
+done
+# simulate the keep-list copy the packager runs, then confirm of.sh can start
+KEEP_DIR=$(mktemp -d)
+mkdir -p "$KEEP_DIR/scripts/dev" "$KEEP_DIR/scripts/ci"
+cp of "$KEEP_DIR/of" 2>/dev/null || true
+cp scripts/of.sh scripts/ui.sh scripts/of_build.sh "$KEEP_DIR/scripts/"
+for f in download_libs.sh download_pg.sh downloader.sh init_submodules.sh \
+         lib_sources.sh sha_verify.sh upgrade.sh; do
+	[[ -f "scripts/dev/$f" ]] && cp "scripts/dev/$f" "$KEEP_DIR/scripts/dev/"
+done
+chmod +x "$KEEP_DIR/of" "$KEEP_DIR/scripts/"*.sh "$KEEP_DIR/scripts/dev/"*.sh 2>/dev/null || true
+# no .git — this is a nightly
+if (cd "$KEEP_DIR" && NO_COLOR=1 OF_ANIM=0 bash scripts/of.sh help < /dev/null) > /tmp/smoke_of_pkg.log 2>&1; then
+	if grep -qiE 'lib_sources.sh: No such file|sha_verify.sh: No such file' /tmp/smoke_of_pkg.log; then
+		fail "of.sh help against packaged scripts — missing subscript (see /tmp/smoke_of_pkg.log)"
+	elif grep -qE 'clone|Interactive menu' /tmp/smoke_of_pkg.log; then
+		pass "of.sh help runs against the nightly keep-list (clone command listed)"
+	else
+		fail "of.sh help against packaged scripts — unexpected output, see /tmp/smoke_of_pkg.log"
+	fi
+else
+	fail "of.sh help against packaged scripts exited $? — see /tmp/smoke_of_pkg.log"
+fi
+if (cd "$KEEP_DIR" && NO_COLOR=1 OF_ANIM=0 bash scripts/of.sh version < /dev/null) > /tmp/smoke_of_ver.log 2>&1; then
+	if grep -q "nightly package (no .git)" /tmp/smoke_of_ver.log; then
+		pass "of.sh version reports nightly package (no .git)"
+	else
+		fail "of.sh version did not report missing .git — see /tmp/smoke_of_ver.log"
+	fi
+else
+	fail "of.sh version against packaged scripts failed — see /tmp/smoke_of_ver.log"
+fi
+rm -rf "$KEEP_DIR"
+
+# ---------------------------------------------------------------------------
 section "Summary"
 # ---------------------------------------------------------------------------
 echo "  $PASS passed, $FAIL failed"

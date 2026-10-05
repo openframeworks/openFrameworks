@@ -343,9 +343,6 @@ function createPackage {
     #delete tutorials by now
     rm -Rf $PKG_OFROOT/tutorials
 
-    #remove of script until after 0.12.1 
-    rm $PKG_OFROOT/of
-
     RELEASE="${RELEASE:-latest}"
     #for now we force latest as we don't have releases in Apothecary for RC etc 
     #prob should have a way to detect if the release exists and if it doesn't downgrade to latest
@@ -553,15 +550,15 @@ function createPackage {
     cd $PKG_OFROOT/scripts
 
     mkdir -p developer
-    # Copy the specified scripts to the new folder
-    cp dev/download_libs.sh developer/
-    cp dev/download_pg.sh developer/
-    cp dev/downloader.sh developer/
-    if [ -f dev/init_submodules.sh ]; then
-        cp dev/init_submodules.sh developer/
-    else
-        echo "Warning: dev/init_submodules.sh does not exist. Skipping copy."
-    fi
+    # of Menu + download_libs keep-list (rest of scripts/dev is packager-only)
+    for f in download_libs.sh download_pg.sh downloader.sh init_submodules.sh \
+             lib_sources.sh sha_verify.sh upgrade.sh; do
+        if [ -f "dev/$f" ]; then
+            cp "dev/$f" developer/
+        else
+            echo "Warning: dev/$f does not exist. Skipping copy."
+        fi
+    done
 
     if [ "$PKG_PLATFORM" != "linux" ] && [ "$PKG_PLATFORM" != "linux64" ] && [ "$PKG_PLATFORM" != "linuxarmv6l" ] && [ "$PKG_PLATFORM" != "linuxarmv7l" ] && [ "$PKG_PLATFORM" != "linuxaarch64" ]; then
         rm -Rf $otherplatforms
@@ -603,6 +600,9 @@ function createPackage {
 
     # make sure any remaining dev scripts are executable
     find . -type f -name "*.sh" -exec chmod +x {} +
+    if [ -f "$PKG_OFROOT/of" ]; then
+        chmod +x "$PKG_OFROOT/of"
+    fi
 
     #delete xcode templates in other platforms
     cd $PKG_OFROOT
