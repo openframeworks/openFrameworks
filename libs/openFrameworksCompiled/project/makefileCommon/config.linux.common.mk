@@ -404,6 +404,15 @@ ifneq ($(LINUX_ARM),1)
 	PLATFORM_PKG_CONFIG_LIBRARIES += gl
 	PLATFORM_PKG_CONFIG_LIBRARIES += glu
 	PLATFORM_PKG_CONFIG_LIBRARIES += glew
+	# GLFW 3.4 static lib on desktop linux (x86_64 and aarch64) is built with
+	# both X11 and Wayland objects. Pull the Wayland link deps when present
+	# so that backend can actually resolve; X11 libs are already listed above.
+	GLFW_WL_PKGS := wayland-client wayland-cursor wayland-egl xkbcommon libdecor-0
+	ifeq ($(CROSS_COMPILING),1)
+		$(foreach pkg,$(GLFW_WL_PKGS),$(if $(shell export PKG_CONFIG_LIBDIR=$(PKG_CONFIG_LIBDIR); pkg-config --exists $(pkg) && echo 1),$(eval PLATFORM_PKG_CONFIG_LIBRARIES += $(pkg))))
+	else
+		$(foreach pkg,$(GLFW_WL_PKGS),$(if $(shell pkg-config --exists $(pkg) && echo 1),$(eval PLATFORM_PKG_CONFIG_LIBRARIES += $(pkg))))
+	endif
 endif
 
 
