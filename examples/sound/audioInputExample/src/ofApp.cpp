@@ -9,9 +9,10 @@ void ofApp::setup(){
 	
 	soundStream.printDeviceList();
 	
-	int bufferSize = 512;
+	int bufferSize = 128;
 
-	
+	left.assign(bufferSize, 0.0);
+	right.assign(bufferSize, 0.0);
 	volHistory.assign(400, 0.0);
 	
 	bufferCounter	= 0;
@@ -27,16 +28,14 @@ void ofApp::setup(){
 	// settings.device = devices[4];
 
 	// you can also get devices for an specific api
-	// auto devices = soundStream.getDeviceList(ofSoundDevice::Api::PULSE);
+	// auto devices = soundStream.getDevicesByApi(ofSoundDevice::Api::PULSE);
 	// settings.device = devices[0];
 
 	// or get the default device for an specific api:
 	// settings.api = ofSoundDevice::Api::PULSE;
 
 	// or by name
-	
 	auto devices = soundStream.getMatchingDevices("default");
-
 	if(!devices.empty()){
 		settings.setInDevice(devices[0]);
 	}
@@ -45,17 +44,13 @@ void ofApp::setup(){
 	settings.sampleRate = 44100;
 	#ifdef TARGET_EMSCRIPTEN
 		settings.numOutputChannels = 2;
+		settings.numInputChannels = 2;
 	#else
 		settings.numOutputChannels = 0;
+		settings.numInputChannels = 1;
 	#endif
-	settings.numInputChannels = 1;
 	settings.bufferSize = bufferSize;
 	soundStream.setup(settings);
-
-	bufferSize = soundStream.getBufferSize();
-
-	left.assign(bufferSize, 0.0);
-	right.assign(bufferSize, 0.0);
 
 }
 
@@ -98,7 +93,7 @@ void ofApp::draw(){
 					
 			ofBeginShape();
 			for (unsigned int i = 0; i < left.size(); i++){
-				ofVertex(i*2, 100 -left[i]*180.0f);
+				ofVertex(i*4, 100 -left[i]*180.0f);
 			}
 			ofEndShape(false);
 			
@@ -121,7 +116,7 @@ void ofApp::draw(){
 					
 			ofBeginShape();
 			for (unsigned int i = 0; i < right.size(); i++){
-				ofVertex(i*2, 100 -right[i]*180.0f);
+				ofVertex(i*4, 100 -right[i]*180.0f);
 			}
 			ofEndShape(false);
 			
@@ -173,8 +168,8 @@ void ofApp::audioIn(ofSoundBuffer & input){
 
 	//lets go through each sample and calculate the root mean square which is a rough way to calculate volume	
 	for (size_t i = 0; i < input.getNumFrames(); i++){
-		left[i]		= input[i]*0.5;
-		right[i]	= input[i]*0.5;
+		left[i]		= input[i*2]*0.5;
+		right[i]	= input[i*2+1]*0.5;
 
 		curVol += left[i] * left[i];
 		curVol += right[i] * right[i];
