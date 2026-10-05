@@ -438,8 +438,8 @@ bool ofRectangle::inside(const glm::vec3& p) const {
 
 //----------------------------------------------------------
 bool ofRectangle::inside(const glm::vec2& p) const {
-	return p.x > getMinX() && p.y > getMinY() &&
-		   p.x < getMaxX() && p.y < getMaxY();
+	return p.x >= getMinX() && p.y >= getMinY() &&
+		   p.x <= getMaxX() && p.y <= getMaxY();
 }
 
 //----------------------------------------------------------
