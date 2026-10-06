@@ -37,6 +37,15 @@ bool ofIsGLProgrammableRenderer() {
 	return programmableRendererCreated;
 }
 
+bool ofIsGLES3Context() {
+#if defined(TARGET_OPENGLES) && defined(TARGET_OPENGLES_3)
+	auto renderer = ofGetGLRenderer();
+	return renderer && renderer->getGLVersionMajor() >= 3;
+#else
+	return false;
+#endif
+}
+
 static ofVboMesh gradientMesh;
 
 //----------------------------------------------------------
@@ -122,6 +131,29 @@ void ofGLProgrammableRenderer::draw(const ofMesh & vertexData, ofPolyRenderMode 
 	if (vertexData.getVertices().empty()) return;
 
 #ifdef TARGET_OPENGLES
+	// Line modes go through the lines shader, which expands each segment into
+	// triangles from a bundle (prev/next vertex attributes). Raw client arrays
+	// don't carry those attributes, so GL_LINE_STRIP / GL_LINE_LOOP (circle and
+	// polyline outlines) would collapse to nothing; build the bundle like desktop.
+	{
+		const GLenum lineMode = ofGetGLPrimitiveMode(vertexData.getMode());
+		if (renderType == OF_MESH_FILL && areLinesShadersEnabled() && !usingCustomShader && !currentMaterial
+			&& (lineMode == GL_LINES || lineMode == GL_LINE_STRIP || lineMode == GL_LINE_LOOP)) {
+			ofGLProgrammableRenderer * mutThis = const_cast<ofGLProgrammableRenderer *>(this);
+			auto & bundle = mutThis->mLinesBundleMap[lineMode == GL_LINES ? GL_LINES : GL_LINE_STRIP];
+			mDrawMode = lineMode;
+			mutThis->configureLinesBundleFromMesh(bundle, lineMode, vertexData);
+			mBRenderingLines = true;
+			if (bundle.vbo.getUsingIndices()) {
+				drawElements(bundle.vbo, GL_TRIANGLES, bundle.vbo.getNumIndices());
+			} else {
+				draw(bundle.vbo, GL_TRIANGLES, 0, bundle.vbo.getNumVertices());
+			}
+			mBRenderingLines = false;
+			return;
+		}
+	}
+
 	// OpenGL ES path - use vertex attrib arrays (fast for frequently updated meshes)
 	glEnableVertexAttribArray(ofShader::POSITION_ATTRIBUTE);
 	glVertexAttribPointer(ofShader::POSITION_ATTRIBUTE, 3, GL_FLOAT, GL_FALSE, sizeof(typename ofMesh::VertexType), vertexData.getVerticesPointer());

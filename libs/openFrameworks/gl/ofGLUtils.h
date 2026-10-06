@@ -85,6 +85,12 @@ bool ofGLSupportsNPOTTextures();
 
 bool ofIsGLProgrammableRenderer();
 
+/// \brief True when ES 3 code paths are both compiled in (TARGET_OPENGLES_3)
+/// and usable by the current context (ES 3.0+). TARGET_OPENGLES_3 alone only
+/// means the GLES 3 headers exist, which is also true for ES 1 / ES 2 contexts
+/// on iOS and Android.
+bool ofIsGLES3Context();
+
 template<class T>
 [[deprecated("Use ofGetGLFormat()")]]
 int ofGetGlFormat(const ofPixels_<T> & pixels);

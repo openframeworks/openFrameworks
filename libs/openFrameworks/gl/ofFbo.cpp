@@ -499,7 +499,8 @@ bool ofFbo::checkGLSupport() {
 #if !defined(TARGET_OPENGLES) || (defined(GL_ES_VERSION_3_0) && defined(TARGET_OPENGLES_3))
 	// Desktop + GLES 3.0+ (FBO is core spec — no extension check needed on ES3)
 	if (!ofIsGLProgrammableRenderer()){
-		if(ofGLCheckExtension("GL_EXT_framebuffer_object")){
+		// fixed-function: desktop GL 2.1 (EXT) or an ES 1.1 context built with ES 3 headers (OES)
+		if(ofGLCheckExtension("GL_EXT_framebuffer_object") || ofGLCheckExtension("GL_OES_framebuffer_object")){
 			ofLogVerbose("ofFbo") << "GL frame buffer object supported";
 		}else{
 			ofLogError("ofFbo") << "GL frame buffer object not supported by this graphics card";
@@ -541,12 +542,14 @@ void ofFbo::allocate(int width, int height, int internalformat, int numSamples) 
 	settings.textureTarget = ofGetUsingArbTex() ? GL_TEXTURE_RECTANGLE_ARB : GL_TEXTURE_2D;
 #endif
 
-#if !defined(TARGET_OPENGLES) || (defined(GL_ES_VERSION_3_0) && defined(TARGET_OPENGLES_3))
-	// GLES 3.0+ (and desktop) can safely default to depth + stencil
+#ifndef TARGET_OPENGLES
 	settings.useDepth = true;
 	settings.useStencil = true;
 #else
-	//we do this as the fbo and the settings object it contains could be created before the user had the chance to disable or enable arb rect.
+	// Colour-only on every ES version, as before: TARGET_OPENGLES_3 is a
+	// compile-time header check (true on iOS even for ES 1/2 contexts), and the
+	// combined depth+stencil renderbuffer path is FRAMEBUFFER_INCOMPLETE on ES.
+	// Use ofFboSettings to request depth / stencil explicitly.
 	settings.useDepth = false;
 	settings.useStencil = false;
 #endif
@@ -1067,13 +1070,16 @@ void ofFbo::resetAnchor(){
 //----------------------------------------------------------
 void ofFbo::readToPixels(ofPixels & pixels, int attachmentPoint) const{
 	if(!bIsAllocated) return;
-#if !defined(TARGET_OPENGLES) || (defined(GL_ES_VERSION_3_0) && defined(TARGET_OPENGLES_3))
-	// Desktop + GLES 3.0+
+#ifndef TARGET_OPENGLES
+	// Desktop: read the attachment's texture directly
 	getTexture(attachmentPoint).readToPixels(pixels);
 #else
-	// GLES 2.0 — glReadPixels is still required
+	// GLES has no glGetTexImage (ES 1/2/3): read the bound FBO
 	pixels.allocate(settings.width, settings.height, ofGetImageTypeFromGLType(settings.internalformat));
 	bind();
+#ifdef TARGET_OPENGLES_3
+	if (ofGetGLRenderer() && ofGetGLRenderer()->getGLVersionMajor() >= 3) glReadBuffer(GL_COLOR_ATTACHMENT0 + attachmentPoint);
+#endif
 	int format = ofGetGLFormatFromInternal(settings.internalformat);
 	glReadPixels(0, 0, settings.width, settings.height, format, GL_UNSIGNED_BYTE, pixels.getData());
 	unbind();
@@ -1083,11 +1089,14 @@ void ofFbo::readToPixels(ofPixels & pixels, int attachmentPoint) const{
 //----------------------------------------------------------
 void ofFbo::readToPixels(ofShortPixels & pixels, int attachmentPoint) const{
 	if(!bIsAllocated) return;
-#if !defined(TARGET_OPENGLES) || (defined(GL_ES_VERSION_3_0) && defined(TARGET_OPENGLES_3))
+#ifndef TARGET_OPENGLES
 	getTexture(attachmentPoint).readToPixels(pixels);
 #else
 	pixels.allocate(settings.width, settings.height, ofGetImageTypeFromGLType(settings.internalformat));
 	bind();
+#ifdef TARGET_OPENGLES_3
+	if (ofGetGLRenderer() && ofGetGLRenderer()->getGLVersionMajor() >= 3) glReadBuffer(GL_COLOR_ATTACHMENT0 + attachmentPoint);
+#endif
 	int format = ofGetGLFormatFromInternal(settings.internalformat);
 	glReadPixels(0, 0, settings.width, settings.height, format, GL_UNSIGNED_SHORT, pixels.getData());
 	unbind();
@@ -1097,18 +1106,21 @@ void ofFbo::readToPixels(ofShortPixels & pixels, int attachmentPoint) const{
 //----------------------------------------------------------
 void ofFbo::readToPixels(ofFloatPixels & pixels, int attachmentPoint) const{
 	if(!bIsAllocated) return;
-#if !defined(TARGET_OPENGLES) || (defined(GL_ES_VERSION_3_0) && defined(TARGET_OPENGLES_3))
+#ifndef TARGET_OPENGLES
 	getTexture(attachmentPoint).readToPixels(pixels);
 #else
 	pixels.allocate(settings.width,settings.height,ofGetImageTypeFromGLType(settings.internalformat));
 	bind();
+#ifdef TARGET_OPENGLES_3
+	if (ofGetGLRenderer() && ofGetGLRenderer()->getGLVersionMajor() >= 3) glReadBuffer(GL_COLOR_ATTACHMENT0 + attachmentPoint);
+#endif
 	int format = ofGetGLFormatFromInternal(settings.internalformat);
 	glReadPixels(0,0,settings.width, settings.height, format, GL_FLOAT, pixels.getData());
 	unbind();
 #endif
 }
 
-#if !defined(TARGET_OPENGLES) || (defined(GL_ES_VERSION_3_0) && defined(TARGET_OPENGLES_3))
+#ifndef TARGET_OPENGLES
 //----------------------------------------------------------
 void ofFbo::copyTo(ofBufferObject & buffer) const{
 	if(!bIsAllocated) return;

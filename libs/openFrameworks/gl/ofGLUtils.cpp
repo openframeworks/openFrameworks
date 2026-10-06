@@ -593,15 +593,21 @@ int ofGetGLInternalFormatFromPixelFormat(ofPixelFormat pixelFormat){
 	switch(pixelFormat){
 	case OF_PIXELS_BGRA:
 	case OF_PIXELS_RGBA:
-#if !defined(TARGET_OPENGLES) || (defined(GL_ES_VERSION_3_0) && defined(TARGET_OPENGLES_3))
+#ifndef TARGET_OPENGLES
 		return GL_RGBA8;
+#elif defined(TARGET_OPENGLES_3)
+		// sized formats are ES 3 only; ES 1/2 need internalformat == format
+		return ofIsGLES3Context() ? GL_RGBA8 : GL_RGBA;
 #else
 		return GL_RGBA;
 #endif
 	case OF_PIXELS_RGB:
 	case OF_PIXELS_BGR:
-#if !defined(TARGET_OPENGLES) || (defined(GL_ES_VERSION_3_0) && defined(TARGET_OPENGLES_3))
+#ifndef TARGET_OPENGLES
 		return GL_RGB8;
+#elif defined(TARGET_OPENGLES_3)
+		// sized formats are ES 3 only; ES 1/2 need internalformat == format
+		return ofIsGLES3Context() ? GL_RGB8 : GL_RGB;
 #else
 		return GL_RGB;
 #endif
