@@ -55,7 +55,7 @@ public:
 	,enableMultiTouch(false) {
 		windowMode = OF_FULLSCREEN;
 		setupOrientation = OF_ORIENTATION_DEFAULT;
-		glesVersion = 2;
+		glesVersion = OF_GLES_VERSION;
 	}
 	
 	ofiOSWindowSettings(const ofWindowSettings & settings)
@@ -77,7 +77,7 @@ public:
 		if(glesSettings){
 			glesVersion = glesSettings->glesVersion;
 		} else {
-			glesVersion = 2;
+			glesVersion = OF_GLES_VERSION;
 		}
 		const ofiOSWindowSettings * iosSettings = dynamic_cast<const ofiOSWindowSettings*>(&settings);
 		if(iosSettings){

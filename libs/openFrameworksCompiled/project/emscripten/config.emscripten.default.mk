@@ -124,7 +124,12 @@ ifneq ($(strip $(wildcard bin/data/*)),)
 	PLATFORM_LDFLAGS += --preload-file bin/data@data
 endif
 PLATFORM_LDFLAGS += --use-port=emdawnwebgpu
+# PROJECT_DEFINES += OF_WEBGL_VERSION=1 in config.make for a WebGL 1 only build (default WebGL 2)
+ifneq ($(filter OF_WEBGL_VERSION=1,$(PROJECT_DEFINES)),)
+PLATFORM_LDFLAGS += -s MAX_WEBGL_VERSION=1 -s FULL_ES2
+else
 PLATFORM_LDFLAGS += -s MAX_WEBGL_VERSION=2 -s WEBGL2_BACKWARDS_COMPATIBILITY_EMULATION=1 -s FULL_ES3
+endif
 PLATFORM_LDFLAGS += -s AUTO_NATIVE_LIBRARIES=1
 PLATFORM_LDFLAGS += -s AUTO_JS_LIBRARIES=1
 
