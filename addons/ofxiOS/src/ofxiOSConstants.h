@@ -68,7 +68,7 @@ enum ofxiOSRendererType {
     OFXIOS_RENDERER_METAL = 4
 };
 
-// template main.mm GLES version - set OF_GLES_VERSION=1|2|3 in the project defines to override
+// OF_GLES_VERSION=1|2|3 in the project defines to override or in projectGenerator from 0.99.0
 #ifndef OF_GLES_VERSION
 #define OF_GLES_VERSION OFXIOS_RENDERER_ES2
 #endif
