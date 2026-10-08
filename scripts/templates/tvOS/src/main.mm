@@ -1,5 +1,9 @@
 #include "ofApp.h"
 
+#ifndef OF_GLES_VERSION
+#define OF_GLES_VERSION OFXIOS_RENDERER_ES2
+#endif
+
 int main() {
     
     //  here are the most commonly used iOS window settings.
