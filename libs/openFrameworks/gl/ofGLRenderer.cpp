@@ -1053,8 +1053,9 @@ void ofGLRenderer::multMatrix(const float * m) {
 
 //----------------------------------------------------------
 void ofGLRenderer::loadViewMatrix(const glm::mat4 & m) {
-	int matrixMode;
-	glGetIntegerv(GL_MATRIX_MODE, &matrixMode);
+	// restore the mode oF tracks: glGet(GL_MATRIX_MODE) raises GL_INVALID_ENUM on
+	// some ES 1.1 drivers (Android emulator), leaving matrixMode uninitialised
+	const GLenum matrixMode = GL_MODELVIEW + matrixStack.getCurrentMatrixMode();
 	matrixStack.loadViewMatrix(m);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadMatrixf(glm::value_ptr(m));
@@ -1825,8 +1826,9 @@ void ofGLRenderer::enableLighting() {
 	normalsEnabled = glIsEnabled(GL_NORMALIZE);
 	glEnable(GL_NORMALIZE);
 
-	int matrixMode;
-	glGetIntegerv(GL_MATRIX_MODE, &matrixMode);
+	// restore the mode oF tracks: glGet(GL_MATRIX_MODE) raises GL_INVALID_ENUM on
+	// some ES 1.1 drivers (Android emulator), leaving matrixMode uninitialised
+	const GLenum matrixMode = GL_MODELVIEW + matrixStack.getCurrentMatrixMode();
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
 	glLoadMatrixf(glm::value_ptr(matrixStack.getViewMatrix()));
@@ -1937,8 +1939,9 @@ void ofGLRenderer::setLightSpecularColor(int lightIndex, const ofFloatColor & c)
 //----------------------------------------------------------
 void ofGLRenderer::setLightPosition(int lightIndex, const glm::vec4 & position) {
 	if (lightIndex == -1) return;
-	int matrixMode;
-	glGetIntegerv(GL_MATRIX_MODE, &matrixMode);
+	// restore the mode oF tracks: glGet(GL_MATRIX_MODE) raises GL_INVALID_ENUM on
+	// some ES 1.1 drivers (Android emulator), leaving matrixMode uninitialised
+	const GLenum matrixMode = GL_MODELVIEW + matrixStack.getCurrentMatrixMode();
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
 	glLoadMatrixf(glm::value_ptr(matrixStack.getViewMatrix()));
@@ -1950,8 +1953,9 @@ void ofGLRenderer::setLightPosition(int lightIndex, const glm::vec4 & position) 
 //----------------------------------------------------------
 void ofGLRenderer::setLightSpotDirection(int lightIndex, const glm::vec4 & direction) {
 	if (lightIndex == -1) return;
-	int matrixMode;
-	glGetIntegerv(GL_MATRIX_MODE, &matrixMode);
+	// restore the mode oF tracks: glGet(GL_MATRIX_MODE) raises GL_INVALID_ENUM on
+	// some ES 1.1 drivers (Android emulator), leaving matrixMode uninitialised
+	const GLenum matrixMode = GL_MODELVIEW + matrixStack.getCurrentMatrixMode();
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
 	glLoadMatrixf(glm::value_ptr(matrixStack.getViewMatrix()));

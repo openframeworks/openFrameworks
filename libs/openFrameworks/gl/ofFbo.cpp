@@ -513,9 +513,20 @@ bool ofFbo::checkGLSupport() {
 			return false;
 		}
 	}
-	glGetIntegerv(GL_MAX_COLOR_ATTACHMENTS, &_maxColorAttachments);
-	glGetIntegerv(GL_MAX_DRAW_BUFFERS, &_maxDrawBuffers);
-	glGetIntegerv(GL_MAX_SAMPLES, &_maxSamples);
+#ifdef TARGET_OPENGLES
+	// these limits are ES 3 queries: GL_INVALID_ENUM on ES 1 / ES 2 contexts
+	// built with ES 3 headers (iOS), which have exactly one attachment / buffer
+	if (!ofIsGLES3Context()) {
+		_maxColorAttachments = 1;
+		_maxDrawBuffers = 1;
+		_maxSamples = 0;
+	} else
+#endif
+	{
+		glGetIntegerv(GL_MAX_COLOR_ATTACHMENTS, &_maxColorAttachments);
+		glGetIntegerv(GL_MAX_DRAW_BUFFERS, &_maxDrawBuffers);
+		glGetIntegerv(GL_MAX_SAMPLES, &_maxSamples);
+	}
 
 	ofLogVerbose("ofFbo") << "checkGLSupport(): "
 						   << "maxColorAttachments: " << _maxColorAttachments << ", "

@@ -682,6 +682,17 @@ void ofTexture::loadData(const void * data, int w, int h, int glFormat, int glTy
 #ifdef TARGET_OF_IOS
 	glTexImage2D(texData.textureTarget, 0, texData.glInternalFormat, texData.tex_w, texData.tex_h, 0, glFormat, glType, 0);
 #endif
+#ifdef TARGET_OPENGLES
+	// ES 1.1 (fixed function): some drivers - e.g. the Android emulator's ES 1 to
+	// desktop GL translator - reject glTexSubImage2D with GL_LUMINANCE /
+	// GL_LUMINANCE_ALPHA / GL_ALPHA (GL_INVALID_ENUM, texture stays empty, so
+	// ofDrawBitmapString draws nothing). A full-size update can re-specify the
+	// level with glTexImage2D instead, which they accept.
+	if (!ofIsGLProgrammableRenderer() && w == texData.tex_w && h == texData.tex_h
+		&& (glFormat == GL_LUMINANCE || glFormat == GL_LUMINANCE_ALPHA || glFormat == GL_ALPHA)) {
+		glTexImage2D(texData.textureTarget, 0, texData.glInternalFormat, w, h, 0, glFormat, glType, data);
+	} else
+#endif
 	glTexSubImage2D(texData.textureTarget, 0, 0, 0, w, h, glFormat, glType, data);
 	// unbind texture target by binding 0
 	glBindTexture(texData.textureTarget, 0);
