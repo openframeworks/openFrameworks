@@ -60,6 +60,14 @@ if(NOT DEFINED HOST_PLATFORM)
     else()
         message(FATAL_ERROR "Unsupported host platform: ${CMAKE_HOST_SYSTEM_NAME} (${CMAKE_HOST_SYSTEM_PROCESSOR})")
     endif()
+    # NDKs up to at least r29 ship only darwin-x86_64 (universal binaries) and
+    # linux-x86_64; use an arm64 host folder only when the NDK actually has one.
+    if(NOT EXISTS "${ANDROID_NDK_ROOT}/toolchains/llvm/prebuilt/${HOST_PLATFORM}")
+        string(REPLACE "-arm64" "-x86_64" HOST_PLATFORM_FALLBACK "${HOST_PLATFORM}")
+        if(EXISTS "${ANDROID_NDK_ROOT}/toolchains/llvm/prebuilt/${HOST_PLATFORM_FALLBACK}")
+            set(HOST_PLATFORM "${HOST_PLATFORM_FALLBACK}")
+        endif()
+    endif()
 endif()
 
 message(STATUS "Android ABI: ${ANDROID_ABI}")

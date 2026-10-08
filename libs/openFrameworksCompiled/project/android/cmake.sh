@@ -13,9 +13,11 @@ APOTHECARY_LEVEL="$(cd "$SCRIPT_DIR/../.." && pwd)"
 export MAKE_TARGET="${MAKE_TARGET:-cmake}"
 export CPP_STANDARD="${CPP_STANDARD:-23}"
 export C_STANDARD="${C_STANDARD:-17}"
-export NDK_VERSION_MAJOR="${NDK_VERSION_MAJOR:-27}"
-export ANDROID_API="${ANDROID_API:-34}" #minimum Android API supported. 34 default
-ANDROID_PLATFORM="android-34" # Usually must be >= 24 for modern libraries and NDKs.
+# Keep in sync with apothecary (.github/workflows/build-android.yml, configure/android_configure.sh)
+export NDK="${NDK:-29.0.14206865}" # pinned NDK (major.minor.build) under $ANDROID_SDK_PATH/ndk
+export NDK_VERSION_MAJOR="${NDK_VERSION_MAJOR:-${NDK%%.*}}"
+export ANDROID_API="${ANDROID_API:-25}" # min compile API (Android 7.1). Not the SDK version.
+ANDROID_PLATFORM="android-${ANDROID_API}"
 DEFAULT_ARCHS="armeabi-v7a arm64-v8a x86_64"
 TOOLCHAIN_FILE="$(pwd)/../CMake/toolchain/android.toolchain.cmake"
 CMAKELISTS_DIR="$(pwd)/openframeworksAndroid"
@@ -37,7 +39,7 @@ else
 fi
 if [[ "$OS_TYPE" == "macOS" ]]; then
     echo "Running on macOS"
-    export ANDROID_SDK_PATH="$HOME/Library/Android/sdk"
+    export ANDROID_SDK_PATH="${ANDROID_HOME:-${ANDROID_SDK_ROOT:-$HOME/Library/Android/sdk}}"
 elif [[ "$OS_TYPE" == "Windows" ]]; then
     echo "Running on Windows (Git Bash)"
     WIN_USER=$(whoami)
@@ -63,13 +65,23 @@ else
     exit 1
 fi
 
-# Find latest NDK inside the SDK directory
-ANDROID_NDK_PATH=$(ls -d "$ANDROID_SDK_PATH/ndk/"* 2>/dev/null | sort -V | tail -n 1)
-export ANDROID_NDK_ROOT=$ANDROID_NDK_PATH
+# NDK: the pinned $NDK under the SDK, else ANDROID_NDK_ROOT / ANDROID_NDK_HOME.
+# Never fall back to "newest folder" silently: a newer or half-installed NDK
+# (no source.properties) builds a core that doesn't match the apothecary libs.
+ANDROID_NDK_PATH=""
+if [ -f "$ANDROID_SDK_PATH/ndk/$NDK/source.properties" ]; then
+    ANDROID_NDK_PATH="$ANDROID_SDK_PATH/ndk/$NDK"
+elif [ -n "${ANDROID_NDK_ROOT:-}" ] && [ -f "$ANDROID_NDK_ROOT/source.properties" ]; then
+    ANDROID_NDK_PATH="$ANDROID_NDK_ROOT"
+elif [ -n "${ANDROID_NDK_HOME:-}" ] && [ -f "$ANDROID_NDK_HOME/source.properties" ]; then
+    ANDROID_NDK_PATH="$ANDROID_NDK_HOME"
+fi
 if [ -n "$ANDROID_NDK_PATH" ]; then
-    echo "Latest Android NDK found at: $ANDROID_NDK_PATH"
+    export ANDROID_NDK_ROOT=$ANDROID_NDK_PATH
+    echo "Android NDK: $ANDROID_NDK_PATH ($(grep -m1 Pkg.Revision "$ANDROID_NDK_PATH/source.properties" | cut -d= -f2 | tr -d ' '))"
 else
-    echo "No NDK found inside SDK directory."
+    echo "Android NDK $NDK not found in $ANDROID_SDK_PATH/ndk (and ANDROID_NDK_ROOT / ANDROID_NDK_HOME not set)."
+    echo "Install it with: sdkmanager \"ndk;$NDK\"  or set NDK=<installed version>"
     exit 1
 fi
 ANDROID_CMAKE_PATH=$(ls -d "$ANDROID_SDK_PATH/cmake/"* 2>/dev/null | sort -V | tail -n 1)
