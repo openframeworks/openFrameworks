@@ -1,4 +1,5 @@
 #include "ofTexture.h"
+#include "ofGLFramebuffer.h"
 #include "ofGraphics.h"
 #include "ofPixels.h"
 #include "ofGLUtils.h"
@@ -710,7 +711,7 @@ void ofTexture::generateMipmap(){
 	// Generate mipmaps using hardware-accelerated core GL methods.
 	
 	// 1. Check whether the current OpenGL version supports mipmap generation:
-	//    glGenerateMipmap() was introduced to OpenGL core in 3.0, and
+	//    ofGLGenerateMipmap() was introduced to OpenGL core in 3.0, and
 	//    OpenGLES core in 2.0 but earlier versions may support it if they
 	//	  support extension GL_EXT_framebuffer_object
 
@@ -722,7 +723,7 @@ void ofTexture::generateMipmap(){
 	
 	if (!isGlGenerateMipmapAvailable && !ofGLCheckExtension("GL_EXT_framebuffer_object")) {
 		static bool versionWarningIssued = false;
-		if (!versionWarningIssued) ofLogWarning() << "Your current OpenGL version does not support mipmap generation via glGenerateMipmap().";
+		if (!versionWarningIssued) ofLogWarning() << "Your current OpenGL version does not support mipmap generation via ofGLGenerateMipmap().";
 		versionWarningIssued = true;
 		texData.hasMipmap = false;
 		return;
@@ -751,7 +752,7 @@ void ofTexture::generateMipmap(){
 			// See also: https://www.opengl.org/wiki/Common_Mistakes#Automatic_mipmap_generation
 
 			glBindTexture(texData.textureTarget, (GLuint) texData.textureID);
-			glGenerateMipmap(texData.textureTarget);
+			ofGLGenerateMipmap(texData.textureTarget);
 			glBindTexture(texData.textureTarget, 0);
 			texData.hasMipmap = true;
 			break;

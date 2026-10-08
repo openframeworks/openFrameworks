@@ -1,4 +1,5 @@
 #include "ofFbo.h"
+#include "ofGLFramebuffer.h"
 // #include "ofAppRunner.h"
 // #include "ofUtils.h"
 // #include "ofGraphics.h"
@@ -193,11 +194,11 @@ static void releaseFB(GLuint id){
 	if(getIdsFB().find(id)!=getIdsFB().end()){
 		getIdsFB()[id]--;
 		if(getIdsFB()[id]==0){
-			glDeleteFramebuffers(1, &id);
+			ofGLDeleteFramebuffers(1, &id);
 		}
 	}else{
 		ofLogWarning("ofFbo") << "releaseFB(): something's wrong here, releasing unknown frame buffer id " << id;
-		glDeleteFramebuffers(1, &id);
+		ofGLDeleteFramebuffers(1, &id);
 	}
 }
 
@@ -222,11 +223,11 @@ static void releaseRB(GLuint id){
 	if(getIdsRB().find(id)!=getIdsRB().end()){
 		getIdsRB()[id]--;
 		if(getIdsRB()[id]==0){
-			glDeleteRenderbuffers(1, &id);
+			ofGLDeleteRenderbuffers(1, &id);
 		}
 	}else{
 		ofLogWarning("ofFbo") << "releaseRB(): something's wrong here, releasing unknown render buffer id " << id;
-		glDeleteRenderbuffers(1, &id);
+		ofGLDeleteRenderbuffers(1, &id);
 	}
 }
 
@@ -499,11 +500,21 @@ bool ofFbo::checkGLSupport() {
 #if !defined(TARGET_OPENGLES) || (defined(GL_ES_VERSION_3_0) && defined(TARGET_OPENGLES_3))
 	// Desktop + GLES 3.0+ (FBO is core spec — no extension check needed on ES3)
 	if (!ofIsGLProgrammableRenderer()){
-		// fixed-function: desktop GL 2.1 (EXT), or an iOS ES 1.1 context built with
-		// ES 3 headers (OES). Not Android: there an ES 1 context has no GLES2 entry
-		// points, so glGenFramebuffers would call a null function pointer.
+		// fixed-function: desktop GL 2.1 (EXT), or an ES 1.1 context built with
+		// ES 3 headers (OES).
+		if (ofIsAndroidEmulatorGLES1()) {
+			static bool logged = false;
+			if (!logged) {
+				logged = true;
+				ofLogError("ofFbo") << "FBOs are disabled on the Android emulator with OpenGL ES 1.1 (emulator driver bug); "
+					<< "they work on real devices. Use ES 2.0+ on the emulator for ofFbo.";
+			}
+			return false;
+		}
 		bool fboExtension = ofGLCheckExtension("GL_EXT_framebuffer_object");
-	#ifdef TARGET_OF_IOS
+	#if defined(TARGET_OF_IOS) || defined(TARGET_ANDROID)
+		// iOS: one GL library for every ES version. Android: ES 1 uses the OES
+		// entry points through ofGLFramebuffer.h (glGenFramebuffersOES, ...)
 		fboExtension = fboExtension || ofGLCheckExtension("GL_OES_framebuffer_object");
 	#endif
 		if(fboExtension){
@@ -637,7 +648,7 @@ void ofFbo::allocate(ofFboSettings _settings) {
 	// create main fbo
 	// this is the main one we bind for drawing into
 	// all the renderbuffers are attached to this (whether MSAA is enabled or not)
-	glGenFramebuffers(1, &fbo);
+	ofGLGenFramebuffers(1, &fbo);
 	retainFB(fbo);
 
 	GLint previousFboId = 0;
@@ -648,7 +659,7 @@ void ofFbo::allocate(ofFboSettings _settings) {
 	// simplicity and readability .
 
 	glGetIntegerv(GL_FRAMEBUFFER_BINDING, &previousFboId);
-	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+	ofGLBindFramebuffer(GL_FRAMEBUFFER, fbo);
 
 	//- USE REGULAR RENDER BUFFER
 	if(!_settings.depthStencilAsTexture){
@@ -671,7 +682,7 @@ void ofFbo::allocate(ofFboSettings _settings) {
 					// GLES 2.0 only: OES_packed_depth_stencil extension requires separate stencil attachment
 					// http://www.khronos.org/registry/gles/extensions/OES/OES_packed_depth_stencil.txt
 					if(_settings.useDepth && _settings.useStencil){
-						glFramebufferTexture2D(GL_FRAMEBUFFER,
+						ofGLFramebufferTexture2D(GL_FRAMEBUFFER,
 											   GL_STENCIL_ATTACHMENT,
 											   GL_TEXTURE_2D, depthBufferTex.texData.textureID, 0);
 					}
@@ -693,7 +704,7 @@ void ofFbo::allocate(ofFboSettings _settings) {
 	// (supported on desktop + GLES 3.0+; pure GLES 2.0 does not support multisampled FBOs reliably)
 	#if !defined(TARGET_OPENGLES) || (defined(GL_ES_VERSION_3_0) && defined(TARGET_OPENGLES_3))
 		if(_settings.numSamples){
-			glGenFramebuffers(1, &fboTextures);
+			ofGLGenFramebuffers(1, &fboTextures);
 			retainFB(fboTextures);
 		}else{
 			fboTextures = fbo;
@@ -724,14 +735,14 @@ void ofFbo::allocate(ofFboSettings _settings) {
 
 	// if textures are attached to a different fbo (e.g. if using MSAA) check it's status
 	if(fbo != fboTextures) {
-		glBindFramebuffer(GL_FRAMEBUFFER, fboTextures);
+		ofGLBindFramebuffer(GL_FRAMEBUFFER, fboTextures);
 	}
 
 	// check everything is ok with this fbo
 	bIsAllocated = checkStatus();
 
 	// restore previous framebuffer id
-	glBindFramebuffer(GL_FRAMEBUFFER, previousFboId);
+	ofGLBindFramebuffer(GL_FRAMEBUFFER, previousFboId);
 
 	/* UNCOMMENT OUTSIDE OF DOING RELEASES
 
@@ -759,29 +770,29 @@ bool ofFbo::isAllocated() const {
 //----------------------------------------------------------
 GLuint ofFbo::createAndAttachRenderbuffer(GLenum internalFormat, GLenum attachmentPoint) {
 	GLuint buffer;
-	glGenRenderbuffers(1, &buffer);
-	glBindRenderbuffer(GL_RENDERBUFFER, buffer);
+	ofGLGenRenderbuffers(1, &buffer);
+	ofGLBindRenderbuffer(GL_RENDERBUFFER, buffer);
 
 #if !defined(TARGET_OPENGLES) || (defined(GL_ES_VERSION_3_0) && defined(TARGET_OPENGLES_3))
 	// Desktop + GLES 3.0+ support full multisampled renderbuffers
 	if (settings.numSamples == 0) {
-		glRenderbufferStorage(GL_RENDERBUFFER, internalFormat, settings.width, settings.height);
+		ofGLRenderbufferStorage(GL_RENDERBUFFER, internalFormat, settings.width, settings.height);
 	} else {
 		glRenderbufferStorageMultisample(GL_RENDERBUFFER, settings.numSamples, internalFormat, settings.width, settings.height);
 	}
 #else
 	// Pure GLES 2.0 — no reliable MSAA + sometimes needs power-of-two textures
 	if (ofGLSupportsNPOTTextures()) {
-		glRenderbufferStorage(GL_RENDERBUFFER, internalFormat, settings.width, settings.height);
+		ofGLRenderbufferStorage(GL_RENDERBUFFER, internalFormat, settings.width, settings.height);
 	} else {
-		glRenderbufferStorage(GL_RENDERBUFFER, internalFormat, ofNextPow2(settings.width), ofNextPow2(settings.height));
+		ofGLRenderbufferStorage(GL_RENDERBUFFER, internalFormat, ofNextPow2(settings.width), ofNextPow2(settings.height));
 	}
 	if (settings.numSamples > 0) {
 		ofLogWarning("ofFbo") << "createAndAttachRenderbuffer(): multisampling not supported in OpenGL ES < 3.0";
 	}
 #endif
 
-	glFramebufferRenderbuffer(GL_FRAMEBUFFER, attachmentPoint, GL_RENDERBUFFER, buffer);
+	ofGLFramebufferRenderbuffer(GL_FRAMEBUFFER, attachmentPoint, GL_RENDERBUFFER, buffer);
 	return buffer;
 }
 //----------------------------------------------------------
@@ -812,9 +823,9 @@ void ofFbo::attachTexture(ofTexture & tex, GLenum internalFormat, GLenum attachm
 	// bind fbo for textures (if using MSAA this is the newly created fbo, otherwise its the same fbo as before)
 	GLint temp;
 	glGetIntegerv(GL_FRAMEBUFFER_BINDING, &temp);
-	glBindFramebuffer(GL_FRAMEBUFFER, fboTextures);
+	ofGLBindFramebuffer(GL_FRAMEBUFFER, fboTextures);
 
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + attachmentPoint, tex.texData.textureTarget, tex.texData.textureID, 0);
+	ofGLFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + attachmentPoint, tex.texData.textureTarget, tex.texData.textureID, 0);
 	if(attachmentPoint >= textures.size()) {
 		textures.resize(attachmentPoint+1);
 	}
@@ -826,13 +837,13 @@ void ofFbo::attachTexture(ofTexture & tex, GLenum internalFormat, GLenum attachm
 
 	// if MSAA, bind main fbo and attach renderbuffer
 	if(settings.numSamples) {
-		glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+		ofGLBindFramebuffer(GL_FRAMEBUFFER, fbo);
 
 		GLuint colorBuffer = createAndAttachRenderbuffer(internalFormat, GL_COLOR_ATTACHMENT0 + attachmentPoint);
 		colorBuffers.push_back(colorBuffer);
 		retainRB(colorBuffer);
 	}
-	glBindFramebuffer(GL_FRAMEBUFFER, temp);
+	ofGLBindFramebuffer(GL_FRAMEBUFFER, temp);
 
 }
 
@@ -849,7 +860,7 @@ void ofFbo::createAndAttachDepthStencilTexture(GLenum target, GLint internalform
 
 	depthBufferTex.allocate(depthBufferTex.texData,transferFormat,transferType);
 
-	glFramebufferTexture2D(GL_FRAMEBUFFER, attachment, target, depthBufferTex.texData.textureID, 0);
+	ofGLFramebufferTexture2D(GL_FRAMEBUFFER, attachment, target, depthBufferTex.texData.textureID, 0);
 }
 
 //----------------------------------------------------------
@@ -864,7 +875,7 @@ void ofFbo::createAndAttachDepthStencilTexture(GLenum target, GLint internalform
 
 	depthBufferTex.allocate(depthBufferTex.texData);
 
-	glFramebufferTexture2D(GL_FRAMEBUFFER, attachment, target, depthBufferTex.texData.textureID, 0);
+	ofGLFramebufferTexture2D(GL_FRAMEBUFFER, attachment, target, depthBufferTex.texData.textureID, 0);
 }
 
 //----------------------------------------------------------
@@ -1231,7 +1242,7 @@ float ofFbo::getHeight() const {
 
 //----------------------------------------------------------
 bool ofFbo::checkStatus() const {
-	GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+	GLenum status = ofGLCheckFramebufferStatus(GL_FRAMEBUFFER);
 	switch(status) {
 	case GL_FRAMEBUFFER_COMPLETE:
 		ofLogVerbose("ofFbo") << "FRAMEBUFFER_COMPLETE - OK";

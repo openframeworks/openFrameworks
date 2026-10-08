@@ -1,4 +1,5 @@
 #include "of3dPrimitives.h"
+#include "ofGLFramebuffer.h"
 #include "ofBitmapFont.h"
 #include "ofCamera.h"
 #include "ofFbo.h"
@@ -56,6 +57,12 @@ void ofGLRenderer::setup() {
 	setupGraphicDefaults();
 	viewport();
 	setupScreenPerspective();
+
+	if (ofIsAndroidEmulatorGLES1()) {
+		ofLogWarning("ofGLRenderer") << "Android emulator + OpenGL ES 1.1 detected: FBOs (ofFbo) will not work here - "
+			<< "the emulator's ES 1 driver can't delete or switch back from OES framebuffers. "
+			<< "ES 1.1 FBOs work on real devices (GL_OES_framebuffer_object); use ES 2.0+ to test FBOs on the emulator.";
+	}
 }
 void ofGLRenderer::startRender() {
 	currentFramebufferId = defaultFramebufferId;
@@ -555,7 +562,7 @@ void ofGLRenderer::bind(const ofFbo & fbo) {
 	// different implementations.
 	framebufferIdStack.push_back(currentFramebufferId);
 	currentFramebufferId = fbo.getId();
-	glBindFramebuffer(GL_FRAMEBUFFER, currentFramebufferId);
+	ofGLBindFramebuffer(GL_FRAMEBUFFER, currentFramebufferId);
 }
 
 #if !defined(TARGET_OPENGLES) || (defined(GL_ES_VERSION_3_0) && defined(TARGET_OPENGLES_3))
@@ -570,8 +577,8 @@ void ofGLRenderer::bindForBlitting(const ofFbo & fboSrc, ofFbo & fboDst, int att
 	framebufferIdStack.push_back(currentFramebufferId);
 	currentFramebufferId = fboSrc.getId();
 
-	glBindFramebuffer(GL_READ_FRAMEBUFFER, currentFramebufferId);
-	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fboDst.getIdDrawBuffer());
+	ofGLBindFramebuffer(GL_READ_FRAMEBUFFER, currentFramebufferId);
+	ofGLBindFramebuffer(GL_DRAW_FRAMEBUFFER, fboDst.getIdDrawBuffer());
 
 #ifndef TARGET_OPENGLES
 	// glReadBuffer / glDrawBuffer are desktop-only
@@ -590,7 +597,7 @@ void ofGLRenderer::unbind(const ofFbo & fbo) {
 		currentFramebufferId = framebufferIdStack.back();
 		framebufferIdStack.pop_back();
 	}
-	glBindFramebuffer(GL_FRAMEBUFFER, currentFramebufferId);
+	ofGLBindFramebuffer(GL_FRAMEBUFFER, currentFramebufferId);
 	fbo.flagDirty();
 }
 
