@@ -499,8 +499,14 @@ bool ofFbo::checkGLSupport() {
 #if !defined(TARGET_OPENGLES) || (defined(GL_ES_VERSION_3_0) && defined(TARGET_OPENGLES_3))
 	// Desktop + GLES 3.0+ (FBO is core spec — no extension check needed on ES3)
 	if (!ofIsGLProgrammableRenderer()){
-		// fixed-function: desktop GL 2.1 (EXT) or an ES 1.1 context built with ES 3 headers (OES)
-		if(ofGLCheckExtension("GL_EXT_framebuffer_object") || ofGLCheckExtension("GL_OES_framebuffer_object")){
+		// fixed-function: desktop GL 2.1 (EXT), or an iOS ES 1.1 context built with
+		// ES 3 headers (OES). Not Android: there an ES 1 context has no GLES2 entry
+		// points, so glGenFramebuffers would call a null function pointer.
+		bool fboExtension = ofGLCheckExtension("GL_EXT_framebuffer_object");
+	#ifdef TARGET_OF_IOS
+		fboExtension = fboExtension || ofGLCheckExtension("GL_OES_framebuffer_object");
+	#endif
+		if(fboExtension){
 			ofLogVerbose("ofFbo") << "GL frame buffer object supported";
 		}else{
 			ofLogError("ofFbo") << "GL frame buffer object not supported by this graphics card";
