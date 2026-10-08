@@ -9,7 +9,7 @@ int main( ){
 	settings.setSize(1024, 768);
 	settings.windowMode = OF_WINDOW; //can also be OF_FULLSCREEN
 
-#ifdef OF_GL_VERSION_MAJOR
+#if defined(OF_GL_VERSION_MAJOR) && defined(OF_GL_VERSION_MINOR)
 	settings.setGLVersion(OF_GL_VERSION_MAJOR, OF_GL_VERSION_MINOR); // set via projectGenerator OpenGL version
 #endif
 
