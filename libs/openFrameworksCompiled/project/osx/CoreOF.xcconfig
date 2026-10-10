@@ -24,6 +24,7 @@ HEADER_CURL = "$(OF_PATH)/libs/curl/include"
 HEADER_SSL = "$(OF_PATH)/libs/openssl/include"
 HEADER_URIPARSER = "$(OF_PATH)/libs/uriparser/include"
 HEADER_PUGIXML = "$(OF_PATH)/libs/pugixml/include"
+HEADER_DAWN = "$(OF_PATH)/libs/dawn/include"
 
 //------- Libraries
 LIB_OF_RELEASE = "$(OF_PATH)/libs/openFrameworksCompiled/lib/osx/openFrameworks.a"
@@ -45,7 +46,9 @@ LIB_OF_DEBUG = "$(OF_PATH)/libs/openFrameworksCompiled/lib/osx/openFrameworksDeb
 //LIB_PUGIXML = "$(OF_PATH)/libs/pugixml/lib/osx/pugixml.a"
 
 
-OF_CORE_HEADERS = $(HEADER_OF) $(HEADER_FREETYPE) $(HEADER_FREETYPE2) $(HEADER_GLEW) $(HEADER_FREEIMAGE) $(HEADER_TESS2) $(HEADER_CAIRO) $(HEADER_RTAUDIO) $(HEADER_GLFW) $(HEADER_UTF8) $(HEADER_JSON) $(HEADER_GLM) $(HEADER_CURL) ${HEADER_SSL} $(HEADER_URIPARSER) $(HEADER_PUGIXML) ${HEADER_BROTLI}
+OF_CORE_HEADERS = $(HEADER_OF) $(HEADER_FREETYPE) $(HEADER_FREETYPE2) $(HEADER_GLEW) $(HEADER_FREEIMAGE) $(HEADER_TESS2) $(HEADER_CAIRO) $(HEADER_RTAUDIO) $(HEADER_GLFW) $(HEADER_UTF8) $(HEADER_JSON) $(HEADER_GLM) $(HEADER_CURL) ${HEADER_SSL} $(HEADER_URIPARSER) $(HEADER_PUGIXML) ${HEADER_BROTLI} $(HEADER_DAWN)
+
+OF_DAWN_LIBS = "$(OF_PATH)/libs/dawn/lib/macos/dawn.xcframework/macos-arm64_x86_64/libwebgpu_dawn.a" -framework Metal -framework MetalKit -framework IOSurface
 
 OF_CORE_FRAMEWORKS = -framework Accelerate -framework AppKit -framework ApplicationServices -framework AudioToolbox -framework AVFoundation -framework Cocoa -framework CoreAudio -framework CoreFoundation -framework CoreMedia -framework CoreServices -framework CoreVideo -framework Foundation -framework IOKit -framework OpenGL -framework QuartzCore -framework Security -framework CFNetwork -framework SystemConfiguration -framework Metal
 

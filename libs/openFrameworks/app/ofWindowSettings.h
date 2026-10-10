@@ -166,3 +166,22 @@ public:
     int glesVersion;
     int glesVersionMinor;
 };
+
+class ofDawnWindowSettings: public ofWindowSettings{
+public:
+	ofDawnWindowSettings() = default;
+
+	ofDawnWindowSettings(const ofWindowSettings & settings)
+	:ofWindowSettings(settings){
+		const ofDawnWindowSettings * dawnSettings = dynamic_cast<const ofDawnWindowSettings*>(&settings);
+		if(dawnSettings){
+			vsync = dawnSettings->vsync;
+			resizable = dawnSettings->resizable;
+			decorated = dawnSettings->decorated;
+		}
+	}
+
+	bool vsync = true;
+	bool resizable = true;
+	bool decorated = true;
+};

@@ -23,6 +23,9 @@ HEADER_CURL = "$(OF_PATH)/libs/curl/include"
 HEADER_URIPARSER = "$(OF_PATH)/libs/uriparser/include"
 HEADER_PUGIXML = "$(OF_PATH)/libs/pugixml/include"
 HEADER_OPENSSL = "$(OF_PATH)/libs/openssl/include"
+HEADER_DAWN = "$(OF_PATH)/libs/dawn/include"
+HEADER_METAL = "$(OF_PATH)/libs/metal/include"
+HEADER_METALANGLE = "$(OF_PATH)/libs/metalangle/include"
 
 
 //------- Libraries
@@ -41,9 +44,17 @@ LINK_OBJC_RUNTIME = YES
 
 OF_CORE_LIBS = $(MISC_FLAGS) $(LIB_OF)
 
-OF_CORE_HEADERS = $(HEADER_OF) $(HEADER_OFXIOS) $(HEADER_UTF8) $(HEADER_FREETYPE) $(HEADER_FREETYPE2) $(HEADER_GLEW) $(HEADER_FREEIMAGE) $(HEADER_TESS2) $(HEADER_RTAUDIO) $(HEADER_JSON) $(HEADER_GLM) $(HEADER_FMT) $(HEADER_CURL) $(HEADER_URIPARSER) $(HEADER_PUGIXML) $(HEADER_OPENSSL)
+OF_CORE_HEADERS = $(HEADER_OF) $(HEADER_OFXIOS) $(HEADER_UTF8) $(HEADER_FREETYPE) $(HEADER_FREETYPE2) $(HEADER_GLEW) $(HEADER_FREEIMAGE) $(HEADER_TESS2) $(HEADER_RTAUDIO) $(HEADER_JSON) $(HEADER_GLM) $(HEADER_FMT) $(HEADER_CURL) $(HEADER_URIPARSER) $(HEADER_PUGIXML) $(HEADER_OPENSSL) $(HEADER_DAWN) $(HEADER_METAL) $(HEADER_METALANGLE)
 
-OF_CORE_FRAMEWORKS = -framework AudioToolbox -framework Accelerate -framework AVFoundation -framework CoreAudio -framework CoreGraphics -framework CoreLocation -framework CoreMotion -framework CoreMedia -framework CoreVideo -framework Foundation -framework GameController -framework GLKit -framework MapKit -framework OpenAL -framework OpenGLES -framework UIKit -framework Security -framework CFNetwork -framework QuartzCore -framework CoreHaptics -framework Metal
+OF_CORE_FRAMEWORKS = -framework AudioToolbox -framework Accelerate -framework AVFoundation -framework CoreAudio -framework CoreGraphics -framework CoreLocation -framework CoreMotion -framework CoreMedia -framework CoreVideo -framework Foundation -framework GameController -framework GLKit -framework MapKit -framework OpenAL -framework OpenGLES -framework UIKit -framework Security -framework CFNetwork -framework QuartzCore -framework CoreHaptics -framework Metal -framework MetalKit
+
+OF_DAWN_LIBS[sdk=iphoneos*] = "$(OF_PATH)/libs/dawn/lib/macos/dawn.xcframework/ios-arm64/libwebgpu_dawn.a" -framework Metal -framework MetalKit -framework IOSurface
+OF_DAWN_LIBS[sdk=iphonesimulator*] = "$(OF_PATH)/libs/dawn/lib/macos/dawn.xcframework/ios-arm64_x86_64-simulator/libwebgpu_dawn.a" -framework Metal -framework MetalKit -framework IOSurface
+
+// App link line for OF_USE_ANGLE=1. OpenGLES and GLKit stay off so gl* resolves to MetalANGLE.
+OF_ANGLE_APP_FRAMEWORKS = -framework AudioToolbox -framework Accelerate -framework AVFoundation -framework CoreAudio -framework CoreGraphics -framework CoreLocation -framework CoreMotion -framework CoreMedia -framework CoreVideo -framework Foundation -framework GameController -framework MapKit -framework OpenAL -framework UIKit -framework Security -framework CFNetwork -framework QuartzCore -framework CoreHaptics -framework Metal -framework MetalKit -framework IOSurface
+OF_ANGLE_LIBS[sdk=iphoneos*] = "$(OF_PATH)/libs/metalangle/lib/macos/metalangle.xcframework/ios-arm64/MetalANGLE.a"
+OF_ANGLE_LIBS[sdk=iphonesimulator*] = "$(OF_PATH)/libs/metalangle/lib/macos/metalangle.xcframework/ios-arm64_x86_64-simulator/MetalANGLE.a"
 
 
 GCC_PREPROCESSOR_DEFINITIONS = $(inherited) GLES_SILENCE_DEPRECATION=1 GLM_FORCE_CTOR_INIT GLM_ENABLE_EXPERIMENTAL

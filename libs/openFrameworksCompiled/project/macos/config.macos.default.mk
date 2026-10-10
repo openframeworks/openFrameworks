@@ -44,6 +44,9 @@ PLATFORM_RUN_COMMAND = cd bin/$(BIN_NAME).app/Contents/MacOS/;./$(BIN_NAME)
 ##########################################################################################
 
 PLATFORM_DEFINES = __MACOSX_CORE__
+ifeq ($(OF_USE_DAWN),1)
+	PLATFORM_DEFINES += OF_USE_DAWN=1
+endif
 
 ##########################################################################################
 # PLATFORM REQUIRED ADDON
@@ -226,6 +229,10 @@ PLATFORM_LDFLAGS = -stdlib=$(MAC_OS_STD_LIB)
 #PLATFORM_LDFLAGS += -arch i386
 # PLATFORM_LDFLAGS += -lcurl
 PLATFORM_LDFLAGS += -mmacosx-version-min=$(MAC_OS_MIN_VERSION) -v
+ifeq ($(OF_USE_DAWN),1)
+	PLATFORM_CFLAGS += -I$(OF_ROOT)/libs/dawn/include
+	PLATFORM_LDFLAGS += $(OF_ROOT)/libs/dawn/lib/macos/dawn.xcframework/macos-arm64_x86_64/libwebgpu_dawn.a
+endif
 
 ##########################################################################################
 # PLATFORM OPTIMIZATION CFLAGS
@@ -287,6 +294,10 @@ PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/app/ofAppEGLWindow.cp
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/fmod/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/sound/ofFmodSoundPlayer.cpp
 PLATFORM_CFLAGS += -DUSE_FMOD=0
+
+# Dawn is opt-in (OF_USE_DAWN=1 adds the macos slice explicitly). Do not
+# auto-link every xcframework slice into the default OpenGL build.
+PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/dawn/%
 # endif
 
 ##########################################################################################
@@ -370,6 +381,10 @@ PLATFORM_FRAMEWORKS += QuartzCore
 PLATFORM_FRAMEWORKS += Security
 PLATFORM_FRAMEWORKS += CFNetwork
 PLATFORM_FRAMEWORKS += SystemConfiguration
+ifeq ($(OF_USE_DAWN),1)
+	PLATFORM_FRAMEWORKS += MetalKit
+	PLATFORM_FRAMEWORKS += IOSurface
+endif
 
 
 ifeq ($(USE_GST),1)

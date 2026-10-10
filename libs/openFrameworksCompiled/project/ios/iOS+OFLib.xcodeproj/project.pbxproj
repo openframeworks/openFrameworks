@@ -183,6 +183,12 @@
 		E4F76E51176CB27200798745 /* ofBitmapFont.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F76DAC176CB27200798745 /* ofBitmapFont.cpp */; };
 		E4F76E52176CB27200798745 /* ofBitmapFont.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F76DAD176CB27200798745 /* ofBitmapFont.h */; };
 		E4F76E55176CB27200798745 /* ofGraphics.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F76DB0176CB27200798745 /* ofGraphics.cpp */; };
+		E4DA02017A00000100000013 /* ofWebGPURenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4DA02017A00000100000003 /* ofWebGPURenderer.cpp */; };
+		E4DA02017A00000100000014 /* ofWebGPURenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = E4DA02017A00000100000004 /* ofWebGPURenderer.h */; };
+		E4DA02017A00000100000015 /* ofxiOSDawnView.mm in Sources */ = {isa = PBXBuildFile; fileRef = E4DA02017A00000100000005 /* ofxiOSDawnView.mm */; };
+		E4DA02017A00000100000016 /* ofxiOSDawnView.h in Headers */ = {isa = PBXBuildFile; fileRef = E4DA02017A00000100000006 /* ofxiOSDawnView.h */; };
+		E4DA02017A00000100000017 /* ofxiOSMGLView.mm in Sources */ = {isa = PBXBuildFile; fileRef = E4DA02017A00000100000007 /* ofxiOSMGLView.mm */; };
+		E4DA02017A00000100000018 /* ofxiOSMGLView.h in Headers */ = {isa = PBXBuildFile; fileRef = E4DA02017A00000100000008 /* ofxiOSMGLView.h */; };
 		E4F76E56176CB27200798745 /* ofGraphics.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F76DB1176CB27200798745 /* ofGraphics.h */; };
 		E4F76E57176CB27200798745 /* ofImage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F76DB2176CB27200798745 /* ofImage.cpp */; };
 		E4F76E58176CB27200798745 /* ofImage.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F76DB3176CB27200798745 /* ofImage.h */; };
@@ -437,6 +443,12 @@
 		E4F76DAC176CB27200798745 /* ofBitmapFont.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofBitmapFont.cpp; sourceTree = "<group>"; };
 		E4F76DAD176CB27200798745 /* ofBitmapFont.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofBitmapFont.h; sourceTree = "<group>"; };
 		E4F76DB0176CB27200798745 /* ofGraphics.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofGraphics.cpp; sourceTree = "<group>"; };
+		E4DA02017A00000100000003 /* ofWebGPURenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofWebGPURenderer.cpp; sourceTree = "<group>"; };
+		E4DA02017A00000100000004 /* ofWebGPURenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofWebGPURenderer.h; sourceTree = "<group>"; };
+		E4DA02017A00000100000005 /* ofxiOSDawnView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ofxiOSDawnView.mm; sourceTree = "<group>"; };
+		E4DA02017A00000100000006 /* ofxiOSDawnView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxiOSDawnView.h; sourceTree = "<group>"; };
+		E4DA02017A00000100000007 /* ofxiOSMGLView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ofxiOSMGLView.mm; sourceTree = "<group>"; };
+		E4DA02017A00000100000008 /* ofxiOSMGLView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxiOSMGLView.h; sourceTree = "<group>"; };
 		E4F76DB1176CB27200798745 /* ofGraphics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofGraphics.h; sourceTree = "<group>"; };
 		E4F76DB2176CB27200798745 /* ofImage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofImage.cpp; sourceTree = "<group>"; };
 		E4F76DB3176CB27200798745 /* ofImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofImage.h; sourceTree = "<group>"; };
@@ -661,6 +673,10 @@
 				90080018204EDB5500DC786A /* ofxiOSGLKView.mm */,
 				90080015204EDA4600DC786A /* ofxiOSGLKViewController.h */,
 				90080013204EDA1300DC786A /* ofxiOSGLKViewController.mm */,
+				E4DA02017A00000100000006 /* ofxiOSDawnView.h */,
+				E4DA02017A00000100000005 /* ofxiOSDawnView.mm */,
+				E4DA02017A00000100000008 /* ofxiOSMGLView.h */,
+				E4DA02017A00000100000007 /* ofxiOSMGLView.mm */,
 				15594F9015C56A8A00727FF2 /* ofxiOSViewController.h */,
 				15594F8D15C56A8A00727FF2 /* ofxiOSViewController.mm */,
 			);
@@ -887,6 +903,8 @@
 				E4F76DAD176CB27200798745 /* ofBitmapFont.h */,
 				E4F76DB0176CB27200798745 /* ofGraphics.cpp */,
 				E4F76DB1176CB27200798745 /* ofGraphics.h */,
+				E4DA02017A00000100000003 /* ofWebGPURenderer.cpp */,
+				E4DA02017A00000100000004 /* ofWebGPURenderer.h */,
 				E4F76DB2176CB27200798745 /* ofImage.cpp */,
 				E4F76DB3176CB27200798745 /* ofImage.h */,
 				E4F76DB4176CB27200798745 /* ofPath.cpp */,
@@ -1061,6 +1079,9 @@
 				E4F76E50176CB27200798745 /* of3dGraphics.h in Headers */,
 				E4F76E52176CB27200798745 /* ofBitmapFont.h in Headers */,
 				E4F76E56176CB27200798745 /* ofGraphics.h in Headers */,
+				E4DA02017A00000100000014 /* ofWebGPURenderer.h in Headers */,
+				E4DA02017A00000100000016 /* ofxiOSDawnView.h in Headers */,
+				E4DA02017A00000100000018 /* ofxiOSMGLView.h in Headers */,
 				E4F76E58176CB27200798745 /* ofImage.h in Headers */,
 				E4F76E5A176CB27200798745 /* ofPath.h in Headers */,
 				E4F76E5C176CB27200798745 /* ofPixels.h in Headers */,
@@ -1250,6 +1271,9 @@
 				E4F76E4F176CB27200798745 /* of3dGraphics.cpp in Sources */,
 				E4F76E51176CB27200798745 /* ofBitmapFont.cpp in Sources */,
 				E4F76E55176CB27200798745 /* ofGraphics.cpp in Sources */,
+				E4DA02017A00000100000013 /* ofWebGPURenderer.cpp in Sources */,
+				E4DA02017A00000100000015 /* ofxiOSDawnView.mm in Sources */,
+				E4DA02017A00000100000017 /* ofxiOSMGLView.mm in Sources */,
 				E4F76E57176CB27200798745 /* ofImage.cpp in Sources */,
 				E4F76E59176CB27200798745 /* ofPath.cpp in Sources */,
 				E4F76E5B176CB27200798745 /* ofPixels.cpp in Sources */,
