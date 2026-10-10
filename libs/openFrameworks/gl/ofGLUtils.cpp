@@ -874,7 +874,8 @@ string ofGLSLVersionFromGL(int major, int minor){
 		}else if(major == 2){
 			return "100";
 		}else if(major == 3){
-			return "300";
+			// GLSL ES follows the ES minor version: 300 es / 310 es / 320 es
+			return minor >= 2 ? "320" : (minor == 1 ? "310" : "300");
 		}else {
 			return ofToString(major*100+minor*10);
 		}

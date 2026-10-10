@@ -3154,6 +3154,24 @@ void ofGLProgrammableRenderer::setup(int _major, int _minor) {
 
 	major = _major;
 	minor = _minor;
+#if defined(TARGET_OPENGLES) && !defined(TARGET_EMSCRIPTEN)
+	// The context can be older than requested (e.g. ES 3.2 asked, device has
+	// 3.1, or an emulator that only offers 3.0): use what the driver reports so
+	// the GLSL version (300 es / 310 es / 320 es) matches the context.
+	if (major >= 3) {
+		GLint actualMajor = 0;
+		GLint actualMinor = 0;
+		glGetIntegerv(GL_MAJOR_VERSION, &actualMajor);
+		glGetIntegerv(GL_MINOR_VERSION, &actualMinor);
+		while (glGetError() != GL_NO_ERROR) {}
+		if (actualMajor > 0 && actualMajor * 10 + actualMinor < major * 10 + minor) {
+			ofLogWarning("ofGLProgrammableRenderer") << "requested OpenGL ES " << major << "." << minor
+				<< ", context provides " << actualMajor << "." << actualMinor << " - using " << actualMajor << "." << actualMinor;
+			major = actualMajor;
+			minor = actualMinor;
+		}
+	}
+#endif
 #ifdef TARGET_RASPBERRY_PI
 	uniqueShader = true;
 #else

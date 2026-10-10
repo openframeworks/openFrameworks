@@ -292,6 +292,9 @@ enum ofTargetPlatform{
 		#include <GLES3/gl31.h> // only works on Android-21+
 		#include <GLES3/gl3ext.h>
 	#endif
+	#if __ANDROID_API__ >= 24
+		#include <GLES3/gl32.h> // ES 3.2 (Android-24+), defines GL_ES_VERSION_3_2
+	#endif
 	#ifndef __gl3_h_
 	#include <GLES2/gl2.h>
 	#include <GLES2/gl2ext.h>
