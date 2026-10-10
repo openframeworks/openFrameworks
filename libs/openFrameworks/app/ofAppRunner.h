@@ -1,11 +1,14 @@
 #pragma once
 
+#include "ofConstants.h"
 #include "ofMainLoop.h"
 #include "ofWindowSettings.h"
 
 class ofRectangle;
 class ofAppBaseWindow;
+#if !OF_USE_DAWN
 class ofAppGLFWWindow;
+#endif
 class ofBaseApp;
 class ofBaseRenderer;
 class ofCoreEvents;
@@ -26,9 +29,11 @@ void ofSetupOpenGL(const std::shared_ptr<Window> & windowPtr, int w, int h, ofWi
 	windowPtr->setup(settings);
 }
 
+#if !OF_USE_DAWN
 //special case so we preserve supplied settngs
 //TODO: remove me when we remove the ofSetupOpenGL legacy approach.
 void ofSetupOpenGL(const std::shared_ptr<ofAppGLFWWindow> & windowPtr, int w, int h, ofWindowMode screenMode);
+#endif
 
 template <typename Window>
 static void noopDeleter(Window *) { }

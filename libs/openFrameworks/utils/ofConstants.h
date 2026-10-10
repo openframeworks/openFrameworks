@@ -13,6 +13,25 @@
 	#define OF_USE_LEGACY_VECTOR_MATH 0
 #endif
 
+// Renderer backends. Default remains desktop GL / iOS GLES.
+// OF_USE_DAWN=1 selects WebGPU (Dawn -> Metal). OF_USE_ANGLE=1 selects
+// MetalANGLE + MGLKit (GLES3 -> Metal). The two flags are mutually exclusive.
+// OF_USE_ANGLE_OFFICIAL=1 is reserved for chromium ANGLE without MGLKit.
+// Pass the flag on the xcodebuild / make command line so the static lib and
+// the app are compiled with the same backend.
+#ifndef OF_USE_DAWN
+	#define OF_USE_DAWN 0
+#endif
+#ifndef OF_USE_ANGLE
+	#define OF_USE_ANGLE 0
+#endif
+#ifndef OF_USE_ANGLE_OFFICIAL
+	#define OF_USE_ANGLE_OFFICIAL 0
+#endif
+#if OF_USE_DAWN && OF_USE_ANGLE
+	#error OF_USE_DAWN and OF_USE_ANGLE cannot both be 1
+#endif
+
 // This enables glm's old behavior of initializing with non garbage values
 #if !defined(GLM_FORCE_CTOR_INIT)
 	#define GLM_FORCE_CTOR_INIT

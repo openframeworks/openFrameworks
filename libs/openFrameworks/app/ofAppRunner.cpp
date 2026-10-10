@@ -14,10 +14,15 @@ using std::shared_ptr;
 
 #if !defined(TARGET_NODISPLAY)
 	#if !defined( TARGET_OF_IOS ) & !defined(TARGET_ANDROID) & !defined(TARGET_EMSCRIPTEN) & !defined(TARGET_RASPBERRY_PI_LEGACY)
+	#if OF_USE_DAWN
+	#include "ofAppDawnWindow.h"
+	#else
 	#include "ofAppGLFWWindow.h"
+	#endif
 	//special case so we preserve supplied settngs
 	//TODO: remove me when we remove the ofAppGLFWWindow setters.
 	//--------------------------------------
+#if !OF_USE_DAWN
 	void ofSetupOpenGL(const shared_ptr<ofAppGLFWWindow> & windowPtr, int w, int h, ofWindowMode screenMode){
 		ofInit();
 		auto settings = windowPtr->getSettings();
@@ -26,6 +31,7 @@ using std::shared_ptr;
 		ofGetMainLoop()->addWindow(windowPtr);
 		windowPtr->setup(settings);
 	}
+	#endif
 	#endif
 #endif
 

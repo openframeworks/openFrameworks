@@ -76,7 +76,9 @@ enum ofxiOSRendererType {
 enum ofxiOSWindowControllerType{
     CORE_ANIMATION = 1,
     GL_KIT = 2,
-    METAL_KIT = 3
+    METAL_KIT = 3,
+    DAWN_KIT = 4,
+    ANGLE_KIT = 5
 };
 
 enum ofxiOSRendererColorFormat{

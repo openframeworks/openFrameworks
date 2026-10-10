@@ -17,6 +17,10 @@
 		2292E73F19E3049700DE9411 /* ofBufferObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 2292E73D19E3049700DE9411 /* ofBufferObject.h */; };
 		229EB9A61B3181C800FF7B5F /* ofEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 229EB9A51B3181C800FF7B5F /* ofEvent.h */; };
 		22A1C453170AFCB60079E473 /* ofRendererCollection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 22A1C452170AFCB60079E473 /* ofRendererCollection.cpp */; };
+		E4DA01017A00000100000011 /* ofAppDawnWindow.mm in Sources */ = {isa = PBXBuildFile; fileRef = E4DA01017A00000100000001 /* ofAppDawnWindow.mm */; };
+		E4DA01017A00000100000012 /* ofAppDawnWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = E4DA01017A00000100000002 /* ofAppDawnWindow.h */; };
+		E4DA01017A00000100000013 /* ofWebGPURenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4DA01017A00000100000003 /* ofWebGPURenderer.cpp */; };
+		E4DA01017A00000100000014 /* ofWebGPURenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = E4DA01017A00000100000004 /* ofWebGPURenderer.h */; };
 		22FAD01E17049373002A7EB3 /* ofAppGLFWWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 22FAD01C17049373002A7EB3 /* ofAppGLFWWindow.cpp */; };
 		22FAD01F17049373002A7EB3 /* ofAppGLFWWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = 22FAD01D17049373002A7EB3 /* ofAppGLFWWindow.h */; };
 		27DEA3111796F578000A9E90 /* ofXml.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 27DEA30F1796F578000A9E90 /* ofXml.cpp */; };
@@ -139,6 +143,10 @@
 		BF6277052BADCF7C008864C1 /* ofMainLoop.h in Sources */ = {isa = PBXBuildFile; fileRef = 9979E8211A1CCC44007E55D1 /* ofMainLoop.h */; };
 		BF6277062BADCF7C008864C1 /* ofAppNoWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E495DF7B178896A900994238 /* ofAppNoWindow.cpp */; };
 		BF6277072BADCF7C008864C1 /* ofAppNoWindow.h in Sources */ = {isa = PBXBuildFile; fileRef = E495DF7C178896A900994238 /* ofAppNoWindow.h */; };
+		E4DA01017A00000100000021 /* ofAppDawnWindow.mm in Sources */ = {isa = PBXBuildFile; fileRef = E4DA01017A00000100000001 /* ofAppDawnWindow.mm */; };
+		E4DA01017A00000100000022 /* ofAppDawnWindow.h in Sources */ = {isa = PBXBuildFile; fileRef = E4DA01017A00000100000002 /* ofAppDawnWindow.h */; };
+		E4DA01017A00000100000023 /* ofWebGPURenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4DA01017A00000100000003 /* ofWebGPURenderer.cpp */; };
+		E4DA01017A00000100000024 /* ofWebGPURenderer.h in Sources */ = {isa = PBXBuildFile; fileRef = E4DA01017A00000100000004 /* ofWebGPURenderer.h */; };
 		BF6277082BADCF7C008864C1 /* ofAppGLFWWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 22FAD01C17049373002A7EB3 /* ofAppGLFWWindow.cpp */; };
 		BF6277092BADCF7C008864C1 /* ofxOpenALSoundPlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BF23BF682BAC872D000E2E0E /* ofxOpenALSoundPlayer.cpp */; };
 		BF62770A2BADCF7C008864C1 /* ofAppGLFWWindow.h in Sources */ = {isa = PBXBuildFile; fileRef = 22FAD01D17049373002A7EB3 /* ofAppGLFWWindow.h */; };
@@ -516,6 +524,10 @@
 		2292E73D19E3049700DE9411 /* ofBufferObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofBufferObject.h; path = gl/ofBufferObject.h; sourceTree = "<group>"; };
 		229EB9A51B3181C800FF7B5F /* ofEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofEvent.h; sourceTree = "<group>"; };
 		22A1C452170AFCB60079E473 /* ofRendererCollection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofRendererCollection.cpp; sourceTree = "<group>"; };
+		E4DA01017A00000100000001 /* ofAppDawnWindow.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = ofAppDawnWindow.mm; sourceTree = "<group>"; };
+		E4DA01017A00000100000002 /* ofAppDawnWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofAppDawnWindow.h; sourceTree = "<group>"; };
+		E4DA01017A00000100000003 /* ofWebGPURenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofWebGPURenderer.cpp; sourceTree = "<group>"; };
+		E4DA01017A00000100000004 /* ofWebGPURenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofWebGPURenderer.h; sourceTree = "<group>"; };
 		22FAD01C17049373002A7EB3 /* ofAppGLFWWindow.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = ofAppGLFWWindow.cpp; sourceTree = "<group>"; };
 		22FAD01D17049373002A7EB3 /* ofAppGLFWWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofAppGLFWWindow.h; sourceTree = "<group>"; };
 		27DEA30F1796F578000A9E90 /* ofXml.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofXml.cpp; sourceTree = "<group>"; };
@@ -1270,6 +1282,8 @@
 				E495DF7C178896A900994238 /* ofAppNoWindow.h */,
 				22FAD01C17049373002A7EB3 /* ofAppGLFWWindow.cpp */,
 				22FAD01D17049373002A7EB3 /* ofAppGLFWWindow.h */,
+				E4DA01017A00000100000001 /* ofAppDawnWindow.mm */,
+				E4DA01017A00000100000002 /* ofAppDawnWindow.h */,
 				E4B27AAC10CBE92A00536013 /* ofAppBaseWindow.h */,
 				E4B27AAF10CBE92A00536013 /* ofAppRunner.cpp */,
 				E4B27AB010CBE92A00536013 /* ofAppRunner.h */,
@@ -1481,6 +1495,8 @@
 				22A1C452170AFCB60079E473 /* ofRendererCollection.cpp */,
 				DA97FD3612F5A61A005C9991 /* ofCairoRenderer.cpp */,
 				DA97FD3712F5A61A005C9991 /* ofCairoRenderer.h */,
+				E4DA01017A00000100000003 /* ofWebGPURenderer.cpp */,
+				E4DA01017A00000100000004 /* ofWebGPURenderer.h */,
 				E4F3BB0012F4C751002D19BB /* ofBitmapFont.cpp */,
 				E4F3BB0112F4C751002D19BB /* ofBitmapFont.h */,
 				E4F3BB0412F4C752002D19BB /* ofGraphics.cpp */,
@@ -1800,6 +1816,8 @@
 				BF6277062BADCF7C008864C1 /* ofAppNoWindow.cpp in Sources */,
 				BF6277072BADCF7C008864C1 /* ofAppNoWindow.h in Sources */,
 				BF6277082BADCF7C008864C1 /* ofAppGLFWWindow.cpp in Sources */,
+				E4DA01017A00000100000021 /* ofAppDawnWindow.mm in Sources */,
+				E4DA01017A00000100000023 /* ofWebGPURenderer.cpp in Sources */,
 				BF6277092BADCF7C008864C1 /* ofxOpenALSoundPlayer.cpp in Sources */,
 				BF62770A2BADCF7C008864C1 /* ofAppGLFWWindow.h in Sources */,
 				BF62770B2BADCF7C008864C1 /* SoundOutputStream.m in Sources */,
@@ -2049,6 +2067,8 @@
 				DAC22D4116E7A4AF0020226D /* ofParameterGroup.cpp in Sources */,
 				67D96B971651AF6D00D5242D /* ofGLUtils.cpp in Sources */,
 				22FAD01E17049373002A7EB3 /* ofAppGLFWWindow.cpp in Sources */,
+				E4DA01017A00000100000011 /* ofAppDawnWindow.mm in Sources */,
+				E4DA01017A00000100000013 /* ofWebGPURenderer.cpp in Sources */,
 				22A1C453170AFCB60079E473 /* ofRendererCollection.cpp in Sources */,
 				22769591170D9DD200604FC3 /* ofMatrixStack.cpp in Sources */,
 				22246D93176C9987008A8AF4 /* ofGLProgrammableRenderer.cpp in Sources */,
