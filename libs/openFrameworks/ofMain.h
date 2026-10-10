@@ -79,7 +79,12 @@
 #include "ofMainLoop.h"
 #include "ofWindowSettings.h"
 #if !defined(TARGET_OF_IOS) & !defined(TARGET_ANDROID) & !defined(TARGET_EMSCRIPTEN) & !defined(TARGET_RASPBERRY_PI_LEGACY)
-    #include "ofAppGLFWWindow.h"
+    #if OF_USE_DAWN
+        #include "ofAppDawnWindow.h"
+        #include "ofWebGPURenderer.h"
+    #else
+        #include "ofAppGLFWWindow.h"
+    #endif
 //    #if !defined(TARGET_LINUX_ARM)
 //        #include "ofAppGlutWindow.h"
 //    #endif
