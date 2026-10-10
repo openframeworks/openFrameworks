@@ -10,6 +10,10 @@
 #include "ofEvents.h"
 #include "ofGLProgrammableRenderer.h"
 
+#ifndef OF_WEBGL_VERSION
+#define OF_WEBGL_VERSION 2
+#endif
+
 using namespace std;
 
 ofxAppEmscriptenWindow * ofxAppEmscriptenWindow::instance = NULL;
@@ -38,7 +42,7 @@ void ofxAppEmscriptenWindow::setup(const ofGLESWindowSettings & settings){
 	attrs.depth = 1;
 	attrs.stencil = 1;
 	attrs.antialias = 1;
-	attrs.majorVersion = 2;
+	attrs.majorVersion = OF_WEBGL_VERSION;
 	attrs.minorVersion = 0;
 	attrs.alpha = 0;
 
