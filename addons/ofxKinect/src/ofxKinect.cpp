@@ -383,7 +383,7 @@ void ofxKinect::update() {
             if( videoPixels.getHeight() == videoPixelsIntra.getHeight() ){
                 std::swap(videoPixels,videoPixelsIntra);
             }else{
-				int minimumSize = std::min(videoPixels.size(), videoPixelsIntra.size());
+				int minimumSize = static_cast<int>(std::min(videoPixels.size(), videoPixelsIntra.size()));
 				memcpy(videoPixels.getData(), videoPixelsIntra.getData(), minimumSize);
             }
 			bNeedsUpdateVideo = false;
@@ -1109,11 +1109,11 @@ int ofxKinectContext::numTotal() {
 int ofxKinectContext::numAvailable() {
 	if(!isInited())
 		init();
-    return freenect_num_devices(kinectContext) - kinects.size();
+    return freenect_num_devices(kinectContext) - static_cast<int>(kinects.size());
 }
 
 int ofxKinectContext::numConnected() {
-	return kinects.size();
+	return static_cast<int>(kinects.size());
 }
 
 ofxKinect* ofxKinectContext::getKinect(freenect_device* dev) {
@@ -1128,7 +1128,7 @@ ofxKinect* ofxKinectContext::getKinect(freenect_device* dev) {
 int ofxKinectContext::getDeviceIndex(int id) {
 	for(size_t i = 0; i < deviceList.size(); ++i) {
 		if(deviceList[i].id == id)
-			return i;
+			return static_cast<int>(i);
 	}
 	return -1;
 }
@@ -1136,7 +1136,7 @@ int ofxKinectContext::getDeviceIndex(int id) {
 int ofxKinectContext::getDeviceIndex(string serial) {
 	for(size_t i = 0; i < deviceList.size(); ++i) {
 		if(deviceList[i].serial == serial)
-			return i;
+			return static_cast<int>(i);
 	}
 	return -1;
 }

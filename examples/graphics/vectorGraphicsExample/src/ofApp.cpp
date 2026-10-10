@@ -260,7 +260,7 @@ void ofApp::draw(){
 
 	if( pts.size() > 0 ){
 
-		int numPts = pts.size();
+		int numPts = static_cast<int>(pts.size());
 
 		output.setColor(0x0088EE);
 		output.noFill();
@@ -343,7 +343,7 @@ void ofApp::mouseDragged(int x, int y, int button){
 
 	//we add a new point to our line
 	pts.push_back(glm::vec3());
-	int last = pts.size()-1;
+	int last = static_cast<int>(pts.size())-1;
 
 	pts[last].x = x;
 	pts[last].y = y;

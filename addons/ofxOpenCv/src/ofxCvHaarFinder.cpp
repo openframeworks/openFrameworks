@@ -89,12 +89,12 @@ int ofxCvHaarFinder::findHaarObjects(ofImage& input, int minWidth, int minHeight
 
 	ofxCvGrayscaleImage gray;
 	gray.setUseTexture(false);
-	gray.allocate(input.getWidth(), input.getHeight());
+	gray.allocate(static_cast<int>(input.getWidth()), static_cast<int>(input.getHeight()));
 
 	if( input.getImageType() == OF_IMAGE_COLOR ){
 		ofxCvColorImage color;
 		color.setUseTexture(false);
-		color.allocate(input.getWidth(), input.getHeight());
+		color.allocate(static_cast<int>(input.getWidth()), static_cast<int>(input.getHeight()));
 		color = input.getPixels();
 		gray = color;
 	}else if( input.getImageType() == OF_IMAGE_GRAYSCALE ){
@@ -111,12 +111,12 @@ int ofxCvHaarFinder::findHaarObjects(ofImage& input, int minWidth, int minHeight
 int ofxCvHaarFinder::findHaarObjects(ofPixels& input, int minWidth, int minHeight){
 	ofxCvGrayscaleImage gray;
 	gray.setUseTexture(false);
-	gray.allocate(input.getWidth(), input.getHeight());
+	gray.allocate(static_cast<int>(input.getWidth()), static_cast<int>(input.getHeight()));
 
 	if( input.getImageType() == OF_IMAGE_COLOR ){
 		ofxCvColorImage color;
 		color.setUseTexture(false);
-		color.allocate(input.getWidth(), input.getHeight());
+		color.allocate(static_cast<int>(input.getWidth()), static_cast<int>(input.getHeight()));
 		color.setFromPixels(input);
 		gray = color;
 	}else if( input.getImageType() == OF_IMAGE_GRAYSCALE ){
@@ -299,7 +299,7 @@ int ofxCvHaarFinder::findHaarObjects(const ofxCvGrayscaleImage& input,
 	cascade.detectMultiScale(ofxCvToMat(img.getCvImage()), haarResults, scaleHaar, neighbors, cv::CASCADE_DO_CANNY_PRUNING, 
 		cv::Size(minWidth, minHeight) );
 	
-	nHaarResults = haarResults.size();
+	nHaarResults = static_cast<int>(haarResults.size());
 
 		for (int i = 0; i < nHaarResults; i++ ) {
 			//ofLogNotice("ofxCvHaarFinder") << "findHaarObjects(): " << i << " objects";

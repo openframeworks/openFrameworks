@@ -28,11 +28,16 @@ void ofxAssimpTexture::setTextureType(aiTextureType aTexType){
 	textureType = aTexType;
 
 	if( textureType >= 0 && textureType < AI_TEXTURE_TYPE_MAX){
+#ifdef TARGET_WIN32
+		// aiTextureTypeToString is always available on Windows (no weak-symbol fallback needed/supported by MSVC)
+		mTexTypeStr = aiTextureTypeToString(getTextureType());
+#else
 		if(aiTextureTypeToString){
 			mTexTypeStr = aiTextureTypeToString(getTextureType());
 		}else{
 			mTexTypeStr = "textureType:"+ofToString(getTextureType());
 		}
+#endif
 	}else{
 		ofLogError("ofxAssimpTexture::setTextureType") << ": unknown aiTextureType type " << aTexType;
 		mTexTypeStr = "NONE";

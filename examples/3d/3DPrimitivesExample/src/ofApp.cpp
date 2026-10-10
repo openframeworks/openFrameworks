@@ -128,7 +128,7 @@ void ofApp::draw() {
 		glm::vec3 vert;
 		for (size_t i = 0; i < deformPlane.getNumIndices(); i++) {
 			planeAngleX += planeAngleInc;
-			int ii = deformPlane.getIndex(i);
+			int ii = deformPlane.getIndex(static_cast<ofIndexType>(i));
 			vert = deformPlane.getVertex(ii);
 			vert.z += cos(planeAngleX) * 50;
 			deformPlane.setVertex(ii, vert);

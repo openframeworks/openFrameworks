@@ -22,7 +22,7 @@ ofxVecSlider_<VecType> * ofxVecSlider_<VecType>::setup(ofParameter<VecType> valu
     VecType max = value.getMax();
 
 	for (size_t i = 0; i < dim(); i++) {
-    	ofParameter<float> p(names[i], val[i], min[i], max[i]);
+    	ofParameter<float> p(names[i], val[static_cast<int>(i)], min[static_cast<int>(i)], max[static_cast<int>(i)]);
 		add(createGuiElement<ofxSlider<float>>(p, width, height));
         listeners.push(p.newListener(this, & ofxVecSlider_::changeSlider));
     }
@@ -55,7 +55,7 @@ void ofxVecSlider_<VecType>::changeValue(VecType & value){
         return;
     }
 	for (size_t i = 0; i < dim(); i++){
-        parameters[i].template cast<float>() = value[i];
+        parameters[i].template cast<float>() = value[static_cast<int>(i)];
     }
 }
 

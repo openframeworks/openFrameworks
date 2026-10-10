@@ -205,7 +205,7 @@ void ofApp::draw(){
 			stringstream ss;
 			ss << endl << endl;
 			ss << "(up/down): Animations "<< endl << "------------------" << endl;
-			for( int i = 0; i < model.getNumAnimations(); i++ ) {
+			for( unsigned int i = 0; i < model.getNumAnimations(); i++ ) {
 				if( i > 0 ) {
 					ss << endl;
 				}

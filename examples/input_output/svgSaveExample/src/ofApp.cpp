@@ -83,7 +83,7 @@ void ofApp::keyPressed(int key){
 	if( key == OF_KEY_LEFT ) {
 		svgTypeIndex--;
 		if( svgTypeIndex < 0 ) {
-			svgTypeIndex = svgAddTypes.size()-1;
+			svgTypeIndex = static_cast<int>(svgAddTypes.size())-1;
 		}
 	}
 	if( key == OF_KEY_UP ) {

@@ -192,7 +192,7 @@ bool ofxXmlSettings::readTag(const string&  tag, TiXmlHandle& valHandle, int whi
 //---------------------------------------------------------
 bool ofxXmlSettings::pushTag(const string&  tag, int which){
 
-	int pos = tag.find(":");
+	int pos = static_cast<int>(tag.find(":"));
 
 	// Either find the tag specified, or the first tag if colon-seperated.
 	string tagToFind((pos > 0) ? tag.substr(0,pos) :tag);
@@ -272,7 +272,7 @@ bool ofxXmlSettings::tagExists(const string& tag, int which) const{
 int ofxXmlSettings::getNumTags(const string&  tag) const{
 	//this only works for tags at the current root level
 
-	int pos = tag.find(":");
+	int pos = static_cast<int>(tag.find(":"));
 
 	// Either find the tag specified, or the first tag if colon-seperated.
 	string tagToFind((pos > 0) ? tag.substr(0,pos) :tag);
@@ -662,7 +662,7 @@ int ofxXmlSettings::writeAttribute(const string& tag, const string& attribute, c
 //---------------------------------------------------------
 bool ofxXmlSettings::loadFromBuffer( string buffer )
 {
-	int size = buffer.size();
+	int size = static_cast<int>(buffer.size());
 	bool loadOkay = doc.ReadFromMemory( buffer.c_str(), size);//, TiXmlEncoding encoding = TIXML_DEFAULT_ENCODING);
 	storedHandle = TiXmlHandle(&doc);
 	level = 0;

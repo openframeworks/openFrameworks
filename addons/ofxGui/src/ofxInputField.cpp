@@ -366,7 +366,7 @@ bool ofxInputField<Type>::mousePressed(ofMouseEventArgs & mouse){
 				mousePressedPos =  round(visibleInputStart + ofMap(cursorX, 0, inputWidth, 0, ofUTF8Length(visibleInput), true));
 				moveCursor(mousePressedPos);
 			}else{
-				calculateSelectionArea(0, ofUTF8Length(input));
+				calculateSelectionArea(0, static_cast<int>(ofUTF8Length(input)));
 				bGuiActive = true;
 			}
 
@@ -527,7 +527,7 @@ bool ofxInputField<Type>::keyPressed(ofKeyEventArgs & args){
 			input = toString(value.get());
 			leaveFocus();
 		}else if(key == 'a' && args.hasModifier(OF_KEY_CONTROL)){
-			calculateSelectionArea(0, ofUTF8Length(input));
+			calculateSelectionArea(0, static_cast<int>(ofUTF8Length(input)));
 		}else if(key == 'c' && args.hasModifier(OF_KEY_CONTROL)){
 			if(selectLen>0){
 				auto selection = ofUTF8Substring(input, first, selectLen);
@@ -552,7 +552,7 @@ bool ofxInputField<Type>::keyPressed(ofKeyEventArgs & args){
 				moveCursor(first);
 			}
 		}else if(key == OF_KEY_END){
-			auto inputLength = ofUTF8Length(input);
+			int inputLength = static_cast<int>(ofUTF8Length(input));
 			if(args.hasModifier(OF_KEY_SHIFT)){
 				calculateSelectionArea(selectStartPos, inputLength);
 			}else{
@@ -772,7 +772,7 @@ template<typename Type>
 void ofxInputField<Type>::valueChanged(Type & value){
 	visibleInput = input = toString(value);
 	if(bGuiActive){
-		moveCursor(ofUTF8Length(input));
+		moveCursor(static_cast<int>(ofUTF8Length(input)));
 	}
     setNeedsRedraw();
 }

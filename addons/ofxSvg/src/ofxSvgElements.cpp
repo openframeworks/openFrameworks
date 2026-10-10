@@ -530,7 +530,7 @@ void ofxSvgText::setText( const std::string& astring, const ofxSvgCssClass& aSvg
 			// ofLogNotice("textSpan word string") << "|"<<tCurrentString << "|";;
 			// ex = font.stringWidth(tCurrentString);
 			ex = font.getStringBoundingBox(tCurrentString,0,0,true).getRight();
-			if( (aMaxWidth > 0.f && ex + cspan->rect.x > aMaxWidth) || bIsAStringLineBreak > 0 ) {
+			if( (aMaxWidth > 0.f && ex + cspan->rect.x > aMaxWidth) || bIsAStringLineBreak ) {
 			// if( ex > aMaxWidth ) {
 				
 				tCurrentString = twords[i];
@@ -759,7 +759,7 @@ void ofxSvgText::create() {
                 float tffontx = bCentered ? cspan->rect.x - tempBounds.width/2 : cspan->rect.x;
 //                const ofMesh& stringMesh  = ttfont.getStringMesh( cspan.text, tffontx-ogPos.x, cspan.rect.y-ogPos.y );
                 const ofMesh& stringMesh  = ttfont.getStringMesh( cspan->text, tffontx, cspan->rect.y );
-                int offsetIndex     = tmesh.getNumVertices();
+                int offsetIndex     = static_cast<int>(tmesh.getNumVertices());
                 
                 vector<ofIndexType> tsIndices = stringMesh.getIndices();
                 for( std::size_t k = 0; k < tsIndices.size(); k++ ) {
