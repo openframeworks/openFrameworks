@@ -1,4 +1,5 @@
 #include "of3dPrimitives.h"
+#include "ofGLFramebuffer.h"
 #include "ofBitmapFont.h"
 #include "ofCamera.h"
 #include "ofFbo.h"
@@ -44,21 +45,25 @@ ofGLRenderer::ofGLRenderer(const ofAppBaseWindow * _window)
 
 void ofGLRenderer::setup() {
 #ifdef TARGET_OPENGLES
-	// OpenGL ES might have set a default frame buffer for
-	// MSAA rendering to the window, bypassing ofFbo, so we
-	// can't trust ofFbo to have correctly tracked the bind
-	// state. Therefore, we are forced to use the slower glGet() method
-	// to be sure to get the correct default framebuffer.
-	GLint currentFrameBuffer;
-	glGetIntegerv(GL_FRAMEBUFFER_BINDING, &currentFrameBuffer);
-	defaultFramebufferId = currentFrameBuffer;
+	// OpenGL ES might have set a default frame buffer for MSAA rendering to the window,
+	// bypassing ofFbo, so we can't trust ofFbo to have correctly tracked the bind state.
+	// Therefore we are forced to use the slower glGet() method to be sure.
+	GLint currentFramebuffer;
+	glGetIntegerv(GL_FRAMEBUFFER_BINDING, &currentFramebuffer);
+	defaultFramebufferId = currentFramebuffer;
 	currentFramebufferId = defaultFramebufferId;
 #endif
+
 	setupGraphicDefaults();
 	viewport();
 	setupScreenPerspective();
-}
 
+	if (ofIsAndroidEmulatorGLES1()) {
+		ofLogWarning("ofGLRenderer") << "Android emulator + OpenGL ES 1.1 detected: FBOs (ofFbo) will not work here - "
+			<< "the emulator's ES 1 driver can't delete or switch back from OES framebuffers. "
+			<< "ES 1.1 FBOs work on real devices (GL_OES_framebuffer_object); use ES 2.0+ to test FBOs on the emulator.";
+	}
+}
 void ofGLRenderer::startRender() {
 	currentFramebufferId = defaultFramebufferId;
 	framebufferIdStack.push_back(defaultFramebufferId);
@@ -188,7 +193,7 @@ void ofGLRenderer::draw(const ofMesh & vertexData, ofPolyRenderMode renderType, 
 	}
 
 	if (vertexData.getNumIndices()) {
-		glDrawElements(drawMode, vertexData.getNumIndices(), GL_UNSIGNED_SHORT, vertexData.getIndexPointer());
+		glDrawElements(drawMode, vertexData.getNumIndices(), sizeof(ofIndexType) == 2 ? GL_UNSIGNED_SHORT : GL_UNSIGNED_INT, vertexData.getIndexPointer());
 	} else {
 		glDrawArrays(drawMode, 0, vertexData.getNumVertices());
 	}
@@ -389,12 +394,7 @@ void ofGLRenderer::draw(const ofVbo & vbo, GLuint drawMode, int first, int total
 void ofGLRenderer::drawElements(const ofVbo & vbo, GLuint drawMode, int amt, int offsetelements) const {
 	if (vbo.getUsingVerts()) {
 		vbo.bind();
-#ifdef TARGET_OPENGLES
-		glDrawElements(drawMode, amt, GL_UNSIGNED_SHORT, (void *)(sizeof(ofIndexType) * offsetelements));
-#else
-		// Index type follows sizeof(ofIndexType); see ofGLProgrammableRenderer::drawElements.
 		glDrawElements(drawMode, amt, sizeof(ofIndexType) == 2 ? GL_UNSIGNED_SHORT : GL_UNSIGNED_INT, (void *)(sizeof(ofIndexType) * offsetelements));
-#endif
 		vbo.unbind();
 	}
 }
@@ -404,11 +404,7 @@ void ofGLRenderer::drawInstanced(const ofVbo & vbo, GLuint drawMode, int first, 
 	if (vbo.getUsingVerts()) {
 		vbo.bind();
 #ifdef TARGET_OPENGLES
-		// todo: activate instancing once OPENGL ES supports instancing, starting with version 3.0
-		// unfortunately there is currently no easy way within oF to query the current OpenGL version.
-		// https://www.khronos.org/opengles/sdk/docs/man3/xhtml/glDrawElementsInstanced.xml
 		ofLogWarning("ofVbo") << "drawInstanced(): hardware instancing is not supported on OpenGL ES < 3.0";
-		// glDrawArraysInstanced(drawMode, first, total, primCount);
 #else
 		glDrawArraysInstanced(drawMode, first, total, primCount);
 #endif
@@ -421,13 +417,8 @@ void ofGLRenderer::drawElementsInstanced(const ofVbo & vbo, GLuint drawMode, int
 	if (vbo.getUsingVerts()) {
 		vbo.bind();
 #ifdef TARGET_OPENGLES
-		// todo: activate instancing once OPENGL ES supports instancing, starting with version 3.0
-		// unfortunately there is currently no easy way within oF to query the current OpenGL version.
-		// https://www.khronos.org/opengles/sdk/docs/man3/xhtml/glDrawElementsInstanced.xml
 		ofLogWarning("ofVbo") << "drawElementsInstanced(): hardware instancing is not supported on OpenGL ES < 3.0";
-		// glDrawElementsInstanced(drawMode, amt, GL_UNSIGNED_SHORT, nullptr, primCount);
 #else
-		// Index type follows sizeof(ofIndexType); see ofGLProgrammableRenderer::drawElements.
 		glDrawElementsInstanced(drawMode, amt, sizeof(ofIndexType) == 2 ? GL_UNSIGNED_SHORT : GL_UNSIGNED_INT, nullptr, primCount);
 #endif
 		vbo.unbind();
@@ -571,10 +562,10 @@ void ofGLRenderer::bind(const ofFbo & fbo) {
 	// different implementations.
 	framebufferIdStack.push_back(currentFramebufferId);
 	currentFramebufferId = fbo.getId();
-	glBindFramebuffer(GL_FRAMEBUFFER, currentFramebufferId);
+	ofGLBindFramebuffer(GL_FRAMEBUFFER, currentFramebufferId);
 }
 
-#ifndef TARGET_OPENGLES
+#if !defined(TARGET_OPENGLES) || (defined(GL_ES_VERSION_3_0) && defined(TARGET_OPENGLES_3))
 //----------------------------------------------------------
 void ofGLRenderer::bindForBlitting(const ofFbo & fboSrc, ofFbo & fboDst, int attachmentPoint) {
 	if (currentFramebufferId == fboSrc.getId()) {
@@ -582,17 +573,18 @@ void ofGLRenderer::bindForBlitting(const ofFbo & fboSrc, ofFbo & fboDst, int att
 					   << "Most probably you forgot to end() the current framebuffer before calling getTexture().";
 		return;
 	}
-	// this method could just as well have been placed in ofBaseGLRenderer
-	// and shared over both programmable and fixed function renderer.
-	// I'm keeping it here, so that if we want to do more fancyful
-	// named framebuffers with GL 4.5+, we can have
-	// different implementations.
+
 	framebufferIdStack.push_back(currentFramebufferId);
 	currentFramebufferId = fboSrc.getId();
-	glBindFramebuffer(GL_READ_FRAMEBUFFER, currentFramebufferId);
+
+	ofGLBindFramebuffer(GL_READ_FRAMEBUFFER, currentFramebufferId);
+	ofGLBindFramebuffer(GL_DRAW_FRAMEBUFFER, fboDst.getIdDrawBuffer());
+
+#ifndef TARGET_OPENGLES
+	// glReadBuffer / glDrawBuffer are desktop-only
 	glReadBuffer(GL_COLOR_ATTACHMENT0 + attachmentPoint);
-	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fboDst.getIdDrawBuffer());
 	glDrawBuffer(GL_COLOR_ATTACHMENT0 + attachmentPoint);
+#endif
 }
 #endif
 
@@ -605,7 +597,7 @@ void ofGLRenderer::unbind(const ofFbo & fbo) {
 		currentFramebufferId = framebufferIdStack.back();
 		framebufferIdStack.pop_back();
 	}
-	glBindFramebuffer(GL_FRAMEBUFFER, currentFramebufferId);
+	ofGLBindFramebuffer(GL_FRAMEBUFFER, currentFramebufferId);
 	fbo.flagDirty();
 }
 
@@ -1068,8 +1060,9 @@ void ofGLRenderer::multMatrix(const float * m) {
 
 //----------------------------------------------------------
 void ofGLRenderer::loadViewMatrix(const glm::mat4 & m) {
-	int matrixMode;
-	glGetIntegerv(GL_MATRIX_MODE, &matrixMode);
+	// restore the mode oF tracks: glGet(GL_MATRIX_MODE) raises GL_INVALID_ENUM on
+	// some ES 1.1 drivers (Android emulator), leaving matrixMode uninitialised
+	const GLenum matrixMode = GL_MODELVIEW + matrixStack.getCurrentMatrixMode();
 	matrixStack.loadViewMatrix(m);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadMatrixf(glm::value_ptr(m));
@@ -1840,8 +1833,9 @@ void ofGLRenderer::enableLighting() {
 	normalsEnabled = glIsEnabled(GL_NORMALIZE);
 	glEnable(GL_NORMALIZE);
 
-	int matrixMode;
-	glGetIntegerv(GL_MATRIX_MODE, &matrixMode);
+	// restore the mode oF tracks: glGet(GL_MATRIX_MODE) raises GL_INVALID_ENUM on
+	// some ES 1.1 drivers (Android emulator), leaving matrixMode uninitialised
+	const GLenum matrixMode = GL_MODELVIEW + matrixStack.getCurrentMatrixMode();
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
 	glLoadMatrixf(glm::value_ptr(matrixStack.getViewMatrix()));
@@ -1952,8 +1946,9 @@ void ofGLRenderer::setLightSpecularColor(int lightIndex, const ofFloatColor & c)
 //----------------------------------------------------------
 void ofGLRenderer::setLightPosition(int lightIndex, const glm::vec4 & position) {
 	if (lightIndex == -1) return;
-	int matrixMode;
-	glGetIntegerv(GL_MATRIX_MODE, &matrixMode);
+	// restore the mode oF tracks: glGet(GL_MATRIX_MODE) raises GL_INVALID_ENUM on
+	// some ES 1.1 drivers (Android emulator), leaving matrixMode uninitialised
+	const GLenum matrixMode = GL_MODELVIEW + matrixStack.getCurrentMatrixMode();
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
 	glLoadMatrixf(glm::value_ptr(matrixStack.getViewMatrix()));
@@ -1965,8 +1960,9 @@ void ofGLRenderer::setLightPosition(int lightIndex, const glm::vec4 & position) 
 //----------------------------------------------------------
 void ofGLRenderer::setLightSpotDirection(int lightIndex, const glm::vec4 & direction) {
 	if (lightIndex == -1) return;
-	int matrixMode;
-	glGetIntegerv(GL_MATRIX_MODE, &matrixMode);
+	// restore the mode oF tracks: glGet(GL_MATRIX_MODE) raises GL_INVALID_ENUM on
+	// some ES 1.1 drivers (Android emulator), leaving matrixMode uninitialised
+	const GLenum matrixMode = GL_MODELVIEW + matrixStack.getCurrentMatrixMode();
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
 	glLoadMatrixf(glm::value_ptr(matrixStack.getViewMatrix()));

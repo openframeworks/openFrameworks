@@ -85,6 +85,12 @@ bool ofGLSupportsNPOTTextures();
 
 bool ofIsGLProgrammableRenderer();
 
+/// \brief True when ES 3 code paths are both compiled in (TARGET_OPENGLES_3)
+/// and usable by the current context (ES 3.0+). TARGET_OPENGLES_3 alone only
+/// means the GLES 3 headers exist, which is also true for ES 1 / ES 2 contexts
+/// on iOS and Android.
+bool ofIsGLES3Context();
+
 template<class T>
 [[deprecated("Use ofGetGLFormat()")]]
 int ofGetGlFormat(const ofPixels_<T> & pixels);
@@ -178,7 +184,7 @@ void ofDisableGLDebugLog();
 			#define GL_DEPTH_COMPONENT32					GL_DEPTH_COMPONENT32_OES
 		#endif
     #endif
-	
+
 	#ifndef GL_RGBA32F
 		#ifdef GL_RGBA32F_EXT
 			#define GL_RGBA32F								GL_RGBA32F_EXT
@@ -192,12 +198,74 @@ void ofDisableGLDebugLog();
         #ifndef GL_HALF_FLOAT
             #define GL_HALF_FLOAT                           GL_HALF_FLOAT_OES
         #endif
-	#ifndef GL_TEXTURE_CUBE_MAP
-		#ifdef GL_TEXTURE_CUBE_MAP_OES
-            #define GL_TEXTURE_CUBE_MAP               		GL_TEXTURE_CUBE_MAP_OES
+		#ifndef GL_TEXTURE_CUBE_MAP
+			#ifdef GL_TEXTURE_CUBE_MAP_OES
+				#define GL_TEXTURE_CUBE_MAP               	GL_TEXTURE_CUBE_MAP_OES
+			#endif
+		#endif
+    #endif
+
+
+	#if (defined(GL_ES_VERSION_3_0) && defined(TARGET_OPENGLES_3))
+	// === GLES 3.0 / 3.1 additional fallbacks ===
+	// High-precision depth (very useful for shadows / FBOs)
+	#ifndef GL_DEPTH_COMPONENT32F
+		#ifdef GL_DEPTH_COMPONENT32F_EXT
+			#define GL_DEPTH_COMPONENT32F               GL_DEPTH_COMPONENT32F_EXT
 		#endif
 	#endif
-    #endif
+
+	// Half-float textures (16F) — core in GLES 3.0 but often exposed via EXT
+	#ifndef GL_R16F
+		#ifdef GL_R16F_EXT
+			#define GL_R16F                             GL_R16F_EXT
+		#endif
+	#endif
+	#ifndef GL_RG16F
+		#ifdef GL_RG16F_EXT
+			#define GL_RG16F                            GL_RG16F_EXT
+		#endif
+	#endif
+	#ifndef GL_RGB16F
+		#ifdef GL_RGB16F_EXT
+			#define GL_RGB16F                           GL_RGB16F_EXT
+		#endif
+	#endif
+	#ifndef GL_RGBA16F
+		#ifdef GL_RGBA16F_EXT
+			#define GL_RGBA16F                          GL_RGBA16F_EXT
+		#endif
+	#endif
+
+	// 32-bit float textures (also core in GLES 3.0)
+	#ifndef GL_R32F
+		#ifdef GL_R32F_EXT
+			#define GL_R32F                             GL_R32F_EXT
+		#endif
+	#endif
+	#ifndef GL_RG32F
+		#ifdef GL_RG32F_EXT
+			#define GL_RG32F                            GL_RG32F_EXT
+		#endif
+	#endif
+	#ifndef GL_RGB32F
+		#ifdef GL_RGB32F_EXT
+			#define GL_RGB32F                           GL_RGB32F_EXT
+		#endif
+	#endif
+	#ifndef GL_RGBA32F
+		#ifdef GL_RGBA32F_EXT
+			#define GL_RGBA32F                          GL_RGBA32F_EXT
+		#endif
+	#endif
+
+	// Renderbuffer storage for multisampled FBOs (GLES 3.0+)
+	#ifndef glRenderbufferStorageMultisample
+		#ifdef glRenderbufferStorageMultisampleEXT
+			#define glRenderbufferStorageMultisample    glRenderbufferStorageMultisampleEXT
+		#endif
+	#endif
+	#endif
 
 	#ifndef glTexStorage2D
 		#ifdef glTexStorage2DEXT
@@ -205,3 +273,8 @@ void ofDisableGLDebugLog();
 		#endif
 	#endif
 #endif
+
+// Rounds an integer value up to the next multiple of 2,4 and 8.
+#define OF_ROUND_UP_2(num)  (((num)+1)&~1)
+#define OF_ROUND_UP_4(num)  (((num)+3)&~3)
+#define OF_ROUND_UP_8(num)  (((num)+7)&~7)
