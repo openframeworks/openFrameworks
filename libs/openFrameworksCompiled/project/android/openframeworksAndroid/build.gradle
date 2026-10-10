@@ -18,11 +18,11 @@ tasks.register("prepareKotlinBuildScriptModel"){}
 android {
 	namespace 'cc.openframeworks.android'
 	compileSdkVersion 34
-	ndkVersion '28.2.13676358'
-	buildToolsVersion '35.0.0'
+	ndkVersion '29.0.14206865'
+	buildToolsVersion '37.0.0'
 
 	defaultConfig {
-		minSdkVersion 34
+		minSdkVersion 25
 		targetSdkVersion 34
 		versionCode 12
 		versionName "12"

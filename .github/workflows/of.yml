@@ -453,7 +453,10 @@ jobs:
       TARGET: ${{ matrix.cfg.target }}
       ARCH: ${{ matrix.cfg.opt }}
       ANDROID_SDK_ROOT: $ANDROID_HOME
-      ANDROID_NDK_ROOT: $ANDROID_NDK_LATEST_HOME
+      # keep in sync with apothecary build-android.yml (NDK r29, min API 25);
+      # cmake.sh resolves $ANDROID_HOME/ndk/$NDK, gradle uses ndkVersion
+      NDK: "29.0.14206865"
+      ANDROID_API: "25"
 
     steps:
       - name: checkout openFrameworks

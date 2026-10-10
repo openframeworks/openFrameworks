@@ -170,9 +170,9 @@ println "Include directories: " + addonIncludeDirs
 
 android {
     compileSdkVersion 34
-    buildToolsVersion '35.0.0'
+    buildToolsVersion '37.0.0'
     //ndkPath "/Users/x/android-ndk-r21e"  // Point to your own NDK if needed
-    ndkVersion '28.2.13676358' // use android studio side loaded ndk
+    ndkVersion '29.0.14206865' // keep in sync with apothecary build-android.yml
     buildFeatures {
         prefab true
     }
@@ -189,7 +189,7 @@ android {
     }
     defaultConfig {
         applicationId "cc.openframeworks.androidAssimpExample"  // IMPORTANT : THIS DEFINES THE ID OF THE APK
-        minSdkVersion 24
+        minSdkVersion 25
         targetSdkVersion 34
         versionCode 12
         versionName '12.0'
