@@ -28,7 +28,7 @@ void ofApp::draw(){
 	mesh.drawVertices();
 	cam.end();
 	
-	int n = mesh.getNumVertices();
+	int n = static_cast<int>(mesh.getNumVertices());
 	float nearestDistance = 0;
 	glm::vec2 nearestVertex;
 	int nearestIndex = 0;

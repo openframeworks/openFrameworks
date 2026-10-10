@@ -938,7 +938,7 @@ void ofArduino::processSysExData(vector <unsigned char> data) {
 				}
 			}
 			pin++;
-			*it++;
+			it++;
 		}
 		if (!_initialized) {
 			initPins();

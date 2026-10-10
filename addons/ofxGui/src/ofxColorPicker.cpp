@@ -213,8 +213,8 @@ ofMesh ofxColorPicker_<ColorType>::getColorPoint(){
 	for(size_t i=0;i<circle.size();i++){
 		auto next = (i + 1) % circle.size();
 		meshColorPoint.addVertex(center);
-		meshColorPoint.addVertex(center + circle[i] * 4);
-		meshColorPoint.addVertex(center + circle[next] * 4);
+		meshColorPoint.addVertex(center + circle[static_cast<int>(i)] * 4);
+		meshColorPoint.addVertex(center + circle[static_cast<int>(next)] * 4);
 
 		meshColorPoint.addColor(ofFloatColor::black);
 		meshColorPoint.addColor(ofFloatColor::black);
@@ -223,8 +223,8 @@ ofMesh ofxColorPicker_<ColorType>::getColorPoint(){
 	for(size_t i=0;i<circle.size();i++){
 		auto next = (i + 1) % circle.size();
 		meshColorPoint.addVertex(center);
-		meshColorPoint.addVertex(center + circle[i] * 2);
-		meshColorPoint.addVertex(center + circle[next] * 2);
+		meshColorPoint.addVertex(center + circle[static_cast<int>(i)] * 2);
+		meshColorPoint.addVertex(center + circle[static_cast<int>(next)] * 2);
 
 		meshColorPoint.addColor(ofFloatColor::white);
 		meshColorPoint.addColor(ofFloatColor::white);
@@ -243,8 +243,8 @@ ofMesh ofxColorPicker_<ColorType>::getColorWheel() {
 	for(size_t i=0;i<circle.size();i++){
 		auto next = (i + 1) % circle.size();
 		meshColorWheel.addVertex(center);
-		meshColorWheel.addVertex(center + circle[i] * colorWheelRadius);
-		meshColorWheel.addVertex(center + circle[next] * colorWheelRadius);
+		meshColorWheel.addVertex(center + circle[static_cast<int>(i)] * colorWheelRadius);
+		meshColorWheel.addVertex(center + circle[static_cast<int>(next)] * colorWheelRadius);
 
 		int j = i % COLOR_WHEEL_RES;
 		float p = j / (float)COLOR_WHEEL_RES;

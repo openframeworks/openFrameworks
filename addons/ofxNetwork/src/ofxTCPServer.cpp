@@ -266,7 +266,7 @@ std::string ofxTCPServer::getClientIP(int clientID){
 
 //--------------------------
 int ofxTCPServer::getNumClients(){
-	return TCPConnections.size();
+	return static_cast<int>(TCPConnections.size());
 }
 
 //--------------------------

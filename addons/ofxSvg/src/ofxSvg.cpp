@@ -397,7 +397,7 @@ int ofxSvg::getNumPath() {
 	if( mPaths.size() < 1 ) {
 		getPaths();
 	}
-	return mPaths.size();
+	return static_cast<int>(mPaths.size());
 }
 
 //--------------------------------------------------------------
@@ -1261,7 +1261,7 @@ void ofxSvg::_parsePath( ofXml& tnode, std::shared_ptr<ofxSvgPath> aSvgPath ) {
 		}
 		
 		
-		int cindex = index;
+		int cindex = static_cast<int>(index);
 		index += currentString.size()+1;
 		
 		
@@ -1630,7 +1630,7 @@ void ofxSvg::_parsePath( ofXml& tnode, std::shared_ptr<ofxSvgPath> aSvgPath ) {
 //							if( i == 0 ) {
 //								aSvgPath->path.moveTo(tline[0]);
 //							} else {
-								aSvgPath->path.lineTo(tline[i]);
+								aSvgPath->path.lineTo(tline[static_cast<int>(i)]);
 //							}
 						}
 					}

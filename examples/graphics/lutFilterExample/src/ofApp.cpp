@@ -105,7 +105,7 @@ void ofApp::applyLUT(ofPixelsRef pix){
 					color[k]= (start[k] + amount * (end[k] - start[k])) * 255;
 				}
 				
-				lutImg.setColor(x, y, color);
+				lutImg.setColor(static_cast<int>(x), static_cast<int>(y), color);
 				
 			}			
 		}
@@ -137,7 +137,7 @@ void ofApp::keyReleased(int key){
 		case OF_KEY_DOWN:
 			dirLoadIndex--;
 			if (dirLoadIndex<0) {
-				dirLoadIndex=dir.size()-1;
+				dirLoadIndex=static_cast<int>(dir.size())-1;
 			}
 			loadLUT(dir.getPath(dirLoadIndex));
 			break;

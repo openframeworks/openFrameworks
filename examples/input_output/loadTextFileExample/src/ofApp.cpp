@@ -43,7 +43,7 @@ void ofApp::update(){
 void ofApp::draw() {
 
 	// the total width on the line
-	int strWidth = (seussLines[lineCount].length()*8) + 5;
+	int strWidth = static_cast<int>(seussLines[lineCount].length()*8) + 5;
 
 	// x and y for the drawing
 	float x = (ofGetWidth()-strWidth)/2;

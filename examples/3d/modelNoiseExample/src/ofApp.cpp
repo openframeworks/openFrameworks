@@ -28,7 +28,7 @@ void ofApp::setup(){
 	ofEnableDepthTest();
 
 	//now we load our model
-	model.loadModel("dog/dog.3ds");
+	model.load("dog/dog.3ds");
 	model.setPosition(ofGetWidth()*.5, ofGetHeight() * 0.75, 0);
 
 	light.enable();

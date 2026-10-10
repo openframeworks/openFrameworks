@@ -71,7 +71,7 @@ void ofApp::update(){
 	// note how we add 1024 and subtract one, this is a fast way to do the equivalent
 	// of std::ceil() in the float domain, i.e. to round up, so that we're also issueing
 	// a work group should the total size of particles be < 1024
-	compute.dispatchCompute((particles.size() + 1024 -1 )/1024, 1, 1);
+	compute.dispatchCompute(static_cast<GLuint>((particles.size() + 1024 -1 )/1024), 1, 1);
 
 	compute.end();
 
@@ -89,10 +89,10 @@ void ofApp::draw(){
 
 	ofSetColor(255,70);
 	glPointSize(5);
-	vbo.draw(GL_POINTS,0,particles.size());
+	vbo.draw(GL_POINTS,0,static_cast<int>(particles.size()));
 	ofSetColor(255);
 	glPointSize(2);
-	vbo.draw(GL_POINTS,0,particles.size());
+	vbo.draw(GL_POINTS,0,static_cast<int>(particles.size()));
 
 	ofNoFill();
 	ofDrawBox(0,0,-ofGetHeight()*2,ofGetWidth()*4,ofGetHeight()*4,ofGetHeight()*4);
