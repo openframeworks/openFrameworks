@@ -20,7 +20,12 @@ public:
 	static std::string getGLSLHeader() {
 		std::string vstr { "#version 150\n" };
 		if( ofGetGLRenderer() ) {
-			vstr = "#version "+ofGLSLVersionFromGL(ofGetGLRenderer()->getGLVersionMajor(), ofGetGLRenderer()->getGLVersionMinor())+"\n";
+			vstr = "#version "+ofGLSLVersionFromGL(ofGetGLRenderer()->getGLVersionMajor(), ofGetGLRenderer()->getGLVersionMinor());
+			#ifdef TARGET_OPENGLES
+			// GLSL ES 3.x needs the "es" profile: #version 300 es / 310 es / 320 es
+			if( ofGetGLRenderer()->getGLVersionMajor() >= 3 ) vstr += " es";
+			#endif
+			vstr += "\n";
 		}
 		#ifdef TARGET_OPENGLES
 		vstr += "#define TARGET_OPENGLES\n";
