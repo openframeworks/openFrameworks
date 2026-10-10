@@ -285,6 +285,22 @@ reindexMsys2StaticLibs(){
             *.dll.a) continue ;;
         esac
         ARCHIVE_ABS="$(cd "$(dirname "$ARCHIVE")" && pwd)/$(basename "$ARCHIVE")"
+        # "ar x" flattens members into one directory, so same-named objects (e.g.
+        # OpenCV world's core/src/parallel.cpp.o and core/src/parallel/parallel.cpp.o)
+        # overwrite each other and the repacked archive silently loses code
+        # (undefined cv::parallel_for_ / g_Saturate8u). Only rebuild the symbol
+        # index in place for those archives (same as apothecary #606).
+        if [ -n "$("$AR_BIN" t "$ARCHIVE_ABS" 2>/dev/null | sort | uniq -d)" ]; then
+            if "$AR_BIN" s "$ARCHIVE_ABS"; then
+                if [ "$AR_KIND" != "llvm" ] && [ -n "$RANLIB_BIN" ]; then
+                    "$RANLIB_BIN" "$ARCHIVE_ABS" >/dev/null 2>&1 || true
+                fi
+                echo "  reindexed in place [$ARCHIVE] (duplicate member names)"
+            else
+                echo "  warning: could not reindex [$ARCHIVE] (linker may reject it)"
+            fi
+            continue
+        fi
         TMPDIR=$(mktemp -d 2>/dev/null || mktemp -d -t ofar)
         if (
             cd "$TMPDIR" || exit 1
