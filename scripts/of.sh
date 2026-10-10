@@ -963,7 +963,10 @@ printHelp(){
     LIB_SOURCE=apothecary|oflibs|archive
     LIB_TAG=latest|v12.1.0|v0.11.2
     LIB_LIBS=core|all|"glfw glm"
+    LIB_ARCH=64|arm64|arm64ec|all   passed as -a to download_libs (vs/linux/msys2)
     LIB_CLEAN_MODE=platform|merge|full   # default platform: only lib/<plat>
+    DOWNLOAD_LIBS_ARGS="-vs --full-clean"  extra flags to download_libs.sh
+    OF_VS_2026=1              VS 2026 package names (_vs_2026_)
     OF_LINUX_DISTRO=ubuntu    Force linux distro scripts
     OF_APO_VS_VER=18          apothecary VS toolchain (18=VS2026, 17=VS2022, 16=VS2019)
     OF_JOBS=8                 Parallel build jobs
@@ -973,6 +976,8 @@ printHelp(){
     ${prog}
     ${prog} status
     ${prog} update libs
+    ${prog} update libs vs arm64
+    LIB_ARCH=arm64 ${prog} update libs vs
     LIB_SOURCE=oflibs LIB_LIBS=core ${prog} update libs
     ${prog} build core Debug
     ${prog} build project apps/myApps/mySketch
@@ -1367,6 +1372,11 @@ cmdUpdatePG(){
 cmdUpdate(){
 	local subcmd="$1"
 	local platformDir="${2:-$OF_PLATFORM}"
+	local arch="${3:-}"
+	if [[ -n "$arch" ]]; then
+		export LIB_ARCH="$arch"
+		export OF_ARCH="$arch"
+	fi
 	case "$subcmd" in
 		""|libs)
 			# interactive: always prompt source; then state-aware download
@@ -2622,7 +2632,7 @@ runCommand(){
 		menu) cmdMenu ;;
 		status|check|doctor|installed|libs-status) cmdStatus ;;
 		setup|install) cmdSetup "${subcmd:-$OF_PLATFORM}" ;;
-		update) cmdUpdate "$subcmd" "$subcmd2" ;;
+		update) cmdUpdate "$subcmd" "$subcmd2" "$subcmd3" ;;
 		build)
 			shift
 			cmdBuild "$@"
