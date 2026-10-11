@@ -22,7 +22,6 @@ public:
 		if( ofGetGLRenderer() ) {
 			vstr = "#version "+ofGLSLVersionFromGL(ofGetGLRenderer()->getGLVersionMajor(), ofGetGLRenderer()->getGLVersionMinor());
 			#ifdef TARGET_OPENGLES
-			// GLSL ES 3.x needs the "es" profile: #version 300 es / 310 es / 320 es
 			if( ofGetGLRenderer()->getGLVersionMajor() >= 3 ) vstr += " es";
 			#endif
 			vstr += "\n";
