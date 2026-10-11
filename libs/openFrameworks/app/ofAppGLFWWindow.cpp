@@ -237,12 +237,23 @@ void ofAppGLFWWindow::setup(const ofGLESWindowSettings & settings) {
         }
         
         auto createWindow = [&](int w, int h, GLFWmonitor * monitor) {
-            GLFWwindow * window = glfwCreateWindow(w, h, settings.title.c_str(), monitor, sharedContext);
 #ifndef TARGET_OPENGLES
-            if (!window && settings.glVersionMajor >= 3) {
-                static const int versions[][2] = { {4, 6}, {4, 5}, {4, 4}, {4, 3}, {4, 2}, {4, 1}, {4, 0}, {3, 3}, {3, 2} };
+            if (settings.glVersionMajor >= 3) {
+                // try the requested version silently, its error is only reported if no fallback version works either
                 GLFWerrorfun errorCallback = glfwSetErrorCallback(nullptr);
+                GLFWwindow * window = glfwCreateWindow(w, h, settings.title.c_str(), monitor, sharedContext);
+                int errorCode = 0;
+                std::string errorDescription;
+#if (GLFW_VERSION_MAJOR >= 3 && GLFW_VERSION_MINOR > 2) || (GLFW_VERSION_MAJOR > 3)
+                if (!window) {
+                    const char * description = nullptr;
+                    errorCode = glfwGetError(&description);
+                    if (description) errorDescription = description;
+                }
+#endif
+                static const int versions[][2] = { {4, 6}, {4, 5}, {4, 4}, {4, 3}, {4, 2}, {4, 1}, {4, 0}, {3, 3}, {3, 2} };
                 for (auto & v : versions) {
+                    if (window) break;
                     if (v[0] * 10 + v[1] >= settings.glVersionMajor * 10 + settings.glVersionMinor) continue;
                     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, v[0]);
                     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, v[1]);
@@ -256,9 +267,13 @@ void ofAppGLFWWindow::setup(const ofGLESWindowSettings & settings) {
                     }
                 }
                 glfwSetErrorCallback(errorCallback);
+                if (!window && errorCallback && errorCode) {
+                    errorCallback(errorCode, errorDescription.c_str());
+                }
+                return window;
             }
 #endif
-            return window;
+            return glfwCreateWindow(w, h, settings.title.c_str(), monitor, sharedContext);
         };
 
         if (settings.windowMode == OF_GAME_MODE) {
