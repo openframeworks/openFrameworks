@@ -64,6 +64,13 @@
     
     GLKView *view = (GLKView *)self.view;
     view.context = [self.glView context];
+    // GLKViewController draws into its own GLKView, so it needs the drawable
+    // settings OF configured on glView (depth, stencil, colour, MSAA, scale)
+    view.drawableColorFormat = self.glView.drawableColorFormat;
+    view.drawableDepthFormat = self.glView.drawableDepthFormat;
+    view.drawableStencilFormat = self.glView.drawableStencilFormat;
+    view.drawableMultisample = self.glView.drawableMultisample;
+    view.contentScaleFactor = self.glView.contentScaleFactor;
     self.delegate = self;
     self.preferredFramesPerSecond = 60; //default
     [view setMultipleTouchEnabled:ofxiOSGetOFWindow()->isMultiTouch()];

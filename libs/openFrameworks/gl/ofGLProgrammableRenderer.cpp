@@ -3066,11 +3066,44 @@ static string videoFragmentShaderSource(const ofBaseVideoDraws & video, int majo
 	return shaderSource(header + src, major, minor);
 }
 
+#ifdef TARGET_OPENGLES
+static const string es3_shader_header =
+		"#version %glsl_version% es\n"
+		"precision highp float;\n"
+		"precision highp int;\n"
+		"precision mediump sampler3D;\n"
+		"precision mediump sampler2DShadow;\n"
+		"precision mediump sampler2DArray;\n"
+		"precision mediump sampler2DArrayShadow;\n"
+		"precision mediump samplerCubeShadow;\n"
+		"#define IN in\n"
+		"#define OUT out\n"
+		"#define TEXTURE texture\n"
+		"#define TARGET_OPENGLES\n";
+
+static string es3ShaderHeader(bool fragment, int major, int minor) {
+	string header = es3_shader_header;
+	ofStringReplace(header, "%glsl_version%", ofGLSLVersionFromGL(major, minor));
+	if (fragment) {
+		header += "#define FRAG_COLOR fragColor\n";
+		header += "out vec4 fragColor;\n";
+	}
+	header += "#define SAMPLER sampler2D\n";
+	return header;
+}
+#endif
+
 string ofGLProgrammableRenderer::defaultVertexShaderHeader(GLenum textureTarget) {
+#ifdef TARGET_OPENGLES
+	if (major >= 3) return es3ShaderHeader(false, major, minor);
+#endif
 	return defaultShaderHeader(vertex_shader_header, textureTarget, major, minor);
 }
 
 string ofGLProgrammableRenderer::defaultFragmentShaderHeader(GLenum textureTarget) {
+#ifdef TARGET_OPENGLES
+	if (major >= 3) return es3ShaderHeader(true, major, minor);
+#endif
 	return defaultShaderHeader(fragment_shader_header, textureTarget, major, minor);
 }
 
@@ -3154,6 +3187,21 @@ void ofGLProgrammableRenderer::setup(int _major, int _minor) {
 
 	major = _major;
 	minor = _minor;
+#if defined(TARGET_OPENGLES) && !defined(TARGET_EMSCRIPTEN)
+	if (major >= 3) {
+		GLint actualMajor = 0;
+		GLint actualMinor = 0;
+		glGetIntegerv(GL_MAJOR_VERSION, &actualMajor);
+		glGetIntegerv(GL_MINOR_VERSION, &actualMinor);
+		while (glGetError() != GL_NO_ERROR) {}
+		if (actualMajor > 0 && actualMajor * 10 + actualMinor < major * 10 + minor) {
+			ofLogWarning("ofGLProgrammableRenderer") << "requested OpenGL ES " << major << "." << minor
+				<< ", context provides " << actualMajor << "." << actualMinor << " - using " << actualMajor << "." << actualMinor;
+			major = actualMajor;
+			minor = actualMinor;
+		}
+	}
+#endif
 #ifdef TARGET_RASPBERRY_PI
 	uniqueShader = true;
 #else

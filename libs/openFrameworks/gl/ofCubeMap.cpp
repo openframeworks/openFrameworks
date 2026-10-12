@@ -800,6 +800,8 @@ void ofCubeMap::_equiRectToCubeMap( GLuint& aCubeTexId, GLuint aSrcTexId, int aS
 	
 	GLuint captureFBO;
 	glGenFramebuffers(1, &captureFBO);
+	GLint prevFramebuffer = 0;
+	glGetIntegerv(GL_FRAMEBUFFER_BINDING, &prevFramebuffer);
 	glBindFramebuffer(GL_FRAMEBUFFER, (GLuint)captureFBO );
 	
 	ofSetColor( 255 );
@@ -829,7 +831,7 @@ void ofCubeMap::_equiRectToCubeMap( GLuint& aCubeTexId, GLuint aSrcTexId, int aS
 		ofLogVerbose("ofCubeMap :: _equiRectToCubeMap : fbo COMPLETE; resolution: ") << aSrcRes;
 	}
 	
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glBindFramebuffer(GL_FRAMEBUFFER, (GLuint)prevFramebuffer);
 	glDeleteFramebuffers(1, &captureFBO);
 }
 
@@ -947,6 +949,8 @@ void ofCubeMap::_createIrradianceMap(GLuint aSrcCubeFid, bool aBMakeCache, const
 		
 		GLuint captureFBO;
 		glGenFramebuffers(1, &captureFBO);
+		GLint prevFramebuffer = 0;
+		glGetIntegerv(GL_FRAMEBUFFER_BINDING, &prevFramebuffer);
 		glBindFramebuffer(GL_FRAMEBUFFER, captureFBO );
 
 		ofPushView();
@@ -973,7 +977,7 @@ void ofCubeMap::_createIrradianceMap(GLuint aSrcCubeFid, bool aBMakeCache, const
 			ofLogVerbose("ofCubeMap :: _createIrradianceMap : fbo COMPLETE");
 		}
 
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		glBindFramebuffer(GL_FRAMEBUFFER, (GLuint)prevFramebuffer);
 		glDeleteFramebuffers(1, &captureFBO);
 		ofPopView();
 	}
@@ -1161,6 +1165,8 @@ void ofCubeMap::_createPrefilteredCubeMap(GLuint aSrcCubeFid, int aSrcRes, bool 
 		
 		unsigned int captureFBO;
 		glGenFramebuffers(1, &captureFBO);
+		GLint prevFramebuffer = 0;
+		glGetIntegerv(GL_FRAMEBUFFER_BINDING, &prevFramebuffer);
 		glBindFramebuffer(GL_FRAMEBUFFER, captureFBO );
 		
 		for (int mip = 0; mip < data->maxMipLevels; mip++) {
@@ -1185,7 +1191,7 @@ void ofCubeMap::_createPrefilteredCubeMap(GLuint aSrcCubeFid, int aSrcRes, bool 
 			ofPopView();
 		}
 		
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		glBindFramebuffer(GL_FRAMEBUFFER, (GLuint)prevFramebuffer);
 		glDeleteFramebuffers(1, &captureFBO);
 	}
 	
