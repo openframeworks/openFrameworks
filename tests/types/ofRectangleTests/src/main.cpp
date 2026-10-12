@@ -127,6 +127,56 @@ class ofApp: public ofxUnitTestsApp{
 			if((q != p) == (q == p)) disagreements++;
 		}
 		ofxTestEq(disagreements, 0, "random pairs where operator!= is not the negation of operator== (" + ofToString(pairs) + " compared)");
+
+		testInside();
+	}
+
+	// inside() includes the edge, and intersects(p0, p1) relies on it for
+	// segment endpoints (#4871)
+	void testInside(){
+		ofRectangle r(0, 0, 100, 100);
+
+		ofxTest(r.intersects(glm::vec2(0, 50), glm::vec2(50, 0)), "#4871: segment with both endpoints on the edge intersects");
+
+		ofxTest(r.inside(glm::vec2(0, 0)), "top-left corner is inside");
+		ofxTest(r.inside(glm::vec2(100, 0)), "top-right corner is inside");
+		ofxTest(r.inside(glm::vec2(0, 100)), "bottom-left corner is inside");
+		ofxTest(r.inside(glm::vec2(100, 100)), "bottom-right corner is inside");
+
+		ofxTest(r.inside(glm::vec2(50, 0)), "point on top edge is inside");
+		ofxTest(r.inside(glm::vec2(50, 100)), "point on bottom edge is inside");
+		ofxTest(r.inside(glm::vec2(0, 50)), "point on left edge is inside");
+		ofxTest(r.inside(glm::vec2(100, 50)), "point on right edge is inside");
+		ofxTest(r.inside(50.f, 0.f), "inside(x, y) includes the edge");
+		ofxTest(r.inside(glm::vec3(100, 50, 7)), "inside(vec3) includes the edge");
+
+		ofxTest(r.inside(glm::vec2(50, 50)), "centre is inside");
+		ofxTest(r.inside(glm::vec2(25, 25)), "interior point is inside");
+
+		ofxTest(!r.inside(glm::vec2(-1, 50)), "point left of the rectangle is outside");
+		ofxTest(!r.inside(glm::vec2(101, 50)), "point right of the rectangle is outside");
+		ofxTest(!r.inside(glm::vec2(50, -1)), "point above the rectangle is outside");
+		ofxTest(!r.inside(glm::vec2(50, 101)), "point below the rectangle is outside");
+
+		ofxTest(r.inside(ofRectangle(0, 0, 100, 100)), "a rectangle is inside an identical rectangle");
+		ofxTest(r.inside(ofRectangle(0, 10, 50, 50)), "a rectangle sharing an edge is inside");
+		ofxTest(!r.inside(ofRectangle(-1, 10, 50, 50)), "a rectangle crossing an edge is not inside");
+		ofxTest(r.inside(glm::vec2(0, 0), glm::vec2(100, 100)), "segment between two corners is inside");
+
+		ofxTest(r.intersects(glm::vec2(25, 25), glm::vec2(75, 75)), "segment fully inside intersects");
+		ofxTest(r.intersects(glm::vec2(-10, 50), glm::vec2(110, 50)), "segment crossing horizontally intersects");
+		ofxTest(r.intersects(glm::vec2(50, -10), glm::vec2(50, 110)), "segment crossing vertically intersects");
+		ofxTest(r.intersects(glm::vec2(50, 50), glm::vec2(150, 150)), "segment with one endpoint inside intersects");
+		ofxTest(r.intersects(glm::vec2(0, 0), glm::vec2(100, 100)), "diagonal between corners intersects");
+		ofxTest(!r.intersects(glm::vec2(-10, -10), glm::vec2(-5, -5)), "segment fully outside does not intersect");
+		ofxTest(r.intersects(glm::vec2(0, 0), glm::vec2(100, 0)), "segment along the top edge intersects");
+		ofxTest(r.intersects(glm::vec2(20, 100), glm::vec2(60, 100)), "segment along part of the bottom edge intersects");
+		ofxTest(r.intersects(glm::vec2(0, 50), glm::vec2(-50, 50)), "segment touching the left edge from outside intersects");
+		ofxTest(r.intersects(glm::vec2(100, 100), glm::vec2(150, 150)), "segment touching a corner from outside intersects");
+
+		// rectangle / rectangle intersection is unchanged: sharing only an edge is not an intersection
+		ofxTest(!r.intersects(ofRectangle(100, 0, 50, 50)), "rectangles sharing only an edge do not intersect");
+		ofxTest(r.intersects(ofRectangle(99, 0, 50, 50)), "overlapping rectangles intersect");
 	}
 };
 
