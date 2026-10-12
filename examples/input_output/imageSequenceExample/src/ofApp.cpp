@@ -29,7 +29,7 @@ void ofApp::setup() {
 	// we know that they are named in seq
 	ofDirectory dir;
 
-	int nFiles = dir.listDir("plops");
+	int nFiles = static_cast<int>(dir.listDir("plops"));
 	dir.sort();
 
 	if(nFiles) {

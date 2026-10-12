@@ -200,11 +200,11 @@ int ofxCvContourFinder::findContours( ofxCvGrayscaleImage&  input,
 			CV_READ_SEQ_ELEM( pt, reader );
             blobs[i].pts.push_back( ofPoint((float)pt.x, (float)pt.y) );
 		}
-		blobs[i].nPts = blobs[i].pts.size();
+		blobs[i].nPts = static_cast<int>(blobs[i].pts.size());
 
 	}
 
-    nBlobs = blobs.size();
+    nBlobs = static_cast<int>(blobs.size());
 
 	// Free the storage memory.
 	// Warning: do this inside this function otherwise a strange memory leak

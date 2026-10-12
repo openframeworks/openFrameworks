@@ -274,7 +274,7 @@ void Node::_getNodesForTypeRecursive( int atype, const std::string& aNameToConta
 //--------------------------------------------------------------
 std::string Node::getAsString( int aLevel ) {
 	std::stringstream oStr;
-	for( unsigned int i = 0; i < aLevel; i++ ) {
+	for( int i = 0; i < aLevel; i++ ) {
 		oStr << " ";
 		if( i < aLevel-1 ) {
 			oStr << "|";

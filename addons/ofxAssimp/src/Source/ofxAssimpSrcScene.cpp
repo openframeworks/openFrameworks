@@ -216,7 +216,7 @@ void SrcScene::printAllNodeNames( aiNode* anode, int alevel ) {
 		ss << "  ";
 	}
 	ss << anode->mName.data << " num mehses: " << anode->mNumMeshes;
-	for( int i = 0; i < anode->mNumMeshes; i++ ) {
+	for( unsigned int i = 0; i < anode->mNumMeshes; i++ ) {
 		aiMesh* mesh = scene->mMeshes[anode->mMeshes[i]];
 		if(mesh) {
 			for( int k = 0; k < alevel; k++ ) {
@@ -641,9 +641,14 @@ void SrcScene::loadGLResources(std::shared_ptr<ofxAssimp::SrcMesh> aSrcMesh, aiM
 					auto matType = ofxAssimp::Texture::ofTextureTypeForAiType( (aiTextureType)d );
 					auto texTypeString = ofMaterial::getTextureTypeAsString(matType);
 					//this is a solution to support older versions of assimp. see the weak defination above
+#ifdef TARGET_WIN32
+					// aiTextureTypeToString is always available on Windows (no weak-symbol fallback needed/supported by MSVC)
+					ofLogVerbose("ofxAssimp::SrcScene") << "loadGLResource(): loading " <<  aiTextureTypeToString((aiTextureType)d) << " image from \"" << texPath.data << "\"";
+#else
 					if( aiTextureTypeToString ){
 						ofLogVerbose("ofxAssimp::SrcScene") << "loadGLResource(): loading " <<  aiTextureTypeToString((aiTextureType)d) << " image from \"" << texPath.data << "\"";
 					}
+#endif
 					
 					if( matType == OF_MATERIAL_TEXTURE_NONE ) {
 						ofLogWarning("ofxAssimp::SrcScene") << "unable to detect texture type: " << texPath.data;

@@ -104,7 +104,7 @@ void ofApp::update(){
 	// then updates the velocity with that information
 	//
 	velPingPong.dst->begin();
-	ofClear(0);
+	ofClear(0, 0);
 	updateVel.begin();
 	updateVel.setUniformTexture("backbuffer", velPingPong.src->getTexture(), 0);   // passing the previus velocity information
 	updateVel.setUniformTexture("posData", posPingPong.src->getTexture(), 1);  // passing the position information
@@ -126,7 +126,7 @@ void ofApp::update(){
 	// With the velocity calculated updates the position
 	//
 	posPingPong.dst->begin();
-	ofClear(0);
+	ofClear(0, 0);
 	updatePos.begin();
 	updatePos.setUniformTexture("prevPosData", posPingPong.src->getTexture(), 0); // Previus position
 	updatePos.setUniformTexture("velData", velPingPong.src->getTexture(), 1);  // Velocity

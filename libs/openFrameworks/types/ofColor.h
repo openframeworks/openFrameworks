@@ -30,10 +30,10 @@ public:
 
     /// \brief Construct a default white color.
     ofColor_():
-        r(limit()),
-        g(limit()),
-        b(limit()),
-        a(limit()) {};
+        r(static_cast<PixelType>(limit())),
+        g(static_cast<PixelType>(limit())),
+        b(static_cast<PixelType>(limit())),
+        a(static_cast<PixelType>(limit())) {};
 
     /// \brief Construct an ofColor_ by using channel values.
     ///
@@ -591,16 +591,16 @@ public:
 		if(sizeof(PixelType) == 1) {
 			int component;
 			is >> std::skipws >> component;
-			color.r = component;
+			color.r = static_cast<PixelType>(component);
 			is.ignore(1);
 			is >> std::skipws >> component;
-			color.g = component;
+			color.g = static_cast<PixelType>(component);
 			is.ignore(1);
 			is >> std::skipws >> component;
-			color.b = component;
+			color.b = static_cast<PixelType>(component);
 			is.ignore(1);
 			is >> std::skipws >> component;
-			color.a = component;
+			color.a = static_cast<PixelType>(component);
 		}else{
 			is >> std::skipws >> color.r;
 			is.ignore(1);
@@ -705,12 +705,12 @@ void ofColor_<PixelType>::copyFrom(const ofColor_<SrcType> & mom){
 		// coming from float we need a special case to clamp the values
 		for(int i = 0; i < 4; i++){
 			// FIXME: replace by std::clamp when it is exclusive C++17
-			v[i] = glm::clamp(float(mom[i]), 0.f, 1.f) * factor;
+			v[i] = static_cast<PixelType>(glm::clamp(float(mom[i]), 0.f, 1.f) * factor);
 		}
 	} else{
 		// everything else is a straight scaling
 		for(int i = 0; i < 4; i++){
-			v[i] = mom[i] * factor;
+			v[i] = static_cast<PixelType>(mom[i] * factor);
 		}
 	}
 }
@@ -748,14 +748,14 @@ inline void ofColor_<unsigned char>::setHex(int hexColor, float alpha){
 	r = (hexColor >> 16) & 0xff;
 	g = (hexColor >> 8) & 0xff;
 	b = (hexColor >> 0) & 0xff;
-	a = alpha;
+	a = static_cast<unsigned char>(alpha);
 }
 
 template<typename PixelType>
 inline void ofColor_<PixelType>::setHex (int hexColor, float alpha){
 	ofColor c = ofColor::fromHex(hexColor);
 	*this = c;
-	a = alpha;
+	a = static_cast<PixelType>(alpha);
 }
 
 

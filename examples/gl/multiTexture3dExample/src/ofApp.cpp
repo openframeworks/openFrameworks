@@ -480,7 +480,7 @@ void ofApp::keyPressed(int key){
 		#ifdef USE_MATERIAL
 		materialIndex++;
 		if( materialIndex >= materials.size() ) {
-			materialIndex = materials.size()-1;
+			materialIndex = static_cast<int>(materials.size())-1;
 		}
 		#else
 		texturePackIndex++;

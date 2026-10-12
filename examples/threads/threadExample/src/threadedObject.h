@@ -70,7 +70,7 @@ public:
 			// the shared memory without problem
 			auto t = ofGetElapsedTimef();
 			auto pixelData = pixels.getData();
-			int totalPixels = pixels.getWidth() * pixels.getHeight();
+			int totalPixels = static_cast<int>(pixels.getWidth() * pixels.getHeight());
 			for (int i = 0; i < totalPixels; i++) {
 				float ux = (i % pixels.getWidth()) / float(pixels.getWidth());
 				float uy = (i / pixels.getWidth()) / float(pixels.getHeight());

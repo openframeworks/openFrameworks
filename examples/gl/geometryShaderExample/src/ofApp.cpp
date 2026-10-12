@@ -78,7 +78,7 @@ void ofApp::update(){
 		
 		if( bUseMesh ) {
 			// now update the vertex on the mesh
-			mesh.setVertex(i, point);
+			mesh.setVertex(static_cast<ofIndexType>(i), point);
 		}
 	}
 	
@@ -105,7 +105,7 @@ void ofApp::update(){
 			// vary the length of the normals that will be read by the shader
 			// will allow for varying line widths per vertex
 			float normalVariation = (cos((float)i*0.3f) * 0.5+0.5) * 2.5 + 0.3;
-			mesh.setNormal(i, normal * normalVariation);
+			mesh.setNormal(static_cast<ofIndexType>(i), normal * normalVariation);
 		}
 	}
 }

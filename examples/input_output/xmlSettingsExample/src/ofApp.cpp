@@ -14,7 +14,7 @@ void ofApp::setup(){
 	//we load our settings file
 	//if it doesn't exist we can still make one
 	//by hitting the 's' key
-	if( XML.loadFile("mySettings.xml") ){
+	if( XML.load("mySettings.xml") ){
 		message = "mySettings.xml loaded!";
 	}else{
 		message = "unable to load mySettings.xml check data/ folder";
@@ -151,7 +151,7 @@ void ofApp::keyPressed  (int key){
 
 		//no data gets saved unless you hit the s key
 		if(key == 's'){
-			XML.saveFile("mySettings.xml");
+			XML.save("mySettings.xml");
 			message ="settings saved to xml!";
 		}
 }
@@ -209,7 +209,7 @@ void ofApp::mouseDragged(int x, int y, int button){
 		//x and y data and we remove it from the begining
 		//this way the displayed text always shows the newest data
 		//without going offscreen.
-		int pos = xmlStructure.find("</PT>");
+		int pos = static_cast<int>(xmlStructure.find("</PT>"));
 		xmlStructure = xmlStructure.substr(pos+6);
 	}
 

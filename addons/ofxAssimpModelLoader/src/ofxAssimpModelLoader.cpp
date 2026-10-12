@@ -46,12 +46,20 @@ bool ofxAssimpModelLoader::load(ofBuffer & buffer, bool optimize, const char * e
 
 // DEPRECATED
 bool ofxAssimpModelLoader::loadModel(const of::filesystem::path & fileName, bool optimize){
-	return load(fileName, optimize);
+	int optimizeFlags = OPTIMIZE_DEFAULT;
+	if( optimize ){
+		optimizeFlags = OPTIMIZE_HIGH;
+	}
+	return load(fileName, optimizeFlags);
 }
 
 // DEPRECATED
 bool ofxAssimpModelLoader::loadModel(ofBuffer & buffer, bool optimize, const char * extension){
-	return load(buffer, optimize, extension);
+	int optimizeFlags = OPTIMIZE_DEFAULT;
+	if( optimize ){
+		optimizeFlags = OPTIMIZE_HIGH;
+	}
+	return load(buffer, optimizeFlags, extension);
 }
 
 //------------------------------------------
@@ -365,9 +373,14 @@ void ofxAssimpModelLoader::loadGLResources(){
 			if(AI_SUCCESS == mtl->GetTexture((aiTextureType)d, texIndex, &texPath, NULL, NULL, NULL, NULL, &texMapMode[0])){
 
 				//this is a solution to support older versions of assimp. see the weak defination above
+#ifdef TARGET_WIN32
+				// aiTextureTypeToString is always available on Windows (no weak-symbol fallback needed/supported by MSVC)
+				ofLogVerbose("ofxAssimpModelLoader") << "loadGLResource(): loading " <<  aiTextureTypeToString((aiTextureType)d) << " image from \"" << texPath.data << "\"";
+#else
 				if( aiTextureTypeToString ){
 					ofLogVerbose("ofxAssimpModelLoader") << "loadGLResource(): loading " <<  aiTextureTypeToString((aiTextureType)d) << " image from \"" << texPath.data << "\"";
 				}
+#endif
 
 				bool bWrap = (texMapMode[0]==aiTextureMapMode_Wrap);
 
@@ -525,7 +538,7 @@ void ofxAssimpModelLoader::loadGLResources(){
 			}
 		}
 
-		meshHelper.vbo.setIndexData(&meshHelper.indices[0],meshHelper.indices.size(),GL_STATIC_DRAW);
+		meshHelper.vbo.setIndexData(&meshHelper.indices[0],static_cast<int>(meshHelper.indices.size()),GL_STATIC_DRAW);
 
 		//modelMeshes.push_back(meshHelper);
 	}
@@ -705,7 +718,7 @@ bool ofxAssimpModelLoader::hasAnimations() {
 }
 
 unsigned int ofxAssimpModelLoader::getAnimationCount(){
-	return animations.size();
+	return static_cast<unsigned int>(animations.size());
 }
 
 ofxAssimpAnimation & ofxAssimpModelLoader::getAnimation(int animationIndex) {
@@ -802,7 +815,7 @@ bool ofxAssimpModelLoader::hasMeshes() {
 }
 
 unsigned int ofxAssimpModelLoader::getMeshCount() {
-	return modelMeshes.size();
+	return static_cast<unsigned int>(modelMeshes.size());
 }
 
 ofxAssimpMeshHelper & ofxAssimpModelLoader::getMeshHelper(int meshIndex) {
@@ -882,7 +895,7 @@ void ofxAssimpModelLoader::setScaleNormalization(bool normalize) {
 //-------------------------------------------
 void ofxAssimpModelLoader::setRotation(int which, float angle, float rot_x, float rot_y, float rot_z){
 	if(which + 1 > (int)rotAngle.size()){
-		int diff = 1 + (which - rotAngle.size());
+		int diff = 1 + (which - static_cast<int>(rotAngle.size()));
 		for(int i = 0; i < diff; i++){
 			rotAngle.push_back(0);
 			rotAxis.push_back(glm::vec3(0.0,0.0,0.0));
@@ -968,11 +981,11 @@ void ofxAssimpModelLoader::draw(ofPolyRenderMode renderType) {
 		ofEnableBlendMode(mesh.blendMode);
 
 #ifndef TARGET_OPENGLES
-		mesh.vbo.drawElements(GL_TRIANGLES,mesh.indices.size());
+		mesh.vbo.drawElements(GL_TRIANGLES,static_cast<int>(mesh.indices.size()));
 #else
 		switch(renderType){
 			case OF_MESH_FILL:
-				mesh.vbo.drawElements(GL_TRIANGLES,mesh.indices.size());
+				mesh.vbo.drawElements(GL_TRIANGLES,static_cast<int>(mesh.indices.size()));
 				break;
 			case OF_MESH_WIREFRAME:
 				//note this won't look the same as on non ES renderers.
@@ -1220,7 +1233,7 @@ glm::vec3 ofxAssimpModelLoader::getSceneCenterModelSpace(){
 
 //-------------------------------------------
 int ofxAssimpModelLoader::getNumRotations(){
-	return rotAngle.size();
+	return static_cast<int>(rotAngle.size());
 }
 
 //-------------------------------------------

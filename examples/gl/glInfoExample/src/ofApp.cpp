@@ -250,11 +250,17 @@ void ofApp::keyPressed(int key){
 
 		FILE *fp;
 
-
+#ifdef _MSC_VER
+		if(freopen_s(&fp, ofToDataPath("openglReport.txt").c_str(), "w", stdout) != 0) {
+			cout << "Cannot open file.\n";
+			return;
+		}
+#else
 		if((fp=freopen(ofToDataPath("openglReport.txt").c_str(), "w" ,stdout))==NULL) {
 			cout << "Cannot open file.\n";
 			return;
 		}
+#endif
 
 
 		cout << "-------------------------------------------------\n";

@@ -407,7 +407,7 @@ void ofPolyline_<T>::arc(const T & center, float radiusX, float radiusY, float a
         if(clockwise) {
             currentLUTIndex = currentLUTIndex % nCirclePoints;
         } else {
-            if(currentLUTIndex < 0) currentLUTIndex = nCirclePoints + currentLUTIndex;
+            if(currentLUTIndex < 0) currentLUTIndex = static_cast<int>(nCirclePoints) + currentLUTIndex;
         }
 
         // add the point to the poly line
@@ -469,7 +469,7 @@ ofRectangle ofPolyline_<T>::getBoundingBox() const {
 //----------------------------------------------------------
 template<class T>
 ofPolyline_<T> ofPolyline_<T>::getSmoothed(int smoothingSize, float smoothingShape) const {
-	int n = size();
+	int n = static_cast<int>(size());
 	smoothingSize = ofClamp(smoothingSize, 0, n);
 	smoothingShape = ofClamp(smoothingShape, 0, 1);
 
@@ -595,7 +595,7 @@ T ofPolyline_<T>::getClosestPoint(const T& target, unsigned int* nearestIndex) c
 	T nearestPoint(0);
 	unsigned int nearest = 0;
 	float normalizedPosition = 0;
-	unsigned int lastPosition = polyline.size() - 1;
+	unsigned int lastPosition = static_cast<unsigned int>(polyline.size()) - 1;
 	if(polyline.isClosed()) {
 		lastPosition++;
 	}
@@ -757,7 +757,7 @@ template<class T>
 void ofPolyline_<T>::simplify(float tol){
     if(points.size() < 2) return;
 
-	int n = size();
+	int n = static_cast<int>(size());
 
 	if(n == 0) {
 		return;
@@ -894,7 +894,7 @@ float ofPolyline_<T>::getIndexAtLength(float length) const {
     float totalLength = getPerimeter();
     length = ofClamp(length, 0, totalLength);
 
-    int lastPointIndex = isClosed() ? points.size() : points.size()-1;
+    int lastPointIndex = isClosed() ? static_cast<int>(points.size()) : static_cast<int>(points.size())-1;
 
     int i1 = ofClamp(std::floor(length / totalLength * lastPointIndex), 0, lengths.size()-2);   // start approximation here
     int leftLimit = 0;
@@ -1121,8 +1121,8 @@ template<class T>
 int ofPolyline_<T>::getWrappedIndex(int index) const {
     if(points.empty()) return 0;
 
-    if(index < 0) return isClosed() ? (index + points.size()) % points.size() : 0;
-    if(index > int(points.size())-1) return isClosed() ? index % points.size() : points.size() - 1;
+    if(index < 0) return isClosed() ? static_cast<int>((index + points.size()) % points.size()) : 0;
+    if(index > int(points.size())-1) return isClosed() ? index % static_cast<int>(points.size()) : static_cast<int>(points.size()) - 1;
     return index;
 }
 

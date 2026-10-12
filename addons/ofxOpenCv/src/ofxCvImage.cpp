@@ -852,12 +852,12 @@ void  ofxCvImage::resetImageROI( IplImage* img ) {
 
 //--------------------------------------------------------------------------------
 void ofxCvImage::setFromPixels( const ofPixels & pixels ){
-	setFromPixels(pixels.getData(),pixels.getWidth(),pixels.getHeight());
+	setFromPixels(pixels.getData(),static_cast<int>(pixels.getWidth()),static_cast<int>(pixels.getHeight()));
 }
 
 //--------------------------------------------------------------------------------
 void ofxCvImage::setRoiFromPixels( const ofPixels & pixels ){
-	setRoiFromPixels(pixels.getData(),pixels.getWidth(),pixels.getHeight());
+	setRoiFromPixels(pixels.getData(),static_cast<int>(pixels.getWidth()),static_cast<int>(pixels.getHeight()));
 }
 
 //--------------------------------------------------------------------------------

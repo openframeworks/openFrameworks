@@ -121,7 +121,7 @@ bool ofxTCPClient::send(string message){
 	}
 	message = partialPrevMsg + message + messageDelimiter;
 	message += (char)0; //for flash
-	int ret = TCPClient.SendAll( message.c_str(), message.length() );
+	int ret = TCPClient.SendAll( message.c_str(), static_cast<int>(message.length()) );
 	int errorCode = ofxNetworkGetLastError();
 	if( ret<0 ) ofxNetworkLogError(errorCode);
 	if( isClosingCondition(ret, errorCode) ){
@@ -160,7 +160,7 @@ bool ofxTCPClient::sendRawMsg(const char * msg, int size){
 	tmpBuffSend.append(msg,size);
 	tmpBuffSend.append(messageDelimiter.c_str(),messageDelimiter.size());
 
-    int ret = TCPClient.SendAll( tmpBuffSend.getData(), tmpBuffSend.size() );
+    int ret = TCPClient.SendAll( tmpBuffSend.getData(), static_cast<int>(tmpBuffSend.size()) );
     int errorCode = ofxNetworkGetLastError();
 	if( ret<0 ) ofxNetworkLogError(errorCode);
 	if( isClosingCondition(ret, errorCode) ){
@@ -186,7 +186,7 @@ bool ofxTCPClient::sendRawMsg(const char * msg, int size){
 //--------------------------
 bool ofxTCPClient::sendRaw(string message){
 	if( message.length() == 0) return false;
-    int ret = TCPClient.SendAll(message.c_str(), message.length());
+    int ret = TCPClient.SendAll(message.c_str(), static_cast<int>(message.length()));
     int errorCode = ofxNetworkGetLastError();
     if( ret<0 ) ofxNetworkLogError(errorCode);
 	if( isClosingCondition(ret, errorCode) ){
@@ -281,7 +281,7 @@ static int findDelimiter(char * data, int size, string delimiter){
 	for(int i=0;i<size;i++){
 		if(data[i]==delimiter[posInDelimiter]){
 			posInDelimiter++;
-			if(posInDelimiter==delimiter.size()) return i-delimiter.size()+1;
+			if(posInDelimiter==delimiter.size()) return i-static_cast<int>(delimiter.size())+1;
 		}else{
 			if(posInDelimiter>0){
 				// Stay at the same position to try matching again
@@ -297,7 +297,7 @@ static int findDelimiter(char * data, int size, string delimiter){
 int ofxTCPClient::receiveRawMsg(char * receiveBuffer, int numBytes){
 	int length=-2;
 	//only get data from the buffer if we don't have already some complete message
-	if(findDelimiter(tmpBuffReceive.getData(),tmpBuffReceive.size(),messageDelimiter)==-1){
+	if(findDelimiter(tmpBuffReceive.getData(),static_cast<int>(tmpBuffReceive.size()),messageDelimiter)==-1){
 		memset(tmpBuff,  0, TCP_MAX_MSG_SIZE);
 		length = receiveRawBytes(tmpBuff, TCP_MAX_MSG_SIZE);
 		if(length>0){ // don't copy the data if there was an error or disconnection
@@ -306,7 +306,7 @@ int ofxTCPClient::receiveRawMsg(char * receiveBuffer, int numBytes){
 	}
 
 	// process any available data
-	int posDelimiter = findDelimiter(tmpBuffReceive.getData(),tmpBuffReceive.size(),messageDelimiter);
+	int posDelimiter = findDelimiter(tmpBuffReceive.getData(),static_cast<int>(tmpBuffReceive.size()),messageDelimiter);
 	if(posDelimiter>0){
 		memcpy(receiveBuffer,tmpBuffReceive.getData(),posDelimiter);
 		if(tmpBuffReceive.size() > (unsigned int) posDelimiter + messageDelimiter.size()){

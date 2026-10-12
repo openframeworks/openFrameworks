@@ -48,7 +48,7 @@ void ofApp::setup(){
 				}
 			}
 		}
-		numVertices = colorData.size();
+		numVertices = static_cast<int>(colorData.size());
 	} else {
 		// if there was a problem loading the image, then just assign default data
 		colorData.assign( numVertices, glm::vec4(0,0,0,0.0) );

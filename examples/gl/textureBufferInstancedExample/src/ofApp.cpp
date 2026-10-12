@@ -123,7 +123,7 @@ void ofApp::draw(){
 	camera.begin();
 //	shader.begin();
 	//mesh.drawInstanced(OF_MESH_WIREFRAME,matrices.size());
-//	mesh.drawInstanced(OF_MESH_FILL,matrices.size());
+//	mesh.drawInstanced(OF_MESH_FILL,static_cast<int>(matrices.size()));
 	renderScene(false);
 	
 	light.draw();
@@ -145,7 +145,7 @@ void ofApp::renderScene(bool bShadowPass) {
 		shader.begin();
 	}
 	
-	mesh.drawInstanced(OF_MESH_FILL,matrices.size());
+	mesh.drawInstanced(OF_MESH_FILL,static_cast<int>(matrices.size()));
 	
 	if(bShadowPass) {
 		mDepthShader.end();

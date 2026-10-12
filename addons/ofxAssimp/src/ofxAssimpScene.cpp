@@ -814,7 +814,7 @@ std::vector< std::shared_ptr<ofxAssimp::Skeleton> > Scene::getSkeletons() {
 unsigned int Scene::getNumBones() {
 	unsigned int total = 0;
 	for( auto skel : mSkeletons ) {
-		total += skel->getAllNodesForType<ofxAssimp::Bone>().size();
+		total += static_cast<unsigned int>(skel->getAllNodesForType<ofxAssimp::Bone>().size());
 	}
 	return total;
 }
