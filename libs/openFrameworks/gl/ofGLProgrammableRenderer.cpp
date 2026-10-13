@@ -341,9 +341,7 @@ void ofGLProgrammableRenderer::draw(const ofPolyline & poly) const {
 	if (poly.getVertices().empty()) return;
 
 #if defined(TARGET_OPENGLES)
-	// OpenGL ES path - direct vertex attrib arrays (fast for frequently updated polylines).
-	// Only without the lines shaders: they build a triangle mesh from the line in
-	// draw(ofMesh), so a raw GL_LINE_STRIP draws nothing with them enabled
+	// OpenGL ES path - direct vertex attrib arrays (fast for frequently updated polylines)
 	if (!areLinesShadersEnabled()) {
 		glEnableVertexAttribArray(ofShader::POSITION_ATTRIBUTE);
 		glVertexAttribPointer(ofShader::POSITION_ATTRIBUTE, 3, GL_FLOAT, GL_FALSE, sizeof(typename ofPolyline::VertexType), &poly[0]);
@@ -355,7 +353,6 @@ void ofGLProgrammableRenderer::draw(const ofPolyline & poly) const {
 	}
 #endif
 
-	// VBO mesh path
 	polylineMesh.getVertices() = poly.getVertices();
 	if (poly.isClosed()) {
 		if (polylineMesh.getNumVertices() > 1 && polylineMesh.getVertices().front() == polylineMesh.getVertices().back()) {
