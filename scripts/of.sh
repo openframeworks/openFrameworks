@@ -1,11 +1,15 @@
 #!/usr/bin/env bash
 # of.sh - openFrameworks CLI  |  Dan Rosser 2025
-OF_SCRIPT_VERSION=0.4.4
+OF_SCRIPT_VERSION=0.4.5
 
 OF_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 OF_DIR="$(realpath "$OF_DIR/../")"
 OF_CORE_SCRIPT_DIR="$(realpath "$OF_DIR/scripts")"
-OF_CORE_CI_SCRIPT_DIR="$(realpath "$OF_DIR/scripts/ci")"
+if [[ -d "$OF_DIR/scripts/ci" ]]; then
+	OF_CORE_CI_SCRIPT_DIR="$(realpath "$OF_DIR/scripts/ci")"
+else
+	OF_CORE_CI_SCRIPT_DIR="${OF_CORE_SCRIPT_DIR}/ci"
+fi
 if [[ -d "$OF_DIR/projectGenerator" ]]; then
 	OF_PG_INSTALLED_DIR="$(realpath "$OF_DIR/projectGenerator")"
 else
@@ -15,9 +19,17 @@ fi
 UI_APP_NAME="openFrameworks"
 UI_APP_VERSION="$OF_SCRIPT_VERSION"
 UI_ANIM="${OF_ANIM:-1}"
+OF_GIT_REMOTE="${OF_GIT_REMOTE:-https://github.com/openframeworks/openFrameworks.git}"
+OF_GIT_BRANCH="${OF_GIT_BRANCH:-master}"
 . "$OF_CORE_SCRIPT_DIR/ui.sh"
-. "$OF_CORE_SCRIPT_DIR/dev/lib_sources.sh"
-. "$OF_CORE_SCRIPT_DIR/of_build.sh"
+if [[ -f "$OF_CORE_SCRIPT_DIR/dev/lib_sources.sh" ]]; then
+	. "$OF_CORE_SCRIPT_DIR/dev/lib_sources.sh"
+else
+	echoWarning "missing scripts/dev/lib_sources.sh — of update libs needs it (of clone restores a full checkout)"
+fi
+if [[ -f "$OF_CORE_SCRIPT_DIR/of_build.sh" ]]; then
+	. "$OF_CORE_SCRIPT_DIR/of_build.sh"
+fi
 
 OF_LIB_PLATFORMS=(osx macos ios android linux vs emscripten msys2)
 OF_LINUX_DISTRO="${OF_LINUX_DISTRO:-}"
@@ -848,6 +860,12 @@ cmdStatus(){
 	fi
 	echoKV "last update" "$lastUp"
 	echoKV "cli" "$OF_SCRIPT_VERSION"
+	if ofHasGit; then
+		echoKV "git" "$(ofGitSummary)"
+	else
+		echoKV "git" "nightly package (no .git)"
+		echoNote "of clone  — attach openFrameworks.git"
+	fi
 	local stSha stShaN
 	stSha=$(readLibStateField sha_status) || stSha=$(readVerifyField status) || stSha=""
 	stShaN=$(readLibStateField sha_verified) || stShaN=$(readVerifyField verified) || stShaN=""
@@ -955,6 +973,7 @@ printHelp(){
     cleanup   projects|caches|libs   Free disk (artifacts / downloads / prebuilts)
     version   of  | pg        Version info
     upgrade   addons | apps   Upgrade tree
+    clone                     Nightly zip → git clone of openFrameworks.git (when no .git)
     test      [group]         Run tests/ smoke tests (build + run), or menu for bash smoke scripts too
     installed                 Alias for status
     apothecary                Build libraries via apothecary submodule
@@ -980,6 +999,7 @@ printHelp(){
     ${prog} cleanup projects
     ${prog} cleanup caches
     ${prog} cleanup libs other
+    ${prog} clone
     ${prog} apothecary build
 
 EOF
@@ -997,6 +1017,11 @@ cmdVersion(){
 	echoKV "openFrameworks" "${ofVer:-—}"
 	echoKV "platform" "${OF_PLATFORM}${OF_ARCH:+ / ${OF_ARCH}}"
 	echoKV "cli" "$OF_SCRIPT_VERSION"
+	if ofHasGit; then
+		echoKV "git" "$(ofGitSummary)"
+	else
+		echoKV "git" "nightly package (no .git)"
+	fi
 	printf '\n'
 }
 
@@ -1026,6 +1051,11 @@ menuVersion(){
 	echoKV "openFrameworks" "${ofVer:-—}"
 	echoKV "platform" "${OF_PLATFORM}${OF_ARCH:+ / ${OF_ARCH}}"
 	echoKV "cli" "$OF_SCRIPT_VERSION"
+	if ofHasGit; then
+		echoKV "git" "$(ofGitSummary)"
+	else
+		echoKV "git" "nightly package (no .git)"
+	fi
 	printf '\n'
 	if [[ -n "$bin" ]]; then
 		ver=$(readPGVersion)
@@ -1236,6 +1266,11 @@ runLibsDownload(){
 	case "$source" in
 		apothecary|"")
 			export LIB_TAG="$tag"
+			if ! type downloadApothecaryLibs >/dev/null 2>&1; then
+				echoError "missing scripts/dev/lib_sources.sh"
+				echoNote "run: of clone   (or re-download a nightly that ships of Menu scripts)"
+				return 1
+			fi
 			downloadApothecaryLibs "$platformDir" || return 1
 			;;
 		oflibs)
@@ -1985,6 +2020,87 @@ pathIsGitTracked(){
 	[[ -n "$(git -C "$OF_DIR" ls-files -- "$p" 2>/dev/null | head -1)" ]]
 }
 
+ofHasGit(){
+	command -v git >/dev/null 2>&1 || return 1
+	[[ -e "$OF_DIR/.git" ]] || return 1
+	git -C "$OF_DIR" rev-parse --verify HEAD >/dev/null 2>&1
+}
+
+ofGitSummary(){
+	local branch sha
+	ofHasGit || { printf 'nightly package (no .git)'; return 1; }
+	branch=$(git -C "$OF_DIR" rev-parse --abbrev-ref HEAD 2>/dev/null || echo "?")
+	sha=$(git -C "$OF_DIR" rev-parse --short HEAD 2>/dev/null || echo "?")
+	printf '%s @ %s' "$branch" "$sha"
+}
+
+# Nightly zip → git init + fetch + checkout; untracked libs/PG/apps stay.
+cmdClone(){
+	local remote="${OF_GIT_REMOTE:-https://github.com/openframeworks/openFrameworks.git}"
+	local branch="${OF_GIT_BRANCH:-master}"
+	local sha
+	printBanner "clone"
+	if ofHasGit; then
+		echoSuccess "already a git checkout"
+		echoKV "git" "$(ofGitSummary)"
+		echoKV "remote" "$(git -C "$OF_DIR" remote get-url origin 2>/dev/null || echo none)"
+		return 0
+	fi
+	if ! command -v git >/dev/null 2>&1; then
+		echoError "git not found"
+		echoNote "install git, then re-run: of clone"
+		return 1
+	fi
+	echoInfo "attach ${remote} (${branch}) to this folder"
+	echoNote "keeps downloaded libs, projectGenerator, and apps/myApps"
+	echoNote "restores files the nightly package stripped"
+	echoKV "dir" "$OF_DIR"
+	echoKV "remote" "$remote"
+	echoKV "branch" "$branch"
+	printf '\n'
+	if menuCanRun; then
+		confirmYes "Turn this nightly into a git clone of openFrameworks.git?" || { echoInfo "cancelled"; return 0; }
+	fi
+
+	tasksBegin "Clone" "git init" "remote" "fetch ${branch}" "checkout" "Finish"
+	taskSet 0 running
+	if [[ ! -e "$OF_DIR/.git" ]]; then
+		if ! git -C "$OF_DIR" -c init.defaultBranch="$branch" init -q; then
+			taskSet 0 fail; tasksSkipRest; tasksSummary; return 1
+		fi
+	fi
+	taskSet 0 done
+	taskSet 1 running
+	if git -C "$OF_DIR" remote get-url origin >/dev/null 2>&1; then
+		git -C "$OF_DIR" remote set-url origin "$remote" || { taskSet 1 fail; tasksSkipRest; tasksSummary; return 1; }
+	else
+		git -C "$OF_DIR" remote add origin "$remote" || { taskSet 1 fail; tasksSkipRest; tasksSummary; return 1; }
+	fi
+	taskSet 1 done "$remote"
+	taskSet 2 running
+	if ! git -C "$OF_DIR" fetch --depth=1 origin "$branch"; then
+		taskSet 2 fail "fetch failed"
+		tasksSkipRest
+		tasksSummary
+		echoNote "check network / OF_GIT_REMOTE"
+		return 1
+	fi
+	taskSet 2 done
+	taskSet 3 running
+	if ! git -C "$OF_DIR" checkout -f -B "$branch" "origin/${branch}"; then
+		taskSet 3 fail "checkout failed"
+		tasksSkipRest
+		tasksSummary
+		return 1
+	fi
+	sha=$(git -C "$OF_DIR" rev-parse --short HEAD 2>/dev/null || echo "?")
+	taskSet 3 done "$sha"
+	taskTickLine 4 done
+	tasksSummary
+	echoSuccess "this folder is a clone of ${remote} (${branch} @ ${sha})"
+	echoNote "later: git pull   ·   deepen history: git fetch --unshallow"
+}
+
 # Best-effort "send to trash/recycle bin" for a batch of paths instead of a
 # permanent rm -rf — one external call for the whole batch (trashing dozens
 # of build artifacts one at a time would reintroduce the per-item slowness
@@ -2445,6 +2561,7 @@ cmdMenu(){
 	# this is openFrameworks' own menu — fn name shown dim on the right
 	local choice
 	local setupDesc="libs + Project Generator (apothecary @ latest)"
+	local -a opts
 	if ! menuCanRun; then
 		echoWarning "no TTY — showing status"
 		cmdStatus
@@ -2460,19 +2577,29 @@ cmdMenu(){
 		echoKV "of dir" "$OF_DIR"
 		echoKV "libs" "${LIB_SOURCE} @ ${LIB_TAG}"
 		[[ -n "$OF_LINUX_DISTRO" ]] && echoKV "distro" "$OF_LINUX_DISTRO"
+		if ofHasGit; then
+			echoKV "git" "$(ofGitSummary)"
+		else
+			echoKV "git" "nightly package (no .git)"
+		fi
 		printf '\n'
 
 		# short labels on purpose — long lines wrap/truncate differently across
 		# terminals and can desync gum's highlighted row from the real selection
-		if ! menuPick "What do you want to do?" \
-			"status()   — checker  (cmdStatus)|status" \
-			"setup()    — install  (cmdSetup)|setup" \
-			"update()   — refresh  (menuUpdate)|update" \
-			"draw()     — build  (menuBuild)|build" \
-			"cleanup()  — free space  (menuCleanup)|cleanup" \
-			"version()  — info  (menuVersion)|version" \
-			"test()     — smoke tests  (menuTest)|test" \
-			"exit()|exit"
+		opts=(
+			"status()   — checker  (cmdStatus)|status"
+			"setup()    — install  (cmdSetup)|setup"
+			"update()   — refresh  (menuUpdate)|update"
+			"draw()     — build  (menuBuild)|build"
+			"cleanup()  — free space  (menuCleanup)|cleanup"
+			"version()  — info  (menuVersion)|version"
+			"test()     — smoke tests  (menuTest)|test"
+		)
+		if ! ofHasGit; then
+			opts+=("clone()    — nightly → git clone  (cmdClone)|clone")
+		fi
+		opts+=("exit()|exit")
+		if ! menuPick "What do you want to do?" "${opts[@]}"
 		then
 			echoInfo "bye"
 			return 0
@@ -2485,6 +2612,7 @@ cmdMenu(){
 			update)     menuUpdate; [[ $? -eq 2 ]] || menuPause ;;
 			build)      menuBuild ;;
 			cleanup|clean) menuCleanup ;;
+			clone)      cmdClone; menuPause ;;
 			version)    menuVersion; menuPause ;;
 			test)       menuTest; [[ $? -eq 2 ]] || menuPause ;;
 			exit|quit)  echoSuccess "bye"; return 0 ;;
@@ -2635,6 +2763,9 @@ runCommand(){
 			esac
 			;;
 		upgrade) cmdUpgrade "$subcmd" ;;
+		clone|git)
+			cmdClone
+			;;
 		test)
 			case "${subcmd:-}" in
 				""|menu) menuTest ;;
@@ -2680,7 +2811,7 @@ runCommand(){
 			;;
 		*)
 			echoError "Unknown command: $cmd"
-			echoNote "valid: menu status setup update build cleanup version upgrade apothecary help"
+			echoNote "valid: menu status setup update build cleanup version upgrade clone apothecary help"
 			printHelp
 			return 1
 			;;
