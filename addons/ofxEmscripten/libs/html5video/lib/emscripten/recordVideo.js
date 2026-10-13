@@ -1,12 +1,12 @@
-drawTexture__deps = ['$GL'];
 var stream;
 var mediaParts;
 var startTime;
 var mediaRecorder;
 var data;
 var fb;
-var canvas2 = document.createElement('canvas');    
-var context2 = canvas2.getContext('2d');
+// --pre-js code also runs in worker / audio worklet scopes, which have no document
+var canvas2 = typeof document !== 'undefined' ? document.createElement('canvas') : null;
+var context2 = canvas2 ? canvas2.getContext('2d') : null;
 var videoTypes = ["webm", "ogg", "mp4", "x-matroska"];
 var audioTypes = ["webm", "ogg", "mp3", "x-matroska"];
 var codecs = ["should-not-be-supported","vp9", "vp9.0", "vp8", "vp8.0", "avc1", "av1", "h265", "h.265", "h264", "h.264", "pcm", "opus", "aac", "mpeg", "mp4a"];

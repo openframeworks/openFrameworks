@@ -4,7 +4,7 @@
     } else if (typeof module !== 'undefined' && module.exports) { // CommonJS / Node.js
         module.exports = definition();
     } else { // Direct include
-        window.ysFixWebmDuration = definition();
+        (typeof window !== 'undefined' ? window : globalThis).ysFixWebmDuration = definition();
     }
 })('fix-webm-duration', function () {
     /*

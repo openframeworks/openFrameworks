@@ -207,7 +207,7 @@ var LibraryHTML5Audio = {
 	}
     },
 
-    html5audio_stream_create__deps: ['$emscriptenGetAudioObject'],
+    html5audio_stream_create__deps: ['$emscriptenGetAudioObject', '$emAudio'],
     html5audio_stream_create: function(audioWorkletNode, numInputChannels){
         var audioWorkletNode = emscriptenGetAudioObject(audioWorkletNode);
         if(numInputChannels > 0){

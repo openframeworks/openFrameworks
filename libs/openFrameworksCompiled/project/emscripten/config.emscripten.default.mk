@@ -89,8 +89,10 @@ endif
 # OFF by default (recommended). It frequently breaks addons (FreeImage, ofxJSON, etc.).
 # Set PROJECT_EMSCRIPTEN_EMBIND_AOT=1 in your project/config.make or pass it to make
 # if you need CSP compliance and know your code is fully compatible.
+# It also needs at least one EMSCRIPTEN_BINDINGS block: with none (OF core has
+# none) the link fails with "expected to find pattern <<< EMBIND_AOT_INVOKERS >>>".
 ################################################################################
-PROJECT_EMSCRIPTEN_EMBIND_AOT ?= 1
+PROJECT_EMSCRIPTEN_EMBIND_AOT ?= 0
 
 ################################################################################
 # PLATFORM LDFLAGS
@@ -136,15 +138,16 @@ PLATFORM_LDFLAGS += -s AUTO_JS_LIBRARIES=1
 PLATFORM_LDFLAGS += -s VERBOSE=1
 
 PLATFORM_LDFLAGS +=  $(PLATFORM_PTHREAD)
-PLATFORM_LDFLAGS += -s AUDIO_WORKLET=1 -s WASM_WORKERS=1 -s ENVIRONMENT="web,worker" -s WEBAUDIO_DEBUG=1
+PLATFORM_LDFLAGS += -s AUDIO_WORKLET=1 -s WASM_WORKERS=1 -s ENVIRONMENT="web,worker"
 
 PLATFORM_LDFLAGS += --js-library $(OF_ADDONS_PATH)/ofxEmscripten/libs/html5video/lib/emscripten/library_html5video.js
 PLATFORM_LDFLAGS += --pre-js $(OF_ADDONS_PATH)/ofxEmscripten/libs/html5video/lib/emscripten/recordVideo.js
 PLATFORM_LDFLAGS += --pre-js $(OF_ADDONS_PATH)/ofxEmscripten/libs/html5video/lib/emscripten/fix-webm-duration.js
 PLATFORM_LDFLAGS += --post-js $(OF_ADDONS_PATH)/ofxEmscripten/libs/html5audio/lib/emscripten/library_audioDeviceSelect.js
-# PLATFORM_LDFLAGS += --js-library $(OF_ADDONS_PATH)/ofxEmscripten/libs/html5audio/lib/emscripten/library_html5audio.js
+PLATFORM_LDFLAGS += --js-library $(OF_ADDONS_PATH)/ofxEmscripten/libs/html5audio/lib/emscripten/library_html5audio.js
 
-PLATFORM_LDFLAGS += -s MAIN_MODULE=2 -DEMCC_FORCE_STDLIBS=1
+# no MAIN_MODULE: dynamic linking is not supported with WASM_WORKERS (audioWorklet);
+# EXPORT_ALL below still exports every symbol for the --js-library / --pre-js code
 PLATFORM_LDFLAGS += -s EXPORT_ALL=1
 PLATFORM_LDFLAGS += -s NO_DYNAMIC_EXECUTION=1
 PLATFORM_LDFLAGS += -s ABORT_ON_WASM_EXCEPTIONS=0
