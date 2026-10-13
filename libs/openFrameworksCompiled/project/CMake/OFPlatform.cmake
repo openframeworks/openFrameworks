@@ -1,0 +1,88 @@
+# Detects the openFrameworks platform from the toolchain.
+#
+#   OF_PLATFORM          libs/*/lib/<OF_PLATFORM> folder name
+#                        (macos ios tvos emscripten linux64 linuxaarch64 linuxarmv7l linuxarmv6l vs msys2)
+#   OF_PLATFORM_FAMILY   platform/<family>.cmake to load (macos ios emscripten linux vs msys2)
+#   OF_ARCH              architecture subfolder under libs/*/lib/<OF_PLATFORM>, empty if none
+
+include_guard(GLOBAL)
+
+string(TOLOWER "${CMAKE_SYSTEM_PROCESSOR}" _of_proc)
+
+if(NOT OF_PLATFORM)
+	if(EMSCRIPTEN)
+		set(OF_PLATFORM emscripten)
+	elseif(ANDROID)
+		set(OF_PLATFORM android)
+	elseif(CMAKE_SYSTEM_NAME STREQUAL "iOS")
+		set(OF_PLATFORM ios)
+	elseif(CMAKE_SYSTEM_NAME STREQUAL "tvOS")
+		set(OF_PLATFORM tvos)
+	elseif(APPLE)
+		set(OF_PLATFORM macos)
+	elseif(MSVC)
+		set(OF_PLATFORM vs)
+	elseif(MINGW OR MSYS)
+		set(OF_PLATFORM msys2)
+	elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+		if(_of_proc MATCHES "^(x86_64|amd64)$")
+			set(OF_PLATFORM linux64)
+		elseif(_of_proc MATCHES "^(aarch64|arm64)$")
+			set(OF_PLATFORM linuxaarch64)
+		elseif(_of_proc MATCHES "^armv7")
+			set(OF_PLATFORM linuxarmv7l)
+		elseif(_of_proc MATCHES "^armv6")
+			set(OF_PLATFORM linuxarmv6l)
+		else()
+			message(FATAL_ERROR "openFrameworks: unsupported Linux processor '${CMAKE_SYSTEM_PROCESSOR}'")
+		endif()
+	else()
+		message(FATAL_ERROR "openFrameworks: unsupported platform '${CMAKE_SYSTEM_NAME}'")
+	endif()
+endif()
+
+if(OF_PLATFORM STREQUAL "android")
+	message(FATAL_ERROR "openFrameworks: Android uses its own CMake (libs/openFrameworksCompiled/project/android)")
+endif()
+
+if(OF_PLATFORM MATCHES "^linux")
+	set(OF_PLATFORM_FAMILY linux)
+elseif(OF_PLATFORM STREQUAL "tvos")
+	set(OF_PLATFORM_FAMILY ios)
+else()
+	set(OF_PLATFORM_FAMILY ${OF_PLATFORM})
+endif()
+
+if(NOT DEFINED OF_ARCH)
+	set(OF_ARCH "")
+	if(OF_PLATFORM STREQUAL "vs")
+		# Visual Studio generators pass the platform with -A, Ninja uses the compiler's target
+		if(CMAKE_GENERATOR_PLATFORM)
+			set(_of_vs_arch "${CMAKE_GENERATOR_PLATFORM}")
+		elseif(CMAKE_VS_PLATFORM_NAME)
+			set(_of_vs_arch "${CMAKE_VS_PLATFORM_NAME}")
+		else()
+			set(_of_vs_arch "${CMAKE_CXX_COMPILER_ARCHITECTURE_ID}")
+		endif()
+		string(TOUPPER "${_of_vs_arch}" _of_vs_arch_upper)
+		if(_of_vs_arch_upper STREQUAL "ARM64EC")
+			set(OF_ARCH ARM64EC)
+		elseif(_of_vs_arch_upper MATCHES "^ARM64")
+			set(OF_ARCH ARM64)
+		else()
+			set(OF_ARCH x64)
+		endif()
+	endif()
+endif()
+
+# msys2 environment (clang64 / ucrt64 / mingw64 / clangarm64); the core and libs
+# live in lib/msys2, some addons have per-environment subfolders
+if(OF_PLATFORM STREQUAL "msys2" AND NOT DEFINED OF_MSYSTEM)
+	set(OF_MSYSTEM "")
+	if(DEFINED ENV{MSYSTEM})
+		string(TOLOWER "$ENV{MSYSTEM}" OF_MSYSTEM)
+	endif()
+endif()
+
+message(STATUS "openFrameworks: platform ${OF_PLATFORM} ${OF_ARCH}"
+	" (${CMAKE_SYSTEM_NAME} ${CMAKE_SYSTEM_PROCESSOR}, ${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER_VERSION})")
