@@ -236,6 +236,46 @@ void ofAppGLFWWindow::setup(const ofGLESWindowSettings & settings) {
             sharedContext = (GLFWwindow *)settings.shareContextWith->getWindowContext();
         }
         
+        auto createWindow = [&](int w, int h, GLFWmonitor * monitor) {
+#ifndef TARGET_OPENGLES
+            if (settings.glVersionMajor >= 3) {
+                // try the requested version silently, its error is only reported if no fallback version works either
+                GLFWerrorfun errorCallback = glfwSetErrorCallback(nullptr);
+                GLFWwindow * window = glfwCreateWindow(w, h, settings.title.c_str(), monitor, sharedContext);
+                int errorCode = 0;
+                std::string errorDescription;
+#if (GLFW_VERSION_MAJOR >= 3 && GLFW_VERSION_MINOR > 2) || (GLFW_VERSION_MAJOR > 3)
+                if (!window) {
+                    const char * description = nullptr;
+                    errorCode = glfwGetError(&description);
+                    if (description) errorDescription = description;
+                }
+#endif
+                static const int versions[][2] = { {4, 6}, {4, 5}, {4, 4}, {4, 3}, {4, 2}, {4, 1}, {4, 0}, {3, 3}, {3, 2} };
+                for (auto & v : versions) {
+                    if (window) break;
+                    if (v[0] * 10 + v[1] >= settings.glVersionMajor * 10 + settings.glVersionMinor) continue;
+                    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, v[0]);
+                    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, v[1]);
+                    window = glfwCreateWindow(w, h, settings.title.c_str(), monitor, sharedContext);
+                    if (window) {
+                        ofLogWarning("ofAppGLFWWindow") << "OpenGL " << settings.glVersionMajor << "." << settings.glVersionMinor
+                            << " is not available, using OpenGL " << v[0] << "." << v[1];
+                        settings.glVersionMajor = v[0];
+                        settings.glVersionMinor = v[1];
+                        break;
+                    }
+                }
+                glfwSetErrorCallback(errorCallback);
+                if (!window && errorCallback && errorCode) {
+                    errorCallback(errorCode, errorDescription.c_str());
+                }
+                return window;
+            }
+#endif
+            return glfwCreateWindow(w, h, settings.title.c_str(), monitor, sharedContext);
+        };
+
         if (settings.windowMode == OF_GAME_MODE) {
             int count;
             GLFWmonitor ** monitors = glfwGetMonitors(&count);
@@ -252,13 +292,13 @@ void ofAppGLFWWindow::setup(const ofGLESWindowSettings & settings) {
                 currentH = mode->height;
             }
             if (count > settings.monitor) {
-                windowP = glfwCreateWindow(currentW, currentH, settings.title.c_str(), monitors[settings.monitor], sharedContext);
+                windowP = createWindow(currentW, currentH, monitors[settings.monitor]);
             } else {
                 ofLogError("ofAppGLFWWindow") << "couldn't find any monitors";
                 return;
             }
         } else {
-            windowP = glfwCreateWindow(settings.getWidth(), settings.getHeight(), settings.title.c_str(), nullptr, sharedContext);
+            windowP = createWindow(settings.getWidth(), settings.getHeight(), nullptr);
             if (!windowP) {
                 ofLogError("ofAppGLFWWindow") << "couldn't create GLFW window";
                 return;
