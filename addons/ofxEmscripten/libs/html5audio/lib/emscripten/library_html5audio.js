@@ -39,10 +39,13 @@ var LibraryHTML5Audio = {
             });
 
             AUDIO.context = context;
+            // stream of the audio output, for recordVideo.js
+            AUDIO.contextStream = new MediaStreamAudioDestinationNode(context);
             
             var fft = context.createAnalyser();
             fft.smoothingTimeConstant = 0;
             fft.connect(AUDIO.context.destination);
+            fft.connect(AUDIO.contextStream);
             fft.maxDecibels = 0;
             fft.minDecibels = -100;
             AUDIO.fft = fft;

@@ -42,10 +42,14 @@ function recordVideo(isRecording, textureID) {
 		console.log('-- All supported Videos : ', supportedVideos)
 		console.log('-- All supported Audios : ', supportedAudios)
 		
-		var audioCodec = supportedAudios[0].split("codecs=")[1];
-		var mimeType = supportedVideos[0] + "," + audioCodec;
+		// add OF's audio output only if an audio context exists (sound stream / player)
+		var hasAudio = typeof AUDIO !== 'undefined' && AUDIO.contextStream;
+		var mimeType = supportedVideos[0];
+		if (hasAudio) {
+			mimeType += "," + supportedAudios[0].split("codecs=")[1];
+			stream.addTrack(AUDIO.contextStream.stream.getAudioTracks()[0]);
+		}
 		console.log("-- MIME type : ", mimeType);
-		stream.addTrack(AUDIO.contextStream.stream.getAudioTracks()[0]);
 		mediaRecorder = new MediaRecorder(stream, {
 			audioBitsPerSecond : 128000, // 128 kbps
   			videoBitsPerSecond: 10000000, // 4x the default quality from 2.5Mbps to 10Mbps
@@ -66,7 +70,7 @@ function recordVideo(isRecording, textureID) {
 		};
 		mediaRecorder.start();
 		startTime = Date.now();
-	} else {
+	} else if (mediaRecorder && mediaRecorder.state !== 'inactive') {
 		mediaRecorder.stop();
 	}
 }
@@ -75,7 +79,7 @@ function downloadBlob(blob) {
 	var url = URL.createObjectURL(blob);
 	var tag = document.createElement('a');
 	tag.href = url;
-	tag.download = 'Video.mp4';
+	tag.download = 'Video.' + (blob.type.indexOf('mp4') >= 0 ? 'mp4' : 'webm');
 	document.body.appendChild(tag);
 	tag.click();
 	document.body.removeChild(tag);
