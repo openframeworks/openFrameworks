@@ -839,6 +839,14 @@ void ofTexture::setAnchorPoint(float x, float y){
 }
 
 //----------------------------------------------------------
+glm::vec2 ofTexture::getAnchor() const{
+	return {anchor.x, anchor.y};
+}
+
+bool ofTexture::isAnchorPercent() const{
+	return bAnchorIsPct;
+}
+
 void ofTexture::resetAnchor(){
 	anchor = {0.f, 0.f, 0.f};
 	bAnchorIsPct = false;

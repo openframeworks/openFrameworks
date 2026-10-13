@@ -23,7 +23,12 @@ ofAVFoundationPlayer::ofAVFoundationPlayer() {
     bResetPixels = false;
     bUpdatePixels = false;
     bUpdateTexture = false;
+#if OF_USE_ANGLE
+	// CVOpenGLTextureCache targets the desktop GL context, not MetalANGLE.
+	bUseTextureCache = false;
+#else
 	bUseTextureCache = true;
+#endif
 }
 
 //--------------------------------------------------------------
@@ -45,7 +50,12 @@ ofAVFoundationPlayer& ofAVFoundationPlayer::operator=(ofAVFoundationPlayer other
 	bResetPixels = false;
 	bUpdatePixels = false;
 	bUpdateTexture = false;
+#if OF_USE_ANGLE
+	// CVOpenGLTextureCache targets the desktop GL context, not MetalANGLE.
+	bUseTextureCache = false;
+#else
 	bUseTextureCache = true;
+#endif
 
 	std::swap(videoPlayer, other.videoPlayer);
 	return *this;
@@ -125,13 +135,15 @@ bool ofAVFoundationPlayer::loadPlayer(const of::filesystem::path & fileName, boo
 										   &_videoTextureCache);
 #endif
 
-#ifdef TARGET_OSX
+#if defined(TARGET_OSX) && !OF_USE_ANGLE
 		err = CVOpenGLTextureCacheCreate(kCFAllocatorDefault,
 										 nullptr,
 										 CGLGetCurrentContext(),
 										 CGLGetPixelFormat(CGLGetCurrentContext()),
 										 nullptr,
 										 &_videoTextureCache);
+#elif defined(TARGET_OSX)
+		err = kCVReturnSuccess;
 #endif
 
 		if(err) {
@@ -175,7 +187,12 @@ void ofAVFoundationPlayer::disposePlayer() {
 	bResetPixels = false;
 	bUpdatePixels = false;
 	bUpdateTexture = false;
+#if OF_USE_ANGLE
+	// CVOpenGLTextureCache targets the desktop GL context, not MetalANGLE.
+	bUseTextureCache = false;
+#else
 	bUseTextureCache = true;
+#endif
 }
 
 //--------------------------------------------------------------
@@ -195,7 +212,12 @@ void ofAVFoundationPlayer::close() {
     bResetPixels = false;
     bUpdatePixels = false;
     bUpdateTexture = false;
+#if OF_USE_ANGLE
+	// CVOpenGLTextureCache targets the desktop GL context, not MetalANGLE.
+	bUseTextureCache = false;
+#else
 	bUseTextureCache = true;
+#endif
 }
 
 //--------------------------------------------------------------
@@ -446,8 +468,8 @@ void ofAVFoundationPlayer::initTextureCache() {
     texData.tex_t = 1.0f; // these values need to be reset to 1.0 to work properly.
     texData.tex_u = 1.0f; // assuming this is something to do with the way ios
 
-    CVReturn err;
-    unsigned int textureCacheID;
+    CVReturn err = kCVReturnSuccess;
+    unsigned int textureCacheID = 0;
 
 #ifdef TARGET_OF_IOS
 
@@ -473,7 +495,7 @@ void ofAVFoundationPlayer::initTextureCache() {
 
 #endif
 
-#ifdef TARGET_OSX
+#if defined(TARGET_OSX) && !OF_USE_ANGLE
 
     err = CVOpenGLTextureCacheCreateTextureFromImage(nullptr,
                                                      _videoTextureCache,
@@ -502,7 +524,7 @@ void ofAVFoundationPlayer::initTextureCache() {
     CVOpenGLESTextureCacheFlush(_videoTextureCache, 0);
 #endif
 
-#ifdef TARGET_OSX
+#if defined(TARGET_OSX) && !OF_USE_ANGLE
     CVOpenGLTextureCacheFlush(_videoTextureCache, 0);
 #endif
 	killTexture();
@@ -514,7 +536,7 @@ void ofAVFoundationPlayer::killTexture() {
         CFRelease(_videoTextureRef);
         _videoTextureRef = nullptr;
     }
-#elif defined TARGET_OSX
+#elif defined(TARGET_OSX) && !OF_USE_ANGLE
     if (_videoTextureRef != nullptr) {
         CVOpenGLTextureRelease(_videoTextureRef);
         _videoTextureRef = nullptr;
@@ -533,7 +555,7 @@ void ofAVFoundationPlayer::killTextureCache() {
     }
 #endif
 
-#ifdef TARGET_OSX
+#if defined(TARGET_OSX) && !OF_USE_ANGLE
     if(_videoTextureCache != nullptr) {
         CVOpenGLTextureCacheRelease(_videoTextureCache);
         _videoTextureCache = nullptr;

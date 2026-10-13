@@ -7,17 +7,21 @@
 #include "ofMatrixStack.h"
 #include "of3dGraphics.h"
 #include "ofPath.h"
+#include "ofBitmapFont.h"
 
 #include <webgpu/webgpu_cpp.h>
 #include <deque>
 #include <vector>
 
 class ofAppBaseWindow;
+template <typename PixelType>
+class ofImage_;
 
 /// WebGPU renderer backed by Dawn (WGPU -> Metal on Apple).
-/// Presents a CAMetalLayer, clears the background, and batches immediate-mode
-/// lines, rectangles, triangles, circles, and ellipses. Bitmap strings,
-/// meshes, textures, and shaders are not drawn yet.
+/// Presents a CAMetalLayer, clears the background, and batches meshes,
+/// polylines, paths, 3d primitives, images, video frames, bitmap strings,
+/// and TrueType strings into colored (and optionally textured) draws.
+/// Shader objects and GPU instancing are not implemented.
 class ofWebGPURenderer : public ofBaseRenderer {
 public:
 	static const std::string TYPE;
@@ -30,12 +34,14 @@ public:
 	/// Attach a CAMetalLayer (void* to stay C++-safe) and create the device.
 	bool setup(void * metalLayer, int width, int height, float contentsScale);
 	void configureSurface(int width, int height);
+	void setPresentVSync(bool enabled);
 	void shutdown();
 
 	bool isSetup() const { return device_ != nullptr && surface_ != nullptr; }
 	wgpu::Device getDevice() const { return device_; }
 	wgpu::Queue getQueue() const { return queue_; }
 	wgpu::Surface getSurface() const { return surface_; }
+	wgpu::RenderPassEncoder getRenderPass() const { return pass_; }
 	void * getMetalLayer() const { return metalLayer_; }
 
 	void startRender() override;
@@ -101,6 +107,8 @@ public:
 	ofFillFlag getFillMode() override;
 	void setLineWidth(float lineWidth) override;
 	void setPointSize(float pointSize) override;
+	void enablePointSprites() override;
+	void disablePointSprites() override;
 	void setDepthTest(bool depthTest) override;
 	void setBlendMode(ofBlendMode blendMode) override;
 	void setLineSmoothing(bool smooth) override;
@@ -136,6 +144,7 @@ public:
 	void drawEllipse(float x, float y, float z, float width, float height) const override;
 	void drawString(std::string text, float x, float y, float z) const override;
 	void drawString(const ofTrueTypeFont & font, std::string text, float x, float y) const override;
+	void drawBackgroundGradient(const ofFloatColor & start, const ofFloatColor & end, ofGradientMode mode) const override;
 
 	ofPath & getPath() override;
 	ofStyle getStyle() const override;
@@ -149,22 +158,33 @@ public:
 
 private:
 	void applyClear(float r, float g, float b, float a);
+	void beginColorPass(wgpu::TextureView colorView, bool clear, float r, float g, float b, float a);
+	void ensureDepth();
 	void logDrawOnce(const char * what) const;
 	void ensurePipelines();
 	void flushBatches();
-	void beginBatch(bool lines) const;
+	void beginBatch(int primBase) const;
+	void beginBatch(int primBase, const glm::mat4 & mvp) const;
 	void pushVert(float x, float y, float z) const;
+	void pushVert(float x, float y, float z, const ofFloatColor & color, float u, float v) const;
 	void rebuildCircle(int res) const;
 	glm::mat4 gpuMvp() const;
+	void drawMesh(const ofMesh & mesh, ofPolyRenderMode renderType, bool useColors, bool useTextures) const;
+	wgpu::TextureView uploadRGBA(const void * owner, const unsigned char * rgba, int width, int height, uint64_t stamp) const;
+	void drawTexturedQuad(float x, float y, float z, float w, float h, float u0, float v0, float u1, float v1, const ofTexture & tex) const;
+	template <typename PixelType>
+	void drawImagePixels(const ofImage_<PixelType> & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const;
 
 	struct GpuVertex {
 		float x, y, z;
 		float r, g, b, a;
+		float u, v;
 	};
 	struct DrawBatch {
 		uint32_t first = 0;
 		uint32_t count = 0;
 		int pipeline = 0;
+		wgpu::TextureView view;
 		glm::mat4 mvp { 1.f };
 	};
 	struct FrameSlot {
@@ -172,6 +192,14 @@ private:
 		wgpu::Buffer uniforms;
 		uint64_t vertexBytes = 0;
 		uint64_t uniformBytes = 0;
+	};
+	struct TexCache {
+		const void * owner = nullptr;
+		uint64_t stamp = 0;
+		int width = 0;
+		int height = 0;
+		wgpu::Texture texture;
+		wgpu::TextureView view;
 	};
 
 	ofAppBaseWindow * window_ = nullptr;
@@ -199,16 +227,26 @@ private:
 	std::deque<ofStyle> styleHistory;
 	bool bBackgroundAuto = true;
 	bool bDepthTest_ = false;
+	bool pointSprites_ = false;
 	mutable bool loggedDraw_ = false;
+	bool vsync_ = true;
 
 	mutable std::vector<GpuVertex> gpuVerts_;
 	mutable std::vector<DrawBatch> batches_;
 	mutable std::vector<glm::vec3> circleUnit_;
+	mutable std::vector<TexCache> texCache_;
+	mutable wgpu::TextureView activeView_;
 	wgpu::BindGroupLayout bindGroupLayout_;
-	wgpu::RenderPipeline pipelines_[4];
+	wgpu::RenderPipeline pipelines_[12];
+	wgpu::Texture whiteTex_;
+	wgpu::TextureView whiteView_;
+	wgpu::Sampler sampler_;
+	wgpu::Texture depthTex_;
+	wgpu::TextureView depthView_;
 	bool pipelinesReady_ = false;
 	FrameSlot slots_[3];
 	int slotIndex_ = 0;
+	ofBitmapFont bitmapFont_;
 };
 
 #endif // OF_USE_DAWN

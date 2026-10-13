@@ -261,7 +261,17 @@ void ofAppDawnWindow::setWindowShape(int w, int h) {
 	resizeSurface(w, h);
 }
 
-void ofAppDawnWindow::setVerticalSync(bool) {}
+void ofAppDawnWindow::setVerticalSync(bool enabled) {
+	if(auto dawn = std::dynamic_pointer_cast<ofWebGPURenderer>(currentRenderer)) {
+		dawn->setPresentVSync(enabled);
+	}
+#if defined(TARGET_OSX) || defined(TARGET_OF_MAC)
+	if(metalLayer) {
+		CAMetalLayer * layer = (__bridge CAMetalLayer *)metalLayer;
+		layer.displaySyncEnabled = enabled ? YES : NO;
+	}
+#endif
+}
 
 void * ofAppDawnWindow::getWindowContext() {
 	return windowP;

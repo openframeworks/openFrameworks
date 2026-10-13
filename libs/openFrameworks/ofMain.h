@@ -82,6 +82,8 @@
     #if OF_USE_DAWN
         #include "ofAppDawnWindow.h"
         #include "ofWebGPURenderer.h"
+    #elif OF_USE_ANGLE
+        #include "ofAppMGLWindow.h"
     #else
         #include "ofAppGLFWWindow.h"
     #endif

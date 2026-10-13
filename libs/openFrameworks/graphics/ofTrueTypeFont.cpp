@@ -608,6 +608,7 @@ ofTrueTypeFont & ofTrueTypeFont::operator=(ofTrueTypeFont&& mom){
 void ofTrueTypeFont::unloadTextures(){
 	if(!bLoadedOk) return;
 	texAtlas.clear();
+	atlasPixels.clear();
 }
 
 //-----------------------------------------------------------
@@ -871,6 +872,11 @@ bool ofTrueTypeFont::load(const ofTrueTypeFontSettings & _settings){
 		x+= glyph.tW + border*2.0;
 	}
 
+#if OF_USE_DAWN
+	atlasPixels = atlasPixelsLuminanceAlpha;
+	bLoadedOk = true;
+	return true;
+#else
 	int maxSize;
 	glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxSize);
 	if(w > maxSize || h > maxSize){
@@ -890,6 +896,7 @@ bool ofTrueTypeFont::load(const ofTrueTypeFontSettings & _settings){
 		bLoadedOk = true;
 		return true;
 	}
+#endif
 }
 
 //-----------------------------------------------------------

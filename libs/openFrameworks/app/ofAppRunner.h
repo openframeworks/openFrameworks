@@ -6,7 +6,7 @@
 
 class ofRectangle;
 class ofAppBaseWindow;
-#if !OF_USE_DAWN
+#if !OF_USE_DAWN && !OF_USE_ANGLE
 class ofAppGLFWWindow;
 #endif
 class ofBaseApp;
@@ -29,7 +29,7 @@ void ofSetupOpenGL(const std::shared_ptr<Window> & windowPtr, int w, int h, ofWi
 	windowPtr->setup(settings);
 }
 
-#if !OF_USE_DAWN
+#if !OF_USE_DAWN && !OF_USE_ANGLE
 //special case so we preserve supplied settngs
 //TODO: remove me when we remove the ofSetupOpenGL legacy approach.
 void ofSetupOpenGL(const std::shared_ptr<ofAppGLFWWindow> & windowPtr, int w, int h, ofWindowMode screenMode);
