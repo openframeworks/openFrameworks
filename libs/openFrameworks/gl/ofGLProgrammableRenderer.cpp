@@ -341,16 +341,21 @@ void ofGLProgrammableRenderer::draw(const ofPolyline & poly) const {
 	if (poly.getVertices().empty()) return;
 
 #if defined(TARGET_OPENGLES)
-	// OpenGL ES path - direct vertex attrib arrays (fast for frequently updated polylines)
-	glEnableVertexAttribArray(ofShader::POSITION_ATTRIBUTE);
-	glVertexAttribPointer(ofShader::POSITION_ATTRIBUTE, 3, GL_FLOAT, GL_FALSE, sizeof(typename ofPolyline::VertexType), &poly[0]);
+	// OpenGL ES path - direct vertex attrib arrays (fast for frequently updated polylines).
+	// Only without the lines shaders: they build a triangle mesh from the line in
+	// draw(ofMesh), so a raw GL_LINE_STRIP draws nothing with them enabled
+	if (!areLinesShadersEnabled()) {
+		glEnableVertexAttribArray(ofShader::POSITION_ATTRIBUTE);
+		glVertexAttribPointer(ofShader::POSITION_ATTRIBUTE, 3, GL_FLOAT, GL_FALSE, sizeof(typename ofPolyline::VertexType), &poly[0]);
 
-	GLenum drawMode = poly.isClosed() ? GL_LINE_LOOP : GL_LINE_STRIP;
-	const_cast<ofGLProgrammableRenderer *>(this)->setAttributes(true, false, false, false, drawMode);
-	glDrawArrays(drawMode, 0, poly.size());
+		GLenum drawMode = poly.isClosed() ? GL_LINE_LOOP : GL_LINE_STRIP;
+		const_cast<ofGLProgrammableRenderer *>(this)->setAttributes(true, false, false, false, drawMode);
+		glDrawArrays(drawMode, 0, poly.size());
+		return;
+	}
+#endif
 
-#else
-	// Desktop GL path - use VBO mesh
+	// VBO mesh path
 	polylineMesh.getVertices() = poly.getVertices();
 	if (poly.isClosed()) {
 		if (polylineMesh.getNumVertices() > 1 && polylineMesh.getVertices().front() == polylineMesh.getVertices().back()) {
@@ -375,7 +380,6 @@ void ofGLProgrammableRenderer::draw(const ofPolyline & poly) const {
 	}
 	polylineMesh.setMode(poly.isClosed() ? OF_PRIMITIVE_LINE_LOOP : OF_PRIMITIVE_LINE_STRIP);
 	draw(polylineMesh, OF_MESH_FILL, false, false, false);
-#endif
 }
 
 
