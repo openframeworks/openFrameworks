@@ -152,9 +152,11 @@ static ofxiOSMGLViewController * _instanceRef = nil;
 	displayLink = nil;
 }
 
+#if !TARGET_OS_TV
 - (BOOL)prefersStatusBarHidden {
 	return YES;
 }
+#endif
 
 - (glm::vec2 *)getWindowPosition {
 	return &windowPos;

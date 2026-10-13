@@ -17,6 +17,11 @@
 #include "ofAppRunner.h"
 #include "ofUtils.h"
 #include "ofFileUtils.h"
+#if OF_USE_DAWN
+#include "ofxiOSDawnView.h"
+#elif OF_USE_ANGLE
+#include "ofxiOSMGLView.h"
+#endif
 
 @implementation ofxtvOSAppDelegate
 
@@ -43,6 +48,15 @@
     if ([appDelegateClassName isEqualToString:@"ofxtvOSAppDelegate"]) { // app delegate is not being extended.
         
         switch(ofxiOSGetOFWindow()->getWindowControllerType()) {
+#if OF_USE_DAWN
+            case DAWN_KIT:
+                self.uiViewController = [[ofxiOSDawnViewController alloc] initWithFrame:frame app:(ofxiOSApp *)ofGetAppPtr()];
+                break;
+#elif OF_USE_ANGLE
+            case ANGLE_KIT:
+                self.uiViewController = [[ofxiOSMGLViewController alloc] initWithFrame:frame app:(ofxiOSApp *)ofGetAppPtr()];
+                break;
+#endif
             case METAL_KIT:
                 NSLog(@"No MetalKit yet supported for openFrameworks: Falling back to GLKit");
             case GL_KIT:
@@ -67,7 +81,9 @@
 }
 
 - (void)applicationDidEnterBackground:(UIApplication *)application {
+#if !OF_USE_DAWN
     glFinish();
+#endif
 }
 
 - (void)applicationDidBecomeActive:(UIApplication *)application {

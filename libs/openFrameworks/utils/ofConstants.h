@@ -222,7 +222,6 @@ enum ofTargetPlatform{
 #endif
 
 #if defined(TARGET_OS_OSX) && !defined(TARGET_OF_IOS)
-    #define TARGET_GLFW_WINDOW
     #define OF_CAIRO
     #define OF_RTAUDIO
 	#ifndef __MACOSX_CORE__
@@ -231,8 +230,21 @@ enum ofTargetPlatform{
 	#ifndef OF_NO_FMOD
 		#define OF_NO_FMOD
 	#endif
-	#include "GL/glew.h"
-    #include "OpenGL/OpenGL.h"
+	#if OF_USE_ANGLE
+		// MetalANGLE implements GLES. Desktop glew and OpenGL.framework define the
+		// same gl* symbols, so this path includes ANGLE's GLES headers instead.
+		#define TARGET_OPENGLES
+		// GLES/gl.h emits ES1 entry points only when this is 1, and it does not
+		// set the default itself. ES2/ES3 headers set it after glTexEnvf is skipped.
+		#ifndef GL_GLES_PROTOTYPES
+		#define GL_GLES_PROTOTYPES 1
+		#endif
+		#include <angle_gl.h>
+	#else
+		#define TARGET_GLFW_WINDOW
+		#include "GL/glew.h"
+		#include "OpenGL/OpenGL.h"
+	#endif
 
 	#if defined(__LITTLE_ENDIAN__)
 		#define TARGET_LITTLE_ENDIAN		// intel cpu

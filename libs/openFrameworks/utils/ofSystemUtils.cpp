@@ -343,7 +343,9 @@ ofFileDialogResult ofSystemLoadDialog(std::string windowTitle, bool bFolderSelec
 	//----------------------------------------------------------------------------------------
 #if defined(TARGET_OS_MAC) && !TARGET_OS_IPHONE && !TARGET_OS_WATCH && !TARGET_OS_TV && defined(__OBJC__)
 	@autoreleasepool {
+#if !OF_USE_ANGLE
 		NSOpenGLContext *context = [NSOpenGLContext currentContext];
+#endif
 
 		NSOpenPanel * loadDialog = [NSOpenPanel openPanel];
 		[loadDialog setAllowsMultipleSelection:NO];
@@ -365,7 +367,9 @@ ofFileDialogResult ofSystemLoadDialog(std::string windowTitle, bool bFolderSelec
 		}
 
 		NSInteger buttonClicked = [loadDialog runModal];
+#if !OF_USE_ANGLE
 		[context makeCurrentContext];
+#endif
 		restoreAppWindowFocus();
 
 		if(buttonClicked == NSModalResponseOK) {
@@ -511,13 +515,17 @@ ofFileDialogResult ofSystemSaveDialog(std::string defaultName, std::string messa
 #if defined(TARGET_OS_MAC) && !TARGET_OS_IPHONE && !TARGET_OS_WATCH && !TARGET_OS_TV && defined(__OBJC__)
 	@autoreleasepool {
 		NSSavePanel * saveDialog = [NSSavePanel savePanel];
+#if !OF_USE_ANGLE
 		NSOpenGLContext *context = [NSOpenGLContext currentContext];
+#endif
 		[saveDialog setMessage:[NSString stringWithUTF8String:messageName.c_str()]];
 		[saveDialog setNameFieldStringValue:[NSString stringWithUTF8String:defaultName.c_str()]];
 
 		NSInteger buttonClicked = [saveDialog runModal];
 		restoreAppWindowFocus();
+#if !OF_USE_ANGLE
 		[context makeCurrentContext];
+#endif
 
 		if(buttonClicked == NSModalResponseOK){
 			results.filePath = std::string([[[saveDialog URL] path] UTF8String]);
