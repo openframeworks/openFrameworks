@@ -63,15 +63,18 @@ cmake --build build/core
 
 ## Options
 
+The Emscripten `PROJECT_EMSCRIPTEN_*` options have the same names and values as the
+makefiles' `config.make` options.
+
 | Option | Default | |
 |---|---|---|
 | `OF_BUILD_CORE` | `OFF` | build the core in this build even if a prebuilt one exists |
 | `OF_PLATFORM` | detected | `macos ios tvos emscripten linux64 linuxaarch64 linuxarmv7l linuxarmv6l vs msys2` |
 | `OF_USE_DAWN`, `OF_USE_ANGLE` | `OFF` | link `libs/dawn`, `libs/metalangle` |
-| `OF_EMSCRIPTEN_INITIAL_MEMORY` | `134217728` | |
-| `OF_EMSCRIPTEN_EMBIND_AOT` | `ON` | |
-| `OF_EMSCRIPTEN_TEMPLATE` | `project/emscripten/template.html` | HTML shell |
-| `OF_EMSCRIPTEN_MEMORY64` | `OFF` | wasm64, libs from `lib/emscripten/WASM64` |
+| `PROJECT_EMSCRIPTEN_WASM` | `32` | `64` for wasm64 (MEMORY64): libs from `lib/emscripten/WASM64`, core in `lib/emscripten/WASM64` |
+| `PROJECT_EMSCRIPTEN_TOTAL_MEMORY` | `134217728` | initial memory in bytes |
+| `PROJECT_EMSCRIPTEN_EMBIND_AOT` | `ON` | |
+| `PROJECT_EMSCRIPTEN_TEMPLATE` | `project/emscripten/template.html` | HTML shell |
 | `OF_WEBGL_VERSION` | `2` | `1` for a WebGL 1 build |
 | `OF_APPLE_DEVELOPMENT_TEAM` | | signing team for iOS / tvOS devices |
 
