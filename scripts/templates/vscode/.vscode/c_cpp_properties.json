@@ -111,7 +111,7 @@
 			"name": "Win32",
 			"includePath": [
 				"C:/msys64/mingw64/include/c++/**",
-				"C:/msys64/mingw64/i686-w64-mingw64/include",
+				"C:/msys64/mingw64/include",
 				"${OF_INCLUDE}",
 				"${OF_LIBS_INCLUDE}",
 				"${workspaceFolder}/src/**",
