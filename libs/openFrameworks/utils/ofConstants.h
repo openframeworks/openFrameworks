@@ -364,7 +364,8 @@ typedef TESSindex ofIndexType;
     #undef USE_FMOD
     #if defined(TARGET_OF_IOS) || defined(TARGET_OSX)
         #define OF_SOUND_PLAYER_AV_ENGINE
-    #elif defined(TARGET_WIN32)
+    #elif defined(TARGET_WIN32) && !defined(TARGET_MINGW)
+		// MSYS2 builds use OpenAL (below); the Media Foundation player is Visual Studio only
 		#define OF_SOUND_PLAYER_MEDIA_FOUNDATION
 	#endif
 #endif
