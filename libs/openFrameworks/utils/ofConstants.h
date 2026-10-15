@@ -329,7 +329,11 @@ typedef TESSindex ofIndexType;
 	#ifndef OF_NO_FMOD
 		#define OF_NO_FMOD
 	#endif
-	#include <arm64_neon.h> // intrinsics SIMD on https://learn.microsoft.com/en-us/cpp/intrinsics/arm64-intrinsics?view=msvc-170
+	#if defined(_MSC_VER)
+		#include <arm64_neon.h> // intrinsics SIMD on https://learn.microsoft.com/en-us/cpp/intrinsics/arm64-intrinsics?view=msvc-170
+	#else
+		#include <arm_neon.h> // MinGW / MSYS2 clangarm64 (arm64_neon.h is MSVC's)
+	#endif
 #endif
 
 #ifdef TARGET_OPENGLES
