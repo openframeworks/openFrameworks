@@ -50,7 +50,6 @@ PACKAGES=(
   "linux64 $lastversion master gcc6"
   "linuxarmv6l $lastversion master"
   "linuxaarch64 $lastversion master"
-  "msys2 $lastversion master mingw64"
   "msys2 $lastversion master clang64"
   "msys2 $lastversion master ucrt64"
   "vs $lastversion master"

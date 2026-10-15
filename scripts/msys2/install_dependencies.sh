@@ -53,8 +53,14 @@ resolveMsystem(){
 		clang64)    MINGW_PACKAGE_PREFIX="mingw-w64-clang-x86_64" ;;
 		clangarm64) MINGW_PACKAGE_PREFIX="mingw-w64-clang-aarch64" ;;
 		ucrt64)     MINGW_PACKAGE_PREFIX="mingw-w64-ucrt-x86_64" ;;
-		mingw64)    MINGW_PACKAGE_PREFIX="mingw-w64-x86_64" ;;
-		mingw32)    MINGW_PACKAGE_PREFIX="mingw-w64-i686" ;;
+		mingw64|mingw32)
+			# MSYS2 is retiring these environments; packages openFrameworks needs
+			# (e.g. rtaudio) are no longer built for them
+			echo "The MSYS2 ${msystem^^} environment is no longer supported by openFrameworks."
+			echo "Open an MSYS2 UCRT64 (recommended) or CLANG64 terminal and run this script again."
+			echo "https://www.msys2.org/docs/environments/"
+			exit 1
+			;;
 		*)
 			msystem="ucrt64"
 			MINGW_PACKAGE_PREFIX="mingw-w64-ucrt-x86_64"
@@ -118,7 +124,7 @@ resolveMsystem
 PACMAN=$(findPacman) || PACMAN=""
 if [[ -z "$PACMAN" ]]; then
 	echo "pacman is not on PATH in this shell (Git Bash / cmd / PowerShell)."
-	echo "MSYS2 may already be installed — open a UCRT64 / MINGW64 / CLANG64 terminal"
+	echo "MSYS2 may already be installed — open a UCRT64 / CLANG64 terminal"
 	echo "from the Start menu and re-run:"
 	echo "  scripts/msys2/install_dependencies.sh"
 	echo
@@ -160,8 +166,6 @@ MINGW_PACKAGES="assimp cairo curl freeimage \
 if [[ "$msystem" == "clang64" ]] || [[ "$msystem" == "clangarm64" ]] ; then
     MINGW_PACKAGES="clang $MINGW_PACKAGES"
 elif [[ "$msystem" == "ucrt64" ]]; then
-    MINGW_PACKAGES="gcc $MINGW_PACKAGES"
-elif [[ "$msystem" == "mingw64" ]]; then
     MINGW_PACKAGES="gcc $MINGW_PACKAGES"
 fi
 # gdb zlib ntldd-git

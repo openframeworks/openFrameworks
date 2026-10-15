@@ -65,7 +65,6 @@ jobs:
       fail-fast: false
       matrix:
         msystem:
-          - mingw64
           - ucrt64
           - clang64
         # - clangarm64

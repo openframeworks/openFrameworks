@@ -58,7 +58,8 @@ cd $(cat ~/.ofprojectgenerator/config)/scripts/dev
 ./create_package.sh linux64 $version $branch gcc6
 ./create_package.sh linuxarmv6l $version $branch
 ./create_package.sh linuxarmv7l $version $branch
-./create_package.sh msys2 $version $branch mingw64
+./create_package.sh msys2 $version $branch ucrt64
+./create_package.sh msys2 $version $branch clang64
 ./create_package.sh vs $version $branch
 ./create_package.sh vs_min $version $branch
 ./create_package.sh ios $version $branch
