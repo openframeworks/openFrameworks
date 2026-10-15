@@ -40,13 +40,14 @@ MSYS2 has several environments, each with its own shell and packages. openFramew
 
 - **UCRT64** (`C:\msys64\ucrt64.exe`), recommended, GCC
 - **CLANG64** (`C:\msys64\clang64.exe`), Clang
+- **CLANGARM64** (`C:\msys64\clangarm64.exe`), Clang, for Windows on ARM
 
 **MINGW64** and **MINGW32** are no longer supported: MSYS2 is retiring them, and packages openFrameworks needs (rtaudio) are no longer built for them.
-Use the same environment's shell for every step below, and download the openFrameworks package for that environment (`msys2_ucrt64` or `msys2_clang64`).
+Use the same environment's shell for every step below, and download the openFrameworks package for that environment (`msys2_ucrt64`, `msys2_clang64` or `msys2_clangarm64`).
 Many problems with openFrameworks on MSYS2 come from mixing environments.
 
 The instructions below use UCRT64 and assume MSYS2 is installed in `C:\msys64`.
-For CLANG64 use `clang64` instead of `ucrt64`; if MSYS2 is installed elsewhere, adapt the paths.
+For CLANG64 / CLANGARM64 use `clang64` / `clangarm64` instead of `ucrt64`; if MSYS2 is installed elsewhere, adapt the paths.
 
 Download and unzip the **qt creator / msys2** version of oF. 
 **DO NOT INSTALL** oF in a folder having space or other special character.

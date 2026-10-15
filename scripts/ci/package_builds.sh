@@ -52,6 +52,7 @@ PACKAGES=(
   "linuxaarch64 $lastversion master"
   "msys2 $lastversion master clang64"
   "msys2 $lastversion master ucrt64"
+  "msys2 $lastversion master clangarm64"
   "vs $lastversion master"
   "vs $lastversion master 64"
   "android $lastversion master windows"

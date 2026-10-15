@@ -60,6 +60,7 @@ fi
 #./create_package.sh msys2 $lastversion master mingw64
 ./create_package.sh msys2 $lastversion master clang64
 ./create_package.sh msys2 $lastversion master ucrt64
+./create_package.sh msys2 $lastversion master clangarm64
 ./create_package.sh vs $lastversion master
 ./create_package.sh vs $lastversion master 64
 # ./create_package.sh vs2019 $lastversion master 64
@@ -85,6 +86,7 @@ mv /var/www/versions/nightly/of_v${lastversion}_linux64_gcc6_release.tar.gz /var
 #mv /var/www/versions/nightly/of_v${lastversion}_msys2_mingw64_release.zip /var/www/versions/nightly/of_v${lastversion}_msys2_mingw64_nightly.zip
 mv /var/www/versions/nightly/of_v${lastversion}_msys2_clang64_release.zip /var/www/versions/nightly/of_v${lastversion}_msys2_clang64_nightly.zip
 mv /var/www/versions/nightly/of_v${lastversion}_msys2_ucrt64_release.zip /var/www/versions/nightly/of_v${lastversion}_msys2_ucrt64_nightly.zip
+mv /var/www/versions/nightly/of_v${lastversion}_msys2_clangarm64_release.zip /var/www/versions/nightly/of_v${lastversion}_msys2_clangarm64_nightly.zip
 mv /var/www/versions/nightly/of_v${lastversion}_vs_release.zip /var/www/versions/nightly/of_v${lastversion}_vs_nightly.zip
 mv /var/www/versions/nightly/of_v${lastversion}_vs_x64_release.zip /var/www/versions/nightly/of_v${lastversion}_vs_x64_nightly.zip
 mv /var/www/versions/nightly/of_v${lastversion}_vs2019_x64_release.zip /var/www/versions/nightly/of_v${lastversion}_vs2019_x64_nightly.zip
