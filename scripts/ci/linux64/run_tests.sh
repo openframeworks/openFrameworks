@@ -2,6 +2,14 @@
 # set -ev
 ROOT=${TRAVIS_BUILD_DIR:-"$( cd "$(dirname "$0")/../../.." ; pwd -P )"}
 
+# fail the job when a build fails, with an error annotation naming what failed
+build_or_fail(){
+	if ! make "$@"; then
+		echo "::error title=Build failed::make $* failed in ${PWD#$ROOT/}"
+		exit 1
+	fi
+}
+
 # if [ "$OPT" == "qbs" ]; then
 	# exit 0
 # else
@@ -21,7 +29,7 @@ for group in *; do
 				cp ../../../scripts/templates/linux/Makefile .
 				cp ../../../scripts/templates/linux/config.make .
 				sleep 0.3 
-				make -j2 Debug
+				build_or_fail -j2 Debug
 				sleep 0.3 
 				cd bin
 				binname=$(basename ${test})
