@@ -401,16 +401,17 @@ downloader() {
             echo "  [downloader] No URLS to download, continue..."
         fi
     else
+        local download_status=0
         if [[ "${SILENT}" == 1 ]]; then
             if [[ $WGET2 == 1 ]] && [[ $WGET2_INSTALLED == 1 ]]; then
                 echo ""
-                wget2 -N -nv --no-tcp-fastopen --progress=bar --tries=${RETRY_MAX} --max-redirect=${MAX_REDIRECTS} --retry-connrefused --timeout=1500 --waitretry=${RETRY_DELAY_S} ${EXTRA_ARGS} ${FINAL_EXTRA_ARGS} ${URLS_TO_DOWNLOAD}
+                wget2 -N -nv --no-tcp-fastopen --progress=bar --tries=${RETRY_MAX} --max-redirect=${MAX_REDIRECTS} --retry-connrefused --timeout=1500 --waitretry=${RETRY_DELAY_S} ${EXTRA_ARGS} ${FINAL_EXTRA_ARGS} ${URLS_TO_DOWNLOAD} || download_status=$?
             elif [[ $CURL == 1 ]] && [[ $CURL_INSTALLED == 1 ]]; then
                 echo
-                curl -Z -L --silent --retry ${RETRY_MAX} --retry-delay ${RETRY_DELAY_S} --max-redirs ${MAX_REDIRECTS} --header "Connection: close" --progress-bar ${EXTRA_ARGS} ${FINAL_EXTRA_ARGS} ${URLS_TO_DOWNLOAD}
+                curl -Z -L --fail --fail-early --show-error --silent --retry ${RETRY_MAX} --retry-delay ${RETRY_DELAY_S} --max-redirs ${MAX_REDIRECTS} --header "Connection: close" --progress-bar ${EXTRA_ARGS} ${FINAL_EXTRA_ARGS} ${URLS_TO_DOWNLOAD} || download_status=$?
             elif [[ $WGET == 1 ]] && [[ $WGET_INSTALLED == 1 ]]; then
                 echo
-                wget -nv -N --tries=${RETRY_MAX} --retry-connrefused --waitretry=${RETRY_DELAY_S} ${EXTRA_ARGS} ${FINAL_EXTRA_ARGS} ${URLS_TO_DOWNLOAD}
+                wget -nv -N --tries=${RETRY_MAX} --retry-connrefused --waitretry=${RETRY_DELAY_S} ${EXTRA_ARGS} ${FINAL_EXTRA_ARGS} ${URLS_TO_DOWNLOAD} || download_status=$?
             else
                 echo $ERROR_MSG
                 exit 1
@@ -421,24 +422,28 @@ downloader() {
                     echo "  [downloader] [wget2] urls:[$URLS_TO_DOWNLOAD] args:[$EXTRA_ARGS $FINAL_EXTRA_ARGS"
                 fi
                 echo ""
-                wget2 -N -c --no-tcp-fastopen --progress=bar --force-progress --tries=${RETRY_MAX} --max-redirect=${MAX_REDIRECTS} --retry-connrefused --waitretry=${RETRY_DELAY_S} --timeout=1500 ${EXTRA_ARGS} ${FINAL_EXTRA_ARGS} ${URLS_TO_DOWNLOAD}
+                wget2 -N -c --no-tcp-fastopen --progress=bar --force-progress --tries=${RETRY_MAX} --max-redirect=${MAX_REDIRECTS} --retry-connrefused --waitretry=${RETRY_DELAY_S} --timeout=1500 ${EXTRA_ARGS} ${FINAL_EXTRA_ARGS} ${URLS_TO_DOWNLOAD} || download_status=$?
             elif [[ $CURL == 1 ]] && [[ $CURL_INSTALLED == 1 ]]; then
                 if [[ $VERBOSE == 1 ]]; then
                     echo "  [downloader] [cURL] urls:[$URLS_TO_DOWNLOAD] args:[$EXTRA_ARGS $FINAL_EXTRA_ARGS ${CONNECTION_EXTRA_ARGS[@]}]"
                 fi
                 echo
-                curl -Z -L --retry ${RETRY_MAX} --retry-delay ${RETRY_DELAY_S} --max-redirs ${MAX_REDIRECTS} --progress-bar --header "Connection: close" ${EXTRA_ARGS} ${FINAL_EXTRA_ARGS} ${URLS_TO_DOWNLOAD}
+                curl -Z -L --fail --fail-early --show-error --retry ${RETRY_MAX} --retry-delay ${RETRY_DELAY_S} --max-redirs ${MAX_REDIRECTS} --progress-bar --header "Connection: close" ${EXTRA_ARGS} ${FINAL_EXTRA_ARGS} ${URLS_TO_DOWNLOAD} || download_status=$?
 
             elif [[ $WGET == 1 ]] && [[ $WGET_INSTALLED == 1 ]]; then
                 if [[ $VERBOSE == 1 ]]; then
                     echo "  [downloader] [wget] [$FILENAME] urls:[$URLS_TO_DOWNLOAD] args:[$EXTRA_ARGS $FINAL_EXTRA_ARGS]"
                 fi
                 echo
-                wget -nv --progress=bar -N --tries=${RETRY_MAX} --retry-connrefused --waitretry=${RETRY_DELAY_S} ${EXTRA_ARGS} ${FINAL_EXTRA_ARGS} ${URLS_TO_DOWNLOAD}
+                wget -nv --progress=bar -N --tries=${RETRY_MAX} --retry-connrefused --waitretry=${RETRY_DELAY_S} ${EXTRA_ARGS} ${FINAL_EXTRA_ARGS} ${URLS_TO_DOWNLOAD} || download_status=$?
             else
                 echo $ERROR_MSG
                 exit 1
             fi
+        fi
+        if [ "$download_status" -ne 0 ]; then
+            echo "  [downloader] Download failed (exit $download_status); not installing libraries." >&2
+            return "$download_status"
         fi
         if [[ "$CLOSE_CONNECTION" == "1" ]]; then
             if [[ $CURL == 1 ]] && [[ $CURL_INSTALLED == 1 ]] || [[ $CURL == 1 && $WGET2 == 1 ]]; then
@@ -452,10 +457,12 @@ downloader() {
                     if [[ $VERBOSE == 1 ]]; then
                         echo "  [downloader] Closing the ports yarr url:[$FIRST_URL]"
                     fi
-                    curl -I -L --retry-connrefused --insecure --silent --head --max-time 1 --retry ${RETRY_MAX} ${CLOSE_EXTRA_ARGS} --no-keepalive --header "Connection: close" --retry-delay ${RETRY_DELAY_S} --max-redirs ${MAX_REDIRECTS} ${FIRST_URL}
+                    curl -I -L --retry-connrefused --insecure --silent --head --max-time 1 --retry ${RETRY_MAX} ${CLOSE_EXTRA_ARGS} --no-keepalive --header "Connection: close" --retry-delay ${RETRY_DELAY_S} --max-redirs ${MAX_REDIRECTS} ${FIRST_URL} || true
                 fi
             fi
         fi
     fi
+
+    return 0
 
 }
