@@ -10,7 +10,7 @@
 				"executable": "C:\\msys64\\msys2_shell.cmd",
 				"args": [
 					"-defterm",
-					"-mingw64",
+					"-ucrt64",
 					"-no-start",
 					"-here",
 					"-shell bash -c"

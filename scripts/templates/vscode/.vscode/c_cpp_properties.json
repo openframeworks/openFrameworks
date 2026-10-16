@@ -110,8 +110,8 @@
 		{
 			"name": "Win32",
 			"includePath": [
-				"C:/msys64/mingw64/include/c++/**",
-				"C:/msys64/mingw64/include",
+				"C:/msys64/ucrt64/include/c++/**",
+				"C:/msys64/ucrt64/include",
 				"${OF_INCLUDE}",
 				"${OF_LIBS_INCLUDE}",
 				"${workspaceFolder}/src/**",
@@ -130,7 +130,7 @@
 				]
 			},
 			"intelliSenseMode": "clang-x64",
-			"compilerPath": "C:/msys64/mingw64/bin/g++.exe",
+			"compilerPath": "C:/msys64/ucrt64/bin/g++.exe",
 			"configurationProvider": "ms-vscode.makefile-tools",
 			"mergeConfigurations": true,
 			"cStandard": "c17",
