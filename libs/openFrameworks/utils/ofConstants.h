@@ -145,6 +145,12 @@ enum ofTargetPlatform{
 	#define GLEW_NO_GLU
     #define TARGET_GLFW_WINDOW
     #define OF_CAIRO
+	// wglew.h needs the Windows types; glew.h only includes windows.h when
+	// APIENTRY isn't defined yet (it is after some headers, e.g. OpenCV on ARM64)
+	#ifndef WIN32_LEAN_AND_MEAN
+		#define WIN32_LEAN_AND_MEAN
+	#endif
+	#include <windows.h>
 	#include "GL/glew.h"
 	#include "GL/wglew.h"
 	#define OF_RTAUDIO
