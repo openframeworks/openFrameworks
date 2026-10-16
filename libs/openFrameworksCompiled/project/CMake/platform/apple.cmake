@@ -31,6 +31,20 @@ function(of_apple_info_plist target project_plist fallback_plist)
 	if(NOT plist_text MATCHES "CFBundleExecutable")
 		file(READ "${fallback_plist}" plist_text)
 	endif()
+	# APP_VERSION / APP_BUILD, like the makefiles' config.make; the version
+	# falls back to project(... VERSION x.y)
+	if(APP_VERSION)
+		set(version "${APP_VERSION}")
+	elseif(PROJECT_VERSION)
+		set(version "${PROJECT_VERSION}")
+	else()
+		set(version 1.0)
+	endif()
+	if(APP_BUILD)
+		set(build "${APP_BUILD}")
+	else()
+		set(build 1)
+	endif()
 	string(MAKE_C_IDENTIFIER "${name}" bundle_name)
 	string(REPLACE "_" "-" bundle_name "${bundle_name}")
 	set(identifier "cc.openFrameworks.${bundle_name}")
@@ -40,8 +54,8 @@ function(of_apple_info_plist target project_plist fallback_plist)
 			"PRODUCT_BUNDLE_IDENTIFIER=${identifier}"
 			"TARGET_NAME=${name}"
 			"PRODUCT_NAME=${name}"
-			"MARKETING_VERSION=1.0"
-			"CURRENT_PROJECT_VERSION=1"
+			"MARKETING_VERSION=${version}"
+			"CURRENT_PROJECT_VERSION=${build}"
 			"HIGH_RESOLUTION_CAPABLE=true"
 			"MACOSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET}")
 		string(REGEX REPLACE "=.*" "" key "${pair}")
@@ -58,5 +72,7 @@ function(of_apple_info_plist target project_plist fallback_plist)
 		MACOSX_BUNDLE ON
 		MACOSX_BUNDLE_INFO_PLIST "${generated}"
 		MACOSX_BUNDLE_GUI_IDENTIFIER "${identifier}"
-		XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER "${identifier}")
+		XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER "${identifier}"
+		XCODE_ATTRIBUTE_MARKETING_VERSION "${version}"
+		XCODE_ATTRIBUTE_CURRENT_PROJECT_VERSION "${build}")
 endfunction()

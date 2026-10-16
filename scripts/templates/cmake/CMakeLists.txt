@@ -18,6 +18,11 @@ if(NOT OF_ROOT)
 endif()
 include("${OF_ROOT}/libs/openFrameworksCompiled/project/CMake/openFrameworks.cmake")
 
+# app version and build number (macOS / iOS / tvOS Info.plist), like APP_VERSION /
+# APP_BUILD in a config.make; the version defaults to project(... VERSION), then 1.0
+# set(APP_VERSION 1.0)
+# set(APP_BUILD 1)
+
 # sources come from src/, addons from addons.make; or list them:
 #   of_add_app(${OF_APP_NAME} ADDONS ofxGui ofxOsc)
 of_add_app(${OF_APP_NAME})
