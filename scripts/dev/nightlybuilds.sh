@@ -57,9 +57,10 @@ fi
 #./create_package.sh linux64 $lastversion master gcc5
 ./create_package.sh linux64 $lastversion master gcc6
 #./create_package.sh msys2 $lastversion master mingw32
-./create_package.sh msys2 $lastversion master mingw64
+#./create_package.sh msys2 $lastversion master mingw64
 ./create_package.sh msys2 $lastversion master clang64
 ./create_package.sh msys2 $lastversion master ucrt64
+./create_package.sh msys2 $lastversion master clangarm64
 ./create_package.sh vs $lastversion master
 ./create_package.sh vs $lastversion master 64
 # ./create_package.sh vs2019 $lastversion master 64
@@ -82,9 +83,10 @@ mv *.zip /var/www/versions/nightly
 #mv /var/www/versions/nightly/of_v${lastversion}_linux64_gcc5_release.tar.gz /var/www/versions/nightly/of_v${lastversion}_linux64_gcc5_nightly.tar.gz
 mv /var/www/versions/nightly/of_v${lastversion}_linux64_gcc6_release.tar.gz /var/www/versions/nightly/of_v${lastversion}_linux64_gcc6_nightly.tar.gz
 #mv /var/www/versions/nightly/of_v${lastversion}_msys2_mingw32_release.zip /var/www/versions/nightly/of_v${lastversion}_msys2_mingw32_nightly.zip
-mv /var/www/versions/nightly/of_v${lastversion}_msys2_mingw64_release.zip /var/www/versions/nightly/of_v${lastversion}_msys2_mingw64_nightly.zip
+#mv /var/www/versions/nightly/of_v${lastversion}_msys2_mingw64_release.zip /var/www/versions/nightly/of_v${lastversion}_msys2_mingw64_nightly.zip
 mv /var/www/versions/nightly/of_v${lastversion}_msys2_clang64_release.zip /var/www/versions/nightly/of_v${lastversion}_msys2_clang64_nightly.zip
 mv /var/www/versions/nightly/of_v${lastversion}_msys2_ucrt64_release.zip /var/www/versions/nightly/of_v${lastversion}_msys2_ucrt64_nightly.zip
+mv /var/www/versions/nightly/of_v${lastversion}_msys2_clangarm64_release.zip /var/www/versions/nightly/of_v${lastversion}_msys2_clangarm64_nightly.zip
 mv /var/www/versions/nightly/of_v${lastversion}_vs_release.zip /var/www/versions/nightly/of_v${lastversion}_vs_nightly.zip
 mv /var/www/versions/nightly/of_v${lastversion}_vs_x64_release.zip /var/www/versions/nightly/of_v${lastversion}_vs_x64_nightly.zip
 mv /var/www/versions/nightly/of_v${lastversion}_vs2019_x64_release.zip /var/www/versions/nightly/of_v${lastversion}_vs2019_x64_nightly.zip

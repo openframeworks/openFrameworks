@@ -145,6 +145,12 @@ enum ofTargetPlatform{
 	#define GLEW_NO_GLU
     #define TARGET_GLFW_WINDOW
     #define OF_CAIRO
+	// wglew.h needs the Windows types; glew.h only includes windows.h when
+	// APIENTRY isn't defined yet (it is after some headers, e.g. OpenCV on ARM64)
+	#ifndef WIN32_LEAN_AND_MEAN
+		#define WIN32_LEAN_AND_MEAN
+	#endif
+	#include <windows.h>
 	#include "GL/glew.h"
 	#include "GL/wglew.h"
 	#define OF_RTAUDIO
@@ -329,7 +335,11 @@ typedef TESSindex ofIndexType;
 	#ifndef OF_NO_FMOD
 		#define OF_NO_FMOD
 	#endif
-	#include <arm64_neon.h> // intrinsics SIMD on https://learn.microsoft.com/en-us/cpp/intrinsics/arm64-intrinsics?view=msvc-170
+	#if defined(_MSC_VER)
+		#include <arm64_neon.h> // intrinsics SIMD on https://learn.microsoft.com/en-us/cpp/intrinsics/arm64-intrinsics?view=msvc-170
+	#else
+		#include <arm_neon.h> // MinGW / MSYS2 clangarm64 (arm64_neon.h is MSVC's)
+	#endif
 #endif
 
 #ifdef TARGET_OPENGLES
@@ -360,7 +370,8 @@ typedef TESSindex ofIndexType;
     #undef USE_FMOD
     #if defined(TARGET_OF_IOS) || defined(TARGET_OSX)
         #define OF_SOUND_PLAYER_AV_ENGINE
-    #elif defined(TARGET_WIN32)
+    #elif defined(TARGET_WIN32) && !defined(TARGET_MINGW)
+		// MSYS2 builds use OpenAL (below); the Media Foundation player is Visual Studio only
 		#define OF_SOUND_PLAYER_MEDIA_FOUNDATION
 	#endif
 #endif

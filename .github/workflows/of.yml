@@ -60,22 +60,21 @@ jobs:
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   build-msys2:
-    runs-on: windows-latest
+    runs-on: ${{ matrix.runner }}
     strategy:
       fail-fast: false
       matrix:
-        msystem:
-          - mingw64
-          - ucrt64
-          - clang64
-        # - clangarm64
+        include:
+          - { msystem: ucrt64, runner: windows-latest }
+          - { msystem: clang64, runner: windows-latest }
+          - { msystem: clangarm64, runner: windows-11-arm }
     defaults:
       run:
         shell: msys2 {0}
     steps:
       - name: Check system
         shell: bash
-        run: gcc -v
+        run: gcc -v || true
       - uses: actions/checkout@v6
       - name: ccache
         uses: hendrikmuhs/ccache-action@v1.2.23
