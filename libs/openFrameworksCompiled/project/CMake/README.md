@@ -76,6 +76,8 @@ makefiles' `config.make` options.
 | `PROJECT_EMSCRIPTEN_EMBIND_AOT` | `ON` | |
 | `PROJECT_EMSCRIPTEN_TEMPLATE` | `project/emscripten/template.html` | HTML shell |
 | `OF_WEBGL_VERSION` | `2` | `1` for a WebGL 1 build |
+| `APP_VERSION` | `project()` version, else `1.0` | app version (macOS / iOS / tvOS `CFBundleShortVersionString`), same as the makefiles' `config.make` |
+| `APP_BUILD` | `1` | build number (`CFBundleVersion`) |
 | `OF_APPLE_DEVELOPMENT_TEAM` | | signing team for iOS / tvOS devices |
 
 ## Addons
