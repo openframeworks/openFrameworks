@@ -2,6 +2,15 @@
 # Native Linux unit tests only. Other groups have their own CI jobs and
 # often need a display, NDK, or emscripten toolchain.
 ROOT=${TRAVIS_BUILD_DIR:-"$( cd "$(dirname "$0")/../../../.." ; pwd -P )"}
+
+# fail the job when a build fails, with an error annotation naming what failed
+build_or_fail(){
+	if ! make "$@"; then
+		echo "::error title=Build failed::make $* failed in ${PWD#$ROOT/}"
+		exit 1
+	fi
+}
+
 TEMPLATE="$ROOT/scripts/templates/linux64"
 
 # if [ "$OPT" == "qbs" ]; then
@@ -25,7 +34,7 @@ for GROUP in *; do
 				cp "$TEMPLATE/Makefile" .
 				cp "$TEMPLATE/config.make" .
 				sleep 0.3
-				make -j2 Debug
+				build_or_fail -j2 Debug
 				sleep 0.3
 				cd bin
 				BINNAME=$(basename ${TEST})

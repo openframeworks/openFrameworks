@@ -78,10 +78,29 @@ endif
 PLATFORM_CFLAGS = -std=c17 -fPIC $(CFLAG_PLATFORM_PTHREAD)
 PLATFORM_CXXFLAGS = -Wall -std=c++23 -fPIC -Wno-warn-absolute-paths $(CFLAG_PLATFORM_PTHREAD)
 
+################################################################################
+# WASM32 / WASM64
+#   PROJECT_EMSCRIPTEN_WASM = 32 (default) or 64, in the project's config.make
+#   or on the command line: make PROJECT_EMSCRIPTEN_WASM=64
+#   (EMSCRIPTEN_MEMORY64=1 also selects 64).
+#   wasm64 needs the 64-bit libs: BITS=64 scripts/emscripten/download_libs.sh
+#   wasm32 uses libs/*/lib/emscripten/WASM and the core in lib/emscripten;
+#   wasm64 uses libs/*/lib/emscripten/WASM64 and the core in lib/emscripten/WASM64
+################################################################################
 ifdef EMSCRIPTEN_MEMORY64
-	PLATFORM_CFLAGS += -s MEMORY64=1
-	PLATFORM_CXXFLAGS += -s MEMORY64=1
-	PLATFORM_LDFLAGS += -s MEMORY64=1 -mwasm64
+	PROJECT_EMSCRIPTEN_WASM ?= 64
+endif
+PROJECT_EMSCRIPTEN_WASM ?= 32
+ifeq ($(PROJECT_EMSCRIPTEN_WASM),64)
+	ABI_PATH = WASM64
+	ABI = WASM64
+	OF_CORE_LIB_PATH := $(OF_LIBS_OF_COMPILED_PATH)/lib/$(PLATFORM_LIB_SUBPATH)/WASM64
+	PLATFORM_CFLAGS += -sMEMORY64=1
+	PLATFORM_CXXFLAGS += -sMEMORY64=1
+else ifeq ($(PROJECT_EMSCRIPTEN_WASM),32)
+	ABI_PATH = WASM
+else
+$(error PROJECT_EMSCRIPTEN_WASM must be 32 or 64, not "$(PROJECT_EMSCRIPTEN_WASM)")
 endif
 
 ################################################################################
@@ -89,8 +108,10 @@ endif
 # OFF by default (recommended). It frequently breaks addons (FreeImage, ofxJSON, etc.).
 # Set PROJECT_EMSCRIPTEN_EMBIND_AOT=1 in your project/config.make or pass it to make
 # if you need CSP compliance and know your code is fully compatible.
+# It also needs at least one EMSCRIPTEN_BINDINGS block: with none (OF core has
+# none) the link fails with "expected to find pattern <<< EMBIND_AOT_INVOKERS >>>".
 ################################################################################
-PROJECT_EMSCRIPTEN_EMBIND_AOT ?= 1
+PROJECT_EMSCRIPTEN_EMBIND_AOT ?= 0
 
 ################################################################################
 # PLATFORM LDFLAGS
@@ -108,6 +129,10 @@ endif
 
 CUR_CC = $(CC)
 CC := $(CUR_CC) -r
+ifeq ($(PROJECT_EMSCRIPTEN_WASM),64)
+	# the core's relocatable link (emcc -r) needs to know the objects are wasm64
+	CC := $(CC) -sMEMORY64=1
+endif
 
 ifdef USE_CCACHE
 	ifeq ($(findstring ccache, $(CC)),)
@@ -136,11 +161,19 @@ PLATFORM_LDFLAGS += -s AUTO_JS_LIBRARIES=1
 PLATFORM_LDFLAGS += -s VERBOSE=1
 
 PLATFORM_LDFLAGS +=  $(PLATFORM_PTHREAD)
+PLATFORM_LDFLAGS += -s AUDIO_WORKLET=1 -s WASM_WORKERS=1 -s ENVIRONMENT="web,worker"
+ifeq ($(PROJECT_EMSCRIPTEN_WASM),64)
+	PLATFORM_LDFLAGS += -sMEMORY64=1
+endif
 
 PLATFORM_LDFLAGS += --js-library $(OF_ADDONS_PATH)/ofxEmscripten/libs/html5video/lib/emscripten/library_html5video.js
-# PLATFORM_LDFLAGS += --js-library $(OF_ADDONS_PATH)/ofxEmscripten/libs/html5audio/lib/emscripten/library_html5audio.js
+PLATFORM_LDFLAGS += --pre-js $(OF_ADDONS_PATH)/ofxEmscripten/libs/html5video/lib/emscripten/recordVideo.js
+PLATFORM_LDFLAGS += --pre-js $(OF_ADDONS_PATH)/ofxEmscripten/libs/html5video/lib/emscripten/fix-webm-duration.js
+PLATFORM_LDFLAGS += --post-js $(OF_ADDONS_PATH)/ofxEmscripten/libs/html5audio/lib/emscripten/library_audioDeviceSelect.js
+PLATFORM_LDFLAGS += --js-library $(OF_ADDONS_PATH)/ofxEmscripten/libs/html5audio/lib/emscripten/library_html5audio.js
 
-PLATFORM_LDFLAGS += -s MAIN_MODULE=1 -DEMCC_FORCE_STDLIBS=1
+# no MAIN_MODULE: dynamic linking is not supported with WASM_WORKERS (audioWorklet);
+# EXPORT_ALL below still exports every symbol for the --js-library / --pre-js code
 PLATFORM_LDFLAGS += -s EXPORT_ALL=1
 PLATFORM_LDFLAGS += -s NO_DYNAMIC_EXECUTION=1
 PLATFORM_LDFLAGS += -s ABORT_ON_WASM_EXCEPTIONS=0
