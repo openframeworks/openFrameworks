@@ -45,6 +45,12 @@
 #endif
 #include "ofxiOSGLKView.h"
 #include "ofxiOSEAGLView.h"
+#if OF_USE_DAWN
+#include "ofWebGPURenderer.h"
+#include "ofxiOSDawnView.h"
+#elif OF_USE_ANGLE
+#include "ofxiOSMGLView.h"
+#endif
 
 //----------------------------------------------------------------------------------- instance.
 static ofAppiOSWindow * _instance = NULL;
@@ -106,11 +112,23 @@ void ofAppiOSWindow::setup() {
 		settings.setupOrientation = OF_ORIENTATION_DEFAULT;
 	}
 	setOrientation(settings.setupOrientation);
+#if OF_USE_DAWN
+	currentRenderer = std::shared_ptr<ofBaseRenderer>(new ofWebGPURenderer(this));
+	settings.windowControllerType = ofxiOSWindowControllerType::DAWN_KIT;
+#elif OF_USE_ANGLE
 	if(settings.glesVersion >= ESRendererVersion_20) {
 		currentRenderer = std::shared_ptr<ofBaseRenderer>(new ofGLProgrammableRenderer(this));
 	} else {
 		currentRenderer = std::shared_ptr<ofBaseRenderer>(new ofGLRenderer(this));
 	}
+	settings.windowControllerType = ofxiOSWindowControllerType::ANGLE_KIT;
+#else
+	if(settings.glesVersion >= ESRendererVersion_20) {
+		currentRenderer = std::shared_ptr<ofBaseRenderer>(new ofGLProgrammableRenderer(this));
+	} else {
+		currentRenderer = std::shared_ptr<ofBaseRenderer>(new ofGLRenderer(this));
+	}
+#endif
 	
 	hasExited = false;
 }
@@ -170,6 +188,13 @@ void ofAppiOSWindow::setWindowShape(int w, int h) {
 glm::vec2	ofAppiOSWindow::getWindowPosition() {
 	if(settings.windowControllerType == METAL_KIT || settings.windowControllerType == GL_KIT)
 		return *[[ofxiOSGLKView getInstance] getWindowPosition];
+#if OF_USE_DAWN
+	else if(settings.windowControllerType == DAWN_KIT && [ofxiOSDawnView getInstance])
+		return *[[ofxiOSDawnView getInstance] getWindowPosition];
+#elif OF_USE_ANGLE
+	else if(settings.windowControllerType == ANGLE_KIT && [ofxiOSMGLViewController getInstance])
+		return *[[ofxiOSMGLViewController getInstance] getWindowPosition];
+#endif
 	else
 		return *[[ofxiOSEAGLView getInstance] getWindowPosition];
 }
@@ -177,6 +202,13 @@ glm::vec2	ofAppiOSWindow::getWindowPosition() {
 glm::vec2	ofAppiOSWindow::getWindowSize() {
 	if(settings.windowControllerType == METAL_KIT || settings.windowControllerType == GL_KIT)
 		return *[[ofxiOSGLKView getInstance] getWindowSize];
+#if OF_USE_DAWN
+	else if(settings.windowControllerType == DAWN_KIT && [ofxiOSDawnView getInstance])
+		return *[[ofxiOSDawnView getInstance] getWindowSize];
+#elif OF_USE_ANGLE
+	else if(settings.windowControllerType == ANGLE_KIT && [ofxiOSMGLViewController getInstance])
+		return *[[ofxiOSMGLViewController getInstance] getWindowSize];
+#endif
 	else
 		return *[[ofxiOSEAGLView getInstance] getWindowSize];
 }
@@ -184,6 +216,13 @@ glm::vec2	ofAppiOSWindow::getWindowSize() {
 glm::vec2	ofAppiOSWindow::getScreenSize() {
 	if(settings.windowControllerType == METAL_KIT || settings.windowControllerType == GL_KIT)
 		return *[[ofxiOSGLKView getInstance] getScreenSize];
+#if OF_USE_DAWN
+	else if(settings.windowControllerType == DAWN_KIT && [ofxiOSDawnView getInstance])
+		return *[[ofxiOSDawnView getInstance] getScreenSize];
+#elif OF_USE_ANGLE
+	else if(settings.windowControllerType == ANGLE_KIT && [ofxiOSMGLViewController getInstance])
+		return *[[ofxiOSMGLViewController getInstance] getScreenSize];
+#endif
 	else
 		return *[[ofxiOSEAGLView getInstance] getScreenSize];
 }

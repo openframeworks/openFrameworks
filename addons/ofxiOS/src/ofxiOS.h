@@ -48,6 +48,12 @@
 #include "ofxiOSGLKViewController.h"
 #include "ofxiOSGLKView.h"
 #include "ofxiOSEAGLView.h"
+#if OF_USE_DAWN
+#include "ofxiOSDawnView.h"
+#include "ofWebGPURenderer.h"
+#elif OF_USE_ANGLE
+#include "ofxiOSMGLView.h"
+#endif
 #include "ofxiOSApp.h"
 #include "ofxiOSExtras.h"
 

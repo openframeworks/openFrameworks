@@ -373,7 +373,7 @@
 				"CLANG_WARN_CONSTANT_CONVERSION": "YES",
 				"GCC_NO_COMMON_BLOCKS": "YES",
 				"MARKETING_VERSION": "1.0",
-				"CODE_SIGN_ENTITLEMENTS": "emptymacOSExample/emptymacOSExample.entitlements",
+				"CODE_SIGN_ENTITLEMENTS": "of.entitlements",
 				"CLANG_WARN_OBJC_ROOT_CLASS": "YES_ERROR",
 				"PRODUCT_NAME": "$(TARGET_NAME)",
 				"SUPPORTED_PLATFORMS": "appletvos appletvsimulator iphoneos iphonesimulator macosx xros xrsimulator",
@@ -392,7 +392,7 @@
 				"CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER": "YES",
 				"CLANG_ENABLE_OBJC_WEAK": "YES",
 				"CLANG_WARN_STRICT_PROTOTYPES": "YES",
-				"ENABLE_USER_SCRIPT_SANDBOXING": "YES",
+				"ENABLE_USER_SCRIPT_SANDBOXING": "NO",
 				"GCC_WARN_ABOUT_RETURN_TYPE": "YES_ERROR",
 				"GCC_WARN_UNUSED_FUNCTION": "YES",
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]": "YES",
@@ -407,7 +407,8 @@
 					"$(inherited)"
 				],
 				"CLANG_WARN_OBJC_LITERAL_CONVERSION": "YES",
-				"PRODUCT_BUNDLE_IDENTIFIER": "com.openFrameworks.emptyExample"
+				"PRODUCT_BUNDLE_IDENTIFIER": "com.openFrameworks.emptyExample",
+				"OTHER_LDFLAGS": "-ObjC"
 			},
 			"name": "Debug"
 		},
@@ -446,11 +447,6 @@
 				"FRAMEWORK_SEARCH_PATHS": "$(inherited)",
 				"COPY_PHASE_STRIP": "NO",
 				"ARCHS": "$(ARCHS_STANDARD)",
-				"OTHER_LDFLAGS": [
-					"$(OF_CORE_LIBS)",
-					"$(OF_CORE_FRAMEWORKS)",
-					"$(LIB_OF_DEBUG)"
-				],
 				"INFOPLIST_KEY_LSApplicationCategoryType": "public.app-category.games",
 				"LIBRARY_SEARCH_PATHS": "$(inherited)",
 				"INFOPLIST_KEY_NSMicrophoneUsageDescription": "This app needs to access the microphone"
@@ -573,7 +569,8 @@
 				"BF6278092BADE950008864C1",
 				"BF6277F32BADE870008864C1",
 				"BF6277F42BADE870008864C1",
-				"BF6277F52BADE870008864C1"
+				"BF6277F52BADE870008864C1",
+				"BF6277F82BADE870008864C1"
 			],
 			"dependencies": [],
 			"name": "emptyExample",
@@ -940,7 +937,7 @@
 				"CLANG_WARN_CONSTANT_CONVERSION": "YES",
 				"GCC_NO_COMMON_BLOCKS": "YES",
 				"MARKETING_VERSION": "1.0",
-				"CODE_SIGN_ENTITLEMENTS": "emptymacOSExample/emptymacOSExample.entitlements",
+				"CODE_SIGN_ENTITLEMENTS": "of.entitlements",
 				"CLANG_WARN_OBJC_ROOT_CLASS": "YES_ERROR",
 				"PRODUCT_NAME": "$(TARGET_NAME)",
 				"SUPPORTED_PLATFORMS": "appletvos appletvsimulator iphoneos iphonesimulator macosx xros xrsimulator",
@@ -958,7 +955,7 @@
 				"CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER": "YES",
 				"CLANG_ENABLE_OBJC_WEAK": "YES",
 				"CLANG_WARN_STRICT_PROTOTYPES": "YES",
-				"ENABLE_USER_SCRIPT_SANDBOXING": "YES",
+				"ENABLE_USER_SCRIPT_SANDBOXING": "NO",
 				"GCC_WARN_ABOUT_RETURN_TYPE": "YES_ERROR",
 				"GCC_WARN_UNUSED_FUNCTION": "YES",
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]": "YES",
@@ -970,7 +967,8 @@
 				"SWIFT_EMIT_LOC_STRINGS": "YES",
 				"CLANG_WARN_NON_LITERAL_NULL_CONVERSION": "YES",
 				"CLANG_WARN_OBJC_LITERAL_CONVERSION": "YES",
-				"PRODUCT_BUNDLE_IDENTIFIER": "com.openFrameworks.emptyExample"
+				"PRODUCT_BUNDLE_IDENTIFIER": "com.openFrameworks.emptyExample",
+				"OTHER_LDFLAGS": "-ObjC"
 			},
 			"name": "Release"
 		},
@@ -1010,14 +1008,8 @@
 				"FRAMEWORK_SEARCH_PATHS": "$(inherited)",
 				"COPY_PHASE_STRIP": "YES",
 				"ARCHS": "$(ARCHS_STANDARD)",
-				"OTHER_LDFLAGS": [
-					"$(OF_CORE_LIBS)",
-					"$(OF_CORE_FRAMEWORKS)",
-					"$(LIB_OF)"
-				],
 				"INFOPLIST_KEY_LSApplicationCategoryType": "public.app-category.games",
 				"LIBRARY_SEARCH_PATHS": "$(inherited)",
-				"baseConfigurationReference": "E4EB6923138AFD0F00A09F29",
 				"INFOPLIST_KEY_NSMicrophoneUsageDescription": "This app needs to access the microphone"
 			},
 			"name": "Release"
@@ -1383,8 +1375,8 @@
 			"outputPaths": [],
 			"isa": "PBXShellScriptBuildPhase",
 			"runOnlyForDeploymentPostprocessing": "0",
-			"shellScript": "echo \"💾 Compiling Openframeworks\"\nxcodebuild -project \"$OF_PATH/libs/openFrameworksCompiled/project/macos/openFrameworksLib.xcodeproj\" -target openFrameworks -configuration \"${CONFIGURATION}\"  CLANG_CXX_LANGUAGE_STANDARD=$CLANG_CXX_LANGUAGE_STANDARD MACOSX_DEPLOYMENT_TARGET=$MACOSX_DEPLOYMENT_TARGET GCC_PREPROCESSOR_DEFINITIONS=$USER_PREPROCESSOR_DEFINITIONS\n",
-			"name": "Run Script — Compile OF",
+			"shellScript": "echo \"\ud83d\udcbe Compiling openFrameworks\"\n# Static archive consumed by emptyExamplemacOS. Keep the lib project's own defines.\nxcodebuild -project \"$OF_PATH/libs/openFrameworksCompiled/project/macos/openFrameworksLib.xcodeproj\" -target openFrameworksLib -configuration \"${CONFIGURATION}\" CLANG_CXX_LANGUAGE_STANDARD=\"$CLANG_CXX_LANGUAGE_STANDARD\" MACOSX_DEPLOYMENT_TARGET=\"$MACOSX_DEPLOYMENT_TARGET\" GCC_PREPROCESSOR_DEFINITIONS=\"\\$(inherited) ${GCC_PREPROCESSOR_DEFINITIONS}\"\n",
+			"name": "Run Script \u2014 Compile OF",
 			"files": []
 		},
 		"BF6278AC2BADEBFE008864C1": {
@@ -1660,7 +1652,7 @@
 				"$OF_PATH/libs/openFrameworksCompiled/lib/macos/openFrameworks.framework"
 			],
 			"runOnlyForDeploymentPostprocessing": "0",
-			"shellScript": "echo \"💾 Compiling OpenFrameworks\"\nxcodebuild -workspace \"$OF_PATH/libs/openFrameworksCompiled/project/macos/openFrameworksLib.xcworkspace\" -scheme openFrameworks -configuration \"${CONFIGURATION}\" CLANG_CXX_LANGUAGE_STANDARD=$CLANG_CXX_LANGUAGE_STANDARD MACOSX_DEPLOYMENT_TARGET=$MACOSX_DEPLOYMENT_TARGET GCC_PREPROCESSOR_DEFINITIONS=$USER_PREPROCESSOR_DEFINITIONS\n",
+			"shellScript": "echo \"\ud83d\udcbe Compiling OpenFrameworks\"\nDEFS=\"${GCC_PREPROCESSOR_DEFINITIONS}\"\nGL_FLAGS=\"\"\nANGLE_LIB=\"\"\nDAWN_LIB=\"\"\ncase \"${PLATFORM_NAME}\" in\n  macosx)\n    GL_FLAGS=\"-framework OpenGL\"\n    ANGLE_LIB=\"${OF_PATH}/libs/metalangle/lib/macos/MetalANGLE.xcframework/macos-arm64_x86_64/MetalANGLE.a\"\n    DAWN_LIB=\"${OF_PATH}/libs/dawn/lib/macos/dawn.xcframework/macos-arm64_x86_64/libwebgpu_dawn.a\" ;;\n  iphoneos)\n    GL_FLAGS=\"-framework OpenGLES -framework GLKit\"\n    ANGLE_LIB=\"${OF_PATH}/libs/metalangle/lib/ios/MetalANGLE.xcframework/ios-arm64/MetalANGLE.a\"\n    DAWN_LIB=\"${OF_PATH}/libs/dawn/lib/ios/dawn.xcframework/ios-arm64/libwebgpu_dawn.a\" ;;\n  iphonesimulator)\n    GL_FLAGS=\"-framework OpenGLES -framework GLKit\"\n    ANGLE_LIB=\"${OF_PATH}/libs/metalangle/lib/ios/MetalANGLE.xcframework/ios-arm64_x86_64-simulator/MetalANGLE.a\"\n    DAWN_LIB=\"${OF_PATH}/libs/dawn/lib/ios/dawn.xcframework/ios-arm64_x86_64-simulator/libwebgpu_dawn.a\" ;;\n  appletvos)\n    GL_FLAGS=\"-framework OpenGLES -framework GLKit\"\n    ANGLE_LIB=\"${OF_PATH}/libs/metalangle/lib/tvos/MetalANGLE.xcframework/tvos-arm64/MetalANGLE.a\"\n    DAWN_LIB=\"${OF_PATH}/libs/dawn/lib/tvos/dawn.xcframework/tvos-arm64/libwebgpu_dawn.a\" ;;\n  appletvsimulator)\n    GL_FLAGS=\"-framework OpenGLES -framework GLKit\"\n    ANGLE_LIB=\"${OF_PATH}/libs/metalangle/lib/tvos/MetalANGLE.xcframework/tvos-arm64_x86_64-simulator/MetalANGLE.a\"\n    DAWN_LIB=\"${OF_PATH}/libs/dawn/lib/tvos/dawn.xcframework/tvos-arm64_x86_64-simulator/libwebgpu_dawn.a\" ;;\nesac\nLD_ARG=\"\"\ncase \" ${DEFS} \" in\n  *\" OF_USE_ANGLE=1 \"*)\n    if [ -z \"${ANGLE_LIB}\" ]; then echo \"MetalANGLE has no slice for ${PLATFORM_NAME}\"; exit 1; fi\n    LD_ARG=\"OTHER_LDFLAGS=-ObjC -framework Metal -framework MetalKit -framework IOSurface ${ANGLE_LIB}\" ;;\n  *\" OF_USE_DAWN=1 \"*)\n    if [ -z \"${DAWN_LIB}\" ]; then echo \"Dawn has no slice for ${PLATFORM_NAME}\"; exit 1; fi\n    LD_ARG=\"OTHER_LDFLAGS=-ObjC ${GL_FLAGS} -framework Metal -framework MetalKit -framework IOSurface ${DAWN_LIB}\" ;;\nesac\nset -- -workspace \"$OF_PATH/libs/openFrameworksCompiled/project/macos/openFrameworksLib.xcworkspace\" -scheme openFrameworks -configuration \"${CONFIGURATION}\"\nif [ -n \"${SDK_NAME}\" ]; then set -- \"$@\" -sdk \"${SDK_NAME}\"; fi\nset -- \"$@\" \"CLANG_CXX_LANGUAGE_STANDARD=${CLANG_CXX_LANGUAGE_STANDARD}\" \"MACOSX_DEPLOYMENT_TARGET=${MACOSX_DEPLOYMENT_TARGET}\" \"GCC_PREPROCESSOR_DEFINITIONS=\\$(inherited) ${DEFS}\"\nif [ -n \"${LD_ARG}\" ]; then set -- \"$@\" \"${LD_ARG}\"; fi\nxcodebuild \"$@\"\n",
 			"outputFileListPaths": [],
 			"inputFileListPaths": [
 				""
@@ -1781,6 +1773,27 @@
 			"lastKnownFileType": "sourcecode.cpp.objcpp",
 			"sourceTree": "<group>",
 			"fileEncoding": "4"
+		},
+		"BF6278C32BADEC41008864C1": {
+			"isa": "PBXBuildFile",
+			"fileRef": "BF6278C12BADEC41008864C1",
+			"settings": {
+				"ATTRIBUTES": [
+					"CodeSignOnCopy",
+					"RemoveHeadersOnCopy"
+				]
+			}
+		},
+		"BF6277F82BADE870008864C1": {
+			"isa": "PBXCopyFilesBuildPhase",
+			"buildActionMask": "2147483647",
+			"dstPath": "",
+			"dstSubfolderSpec": "10",
+			"files": [
+				"BF6278C32BADEC41008864C1"
+			],
+			"name": "Embed Frameworks",
+			"runOnlyForDeploymentPostprocessing": "0"
 		}
 	},
 	"rootObject": "E4B69B4C0A3A1720003C02F2"

@@ -26,6 +26,9 @@ HEADER_OPENSSL = "$(OF_PATH)/libs/openssl/include"
 HEADER_BROTLI = "$(OF_PATH)/libs/brotli/include"
 HEADER_URIPARSER = "$(OF_PATH)/libs/uriparser/include"
 HEADER_PUGIXML = "$(OF_PATH)/libs/pugixml/include"
+HEADER_DAWN = "$(OF_PATH)/libs/dawn/include"
+HEADER_METAL = "$(OF_PATH)/libs/metal/include"
+HEADER_METALANGLE = "$(OF_PATH)/libs/metalangle/include"
 
 //------- Libraries
 LIB_OF = "$(OF_PATH)/libs/openFrameworksCompiled/lib/macos/openFrameworks.a"
@@ -49,7 +52,29 @@ LIB_OF_DEBUG = "$(OF_PATH)/libs/openFrameworksCompiled/lib/macos/openFrameworksD
 OF_CORE_LIBS = $(MISC_FLAGS)
 //$(LIB_FMOD)
 
-OF_CORE_HEADERS = $(HEADER_OF) $(HEADER_FREEIMAGE)  $(HEADER_UTF8) $(HEADER_JSON) $(HEADER_GLM) $(HEADER_TESS2) $(HEADER_CAIRO) $(HEADER_RTAUDIO) $(HEADER_GLFW) $(HEADER_FREETYPE) $(HEADER_FREETYPE2) $(HEADER_CURL) $(HEADER_URIPARSER) $(HEADER_PUGIXML) $(HEADER_GLEW) $(HEADER_CURL) $(HEADER_OPENSSL) $(HEADER_BROTLI)
+// Archives an app must link when it links openFrameworks.a directly.
+// openFrameworks.framework absorbs the same xcframeworks in its Frameworks phase.
+// Keep these out of OF_CORE_LIBS. The lib project sets OTHER_LDFLAGS = $(OF_CORE_LIBS),
+// and these slices are macOS-only.
+OF_STATIC_LIBS = "$(OF_PATH)/libs/zlib/lib/macos/zlib.xcframework/macos-arm64_x86_64/zlib.a" "$(OF_PATH)/libs/brotli/lib/macos/brotli.xcframework/macos-arm64_x86_64/brotli.a" "$(OF_PATH)/libs/libpng/lib/macos/libpng.xcframework/macos-arm64_x86_64/libpng.a" "$(OF_PATH)/libs/freetype/lib/macos/freetype.xcframework/macos-arm64_x86_64/libfreetype.a" "$(OF_PATH)/libs/pixman/lib/macos/pixman.xcframework/macos-arm64_x86_64/libpixman-1.a" "$(OF_PATH)/libs/cairo/lib/macos/cairo.xcframework/macos-arm64_x86_64/libcairo.a" "$(OF_PATH)/libs/fmt/lib/macos/fmt.xcframework/macos-arm64_x86_64/libfmt.a" "$(OF_PATH)/libs/pugixml/lib/macos/pugixml.xcframework/macos-arm64_x86_64/libpugixml.a" "$(OF_PATH)/libs/tess2/lib/macos/tess2.xcframework/macos-arm64_x86_64/libtess2.a" "$(OF_PATH)/libs/uriparser/lib/macos/uriparser.xcframework/macos-arm64_x86_64/uriparser.a" "$(OF_PATH)/libs/openssl/lib/macos/libcrypto.xcframework/macos-arm64_x86_64/libcrypto.a" "$(OF_PATH)/libs/openssl/lib/macos/libssl.xcframework/macos-arm64_x86_64/libssl.a" "$(OF_PATH)/libs/curl/lib/macos/curl.xcframework/macos-arm64_x86_64/curl.a" "$(OF_PATH)/libs/FreeImage/lib/macos/FreeImage.xcframework/macos-arm64_x86_64/FreeImage.a" "$(OF_PATH)/libs/glew/lib/macos/glew.xcframework/macos-arm64_x86_64/libGLEW.a" "$(OF_PATH)/libs/glfw/lib/macos/glfw.xcframework/macos-arm64_x86_64/libglfw3.a" "$(OF_PATH)/libs/rtAudio/lib/macos/rtAudio.xcframework/macos-arm64_x86_64/librtaudio.a"
+
+// Desktop GL or mobile GLES for the openFrameworks framework target.
+// Not part of the default app link line: the app xcconfig uses OF_CORE_FRAMEWORKS,
+// and an ANGLE build must be able to leave this off.
+OF_PLATFORM_GL[sdk=macosx*] = -framework OpenGL
+OF_PLATFORM_GL[sdk=iphoneos*] = -framework OpenGLES -framework GLKit
+OF_PLATFORM_GL[sdk=iphonesimulator*] = -framework OpenGLES -framework GLKit
+OF_PLATFORM_GL[sdk=appletvos*] = -framework OpenGLES -framework GLKit
+OF_PLATFORM_GL[sdk=appletvsimulator*] = -framework OpenGLES -framework GLKit
+
+OF_CORE_HEADERS = $(HEADER_OF) $(HEADER_FREEIMAGE)  $(HEADER_UTF8) $(HEADER_JSON) $(HEADER_GLM) $(HEADER_TESS2) $(HEADER_CAIRO) $(HEADER_RTAUDIO) $(HEADER_GLFW) $(HEADER_FREETYPE) $(HEADER_FREETYPE2) $(HEADER_CURL) $(HEADER_URIPARSER) $(HEADER_PUGIXML) $(HEADER_GLEW) $(HEADER_CURL) $(HEADER_OPENSSL) $(HEADER_BROTLI) $(HEADER_DAWN) $(HEADER_METAL) $(HEADER_METALANGLE)
+
+// Link these from Project.xcconfig when OF_USE_DAWN=1
+OF_DAWN_LIBS = "$(OF_PATH)/libs/dawn/lib/macos/dawn.xcframework/macos-arm64_x86_64/libwebgpu_dawn.a" -framework Metal -framework MetalKit -framework IOSurface
+
+// Link these from Project.xcconfig when OF_USE_ANGLE=1. Drop OpenGL.framework so its gl* symbols do not collide with MetalANGLE.
+OF_ANGLE_LIBS = "$(OF_PATH)/libs/metalangle/lib/macos/MetalANGLE.xcframework/macos-arm64_x86_64/MetalANGLE.a"
+OF_ANGLE_APP_FRAMEWORKS = -framework Accelerate -framework AppKit -framework ApplicationServices -framework AudioToolbox -framework AVFoundation -framework Cocoa -framework CoreAudio -framework CoreFoundation -framework CoreMedia -framework CoreServices -framework CoreVideo -framework Foundation -framework IOKit -framework QuartzCore -framework Security -framework CFNetwork -framework SystemConfiguration -framework Metal -framework MetalKit -framework IOSurface
 
 OF_CORE_FRAMEWORKS = -framework Accelerate -framework AppKit -framework ApplicationServices -framework AudioToolbox -framework AVFoundation -framework Cocoa -framework CoreAudio -framework CoreFoundation -framework CoreMedia -framework CoreServices -framework CoreVideo -framework Foundation -framework IOKit -framework OpenGL -framework QuartzCore -framework Security -framework CFNetwork -framework SystemConfiguration -framework Metal
 //-framework AudioToolbox -framework Accelerate -framework AVFoundation -framework CoreAudio -framework CoreGraphics -framework CoreLocation -framework CoreMotion -framework CoreMedia -framework CoreVideo -framework Foundation -framework GameController -framework GLKit -framework MapKit -framework OpenAL -framework OpenGLES -framework UIKit -framework Security -framework QuartzCore -framework CoreHaptics

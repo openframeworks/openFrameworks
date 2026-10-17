@@ -500,6 +500,7 @@ ofTrueTypeFont::ofTrueTypeFont(const ofTrueTypeFont& mom)
 	settings = mom.settings;
 	glyphIndexMap = mom.glyphIndexMap;
 	texAtlas = mom.texAtlas;
+	atlasPixels = mom.atlasPixels;
 	face = mom.face;
 }
 
@@ -532,6 +533,7 @@ ofTrueTypeFont & ofTrueTypeFont::operator=(const ofTrueTypeFont& mom){
 	settings = mom.settings;
 	glyphIndexMap = mom.glyphIndexMap;
 	texAtlas = mom.texAtlas;
+	atlasPixels = mom.atlasPixels;
 	face = mom.face;
 
 	return *this;
@@ -565,6 +567,7 @@ ofTrueTypeFont::ofTrueTypeFont(ofTrueTypeFont&& mom)
 	settings = mom.settings;
 	glyphIndexMap = std::move(mom.glyphIndexMap);
 	texAtlas = mom.texAtlas;
+	atlasPixels = std::move(mom.atlasPixels);
 	face = mom.face;
 }
 
@@ -596,6 +599,7 @@ ofTrueTypeFont & ofTrueTypeFont::operator=(ofTrueTypeFont&& mom){
 	settings = mom.settings;
 	glyphIndexMap = std::move(mom.glyphIndexMap);
 	texAtlas = mom.texAtlas;
+	atlasPixels = std::move(mom.atlasPixels);
 	face = mom.face;
 	return *this;
 }
@@ -604,6 +608,7 @@ ofTrueTypeFont & ofTrueTypeFont::operator=(ofTrueTypeFont&& mom){
 void ofTrueTypeFont::unloadTextures(){
 	if(!bLoadedOk) return;
 	texAtlas.clear();
+	atlasPixels.clear();
 }
 
 //-----------------------------------------------------------
@@ -867,6 +872,11 @@ bool ofTrueTypeFont::load(const ofTrueTypeFontSettings & _settings){
 		x+= glyph.tW + border*2.0;
 	}
 
+#if OF_USE_DAWN
+	atlasPixels = atlasPixelsLuminanceAlpha;
+	bLoadedOk = true;
+	return true;
+#else
 	int maxSize;
 	glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxSize);
 	if(w > maxSize || h > maxSize){
@@ -885,6 +895,7 @@ bool ofTrueTypeFont::load(const ofTrueTypeFontSettings & _settings){
 		bLoadedOk = true;
 		return true;
 	}
+#endif
 }
 
 //-----------------------------------------------------------
@@ -1251,6 +1262,10 @@ const ofMesh & ofTrueTypeFont::getStringMesh(const string& c, float x, float y, 
 //-----------------------------------------------------------
 const ofTexture & ofTrueTypeFont::getFontTexture() const{
 	return texAtlas;
+}
+
+const ofPixels & ofTrueTypeFont::getFontAtlasPixels() const{
+	return atlasPixels;
 }
 
 //-----------------------------------------------------------

@@ -980,7 +980,11 @@ void ofImage_<PixelType>::allocate(int w, int h, ofImageType newType){
 	pixels.allocate(w, h, newType);
 
 	// take care of texture allocation --
+#if OF_USE_DAWN
+	if (pixels.isAllocated() && bUseTexture && ofGetCurrentRenderer() && ofGetGLRenderer()){
+#else
 	if (pixels.isAllocated() && bUseTexture){
+#endif
 		tex.allocate(pixels);
 	}
 
@@ -1147,7 +1151,11 @@ void ofImage_<PixelType>::update(){
 	height = pixels.getHeight();
 	bpp = pixels.getBitsPerPixel();
 	type = pixels.getImageType();
+#if OF_USE_DAWN
+	if (pixels.isAllocated() && bUseTexture && ofGetCurrentRenderer() && ofGetGLRenderer()){
+#else
 	if (pixels.isAllocated() && bUseTexture){
+#endif
 		int glInternalFormat = ofGetGLInternalFormat(pixels);
 		if(!tex.isAllocated() || tex.getWidth() != width || tex.getHeight() != height || tex.getTextureData().glInternalFormat != glInternalFormat){
 			tex.allocate(pixels);
