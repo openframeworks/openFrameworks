@@ -459,6 +459,7 @@ if ! verifyPackageDigests "$PKGS"; then
     writeVerifyState "$(pwd)" "$REPO" "$PLATFORM" "$ARCH"
     exit 1
 fi
+verifyPackageArchives "$PKGS"
 writeVerifyState "$(pwd)" "$REPO" "$PLATFORM" "$ARCH"
 
 cd ../ # back to libs
@@ -544,9 +545,9 @@ for PKG in $PKGS; do
 
         if [ "$PLATFORM" == "linux" ] && { [ "$ARCH" == "aarch64" ] || [ "$ARCH" == "armv7l" ] || [ "$ARCH" == "armv6l" ]; }; then
             echo "tar xjfv download/$PKG  --strip-components=1"
-            tar xf download/$PKG --strip-components=1 > /dev/null 2>&1
+            tar xf "download/$PKG" --strip-components=1 > /dev/null
         else
-            tar xf download/$PKG > /dev/null 2>&1
+            tar xf "download/$PKG" > /dev/null
         fi
         # rm -r download/$PKG
     fi
