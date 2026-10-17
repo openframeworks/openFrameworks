@@ -2,7 +2,7 @@
 set -ev
 
 if [ -z ${OF_ROOT} ]; then
-    OF_ROOT=${TRAVIS_BUILD_DIR:-"$( cd "$(dirname "$0")/../../.." ; pwd -P )"}
+    OF_ROOT=${TRAVIS_BUILD_DIR:-"$( cd "$(dirname "$0")/../../../.." ; pwd -P )"}
 fi
 
 # Trusty/14.04 builds don't have databases running - disable this
