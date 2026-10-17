@@ -31,14 +31,22 @@ PLATFORM_CXXFLAGS += -std=gnu++17
 PLATFORM_CFLAGS += -DUNICODE -D_UNICODE
 #PLATFORM_CFLAGS += -IC:/msys64/mingw32/include/gstreamer-1.0 -DOF_VIDEO_PLAYER_GSTREAMER
 
-CC = $(MINGW_PREFIX)/bin/gcc
-CXX = $(MINGW_PREFIX)/bin/g++
+# CLANG64 / CLANGARM64 ship clang + LLVM tools and no gcc/binutils
+ifneq ($(filter CLANG64 CLANGARM64,$(MSYSTEM)),)
+	CC = $(MINGW_PREFIX)/bin/clang
+	CXX = $(MINGW_PREFIX)/bin/clang++
+	PLATFORM_AR = $(firstword $(wildcard $(MINGW_PREFIX)/bin/llvm-ar.exe) $(MINGW_PREFIX)/bin/ar)
+	PLATFORM_RESOURCE_COMPILER = $(firstword $(wildcard $(MINGW_PREFIX)/bin/llvm-windres.exe) $(MINGW_PREFIX)/bin/windres)
+else
+	CC = $(MINGW_PREFIX)/bin/gcc
+	CXX = $(MINGW_PREFIX)/bin/g++
+	PLATFORM_AR = $(MINGW_PREFIX)/bin/ar
+	PLATFORM_RESOURCE_COMPILER = $(MINGW_PREFIX)/bin/windres
+endif
 
 FIND ?= /usr/bin/find
-PLATFORM_AR = $(MINGW_PREFIX)/bin/ar
 #PLATFORM_LD = $(MINGW_PREFIX)/bin/ld
 PLATFORM_LD = /usr/bin/lld
-PLATFORM_RESOURCE_COMPILER = $(MINGW_PREFIX)/bin/windres
 PLATFORM_PKG_CONFIG = $(MINGW_PREFIX)/bin/pkgconf
 
 
