@@ -242,7 +242,7 @@ ifeq ($(OF_USE_ANGLE),1)
 	PLATFORM_CFLAGS += -I$(OF_ROOT)/libs/metalangle/include
 	PLATFORM_CFLAGS += -I$(OF_ROOT)/libs/metal/include
 	PLATFORM_LDFLAGS += -ObjC
-	PLATFORM_LDFLAGS += $(OF_ROOT)/libs/metalangle/lib/macos/metalangle.xcframework/macos-arm64_x86_64/MetalANGLE.a
+	PLATFORM_LDFLAGS += $(OF_ROOT)/libs/metalangle/lib/macos/MetalANGLE.xcframework/macos-arm64_x86_64/MetalANGLE.a
 endif
 
 ##########################################################################################

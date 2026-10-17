@@ -53,7 +53,7 @@ OF_CORE_HEADERS = $(HEADER_OF) $(HEADER_FREETYPE) $(HEADER_FREETYPE2) $(HEADER_G
 OF_DAWN_LIBS = "$(OF_PATH)/libs/dawn/lib/macos/dawn.xcframework/macos-arm64_x86_64/libwebgpu_dawn.a" -framework Metal -framework MetalKit -framework IOSurface
 
 // OF_USE_ANGLE=1. OpenGL.framework is omitted so its gl* symbols do not collide with MetalANGLE.
-OF_ANGLE_LIBS = "$(OF_PATH)/libs/metalangle/lib/macos/metalangle.xcframework/macos-arm64_x86_64/MetalANGLE.a"
+OF_ANGLE_LIBS = "$(OF_PATH)/libs/metalangle/lib/macos/MetalANGLE.xcframework/macos-arm64_x86_64/MetalANGLE.a"
 OF_ANGLE_APP_FRAMEWORKS = -framework Accelerate -framework AppKit -framework ApplicationServices -framework AudioToolbox -framework AVFoundation -framework Cocoa -framework CoreAudio -framework CoreFoundation -framework CoreMedia -framework CoreServices -framework CoreVideo -framework Foundation -framework IOKit -framework QuartzCore -framework Security -framework CFNetwork -framework SystemConfiguration -framework Metal -framework MetalKit -framework IOSurface
 
 OF_CORE_FRAMEWORKS = -framework Accelerate -framework AppKit -framework ApplicationServices -framework AudioToolbox -framework AVFoundation -framework Cocoa -framework CoreAudio -framework CoreFoundation -framework CoreMedia -framework CoreServices -framework CoreVideo -framework Foundation -framework IOKit -framework OpenGL -framework QuartzCore -framework Security -framework CFNetwork -framework SystemConfiguration -framework Metal
