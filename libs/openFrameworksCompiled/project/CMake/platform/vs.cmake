@@ -18,6 +18,10 @@ set(OF_PLATFORM_DEFINES
 	WIN32 _CONSOLE POCO_STATIC CAIRO_WIN32_STATIC_BUILD DISABLE_SOME_FLOATING_POINT
 	URI_STATIC_BUILD CURL_STATICLIB FREEIMAGE_LIB OF_NO_FMOD
 	_HAS_STREAM_INSERTION_OPERATORS_DELETED_IN_CXX20
+	# openframeworksLib.vcxproj sets CharacterSet to Unicode, which defines these.
+	# Without them GetFileAttributes, MessageBox and OPENFILENAME stay the ANSI
+	# entry points while the core passes wchar_t paths.
+	UNICODE _UNICODE
 	$<$<CONFIG:Debug>:_DEBUG>)
 
 set(OF_PLATFORM_COMPILE_OPTIONS /Zc:__cplusplus /MP /utf-8)
