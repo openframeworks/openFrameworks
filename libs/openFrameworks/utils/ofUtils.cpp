@@ -781,8 +781,7 @@ static std::locale getLocale(const string & locale) {
 	} catch (...) {
 		ofLogWarning("ofUtils") << "Couldn't create locale " << locale << " using default, " << loc.name();
 	}
-	// no locale asked for and the environment's locale only maps ASCII case (LANG unset,
-	// e.g. in a container, gives "C"): use a UTF-8 one for the UTF-8 strings these take
+	// default locale only maps ASCII case (e.g. LANG unset): use a UTF-8 one
 	if (locale.empty() && std::tolower<wchar_t>(L'\u00C9', loc) == L'\u00C9') {
 		for (const char * name : { "C.UTF-8", "C.utf8", "en_US.UTF-8" }) {
 			try {
