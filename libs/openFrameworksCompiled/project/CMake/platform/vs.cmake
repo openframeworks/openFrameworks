@@ -87,6 +87,9 @@ function(of_platform_setup_app target)
 	set(icon_rc "${CMAKE_CURRENT_SOURCE_DIR}/icon.rc")
 	if(EXISTS "${icon_rc}")
 		target_sources(${target} PRIVATE "${icon_rc}")
+		# icon.rc names icon.ico / icon_debug.ico, which live in project/vs (the VS
+		# template's ResourceCompile AdditionalIncludeDirectories); rc gets _DEBUG in Debug
+		target_include_directories(${target} PRIVATE "${OF_LIBS_DIR}/openFrameworksCompiled/project/vs")
 	endif()
 	set_property(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}" PROPERTY VS_STARTUP_PROJECT ${target})
 endfunction()
