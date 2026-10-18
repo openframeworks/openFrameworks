@@ -71,9 +71,9 @@ makefiles' `config.make` options.
 | `OF_BUILD_CORE` | `OFF` | build the core in this build even if a prebuilt one exists |
 | `OF_PLATFORM` | detected | `macos ios tvos emscripten linux64 linuxaarch64 linuxarmv7l linuxarmv6l vs msys2` |
 | `OF_USE_DAWN`, `OF_USE_ANGLE` | `OFF` | link `libs/dawn`, `libs/metalangle` |
-| `PROJECT_EMSCRIPTEN_WASM` | `32` | `64` for wasm64 (MEMORY64): libs from `lib/emscripten/WASM64`, core in `lib/emscripten/WASM64` |
+| `PROJECT_EMSCRIPTEN_WASM` | `32` | `32`: libs from `lib/emscripten/WASM`, core in `lib/emscripten`. `64`: libs and core in `lib/emscripten/WASM64` |
 | `PROJECT_EMSCRIPTEN_TOTAL_MEMORY` | `134217728` | initial memory in bytes |
-| `PROJECT_EMSCRIPTEN_EMBIND_AOT` | `ON` | |
+| `PROJECT_EMSCRIPTEN_EMBIND_AOT` | `OFF` | ON needs an `EMSCRIPTEN_BINDINGS` block and breaks some addons |
 | `PROJECT_EMSCRIPTEN_TEMPLATE` | `project/emscripten/template.html` | HTML shell |
 | `OF_WEBGL_VERSION` | `2` | `1` for a WebGL 1 build |
 | `APP_VERSION` | `project()` version, else `1.0` | app version (macOS / iOS / tvOS `CFBundleShortVersionString`), same as the makefiles' `config.make` |
