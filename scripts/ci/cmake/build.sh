@@ -43,6 +43,14 @@ configure_and_build(){
 	cmake --build "$dir" --config "$config" --parallel || return 1
 }
 
+# Exercise MSVC addon layouts on every host; no Windows binaries are linked here.
+echo "##[group]MSVC addon library selection"
+for config in Release Debug; do
+	configure_and_build "$ROOT/scripts/ci/cmake/tests/vs-addon-libraries" "$ROOT/build/cmake-vs-addon-libraries-$config" "$config" \
+		|| fail "MSVC addon library selection $config"
+done
+echo "##[endgroup]"
+
 echo "##[group]core"
 for config in Release Debug; do
 	configure_and_build "$ROOT/libs/openFrameworksCompiled/project/CMake" "$ROOT/build/cmake-core-$config" "$config" \

@@ -53,6 +53,12 @@ endfunction()
 function(of_expand_addon_paths out_var base)
 	set(result)
 	foreach(item IN LISTS ARGN)
+		# Platform discovery can return configuration-dependent library expressions.
+		# They already contain absolute paths and must reach target_link_libraries intact.
+		if(item MATCHES "^\\$<")
+			list(APPEND result "${item}")
+			continue()
+		endif()
 		if(NOT IS_ABSOLUTE "${item}")
 			set(item "${base}/${item}")
 		endif()
