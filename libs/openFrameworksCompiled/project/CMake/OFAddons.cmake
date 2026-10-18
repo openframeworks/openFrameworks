@@ -185,7 +185,9 @@ function(of_target_addon target addon)
 	of_filter_make_patterns(includes "${dir}" "${cfg_ADDON_INCLUDES_EXCLUDE}" ${includes})
 	of_expand_addon_paths(libs "${dir}" ${cfg_ADDON_LIBS})
 	of_filter_make_patterns(libs "${dir}" "${cfg_ADDON_LIBS_EXCLUDE}" ${libs})
-	list(FILTER libs INCLUDE REGEX "\\.(a|lib|so|dylib|tbd)$|^-")
+	# Release/Debug libs are $<$<CONFIG:...>:path.lib>. That trailing > must stay,
+	# or ofxAssimpModelLoader and ofxOpenCv link with no libraries on Visual Studio.
+	list(FILTER libs INCLUDE REGEX "\\.(a|lib|so|dylib|tbd|xcframework)(>)?$|^-")
 
 	of_target_addon_files(${target} NAME ${name}
 		SOURCES ${sources}
