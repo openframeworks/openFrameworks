@@ -11,6 +11,17 @@
 # OF_ROOT = ../../..
 
 ################################################################################
+# APP VERSION
+#   The app's version, shown in the macOS About window (CFBundleShortVersionString),
+#   and its build number (CFBundleVersion).
+#
+#   (default) APP_VERSION = 1.0
+#   (default) APP_BUILD = 1
+################################################################################
+# APP_VERSION = 1.0
+# APP_BUILD = 1
+
+################################################################################
 # PROJECT ROOT
 #   The location of the project - a starting place for searching for files
 #       (default) PROJECT_ROOT = . (this directory)

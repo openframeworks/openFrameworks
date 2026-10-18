@@ -1,6 +1,14 @@
 #!/bin/bash
 # set -ev
 ROOT=$(pwd -P)
+
+# fail the job when a build fails, with an error annotation naming what failed
+build_or_fail(){
+	if ! make "$@"; then
+		echo "::error title=Build failed::make $* failed in ${PWD#$ROOT/}"
+		exit 1
+	fi
+}
 # source $ROOT/scripts/ci/ccache.sh
 
 echo "##[group]**** Running unit tests ****"
@@ -16,7 +24,7 @@ for group in *; do
 				cd $test
 				cp ../../../scripts/templates/msys2/Makefile .
 				cp ../../../scripts/templates/msys2/config.make .
-				make -j2 Debug
+				build_or_fail -j2 Debug
 				cd bin
 				binname=$(basename ${test})
                 #gdb -batch -ex "run" -ex "bt" -ex "q \$_exitcode" ./${binname}_debug
