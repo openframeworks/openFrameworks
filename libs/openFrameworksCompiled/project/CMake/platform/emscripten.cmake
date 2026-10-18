@@ -5,10 +5,12 @@
 #   emrun bin/em/<app>
 #
 # Project options (cache variables, same names as the makefiles' config.make options):
-#   PROJECT_EMSCRIPTEN_WASM           32 (default) or 64: wasm64 (MEMORY64), libs from
-#                                     lib/emscripten/WASM64, core in lib/emscripten/WASM64
+#   PROJECT_EMSCRIPTEN_WASM           32 (default) or 64. wasm32 libs are
+#                                     lib/emscripten/WASM and the core stays in
+#                                     lib/emscripten. wasm64 libs and core are
+#                                     lib/emscripten/WASM64
 #   PROJECT_EMSCRIPTEN_TOTAL_MEMORY   initial memory in bytes (default 128 MB)
-#   PROJECT_EMSCRIPTEN_EMBIND_AOT     ON (default) / OFF
+#   PROJECT_EMSCRIPTEN_EMBIND_AOT     OFF (default) / ON
 #   PROJECT_EMSCRIPTEN_TEMPLATE       HTML shell file (default the one in project/emscripten)
 #   OF_WEBGL_VERSION                  2 (default) or 1
 
@@ -25,7 +27,9 @@ if(NOT PROJECT_EMSCRIPTEN_WASM MATCHES "^(32|64)$")
 	message(FATAL_ERROR "PROJECT_EMSCRIPTEN_WASM must be 32 or 64, not \"${PROJECT_EMSCRIPTEN_WASM}\"")
 endif()
 set(PROJECT_EMSCRIPTEN_TOTAL_MEMORY 134217728 CACHE STRING "Initial wasm memory in bytes")
-option(PROJECT_EMSCRIPTEN_EMBIND_AOT "Ahead-of-time embind (CSP safe)" ON)
+# Off: the core has no EMSCRIPTEN_BINDINGS block, so ON fails the link
+# ("expected to find pattern <<< EMBIND_AOT_INVOKERS >>>") and breaks some addons.
+option(PROJECT_EMSCRIPTEN_EMBIND_AOT "Ahead-of-time embind (CSP safe; breaks some addons)" OFF)
 set(PROJECT_EMSCRIPTEN_TEMPLATE "${OF_LIBS_DIR}/openFrameworksCompiled/project/emscripten/template.html"
 	CACHE FILEPATH "HTML shell for the app")
 set(OF_WEBGL_VERSION 2 CACHE STRING "WebGL version (1 or 2)")
@@ -63,7 +67,8 @@ set(OF_PLATFORM_COMPILE_OPTIONS
 	-pthread
 	-matomics
 	-mbulk-memory
-	"$<$<COMPILE_LANGUAGE:CXX>:-Wall;-Wno-warn-absolute-paths>")
+	"$<$<COMPILE_LANGUAGE:CXX>:-Wall>"
+	"$<$<COMPILE_LANGUAGE:CXX>:-Wno-warn-absolute-paths>")
 
 set(OF_PLATFORM_LINK_OPTIONS
 	--emrun
@@ -76,20 +81,30 @@ set(OF_PLATFORM_LINK_OPTIONS
 	-matomics
 	-mbulk-memory
 	"SHELL:--js-library ${OF_ADDONS_DIR}/ofxEmscripten/libs/html5video/lib/emscripten/library_html5video.js"
-	-sMAIN_MODULE=1
+	"SHELL:--pre-js ${OF_ADDONS_DIR}/ofxEmscripten/libs/html5video/lib/emscripten/recordVideo.js"
+	"SHELL:--pre-js ${OF_ADDONS_DIR}/ofxEmscripten/libs/html5video/lib/emscripten/fix-webm-duration.js"
+	"SHELL:--post-js ${OF_ADDONS_DIR}/ofxEmscripten/libs/html5audio/lib/emscripten/library_audioDeviceSelect.js"
+	"SHELL:--js-library ${OF_ADDONS_DIR}/ofxEmscripten/libs/html5audio/lib/emscripten/library_html5audio.js"
+	# No MAIN_MODULE: dynamic linking is not supported with WASM_WORKERS.
+	# EXPORT_ALL still exports every symbol for the js libraries.
+	-sAUDIO_WORKLET=1
+	-sWASM_WORKERS=1
+	"-sENVIRONMENT=web,worker"
 	-sEXPORT_ALL=1
-	-sNO_DYNAMIC_EXECUTION=1
 	-sABORT_ON_WASM_EXCEPTIONS=0
 	-sFILESYSTEM=1
 	-sMINIFY_HTML=0
 	-sUSE_GLFW=3
 	-sEXPORTED_RUNTIME_METHODS=ccall,cwrap,FS,UTF8ToString,stringToUTF8,lengthBytesUTF8
 	-sERROR_ON_UNDEFINED_SYMBOLS=1
+	-sVERBOSE=1
 	-sINITIAL_MEMORY=${PROJECT_EMSCRIPTEN_TOTAL_MEMORY}
 	-sALLOW_MEMORY_GROWTH=1
 	-sWASM=1
 	"SHELL:--shell-file ${PROJECT_EMSCRIPTEN_TEMPLATE}"
-	"$<$<CONFIG:Debug>:-sVERBOSE=1;-sGL_ASSERTIONS=1;-sASSERTIONS=2;-gsource-map>")
+	"$<$<CONFIG:Debug>:-sGL_ASSERTIONS=1>"
+	"$<$<CONFIG:Debug>:-sASSERTIONS=2>"
+	"$<$<CONFIG:Debug>:-gsource-map>")
 if(OF_WEBGL_VERSION STREQUAL "1")
 	list(APPEND OF_PLATFORM_LINK_OPTIONS -sMAX_WEBGL_VERSION=1 -sFULL_ES2)
 else()
@@ -117,21 +132,25 @@ set(OF_PLATFORM_INCLUDE_DIRS "${OF_ADDONS_DIR}/ofxEmscripten/src")
 
 set(OF_PLATFORM_LIB_EXTENSIONS a)
 set(OF_PLATFORM_LINK_GROUP OFF)
+# The makefile partial-links the core with cc -r into one .o. A normal .a
+# drops objects nothing references by name. --whole-archive keeps them.
+set(OF_PLATFORM_WHOLE_ARCHIVE_CORE ON)
 set(OF_PLATFORM_REQUIRED_ADDONS ofxEmscripten)
 
 # the makefiles build the core as libopenFrameworks.o; CMake builds a static
-# library next to it
+# library next to it and links that archive whole
 set(OF_CORE_LIB_PREFIX lib)
 set(OF_CORE_LIB_NAME openFrameworks)
 set(OF_CORE_LIB_NAME_DEBUG openFrameworksDebug)
 set(OF_CORE_LIB_SUFFIX .a)
 
-# libs/<name>/lib/emscripten/WASM (WASM64 with PROJECT_EMSCRIPTEN_WASM=64)
+# Same folders as ABI_PATH in config.emscripten.default.mk. One ABI per
+# directory, so a wasm64 link does not also pick up wasm32 archives.
 function(of_platform_lib_dirs lib_folder out_var)
 	if(PROJECT_EMSCRIPTEN_WASM STREQUAL "64")
-		set(${out_var} "${lib_folder}" "${lib_folder}/WASM64" PARENT_SCOPE)
+		set(${out_var} "${lib_folder}/WASM64" PARENT_SCOPE)
 	else()
-		set(${out_var} "${lib_folder}" "${lib_folder}/WASM" PARENT_SCOPE)
+		set(${out_var} "${lib_folder}/WASM" PARENT_SCOPE)
 	endif()
 endfunction()
 
@@ -149,7 +168,9 @@ function(of_platform_setup_app target)
 		set_target_properties(${target} PROPERTIES RUNTIME_OUTPUT_DIRECTORY_${upper} "${out_dir}")
 	endforeach()
 
-	file(GLOB data_files "${CMAKE_CURRENT_SOURCE_DIR}/bin/data/*")
+	# Reconfigure when bin/data gains or loses entries, then emcc packs the
+	# directory as it is at link time. The makefile checks this every build.
+	file(GLOB data_files CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/bin/data/*")
 	if(data_files)
 		target_link_options(${target} PRIVATE "SHELL:--preload-file ${CMAKE_CURRENT_SOURCE_DIR}/bin/data@data")
 	endif()

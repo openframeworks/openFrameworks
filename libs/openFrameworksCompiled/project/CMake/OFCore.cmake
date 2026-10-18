@@ -20,6 +20,7 @@
 #   OF_PLATFORM_REQUIRED_ADDONS    addons every app on this platform needs
 #   OF_PLATFORM_LIB_EXTENSIONS     static library extensions
 #   OF_PLATFORM_LINK_GROUP         ON to wrap static libs in --start-group/--end-group
+#   OF_PLATFORM_WHOLE_ARCHIVE_CORE ON to link every object in the core archive
 #   OF_CORE_LIB_NAME / OF_CORE_LIB_NAME_DEBUG / OF_CORE_LIB_PREFIX / OF_CORE_LIB_SUFFIX
 # and defines of_platform_lib_dirs(<lib folder> <out var>) and of_platform_setup_app(<target>).
 
@@ -201,6 +202,26 @@ function(of_core_lib_path out_var config)
 	set(${out_var} "${OF_CORE_LIB_DIR}/${OF_CORE_LIB_PREFIX}${name}${OF_CORE_LIB_SUFFIX}" PARENT_SCOPE)
 endfunction()
 
+# openFrameworks::openFrameworks is what apps link. With
+# OF_PLATFORM_WHOLE_ARCHIVE_CORE the archive is wrapped in --whole-archive,
+# which is what the Emscripten makefile gets from cc -r: every core object
+# is in the link, including ones reached only from a static constructor.
+function(of_expose_core)
+	if(TARGET openFrameworks::openFrameworks)
+		return()
+	endif()
+	if(OF_PLATFORM_WHOLE_ARCHIVE_CORE)
+		add_library(openFrameworks_link INTERFACE)
+		add_library(openFrameworks::openFrameworks ALIAS openFrameworks_link)
+		target_link_libraries(openFrameworks_link INTERFACE
+			"LINKER:--whole-archive,$<TARGET_FILE:openFrameworks>,--no-whole-archive"
+			openFrameworks::deps)
+		add_dependencies(openFrameworks_link openFrameworks)
+	else()
+		add_library(openFrameworks::openFrameworks ALIAS openFrameworks)
+	endif()
+endfunction()
+
 # defines the openFrameworks core library target, built from source
 function(of_add_core_library)
 	of_setup_deps()
@@ -219,7 +240,7 @@ function(of_add_core_library)
 	if(COMMAND of_platform_setup_core)
 		of_platform_setup_core(openFrameworks)
 	endif()
-	add_library(openFrameworks::openFrameworks ALIAS openFrameworks)
+	of_expose_core()
 	list(LENGTH sources n)
 	message(STATUS "openFrameworks: building the core (${n} sources) into ${OF_CORE_LIB_DIR}")
 endfunction()
@@ -256,7 +277,7 @@ function(of_use_core)
 			IMPORTED_LOCATION_MINSIZEREL "${release}"
 			IMPORTED_LOCATION_DEBUG "${debug}"
 			INTERFACE_LINK_LIBRARIES openFrameworks::deps)
-		add_library(openFrameworks::openFrameworks ALIAS openFrameworks)
+		of_expose_core()
 		message(STATUS "openFrameworks: using prebuilt core from ${OF_CORE_LIB_DIR}")
 	else()
 		add_subdirectory("${OF_CMAKE_DIR}" "${CMAKE_BINARY_DIR}/openFrameworks")
