@@ -141,11 +141,13 @@ jobs:
           - { name: linux64, runner: ubuntu-24.04 }
           - { name: macos, runner: macos-15 }
           - { name: vs-x64, runner: windows-2022 }
+          - { name: linuxaarch64, runner: ubuntu-24.04-arm }
+          - { name: emscripten, runner: ubuntu-24.04 }
     name: build-cmake (${{ matrix.name }})
     steps:
       - uses: actions/checkout@v6
       - name: ccache
-        if: matrix.name != 'vs-x64'
+        if: matrix.name != 'vs-x64' && matrix.name != 'emscripten'
         uses: hendrikmuhs/ccache-action@v1.2.23
         with:
           key: cmake-${{ matrix.name }}
@@ -163,6 +165,34 @@ jobs:
       - name: Build (linux64)
         if: matrix.name == 'linux64'
         run: scripts/ci/cmake/build.sh --pg "$PG" --platform linux64 -- -G Ninja
+
+      # 64-bit Raspberry Pi OS / arm64 Linux
+      - name: Libs, dependencies and projectGenerator (linuxaarch64)
+        if: matrix.name == 'linuxaarch64'
+        run: |
+          ./scripts/linux/download_libs.sh -t $RELEASE -a aarch64
+          ./scripts/ci/linux64/install.sh
+          sudo apt-get install -y ninja-build
+          mkdir -p ~/pg && cd ~/pg
+          curl -fsSL -o pg.tar.bz2 https://github.com/openframeworks/projectGenerator/releases/download/nightly/projectGenerator-linux-arm64.tar.bz2
+          tar -xjf pg.tar.bz2 && rm pg.tar.bz2
+          echo "PG=$(find ~/pg -type f -name 'projectGenerator*' -perm -u+x | head -1)" >> $GITHUB_ENV
+      - name: Build (linuxaarch64)
+        if: matrix.name == 'linuxaarch64'
+        run: scripts/ci/cmake/build.sh --pg "$PG" --platform linuxaarch64 -- -G Ninja
+
+      # same emsdk image as build-emscripten; emcmake sets the Emscripten toolchain
+      - name: Libs and emsdk (emscripten)
+        if: matrix.name == 'emscripten'
+        run: |
+          ./scripts/emscripten/download_libs.sh -t $RELEASE
+          docker run -di --name emscripten -v $PWD:/src emscripten/emsdk:6.0.11 bash
+      - name: Build (emscripten)
+        if: matrix.name == 'emscripten'
+        run: >-
+          docker exec -i -e CMAKE_WRAPPER=emcmake
+          -e OF_CMAKE_EXAMPLES="templates/emptyExample:Release,Debug graphics/graphicsExample:Release gui/guiExample:Release"
+          emscripten bash -c "cd /src && scripts/ci/cmake/build.sh"
 
       - name: Libs (macos)
         if: matrix.name == 'macos'

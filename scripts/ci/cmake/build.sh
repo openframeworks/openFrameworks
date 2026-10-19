@@ -6,6 +6,9 @@
 # Usage: scripts/ci/cmake/build.sh [--pg <projectGenerator>] [--platform <pg platform>] [-- <cmake configure args>]
 #   scripts/ci/cmake/build.sh --pg ~/pg/projectGenerator --platform linux64 -- -G Ninja
 #   scripts/ci/cmake/build.sh -- -G "Visual Studio 17 2022" -A x64
+#   CMAKE_WRAPPER=emcmake OF_CMAKE_EXAMPLES="templates/emptyExample:Release" scripts/ci/cmake/build.sh
+# CMAKE_WRAPPER prefixes the configure step (emcmake); OF_CMAKE_EXAMPLES replaces the
+# example list (space-separated "path:Config[,Config]" entries).
 ROOT="$( cd "$(dirname "$0")/../../.." ; pwd -P )"
 PG=""
 PG_PLATFORM=""
@@ -26,6 +29,9 @@ EXAMPLES=(
 	"gui/guiExample:Release"
 	"templates/allAddonsExample:Release"
 )
+if [[ -n "$OF_CMAKE_EXAMPLES" ]]; then
+	read -r -a EXAMPLES <<< "$OF_CMAKE_EXAMPLES"
+fi
 
 if command -v ccache >/dev/null 2>&1; then
 	CONFIGURE_ARGS+=(-DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache)
@@ -39,7 +45,7 @@ fail(){
 # single-config generators take the build type at configure time, multi-config ones at build time
 configure_and_build(){
 	local src="$1" dir="$2" config="$3"
-	cmake -S "$src" -B "$dir" "${CONFIGURE_ARGS[@]}" -DCMAKE_BUILD_TYPE="$config" || return 1
+	$CMAKE_WRAPPER cmake -S "$src" -B "$dir" "${CONFIGURE_ARGS[@]}" -DCMAKE_BUILD_TYPE="$config" || return 1
 	cmake --build "$dir" --config "$config" --parallel || return 1
 }
 
@@ -61,6 +67,7 @@ echo "##[endgroup]"
 for entry in "${EXAMPLES[@]}"; do
 	example="${entry%%:*}"
 	configs="${entry#*:}"
+	configs="${configs//,/ }"
 	dir="$ROOT/examples/$example"
 	app="$(basename "$example")"
 	echo "##[group]$example"
@@ -77,7 +84,7 @@ for entry in "${EXAMPLES[@]}"; do
 		configure_and_build "$dir" "$ROOT/build/cmake-$app-$config" "$config" || fail "$example $config"
 		name="$app"; [[ "$config" == "Debug" ]] && name="${app}_debug"
 		found=""
-		for out in "$dir/bin/$name" "$dir/bin/$name.exe" "$dir/bin/$name.app"; do
+		for out in "$dir/bin/$name" "$dir/bin/$name.exe" "$dir/bin/$name.app" "$dir/bin/em/$app/index.html"; do
 			[[ -e "$out" ]] && found="$out"
 		done
 		[[ -n "$found" ]] || fail "$example $config: no bin/$name"
