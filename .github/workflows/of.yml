@@ -180,7 +180,7 @@ jobs:
           echo "PG=$(find ~/pg -type f -name 'projectGenerator*' -perm -u+x | head -1)" >> $GITHUB_ENV
       - name: Build (linuxaarch64)
         if: matrix.name == 'linuxaarch64'
-        run: scripts/ci/cmake/build.sh --pg "$PG" --platform linuxaarch64 -- -G Ninja
+        run: scripts/ci/cmake/build.sh --pg "$PG" --platform linuxaarch64 -- -G Ninja -DOF_PRECOMPILED_HEADER=ON
 
       # same emsdk image as build-emscripten; emcmake sets the Emscripten toolchain
       - name: Libs and emsdk (emscripten)
@@ -231,7 +231,7 @@ jobs:
       - name: Build (vs-x64)
         if: matrix.name == 'vs-x64'
         shell: bash
-        run: scripts/ci/cmake/build.sh --pg "$PWD/projectGenerator/projectGenerator.exe" --platform vs -- -G "Visual Studio 17 2022" -A x64
+        run: scripts/ci/cmake/build.sh --pg "$PWD/projectGenerator/projectGenerator.exe" --platform vs -- -G "Visual Studio 17 2022" -A x64 -DOF_PRECOMPILED_HEADER=ON
 
   build-vs:
     runs-on: ${{ matrix.runner }}
