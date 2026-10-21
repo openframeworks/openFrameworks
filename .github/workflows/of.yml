@@ -206,6 +206,17 @@ jobs:
         env:
           DEVELOPER_DIR: "/Applications/Xcode.app/Contents/Developer"
 
+      # unit tests in tests/ through CTest (Debug, like the makefile CI)
+      - name: Tests (ctest)
+        if: matrix.name == 'linux64' || matrix.name == 'macos'
+        run: |
+          cmake -S libs/openFrameworksCompiled/project/CMake -B build/cmake-tests -G Ninja -DCMAKE_BUILD_TYPE=Debug -DOF_BUILD_TESTS=ON
+          cmake --build build/cmake-tests --parallel
+          if [ "$RUNNER_OS" = "Linux" ]; then RUN="xvfb-run -a"; fi
+          $RUN ctest --test-dir build/cmake-tests --output-on-failure --timeout 300
+        env:
+          DEVELOPER_DIR: "/Applications/Xcode.app/Contents/Developer"
+
       - uses: msys2/setup-msys2@v2
         if: matrix.name == 'vs-x64'
         with:

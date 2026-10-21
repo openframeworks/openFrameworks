@@ -61,6 +61,23 @@ cmake --build build/core
 | MSYS2 | `lib/msys2/libopenFrameworks.a` (make's) |
 | Emscripten | `lib/emscripten/libopenFrameworks.a` (make builds `libopenFrameworks.o` next to it) |
 
+## Tests
+
+`-DOF_BUILD_TESTS=ON` on the core build adds every test in `tests/` (desktop
+platforms) and registers it with CTest. Each test runs from its executable's
+folder, like `make RunDebug`:
+
+```sh
+cmake -S libs/openFrameworksCompiled/project/CMake -B build/tests -DCMAKE_BUILD_TYPE=Debug -DOF_BUILD_TESTS=ON
+cmake --build build/tests
+ctest --test-dir build/tests --output-on-failure     # Linux without a display: xvfb-run -a ctest ...
+```
+
+Multi-config generators (Visual Studio, Xcode) take `--config Debug` on the build
+and `-C Debug` on `ctest`. The tests need no `CMakeLists.txt`: they're added with
+`of_add_app(... PROJECT_DIR <dir>)` (`OFProjects.cmake`). This follows the CTest
+setup in [#7524](https://github.com/openframeworks/openFrameworks/pull/7524).
+
 ## Options
 
 The Emscripten `PROJECT_EMSCRIPTEN_*` options have the same names and values as the
@@ -69,6 +86,7 @@ makefiles' `config.make` options.
 | Option | Default | |
 |---|---|---|
 | `OF_BUILD_CORE` | `OFF` | build the core in this build even if a prebuilt one exists |
+| `OF_BUILD_TESTS` | `OFF` | core build: add `tests/` and register them with CTest |
 | `OF_PLATFORM` | detected | `macos ios tvos emscripten linux64 linuxaarch64 linuxarmv7l linuxarmv6l vs msys2` |
 | `OF_USE_DAWN`, `OF_USE_ANGLE` | `OFF` | link `libs/dawn`, `libs/metalangle` |
 | `PROJECT_EMSCRIPTEN_WASM` | `32` | `32`: libs from `lib/emscripten/WASM`, core in `lib/emscripten`. `64`: libs and core in `lib/emscripten/WASM64` |
