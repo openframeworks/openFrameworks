@@ -172,7 +172,8 @@ jobs:
         run: |
           ./scripts/linux/download_libs.sh -t $RELEASE -a aarch64
           ./scripts/ci/linux64/install.sh
-          sudo apt-get install -y ninja-build
+          # ofxOpenCv links -lblas -llapack on linuxaarch64 (rpi-build gets them from multistrap)
+          sudo apt-get install -y ninja-build libblas-dev liblapack-dev
           mkdir -p ~/pg && cd ~/pg
           curl -fsSL -o pg.tar.bz2 https://github.com/openframeworks/projectGenerator/releases/download/nightly/projectGenerator-linux-arm64.tar.bz2
           tar -xjf pg.tar.bz2 && rm pg.tar.bz2
