@@ -29,6 +29,10 @@ set(OF_PLATFORM_COMPILE_OPTIONS
 	# like the makefiles, C++ is compiled as Objective-C++ so it can use Cocoa
 	"$<$<COMPILE_LANGUAGE:CXX>:-xobjective-c++>")
 
+# so a precompiled header (OF_PRECOMPILED_HEADER) must be Objective-C++ too, or
+# clang rejects it ("Objective-C was disabled in precompiled file")
+set(CMAKE_CXX_COMPILE_OPTIONS_CREATE_PCH ${CMAKE_OBJCXX_COMPILE_OPTIONS_CREATE_PCH})
+
 set(OF_PLATFORM_LINK_OPTIONS)
 
 set(OF_PLATFORM_LINK_LIBRARIES objc)

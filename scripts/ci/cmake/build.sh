@@ -85,7 +85,7 @@ for entry in "${EXAMPLES[@]}"; do
 		name="$app"; [[ "$config" == "Debug" ]] && name="${app}_debug"
 		found=""
 		for out in "$dir/bin/$name" "$dir/bin/$name.exe" "$dir/bin/$name.app" "$dir/bin/em/$app/index.html"; do
-			[[ -e "$out" ]] && found="$out"
+			[[ -e "$out" ]] && { found="$out"; break; }
 		done
 		[[ -n "$found" ]] || fail "$example $config: no bin/$name"
 		echo "built ${found#$ROOT/}"

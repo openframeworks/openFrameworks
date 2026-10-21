@@ -9,6 +9,7 @@
 # makefiles and IDE projects: <name> for Release, <name>_debug for Debug.
 # PROJECT_DIR is the project folder (default: the current CMakeLists.txt folder),
 # so a project without its own CMakeLists.txt (tests, examples) can be added.
+# OF_PRECOMPILED_HEADER=ON precompiles ofMain.h for the app's src/ C++ files.
 
 include_guard(GLOBAL)
 
@@ -58,6 +59,21 @@ function(of_add_app name)
 		of_read_addons_make(addons "${OF_PROJECT_DIR}/addons.make")
 	endif()
 	of_target_addons(${name} ${OF_PLATFORM_REQUIRED_ADDONS} ${addons})
+
+	# ofMain.h precompiled for the app's own C++ files; addon and library
+	# sources compile without it, as they do in the other build systems
+	if(OF_PRECOMPILED_HEADER)
+		target_precompile_headers(${name} PRIVATE
+			"$<$<COMPILE_LANGUAGE:CXX>:${OF_CORE_SRC_DIR}/ofMain.h>")
+		get_target_property(app_sources ${name} SOURCES)
+		foreach(source IN LISTS app_sources)
+			get_filename_component(source "${source}" ABSOLUTE)
+			string(FIND "${source}" "${OF_PROJECT_DIR}/src/" at)
+			if(NOT at EQUAL 0)
+				set_source_files_properties("${source}" PROPERTIES SKIP_PRECOMPILE_HEADERS ON)
+			endif()
+		endforeach()
+	endif()
 
 	of_platform_setup_app(${name})
 endfunction()
