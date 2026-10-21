@@ -213,9 +213,12 @@ function(of_expose_core)
 	if(OF_PLATFORM_WHOLE_ARCHIVE_CORE)
 		add_library(openFrameworks_link INTERFACE)
 		add_library(openFrameworks::openFrameworks ALIAS openFrameworks_link)
-		target_link_libraries(openFrameworks_link INTERFACE
-			"LINKER:--whole-archive,$<TARGET_FILE:openFrameworks>,--no-whole-archive"
-			openFrameworks::deps)
+		# LINKER: is only expanded in link options, not in link libraries
+		target_link_options(openFrameworks_link INTERFACE
+			"LINKER:--whole-archive,$<TARGET_FILE:openFrameworks>,--no-whole-archive")
+		set_property(TARGET openFrameworks_link APPEND PROPERTY
+			INTERFACE_LINK_DEPENDS "$<TARGET_FILE:openFrameworks>")
+		target_link_libraries(openFrameworks_link INTERFACE openFrameworks::deps)
 		add_dependencies(openFrameworks_link openFrameworks)
 	else()
 		add_library(openFrameworks::openFrameworks ALIAS openFrameworks)
