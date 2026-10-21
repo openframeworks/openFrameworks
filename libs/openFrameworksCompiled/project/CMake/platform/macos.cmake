@@ -72,10 +72,10 @@ endfunction()
 # Info.plist and icon the makefiles use
 function(of_platform_setup_app target)
 	of_apple_info_plist(${target}
-		"${CMAKE_CURRENT_SOURCE_DIR}/openFrameworks-Info.plist"
+		"${OF_PROJECT_DIR}/openFrameworks-Info.plist"
 		"${OF_ROOT}/scripts/templates/osx/openFrameworks-Info.plist")
 
-	set(icon "${CMAKE_CURRENT_SOURCE_DIR}/of.icns")
+	set(icon "${OF_PROJECT_DIR}/of.icns")
 	if(NOT EXISTS "${icon}")
 		set(icon "${OF_LIBS_DIR}/openFrameworksCompiled/project/osx/of.icns")
 	endif()

@@ -84,7 +84,7 @@ endfunction()
 
 # console app in bin/, like the VS templates (Debug: <name>_debug.exe)
 function(of_platform_setup_app target)
-	set(icon_rc "${CMAKE_CURRENT_SOURCE_DIR}/icon.rc")
+	set(icon_rc "${OF_PROJECT_DIR}/icon.rc")
 	if(EXISTS "${icon_rc}")
 		target_sources(${target} PRIVATE "${icon_rc}")
 		# icon.rc names icon.ico / icon_debug.ico, which live in project/vs (the VS

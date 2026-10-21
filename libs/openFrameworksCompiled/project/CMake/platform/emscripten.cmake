@@ -157,7 +157,7 @@ endfunction()
 # bin/em/<name>/index.html (+ .js .wasm .data), with app.js / style.css /
 # .htaccess and bin/data preloaded at /data, like the makefiles
 function(of_platform_setup_app target)
-	set(out_dir "${CMAKE_CURRENT_SOURCE_DIR}/bin/em/${target}")
+	set(out_dir "${OF_PROJECT_DIR}/bin/em/${target}")
 	set_target_properties(${target} PROPERTIES
 		OUTPUT_NAME index
 		OUTPUT_NAME_DEBUG index
@@ -170,9 +170,9 @@ function(of_platform_setup_app target)
 
 	# Reconfigure when bin/data gains or loses entries, then emcc packs the
 	# directory as it is at link time. The makefile checks this every build.
-	file(GLOB data_files CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/bin/data/*")
+	file(GLOB data_files CONFIGURE_DEPENDS "${OF_PROJECT_DIR}/bin/data/*")
 	if(data_files)
-		target_link_options(${target} PRIVATE "SHELL:--preload-file ${CMAKE_CURRENT_SOURCE_DIR}/bin/data@data")
+		target_link_options(${target} PRIVATE "SHELL:--preload-file ${OF_PROJECT_DIR}/bin/data@data")
 	endif()
 
 	set(project_dir "${OF_LIBS_DIR}/openFrameworksCompiled/project/emscripten")
