@@ -78,6 +78,22 @@ and `-C Debug` on `ctest`. The tests need no `CMakeLists.txt`: they're added wit
 `of_add_app(... PROJECT_DIR <dir>)` (`OFProjects.cmake`). This follows the CTest
 setup in [#7524](https://github.com/openframeworks/openFrameworks/pull/7524).
 
+## All examples
+
+`-DOF_BUILD_EXAMPLES=ON` on the core build adds every example for the platform
+(not built by default) and a `build_all_examples` target. Targets are grouped in
+IDE folders (`openFrameworks`, `examples/<group>`, `tests/<group>`), so one Visual
+Studio solution, Xcode project or CLion project opens them all:
+
+```sh
+cmake -S libs/openFrameworksCompiled/project/CMake -B build/examples -DOF_BUILD_EXAMPLES=ON
+cmake --build build/examples --target build_all_examples    # or one example: --target graphicsExample
+```
+
+Each example builds into its own `bin/`, as with its own `CMakeLists.txt`. An example
+name used in two groups gets the group as a prefix. This follows the examples setup in
+[#7524](https://github.com/openframeworks/openFrameworks/pull/7524).
+
 ## Options
 
 The Emscripten `PROJECT_EMSCRIPTEN_*` options have the same names and values as the
@@ -87,6 +103,7 @@ makefiles' `config.make` options.
 |---|---|---|
 | `OF_BUILD_CORE` | `OFF` | build the core in this build even if a prebuilt one exists |
 | `OF_BUILD_TESTS` | `OFF` | core build: add `tests/` and register them with CTest |
+| `OF_BUILD_EXAMPLES` | `OFF` | core build: add `examples/` and a `build_all_examples` target |
 | `OF_PLATFORM` | detected | `macos ios tvos emscripten linux64 linuxaarch64 linuxarmv7l linuxarmv6l vs msys2` |
 | `OF_USE_DAWN`, `OF_USE_ANGLE` | `OFF` | link `libs/dawn`, `libs/metalangle` |
 | `PROJECT_EMSCRIPTEN_WASM` | `32` | `32`: libs from `lib/emscripten/WASM`, core in `lib/emscripten`. `64`: libs and core in `lib/emscripten/WASM64` |
