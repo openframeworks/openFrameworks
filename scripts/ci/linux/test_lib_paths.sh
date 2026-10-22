@@ -152,6 +152,52 @@ for PAIR in "${PAIRS[@]}"; do
 done
 
 echo
+echo "== Raspberry Pi detection (downloader + makefile agree) =="
+if grep -q 'etc/rpi-issue' "$SHARED" && grep -q 'raspberrypi' "$SHARED"; then
+	ok "config.shared.mk RPI_DETECTED accepts RPi OS userland markers"
+else
+	bad "config.shared.mk RPI_DETECTED is missing RPi OS userland markers"
+fi
+DL="$ROOT/scripts/dev/download_libs.sh"
+FN="$WORKDIR/is_raspberry_pi.sh"
+sed -n '/^is_raspberry_pi(){/,/^}/p' "$DL" >"$FN"
+if [[ -s "$FN" ]]; then
+	ok "download_libs.sh defines is_raspberry_pi"
+else
+	bad "could not extract is_raspberry_pi from download_libs.sh"
+fi
+rpi_fixture() {
+	local dir="$WORKDIR/rpi-$1"
+	mkdir -p "$dir/etc/apt/sources.list.d"
+	printf 'ID=debian\nPRETTY_NAME="Debian GNU/Linux 13 (trixie)"\n' >"$dir/etc/os-release"
+	case "$1" in
+		trixie) printf 'deb http://archive.raspberrypi.org/debian/ trixie main\n' >"$dir/etc/apt/sources.list.d/raspi.list" ;;
+		devicetree)
+			mkdir -p "$dir/proc/device-tree"
+			printf 'Raspberry Pi 5 Model B\0' >"$dir/proc/device-tree/model" ;;
+	esac
+	(
+		source "$FN"
+		OF_RPI_PROBE_ROOT="$dir" is_raspberry_pi
+	)
+}
+if rpi_fixture trixie; then
+	ok "RPi OS trixie userland (raspi apt repo, ID=debian) detected"
+else
+	bad "RPi OS trixie userland not detected"
+fi
+if rpi_fixture devicetree; then
+	ok "device-tree Raspberry Pi model detected"
+else
+	bad "device-tree Raspberry Pi model not detected"
+fi
+if rpi_fixture plain; then
+	bad "plain Debian fixture wrongly detected as Raspberry Pi"
+else
+	ok "plain Debian fixture not detected as Raspberry Pi"
+fi
+
+echo
 echo "Passed: ${PASS}  Failed: ${FAIL}"
 if [[ "$FAIL" -ne 0 ]]; then
 	exit 1

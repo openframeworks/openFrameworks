@@ -110,16 +110,27 @@ download(){
 }
 
 is_raspberry_pi(){
+    # OF_RPI_PROBE_ROOT only prefixes probe paths so tests can use fixtures.
+    local root="${OF_RPI_PROBE_ROOT:-}"
     local model=""
-    if [ -f /proc/device-tree/model ]; then
-        model="$(tr -d '\0' </proc/device-tree/model 2>/dev/null || true)"
-    elif [ -f /sys/firmware/devicetree/base/model ]; then
-        model="$(tr -d '\0' </sys/firmware/devicetree/base/model 2>/dev/null || true)"
+    if [ -f "$root/proc/device-tree/model" ]; then
+        model="$(tr -d '\0' <"$root/proc/device-tree/model" 2>/dev/null || true)"
+    elif [ -f "$root/sys/firmware/devicetree/base/model" ]; then
+        model="$(tr -d '\0' <"$root/sys/firmware/devicetree/base/model" 2>/dev/null || true)"
     fi
     if echo "$model" | grep -qi raspberry; then
         return 0
     fi
-    if [ -f /etc/os-release ] && grep -qiE '^(ID=raspbian|PRETTY_NAME=.*Raspberry Pi)' /etc/os-release; then
+    if [ -f "$root/etc/os-release" ] && grep -qiE '^(ID=raspbian|PRETTY_NAME=.*Raspberry Pi)' "$root/etc/os-release"; then
+        return 0
+    fi
+    # Raspberry Pi OS (Bookworm/Trixie) reports ID=debian and containers have
+    # no device-tree, so also accept RPi OS image markers: /etc/rpi-issue or
+    # the Raspberry Pi apt repository (archive.raspberrypi.org/.com).
+    if [ -f "$root/etc/rpi-issue" ]; then
+        return 0
+    fi
+    if grep -qiE 'raspberrypi\.(org|com)' "$root/etc/apt/sources.list" "$root"/etc/apt/sources.list.d/* 2>/dev/null; then
         return 0
     fi
     return 1
@@ -518,6 +529,18 @@ if [ "$PLATFORM" == "vs" ]; then
         aarch64|ARM64|clangarm64) ARCH=arm64 ;;
         all|multi|host-all) ARCH=all ;;
         host) ARCH=$(detectHostVsArch) ;;
+    esac
+fi
+
+# An explicit -a arm64 on Raspberry Pi hardware / RPi OS would download the
+# generic linux/arm64 artifact while the makefiles build linux/aarch64 there.
+# Normalise to the RPi artifact whenever a Pi is detected.
+if [ "$PLATFORM" == "linux" ] && is_raspberry_pi; then
+    case "$ARCH" in
+        arm64)
+            ARCH=aarch64
+            echo " Raspberry Pi detected → using aarch64 libs (linux/aarch64)"
+            ;;
     esac
 fi
 
