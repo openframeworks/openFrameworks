@@ -114,6 +114,7 @@ public:
 		add(parameters...);
 	}
 
+	void add(std::shared_ptr<ofAbstractParameter> param);
 	void add(ofAbstractParameter & param);
 	std::string valueType() const;
 
