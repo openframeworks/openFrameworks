@@ -352,7 +352,7 @@ static NSString *kShouldEnginePauseNotification = @"kShouldEnginePauseNotificati
            }
             
             
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.033f), dispatch_get_main_queue(), ^{
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 33 * NSEC_PER_MSEC), dispatch_get_main_queue(), ^{
                 [weak_self handleInterruption:note];
             });
             
@@ -558,7 +558,7 @@ static NSString *kShouldEnginePauseNotification = @"kShouldEnginePauseNotificati
             
         __typeof(self) __weak weak_self = self;
     
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.017f), dispatch_get_main_queue(), ^{
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 17 * NSEC_PER_MSEC), dispatch_get_main_queue(), ^{
                 weak_self.mRestorePlayCount--;
                 if(weak_self.bIsPlaying == NO) return;
                 [weak_self play:posSecs];
@@ -723,7 +723,7 @@ static NSString *kShouldEnginePauseNotification = @"kShouldEnginePauseNotificati
     }
     if(_isSessionInterrupted || _isConfigChangePending){
         __typeof(self) __weak weak_self = self;
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.3f), dispatch_get_main_queue(), ^{
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 300 * NSEC_PER_MSEC), dispatch_get_main_queue(), ^{
             [weak_self play:startTime];
         });
         return;
@@ -855,7 +855,7 @@ static NSString *kShouldEnginePauseNotification = @"kShouldEnginePauseNotificati
 	}
 
     if(_isSessionInterrupted || _isConfigChangePending){
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.3f), dispatch_get_main_queue(), ^{
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 300 * NSEC_PER_MSEC), dispatch_get_main_queue(), ^{
             __typeof(self) __weak weak_self = self;
             [weak_self stop];
         });
