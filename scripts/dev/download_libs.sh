@@ -43,6 +43,9 @@ cat << EOF
     --full-clean                Also remove shared include/ (and bin/ for vs|msys2) for libs being
                                 installed. Use for a hard reset of one platform install; not needed
                                 for multi-platform side-by-side installs.
+    --modules LIST              Also install optional library modules from apothecary's latest-modular
+                                release, e.g. --modules dawn,metalangle (default: \$OF_LIB_MODULES).
+                                Modules not built for this platform yet are skipped.
     --skip-sha                  Do not verify package SHA-256 against GitHub release digests
     --require-sha               Fail if a package has no digest or local hash tools are missing
     -s, --silent                Silent download progress
@@ -182,6 +185,10 @@ while [[ $# -gt 0 ]]; do
         ;;
         -vs|--vs2026)
         VS_2026=1
+        ;;
+        --modules)
+        MODULES="$2"
+        shift # past argument
         ;;
         -h|--help)
         printHelp
@@ -677,4 +684,16 @@ elif [[ "$SHA_STATUS" == "skipped" || "$SHA_STATUS" == "no-digest" || "$SHA_STAT
     echo " openFrameworks download_libs complete — integrity not fully verified (${SHA_STATUS})"
 else
     echo " openFrameworks download_libs and install complete!"
+fi
+
+# optional modules (dawn, metalangle, ...) are separate packages on latest-modular
+MODULES="${MODULES:-${OF_LIB_MODULES:-}}"
+if [ -n "$MODULES" ]; then
+    MODULE_ARGS=(-p "$PLATFORM")
+    case "$PLATFORM" in
+        vs|emscripten|msys2) [ -n "$ARCH" ] && MODULE_ARGS+=(-a "$ARCH") ;;
+    esac
+    [ "$SILENT_ARGS" == "1" ] && MODULE_ARGS+=(-s)
+    [ "$NO_SSL" == "1" ] && MODULE_ARGS+=(-k)
+    "$SCRIPT_DIR/download_modules.sh" "${MODULE_ARGS[@]}" "$MODULES" || exit 1
 fi

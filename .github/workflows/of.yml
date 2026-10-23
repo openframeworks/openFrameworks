@@ -438,6 +438,33 @@ jobs:
           DEVELOPER_DIR: "/Applications/Xcode.app/Contents/Developer"
           SDKROOT: "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk"
 
+  # Dawn / MetalANGLE are optional modules (apothecary latest-modular), not in the
+  # core libs package: download them and build with each renderer
+  build-macos-renderers:
+    runs-on: macos-15
+    strategy:
+      fail-fast: false
+      matrix:
+        renderer: [DAWN, ANGLE]
+    steps:
+      - uses: actions/checkout@v6
+      - name: ccache
+        uses: hendrikmuhs/ccache-action@v1.2.23
+        with:
+          key: osx-renderer-${{ matrix.renderer }}
+      - name: Download libs and modules
+        run: ./scripts/osx/download_libs.sh -t $RELEASE --modules dawn,metalangle
+      - name: Build backendBenchExample with OF_USE_${{ matrix.renderer }}=1
+        run: |
+          set -e
+          cd examples/gl/backendBenchExample
+          cp ../../../scripts/templates/osx/Makefile ../../../scripts/templates/osx/config.make .
+          make -j3 Release OF_USE_${{ matrix.renderer }}=1
+          ls -d bin/backendBenchExample.app
+        env:
+          DEVELOPER_DIR: "/Applications/Xcode.app/Contents/Developer"
+          SDKROOT: "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk"
+
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   build-android:
     runs-on: ubuntu-24.04

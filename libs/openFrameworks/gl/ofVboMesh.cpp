@@ -1,5 +1,8 @@
 #include "ofVboMesh.h"
 #include "ofGLBaseTypes.h"
+#include "ofGLUtils.h"
+#include "ofAppRunner.h"
+#include "ofLog.h"
 
 #ifdef TARGET_ANDROID
 #include "ofxAndroidUtils.h"
@@ -115,11 +118,24 @@ const ofVbo & ofVboMesh::getVbo() const{
 
 void ofVboMesh::drawInstanced(ofPolyRenderMode drawMode, int primCount) const{
 	if(getNumVertices()==0) return;
+	if(!ofGetCurrentRenderer() || !ofGetGLRenderer()){
+		static bool logged = false;
+		if(!logged){
+			ofLogVerbose("ofVboMesh") << "drawInstanced has no GL renderer; drawing the mesh once";
+			logged = true;
+		}
+		ofMesh::draw(drawMode);
+		return;
+	}
 	ofGetGLRenderer()->drawInstanced(*this,drawMode,primCount);
 }
 
 void ofVboMesh::draw(ofPolyRenderMode drawMode) const{
 	if(getNumVertices()==0) return;
+	if(!ofGetCurrentRenderer() || !ofGetGLRenderer()){
+		ofMesh::draw(drawMode);
+		return;
+	}
 	drawInstanced(drawMode, 1);
 }
 
