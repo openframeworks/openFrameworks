@@ -829,6 +829,10 @@ void ofEnableDepthTest();
 /// \sa ofEnableDepthTest()
 void ofDisableDepthTest();
 
+/// \brief Enable / disable writing to the depth buffer.
+/// Helpful when drawing transparent objects while depth testing is enabled.
+void ofSetDepthWrite(bool write);
+
 /// \brief Sets and enables the blend mode for drawing. The options are:
 ///
 ///     OF_BLENDMODE_DISABLED
