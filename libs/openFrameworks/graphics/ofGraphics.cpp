@@ -489,6 +489,11 @@ void ofDisableDepthTest() {
 	ofSetDepthTest(false);
 }
 
+//----------------------------------------------------------
+void ofSetDepthWrite(bool write) {
+	ofGetCurrentRenderer()->setDepthWrite(write);
+}
+
 //----------------------------------------
 void ofSetCurveResolution(int res) {
 	ofGetCurrentRenderer()->setCurveResolution(res);
@@ -1213,7 +1218,7 @@ void ofDrawBitmapStringHighlight(string text, int x, int y, const ofColor & back
 	int width = maxLineLength * fontSize;
 
 	ofPushStyle();
-	glDepthMask(false);
+	ofSetDepthWrite(false);
 	ofSetColor(background);
 	ofFill();
 	ofPushMatrix();
@@ -1231,7 +1236,7 @@ void ofDrawBitmapStringHighlight(string text, int x, int y, const ofColor & back
 	ofSetColor(foreground);
 	ofNoFill();
 	ofDrawBitmapString(text, x, y);
-	glDepthMask(true);
+	ofSetDepthWrite(true);
 	ofPopStyle();
 }
 

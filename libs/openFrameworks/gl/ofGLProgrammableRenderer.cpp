@@ -1159,6 +1159,11 @@ void ofGLProgrammableRenderer::setDepthTest(bool depthTest) {
 }
 
 //----------------------------------------------------------
+void ofGLProgrammableRenderer::setDepthWrite(bool write) {
+	glDepthMask(write);
+}
+
+//----------------------------------------------------------
 void ofGLProgrammableRenderer::setLineSmoothing(bool smooth) {
 	currentStyle.smoothing = smooth;
 }

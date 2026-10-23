@@ -90,6 +90,7 @@ public:
 	void enablePointSprites() {};
 	void disablePointSprites() {};
 	void setDepthTest(bool depthTest);
+	void setDepthWrite(bool write) {};
 	void setBlendMode(ofBlendMode blendMode);
 	void setLineSmoothing(bool smooth);
 	void enableAntiAliasing();

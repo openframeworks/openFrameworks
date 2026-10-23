@@ -875,6 +875,9 @@ public:
 	///
 	/// \param depthTest True to enable depth testing.
 	virtual void setDepthTest(bool depthTest) = 0;
+	
+	/// \brief Enable / disable writing to the depth buffer.
+	virtual void setDepthWrite( bool write ) = 0;
 
 	/// \brief Set this renderer's current blend mode.
 	///
