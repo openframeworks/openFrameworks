@@ -632,16 +632,3 @@ bool ofSendMessage(std::string messageString) {
 	ofMessage msg(messageString);
 	return ofSendMessage(msg);
 }
-
-//------------------------------------------
-namespace of {
-namespace priv {
-std::atomic<uint_fast64_t> StdFunctionId::nextId;
-
-AbstractEventToken::~AbstractEventToken() { }
-
-BaseFunctionId::~BaseFunctionId() { }
-
-StdFunctionId::~StdFunctionId() { }
-}
-}

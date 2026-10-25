@@ -1,13 +1,10 @@
 #include "ofUtils.h"
-// FIXME: split ofUtils in two files, one which uses urlparser / ofImage, other without for smaller apps.
+// FIXME: split ofUtils in two files, one which uses urlparser, other without for smaller apps.
 #include "ofAppBaseWindow.h"
 #include "ofAppRunner.h"
 #include "ofEvents.h"
-#include "ofGLUtils.h"
-#include "ofImage.h"
 #include "ofLog.h"
 #include "ofMainLoop.h"
-#include "ofPixels.h"
 
 #include "uriparser/Uri.h"
 #include <chrono>
@@ -246,61 +243,17 @@ uint64_t ofGetFixedStepForFps(double fps) {
 	return 1'000'000'000 / fps;
 }
 
-ofTimeMode ofGetTimeMode() {
-	if (auto mainLoop = ofGetMainLoop()) {
-		if (auto window = mainLoop->getCurrentWindow()) {
-			return window->events().getTimeMode();
-		}
-	}
-	return ofTimeMode(0);
+// ofGetTimeMode / ofSetTimeMode* are in ofAppRunner.cpp (they need the main loop),
+// so ofUtils doesn't pull the app / window code into tools that only use the utils
+namespace of {
+namespace priv {
+void setClockTimeModeSystem() {
+	getClock().setTimeModeSystem();
 }
-
-//--------------------------------------
-void ofSetTimeModeSystem() {
-	auto mainLoop = ofGetMainLoop();
-	if (!mainLoop) {
-		ofLogError("ofSetSystemTimeMode") << "ofMainLoop is not initialized yet, can't set time mode";
-		return;
-	}
-	auto window = mainLoop->getCurrentWindow();
-	if (!window) {
-		ofLogError("ofSetSystemTimeMode") << "No window setup yet can't set time mode";
-		return;
-	}
-	window->events().setTimeModeSystem();
-	of::priv::getClock().setTimeModeSystem();
+void setClockTimeModeFixedRate(uint64_t stepNanos, ofMainLoop & mainLoop) {
+	getClock().setTimeModeFixedRate(stepNanos, mainLoop);
 }
-
-//--------------------------------------
-void ofSetTimeModeFixedRate(uint64_t stepNanos) {
-	auto mainLoop = ofGetMainLoop();
-	if (!mainLoop) {
-		ofLogError("ofSetSystemTimeMode") << "ofMainLoop is not initialized yet, can't set time mode";
-		return;
-	}
-	auto window = mainLoop->getCurrentWindow();
-	if (!window) {
-		ofLogError("ofSetSystemTimeMode") << "No window setup yet can't set time mode";
-		return;
-	}
-	window->events().setTimeModeFixedRate(stepNanos);
-	of::priv::getClock().setTimeModeFixedRate(stepNanos, *mainLoop);
 }
-
-//--------------------------------------
-void ofSetTimeModeFiltered(float alpha) {
-	auto mainLoop = ofGetMainLoop();
-	if (!mainLoop) {
-		ofLogError("ofSetSystemTimeMode") << "ofMainLoop is not initialized yet, can't set time mode";
-		return;
-	}
-	auto window = mainLoop->getCurrentWindow();
-	if (!window) {
-		ofLogError("ofSetSystemTimeMode") << "No window setup yet can't set time mode";
-		return;
-	}
-	window->events().setTimeModeFiltered(alpha);
-	of::priv::getClock().setTimeModeSystem();
 }
 
 //--------------------------------------
@@ -1032,42 +985,7 @@ std::string ofGetVersionPreRelease() {
 //---- new to 006
 //from the forums http://www.openframeworks.cc/forum/viewtopic.php?t=1413
 
-//--------------------------------------------------
-void ofSaveScreen(const of::filesystem::path & fileName) {
-	/*ofImage screen;
-   screen.allocate(ofGetWidth(), ofGetHeight(), OF_IMAGE_COLOR);
-   screen.grabScreen(0, 0, ofGetWidth(), ofGetHeight());
-   screen.save(filename);*/
-	ofPixels pixels;
-	ofGetGLRenderer()->saveFullViewport(pixels);
-	ofSaveImage(pixels, fileName);
-}
-
-//--------------------------------------------------
-void ofSaveViewport(const of::filesystem::path & fileName) {
-	// because ofSaveScreen doesn't related to viewports
-	/*ofImage screen;
-	ofRectangle view = ofGetCurrentViewport();
-	screen.allocate(view.width, view.height, OF_IMAGE_COLOR);
-	screen.grabScreen(0, 0, view.width, view.height);
-	screen.save(filename);*/
-
-	ofPixels pixels;
-	ofGetGLRenderer()->saveFullViewport(pixels);
-	ofSaveImage(pixels, fileName);
-}
-
-//--------------------------------------------------
-int saveImageCounter = 0;
-void ofSaveFrame(bool bUseViewport) {
-	of::filesystem::path fileName = ofToString(saveImageCounter) + ".png";
-	if (bUseViewport) {
-		ofSaveViewport(fileName);
-	} else {
-		ofSaveScreen(fileName);
-	}
-	saveImageCounter++;
-}
+// ofSaveScreen / ofSaveViewport / ofSaveFrame are in ofGraphics.cpp (renderer + ofImage)
 
 //--------------------------------------------------
 string ofSystem(const string & command) {
