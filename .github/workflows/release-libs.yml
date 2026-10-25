@@ -41,6 +41,7 @@ jobs:
     outputs:
       apothecary_tag: ${{ steps.pin.outputs.tag }}
       platforms: ${{ steps.assets.outputs.platforms }}
+      missing: ${{ steps.assets.outputs.missing }}
     steps:
       - uses: actions/checkout@v6
         with:
@@ -112,16 +113,15 @@ jobs:
           check "iOS"               ""    "_ios_[0-9]\.tar\.bz2$"
           check "Android"           ""    "_android_"
           check "Emscripten"        ""    "_emscripten"
+          # a failed job passes no outputs on, so download-libs still runs for the
+          # platforms that are there, and the verdict job fails for the rest
           echo "platforms=[$(IFS=,; echo "${platforms[*]}")]" >> "$GITHUB_OUTPUT"
-          if (( missing > 0 )); then
-            echo "$missing platform(s) have no packages in $APO_TAG (see the summary)."
-            exit 1
-          fi
+          echo "missing=$missing" >> "$GITHUB_OUTPUT"
 
   download-libs:
     # runs for the platforms that have packages, even if others are missing
     needs: apothecary-release
-    if: ${{ !cancelled() && needs.apothecary-release.outputs.platforms != '' && needs.apothecary-release.outputs.platforms != '[]' }}
+    if: ${{ needs.apothecary-release.outputs.platforms != '[]' }}
     strategy:
       fail-fast: false
       matrix:
@@ -139,3 +139,24 @@ jobs:
           scripts/${{ matrix.platform }}/download_libs.sh 2>&1 | tee download.log
           grep -q "pinned by scripts/dev/apothecary_release: ${{ needs.apothecary-release.outputs.apothecary_tag }}" download.log
           grep -qE "secure \(SHA-256 verified" download.log || echo "::warning::download_libs.sh didn't report SHA-256 verified packages"
+
+  verdict:
+    needs: [apothecary-release, download-libs]
+    if: ${{ !cancelled() && needs.apothecary-release.result == 'success' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Every platform has packages and they install
+        env:
+          MISSING: ${{ needs.apothecary-release.outputs.missing }}
+          DOWNLOAD: ${{ needs.download-libs.result }}
+          APO_TAG: ${{ needs.apothecary-release.outputs.apothecary_tag }}
+        run: |
+          if [[ "$MISSING" != 0 ]]; then
+            echo "::error title=Incomplete apothecary release::$APO_TAG is missing packages for $MISSING platform(s); see the apothecary-release summary."
+            exit 1
+          fi
+          if [[ "$DOWNLOAD" != success ]]; then
+            echo "::error title=download_libs failed::download_libs.sh with $APO_TAG: $DOWNLOAD"
+            exit 1
+          fi
+          echo "$APO_TAG is complete and installs."
