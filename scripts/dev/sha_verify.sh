@@ -91,13 +91,10 @@ fetchGithubReleaseDigests(){
 	local out="$3"
 	local url api
 	: > "$out"
-	if [[ "$tag" == "latest" ]]; then
-		url="https://api.github.com/repos/${repo}/releases/latest"
-	else
-		url="https://api.github.com/repos/${repo}/releases/tags/${tag}"
-	fi
+	# Callers download /releases/download/<tag>/..., including the literal latest tag.
+	url="https://api.github.com/repos/${repo}/releases/tags/${tag}"
 	api=$(mktemp 2>/dev/null || mktemp -t ofdigest)
-	if ! curl -fsSL -H "Accept: application/vnd.github+json" \
+	if ! curl -fsSL --retry 3 --retry-connrefused --connect-timeout 15 --max-time 60 -H "Accept: application/vnd.github+json" \
 		-H "User-Agent: openFrameworks-sha-verify" \
 		"$url" -o "$api" 2>/dev/null; then
 		rm -f "$api"
@@ -237,6 +234,8 @@ verifyPackagesAgainstMap(){
 	SHA_SKIPPED=0
 	SHA_FAILED=0
 	SHA_STATUS="unchecked"
+	# Space-padded names of packages whose SHA-256 matched (see verifyPackageArchives)
+	SHA_VERIFIED_PKGS=" "
 
 	if [[ "${VERIFY_SHA}" == "0" ]]; then
 		SHA_STATUS="skipped"
@@ -273,6 +272,7 @@ verifyPackagesAgainstMap(){
 		any_expected=1
 		if verifyFileSha256 "$pkg" "$expected"; then
 			SHA_VERIFIED=$((SHA_VERIFIED+1))
+			SHA_VERIFIED_PKGS="${SHA_VERIFIED_PKGS}${pkg} "
 			actual=$(cat "${pkg}.sha256" 2>/dev/null || true)
 			echo "  ✓ $pkg"
 			echo "      sha256:${actual}"
@@ -306,4 +306,31 @@ verifyPackagesAgainstMap(){
 		SHA_STATUS="skipped"
 	fi
 	return 0
+}
+
+# Validate archives before download_libs removes any installed output, so a bad
+# download is caught even when remote SHA metadata is unavailable. A package
+# whose SHA-256 matched the published digest is the release asset byte for
+# byte, so it isn't decompressed a second time; only the others are opened.
+verifyPackageArchives(){
+	local packages="$1" pkg
+	for pkg in $packages; do
+		if [[ ! -s "$pkg" ]]; then
+			echo "ERROR: Missing or empty library archive: $pkg" >&2
+			return 1
+		fi
+		if [[ "${SHA_VERIFIED_PKGS:-}" == *" $pkg "* ]]; then
+			continue
+		fi
+		case "$pkg" in
+			*.zip)
+				if unzip -tq "$pkg" >/dev/null; then continue; fi
+				;;
+			*)
+				if tar -tf "$pkg" >/dev/null; then continue; fi
+				;;
+		esac
+		echo "ERROR: Invalid library archive: $pkg. Remove the cached file and retry." >&2
+		return 1
+	done
 }
