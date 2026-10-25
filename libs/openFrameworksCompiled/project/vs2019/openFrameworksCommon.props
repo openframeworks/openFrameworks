@@ -23,4 +23,21 @@
       <EnvironmentVariable>true</EnvironmentVariable>
     </BuildMacro>
   </ItemGroup>
+  <!-- GLon12 (Mesa OpenGL -> D3D12): OF_USE_GLON12=1 copies libs/glon12/bin/vs/$(Platform)/*.dll next to the exe -->
+  <PropertyGroup>
+    <OF_USE_GLON12 Condition="'$(OF_USE_GLON12)'==''">0</OF_USE_GLON12>
+    <OF_GLON12_BIN>$(OF_ROOT)libs\glon12\bin\vs\$(Platform)\</OF_GLON12_BIN>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(OF_USE_GLON12)'=='1'">
+    <ClCompile>
+      <PreprocessorDefinitions>OF_USE_GLON12=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <Target Name="OFCopyGLon12" AfterTargets="Build" Condition="'$(OF_USE_GLON12)'=='1' and '$(ConfigurationType)'=='Application'">
+    <ItemGroup>
+      <OFGLon12Dll Include="$(OF_GLON12_BIN)*.dll" />
+    </ItemGroup>
+    <Error Condition="'@(OFGLon12Dll)'==''" Text="OF_USE_GLON12=1 but no GLon12 DLLs in $(OF_GLON12_BIN) - download the glon12 library (projectGenerator Libraries, or apothecary: TYPE=vs ./apothecary update glon12)" />
+    <Copy SourceFiles="@(OFGLon12Dll)" DestinationFolder="$(OutDir)" SkipUnchangedFiles="true" />
+  </Target>
 </Project>
