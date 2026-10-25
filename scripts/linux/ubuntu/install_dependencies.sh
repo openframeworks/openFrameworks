@@ -192,7 +192,7 @@ libjack-jackd2-0 libjack-jackd2-dev freeglut3-dev libasound2-dev libxmu-dev \
 libxxf86vm-dev g++${CXX_VER} libgl1-mesa-dev${XTAG} libglu1-mesa-dev \
 libraw1394-dev libudev-dev libdrm-dev libglew-dev libopenal-dev libsndfile1-dev \
 libfreeimage-dev libcairo2-dev libfreetype6-dev libssl-dev libpulse-dev \
-libusb-1.0-0-dev ${LIB_GTK_DEV} libopencv-dev libassimp-dev librtaudio-dev \
+libusb-1.0-0-dev ${LIB_GTK_DEV} libopencv-dev liblapack-dev libblas-dev libassimp-dev librtaudio-dev \
 libgstreamer${GSTREAMER_VERSION}-dev libgstreamer-plugins-base${GSTREAMER_VERSION}-dev \
 ${GSTREAMER_FFMPEG} gstreamer${GSTREAMER_VERSION}-pulseaudio \
 gstreamer${GSTREAMER_VERSION}-x gstreamer${GSTREAMER_VERSION}-plugins-bad \
