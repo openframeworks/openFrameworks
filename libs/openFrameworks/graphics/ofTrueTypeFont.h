@@ -363,6 +363,9 @@ public:
 	std::vector<ofPath> getStringAsPoints(const std::string & str, bool vflip = true, bool filled = true) const;
 	const ofMesh & getStringMesh(const std::string & s, float x, float y, bool vflip = true) const;
 	const ofTexture & getFontTexture() const;
+	/// \brief The glyph atlas the font texture is made from (OF_PIXELS_GRAY_ALPHA),
+	/// kept on the CPU after load(): empty if the font isn't loaded.
+	const ofPixels & getFontAtlasPixels() const;
 	// FIXME: Maybe return a const & so texture is not copied?
 	ofTexture getStringTexture(const std::string & s, bool vflip = true) const;
 	glm::vec2 getFirstGlyphPosForTexture(const std::string & str, bool vflip) const;
@@ -436,6 +439,7 @@ protected:
 	size_t indexForGlyph(uint32_t glyph) const;
 
 	ofTexture texAtlas;
+	ofPixels atlasPixels;
 	mutable ofMesh stringQuads;
 
 	/// \endcond

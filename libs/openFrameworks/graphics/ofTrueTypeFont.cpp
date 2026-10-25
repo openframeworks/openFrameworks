@@ -500,6 +500,7 @@ ofTrueTypeFont::ofTrueTypeFont(const ofTrueTypeFont& mom)
 	settings = mom.settings;
 	glyphIndexMap = mom.glyphIndexMap;
 	texAtlas = mom.texAtlas;
+	atlasPixels = mom.atlasPixels;
 	face = mom.face;
 }
 
@@ -532,6 +533,7 @@ ofTrueTypeFont & ofTrueTypeFont::operator=(const ofTrueTypeFont& mom){
 	settings = mom.settings;
 	glyphIndexMap = mom.glyphIndexMap;
 	texAtlas = mom.texAtlas;
+	atlasPixels = mom.atlasPixels;
 	face = mom.face;
 
 	return *this;
@@ -565,6 +567,7 @@ ofTrueTypeFont::ofTrueTypeFont(ofTrueTypeFont&& mom)
 	settings = mom.settings;
 	glyphIndexMap = std::move(mom.glyphIndexMap);
 	texAtlas = mom.texAtlas;
+	atlasPixels = std::move(mom.atlasPixels);
 	face = mom.face;
 }
 
@@ -596,6 +599,7 @@ ofTrueTypeFont & ofTrueTypeFont::operator=(ofTrueTypeFont&& mom){
 	settings = mom.settings;
 	glyphIndexMap = std::move(mom.glyphIndexMap);
 	texAtlas = mom.texAtlas;
+	atlasPixels = std::move(mom.atlasPixels);
 	face = mom.face;
 	return *this;
 }
@@ -882,6 +886,7 @@ bool ofTrueTypeFont::load(const ofTrueTypeFontSettings & _settings){
 			texAtlas.setTextureMinMagFilter(GL_NEAREST,GL_NEAREST);
 		}
 		texAtlas.loadData(atlasPixelsLuminanceAlpha);
+		atlasPixels = std::move(atlasPixelsLuminanceAlpha);
 		bLoadedOk = true;
 		return true;
 	}
@@ -1251,6 +1256,11 @@ const ofMesh & ofTrueTypeFont::getStringMesh(const string& c, float x, float y, 
 //-----------------------------------------------------------
 const ofTexture & ofTrueTypeFont::getFontTexture() const{
 	return texAtlas;
+}
+
+//-----------------------------------------------------------
+const ofPixels & ofTrueTypeFont::getFontAtlasPixels() const{
+	return atlasPixels;
 }
 
 //-----------------------------------------------------------
