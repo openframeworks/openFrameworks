@@ -212,6 +212,14 @@ else
 fi
 
 echo
+echo "== Jetson detection can be forced (containers have no device-tree) =="
+if grep -q '^JETSON_DETECTED ?=' "$SHARED"; then
+	ok "config.shared.mk allows JETSON_DETECTED override"
+else
+	bad "config.shared.mk does not allow JETSON_DETECTED override"
+fi
+
+echo
 echo "Passed: ${PASS}  Failed: ${FAIL}"
 if [[ "$FAIL" -ne 0 ]]; then
 	exit 1

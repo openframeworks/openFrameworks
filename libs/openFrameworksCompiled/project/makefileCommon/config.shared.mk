@@ -49,7 +49,7 @@ RPI_DETECTED := $(shell \
 	elif grep -qiE 'raspberrypi\.(org|com)' /etc/apt/sources.list /etc/apt/sources.list.d/* 2>/dev/null; then echo yes; \
 	else echo no; fi)
 
-JETSON_DETECTED := $(shell \
+JETSON_DETECTED ?= $(shell \
 	if [ -f /proc/device-tree/model ]; then file=/proc/device-tree/model; \
 	elif [ -f /sys/firmware/devicetree/base/model ]; then file=/sys/firmware/devicetree/base/model; \
 	else file=""; fi; \
