@@ -26,11 +26,18 @@
   <!-- GLon12 (Mesa OpenGL -> D3D12): OF_USE_GLON12=1 copies libs/glon12/bin/vs/$(Platform)/*.dll next to the exe -->
   <PropertyGroup>
     <OF_USE_GLON12 Condition="'$(OF_USE_GLON12)'==''">0</OF_USE_GLON12>
+    <!-- OF_GLON12_WARP=1: run on WARP (software D3D12) instead of the GPU, see ofAppGLFWWindow.h -->
+    <OF_GLON12_WARP Condition="'$(OF_GLON12_WARP)'==''">0</OF_GLON12_WARP>
     <OF_GLON12_BIN>$(OF_ROOT)libs\glon12\bin\vs\$(Platform)\</OF_GLON12_BIN>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(OF_USE_GLON12)'=='1'">
     <ClCompile>
       <PreprocessorDefinitions>OF_USE_GLON12=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(OF_USE_GLON12)'=='1' and '$(OF_GLON12_WARP)'=='1'">
+    <ClCompile>
+      <PreprocessorDefinitions>OF_USE_GLON12_WARP=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
   </ItemDefinitionGroup>
   <Target Name="OFCopyGLon12" AfterTargets="Build" Condition="'$(OF_USE_GLON12)'=='1' and '$(ConfigurationType)'=='Application'">

@@ -19,6 +19,24 @@ template <typename T>
 class ofPixels_;
 typedef ofPixels_<unsigned char> ofPixels;
 
+#if defined(TARGET_WIN32) && defined(OF_USE_GLON12) && defined(OF_USE_GLON12_WARP)
+#include <cstdlib>
+namespace of {
+namespace priv {
+	// GLon12: run Mesa d3d12 on WARP (software D3D12) unless the user already chose.
+	// Lives in the header so the app's OF_USE_GLON12_WARP define reaches it (openframeworksLib
+	// is built without it). Runs at static init, before GLFW creates the first context.
+	// LIBGL_ALWAYS_SOFTWARE alone makes Mesa look for llvmpipe / softpipe, which GLon12
+	// doesn't build, so GALLIUM_DRIVER keeps it on d3d12 (which then picks WARP).
+	inline const bool glon12Warp = [] {
+		if (!std::getenv("LIBGL_ALWAYS_SOFTWARE")) _putenv("LIBGL_ALWAYS_SOFTWARE=true");
+		if (!std::getenv("GALLIUM_DRIVER")) _putenv("GALLIUM_DRIVER=d3d12");
+		return true;
+	}();
+}
+}
+#endif
+
 #ifdef TARGET_OPENGLES
 class ofGLFWWindowSettings : public ofGLESWindowSettings {
 #else
