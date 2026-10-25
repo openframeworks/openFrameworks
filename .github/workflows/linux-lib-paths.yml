@@ -1,0 +1,34 @@
+name: Linux lib paths
+
+on:
+  push:
+    paths-ignore:
+      - "**/*.md"
+      - "examples/**"
+  pull_request:
+    paths-ignore:
+      - "**/*.md"
+      - "examples/**"
+
+concurrency:
+  group: linux-lib-paths-${{ github.event.pull_request.number || github.sha }}
+  cancel-in-progress: true
+
+jobs:
+  test-old-and-new-lib-paths:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v6
+      - name: New lib/linux/<arch> and legacy lib/linux64 both resolve
+        run: bash scripts/ci/linux/test_lib_paths.sh
+
+  download-and-check-linux-64:
+    runs-on: ubuntu-24.04
+    env:
+      RELEASE: latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Download linux 64 gcc10 libs
+        run: ./scripts/linux/download_libs.sh -t $RELEASE -a 64 -g 10
+      - name: Check deployed files and archive format
+        run: bash scripts/ci/check_deployed_libs.sh --platform linux --arch 64
