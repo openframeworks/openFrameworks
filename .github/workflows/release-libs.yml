@@ -1,0 +1,141 @@
+# Links an openFrameworks release tag to its apothecary library release.
+#
+# A release commit pins the apothecary release in scripts/dev/apothecary_release
+# (e.g. v12.2.0; master keeps "latest"), so download_libs.sh in a checkout of the
+# tag always gets the libraries the release was tested with. When a tag is
+# pushed, this checks that:
+#   - the tag pins a versioned apothecary release (not the moving "latest")
+#   - that release exists and has every platform's packages
+#   - download_libs.sh installs it (SHA-256 verified) on Linux and macOS
+# Run it by hand for a tag to re-check, or to start apothecary's release
+# workflow (release-openframeworks.yml) when the release is missing; that needs
+# an APOTHECARY_TOKEN secret allowed to run workflows in the apothecary repo.
+
+name: release-libs
+
+on:
+  push:
+    tags: ['[0-9]*.[0-9]*.[0-9]*']
+  workflow_dispatch:
+    inputs:
+      of_tag:
+        description: "openFrameworks tag to check (e.g. 0.12.2)"
+        required: true
+        type: string
+      start_apothecary_release:
+        description: "Start apothecary's release workflow if the pinned release doesn't exist"
+        required: false
+        default: false
+        type: boolean
+
+permissions:
+  contents: read
+
+env:
+  APOTHECARY_REPO: ${{ vars.APOTHECARY_REPO || 'openframeworks/apothecary' }}
+  OF_TAG: ${{ inputs.of_tag || github.ref_name }}
+
+jobs:
+  apothecary-release:
+    runs-on: ubuntu-latest
+    outputs:
+      apothecary_tag: ${{ steps.pin.outputs.tag }}
+      platforms: ${{ steps.assets.outputs.platforms }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ env.OF_TAG }}
+
+      - name: Read the pinned apothecary release
+        id: pin
+        shell: bash
+        run: |
+          set -euo pipefail
+          pinned=$(tr -d '[:space:]' < scripts/dev/apothecary_release 2>/dev/null || true)
+          # openFrameworks 0.X.Y[-suffix] uses apothecary vX.Y.0[-suffix] unless pinned otherwise
+          suggested="v$(sed -E 's/^0\.([0-9]+)\.([0-9]+)(.*)$/\1.\2.0\3/' <<< "$OF_TAG")"
+          if [[ -z "$pinned" || "$pinned" == latest ]]; then
+            echo "::error title=Libraries not pinned::$OF_TAG pins '${pinned:-nothing}' in scripts/dev/apothecary_release, so download_libs.sh would follow apothecary's moving 'latest'. Commit the release's apothecary tag (e.g. $suggested) before tagging."
+            exit 1
+          fi
+          echo "tag=$pinned" >> "$GITHUB_OUTPUT"
+          echo "$OF_TAG -> apothecary $pinned (suggested from the version: $suggested)"
+
+      - name: Check the apothecary release and its packages
+        id: assets
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          APO_TAG: ${{ steps.pin.outputs.tag }}
+          START: ${{ inputs.start_apothecary_release || false }}
+          APOTHECARY_TOKEN: ${{ secrets.APOTHECARY_TOKEN }}
+        run: |
+          set -euo pipefail
+          if ! gh release view "$APO_TAG" --repo "$APOTHECARY_REPO" --json assets --jq '.assets[].name' > assets.txt 2>/dev/null; then
+            echo "::error title=Apothecary release missing::$APOTHECARY_REPO has no release $APO_TAG."
+            if [[ "$START" == true && -n "$APOTHECARY_TOKEN" ]]; then
+              GH_TOKEN="$APOTHECARY_TOKEN" gh workflow run release-openframeworks.yml --repo "$APOTHECARY_REPO" \
+                -f openframeworks_version="${APO_TAG#v}" -f overwrite_existing=false
+              echo "Started $APOTHECARY_REPO release-openframeworks.yml for ${APO_TAG#v}; re-run this check when its builds finish."
+            else
+              echo "Run $APOTHECARY_REPO's 'Build and release openFrameworks libraries' workflow with version ${APO_TAG#v}, or re-run this one with start_apothecary_release (needs the APOTHECARY_TOKEN secret)."
+            fi
+            exit 1
+          fi
+          # platform | packages download_libs.sh needs (either the current or the linux/<arch> naming)
+          missing=0
+          platforms=()
+          {
+            echo "## openFrameworks \`$OF_TAG\` → apothecary [\`$APO_TAG\`](https://github.com/$APOTHECARY_REPO/releases/tag/$APO_TAG)"
+            echo
+            echo "| Platform | Packages | |"
+            echo "|---|---|---|"
+          } >> "$GITHUB_STEP_SUMMARY"
+          check() { # name smoke-id regex
+            local n
+            n=$(grep -cE "$3" assets.txt || true)
+            if (( n > 0 )); then
+              echo "| $1 | $n | ✅ |" >> "$GITHUB_STEP_SUMMARY"
+              [[ -n "$2" ]] && platforms+=("\"$2\"")
+            else
+              echo "| $1 | 0 | ❌ missing |" >> "$GITHUB_STEP_SUMMARY"
+              echo "::error title=Missing packages::$APO_TAG has no $1 packages"
+              missing=$((missing + 1))
+            fi
+          }
+          check "macOS"             osx   "_(osx|macos)_[0-9]\.tar\.bz2$"
+          check "Linux x86_64"      linux "_linux(64gcc6|_64_gcc[0-9]+)\.tar\.bz2$"
+          check "Linux arm64"       ""    "_linux_?(arm64|aarch64)"
+          check "Raspberry Pi 32"   ""    "_linux_?armv6l"
+          check "Visual Studio"     ""    "_vs_(64|arm64|arm64ec)_[0-9]\.zip$"
+          check "MSYS2"             ""    "_msys2_"
+          check "iOS"               ""    "_ios_[0-9]\.tar\.bz2$"
+          check "Android"           ""    "_android_"
+          check "Emscripten"        ""    "_emscripten"
+          echo "platforms=[$(IFS=,; echo "${platforms[*]}")]" >> "$GITHUB_OUTPUT"
+          if (( missing > 0 )); then
+            echo "$missing platform(s) have no packages in $APO_TAG (see the summary)."
+            exit 1
+          fi
+
+  download-libs:
+    # runs for the platforms that have packages, even if others are missing
+    needs: apothecary-release
+    if: ${{ !cancelled() && needs.apothecary-release.outputs.platforms != '' && needs.apothecary-release.outputs.platforms != '[]' }}
+    strategy:
+      fail-fast: false
+      matrix:
+        platform: ${{ fromJSON(needs.apothecary-release.outputs.platforms) }}
+    runs-on: ${{ matrix.platform == 'osx' && 'macos-latest' || 'ubuntu-latest' }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ env.OF_TAG }}
+      - name: download_libs.sh with the pinned release
+        shell: bash
+        run: |
+          set -o pipefail
+          # no -t: this tests the pin a user's checkout of the tag gets
+          scripts/${{ matrix.platform }}/download_libs.sh 2>&1 | tee download.log
+          grep -q "pinned by scripts/dev/apothecary_release: ${{ needs.apothecary-release.outputs.apothecary_tag }}" download.log
+          grep -qE "secure \(SHA-256 verified" download.log || echo "::warning::download_libs.sh didn't report SHA-256 verified packages"

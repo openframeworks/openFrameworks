@@ -606,6 +606,18 @@ fi
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd "$SCRIPT_DIR"
 
+# apothecary_release names the apothecary release this openFrameworks version
+# uses: "latest" on master; a release commit pins its own (e.g. v12.2.0), so a
+# checkout of that tag keeps getting the same libraries. -t overrides it
+# (-t latest for the newest libraries). The platform scripts always pass -b.
+if [[ $TAG == "" ]] && [[ -f "$SCRIPT_DIR/apothecary_release" ]]; then
+    PINNED_RELEASE=$(tr -d '[:space:]' < "$SCRIPT_DIR/apothecary_release")
+    if [[ -n $PINNED_RELEASE ]] && [[ $PINNED_RELEASE != latest ]]; then
+        TAG="$PINNED_RELEASE"
+        echo " Using the apothecary release pinned by scripts/dev/apothecary_release: $TAG"
+    fi
+fi
+
 if [[ $BLEEDING_EDGE = 1 ]] ; then
     VER=latest
 fi
