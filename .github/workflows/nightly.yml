@@ -44,9 +44,9 @@ jobs:
         # libunwind-dev wget2
         version: 1.0
 
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
     - name: ccache
-      uses: hendrikmuhs/ccache-action@v1.2.14
+      uses: hendrikmuhs/ccache-action@v1.2.24
       with:
         key: ${{ matrix.cfg.target }}
     - name: Install dependencies
@@ -61,7 +61,7 @@ jobs:
     - name: List output directory
       run: ls -lah out/
     # - name: Upload to GitHub Release
-    #   uses: softprops/action-gh-release@v2.1.0
+    #   uses: danoli3/action-gh-release@ec40b04e78c39008f73c4ca3fdf9b51df604c4ed # softprops/action-gh-release#852 (v3, node24)
     #   with:
     #     token: ${{ secrets.GITHUB_TOKEN }}
     #     tag_name: "nightly"

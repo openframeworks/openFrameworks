@@ -77,7 +77,7 @@ jobs:
         run: gcc -v || true
       - uses: actions/checkout@v6
       - name: ccache
-        uses: hendrikmuhs/ccache-action@v1.2.23
+        uses: hendrikmuhs/ccache-action@v1.2.24
         with:
           # key: ${{ matrix.os }}-${{ matrix.type }}
           key: ${{ matrix.msystem }}
@@ -214,13 +214,13 @@ jobs:
       ALLADDONSEXAMPLE: ${{matrix.cfg.alladdons}}
     steps:
       - name: Cache Packages
-        uses: awalsh128/cache-apt-pkgs-action@v1.6.0
+        uses: awalsh128/cache-apt-pkgs-action@v1.6.3
         with:
           packages: multistrap unzip gcc-${{matrix.cfg.suffix}} g++-${{matrix.cfg.suffix}}
           version: 1.0
       - uses: actions/checkout@v6
       - name: ccache
-        uses: hendrikmuhs/ccache-action@v1.2.23
+        uses: hendrikmuhs/ccache-action@v1.2.24
         with:
           key: ${{ matrix.cfg.libs }}
       # - name: Determine Release
@@ -265,7 +265,7 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - name: ccache
-        uses: hendrikmuhs/ccache-action@v1.2.23
+        uses: hendrikmuhs/ccache-action@v1.2.24
         with:
           key: ${{ matrix.cfg.target }}-${{ matrix.cfg.libs }}
       # - name: Determine Release
@@ -308,7 +308,7 @@ jobs:
       #          sudo apt-get remove libunwind-14 -y;
       #          fi
       - name: Cache Packages
-        uses: awalsh128/cache-apt-pkgs-action@v1.6.0
+        uses: awalsh128/cache-apt-pkgs-action@v1.6.3
         with:
           packages: aptitude aptitude-common libboost-iostreams1.83.0 libcwidget4 libsigc++-2.0-0v5 libxapian30 fonts-wine{a} libasound2-plugins{a} libcapi20-3t64{a} libosmesa6{a} libpcsclite1{a} libspeexdsp1{a} libwine{a} libxkbregistry0{a} libz-mingw-w64{a} wine{a} wine64 wget2 make libjack-jackd2-0 libjack-jackd2-dev freeglut3-dev libasound2-dev libxmu-dev libxxf86vm-dev g++ libgl1-mesa-dev libglu1-mesa-dev libraw1394-dev libudev-dev libdrm-dev libglew-dev libopenal-dev libsndfile1-dev libfreeimage-dev libcairo2-dev libfreetype6-dev libpulse-dev libusb-1.0-0-dev libgtk2.0-dev libopencv-dev libassimp-dev librtaudio-dev gdb libglfw3-dev liburiparser-dev libpugixml-dev libgconf-2-4 libgtk2.0-0 libpoco-dev libxcursor-dev libxi-dev libxinerama-dev libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev gstreamer1.0-libav gstreamer1.0-pulseaudio gstreamer1.0-x gstreamer1.0-plugins-bad gstreamer1.0-alsa gstreamer1.0-plugins-base gstreamer1.0-plugins-good
           version: 1.0
@@ -327,7 +327,7 @@ jobs:
       #     fi
       - uses: actions/checkout@v6
       - name: ccache
-        uses: hendrikmuhs/ccache-action@v1.2.23
+        uses: hendrikmuhs/ccache-action@v1.2.24
         with:
           key: ${{ matrix.cfg.target }}-${{ matrix.cfg.libs }}
 
@@ -369,9 +369,9 @@ jobs:
   #       packages: aptitude aptitude-common libboost-iostreams1.83.0 libcwidget4 libsigc++-2.0-0v5 libxapian30 fonts-wine{a} libasound2-plugins{a} libcapi20-3t64{a} libosmesa6{a} libpcsclite1{a} libspeexdsp1{a} libwine{a} libxkbregistry0{a} libz-mingw-w64{a} wine{a} wine64 wget2 make libjack-jackd2-0 libjack-jackd2-dev freeglut3-dev libasound2-dev libxmu-dev libxxf86vm-dev g++ libgl1-mesa-dev libglu1-mesa-dev libraw1394-dev libudev-dev libdrm-dev libglew-dev libopenal-dev libsndfile1-dev libfreeimage-dev libcairo2-dev libfreetype6-dev libpulse-dev libusb-1.0-0-dev libgtk2.0-dev libopencv-dev libassimp-dev librtaudio-dev gdb libglfw3-dev liburiparser-dev libpugixml-dev libgconf-2-4 libgtk2.0-0 libpoco-dev libxcursor-dev libxi-dev libxinerama-dev libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev gstreamer1.0-libav gstreamer1.0-pulseaudio gstreamer1.0-x gstreamer1.0-plugins-bad gstreamer1.0-alsa gstreamer1.0-plugins-base gstreamer1.0-plugins-good
   #       version: 1.0
 
-  #   - uses: actions/checkout@v4
+  #   - uses: actions/checkout@v6
   #   - name: ccache
-  #     uses: hendrikmuhs/ccache-action@v1.2.17
+  #     uses: hendrikmuhs/ccache-action@v1.2.24
   #     with:
   #       key: ${{ matrix.cfg.target }}-${{ matrix.cfg.libs }}
 
@@ -399,7 +399,7 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - name: ccache
-        uses: hendrikmuhs/ccache-action@v1.2.23
+        uses: hendrikmuhs/ccache-action@v1.2.24
         with:
           key: ${{ matrix.cfg.target }}-${{ matrix.cfg.opt }}
 
