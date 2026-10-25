@@ -36,9 +36,9 @@ jobs:
           # libunwind-dev wget2
           version: 1.0
 
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: ccache
-        uses: hendrikmuhs/ccache-action@v1.2.14
+        uses: hendrikmuhs/ccache-action@v1.2.24
         with:
           key: ${{ matrix.cfg.target }}
       - name: update submodules
@@ -56,18 +56,19 @@ jobs:
       #   run: |
       #     tar -cjf out/manual-mega_artefact.tar.bz2 -C out $(echo ${{ steps.createpackage.outputs.FILES_OUT }} | tr ' ' '\n' | sed 's|^out/||')
       # - name: Upload binaries as Artefact
-      #   uses: actions/upload-artifact@v4
+      #   uses: actions/upload-artifact@v6
       #   with:
       #     name: openFrameworks-all-artefact-${{ env.TARGET }}-${{ matrix.bundle }}
       #     path: out/manual-mega_artefact.tar.bz2
       #     retention-days: 1
       - name: Update Release
-        uses: IsaacShelton/update-existing-release@v1.3.4
         if: github.repository == 'openframeworks/openFrameworks' && github.ref == 'refs/heads/master'
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          tag: ${{ github.event.inputs.release }}
-          release: ${{ github.event.inputs.release }}
-          prerelease: false
-          replace: true
-          files: ${{ steps.createpackage.outputs.FILES_OUT }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+          RELEASE: ${{ github.event.inputs.release }}
+          FILES_OUT: ${{ steps.createpackage.outputs.FILES_OUT }}
+        run: |
+          gh release view "$RELEASE" > /dev/null 2>&1 || gh release create "$RELEASE" --title "$RELEASE" --target "$GITHUB_SHA" --notes ""
+          gh release edit "$RELEASE" --title "$RELEASE" --prerelease=false
+          gh release upload "$RELEASE" $FILES_OUT --clobber
