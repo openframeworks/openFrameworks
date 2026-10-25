@@ -17,6 +17,19 @@ for archive in bad.tar.bz2 truncated.tar.bz2 empty.tar.bz2 absent.tar.bz2; do
         echo "Accepted invalid archive: $archive" >&2; exit 1
     fi
 done
+# A package whose SHA-256 matched is skipped (not decompressed again); one
+# without a matching digest is still opened.
+SHA_VERIFIED_PKGS=" $TEMP/bad.tar.bz2 "
+verifyPackageArchives "$TEMP/bad.tar.bz2"
+SHA_VERIFIED_PKGS=" $TEMP/bad.tar.bz2.old "
+if verifyPackageArchives "$TEMP/bad.tar.bz2" > "$TEMP/validation.log" 2>&1; then
+    echo "Skipped an archive whose digest didn't match by name" >&2; exit 1
+fi
+SHA_VERIFIED_PKGS=" "
+if verifyPackageArchives "$TEMP/bad.tar.bz2" > "$TEMP/validation.log" 2>&1; then
+    echo "Accepted invalid archive without a verified digest" >&2; exit 1
+fi
+unset SHA_VERIFIED_PKGS
 # The real downloader must preserve failures instead of returning the status
 # of an optional connection-cleanup request.
 cat > "$TEMP/bin/curl" <<'CURL'
