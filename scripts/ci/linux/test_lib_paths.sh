@@ -220,6 +220,19 @@ else
 fi
 
 echo
+echo "== Jetson uses the Ubuntu arm64 (linux/arm64) libs =="
+if grep -q 'Jetson.*Ubuntu arm64 libs' "$DL"; then
+	ok "download_libs.sh maps Jetson to the Ubuntu arm64 libs"
+else
+	bad "download_libs.sh does not map Jetson to the Ubuntu arm64 libs"
+fi
+if grep -A2 'JETSON_DETECTED),yes' "$SHARED" | grep -q 'PLATFORM_LIB_SUBPATH=linux/arm64'; then
+	ok "makefile Jetson path uses linux/arm64 libs"
+else
+	bad "makefile Jetson path does not use linux/arm64 libs"
+fi
+
+echo
 echo "Passed: ${PASS}  Failed: ${FAIL}"
 if [[ "$FAIL" -ne 0 ]]; then
 	exit 1

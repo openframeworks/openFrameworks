@@ -136,6 +136,23 @@ is_raspberry_pi(){
     return 1
 }
 
+is_jetson(){
+    local root="${OF_RPI_PROBE_ROOT:-}"
+    local model=""
+    if [ -f "$root/proc/device-tree/model" ]; then
+        model="$(tr -d '\0' <"$root/proc/device-tree/model" 2>/dev/null || true)"
+    elif [ -f "$root/sys/firmware/devicetree/base/model" ]; then
+        model="$(tr -d '\0' <"$root/sys/firmware/devicetree/base/model" 2>/dev/null || true)"
+    fi
+    if echo "$model" | grep -qiE 'jetson|tegra'; then
+        return 0
+    fi
+    if [ -f "$root/etc/nv_tegra_release" ]; then
+        return 0
+    fi
+    return 1
+}
+
 # Canonical apothecary / linux2026 makefile paths: lib/linux/<arch>
 linux_canonical_lib_subpath(){
     case "$1" in
@@ -532,6 +549,23 @@ if [ "$PLATFORM" == "vs" ]; then
     esac
 fi
 
+# Jetson (L4T) is Ubuntu arm64 and apothecary publishes no linux_jetson
+# archive, so Jetson always uses the Ubuntu arm64 libs.
+if [ "$PLATFORM" == "linux" ]; then
+    case "$ARCH" in
+        jetson|armv8l)
+            ARCH=arm64
+            echo " Jetson → using Ubuntu arm64 libs (linux/arm64)"
+            ;;
+        aarch64)
+            if is_jetson; then
+                ARCH=arm64
+                echo " Jetson detected → using Ubuntu arm64 libs (linux/arm64)"
+            fi
+            ;;
+    esac
+fi
+
 # An explicit -a arm64 on Raspberry Pi hardware / RPi OS would download the
 # generic linux/arm64 artifact while the makefiles build linux/aarch64 there.
 # Normalise to the RPi artifact whenever a Pi is detected.
@@ -560,9 +594,6 @@ if [ "$PLATFORM" == "linux" ]; then
 	case "$ARCH" in
 		64|x86_64|arm64|aarch64|armv6l|armv7l)
 			OPT="_${GCC_VERSION}"
-			;;
-		jetson|armv8l)
-			OPT=""
 			;;
 		*)
 			OPT="_${GCC_VERSION}"

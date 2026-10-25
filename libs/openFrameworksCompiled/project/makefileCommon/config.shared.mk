@@ -148,7 +148,7 @@ ifndef PLATFORM_LIB_SUBPATH
 $(error This makefile does not support Raspberry Pi architecture $(PLATFORM_ARCH))
 			endif
 		else ifeq ($(JETSON_DETECTED),yes)
-			PLATFORM_LIB_SUBPATH=linux/jetson
+			PLATFORM_LIB_SUBPATH=linux/arm64
 			PLATFORM_CONFIG_SUBPATH=linux/arm64
 			PLATFORM_CONFIG_ID=linuxarm64
 		else
