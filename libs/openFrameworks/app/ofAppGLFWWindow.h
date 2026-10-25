@@ -23,11 +23,7 @@ typedef ofPixels_<unsigned char> ofPixels;
 #include <cstdlib>
 namespace of {
 namespace priv {
-	// GLon12: run Mesa d3d12 on WARP (software D3D12) unless the user already chose.
-	// Lives in the header so the app's OF_USE_GLON12_WARP define reaches it (openframeworksLib
-	// is built without it). Runs at static init, before GLFW creates the first context.
-	// LIBGL_ALWAYS_SOFTWARE alone makes Mesa look for llvmpipe / softpipe, which GLon12
-	// doesn't build, so GALLIUM_DRIVER keeps it on d3d12 (which then picks WARP).
+	// in the header so the app's OF_USE_GLON12_WARP reaches it; GALLIUM_DRIVER keeps Mesa on d3d12
 	inline const bool glon12Warp = [] {
 		if (!std::getenv("LIBGL_ALWAYS_SOFTWARE")) _putenv("LIBGL_ALWAYS_SOFTWARE=true");
 		if (!std::getenv("GALLIUM_DRIVER")) _putenv("GALLIUM_DRIVER=d3d12");
@@ -78,10 +74,7 @@ public:
 	int monitor = 0;
 	bool multiMonitorFullScreen = false;
 	std::shared_ptr<ofAppBaseWindow> shareContextWith;
-	// Windows, GLon12 (OF_USE_GLON12=1) only: run on WARP (software D3D12) instead of the GPU.
-	// Must be set on the first window, Mesa picks the adapter when the first context is created.
-	// The same as building with OF_USE_GLON12_WARP=1; LIBGL_ALWAYS_SOFTWARE in the environment wins.
-	bool glon12Warp = false;
+	bool glon12Warp = false; // GLon12 (Windows): WARP instead of the GPU, first window only
 };
 
 #ifdef TARGET_OPENGLES

@@ -49,8 +49,7 @@ namespace of{
 			return glfwInit();
 		}
 
-		// GLon12: Mesa d3d12 on WARP, see ofGLFWWindowSettings::glon12Warp and OF_USE_GLON12_WARP
-		// in ofAppGLFWWindow.h. Only read when the first GL context is created.
+		// GLon12 WARP: Mesa reads these when the first GL context is created
 		void SelectGLon12Warp(bool firstWindow){
 			#ifdef TARGET_WIN32
 			if (!firstWindow) {
