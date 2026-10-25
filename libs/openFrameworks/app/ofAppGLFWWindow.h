@@ -78,6 +78,10 @@ public:
 	int monitor = 0;
 	bool multiMonitorFullScreen = false;
 	std::shared_ptr<ofAppBaseWindow> shareContextWith;
+	// Windows, GLon12 (OF_USE_GLON12=1) only: run on WARP (software D3D12) instead of the GPU.
+	// Must be set on the first window, Mesa picks the adapter when the first context is created.
+	// The same as building with OF_USE_GLON12_WARP=1; LIBGL_ALWAYS_SOFTWARE in the environment wins.
+	bool glon12Warp = false;
 };
 
 #ifdef TARGET_OPENGLES
