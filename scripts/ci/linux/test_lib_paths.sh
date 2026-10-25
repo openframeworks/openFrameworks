@@ -198,6 +198,20 @@ else
 fi
 
 echo
+echo "== Linux uses the apothecary FreeImage (not the system one) =="
+LINUX_COMMON="$ROOT/libs/openFrameworksCompiled/project/makefileCommon/config.linux.common.mk"
+if grep -q 'PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/FreeImage/%' "$LINUX_COMMON"; then
+	bad "config.linux.common.mk still excludes the bundled FreeImage"
+else
+	ok "config.linux.common.mk does not exclude the bundled FreeImage"
+fi
+if grep -qE '^PLATFORM_LIBRARIES \+= freeimage' "$LINUX_COMMON"; then
+	bad "config.linux.common.mk still links system -lfreeimage"
+else
+	ok "config.linux.common.mk does not link system -lfreeimage"
+fi
+
+echo
 echo "Passed: ${PASS}  Failed: ${FAIL}"
 if [[ "$FAIL" -ne 0 ]]; then
 	exit 1
