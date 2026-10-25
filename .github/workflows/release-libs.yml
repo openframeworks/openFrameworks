@@ -97,7 +97,7 @@ jobs:
             n=$(grep -cE "$3" assets.txt || true)
             if (( n > 0 )); then
               echo "| $1 | $n | ✅ |" >> "$GITHUB_STEP_SUMMARY"
-              [[ -n "$2" ]] && platforms+=("\"$2\"")
+              if [[ -n "$2" ]]; then platforms+=("\"$2\""); fi
             else
               echo "| $1 | 0 | ❌ missing |" >> "$GITHUB_STEP_SUMMARY"
               echo "::error title=Missing packages::$APO_TAG has no $1 packages"
