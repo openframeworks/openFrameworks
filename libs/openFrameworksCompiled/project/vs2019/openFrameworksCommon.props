@@ -46,7 +46,7 @@
     <ItemGroup>
       <OFGLon12Dll Include="$(OF_GLON12_BIN)*.dll" />
     </ItemGroup>
-    <Error Condition="'@(OFGLon12Dll)'==''" Text="OF_USE_GLON12=1: no GLon12 files found in $(OF_GLON12_BIN) - download the glon12 library (projectGenerator Libraries, or apothecary: TYPE=vs ./apothecary update glon12)" />
+    <Error Condition="'@(OFGLon12Dll)'==''" Text="OF_USE_GLON12=1: no GLon12 files found in $(OF_GLON12_BIN) - download glon12 in projectGenerator: downloads > Modular libraries > glon12 > Download selected (or apothecary: TYPE=vs ./apothecary update glon12)" />
     <Copy SourceFiles="@(OFGLon12Dll)" DestinationFolder="$(OutDir)" SkipUnchangedFiles="true" />
   </Target>
 </Project>
