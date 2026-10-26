@@ -29,9 +29,10 @@ namespace priv{
 	};
 
 	// -------------------------------------
+	// inline (with the function ids below), so code using ofEventListener doesn't need ofEvents.o and through it the app code
 	class AbstractEventToken{
 		public:
-			virtual ~AbstractEventToken();
+			virtual ~AbstractEventToken() = default;
 	};
 
 
@@ -41,14 +42,14 @@ namespace priv{
 		BaseFunctionId(){}
 		BaseFunctionId(const BaseFunctionId &) = delete;
 		BaseFunctionId & operator=(const BaseFunctionId &) = delete;
-		virtual ~BaseFunctionId();
+		virtual ~BaseFunctionId() = default;
 		virtual bool operator==(const BaseFunctionId &) const = 0;
 		virtual BaseFunctionId * clone() const = 0;
 	};
 
 	// -------------------------------------
 	class StdFunctionId: public BaseFunctionId{
-		static std::atomic<uint_fast64_t> nextId;
+		inline static std::atomic<uint_fast64_t> nextId{0};
 		uint64_t id;
 
 		StdFunctionId(uint64_t id)
@@ -57,7 +58,7 @@ namespace priv{
 		StdFunctionId()
 		:id(nextId++){}
 
-		virtual ~StdFunctionId();
+		virtual ~StdFunctionId() = default;
 
 		bool operator==(const BaseFunctionId & otherid) const{
 			const auto * other = dynamic_cast<const StdFunctionId*>(&otherid);
