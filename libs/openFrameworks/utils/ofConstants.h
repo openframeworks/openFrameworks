@@ -225,6 +225,7 @@ enum ofTargetPlatform{
 #endif
 
 #ifdef TARGET_LINUX
+    #define OF_CAIRO
 
 	#ifdef TARGET_LINUX_ARM
 		#ifdef TARGET_RASPBERRY_PI
