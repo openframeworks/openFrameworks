@@ -171,6 +171,7 @@ PLATFORM_LDFLAGS += --pre-js $(OF_ADDONS_PATH)/ofxEmscripten/libs/html5video/lib
 PLATFORM_LDFLAGS += --pre-js $(OF_ADDONS_PATH)/ofxEmscripten/libs/html5video/lib/emscripten/fix-webm-duration.js
 PLATFORM_LDFLAGS += --post-js $(OF_ADDONS_PATH)/ofxEmscripten/libs/html5audio/lib/emscripten/library_audioDeviceSelect.js
 PLATFORM_LDFLAGS += --js-library $(OF_ADDONS_PATH)/ofxEmscripten/libs/html5audio/lib/emscripten/library_html5audio.js
+PLATFORM_LDFLAGS += --post-js $(OF_ADDONS_PATH)/ofxEmscripten/libs/webMidi/library_webMidi.js
 
 # no MAIN_MODULE: dynamic linking is not supported with WASM_WORKERS (audioWorklet);
 # EXPORT_ALL below still exports every symbol for the --js-library / --pre-js code
