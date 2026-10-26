@@ -58,7 +58,7 @@ void ofApp::draw(){
 	ofPushStyle();
 	ofSetLineWidth(std::max(1.f, lineWidth/4.f));
 	
-	float rectRadius = 10.f + (1.f-std::abs(std::sinf(elapsedTime))) * 80.f;
+	float rectRadius = 10.f + (1.f-std::abs(std::sin(elapsedTime))) * 80.f;
 	ofRectangle outlineRect(200, 150, ofGetWidth()-400, ofGetHeight()-300);
 	
 	ofPath testRectPath;
@@ -86,9 +86,9 @@ void ofApp::draw(){
 			float fi = (float)i;
 			float fpct = fi / (float)numPts;
 			glm::vec3 pt = glm::vec3(// magic numbers! :) move the vertices around with sin and cos
-									 std::cosf(fi * 0.15f + elapsedTime ) * (fpct+0.1f) * height * 0.5,
-									 std::sinf(fi * 0.08 + elapsedTime) * height * 0.5 + height * (fpct * 2.0f-1.0f) * 0.5,
-									 std::cosf(fi * -0.05f + elapsedTime) * height * 0.25f
+									 std::cos(fi * 0.15f + elapsedTime ) * (fpct+0.1f) * height * 0.5,
+									 std::sin(fi * 0.08 + elapsedTime) * height * 0.5 + height * (fpct * 2.0f-1.0f) * 0.5,
+									 std::cos(fi * -0.05f + elapsedTime) * height * 0.25f
 									 );
 			lineMesh.addVertex(pt);
 			if(bUseLineColors) {
@@ -146,7 +146,7 @@ void ofApp::draw(){
 		// so we don't need to add an index for that.
 		
 		ofPushMatrix(); {
-			ofTranslate(0.0, height * 0.5 * std::sinf(elapsedTime) );
+			ofTranslate(0.0, height * 0.5 * std::sin(elapsedTime) );
 			ofRotateXRad( glm::half_pi<float>() );
 			boxMesh.draw();
 		} ofPopMatrix();
@@ -175,12 +175,12 @@ void ofApp::draw(){
 		// in the setup function
 		for( auto& fp : textPaths ) {
 			fp.setFilled(true);
-			float cs = std::max(std::cosf(fi*0.35f - elapsedTime), 0.f);
+			float cs = std::max(std::cos(fi*0.35f - elapsedTime), 0.f);
 			fp.setFillColor(floatColor);
 			fp.setStrokeColor(ofColor( 60 ).getLerped(ofColor::seaGreen, cs));
 			// line width does not apply to paths, since paths have a stroke width property
 			// so change the width that the paths render by setting it on the path
-			fp.setStrokeWidth(2.f + std::max(lineWidth*0.25f*std::cosf(fi*0.25f - elapsedTime), 0.f));
+			fp.setStrokeWidth(2.f + std::max(lineWidth*0.25f*std::cos(fi*0.25f - elapsedTime), 0.f));
 			fi += 1.f;
 			fp.draw();
 		}
