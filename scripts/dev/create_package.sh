@@ -475,6 +475,13 @@ function createPackage {
         exit 1
     fi
 
+    # Linux packages keep libs/openFrameworksCompiled/{lib,project}/linux and scripts/linux:
+    # every Linux arch builds from project/linux and lib/linux/<arch> (#8540)
+    case "$PKG_PLATFORM" in
+        linux64|linuxarm64|linuxarmv6l|linuxarmv7l|linuxaarch64)
+            otherplatforms=$(remove_current_platform "$otherplatforms" "linux") ;;
+    esac
+
     #download and uncompress PG
     echo "Creating projectGenerator"
     mkdir -p $HOME/.tmp
@@ -607,7 +614,7 @@ function createPackage {
         fi
     done
 
-    if [ "$PKG_PLATFORM" != "linux" ] && [ "$PKG_PLATFORM" != "linux64" ] && [ "$PKG_PLATFORM" != "linuxarmv6l" ] && [ "$PKG_PLATFORM" != "linuxarmv7l" ] && [ "$PKG_PLATFORM" != "linuxaarch64" ]; then
+    if [ "$PKG_PLATFORM" != "linux" ] && [ "$PKG_PLATFORM" != "linux64" ] && [ "$PKG_PLATFORM" != "linuxarm64" ] && [ "$PKG_PLATFORM" != "linuxarmv6l" ] && [ "$PKG_PLATFORM" != "linuxarmv7l" ] && [ "$PKG_PLATFORM" != "linuxaarch64" ]; then
         rm -Rf $otherplatforms
         rm -Rf ci dev apothecary
     else
