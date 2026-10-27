@@ -468,6 +468,11 @@ void ofBitmapFont::unloadTexture(){
 	texture.clear();
 }
 
+const ofPixels & ofBitmapFont::getAtlasPixels() const{
+	init();
+	return pixels;
+}
+
 const ofTexture & ofBitmapFont::getTexture() const{
 	if(!texture.isAllocated()){
 		ofBitmapFont::init();

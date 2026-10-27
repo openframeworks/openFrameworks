@@ -22,6 +22,9 @@ public:
 	~ofBitmapFont();
 	ofMesh getMesh(const std::string & text, int x, int y, ofDrawBitmapMode mode=OF_BITMAPMODE_MODEL_BILLBOARD, bool vFlipped=true) const;
 	const ofTexture & getTexture() const;
+	/// \brief The glyph atlas the texture is made from: 256x256 OF_PIXELS_GRAY_ALPHA,
+	/// a 16x16 grid of the 256 characters. Available without a GL context.
+	const ofPixels & getAtlasPixels() const;
 	ofRectangle getBoundingBox(const std::string & text, int x, int y, ofDrawBitmapMode mode = ofGetStyle().drawBitmapMode, bool vFlipped = ofIsVFlipped()) const;
 private:
 	static void init();

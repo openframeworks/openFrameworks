@@ -67,19 +67,40 @@ function installPackages {
 source /etc/os-release
 
 if [ "$ID" = "elementary" ]; then
-	# Gets ubuntu base version
-	RELEASE=$(lsb_release -r -u)
+	# Gets ubuntu base version: lsb_release -u, the upstream-release file, or the codename
+	if command -v lsb_release > /dev/null; then
+		RELEASE=$(lsb_release -r -s -u 2> /dev/null)
+	fi
+	if [ -z "$RELEASE" ] && [ -f /etc/upstream-release/lsb-release ]; then
+		RELEASE=$(grep DISTRIB_RELEASE /etc/upstream-release/lsb-release | cut -d "=" -f2)
+	fi
+	if [ -z "$RELEASE" ]; then
+		case "$UBUNTU_CODENAME" in
+			bionic) RELEASE=18.04 ;;
+			focal) RELEASE=20.04 ;;
+			jammy) RELEASE=22.04 ;;
+			noble) RELEASE=24.04 ;;
+		esac
+	fi
 elif [ "$ID" = "linuxmint" ]; then
 	# Gets ubuntu base version
 	RELEASE=$(cat /etc/upstream-release/lsb-release | grep DISTRIB_RELEASE | cut -d "=" -f2)
 else
-	RELEASE=$(lsb_release -r)
+	# VERSION_ID from /etc/os-release: lsb_release isn't on minimal installs (Docker, cloud images)
+	RELEASE=$VERSION_ID
 fi
 
-MAJOR_VERSION=$(echo $RELEASE | cut -f2 -d: | cut -f1 -d. | sed "s/\t//g")
-MINOR_VERSION=$(echo $RELEASE | cut -f2 -d: | cut -f2 -d.)
+MAJOR_VERSION=$(echo "$RELEASE" | cut -f1 -d.)
+MINOR_VERSION=$(echo "$RELEASE" | cut -f2 -d.)
+if ! [[ "$MAJOR_VERSION" =~ ^[0-9]+$ && "$MINOR_VERSION" =~ ^[0-9]+$ ]]; then
+	echo "Couldn't detect the Ubuntu version (got '$RELEASE')." >&2
+	echo "Check VERSION_ID in /etc/os-release, or install lsb-release: sudo apt-get install lsb-release" >&2
+	exit 1
+fi
 
 echo "Running on ubuntu ${MAJOR_VERSION}.${MINOR_VERSION}"
+# 04 -> 4: no octal in the numeric tests below
+MINOR_VERSION=$((10#$MINOR_VERSION))
 
 if [ $MAJOR_VERSION -lt 12 ]; then
     echo "Your ubuntu version is too old try using an older version of openFrameworks or updating your system"
@@ -192,7 +213,7 @@ libjack-jackd2-0 libjack-jackd2-dev freeglut3-dev libasound2-dev libxmu-dev \
 libxxf86vm-dev g++${CXX_VER} libgl1-mesa-dev${XTAG} libglu1-mesa-dev \
 libraw1394-dev libudev-dev libdrm-dev libglew-dev libopenal-dev libsndfile1-dev \
 libfreeimage-dev libcairo2-dev libfreetype6-dev libssl-dev libpulse-dev \
-libusb-1.0-0-dev ${LIB_GTK_DEV} libopencv-dev libassimp-dev librtaudio-dev \
+libusb-1.0-0-dev ${LIB_GTK_DEV} libopencv-dev liblapack-dev libblas-dev libassimp-dev librtaudio-dev \
 libgstreamer${GSTREAMER_VERSION}-dev libgstreamer-plugins-base${GSTREAMER_VERSION}-dev \
 ${GSTREAMER_FFMPEG} gstreamer${GSTREAMER_VERSION}-pulseaudio \
 gstreamer${GSTREAMER_VERSION}-x gstreamer${GSTREAMER_VERSION}-plugins-bad \

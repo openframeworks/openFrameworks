@@ -546,3 +546,70 @@ HWND ofGetWin32Window(){
 	return mainLoop()->getCurrentWindow()->getWin32Window();
 }
 #endif
+
+//--------------------------------------
+// time mode, here rather than ofUtils.cpp since it needs the main loop
+namespace of {
+namespace priv {
+void setClockTimeModeSystem();
+void setClockTimeModeFixedRate(uint64_t stepNanos, ofMainLoop & mainLoop);
+}
+}
+
+//--------------------------------------
+ofTimeMode ofGetTimeMode() {
+	if (auto mainLoop = ofGetMainLoop()) {
+		if (auto window = mainLoop->getCurrentWindow()) {
+			return window->events().getTimeMode();
+		}
+	}
+	return ofTimeMode(0);
+}
+
+//--------------------------------------
+void ofSetTimeModeSystem() {
+	auto mainLoop = ofGetMainLoop();
+	if (!mainLoop) {
+		ofLogError("ofSetSystemTimeMode") << "ofMainLoop is not initialized yet, can't set time mode";
+		return;
+	}
+	auto window = mainLoop->getCurrentWindow();
+	if (!window) {
+		ofLogError("ofSetSystemTimeMode") << "No window setup yet can't set time mode";
+		return;
+	}
+	window->events().setTimeModeSystem();
+	of::priv::setClockTimeModeSystem();
+}
+
+//--------------------------------------
+void ofSetTimeModeFixedRate(uint64_t stepNanos) {
+	auto mainLoop = ofGetMainLoop();
+	if (!mainLoop) {
+		ofLogError("ofSetSystemTimeMode") << "ofMainLoop is not initialized yet, can't set time mode";
+		return;
+	}
+	auto window = mainLoop->getCurrentWindow();
+	if (!window) {
+		ofLogError("ofSetSystemTimeMode") << "No window setup yet can't set time mode";
+		return;
+	}
+	window->events().setTimeModeFixedRate(stepNanos);
+	of::priv::setClockTimeModeFixedRate(stepNanos, *mainLoop);
+}
+
+//--------------------------------------
+void ofSetTimeModeFiltered(float alpha) {
+	auto mainLoop = ofGetMainLoop();
+	if (!mainLoop) {
+		ofLogError("ofSetSystemTimeMode") << "ofMainLoop is not initialized yet, can't set time mode";
+		return;
+	}
+	auto window = mainLoop->getCurrentWindow();
+	if (!window) {
+		ofLogError("ofSetSystemTimeMode") << "No window setup yet can't set time mode";
+		return;
+	}
+	window->events().setTimeModeFiltered(alpha);
+	of::priv::setClockTimeModeSystem();
+}

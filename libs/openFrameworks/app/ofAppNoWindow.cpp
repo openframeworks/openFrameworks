@@ -155,6 +155,7 @@ private:
 	void enablePointSprites(){};
 	void disablePointSprites(){};
 	void setDepthTest(bool){};
+	void setDepthWrite(bool write){};
 
 	// color options
 	void setColor(float r, float g, float b){}; // 0-1

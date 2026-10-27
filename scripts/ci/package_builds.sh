@@ -1,5 +1,5 @@
 #!/bin/bash
-set -ev
+set -e
 
 ROOT=${GITHUB_WORKSPACE}
 
@@ -47,14 +47,18 @@ echo "##[endgroup]"
 cd $OUTPUT_FOLDER
 pwd
 PACKAGES=(
-  "linux64 $lastversion master gcc6"
-  "linuxarmv6l $lastversion master"
+  "linux64 $lastversion master 10"
+  "linuxarm64 $lastversion master 10"
   "linuxaarch64 $lastversion master"
+  "linuxarmv7l $lastversion master"
+  "linuxarmv6l $lastversion master"
   "msys2 $lastversion master clang64"
   "msys2 $lastversion master ucrt64"
   "msys2 $lastversion master clangarm64"
-  "vs $lastversion master"
-  "vs $lastversion master 64"
+  "vs $lastversion master 2022_64"
+  "vs $lastversion master 2022_all"
+  "vs $lastversion master 2026_64"
+  "vs $lastversion master 2026_all"
   "android $lastversion master windows"
   "android $lastversion master macos"
   "osx $lastversion master"

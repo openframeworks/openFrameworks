@@ -129,6 +129,7 @@ public:
 	void setLineWidth(float lineWidth);
 	void setPointSize(float pointSize);
 	void setDepthTest(bool depthTest);
+	void setDepthWrite(bool write);
 	void setLineSmoothing(bool smooth);
 	void setBlendMode(ofBlendMode blendMode);
 	void enablePointSprites();

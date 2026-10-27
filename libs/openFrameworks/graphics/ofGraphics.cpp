@@ -1,5 +1,7 @@
 //#include "ofGLRenderer.h"
 #include "ofGraphics.h"
+#include "ofGLUtils.h" // ofGetGLRenderer, ofSaveScreen
+#include "ofImage.h" // ofSaveImage
 #include "ofRendererCollection.h"
 #include "ofRectangle.h"
 
@@ -487,6 +489,11 @@ void ofEnableDepthTest() {
 //----------------------------------------------------------
 void ofDisableDepthTest() {
 	ofSetDepthTest(false);
+}
+
+//----------------------------------------------------------
+void ofSetDepthWrite(bool write) {
+	ofGetCurrentRenderer()->setDepthWrite(write);
 }
 
 //----------------------------------------
@@ -1213,7 +1220,7 @@ void ofDrawBitmapStringHighlight(string text, int x, int y, const ofColor & back
 	int width = maxLineLength * fontSize;
 
 	ofPushStyle();
-	glDepthMask(false);
+	ofSetDepthWrite(false);
 	ofSetColor(background);
 	ofFill();
 	ofPushMatrix();
@@ -1231,9 +1238,46 @@ void ofDrawBitmapStringHighlight(string text, int x, int y, const ofColor & back
 	ofSetColor(foreground);
 	ofNoFill();
 	ofDrawBitmapString(text, x, y);
-	glDepthMask(true);
+	ofSetDepthWrite(true);
 	ofPopStyle();
 }
 
 // end text
 //--------------------------------------------------
+
+//--------------------------------------------------
+void ofSaveScreen(const of::filesystem::path & fileName) {
+	/*ofImage screen;
+   screen.allocate(ofGetWidth(), ofGetHeight(), OF_IMAGE_COLOR);
+   screen.grabScreen(0, 0, ofGetWidth(), ofGetHeight());
+   screen.save(filename);*/
+	ofPixels pixels;
+	ofGetGLRenderer()->saveFullViewport(pixels);
+	ofSaveImage(pixels, fileName);
+}
+
+//--------------------------------------------------
+void ofSaveViewport(const of::filesystem::path & fileName) {
+	// because ofSaveScreen doesn't related to viewports
+	/*ofImage screen;
+	ofRectangle view = ofGetCurrentViewport();
+	screen.allocate(view.width, view.height, OF_IMAGE_COLOR);
+	screen.grabScreen(0, 0, view.width, view.height);
+	screen.save(filename);*/
+
+	ofPixels pixels;
+	ofGetGLRenderer()->saveFullViewport(pixels);
+	ofSaveImage(pixels, fileName);
+}
+
+//--------------------------------------------------
+int saveImageCounter = 0;
+void ofSaveFrame(bool bUseViewport) {
+	of::filesystem::path fileName = ofToString(saveImageCounter) + ".png";
+	if (bUseViewport) {
+		ofSaveViewport(fileName);
+	} else {
+		ofSaveScreen(fileName);
+	}
+	saveImageCounter++;
+}

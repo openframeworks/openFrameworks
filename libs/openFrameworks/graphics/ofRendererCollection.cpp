@@ -562,6 +562,12 @@ void ofRendererCollection::setDepthTest(bool depthTest) {
    }
 }
 
+void ofRendererCollection::setDepthWrite(bool write) {
+	for(auto renderer: renderers){
+		renderer->setDepthWrite(write);
+	}
+}
+
 void ofRendererCollection::setBlendMode(ofBlendMode blendMode){
    for(auto renderer: renderers){
 	   renderer->setBlendMode(blendMode);

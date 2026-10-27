@@ -43,3 +43,37 @@ cd OF/scripts/linux
 ```
 
 which will compile the command line version of the project generator and install it in your system so you can create projects from anywhere, it'll also make it possible to use the gui tool which is present in the root of the OF folder.
+
+Linking prebuilt libraries: "recompile with -fPIE"
+---------------------------------------------------
+
+Current distributions (Ubuntu, Debian, Fedora, Raspberry Pi OS...) build executables as PIE (position independent executables) by default. A static library (`.a`) that wasn't compiled as position independent code can't be linked into one, and the link fails with an error like this:
+
+```
+/usr/bin/ld: libfoo.a(foo.o): relocation R_X86_64_32S against symbol `bar' can not be used when making a PIE object; recompile with -fPIE
+/usr/bin/ld: failed to set dynamic section sizes: bad value
+collect2: error: ld returned 1 exit status
+```
+
+The relocation type depends on the architecture: `R_X86_64_32` or `R_X86_64_32S` on x86_64, `R_ARM_MOVW_ABS_NC` or `R_ARM_MOVT_ABS` on 32-bit ARM. This usually comes from a precompiled library in an addon (`addons/ofxSomething/libs/*/lib/linux64/*.a`) built before PIE was the default. To check a library, look for those relocations; no output means it's position independent:
+
+```
+objdump -r libfoo.a | grep -E 'R_X86_64_32S? |R_ARM_MOV[WT]_ABS'
+```
+
+**Fix: rebuild the library as position independent code** with `-fPIC`. With CMake, add `-DCMAKE_POSITION_INDEPENDENT_CODE=ON`; with autotools or plain makefiles, add `-fPIC` to `CFLAGS` and `CXXFLAGS`:
+
+```
+cmake -S . -B build -DCMAKE_POSITION_INDEPENDENT_CODE=ON -DBUILD_SHARED_LIBS=OFF
+./configure --enable-static --disable-shared CFLAGS="-fPIC" CXXFLAGS="-fPIC"
+```
+
+If the library comes with an addon, please also report it to the addon so the fixed library helps everyone.
+
+**Workaround: link your app without PIE.** If you can't rebuild the library, add this to your project's `config.make`:
+
+```
+PROJECT_LDFLAGS = -no-pie
+```
+
+The app then links as a regular executable. It works the same, but without the address randomization PIE gives, so prefer rebuilding the library.

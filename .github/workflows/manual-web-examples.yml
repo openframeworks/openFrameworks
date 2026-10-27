@@ -30,7 +30,7 @@ jobs:
     env:
       TARGET: ${{matrix.cfg.target}}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Docker Step
         run:  docker run -di --name emscripten -v $PWD:/src emscripten/emsdk:6.0.11 bash
       - name: Download libs

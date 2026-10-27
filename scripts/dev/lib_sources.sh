@@ -126,12 +126,13 @@ downloadApothecaryLibs(){
 	local platformDir="$1"
 	local scriptsRoot="${OF_CORE_SCRIPT_DIR:-$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)}"
 	local script="${scriptsRoot}/${platformDir}/download_libs.sh"
+	local arch="${LIB_ARCH:-}"
 	if [[ ! -f "$script" ]]; then
 		echo "download script missing: $script" >&2
 		return 1
 	fi
 	[[ -x "$script" ]] || chmod +x "$script" 2>/dev/null || true
-	local -a args=()
+	local -a args=() extra=()
 	# -b bleeding-edge → "latest" packages; -t TAG for a specific release tag
 	if [[ -n "$LIB_TAG" && "$LIB_TAG" != "latest" && "$LIB_TAG" != "nightly" ]]; then
 		args+=( -t "$LIB_TAG" )
@@ -144,6 +145,23 @@ downloadApothecaryLibs(){
 		full|full-clean)      args+=( --full-clean ) ;;
 		platform|*)           ;; # default platform-scoped clean in download_libs.sh
 	esac
+	# Arch: LIB_ARCH, else OF_ARCH for vs (linux/msys2 wrappers pick host arch).
+	# Extra flags via DOWNLOAD_LIBS_ARGS.
+	if [[ -z "$arch" && -n "${OF_ARCH:-}" && "$platformDir" == "vs" ]]; then
+		arch="$OF_ARCH"
+	fi
+	if [[ -n "$arch" ]]; then
+		args+=( -a "$arch" )
+	fi
+	if [[ "$platformDir" == "vs" && "${OF_VS_2026:-}" == "1" ]]; then
+		args+=( -vs )
+	fi
+	if [[ -n "${DOWNLOAD_LIBS_ARGS:-}" ]]; then
+		# shellcheck disable=SC2206
+		extra=( $DOWNLOAD_LIBS_ARGS )
+		args+=( "${extra[@]}" )
+	fi
+	echo " download_libs ${platformDir}${arch:+ -a ${arch}} ${args[*]}"
 	"$script" "${args[@]}"
 }
 
