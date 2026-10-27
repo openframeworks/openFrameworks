@@ -233,6 +233,27 @@ remove_current_platform() {
     echo "$platforms" | sed "s/\b$platform_to_remove\b//g"
 }
 
+# Published package name (without of_v<version>_ and _release):
+#   linux64 10 -> linux_64_gcc10, linuxarm64 10 -> linux_arm64_gcc10,
+#   linuxaarch64 / linuxarmv7l / linuxarmv6l -> linux_<arch>_rpi_gcc10 (Raspberry Pi OS),
+#   vs all -> vs_64_arm64_arm64ec (x64, ARM64 and ARM64EC libraries),
+#   anything else -> <platform>[_<abi>]
+function packageName {
+    local platform=$1 abi=$2
+    case "$platform" in
+        linux64) echo "linux_64_gcc${abi:-10}" ;;
+        linuxarm64) echo "linux_arm64_gcc${abi:-10}" ;;
+        linuxaarch64|linuxarmv7l|linuxarmv6l) echo "linux_${platform#linux}_rpi_gcc10" ;;
+        vs)
+            if [ "$abi" = "all" ]; then
+                echo "vs_64_arm64_arm64ec"
+            else
+                echo "vs${abi:+_$abi}"
+            fi ;;
+        *) echo "${platform}${abi:+_$abi}" ;;
+    esac
+}
+
 function createPackage {
     PKG_PLATFORM=$1
     PKG_VERSION=$2
@@ -241,8 +262,8 @@ function createPackage {
 
     #remove previously created package
     cd $PKG_OFROOT/..
-    rm -Rf of_v${PKG_VERSION}_${PKG_PLATFORM}${LIBS_ABI}.*
-    rm -Rf of_v${PKG_VERSION}_${PKG_PLATFORM}${LIBS_ABI}_*
+    PKG_NAME=of_v${PKG_VERSION}_$(packageName "$PKG_PLATFORM" "$LIBS_ABI")_release
+    rm -Rf ${PKG_NAME} ${PKG_NAME}.*
     echo "Creating package $PKG_PLATFORM $version in $PKG_OFROOT"
 
     #remove devApps folder
@@ -670,12 +691,7 @@ function createPackage {
 
     #create compressed package
    if [[ "$PKG_PLATFORM" =~ ^(linux|linuxarm64|linux64|android|linuxarmv6l|linuxarmv7l|linuxaarch64|macos|ios|osx)$ ]] && [ "${LIBS_ABI}" != "windows" ]; then
-        if [ "$LIBS_ABI" = "" ]; then
-            PKG_NAME=of_v${PKG_VERSION}_${PKG_PLATFORM}_release
-        else
-            PKG_NAME=of_v${PKG_VERSION}_${PKG_PLATFORM}_${LIBS_ABI}_release
-        fi
-        echo "compressing package to of_v${PKG_VERSION}_${PKG_PLATFORM}_${LIBS_ABI}_release.tar.gz"
+        echo "compressing package to ${PKG_NAME}.tar.gz"
         cd $PKG_OFROOT/..
         mkdir ${PKG_NAME}
         mv ${pkgfolder}/* ${PKG_NAME}
@@ -683,11 +699,6 @@ function createPackage {
         COPYFILE_DISABLE=true tar czf ${PKG_NAME}.tar.gz ${PKG_NAME}
         rm -Rf ${PKG_NAME}
     else
-        if [ "$LIBS_ABI" = "" ]; then
-            PKG_NAME=of_v${PKG_VERSION}_${PKG_PLATFORM}_release
-        else
-            PKG_NAME=of_v${PKG_VERSION}_${PKG_PLATFORM}_${LIBS_ABI}_release
-        fi 
         echo "compressing package to ${PKG_NAME}.zip"
         cd $PKG_OFROOT/..
         mkdir ${PKG_NAME}
