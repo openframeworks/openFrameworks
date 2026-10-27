@@ -88,6 +88,7 @@ endef
 # 1. read the addon_config.mk file for each adddon that has it
 # 2. read each line of the addon by converting \n to \t since makefiles treat \n as spaces
 #    also convert spaces to ? so foreach works for each line instead of each word
+#    (tabs to spaces first: a tab inside a line split it, so "#<tab>ADDON_SOURCES = x" was not a comment)
 # 3. unscape ? to space inside the loop
 # 4. if the line matches common: or platform: set the PROCESS_NEXT flag to true
 # 5. if the line matches %: but it's not common or platform: set PROCESS_NEXT to false
@@ -121,7 +122,7 @@ define parse_addon
 	$(eval ADDON_SOURCES=$(PARSED_ADDONS_SOURCE_FILES)) \
 	$(eval PROCESS_NEXT=0) \
 	$(if $(wildcard $(addon)/addon_config.mk), \
-		$(foreach var_line, $(shell cat $(addon)/addon_config.mk | tr '\n ' '\t?'), \
+		$(foreach var_line, $(shell tr '\t' ' ' < $(addon)/addon_config.mk | tr '\n ' '\t?'), \
 			$(eval unscaped_var_line=$(strip $(subst ?, ,$(var_line)))) \
 			$(if $(filter %:,$(unscaped_var_line)), \
 				$(if $(filter common:,$(unscaped_var_line)), \
