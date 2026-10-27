@@ -579,6 +579,10 @@ if [ "$PLATFORM" == "linux" ] && is_raspberry_pi; then
 fi
 
 if [ "$PLATFORM" == "linux" ]; then
+	# Legacy names for the x86_64 libraries (64gcc6 was the nightly / release workflows' -a)
+	case "$ARCH" in
+		64gcc6|64_gcc6|x86_64) ARCH=64 ;;
+	esac
 	# Official apothecary Linux archives are the GCC 10 baseline only:
 	#   openFrameworksLibs_<tag>_linux_<ARCH>_gcc10.tar.bz2
 	# A newer host compiler can still consume them (_GLIBCXX_USE_CXX11_ABI=1).
