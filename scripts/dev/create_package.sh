@@ -217,7 +217,7 @@ function createProjectFiles {
         #fix config.make because the project generator is putting in the full path to the OF_ROOT as it is designed to do.
         #in this case we actually don't want to set it as the default of ../../../ is fine.
         find $PKG_OFROOT/examples -name "config.make" -type f -exec sed -i 's/^OF_ROOT =.*/# OF_ROOT = ..\/..\/..\//' {} \;
-    elif [ "$PKG_PLATFORM" == "linuxarmv6l" ] || [ "$PKG_PLATFORM" == "linuxarmv7l" ] || [ "$PKG_PLATFORM" == "linuxaarch64" ]; then
+    elif [ "$PKG_PLATFORM" == "linuxarm64" ] || [ "$PKG_PLATFORM" == "linuxarmv6l" ] || [ "$PKG_PLATFORM" == "linuxarmv7l" ] || [ "$PKG_PLATFORM" == "linuxaarch64" ]; then
         for example_group in $PKG_OFROOT/examples/*; do
             for example in $example_group/*; do
                 if [ -d $example ]; then
