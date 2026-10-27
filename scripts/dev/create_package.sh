@@ -200,7 +200,11 @@ function createProjectFiles {
 
             echo "##[group]PG building example projects"
             # ${MAIN_OFROOT}/apps/projectGenerator/commandLine/bin/projectGenerator --recursive -p${PG_PLATFORM} -o$PKG_OFROOT $PKG_OFROOT/examples > /dev/null
-            ${MAIN_OFROOT}/apps/projectGenerator/commandLine/bin/projectGenerator --recursive -p${PG_PLATFORM} -o$PKG_OFROOT $PKG_OFROOT/examples
+            PG_TEMPLATE=""
+            if [ "$PKG_PLATFORM" == "vs" ] && [ "$(vsYear "$LIBS_ABI")" == "2026" ]; then
+                PG_TEMPLATE="--template=vs2026"
+            fi
+            ${MAIN_OFROOT}/apps/projectGenerator/commandLine/bin/projectGenerator --recursive -p${PG_PLATFORM} ${PG_TEMPLATE} -o$PKG_OFROOT $PKG_OFROOT/examples
             echo "##[endgroup]"
 
         else
@@ -213,7 +217,7 @@ function createProjectFiles {
         #fix config.make because the project generator is putting in the full path to the OF_ROOT as it is designed to do.
         #in this case we actually don't want to set it as the default of ../../../ is fine.
         find $PKG_OFROOT/examples -name "config.make" -type f -exec sed -i 's/^OF_ROOT =.*/# OF_ROOT = ..\/..\/..\//' {} \;
-    elif [ "$PKG_PLATFORM" == "linuxarmv6l" ] || [ "$PKG_PLATFORM" == "linuxarmv7l" ] || [ "$PKG_PLATFORM" == "linuxaarch64" ]; then
+    elif [ "$PKG_PLATFORM" == "linuxarm64" ] || [ "$PKG_PLATFORM" == "linuxarmv6l" ] || [ "$PKG_PLATFORM" == "linuxarmv7l" ] || [ "$PKG_PLATFORM" == "linuxaarch64" ]; then
         for example_group in $PKG_OFROOT/examples/*; do
             for example in $example_group/*; do
                 if [ -d $example ]; then
@@ -233,6 +237,43 @@ remove_current_platform() {
     echo "$platforms" | sed "s/\b$platform_to_remove\b//g"
 }
 
+# Published package name (without of_v<version>_ and _release):
+#   linux64 10 -> linux_64_gcc10, linuxarm64 10 -> linux_arm64_gcc10,
+#   linuxaarch64 / linuxarmv7l / linuxarmv6l -> linux_<arch>_rpi_gcc10 (Raspberry Pi OS),
+#   vs <year>_<arch> -> vs_<year>_64 or vs_<year>_64_arm64_arm64ec (arch all: x64, ARM64 and ARM64EC),
+#   anything else -> <platform>[_<abi>]
+# Visual Studio packages take <year>_<arch> (2022_64, 2026_all, ...); for older package lists,
+# no ABI is the VS 2019 x64 package and a bare arch (64, all) is VS 2022.
+function vsYear {
+    case "$1" in
+        "") echo 2019 ;;
+        *_*) echo "${1%%_*}" ;;
+        *) echo 2022 ;;
+    esac
+}
+
+function vsArch {
+    case "$1" in
+        "") echo 64 ;;
+        *_*) echo "${1#*_}" ;;
+        *) echo "$1" ;;
+    esac
+}
+
+function packageName {
+    local platform=$1 abi=$2
+    case "$platform" in
+        linux64) echo "linux_64_gcc${abi:-10}" ;;
+        linuxarm64) echo "linux_arm64_gcc${abi:-10}" ;;
+        linuxaarch64|linuxarmv7l|linuxarmv6l) echo "linux_${platform#linux}_rpi_gcc10" ;;
+        vs)
+            local arch
+            arch=$(vsArch "$abi")
+            echo "vs_$(vsYear "$abi")_${arch/#all/64_arm64_arm64ec}" ;;
+        *) echo "${platform}${abi:+_$abi}" ;;
+    esac
+}
+
 function createPackage {
     PKG_PLATFORM=$1
     PKG_VERSION=$2
@@ -241,8 +282,8 @@ function createPackage {
 
     #remove previously created package
     cd $PKG_OFROOT/..
-    rm -Rf of_v${PKG_VERSION}_${PKG_PLATFORM}${LIBS_ABI}.*
-    rm -Rf of_v${PKG_VERSION}_${PKG_PLATFORM}${LIBS_ABI}_*
+    PKG_NAME=of_v${PKG_VERSION}_$(packageName "$PKG_PLATFORM" "$LIBS_ABI")_release
+    rm -Rf ${PKG_NAME} ${PKG_NAME}.*
     echo "Creating package $PKG_PLATFORM $version in $PKG_OFROOT"
 
     #remove devApps folder
@@ -372,11 +413,11 @@ function createPackage {
         scripts/vs/download_libs.sh -a $LIBS_ABI -t $LIBS_VERSION
         scripts/emscripten/download_libs.sh -n -t $LIBS_VERSION
     elif [ "$PKG_PLATFORM" = "vs" ]; then
-        if [ "$LIBS_ABI" = "" ]; then
-            scripts/vs/download_libs_2019_x64.sh -t $LIBS_VERSION
-        else
-            scripts/vs/download_libs.sh -a $LIBS_ABI -t $LIBS_VERSION
-        fi
+        case "$(vsYear "$LIBS_ABI")" in
+            2019) scripts/vs/download_libs_2019_x64.sh -t $LIBS_VERSION ;;
+            2026) scripts/vs/download_libs.sh --vs2026 -a "$(vsArch "$LIBS_ABI")" -t $LIBS_VERSION ;;
+            *) scripts/vs/download_libs.sh -a "$(vsArch "$LIBS_ABI")" -t $LIBS_VERSION ;;
+        esac
         scripts/emscripten/download_libs.sh -n -t $LIBS_VERSION
     elif [ "$PKG_PLATFORM" = "android" ]; then
         scripts/android/download_libs.sh -t $LIBS_VERSION
@@ -433,6 +474,13 @@ function createPackage {
         echo "Unknown platform: $PKG_PLATFORM"
         exit 1
     fi
+
+    # Linux packages keep libs/openFrameworksCompiled/{lib,project}/linux and scripts/linux:
+    # every Linux arch builds from project/linux and lib/linux/<arch> (#8540)
+    case "$PKG_PLATFORM" in
+        linux64|linuxarm64|linuxarmv6l|linuxarmv7l|linuxaarch64)
+            otherplatforms=$(remove_current_platform "$otherplatforms" "linux") ;;
+    esac
 
     #download and uncompress PG
     echo "Creating projectGenerator"
@@ -566,7 +614,7 @@ function createPackage {
         fi
     done
 
-    if [ "$PKG_PLATFORM" != "linux" ] && [ "$PKG_PLATFORM" != "linux64" ] && [ "$PKG_PLATFORM" != "linuxarmv6l" ] && [ "$PKG_PLATFORM" != "linuxarmv7l" ] && [ "$PKG_PLATFORM" != "linuxaarch64" ]; then
+    if [ "$PKG_PLATFORM" != "linux" ] && [ "$PKG_PLATFORM" != "linux64" ] && [ "$PKG_PLATFORM" != "linuxarm64" ] && [ "$PKG_PLATFORM" != "linuxarmv6l" ] && [ "$PKG_PLATFORM" != "linuxarmv7l" ] && [ "$PKG_PLATFORM" != "linuxaarch64" ]; then
         rm -Rf $otherplatforms
         rm -Rf ci dev apothecary
     else
@@ -670,12 +718,7 @@ function createPackage {
 
     #create compressed package
    if [[ "$PKG_PLATFORM" =~ ^(linux|linuxarm64|linux64|android|linuxarmv6l|linuxarmv7l|linuxaarch64|macos|ios|osx)$ ]] && [ "${LIBS_ABI}" != "windows" ]; then
-        if [ "$LIBS_ABI" = "" ]; then
-            PKG_NAME=of_v${PKG_VERSION}_${PKG_PLATFORM}_release
-        else
-            PKG_NAME=of_v${PKG_VERSION}_${PKG_PLATFORM}_${LIBS_ABI}_release
-        fi
-        echo "compressing package to of_v${PKG_VERSION}_${PKG_PLATFORM}_${LIBS_ABI}_release.tar.gz"
+        echo "compressing package to ${PKG_NAME}.tar.gz"
         cd $PKG_OFROOT/..
         mkdir ${PKG_NAME}
         mv ${pkgfolder}/* ${PKG_NAME}
@@ -683,11 +726,6 @@ function createPackage {
         COPYFILE_DISABLE=true tar czf ${PKG_NAME}.tar.gz ${PKG_NAME}
         rm -Rf ${PKG_NAME}
     else
-        if [ "$LIBS_ABI" = "" ]; then
-            PKG_NAME=of_v${PKG_VERSION}_${PKG_PLATFORM}_release
-        else
-            PKG_NAME=of_v${PKG_VERSION}_${PKG_PLATFORM}_${LIBS_ABI}_release
-        fi 
         echo "compressing package to ${PKG_NAME}.zip"
         cd $PKG_OFROOT/..
         mkdir ${PKG_NAME}
