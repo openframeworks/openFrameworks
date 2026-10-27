@@ -52,7 +52,7 @@ jobs:
       with:
         key: ${{ matrix.cfg.target }}
     - name: Install dependencies
-      run: ./scripts/ci/$TARGET/install.sh;
+      run: ./scripts/ci/linux/64/install.sh;
     - name: update submodules
       run: ./scripts/dev/init_submodules.sh
     - name: Download libs
