@@ -1,3 +1,74 @@
+### 0.12.2 (in progress): main changes since 0.12.1 ###
+
+The full list of commits is added at release.
+
+CORE
+----
+### core
+- C++23 / C17 is the project dialect ([#8548](https://github.com/openframeworks/openFrameworks/pull/8548))
+- GL decoupled from ofGraphics; `ofSetDepthWrite(bool)` replaces direct `glDepthMask` calls ([#8554](https://github.com/openframeworks/openFrameworks/pull/8554)) ([#8598](https://github.com/openframeworks/openFrameworks/pull/8598))
+- `ofTrueTypeFont::getFontAtlasPixels()` and `ofBitmapFont::getAtlasPixels()` expose the font atlases ([#8600](https://github.com/openframeworks/openFrameworks/pull/8600))
+- `ofColor` from a vector; `ofQuaternion::lengthSquared()` (`length2()` deprecated) ([#7696](https://github.com/openframeworks/openFrameworks/pull/7696)) ([#7680](https://github.com/openframeworks/openFrameworks/pull/7680))
+- `ofRectangle`: `operator!=` agrees with `operator==`; `inside()` includes points on the edge ([#8567](https://github.com/openframeworks/openFrameworks/pull/8567)) ([#8584](https://github.com/openframeworks/openFrameworks/pull/8584))
+- `ofToLower` / `ofToUpper` use a UTF-8 locale when the environment has none ([#8593](https://github.com/openframeworks/openFrameworks/pull/8593))
+- `ofFilePath::getAppName()` ([#8181](https://github.com/openframeworks/openFrameworks/pull/8181))
+- tools that only use ofUtils no longer link the renderer, ofImage and the app (Linux) ([#8605](https://github.com/openframeworks/openFrameworks/pull/8605))
+
+### gl
+- OpenGL ES 3.1 / 3.2 (Android, iOS / tvOS), GLSL ES 3.00 material shaders (PBR on WebGL2 / Android / iOS), ofCubeMap and ofPolyline fixes on GLES ([#8533](https://github.com/openframeworks/openFrameworks/pull/8533)) ([#8578](https://github.com/openframeworks/openFrameworks/pull/8578)) ([#8581](https://github.com/openframeworks/openFrameworks/pull/8581)) ([#8582](https://github.com/openframeworks/openFrameworks/pull/8582)) ([#8585](https://github.com/openframeworks/openFrameworks/pull/8585))
+- desktop OpenGL 4.6, falling back to the newest available version (Windows / Linux) ([#8580](https://github.com/openframeworks/openFrameworks/pull/8580))
+- GL version defines for the main templates and the project generator ([#8573](https://github.com/openframeworks/openFrameworks/pull/8573))
+- indexed draws take the GL index type from `sizeof(ofIndexType)` ([#8526](https://github.com/openframeworks/openFrameworks/pull/8526))
+
+### graphics
+- Cairo renderer, `ofBeginSaveScreenAsPDF` / `SVG` work on Linux again ([#8610](https://github.com/openframeworks/openFrameworks/pull/8610))
+- ofTrueTypeFont inserts a string's mesh at once ([#8432](https://github.com/openframeworks/openFrameworks/pull/8432))
+
+### utils / communication
+- ofURLFileLoader: progress events and example; OpenSSL 3 / 4 certificate checks; listener removed in `stop()` ([#8507](https://github.com/openframeworks/openFrameworks/pull/8507)) ([#8537](https://github.com/openframeworks/openFrameworks/pull/8537)) ([#8535](https://github.com/openframeworks/openFrameworks/pull/8535)) ([#8491](https://github.com/openframeworks/openFrameworks/pull/8491)) ([#8501](https://github.com/openframeworks/openFrameworks/pull/8501))
+
+### addons
+- ofxSvg rewritten without libtinysvg and libxml2 ([#8266](https://github.com/openframeworks/openFrameworks/pull/8266)) ([#8500](https://github.com/openframeworks/openFrameworks/pull/8500)) ([#8538](https://github.com/openframeworks/openFrameworks/pull/8538)) ([#8539](https://github.com/openframeworks/openFrameworks/pull/8539))
+- ofxOpenCv supports OpenCV 5 (OpenCV 4 still works) ([#8563](https://github.com/openframeworks/openFrameworks/pull/8563))
+- ofxAssimp: FBX pivots for Mixamo models, option to apply mesh transforms ([#8449](https://github.com/openframeworks/openFrameworks/pull/8449)) ([#8461](https://github.com/openframeworks/openFrameworks/pull/8461))
+- ofxGui toggle / button size fix ([#8503](https://github.com/openframeworks/openFrameworks/pull/8503))
+
+### libraries
+- OpenSSL 4 (and 3) support, assimp 6.0.5, updated apothecary and project generator ([#8535](https://github.com/openframeworks/openFrameworks/pull/8535)) ([#8594](https://github.com/openframeworks/openFrameworks/pull/8594)) ([#8612](https://github.com/openframeworks/openFrameworks/pull/8612))
+- library downloads are verified before installed libraries are removed ([#8591](https://github.com/openframeworks/openFrameworks/pull/8591))
+
+
+PLATFORM/IDE SPECIFIC
+-----------------
+### linux
+- Wayland support (GLFW with X11 and Wayland) ([#8508](https://github.com/openframeworks/openFrameworks/pull/8508)) ([#8476](https://github.com/openframeworks/openFrameworks/pull/8476))
+- 64-bit ARM: `lib/linux/<arch>` library folders for x86_64, arm64 and the Raspberry Pi (aarch64, armv7l, armv6l), GCC 10 libraries ([#8540](https://github.com/openframeworks/openFrameworks/pull/8540))
+- Ubuntu `install_dependencies.sh` detects the version from `/etc/os-release` (no `lsb_release` needed); BLAS / LAPACK for ofxOpenCv ([#8606](https://github.com/openframeworks/openFrameworks/pull/8606)) ([#8603](https://github.com/openframeworks/openFrameworks/pull/8603))
+- docs: linking non-PIC prebuilt libraries ("recompile with -fPIE") ([#8602](https://github.com/openframeworks/openFrameworks/pull/8602))
+- GStreamer MJPG v4l2 capture pipeline fix; Arch install script fixes ([#8572](https://github.com/openframeworks/openFrameworks/pull/8572)) ([#8497](https://github.com/openframeworks/openFrameworks/pull/8497))
+
+### windows
+- Visual Studio 2026; Windows on ARM hosts download x64 libraries too ([#8511](https://github.com/openframeworks/openFrameworks/pull/8511)) ([#8544](https://github.com/openframeworks/openFrameworks/pull/8544))
+- MSYS2: UCRT64 (recommended), CLANG64 and CLANGARM64 with the clang toolchain; MINGW64 dropped ([#8589](https://github.com/openframeworks/openFrameworks/pull/8589)) ([#8588](https://github.com/openframeworks/openFrameworks/pull/8588)) ([#8556](https://github.com/openframeworks/openFrameworks/pull/8556)) ([#8531](https://github.com/openframeworks/openFrameworks/pull/8531)) ([#8566](https://github.com/openframeworks/openFrameworks/pull/8566))
+- MSVC warnings fixed across core, addons and examples ([#8579](https://github.com/openframeworks/openFrameworks/pull/8579))
+
+### macos / ios / tvos
+- minimum macOS 12, iOS 15, tvOS 18 (was macOS 10.15) ([#8565](https://github.com/openframeworks/openFrameworks/pull/8565)) ([#8571](https://github.com/openframeworks/openFrameworks/pull/8571))
+- ofxiOS / ofxtvOS GLKit: depth, stencil, MSAA and scale settings apply to the view; native view controller startup fix ([#8583](https://github.com/openframeworks/openFrameworks/pull/8583)) ([#8524](https://github.com/openframeworks/openFrameworks/pull/8524))
+- ofAVFoundationPlayer `close()` is synchronous; split OpenSSL XCFrameworks; make builds set `APP_VERSION` / `APP_BUILD` ([#8527](https://github.com/openframeworks/openFrameworks/pull/8527)) ([#8562](https://github.com/openframeworks/openFrameworks/pull/8562)) ([#8592](https://github.com/openframeworks/openFrameworks/pull/8592))
+
+### android
+- NDK r29, minimum API 25, build-tools 37; Android examples; ZIP path traversal fix (CWE-22) ([#8575](https://github.com/openframeworks/openFrameworks/pull/8575)) ([#8418](https://github.com/openframeworks/openFrameworks/pull/8418)) ([#8541](https://github.com/openframeworks/openFrameworks/pull/8541))
+
+### emscripten
+- Emscripten 6.0.11, filesystem support, template fixes ([#8510](https://github.com/openframeworks/openFrameworks/pull/8510)) ([#8555](https://github.com/openframeworks/openFrameworks/pull/8555)) ([#8569](https://github.com/openframeworks/openFrameworks/pull/8569)) ([#8483](https://github.com/openframeworks/openFrameworks/pull/8483)) ([#8558](https://github.com/openframeworks/openFrameworks/pull/8558))
+
+### makefiles / project generator
+- addon `-std=*` in `ADDON_CFLAGS` is forwarded to `CXXFLAGS` ([#8515](https://github.com/openframeworks/openFrameworks/pull/8515))
+- project generator 0.12.2 fixes: `ADDON_DATA` folders, Xcode paths with spaces, missing addons kept ([#8612](https://github.com/openframeworks/openFrameworks/pull/8612))
+
+
+
 ```
  ________    _____    _______    _____     
 |\   __  \  / __  \  /  ___  \  / __  \    
