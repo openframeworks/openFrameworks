@@ -28,7 +28,7 @@ dnf install -y \
   libdecor-devel xorg-x11-proto-devel \
   mesa-libGL-devel mesa-libGLU-devel mesa-libEGL-devel mesa-libGLES-devel \
   libXcursor-devel libXinerama-devel libXext-devel \
-  fftw-devel xorg-x11-server-Xwayland mesa-dri-drivers libdecor
+  fftw-devel xorg-x11-server-Xwayland mesa-dri-drivers libdecor ccache
 
 exit_code=$?
 if [ $exit_code != 0 ]; then

@@ -482,5 +482,7 @@ PLATFORM_LIBRARY_SEARCH_PATHS =
 ################################################################################
 #PLATFORM_CXX=
 
+ccache := $(shell which ccache 2>/dev/null)
+
 afterplatform: after
 	@echo

@@ -223,7 +223,7 @@ libpugixml-dev libgtk2.0-0 libpoco-dev libxcursor-dev libxi-dev libxinerama-dev 
 libxml2-dev \
 libwayland-dev wayland-protocols libxkbcommon-dev libxkbcommon-x11-dev \
 libdecor-0-dev x11proto-dev libglvnd-dev libegl1-mesa-dev libgles2-mesa-dev \
-mesa-utils"
+mesa-utils ccache"
 
 echo "installing OF dependencies"
 echo "OF needs to install the following packages using apt-get:"

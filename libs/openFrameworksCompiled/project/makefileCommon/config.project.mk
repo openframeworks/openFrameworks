@@ -438,10 +438,10 @@ ifdef PLATFORM_CC
 	CC ?= $(PLATFORM_CC)
 endif
 
-ifdef ${ccache}
-$(info 💿 Using CCACHE -- config.project.mk )
-	CXX := ${ccache} $(CXX)
-	CC := ${ccache} $(CC)
+ifdef ccache
+    $(info 💿 Using CCACHE -- config.project.mk)
+    CXX := $(ccache) $(CXX)
+    CC := $(ccache) $(CC)
 endif
 
 ifdef PROJECT_RESOURCE_COMPILER
