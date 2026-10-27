@@ -200,7 +200,11 @@ function createProjectFiles {
 
             echo "##[group]PG building example projects"
             # ${MAIN_OFROOT}/apps/projectGenerator/commandLine/bin/projectGenerator --recursive -p${PG_PLATFORM} -o$PKG_OFROOT $PKG_OFROOT/examples > /dev/null
-            ${MAIN_OFROOT}/apps/projectGenerator/commandLine/bin/projectGenerator --recursive -p${PG_PLATFORM} -o$PKG_OFROOT $PKG_OFROOT/examples
+            PG_TEMPLATE=""
+            if [ "$PKG_PLATFORM" == "vs" ] && [ "$(vsYear "$LIBS_ABI")" == "2026" ]; then
+                PG_TEMPLATE="--template=vs2026"
+            fi
+            ${MAIN_OFROOT}/apps/projectGenerator/commandLine/bin/projectGenerator --recursive -p${PG_PLATFORM} ${PG_TEMPLATE} -o$PKG_OFROOT $PKG_OFROOT/examples
             echo "##[endgroup]"
 
         else
@@ -236,8 +240,26 @@ remove_current_platform() {
 # Published package name (without of_v<version>_ and _release):
 #   linux64 10 -> linux_64_gcc10, linuxarm64 10 -> linux_arm64_gcc10,
 #   linuxaarch64 / linuxarmv7l / linuxarmv6l -> linux_<arch>_rpi_gcc10 (Raspberry Pi OS),
-#   vs all -> vs_64_arm64_arm64ec (x64, ARM64 and ARM64EC libraries),
+#   vs <year>_<arch> -> vs_<year>_64 or vs_<year>_64_arm64_arm64ec (arch all: x64, ARM64 and ARM64EC),
 #   anything else -> <platform>[_<abi>]
+# Visual Studio packages take <year>_<arch> (2022_64, 2026_all, ...); for older package lists,
+# no ABI is the VS 2019 x64 package and a bare arch (64, all) is VS 2022.
+function vsYear {
+    case "$1" in
+        "") echo 2019 ;;
+        *_*) echo "${1%%_*}" ;;
+        *) echo 2022 ;;
+    esac
+}
+
+function vsArch {
+    case "$1" in
+        "") echo 64 ;;
+        *_*) echo "${1#*_}" ;;
+        *) echo "$1" ;;
+    esac
+}
+
 function packageName {
     local platform=$1 abi=$2
     case "$platform" in
@@ -245,11 +267,9 @@ function packageName {
         linuxarm64) echo "linux_arm64_gcc${abi:-10}" ;;
         linuxaarch64|linuxarmv7l|linuxarmv6l) echo "linux_${platform#linux}_rpi_gcc10" ;;
         vs)
-            if [ "$abi" = "all" ]; then
-                echo "vs_64_arm64_arm64ec"
-            else
-                echo "vs${abi:+_$abi}"
-            fi ;;
+            local arch
+            arch=$(vsArch "$abi")
+            echo "vs_$(vsYear "$abi")_${arch/#all/64_arm64_arm64ec}" ;;
         *) echo "${platform}${abi:+_$abi}" ;;
     esac
 }
@@ -393,11 +413,11 @@ function createPackage {
         scripts/vs/download_libs.sh -a $LIBS_ABI -t $LIBS_VERSION
         scripts/emscripten/download_libs.sh -n -t $LIBS_VERSION
     elif [ "$PKG_PLATFORM" = "vs" ]; then
-        if [ "$LIBS_ABI" = "" ]; then
-            scripts/vs/download_libs_2019_x64.sh -t $LIBS_VERSION
-        else
-            scripts/vs/download_libs.sh -a $LIBS_ABI -t $LIBS_VERSION
-        fi
+        case "$(vsYear "$LIBS_ABI")" in
+            2019) scripts/vs/download_libs_2019_x64.sh -t $LIBS_VERSION ;;
+            2026) scripts/vs/download_libs.sh --vs2026 -a "$(vsArch "$LIBS_ABI")" -t $LIBS_VERSION ;;
+            *) scripts/vs/download_libs.sh -a "$(vsArch "$LIBS_ABI")" -t $LIBS_VERSION ;;
+        esac
         scripts/emscripten/download_libs.sh -n -t $LIBS_VERSION
     elif [ "$PKG_PLATFORM" = "android" ]; then
         scripts/android/download_libs.sh -t $LIBS_VERSION
