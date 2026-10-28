@@ -53,14 +53,17 @@ jobs:
         run: |
           set -euo pipefail
           pinned=$(tr -d '[:space:]' < scripts/dev/apothecary_release 2>/dev/null || true)
-          # openFrameworks 0.X.Y[-suffix] uses apothecary vX.Y.0[-suffix] unless pinned otherwise
-          suggested="v$(sed -E 's/^0\.([0-9]+)\.([0-9]+)(.*)$/\1.\2.0\3/' <<< "$OF_TAG")"
+          # 0.12.2 and 0.12.2-RC1 both use apothecary v12.2.0. A suffix on the
+          # pin (v12.2.0-RC1) is that same release. download_libs.sh agrees.
+          source scripts/dev/apothecary_release_tag.sh
+          suggested=$(apothecary_release_tag "$OF_TAG")
           if [[ -z "$pinned" || "$pinned" == latest ]]; then
             echo "::error title=Libraries not pinned::$OF_TAG pins '${pinned:-nothing}' in scripts/dev/apothecary_release, so download_libs.sh would follow apothecary's moving 'latest'. Commit the release's apothecary tag (e.g. $suggested) before tagging."
             exit 1
           fi
-          echo "tag=$pinned" >> "$GITHUB_OUTPUT"
-          echo "$OF_TAG -> apothecary $pinned (suggested from the version: $suggested)"
+          resolved=$(apothecary_release_tag "$pinned")
+          echo "tag=$resolved" >> "$GITHUB_OUTPUT"
+          echo "$OF_TAG -> apothecary $resolved (pinned '$pinned'; version suggests $suggested)"
 
       - name: Check the apothecary release and its packages
         id: assets

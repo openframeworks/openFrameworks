@@ -610,12 +610,21 @@ cd "$SCRIPT_DIR"
 # uses: "latest" on master; a release commit pins its own (e.g. v12.2.0), so a
 # checkout of that tag keeps getting the same libraries. -t overrides it
 # (-t latest for the newest libraries). The platform scripts always pass -b.
+# 0.12.2-RC1 and v12.2.0-RC1 are the 0.12.2 libraries, apothecary v12.2.0.
+source "$SCRIPT_DIR/apothecary_release_tag.sh"
+USE_PIN=0
 if [[ $TAG == "" ]] && [[ -f "$SCRIPT_DIR/apothecary_release" ]]; then
     PINNED_RELEASE=$(tr -d '[:space:]' < "$SCRIPT_DIR/apothecary_release")
     if [[ -n $PINNED_RELEASE ]] && [[ $PINNED_RELEASE != latest ]]; then
         TAG="$PINNED_RELEASE"
-        echo " Using the apothecary release pinned by scripts/dev/apothecary_release: $TAG"
+        USE_PIN=1
     fi
+fi
+if [[ -n $TAG ]]; then
+    TAG=$(apothecary_release_tag "$TAG")
+fi
+if [[ $USE_PIN == 1 ]]; then
+    echo " Using the apothecary release pinned by scripts/dev/apothecary_release: $TAG"
 fi
 
 if [[ $BLEEDING_EDGE = 1 ]] ; then
