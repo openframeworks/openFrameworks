@@ -32,8 +32,8 @@ jobs:
       BITS: ${{ matrix.bits }}
     steps:
       - name: Clone repository
-        uses: actions/checkout@v4
-      - uses: msys2/setup-msys2@v2
+        uses: actions/checkout@v7.0.1
+      - uses: msys2/setup-msys2@v2.33.0
         with:
           update: true
           install: >-
@@ -46,7 +46,7 @@ jobs:
         run:
           ./scripts/ci/vs/install.sh
       - name: Setup MSBuild
-        uses: microsoft/setup-msbuild@v1.1
+        uses: microsoft/setup-msbuild@v3
       - name: Build emptyExample
         working-directory: ${{env.GITHUB_WORKSPACE}}
         run:

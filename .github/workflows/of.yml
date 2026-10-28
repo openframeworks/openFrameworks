@@ -30,7 +30,7 @@ jobs:
     env:
       TARGET: ${{matrix.cfg.target}}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7.0.1
       - name: Docker Step
         run: "docker run -di --name emscripten -v $PWD:/src emscripten/emsdk:6.0.11 bash"
       # - name: Determine Release
@@ -75,13 +75,13 @@ jobs:
       - name: Check system
         shell: bash
         run: gcc -v || true
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7.0.1
       - name: ccache
         uses: hendrikmuhs/ccache-action@v1.2.24
         with:
           # key: ${{ matrix.os }}-${{ matrix.type }}
           key: ${{ matrix.msystem }}
-      - uses: msys2/setup-msys2@v2
+      - uses: msys2/setup-msys2@v2.33.0
         with:
           cache: true
           release: true
@@ -148,8 +148,8 @@ jobs:
             installFlag: "--vs2026"
     steps:
       - name: Clone repository
-        uses: actions/checkout@v6
-      - uses: msys2/setup-msys2@v2
+        uses: actions/checkout@v7.0.1
+      - uses: msys2/setup-msys2@v2.33.0
         with:
           update: true
           install: >-
@@ -219,7 +219,7 @@ jobs:
         with:
           packages: multistrap unzip gcc-${{matrix.cfg.suffix}} g++-${{matrix.cfg.suffix}}
           version: 1.0
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7.0.1
       - name: ccache
         uses: hendrikmuhs/ccache-action@v1.2.24
         with:
@@ -270,7 +270,7 @@ jobs:
     env:
       TARGET: ${{matrix.cfg.target}}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7.0.1
       - name: ccache
         uses: hendrikmuhs/ccache-action@v1.2.24
         with:
@@ -337,7 +337,7 @@ jobs:
       #     else
       #       echo "RELEASE=latest" >> $GITHUB_ENV
       #     fi
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7.0.1
       - name: ccache
         uses: hendrikmuhs/ccache-action@v1.2.24
         with:
@@ -391,7 +391,7 @@ jobs:
       # libcapi20-3t64 and libboost-iostreams1.83.0 are not on 22.04.
       # install_dependencies.sh (via ci/linux/64/install.sh) is the source of truth.
 
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7.0.1
       - name: ccache
         uses: hendrikmuhs/ccache-action@v1.2.24
         with:
@@ -436,7 +436,7 @@ jobs:
   #       packages: aptitude aptitude-common libboost-iostreams1.83.0 libcwidget4 libsigc++-2.0-0v5 libxapian30 fonts-wine{a} libasound2-plugins{a} libcapi20-3t64{a} libosmesa6{a} libpcsclite1{a} libspeexdsp1{a} libwine{a} libxkbregistry0{a} libz-mingw-w64{a} wine{a} wine64 wget2 make libjack-jackd2-0 libjack-jackd2-dev freeglut3-dev libasound2-dev libxmu-dev libxxf86vm-dev g++ libgl1-mesa-dev libglu1-mesa-dev libraw1394-dev libudev-dev libdrm-dev libglew-dev libopenal-dev libsndfile1-dev libfreeimage-dev libcairo2-dev libfreetype6-dev libpulse-dev libusb-1.0-0-dev libgtk2.0-dev libopencv-dev libassimp-dev librtaudio-dev gdb libglfw3-dev liburiparser-dev libpugixml-dev libgconf-2-4 libgtk2.0-0 libpoco-dev libxcursor-dev libxi-dev libxinerama-dev libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev gstreamer1.0-libav gstreamer1.0-pulseaudio gstreamer1.0-x gstreamer1.0-plugins-bad gstreamer1.0-alsa gstreamer1.0-plugins-base gstreamer1.0-plugins-good
   #       version: 1.0
 
-  #   - uses: actions/checkout@v6
+  #   - uses: actions/checkout@v7.0.1
   #   - name: ccache
   #     uses: hendrikmuhs/ccache-action@v1.2.24
   #     with:
@@ -464,7 +464,7 @@ jobs:
           - { target: osx, opt: "xcode" }
           - { target: osx, opt: "makefiles" }
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7.0.1
       - name: ccache
         uses: hendrikmuhs/ccache-action@v1.2.24
         with:
@@ -526,10 +526,10 @@ jobs:
 
     steps:
       - name: checkout openFrameworks
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7.0.1
 
       - name: Set Up JDK 17
-        uses: actions/setup-java@v5
+        uses: actions/setup-java@v6.1.0
         with:
           distribution: "temurin"
           java-version: "17"

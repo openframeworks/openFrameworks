@@ -29,7 +29,7 @@ jobs:
           - {target: macos, opt: "xcode"}
           - {target: macos, opt: "makefiles"}
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v7.0.1
     - name: ccache
       uses: hendrikmuhs/ccache-action@v1.2.14
       with:
