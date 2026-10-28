@@ -16,7 +16,7 @@
 
 meta:
 	ADDON_NAME = ofxOsc
-	ADDON_DESCRIPTION = Addon for communicating with the OSC protocol
+	ADDON_DESCRIPTION = Addon for communicating with the OSC protocol. An optional AES-256-GCM passphrase seals the UDP payload.
 	ADDON_AUTHOR = OF Team
 	ADDON_TAGS = "networking"
 	ADDON_URL = http://github.com/openframeworks/openFrameworks

@@ -2,10 +2,17 @@
 // copyright (c) Damian Stewart 2007-2009
 #pragma once
 
+#include <atomic>
+#include <cstdint>
+#include <map>
+#include <mutex>
 #include <optional>
+#include <set>
+#include <string>
 
 #include "ofParameter.h"
 #include "ofThreadChannel.h"
+#include "ofxOscCrypto.h"
 #include "ofxOscMessage.h"
 
 #include "OscPacketListener.h"
@@ -81,6 +88,16 @@ public:
 	/// \return true if the receiver is listening
 	bool isListening() const;
 
+	/// Seal check for incoming datagrams. The passphrase is stretched with
+	/// PBKDF2-HMAC-SHA256. The default stretch is 200000. Empty turns it off.
+	/// The sender needs the same passphrase and the same stretch.
+	void setPassphrase(const std::string & passphrase, int iterations = 200000);
+	bool isEncrypting() const;
+	/// 12 hex characters. Matches a sender that was given the same passphrase and stretch.
+	std::string getFingerprint() const;
+	/// When set, a datagram that is not sealed with the passphrase is dropped.
+	std::atomic<bool> requireEncryption { false };
+
 	/// \return true if there are any messages waiting for collection
 	bool hasWaitingMessages() const;
 
@@ -112,8 +129,29 @@ public:
 protected:
 	/// process an incoming osc message and add it to the queue
 	virtual void ProcessMessage(const osc::ReceivedMessage & m, const osc::IpEndpointName & remoteEndpoint);
+	void ProcessPacket(const char * data, int size, const osc::IpEndpointName & remoteEndpoint) override;
 
 private:
+	struct ReplayKey {
+		std::string host;
+		int port = 0;
+		std::string salt;
+		bool operator<(const ReplayKey & other) const {
+			if (host != other.host) {
+				return host < other.host;
+			}
+			if (port != other.port) {
+				return port < other.port;
+			}
+			return salt < other.salt;
+		}
+	};
+	struct ReplaySlot {
+		std::uint64_t high = 0;
+		std::set<std::uint64_t> seen;
+	};
+
+	bool acceptCounter(const std::string & host, int port, const std::string & salt, std::uint64_t counter);
 	/// socket to listen on, unique for each port
 	/// shared between objects if allowReuse is true
 	std::unique_ptr<osc::UdpListeningReceiveSocket, std::function<void(osc::UdpListeningReceiveSocket *)>> listenSocket;
@@ -122,4 +160,7 @@ private:
 	ofThreadChannel<ofxOscMessage> messagesChannel; ///< message passing thread channel
 
 	ofxOscReceiverSettings settings; ///< current settings
+	ofxOsc::crypto::Cipher cipher;
+	mutable std::mutex replayMutex;
+	std::map<ReplayKey, ReplaySlot> replay;
 };

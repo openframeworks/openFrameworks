@@ -21,6 +21,12 @@ ofxOscReceiver & ofxOscReceiver::operator=(const ofxOscReceiver & mom) {
 ofxOscReceiver & ofxOscReceiver::copy(const ofxOscReceiver & other) {
 	if (this == &other) return *this;
 	settings = other.settings;
+	requireEncryption.store(other.requireEncryption.load());
+	cipher = other.cipher;
+	{
+		std::scoped_lock lock(replayMutex, other.replayMutex);
+		replay = other.replay;
+	}
 	if (other.listenSocket) {
 		setup(settings);
 	}
@@ -118,6 +124,95 @@ void ofxOscReceiver::stop() {
 //--------------------------------------------------------------
 bool ofxOscReceiver::isListening() const {
 	return listenSocket != nullptr;
+}
+
+//--------------------------------------------------------------
+void ofxOscReceiver::setPassphrase(const std::string & passphrase, int iterations) {
+	cipher.setPassphrase(passphrase, iterations);
+	std::lock_guard<std::mutex> lock(replayMutex);
+	replay.clear();
+}
+
+//--------------------------------------------------------------
+bool ofxOscReceiver::isEncrypting() const {
+	return cipher.isEnabled();
+}
+
+//--------------------------------------------------------------
+std::string ofxOscReceiver::getFingerprint() const {
+	return cipher.getFingerprint();
+}
+
+//--------------------------------------------------------------
+bool ofxOscReceiver::acceptCounter(const std::string & host, int port, const std::string & salt, std::uint64_t counter) {
+	constexpr std::uint64_t kWindow = 64;
+	if (counter == 0 || salt.size() != ofxOsc::crypto::Cipher::SALT_SIZE) {
+		return false;
+	}
+	std::lock_guard<std::mutex> lock(replayMutex);
+	ReplayKey key;
+	key.host = host;
+	key.port = port;
+	key.salt = salt;
+	if (replay.size() >= 256 && replay.find(key) == replay.end()) {
+		replay.erase(replay.begin());
+	}
+	ReplaySlot & slot = replay[key];
+	if (slot.seen.count(counter) != 0) {
+		return false;
+	}
+	if (slot.high >= kWindow && counter <= slot.high - kWindow) {
+		return false;
+	}
+	slot.seen.insert(counter);
+	if (counter > slot.high) {
+		slot.high = counter;
+	}
+	const std::uint64_t oldest = slot.high >= kWindow ? slot.high - kWindow : 0;
+	for (auto it = slot.seen.begin(); it != slot.seen.end();) {
+		if (*it < oldest) {
+			it = slot.seen.erase(it);
+		} else {
+			++it;
+		}
+	}
+	return true;
+}
+
+//--------------------------------------------------------------
+void ofxOscReceiver::ProcessPacket(const char * data, int size, const osc::IpEndpointName & remoteEndpoint) {
+	if (data == nullptr || size < 0) {
+		return;
+	}
+	const std::string bytes(data, static_cast<std::size_t>(size));
+	if (ofxOsc::crypto::Cipher::isEnvelope(bytes)) {
+		const auto plain = cipher.decrypt(bytes);
+		if (!plain) {
+			ofLogVerbose("ofxOscReceiver") << "sealed datagram dropped";
+			return;
+		}
+		char host[osc::IpEndpointName::ADDRESS_STRING_LENGTH];
+		remoteEndpoint.AddressAsString(host);
+		if (!acceptCounter(host, remoteEndpoint.port, ofxOsc::crypto::Cipher::saltOf(bytes), ofxOsc::crypto::Cipher::counterOf(bytes))) {
+			ofLogVerbose("ofxOscReceiver") << "replay dropped";
+			return;
+		}
+		try {
+			osc::OscPacketListener::ProcessPacket(plain->data(), static_cast<int>(plain->size()), remoteEndpoint);
+		} catch (const std::exception & error) {
+			ofLogVerbose("ofxOscReceiver") << error.what();
+		}
+		return;
+	}
+	if (requireEncryption.load()) {
+		ofLogVerbose("ofxOscReceiver") << "plaintext dropped";
+		return;
+	}
+	try {
+		osc::OscPacketListener::ProcessPacket(data, size, remoteEndpoint);
+	} catch (const std::exception & error) {
+		ofLogVerbose("ofxOscReceiver") << error.what();
+	}
 }
 
 //--------------------------------------------------------------

@@ -8,6 +8,7 @@
 
 #include "ofParameter.h"
 #include "ofxOscBundle.h"
+#include "ofxOscCrypto.h"
 
 /// \struct ofxOscSenderSettings
 /// \brief OSC message sender settings
@@ -45,6 +46,15 @@ public:
 
 	/// returns true if the sender can send
 	bool isReady() const;
+
+	/// Seal every datagram with AES-256-GCM. The passphrase is stretched with
+	/// PBKDF2-HMAC-SHA256. The default stretch is 200000. Empty turns it off.
+	/// The receiver needs the same passphrase and the same stretch. The OSC
+	/// address and arguments are inside the seal.
+	void setPassphrase(const std::string & passphrase, int iterations = 200000);
+	bool isEncrypting() const;
+	/// 12 hex characters. Matches a receiver that was given the same passphrase and stretch.
+	std::string getFingerprint() const;
 
 	/// send the given message
 	/// if wrapInBundle is true (default), message sent in a timetagged bundle
@@ -89,7 +99,9 @@ private:
 	void appendMessage(const ofxOscMessage & message, osc::OutboundPacketStream & p);
 	void appendParameter(ofxOscBundle & bundle, const ofAbstractParameter & parameter, const std::string & address);
 	void appendParameter(ofxOscMessage & msg, const ofAbstractParameter & parameter, const std::string & address);
+	bool transmit(const char * data, std::size_t size);
 
 	ofxOscSenderSettings settings; ///< current settings
 	std::unique_ptr<osc::UdpTransmitSocket> sendSocket; ///< sender socket
+	ofxOsc::crypto::Cipher cipher;
 };
