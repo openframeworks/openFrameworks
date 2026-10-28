@@ -119,13 +119,16 @@ function(of_thirdparty_include_dirs out_var)
 		if(IS_DIRECTORY "${root}/include")
 			list(APPEND result "${root}/include")
 		endif()
-		# KissFFT installs into include/kissfft. ofOpenALSoundPlayer includes
-		# kiss_fftr.h from that folder. The makefile adds every libs/*/include
-		# subdirectory. include/glm is left out so glm/simd does not shadow
-		# the SDK simd headers.
-		if(IS_DIRECTORY "${root}/include/kissfft")
-			list(APPEND result "${root}/include/kissfft")
-		endif()
+		# Apothecary copies the install tree into libs/kiss/include, so
+		# kiss_fftr.h lands in include/include/kissfft. ofOpenALSoundPlayer
+		# includes that header by its bare name. The makefile adds every
+		# subdirectory of libs/*/include. include/glm stays off this list so
+		# glm/simd does not shadow the SDK simd headers.
+		foreach(kiss_dir IN ITEMS "${root}/include/kissfft" "${root}/include/include/kissfft")
+			if(IS_DIRECTORY "${kiss_dir}")
+				list(APPEND result "${kiss_dir}")
+			endif()
+		endforeach()
 	endforeach()
 	set(${out_var} ${result} PARENT_SCOPE)
 endfunction()
