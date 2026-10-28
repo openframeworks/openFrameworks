@@ -56,17 +56,15 @@ foreach(pkg IN LISTS _of_pkgs)
 	list(APPEND OF_PLATFORM_LINK_LIBRARIES PkgConfig::${id})
 endforeach()
 
-# optional pkg-config packages
-foreach(pkg openssl libcurl libcurl4 glfw3 rtaudio)
+# optional pkg-config packages. Not glfw3: the makefile leaves that commented
+# out and links libs/glfw. Ubuntu's libglfw3-dev is 3.3.
+foreach(pkg openssl libcurl libcurl4 rtaudio)
 	string(MAKE_C_IDENTIFIER "OF_PC_${pkg}" id)
 	pkg_check_modules(${id} QUIET IMPORTED_TARGET GLOBAL ${pkg})
 	if(${id}_FOUND)
 		list(APPEND OF_PLATFORM_LINK_LIBRARIES PkgConfig::${id})
 	endif()
 endforeach()
-if(OF_PC_glfw3_FOUND)
-	list(APPEND OF_PLATFORM_LINK_LIBRARIES Xinerama)
-endif()
 if(NOT OF_PC_rtaudio_FOUND)
 	list(APPEND OF_PLATFORM_LINK_LIBRARIES rtaudio)
 endif()
@@ -97,9 +95,11 @@ if(NOT OF_PLATFORM STREQUAL "linux/armv6l")
 endif()
 list(APPEND OF_PLATFORM_LINK_LIBRARIES freeimage pugixml uriparser)
 
-# these come from the system on Linux, not libs/
+# These come from the system on Linux, not libs/.
+# glfw stays in libs/. Ubuntu's libglfw3-dev is 3.3, and ofAppGLFWWindow
+# calls glfwGetPlatform, which the bundled GLFW 3.4 headers declare.
 set(OF_PLATFORM_THIRDPARTY_EXCLUDE
-	glew cairo videoInput freetype FreeImage assimp rtAudio openssl glfw curl uriparser fmod
+	glew cairo videoInput freetype FreeImage assimp rtAudio openssl curl uriparser fmod
 	pixman dawn metalangle)
 
 set(OF_PLATFORM_LIB_EXTENSIONS a)
