@@ -1,7 +1,8 @@
 # Detects the openFrameworks platform from the toolchain.
 #
 #   OF_PLATFORM          libs/*/lib/<OF_PLATFORM> folder name
-#                        (macos ios tvos emscripten linux64 linuxaarch64 linuxarmv7l linuxarmv6l vs msys2)
+#                        (macos ios tvos emscripten linux/64 linux/aarch64 linux/armv7l linux/armv6l vs msys2)
+#   OF_LIB_SUBPATHS      that folder, then older flat names (linux64, ...) when they still exist
 #   OF_PLATFORM_FAMILY   platform/<family>.cmake to load (macos ios emscripten linux vs msys2)
 #   OF_ARCH              architecture subfolder under libs/*/lib/<OF_PLATFORM>, empty if none
 
@@ -26,13 +27,13 @@ if(NOT OF_PLATFORM)
 		set(OF_PLATFORM msys2)
 	elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
 		if(_of_proc MATCHES "^(x86_64|amd64)$")
-			set(OF_PLATFORM linux64)
+			set(OF_PLATFORM "linux/64")
 		elseif(_of_proc MATCHES "^(aarch64|arm64)$")
-			set(OF_PLATFORM linuxaarch64)
+			set(OF_PLATFORM "linux/aarch64")
 		elseif(_of_proc MATCHES "^armv7")
-			set(OF_PLATFORM linuxarmv7l)
+			set(OF_PLATFORM "linux/armv7l")
 		elseif(_of_proc MATCHES "^armv6")
-			set(OF_PLATFORM linuxarmv6l)
+			set(OF_PLATFORM "linux/armv6l")
 		else()
 			message(FATAL_ERROR "openFrameworks: unsupported Linux processor '${CMAKE_SYSTEM_PROCESSOR}'")
 		endif()
@@ -43,6 +44,33 @@ endif()
 
 if(OF_PLATFORM STREQUAL "android")
 	message(FATAL_ERROR "openFrameworks: Android uses its own CMake (libs/openFrameworksCompiled/project/android)")
+endif()
+
+# Flat names from before the linux/<arch> archives. -DOF_PLATFORM=linux64 still works.
+if(OF_PLATFORM STREQUAL "linux64")
+	set(OF_PLATFORM "linux/64")
+elseif(OF_PLATFORM STREQUAL "linuxaarch64")
+	set(OF_PLATFORM "linux/aarch64")
+elseif(OF_PLATFORM STREQUAL "linuxarm64")
+	set(OF_PLATFORM "linux/arm64")
+elseif(OF_PLATFORM STREQUAL "linuxarmv7l")
+	set(OF_PLATFORM "linux/armv7l")
+elseif(OF_PLATFORM STREQUAL "linuxarmv6l")
+	set(OF_PLATFORM "linux/armv6l")
+endif()
+
+# Canonical folder first, then the pre-0.13 flat folder. The first one on disk is used.
+set(OF_LIB_SUBPATHS "${OF_PLATFORM}")
+if(OF_PLATFORM STREQUAL "linux/64")
+	set(OF_LIB_SUBPATHS linux/64 linux64)
+elseif(OF_PLATFORM STREQUAL "linux/aarch64")
+	set(OF_LIB_SUBPATHS linux/aarch64 linuxaarch64)
+elseif(OF_PLATFORM STREQUAL "linux/arm64")
+	set(OF_LIB_SUBPATHS linux/arm64 linuxarm64 linuxaarch64)
+elseif(OF_PLATFORM STREQUAL "linux/armv7l")
+	set(OF_LIB_SUBPATHS linux/armv7l linuxarmv7l)
+elseif(OF_PLATFORM STREQUAL "linux/armv6l")
+	set(OF_LIB_SUBPATHS linux/armv6l linuxarmv6l)
 endif()
 
 if(OF_PLATFORM MATCHES "^linux")

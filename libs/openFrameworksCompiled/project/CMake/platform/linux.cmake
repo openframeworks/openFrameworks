@@ -1,4 +1,4 @@
-# Linux: linux64 / linuxaarch64 / linuxarmv7l / linuxarmv6l
+# Linux: linux/64 / linux/aarch64 / linux/armv7l / linux/armv6l
 # (mirrors makefileCommon/config.linux.common.mk and <platform>/config.<platform>.default.mk)
 #
 # Most dependencies come from the system through pkg-config; install them with
@@ -9,7 +9,7 @@ include_guard(GLOBAL)
 find_package(PkgConfig REQUIRED)
 
 set(_of_linux_arm OFF)
-if(OF_PLATFORM MATCHES "^linuxarmv[67]l$")
+if(OF_PLATFORM MATCHES "^linux/armv[67]l$")
 	set(_of_linux_arm ON)
 endif()
 
@@ -30,11 +30,11 @@ set(OF_PLATFORM_DEFINES)
 set(OF_PLATFORM_COMPILE_OPTIONS -Wall -Werror=return-type)
 set(OF_PLATFORM_LINK_OPTIONS "-Wl,-rpath=./libs:./bin/libs:./" -Wl,--as-needed -Wl,--gc-sections)
 
-if(OF_PLATFORM STREQUAL "linuxaarch64")
+if(OF_PLATFORM STREQUAL "linux/aarch64")
 	list(APPEND OF_PLATFORM_COMPILE_OPTIONS
 		-march=armv8-a -mcpu=cortex-a72 -mtune=cortex-a72 -fPIC -ftree-vectorize -Wno-psabi -pipe)
 	list(APPEND OF_PLATFORM_LINK_OPTIONS -no-pie)
-elseif(OF_PLATFORM STREQUAL "linuxarmv7l")
+elseif(OF_PLATFORM STREQUAL "linux/armv7l")
 	list(APPEND OF_PLATFORM_COMPILE_OPTIONS
 		-march=armv7 -mtune=cortex-a8 -mfpu=neon -mfloat-abi=hard -fPIC -ftree-vectorize -Wno-psabi -pipe)
 endif()
@@ -47,7 +47,7 @@ set(_of_pkgs cairo zlib gstreamer-app-1.0 gstreamer-1.0 gstreamer-video-1.0 gstr
 if(NOT _of_linux_arm)
 	list(APPEND _of_pkgs libpulse-simple alsa gl glu glew)
 endif()
-if(OF_PLATFORM MATCHES "^linux(aarch64|armv7l|armv6l)$")
+if(OF_PLATFORM MATCHES "^linux/(aarch64|armv7l|armv6l)$")
 	list(APPEND _of_pkgs glesv1_cm glesv2 egl)
 endif()
 foreach(pkg IN LISTS _of_pkgs)
@@ -92,7 +92,7 @@ endif()
 if(NOT _of_linux_arm)
 	list(APPEND OF_PLATFORM_LINK_LIBRARIES glut)
 endif()
-if(NOT OF_PLATFORM STREQUAL "linuxarmv6l")
+if(NOT OF_PLATFORM STREQUAL "linux/armv6l")
 	list(APPEND OF_PLATFORM_LINK_LIBRARIES X11 Xrandr Xxf86vm Xi Xcursor dl pthread)
 endif()
 list(APPEND OF_PLATFORM_LINK_LIBRARIES freeimage pugixml uriparser)

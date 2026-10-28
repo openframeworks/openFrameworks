@@ -1,7 +1,7 @@
 # openFrameworks CMake
 
 CMake build for the openFrameworks core and apps on macOS, iOS, tvOS, Emscripten,
-Linux (linux64, linuxaarch64, linuxarmv7l, linuxarmv6l) and Windows (Visual Studio,
+Linux (linux/64, linux/aarch64, linux/armv7l, linux/armv6l) and Windows (Visual Studio,
 MSYS2). Android has its own CMake in `project/android` for now.
 
 It mirrors the makefiles and IDE projects: the same sources, defines, flags and
@@ -106,7 +106,7 @@ makefiles' `config.make` options.
 | `OF_BUILD_EXAMPLES` | `OFF` | core build: add `examples/` and a `build_all_examples` target |
 | `OF_PRECOMPILED_HEADER` | `OFF` | precompile `ofMain.h` for each app's own `src/` C++ files (faster rebuilds); addon sources compile without it |
 | `OF_USE_CCACHE` | `ON` | prefix C and C++ with ccache when it is installed. A launcher you already set is left as it is |
-| `OF_PLATFORM` | detected | `macos ios tvos emscripten linux64 linuxaarch64 linuxarmv7l linuxarmv6l vs msys2` |
+| `OF_PLATFORM` | detected | `macos ios tvos emscripten linux/64 linux/aarch64 linux/armv7l linux/armv6l vs msys2`. `linux64` and the other flat names still select the same platform |
 | `OF_USE_DAWN`, `OF_USE_ANGLE` | `OFF` | link `libs/dawn`, `libs/metalangle` |
 | `PROJECT_EMSCRIPTEN_WASM` | `32` | `32`: libs from `lib/emscripten/WASM`, core in `lib/emscripten`. `64`: libs and core in `lib/emscripten/WASM64` |
 | `PROJECT_EMSCRIPTEN_TOTAL_MEMORY` | `134217728` | initial memory in bytes |

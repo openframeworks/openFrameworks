@@ -10,7 +10,7 @@
 #   of_add_app(myApp ADDONS ofxGui)
 #
 # Platforms (OF_PLATFORM, detected from the toolchain, or set it):
-#   macos ios tvos emscripten linux64 linuxaarch64 linuxarmv7l linuxarmv6l vs msys2
+#   macos ios tvos emscripten linux/64 linux/aarch64 linux/armv7l linux/armv6l vs msys2
 #
 # Options:
 #   OF_BUILD_CORE=ON   always build the core in this build, even if a prebuilt

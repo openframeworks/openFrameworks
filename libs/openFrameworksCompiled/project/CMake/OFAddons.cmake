@@ -14,13 +14,20 @@
 
 include_guard(GLOBAL)
 
-# addon_config.mk section names that apply to this platform
-set(OF_ADDON_CONFIG_SECTIONS common ${OF_PLATFORM})
+# addon_config.mk section names that apply to this platform.
+# Linux also reads the generic linux: section, then linux/64 and the flat linux64 alias.
+set(OF_ADDON_CONFIG_SECTIONS common)
+if(OF_PLATFORM MATCHES "^linux/")
+	list(APPEND OF_ADDON_CONFIG_SECTIONS linux)
+endif()
+list(APPEND OF_ADDON_CONFIG_SECTIONS ${OF_LIB_SUBPATHS})
 if(OF_PLATFORM STREQUAL "macos")
 	list(APPEND OF_ADDON_CONFIG_SECTIONS osx)
 endif()
 if(OF_ARCH)
-	list(APPEND OF_ADDON_CONFIG_SECTIONS "${OF_PLATFORM}/${OF_ARCH}")
+	foreach(subpath IN LISTS OF_LIB_SUBPATHS)
+		list(APPEND OF_ADDON_CONFIG_SECTIONS "${subpath}/${OF_ARCH}")
+	endforeach()
 endif()
 
 set(OF_ADDON_CONFIG_VARS
@@ -176,7 +183,8 @@ function(of_target_addon target addon)
 	set(cfg_ADDON_LIBS)
 	file(GLOB addon_lib_roots LIST_DIRECTORIES true "${dir}/libs/*")
 	foreach(lib_root IN LISTS addon_lib_roots)
-		of_static_libs_in(libs "${lib_root}/lib/${OF_PLATFORM}")
+		of_platform_lib_folder(folder "${lib_root}")
+		of_static_libs_in(libs "${folder}")
 		list(APPEND cfg_ADDON_LIBS ${libs})
 	endforeach()
 

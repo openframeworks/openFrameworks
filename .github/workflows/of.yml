@@ -145,18 +145,18 @@ jobs:
           - { name: emscripten, runner: ubuntu-24.04 }
     name: build-cmake (${{ matrix.name }})
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7.0.1
       - name: ccache
         if: matrix.name != 'vs-x64' && matrix.name != 'emscripten'
-        uses: hendrikmuhs/ccache-action@v1.2.23
+        uses: hendrikmuhs/ccache-action@v1.2.24
         with:
           key: cmake-${{ matrix.name }}
 
       - name: Libs, dependencies and projectGenerator (linux64)
         if: matrix.name == 'linux64'
         run: |
-          ./scripts/linux/download_libs.sh -t $RELEASE -a 64gcc6
-          ./scripts/ci/linux64/install.sh
+          ./scripts/linux/download_libs.sh -t "$RELEASE" -a 64 -g 10
+          ./scripts/ci/linux/64/install.sh
           sudo apt-get install -y ninja-build
           mkdir -p ~/pg && cd ~/pg
           curl -fsSL -o pg.tar.bz2 https://github.com/openframeworks/projectGenerator/releases/download/nightly/projectGenerator-linux.tar.bz2
@@ -170,9 +170,9 @@ jobs:
       - name: Libs, dependencies and projectGenerator (linuxaarch64)
         if: matrix.name == 'linuxaarch64'
         run: |
-          ./scripts/linux/download_libs.sh -t $RELEASE -a aarch64
-          ./scripts/ci/linux64/install.sh
-          # ofxOpenCv links -lblas -llapack on linuxaarch64 (rpi-build gets them from multistrap)
+          ./scripts/linux/download_libs.sh -t "$RELEASE" -a aarch64 -g 10
+          ./scripts/ci/linux/64/install.sh
+          # ofxOpenCv links -lblas -llapack on linux/aarch64 (rpi-build gets them from multistrap)
           sudo apt-get install -y ninja-build libblas-dev liblapack-dev
           mkdir -p ~/pg && cd ~/pg
           curl -fsSL -o pg.tar.bz2 https://github.com/openframeworks/projectGenerator/releases/download/nightly/projectGenerator-linux-arm64.tar.bz2
@@ -187,7 +187,7 @@ jobs:
         if: matrix.name == 'emscripten'
         run: |
           ./scripts/emscripten/download_libs.sh -t $RELEASE
-          docker run -di --name emscripten -v $PWD:/src emscripten/emsdk:6.0.11 bash
+          docker run -di --name emscripten -v $PWD:/src emscripten/emsdk:6.0.13 bash
       - name: Build (emscripten)
         if: matrix.name == 'emscripten'
         run: >-
