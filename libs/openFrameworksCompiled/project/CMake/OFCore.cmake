@@ -146,15 +146,21 @@ endfunction()
 # libs/<name>/lib/<subpath>. The canonical folder wins; an older flat folder is
 # used when that is the one on disk (linux/64, then linux64).
 function(of_platform_lib_folder out_var lib_root)
+	# OFPlatform.cmake fills OF_LIB_SUBPATHS. Callers that set OF_PLATFORM only
+	# (the MSVC addon fixture) still search libs/*/lib/${OF_PLATFORM}.
+	set(subpaths ${OF_LIB_SUBPATHS})
+	if(NOT subpaths)
+		set(subpaths "${OF_PLATFORM}")
+	endif()
 	set(found "")
-	foreach(subpath IN LISTS OF_LIB_SUBPATHS)
+	foreach(subpath IN LISTS subpaths)
 		if(IS_DIRECTORY "${lib_root}/lib/${subpath}")
 			set(found "${lib_root}/lib/${subpath}")
 			break()
 		endif()
 	endforeach()
 	if(found STREQUAL "")
-		list(GET OF_LIB_SUBPATHS 0 subpath)
+		list(GET subpaths 0 subpath)
 		set(found "${lib_root}/lib/${subpath}")
 	endif()
 	set(${out_var} "${found}" PARENT_SCOPE)

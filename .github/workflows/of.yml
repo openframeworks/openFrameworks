@@ -139,7 +139,7 @@ jobs:
       matrix:
         include:
           - { name: linux64, runner: ubuntu-24.04 }
-          - { name: macos, runner: macos-15 }
+          - { name: macos, runner: xcode-27 }
           - { name: vs-x64, runner: windows-2022 }
           - { name: linuxaarch64, runner: ubuntu-24.04-arm }
           - { name: emscripten, runner: ubuntu-24.04 }
@@ -204,7 +204,7 @@ jobs:
         if: matrix.name == 'macos'
         run: scripts/ci/cmake/build.sh -- -G Ninja
         env:
-          DEVELOPER_DIR: "/Applications/Xcode.app/Contents/Developer"
+          DEVELOPER_DIR: "/Applications/Xcode_27.1.app/Contents/Developer"
 
       # unit tests in tests/ through CTest (Debug, like the makefile CI)
       - name: Tests (ctest)
@@ -215,7 +215,7 @@ jobs:
           if [ "$RUNNER_OS" = "Linux" ]; then RUN="xvfb-run -a"; fi
           $RUN ctest --test-dir build/cmake-tests --output-on-failure --timeout 300
         env:
-          DEVELOPER_DIR: "/Applications/Xcode.app/Contents/Developer"
+          DEVELOPER_DIR: "/Applications/Xcode_27.1.app/Contents/Developer"
 
       - uses: msys2/setup-msys2@v2
         if: matrix.name == 'vs-x64'
