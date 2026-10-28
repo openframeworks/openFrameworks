@@ -150,6 +150,10 @@ enum ofTargetPlatform{
 	#ifndef WIN32_LEAN_AND_MEAN
 		#define WIN32_LEAN_AND_MEAN
 	#endif
+	#if defined(_MSC_VER) // before windows.h, so GLFW _putenv is not C4996
+		#define _CRT_SECURE_NO_WARNINGS
+		#define _WINSOCK_DEPRECATED_NO_WARNINGS
+	#endif
 	#include <windows.h>
 	#include "GL/glew.h"
 	#include "GL/wglew.h"
@@ -160,9 +164,6 @@ enum ofTargetPlatform{
 	#define __WINDOWS_MM__ // rtMidi?
 	#if (_MSC_VER)       // microsoft visual studio
 		//TODO: Fix this in the code instead of disabling the warnings
-		#define _CRT_SECURE_NO_WARNINGS
-		#define _WINSOCK_DEPRECATED_NO_WARNINGS
-
 		#include <stdint.h>
 		#include <functional>
 		#pragma warning(disable : 4068)		// unknown pragmas
