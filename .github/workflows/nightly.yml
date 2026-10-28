@@ -24,6 +24,13 @@ env:
   ccache: ccache
   RELEASE: latest
 
+permissions:
+  contents: write
+
+concurrency:
+  group: nightly
+  cancel-in-progress: false
+
 jobs:
   build-nightly-ok:
     runs-on: ubuntu-24.04
@@ -31,7 +38,7 @@ jobs:
     strategy:
       matrix:
         cfg:
-        - {target: linux64, libs: 64gcc6}
+        - {target: linux64, libs: 64}
     env:
      TARGET: ${{matrix.cfg.target}}
     steps:
@@ -70,23 +77,37 @@ jobs:
     #     files: |
     #       out/of_v*.tar.gz
     #       out/of_v*.zip
-    # Delete the existing release (but NOT the tag)
-    - name: Delete existing nightly release if exists
+    # Upload into a draft first, then swap it in as "nightly": the current nightly stays
+    # available until the new one is complete, and the nightly tag moves to this commit.
+    - name: Publish nightly
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        REPO: ${{ github.repository }}
+        SHA: ${{ github.sha }}
       run: |
-        gh release delete nightly --yes || true
-    # Recreate nightly release associated with existing tag
-    - name: Create new nightly release and upload assets
-      env:
-        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        shopt -s nullglob
+        files=(out/of_v*.tar.gz out/of_v*.zip)
+        if [ ${#files[@]} -eq 0 ]; then
+          echo "::error::No packages were built - keeping the current nightly"
+          exit 1
+        fi
+        notes="Nightly openFrameworks build from ${SHA:0:7} ($(date -u +%Y-%m-%d))."
+        if [ -f out/package_summary.md ]; then
+          notes="$notes"$'\n\n'"$(cat out/package_summary.md)"
+        fi
+        gh release delete nightly-staging --repo "$REPO" --cleanup-tag --yes 2> /dev/null || true
+        gh release create nightly-staging "${files[@]}" --repo "$REPO" --draft --target "$SHA" \
+          --title "Nightly Release" --notes "$notes"
+        gh release delete nightly --repo "$REPO" --cleanup-tag --yes 2> /dev/null || true
+        id=$(gh api "repos/$REPO/releases" --jq '.[] | select(.draft and .tag_name == "nightly-staging") | .id' | head -1)
+        gh api -X PATCH "repos/$REPO/releases/$id" -f tag_name=nightly -f target_commitish="$SHA" -F draft=false > /dev/null
+        gh release view nightly --repo "$REPO" --json tagName,publishedAt,assets \
+          --jq '"\(.tagName) published \(.publishedAt) with \(.assets | length) files"'
+    # package_builds.sh keeps going when a package fails, so the nightly has every package
+    # that built; fail the run afterwards so a missing package doesn't go unnoticed
+    - name: Check every package built
       run: |
-        gh release create nightly \
-          --title "Nightly Release" \
-          --notes "Auto-generated nightly build." \
-          out/of_v*.tar.gz out/of_v*.zip || \
-        gh release create nightly \
-          --title "Nightly Release" \
-          --notes "Auto-generated nightly build." \
-          --target ${{ github.sha }} \
-          out/of_v*.tar.gz out/of_v*.zip
+        if grep -q "| FAILED |" out/package_summary.md; then
+          grep "| FAILED |" out/package_summary.md | sed 's/^/::error::Package failed: /'
+          exit 1
+        fi

@@ -25,7 +25,7 @@ jobs:
     strategy:
       matrix:
         cfg:
-          - { target: linux64, libs: 64gcc6 }
+          - { target: linux64, libs: 64 }
     steps:
       - name: Install libunwind
         run: |
