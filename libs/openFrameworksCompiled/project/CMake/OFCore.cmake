@@ -119,6 +119,13 @@ function(of_thirdparty_include_dirs out_var)
 		if(IS_DIRECTORY "${root}/include")
 			list(APPEND result "${root}/include")
 		endif()
+		# KissFFT installs into include/kissfft. ofOpenALSoundPlayer includes
+		# kiss_fftr.h from that folder. The makefile adds every libs/*/include
+		# subdirectory. include/glm is left out so glm/simd does not shadow
+		# the SDK simd headers.
+		if(IS_DIRECTORY "${root}/include/kissfft")
+			list(APPEND result "${root}/include/kissfft")
+		endif()
 	endforeach()
 	set(${out_var} ${result} PARENT_SCOPE)
 endfunction()
