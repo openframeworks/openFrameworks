@@ -1,5 +1,7 @@
 # Linux Ubuntu ARM64 Toolchain File
 
+include("${CMAKE_CURRENT_LIST_DIR}/../ccache.cmake")
+
 # Specify the system
 set(CMAKE_SYSTEM_NAME Linux)        # Cross-compilation target system
 set(CMAKE_SYSTEM_PROCESSOR aarch64) # Architecture (ARM64)
