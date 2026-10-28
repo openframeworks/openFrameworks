@@ -50,7 +50,7 @@ apt-get install -y \
   libgconf-2-4 brotli liblapack-dev libblas-dev \
   libxrandr-dev libxinerama-dev libxcursor-dev libxi-dev libxext-dev \
   xorgproto libwayland-dev wayland-protocols libxkbcommon-dev libxkbcommon-x11-dev \
-  libdecor-0-dev libglvnd-dev mesa-utils
+  libdecor-0-dev libglvnd-dev mesa-utils ccache
 
 exit_code=$?
 if [ $exit_code != 0 ]; then
