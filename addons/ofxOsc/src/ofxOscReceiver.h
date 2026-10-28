@@ -88,9 +88,7 @@ public:
 	/// \return true if the receiver is listening
 	bool isListening() const;
 
-	/// Seal check for incoming datagrams. The passphrase is stretched with
-	/// PBKDF2-HMAC-SHA256. The default stretch is 200000. Empty turns it off.
-	/// The sender needs the same passphrase and the same stretch.
+	/// Seal check for incoming datagrams. The passphrase is stretched with PBKDF2-HMAC-SHA256. The default stretch is 200000. Empty turns it off. The sender needs the same passphrase and the same stretch.
 	void setPassphrase(const std::string & passphrase, int iterations = 200000);
 	bool isEncrypting() const;
 	/// 12 hex characters. Matches a sender that was given the same passphrase and stretch.

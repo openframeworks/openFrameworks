@@ -46,8 +46,7 @@ public:
 	/// 12 hex characters. The same passphrase and stretch match on every machine.
 	std::string getFingerprint() const;
 
-	/// The plaintext when sealing is off, the envelope when it is on.
-	/// Nothing when sealing fails.
+	/// The plaintext when sealing is off, the envelope when it is on. Nothing when sealing fails.
 	std::optional<std::string> seal(const std::string & plaintext);
 	std::optional<std::string> decrypt(const std::string & envelope);
 

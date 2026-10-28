@@ -47,10 +47,7 @@ public:
 	/// returns true if the sender can send
 	bool isReady() const;
 
-	/// Seal every datagram with AES-256-GCM. The passphrase is stretched with
-	/// PBKDF2-HMAC-SHA256. The default stretch is 200000. Empty turns it off.
-	/// The receiver needs the same passphrase and the same stretch. The OSC
-	/// address and arguments are inside the seal.
+	/// Seal every datagram with AES-256-GCM. The passphrase is stretched with PBKDF2-HMAC-SHA256. The default stretch is 200000. Empty turns it off. The receiver needs the same passphrase and the same stretch. The OSC address and arguments are inside the seal.
 	void setPassphrase(const std::string & passphrase, int iterations = 200000);
 	bool isEncrypting() const;
 	/// 12 hex characters. Matches a receiver that was given the same passphrase and stretch.
