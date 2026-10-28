@@ -14,6 +14,7 @@
 #   cmake --build build/core --target build_all_examples
 
 cmake_minimum_required(VERSION 3.22)
+include("${CMAKE_CURRENT_LIST_DIR}/ccache.cmake")
 project(openFrameworks LANGUAGES C CXX)
 
 include("${CMAKE_CURRENT_LIST_DIR}/openFrameworks.cmake")

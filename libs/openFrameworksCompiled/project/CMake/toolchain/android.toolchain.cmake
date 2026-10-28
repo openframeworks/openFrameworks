@@ -1,6 +1,8 @@
 # Android Toolchain CMake Configuration
 cmake_minimum_required(VERSION 3.14)
 
+include("${CMAKE_CURRENT_LIST_DIR}/../ccache.cmake")
+
 # Add additional flags or settings if needed
 set(CMAKE_ANDROID_STL_TYPE "c++_shared") # Adjust STL type if needed
 

@@ -8,14 +8,16 @@
 
 cmake_minimum_required(VERSION 3.22)
 
-# project folder name is the app name by default
-get_filename_component(OF_APP_NAME "${CMAKE_CURRENT_SOURCE_DIR}" NAME)
-project(${OF_APP_NAME} LANGUAGES C CXX)
-
 # path to openFrameworks, relative to this project (apps/myApps/<app> by default)
 if(NOT OF_ROOT)
 	set(OF_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/../../..")
 endif()
+include("${OF_ROOT}/libs/openFrameworksCompiled/project/CMake/ccache.cmake")
+
+# project folder name is the app name by default
+get_filename_component(OF_APP_NAME "${CMAKE_CURRENT_SOURCE_DIR}" NAME)
+project(${OF_APP_NAME} LANGUAGES C CXX)
+
 include("${OF_ROOT}/libs/openFrameworksCompiled/project/CMake/openFrameworks.cmake")
 
 # app version and build number (macOS / iOS / tvOS Info.plist), like APP_VERSION /

@@ -105,6 +105,7 @@ makefiles' `config.make` options.
 | `OF_BUILD_TESTS` | `OFF` | core build: add `tests/` and register them with CTest |
 | `OF_BUILD_EXAMPLES` | `OFF` | core build: add `examples/` and a `build_all_examples` target |
 | `OF_PRECOMPILED_HEADER` | `OFF` | precompile `ofMain.h` for each app's own `src/` C++ files (faster rebuilds); addon sources compile without it |
+| `OF_USE_CCACHE` | `ON` | prefix C and C++ with ccache when it is installed. A launcher you already set is left as it is |
 | `OF_PLATFORM` | detected | `macos ios tvos emscripten linux64 linuxaarch64 linuxarmv7l linuxarmv6l vs msys2` |
 | `OF_USE_DAWN`, `OF_USE_ANGLE` | `OFF` | link `libs/dawn`, `libs/metalangle` |
 | `PROJECT_EMSCRIPTEN_WASM` | `32` | `32`: libs from `lib/emscripten/WASM`, core in `lib/emscripten`. `64`: libs and core in `lib/emscripten/WASM64` |

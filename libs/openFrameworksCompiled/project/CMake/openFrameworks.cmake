@@ -15,8 +15,11 @@
 # Options:
 #   OF_BUILD_CORE=ON   always build the core in this build, even if a prebuilt
 #                      libs/openFrameworksCompiled/lib/<platform> library exists
+#   OF_USE_CCACHE=OFF  do not prefix the compilers with ccache
 
 include_guard(GLOBAL)
+
+include("${CMAKE_CURRENT_LIST_DIR}/ccache.cmake")
 
 get_filename_component(OF_ROOT "${CMAKE_CURRENT_LIST_DIR}/../../../.." ABSOLUTE)
 set(OF_ROOT "${OF_ROOT}" CACHE PATH "openFrameworks root" FORCE)
