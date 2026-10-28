@@ -30,14 +30,14 @@ jobs:
       GRADLE_TARGET: ${{matrix.cfg.gradle_target}}
       NDK_DIR: android-ndk-r23b
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v7.0.1
     - name: Cache projectGenerator folder
-      uses: actions/cache@v3
+      uses: actions/cache@v6.1.0
       with:
         path: '~/projectGenerator'
         key: ${{ runner.os }}-pg-${{matrix.cfg.gradle_target}}
     - name: Cache NDK
-      uses: actions/cache@v3
+      uses: actions/cache@v6.1.0
       with:
         path: '~/android-ndk-r23b'
         key: ${{ runner.os }}-android-ndk-${{matrix.cfg.gradle_target}}

@@ -24,6 +24,6 @@ jobs:
   validate:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6.0.2
+      - uses: actions/checkout@v7.0.1
       - run: bash -n scripts/dev/download_libs.sh scripts/dev/downloader.sh scripts/dev/sha_verify.sh
       - run: bash scripts/dev/tests/test-download-validation.sh

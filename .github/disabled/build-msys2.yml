@@ -32,13 +32,13 @@ jobs:
       run:
         shell: msys2 {0}
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v7.0.1
     - name: ccache
       uses: hendrikmuhs/ccache-action@v1.2.14
       with:
         # key: ${{ matrix.os }}-${{ matrix.type }}
         key: ${{ matrix.msystem }}
-    - uses: msys2/setup-msys2@v2
+    - uses: msys2/setup-msys2@v2.33.0
       with:
         cache: true
         release: true
