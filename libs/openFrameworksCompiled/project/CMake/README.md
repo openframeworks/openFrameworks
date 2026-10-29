@@ -8,6 +8,13 @@ It mirrors the makefiles and IDE projects: the same sources, defines, flags and
 third-party libraries per platform, apps built into the project's `bin/`, and
 the core in `libs/openFrameworksCompiled/lib/<platform>`.
 
+## Requirements
+
+- CMake 3.22 or newer (3.28 for iOS / tvOS, which link the libraries' xcframeworks directly)
+- the libraries for the platform (`scripts/<platform>/download_libs.sh`), as for the other builds
+- any generator: Ninja or Makefiles, Xcode (macOS / iOS / tvOS), Visual Studio 2022 / 2026 (x64, ARM64, ARM64EC)
+- Emscripten: `emcmake` from the Emscripten SDK (openFrameworks CI uses 6.0.13)
+
 ## App
 
 Copy `scripts/templates/cmake/CMakeLists.txt` into a project (`apps/myApps/myApp`):
@@ -129,6 +136,18 @@ name in `addons/`, or a path relative to the project for local addons.
 `of_add_app()` calls it for `ADDONS` / `addons.make`.
 
 ## Project Generator
+
+projectGenerator 0.110.0 and later (GUI 0.102.0, projectGenerator#664) has a `cmake`
+template: it adds this template's `CMakeLists.txt` next to the project for the
+platform (an existing `CMakeLists.txt` is kept) and writes the addons to `addons.make`:
+
+```sh
+projectGenerator -o"<OF root>" -p"linux64" -t"cmake" apps/myApps/myApp     # -p vs, osx, emscripten, ...
+```
+
+It also reads `APP_VERSION` / `APP_BUILD` and `PROJECT_EMSCRIPTEN_WASM` back from the
+`CMakeLists.txt` (projectGenerator#664, #670). The projectGenerator in `apps/projectGenerator`
+on master (0.115.0) has it.
 
 A generated project only needs the template `CMakeLists.txt` with the addons
 listed (or an `addons.make`). If PG resolves the addons itself, it can write them
