@@ -518,9 +518,9 @@ jobs:
       TARGET: ${{ matrix.cfg.target }}
       ARCH: ${{ matrix.cfg.opt }}
       ANDROID_SDK_ROOT: $ANDROID_HOME
-      # keep in sync with apothecary build-android.yml (NDK r29, min API 25);
-      # cmake.sh resolves $ANDROID_HOME/ndk/$NDK, gradle uses ndkVersion
-      NDK: "29.0.14206865"
+      # NDK r30 LTS is installed on ubuntu-24.04 at $ANDROID_HOME/ndk/$NDK.
+      # cmake.sh uses that path. Gradle ndkVersion matches. Min API stays 25.
+      NDK: "30.0.16248370"
       ANDROID_API: "25"
 
     steps:
@@ -557,3 +557,6 @@ jobs:
             echo "ERROR: Build Failed not found: [$LIB_PATH]"
             exit 1
           fi
+
+      - name: Build Android examples
+        run: scripts/ci/android/build_examples.sh "$ARCH"

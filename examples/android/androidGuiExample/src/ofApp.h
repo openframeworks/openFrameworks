@@ -1,9 +1,10 @@
 #pragma once
 
 #include "ofMain.h"
+#include "ofxAndroid.h"
 #include "ofxGui.h"
 
-class ofApp : public ofBaseApp{
+class ofApp : public ofxAndroidApp{
 	
 	public:
 		void setup();

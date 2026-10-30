@@ -12,16 +12,16 @@ Setting up openFrameworks with Android Studio is fairly straightforward. The bas
 - Install the latest version of [Android Studio](https://developer.android.com/studio/index.html) (tested with Android Studio Meerkat | 2024.3.1).
 
 ###  Select the following to be installed in SDK Manager (options)
-- Android SDK 36.0 (or latest) - add any older APIs if targetting
-- Build Tools 36.0.0 (or latest)
-- NDK 28.0.13004108 (Side by Side)
+- Android SDK Platform 34. The template compiles and targets API 34. Install a newer platform as well if an example needs it.
+- Build Tools 37.0.0
+- NDK r30, side by side package `30.0.16248370` (SDK Manager: NDK (Side by side))
 - Android SDK Command Line Tools 19.0 (or latest)
 - CMake 3.31.6 (or latest)
 
 ## Install openFrameworks
 - Download openFrameworks 0.12.1 or later from the [download page](http://openframeworks.cc/download/) or from [github](https://github.com/openframeworks/openFrameworks/).
-- If you got openFrameworks from git: 
-	- Run `scripts/android/download_libs.sh` to download libraries.
+- If you got openFrameworks from git:
+	- Run `scripts/android/download_libs.sh` to download the current apothecary `latest` Android libraries (arm64, armv7, and x86_64).
 	- Use the Project Generator to generate Android Studio project files for android examples.
 - In Android Studio, use **Open an existing Android Studio project** and select an openFrameworks example from the `examples/android` folder.
 - It will ask you for NDK location, either put the path in `local.properties` or click *Project Structure* and select the NDK location.
@@ -50,7 +50,7 @@ Press the Play button next to the `androidEmptyExample` shown in the toolbar. It
     - The `compileSdkVersion`, `buildToolsVersion`, `minSdkVersion`, `targetSdkVersion` values
         in `/addons/ofxAndroid/ofAndroidLib/build.gradle` and `/apps/myApps/androidEmptyExample/build.gradle`
 
-- If you get strange linker errors, make sure you are using NDK version r15c. Newer NDKs might work but usually require some changes.
+- If you get strange linker errors, check that Android Studio is using NDK `30.0.16248370`. The template, the core Android project, and the GitHub Android job all pin that version. An older side-by-side NDK will not match this tree.
 
 - If your connected device is not recognized by Android Studio, restart adb
   with `adb kill-server && adb start-server`.
@@ -59,3 +59,12 @@ Press the Play button next to the `androidEmptyExample` shown in the toolbar. It
   messages does not solve the problem regarding a missing dependency of the
   android API (like for example Android API 22), open the sdk from the console,
    select the missing API and install it.
+
+## Rabbit R1
+
+The Rabbit R1 is a small arm64 device with a 320×240 touchscreen and a MediaTek Helio P35. A community Android 13 image can install a normal openFrameworks APK. The stock Rabbit OS is not a build target.
+
+- Generate an example with the Project Generator, then in `ofApp/build.gradle` keep `ndkVersion '30.0.16248370'` and set both `ndk.abiFilters` lines to `'arm64-v8a'`.
+- `minSdkVersion 25` is below Android 13, so the package installs.
+- Build with `./gradlew assembleDebug`. The debug package is `ofApp-playstore-debug.apk`.
+- Sideload with `adb install -r` and that APK. Touch events reach openFrameworks. The scroll wheel does not act as a mouse, and layouts written for a phone will be tight on 320×240.
