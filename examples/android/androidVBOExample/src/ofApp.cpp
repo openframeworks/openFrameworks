@@ -56,8 +56,8 @@ void ofApp::update(){
 				int z     = (j * space) - center.y;
 				int index = (j*GRID_WIDTH+i) * LENGTH;
 
-				pos[index].set(x, y, z);
-				pos[index+1].set(x+ofRandom(-r,r), y+ofRandom(-r,r), z+ofRandom(-r,r));
+				pos[index] = glm::vec3(x, y, z);
+				pos[index+1] = glm::vec3(x+ofRandom(-r,r), y+ofRandom(-r,r), z+ofRandom(-r,r));
 				pos[index+1].y -= 1.0;
 
 				for (int k=2; k<LENGTH; k++) {

@@ -16,7 +16,7 @@ void ofApp::update(){
 	messages[0] = "g(x) = " + ofToString(accel.x,2);
 	messages[1] = "g(y) = " + ofToString(accel.y,2);
 	messages[2] = "g(z) = " + ofToString(accel.z,2);
-	normAccel = accel.getNormalized();
+	normAccel = glm::length(accel) > 0 ? glm::normalize(accel) : accel;
 }
 
 //--------------------------------------------------------------
