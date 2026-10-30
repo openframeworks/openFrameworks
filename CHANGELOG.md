@@ -47,6 +47,7 @@ PLATFORM/IDE SPECIFIC
 - Ubuntu `install_dependencies.sh` detects the version from `/etc/os-release` (no `lsb_release` needed); BLAS / LAPACK for ofxOpenCv ([#8606](https://github.com/openframeworks/openFrameworks/pull/8606)) ([#8603](https://github.com/openframeworks/openFrameworks/pull/8603))
 - docs: linking non-PIC prebuilt libraries ("recompile with -fPIE") ([#8602](https://github.com/openframeworks/openFrameworks/pull/8602))
 - GStreamer MJPG v4l2 capture pipeline fix; Arch install script fixes ([#8572](https://github.com/openframeworks/openFrameworks/pull/8572)) ([#8497](https://github.com/openframeworks/openFrameworks/pull/8497))
+- Debian `install_dependencies.sh` installs `x11proto-dev`. `xorgproto` is the source package name and apt on Debian 13 cannot install it ([#8630](https://github.com/openframeworks/openFrameworks/pull/8630)) ([#8481](https://github.com/openframeworks/openFrameworks/issues/8481))
 - linesExample builds with GCC (`std::sin` / `std::cos`) ([#8609](https://github.com/openframeworks/openFrameworks/pull/8609))
 
 ### windows
