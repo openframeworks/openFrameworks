@@ -49,7 +49,7 @@ apt-get install -y \
   liburiparser-dev libcurl4-openssl-dev libpugixml-dev libpoco-dev \
   libgconf-2-4 brotli liblapack-dev libblas-dev \
   libxrandr-dev libxinerama-dev libxcursor-dev libxi-dev libxext-dev \
-  xorgproto libwayland-dev wayland-protocols libxkbcommon-dev libxkbcommon-x11-dev \
+  x11proto-dev libwayland-dev wayland-protocols libxkbcommon-dev libxkbcommon-x11-dev \
   libdecor-0-dev libglvnd-dev mesa-utils ccache
 
 exit_code=$?
