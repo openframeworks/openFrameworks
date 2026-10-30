@@ -46,6 +46,7 @@ PLATFORM/IDE SPECIFIC
 - Ubuntu `install_dependencies.sh` detects the version from `/etc/os-release` (no `lsb_release` needed); BLAS / LAPACK for ofxOpenCv ([#8606](https://github.com/openframeworks/openFrameworks/pull/8606)) ([#8603](https://github.com/openframeworks/openFrameworks/pull/8603))
 - docs: linking non-PIC prebuilt libraries ("recompile with -fPIE") ([#8602](https://github.com/openframeworks/openFrameworks/pull/8602))
 - GStreamer MJPG v4l2 capture pipeline fix; Arch install script fixes ([#8572](https://github.com/openframeworks/openFrameworks/pull/8572)) ([#8497](https://github.com/openframeworks/openFrameworks/pull/8497))
+- linesExample builds with GCC (`std::sin` / `std::cos`) ([#8609](https://github.com/openframeworks/openFrameworks/pull/8609))
 
 ### windows
 - Visual Studio 2026; Windows on ARM hosts download x64 libraries too ([#8511](https://github.com/openframeworks/openFrameworks/pull/8511)) ([#8544](https://github.com/openframeworks/openFrameworks/pull/8544))
@@ -61,12 +62,24 @@ PLATFORM/IDE SPECIFIC
 - NDK r29, minimum API 25, build-tools 37; Android examples; ZIP path traversal fix (CWE-22) ([#8575](https://github.com/openframeworks/openFrameworks/pull/8575)) ([#8418](https://github.com/openframeworks/openFrameworks/pull/8418)) ([#8541](https://github.com/openframeworks/openFrameworks/pull/8541))
 
 ### emscripten
-- Emscripten 6.0.11, filesystem support, template fixes ([#8510](https://github.com/openframeworks/openFrameworks/pull/8510)) ([#8555](https://github.com/openframeworks/openFrameworks/pull/8555)) ([#8569](https://github.com/openframeworks/openFrameworks/pull/8569)) ([#8483](https://github.com/openframeworks/openFrameworks/pull/8483)) ([#8558](https://github.com/openframeworks/openFrameworks/pull/8558))
+- Emscripten 6.0.13, filesystem support, template fixes ([#8510](https://github.com/openframeworks/openFrameworks/pull/8510)) ([#8555](https://github.com/openframeworks/openFrameworks/pull/8555)) ([#8569](https://github.com/openframeworks/openFrameworks/pull/8569)) ([#8619](https://github.com/openframeworks/openFrameworks/pull/8619)) ([#8483](https://github.com/openframeworks/openFrameworks/pull/8483)) ([#8558](https://github.com/openframeworks/openFrameworks/pull/8558))
 
 ### makefiles / project generator
 - addon `-std=*` in `ADDON_CFLAGS` is forwarded to `CXXFLAGS` ([#8515](https://github.com/openframeworks/openFrameworks/pull/8515))
 - project generator 0.12.2 fixes: `ADDON_DATA` folders, Xcode paths with spaces, missing addons kept ([#8612](https://github.com/openframeworks/openFrameworks/pull/8612))
+- ccache by default for Linux builds when installed, and in the Linux / Android CMake toolchains ([#8620](https://github.com/openframeworks/openFrameworks/pull/8620)) ([#8625](https://github.com/openframeworks/openFrameworks/pull/8625))
+- `#<tab>` in `addon_config.mk` is a comment again ([#8617](https://github.com/openframeworks/openFrameworks/pull/8617))
 
+
+RELEASES / CI
+-----------------
+### releases
+- release packages named by what they're for: `linux_64_gcc10`, `linux_arm64_gcc10`, `linux_{aarch64,armv7l,armv6l}_rpi_gcc10` (new Raspberry Pi armv7l package), `vs_2022_64`, `vs_2026_64` and `vs_{2022,2026}_64_arm64_arm64ec` (the first packages with ARM64 / ARM64EC libraries); Linux packages keep `project/linux` and `scripts/linux` ([#8614](https://github.com/openframeworks/openFrameworks/pull/8614))
+- a release pins its apothecary libraries (`scripts/dev/apothecary_release`), checked when tagging ([#8604](https://github.com/openframeworks/openFrameworks/pull/8604))
+- nightly: builds again, the `nightly` tag moves to the built commit, a run fails when a package is missing ([#8613](https://github.com/openframeworks/openFrameworks/pull/8613)) ([#8616](https://github.com/openframeworks/openFrameworks/pull/8616)) ([#8618](https://github.com/openframeworks/openFrameworks/pull/8618))
+
+### CI
+- macOS, iOS and tvOS with Xcode 27.1; GitHub Actions on current releases ([#8624](https://github.com/openframeworks/openFrameworks/pull/8624)) ([#8622](https://github.com/openframeworks/openFrameworks/pull/8622)) ([#8599](https://github.com/openframeworks/openFrameworks/pull/8599))
 
 
 ```
