@@ -3,6 +3,7 @@
 #include "ofCamera.h"
 #include "ofFbo.h"
 #include "ofGLProgrammableRenderer.h"
+#include "ofFramebufferBinding.h"
 #include "ofGLUtils.h"
 #include "ofImage.h"
 #include "ofLight.h"
@@ -95,8 +96,8 @@ ofGLProgrammableRenderer::ofGLProgrammableRenderer(const ofAppBaseWindow * _wind
 
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::startRender() {
-	currentFramebufferId = defaultFramebufferId;
-	framebufferIdStack.push_back(defaultFramebufferId);
+	ofFramebufferStartRender(framebufferIdStack, currentFramebufferId, defaultFramebufferId);
+	glBindFramebuffer(GL_FRAMEBUFFER, currentFramebufferId);
 	matrixStack.setRenderSurface(*window);
 	beginDefaultShader();
 	viewport();
@@ -121,7 +122,14 @@ void ofGLProgrammableRenderer::finishRender() {
 		if (!usingCustomShader) currentShader = nullptr;
 	}
 	matrixStack.clearStacks();
-	framebufferIdStack.clear();
+	const GLuint leftBound = currentFramebufferId;
+	const auto framebufferStep = ofFramebufferFinishRender(framebufferIdStack, currentFramebufferId, defaultFramebufferId);
+	if (framebufferStep.warning == ofFramebufferBindWarning::LeftBound) {
+		ofLogWarning("ofFbo") << "left bound at the end of the frame (id " << leftBound << ")";
+	}
+	if (framebufferStep.bind) {
+		glBindFramebuffer(GL_FRAMEBUFFER, currentFramebufferId);
+	}
 	mDrawMode = GL_TRIANGLES;
 	mUniformsTex.clear();
 }
@@ -1609,32 +1617,22 @@ void ofGLProgrammableRenderer::end(const ofFbo & fbo) {
 
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::bind(const ofFbo & fbo) {
-	if (currentFramebufferId == fbo.getId()) {
+	const auto step = ofFramebufferPush(framebufferIdStack, currentFramebufferId, fbo.getId());
+	if (step.warning == ofFramebufferBindWarning::BoundOntoSelf) {
 		ofLogWarning() << "Framebuffer with id: " << fbo.getId() << " cannot be bound onto itself. \n"
 					   << "Most probably you forgot to end() the current framebuffer before calling begin() again or you forgot to allocate() before calling begin().";
-		return;
 	}
-	// this method could just as well have been placed in ofBaseGLRenderer
-	// and shared over both programmable and fixed function renderer.
-	// I'm keeping it here, so that if we want to do more fancyful
-	// named framebuffers with GL 4.5+, we can have
-	// different implementations.
-	framebufferIdStack.push_back(currentFramebufferId);
-	currentFramebufferId = fbo.getId();
 	glBindFramebuffer(GL_FRAMEBUFFER, currentFramebufferId);
 }
 
 #if !defined(TARGET_OPENGLES) || (defined(GL_ES_VERSION_3_0) && defined(TARGET_OPENGLES_3))
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::bindForBlitting(const ofFbo & fboSrc, ofFbo & fboDst, int attachmentPoint) {
-	if (currentFramebufferId == fboSrc.getId()) {
+	const auto step = ofFramebufferPush(framebufferIdStack, currentFramebufferId, fboSrc.getId());
+	if (step.warning == ofFramebufferBindWarning::BoundOntoSelf) {
 		ofLogWarning() << "Framebuffer with id: " << fboSrc.getId() << " cannot be bound onto itself. \n"
 					   << "Most probably you forgot to end() the current framebuffer before calling getTexture().";
-		return;
 	}
-
-	framebufferIdStack.push_back(currentFramebufferId);
-	currentFramebufferId = fboSrc.getId();
 
 	glBindFramebuffer(GL_READ_FRAMEBUFFER, currentFramebufferId);
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fboDst.getIdDrawBuffer());
@@ -1649,12 +1647,9 @@ void ofGLProgrammableRenderer::bindForBlitting(const ofFbo & fboSrc, ofFbo & fbo
 
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::unbind(const ofFbo & fbo) {
-	if (framebufferIdStack.empty()) {
-		ofLogError() << "unbalanced fbo bind/unbind binding default framebuffer";
-		currentFramebufferId = defaultFramebufferId;
-	} else {
-		currentFramebufferId = framebufferIdStack.back();
-		framebufferIdStack.pop_back();
+	const auto step = ofFramebufferPop(framebufferIdStack, currentFramebufferId, defaultFramebufferId);
+	if (step.warning == ofFramebufferBindWarning::NoMatchingBegin) {
+		ofLogWarning("ofFbo") << "end() with no matching begin(); binding the window";
 	}
 	glBindFramebuffer(GL_FRAMEBUFFER, currentFramebufferId);
 	fbo.flagDirty();
