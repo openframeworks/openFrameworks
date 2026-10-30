@@ -20,6 +20,7 @@ CORE
 - desktop OpenGL 4.6, falling back to the newest available version (Windows / Linux) ([#8580](https://github.com/openframeworks/openFrameworks/pull/8580))
 - GL version defines for the main templates and the project generator ([#8573](https://github.com/openframeworks/openFrameworks/pull/8573))
 - indexed draws take the GL index type from `sizeof(ofIndexType)` ([#8526](https://github.com/openframeworks/openFrameworks/pull/8526))
+- a forgotten `ofFbo::end()` is reported when the frame ends. A matching `begin()` / `end()` stays quiet after the frame ([#8631](https://github.com/openframeworks/openFrameworks/pull/8631)) ([#8564](https://github.com/openframeworks/openFrameworks/issues/8564))
 
 ### graphics
 - Cairo renderer, `ofBeginSaveScreenAsPDF` / `SVG` work on Linux again ([#8610](https://github.com/openframeworks/openFrameworks/pull/8610))
