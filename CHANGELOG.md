@@ -13,6 +13,7 @@ CORE
 - `ofToLower` / `ofToUpper` use a UTF-8 locale when the environment has none ([#8593](https://github.com/openframeworks/openFrameworks/pull/8593))
 - `ofFilePath::getAppName()` ([#8181](https://github.com/openframeworks/openFrameworks/pull/8181))
 - tools that only use ofUtils no longer link the renderer, ofImage and the app (Linux) ([#8605](https://github.com/openframeworks/openFrameworks/pull/8605))
+- `ofAppGLFWWindow` tracks window focus ([#8530](https://github.com/openframeworks/openFrameworks/pull/8530))
 
 ### gl
 - OpenGL ES 3.1 / 3.2 (Android, iOS / tvOS), GLSL ES 3.00 material shaders (PBR on WebGL2 / Android / iOS), ofCubeMap and ofPolyline fixes on GLES ([#8533](https://github.com/openframeworks/openFrameworks/pull/8533)) ([#8578](https://github.com/openframeworks/openFrameworks/pull/8578)) ([#8581](https://github.com/openframeworks/openFrameworks/pull/8581)) ([#8582](https://github.com/openframeworks/openFrameworks/pull/8582)) ([#8585](https://github.com/openframeworks/openFrameworks/pull/8585))
@@ -34,7 +35,7 @@ CORE
 - ofxGui toggle / button size fix ([#8503](https://github.com/openframeworks/openFrameworks/pull/8503))
 
 ### libraries
-- OpenSSL 4 (and 3) support, assimp 6.0.5, updated apothecary and project generator ([#8535](https://github.com/openframeworks/openFrameworks/pull/8535)) ([#8594](https://github.com/openframeworks/openFrameworks/pull/8594)) ([#8612](https://github.com/openframeworks/openFrameworks/pull/8612))
+- OpenSSL 4 (and 3), assimp 6.0.5, FreeImage 3.19.28, updated apothecary and project generator ([#8535](https://github.com/openframeworks/openFrameworks/pull/8535)) ([#8594](https://github.com/openframeworks/openFrameworks/pull/8594)) ([#8612](https://github.com/openframeworks/openFrameworks/pull/8612)) ([#8628](https://github.com/openframeworks/openFrameworks/pull/8628))
 - library downloads are verified before installed libraries are removed ([#8591](https://github.com/openframeworks/openFrameworks/pull/8591))
 
 
@@ -59,16 +60,19 @@ PLATFORM/IDE SPECIFIC
 - ofAVFoundationPlayer `close()` is synchronous; split OpenSSL XCFrameworks; make builds set `APP_VERSION` / `APP_BUILD` ([#8527](https://github.com/openframeworks/openFrameworks/pull/8527)) ([#8562](https://github.com/openframeworks/openFrameworks/pull/8562)) ([#8592](https://github.com/openframeworks/openFrameworks/pull/8592))
 
 ### android
-- NDK r29, minimum API 25, build-tools 37; Android examples; ZIP path traversal fix (CWE-22) ([#8575](https://github.com/openframeworks/openFrameworks/pull/8575)) ([#8418](https://github.com/openframeworks/openFrameworks/pull/8418)) ([#8541](https://github.com/openframeworks/openFrameworks/pull/8541))
+- NDK r30 (`30.0.16248370`), minimum API 25, build-tools 37. The Android examples are built in CI for arm64-v8a, x86_64 and armeabi-v7a. ZIP path traversal fix (CWE-22) ([#8575](https://github.com/openframeworks/openFrameworks/pull/8575)) ([#8629](https://github.com/openframeworks/openFrameworks/pull/8629)) ([#8418](https://github.com/openframeworks/openFrameworks/pull/8418)) ([#8541](https://github.com/openframeworks/openFrameworks/pull/8541))
 
 ### emscripten
 - Emscripten 6.0.13, filesystem support, template fixes ([#8510](https://github.com/openframeworks/openFrameworks/pull/8510)) ([#8555](https://github.com/openframeworks/openFrameworks/pull/8555)) ([#8569](https://github.com/openframeworks/openFrameworks/pull/8569)) ([#8619](https://github.com/openframeworks/openFrameworks/pull/8619)) ([#8483](https://github.com/openframeworks/openFrameworks/pull/8483)) ([#8558](https://github.com/openframeworks/openFrameworks/pull/8558))
 
 ### makefiles / project generator
 - addon `-std=*` in `ADDON_CFLAGS` is forwarded to `CXXFLAGS` ([#8515](https://github.com/openframeworks/openFrameworks/pull/8515))
-- project generator 0.12.2 fixes: `ADDON_DATA` folders, Xcode paths with spaces, missing addons kept ([#8612](https://github.com/openframeworks/openFrameworks/pull/8612))
-- ccache by default for Linux builds when installed, and in the Linux / Android CMake toolchains ([#8620](https://github.com/openframeworks/openFrameworks/pull/8620)) ([#8625](https://github.com/openframeworks/openFrameworks/pull/8625))
+- project generator: `ADDON_DATA` folders, Xcode paths with spaces, missing addons kept; `-t vscode` adds VS Code alongside the other platforms ([#8612](https://github.com/openframeworks/openFrameworks/pull/8612)) ([#8628](https://github.com/openframeworks/openFrameworks/pull/8628))
+- ccache by default for Linux builds when it is installed, and in the Linux, Android and iOS / tvOS CMake toolchains ([#8620](https://github.com/openframeworks/openFrameworks/pull/8620)) ([#8625](https://github.com/openframeworks/openFrameworks/pull/8625)) ([#8627](https://github.com/openframeworks/openFrameworks/pull/8627))
 - `#<tab>` in `addon_config.mk` is a comment again ([#8617](https://github.com/openframeworks/openFrameworks/pull/8617))
+
+### cmake
+- CMake build for the core and apps on macOS, iOS, tvOS, Emscripten, Linux and Windows (Visual Studio and MSYS2). `projectGenerator -t cmake`, or copy `scripts/templates/cmake/CMakeLists.txt`. CMake 3.22 or newer, 3.28 for iOS / tvOS. Android keeps the build in `project/android` ([#8586](https://github.com/openframeworks/openFrameworks/pull/8586))
 
 
 RELEASES / CI
@@ -80,6 +84,7 @@ RELEASES / CI
 
 ### CI
 - macOS, iOS and tvOS with Xcode 27.1; GitHub Actions on current releases ([#8624](https://github.com/openframeworks/openFrameworks/pull/8624)) ([#8622](https://github.com/openframeworks/openFrameworks/pull/8622)) ([#8599](https://github.com/openframeworks/openFrameworks/pull/8599))
+- an example or test build failure fails the macOS, Linux and MSYS2 jobs ([#8590](https://github.com/openframeworks/openFrameworks/pull/8590))
 
 
 ```
