@@ -628,10 +628,6 @@ static const void *PlayerRateContext = &ItemStatusContext;
 	if (bSampleAudio) {
 		// really?
 		double preferredHardwareSampleRate = 44100;
-        double currentSampleRate = preferredHardwareSampleRate;
-#ifdef TARGET_IOS
-        currentSampleRate = [[AVAudioSession sharedInstance] sampleRate];
-#endif
 		
 		AudioChannelLayout channelLayout;
 		bzero(&channelLayout, sizeof(channelLayout));

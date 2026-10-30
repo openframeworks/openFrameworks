@@ -247,7 +247,6 @@ static NSString *kShouldEnginePauseNotification = @"kShouldEnginePauseNotificati
     self = [super init];
     if (self) {
 		[self setupSharedSession];
-		NSError * error = nil;
         
         _mainMixer = [[self engine] mainMixerNode];
 		_mainMixer.outputVolume = 0.98;
@@ -315,7 +314,7 @@ static NSString *kShouldEnginePauseNotification = @"kShouldEnginePauseNotificati
                    /* pausing stops the audio engine and the audio hardware, but does not deallocate the resources allocated by prepare().
                       When your app does not need to play audio, you should pause or stop the engine (as applicable), to minimize power consumption.
                    */
-                    bool isPlaying = [weak_self isPlaying] || weak_self.bIsPlaying == YES;
+                    [[maybe_unused]] bool isPlaying = [weak_self isPlaying] || weak_self.bIsPlaying == YES;
                    if (!weak_self.isSessionInterrupted && !weak_self.isConfigChangePending) {
                        
                        
@@ -353,7 +352,7 @@ static NSString *kShouldEnginePauseNotification = @"kShouldEnginePauseNotificati
            }
             
             
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.033f), dispatch_get_main_queue(), ^{
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 33 * NSEC_PER_MSEC), dispatch_get_main_queue(), ^{
                 [weak_self handleInterruption:note];
             });
             
@@ -369,8 +368,8 @@ static NSString *kShouldEnginePauseNotification = @"kShouldEnginePauseNotificati
 - (void) handleMediaServicesReset:(NSNotification *)notification {
 
     
-    NSUInteger interruptionType;
-    UInt8 reasonValue;
+    [[maybe_unused]] NSUInteger interruptionType;
+    [[maybe_unused]] UInt8 reasonValue;
 #ifndef TARGET_OSX
     interruptionType = [notification.userInfo[AVAudioSessionInterruptionTypeKey] unsignedIntegerValue];
 #endif
@@ -400,7 +399,7 @@ static NSString *kShouldEnginePauseNotification = @"kShouldEnginePauseNotificati
 
 - (void) handleRouteChange:(NSNotification *)notification {
 
-    NSUInteger interruptionType;
+    [[maybe_unused]] NSUInteger interruptionType;
     UInt8 reasonValue = 0;
 
 #ifndef TARGET_OSX
@@ -522,7 +521,7 @@ static NSString *kShouldEnginePauseNotification = @"kShouldEnginePauseNotificati
 - (void)endInterruption {
     NSLog(@"AVEnginePlayer::endInterruption");
     
-    NSError *error;
+    [[maybe_unused]] NSError *error;
 #ifndef TARGET_OSX
     bool success = [[AVAudioSession sharedInstance] setActive:YES error:&error];
     if (!success)
@@ -559,7 +558,7 @@ static NSString *kShouldEnginePauseNotification = @"kShouldEnginePauseNotificati
             
         __typeof(self) __weak weak_self = self;
     
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.017f), dispatch_get_main_queue(), ^{
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 17 * NSEC_PER_MSEC), dispatch_get_main_queue(), ^{
                 weak_self.mRestorePlayCount--;
                 if(weak_self.bIsPlaying == NO) return;
                 [weak_self play:posSecs];
@@ -606,7 +605,7 @@ static NSString *kShouldEnginePauseNotification = @"kShouldEnginePauseNotificati
 - (void)startEngine{
     
     NSError * error = nil;
-    BOOL engineRunning = NO;
+    [[maybe_unused]] BOOL engineRunning = NO;
     BOOL problem = NO;
     if( ![[self engine] isRunning] ){
         [[self engine] startAndReturnError:&error];
@@ -724,7 +723,7 @@ static NSString *kShouldEnginePauseNotification = @"kShouldEnginePauseNotificati
     }
     if(_isSessionInterrupted || _isConfigChangePending){
         __typeof(self) __weak weak_self = self;
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.3f), dispatch_get_main_queue(), ^{
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 300 * NSEC_PER_MSEC), dispatch_get_main_queue(), ^{
             [weak_self play:startTime];
         });
         return;
@@ -856,7 +855,7 @@ static NSString *kShouldEnginePauseNotification = @"kShouldEnginePauseNotificati
 	}
 
     if(_isSessionInterrupted || _isConfigChangePending){
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.3f), dispatch_get_main_queue(), ^{
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 300 * NSEC_PER_MSEC), dispatch_get_main_queue(), ^{
             __typeof(self) __weak weak_self = self;
             [weak_self stop];
         });

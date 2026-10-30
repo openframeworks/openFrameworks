@@ -134,7 +134,7 @@ void AnimationMixer::update(float aElapsedTimef) {
 		}
 	}
 	
-	bool bFinishedTransition = false;
+	[[maybe_unused]] bool bFinishedTransition = false;
 	if(isTransitioning()) {
 //		ofLogNotice("AnimationMixer::update") << " total weights: " << getTotalClipWeights() << " | " << ofGetFrameNum();
 		mTransitionPercent += (tdelta / mTransitionDuration);

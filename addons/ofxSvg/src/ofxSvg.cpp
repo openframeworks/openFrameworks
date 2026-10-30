@@ -1238,7 +1238,6 @@ void ofxSvg::_parsePath( ofXml& tnode, std::shared_ptr<ofxSvgPath> aSvgPath ) {
 		
 		// up to next valid character //
 		std::string currentString;
-		bool bFoundValidNextChar = false;
 		auto pos = index+1;
 		if( pos >= ostring.size() ) {
 //			ofLogVerbose("ofxSvg") << "pos is greater than string size: " << pos << " / " << ostring.size();
