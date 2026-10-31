@@ -203,6 +203,8 @@ function createProjectFiles {
             PG_TEMPLATE=""
             if [ "$PKG_PLATFORM" == "vs" ] && [ "$(vsYear "$LIBS_ABI")" == "2026" ]; then
                 PG_TEMPLATE="--template=vs2026"
+            elif [ "$PKG_PLATFORM" == "vs" ] && [ "$(vsYear "$LIBS_ABI")" == "2019" ]; then
+                PG_PLATFORM="vs2019"
             fi
             ${MAIN_OFROOT}/apps/projectGenerator/commandLine/bin/projectGenerator --recursive -p${PG_PLATFORM} ${PG_TEMPLATE} -o$PKG_OFROOT $PKG_OFROOT/examples
             echo "##[endgroup]"
@@ -242,7 +244,7 @@ remove_current_platform() {
 #   linuxaarch64 / linuxarmv7l / linuxarmv6l -> linux_<arch>_rpi_gcc10 (Raspberry Pi OS),
 #   vs <year>_<arch> -> vs_<year>_64 or vs_<year>_64_arm64_arm64ec (arch all: x64, ARM64 and ARM64EC),
 #   anything else -> <platform>[_<abi>]
-# Visual Studio packages take <year>_<arch> (2022_64, 2026_all, ...); for older package lists,
+# Visual Studio packages take <year>_<arch> (2019_64, 2022_64, 2026_all, ...); for older package lists,
 # no ABI is the VS 2019 x64 package and a bare arch (64, all) is VS 2022.
 function vsYear {
     case "$1" in
