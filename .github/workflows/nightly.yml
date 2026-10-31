@@ -92,9 +92,7 @@ jobs:
           exit 1
         fi
         notes="Nightly openFrameworks build from ${SHA:0:7} ($(date -u +%Y-%m-%d))."
-        if [ -f out/package_summary.md ]; then
-          notes="$notes"$'\n\n'"$(cat out/package_summary.md)"
-        fi
+        notes="$notes"$'\n\n'"[Package build summary](${GITHUB_SERVER_URL}/${REPO}/actions/runs/${GITHUB_RUN_ID})"
         gh release delete nightly-staging --repo "$REPO" --cleanup-tag --yes 2> /dev/null || true
         gh release create nightly-staging "${files[@]}" --repo "$REPO" --draft --target "$SHA" \
           --title "Nightly Release" --notes "$notes"
