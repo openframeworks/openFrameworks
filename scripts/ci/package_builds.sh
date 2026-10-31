@@ -55,6 +55,7 @@ PACKAGES=(
   "msys2 $lastversion master clang64"
   "msys2 $lastversion master ucrt64"
   "msys2 $lastversion master clangarm64"
+  "vs $lastversion master 2019_64"
   "vs $lastversion master 2022_64"
   "vs $lastversion master 2022_all"
   "vs $lastversion master 2026_64"
