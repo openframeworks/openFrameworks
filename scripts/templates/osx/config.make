@@ -91,6 +91,18 @@
 # PROJECT_LDFLAGS=-Wl,-rpath=./libs
 
 ################################################################################
+# PROJECT FRAMEWORKS / SYSTEM LIBRARIES
+#   Space-delimited system frameworks (macOS / iOS / tvOS: -framework) and
+#   libraries (-l, sqlite3 = libsqlite3.tbd / libsqlite3.so). The
+#   projectGenerator adds them to Xcode projects and keeps them on update.
+#
+#		(default) PROJECT_FRAMEWORKS = (blank)
+#		(default) PROJECT_SYSTEM_LIBS = (blank)
+################################################################################
+# PROJECT_FRAMEWORKS = Security
+# PROJECT_SYSTEM_LIBS = sqlite3
+
+################################################################################
 # PROJECT DEFINES
 #   Create a space-delimited list of DEFINES. The list will be converted into 
 #   CFLAGS with the "-D" flag later in the makefile.
