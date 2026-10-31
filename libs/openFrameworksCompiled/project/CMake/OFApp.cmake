@@ -60,6 +60,16 @@ function(of_add_app name)
 	endif()
 	of_target_addons(${name} ${OF_PLATFORM_REQUIRED_ADDONS} ${addons})
 
+	# config.make PROJECT_FRAMEWORKS / PROJECT_SYSTEM_LIBS, like the makefiles
+	of_read_config_make_list(frameworks "${OF_PROJECT_DIR}/config.make" PROJECT_FRAMEWORKS)
+	of_read_config_make_list(system_libs "${OF_PROJECT_DIR}/config.make" PROJECT_SYSTEM_LIBS)
+	if(APPLE)
+		foreach(framework IN LISTS frameworks)
+			target_link_libraries(${name} PRIVATE "-framework ${framework}")
+		endforeach()
+	endif()
+	target_link_libraries(${name} PRIVATE ${system_libs})
+
 	# ofMain.h precompiled for the app's own C++ files; addon and library
 	# sources compile without it, as they do in the other build systems
 	if(OF_PRECOMPILED_HEADER)

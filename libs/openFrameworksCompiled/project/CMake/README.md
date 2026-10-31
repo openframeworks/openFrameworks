@@ -30,6 +30,10 @@ being built, otherwise it's built in this build first (and written there for the
 next app). `-DOF_BUILD_CORE=ON` always builds it here (e.g. after changing the
 core sources).
 
+System frameworks and libraries come from the project's `config.make`, like the
+makefiles: `PROJECT_FRAMEWORKS = Security` (`-framework`, Apple only) and
+`PROJECT_SYSTEM_LIBS = sqlite3 z` (`-l`).
+
 | Platform | Configure | Output |
 |---|---|---|
 | macOS | `cmake -S . -B build -G Ninja` (or `-G Xcode`) | `bin/<app>.app` |
