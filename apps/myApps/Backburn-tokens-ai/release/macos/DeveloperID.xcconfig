@@ -1,0 +1,11 @@
+// The Developer ID build: hardened runtime + notarization, NOT sandboxed.
+// Reads the AI tools' folders in $HOME directly, so it ships outside the Mac App Store.
+//   xcodebuild -project Backburn-tokens-ai.xcodeproj -target Backburn-tokens-aimacOS -configuration Release \
+//     -xcconfig release/macos/DeveloperID.xcconfig
+// Then: notarytool submit --wait, stapler staple (see release/README.md checklist).
+#include "../Hardened.xcconfig"
+
+CODE_SIGN_ENTITLEMENTS = release/macos/DeveloperID.entitlements
+CODE_SIGN_STYLE = Manual
+ENABLE_HARDENED_RUNTIME = YES
+// No BACKBURN_APP_STORE: Donate page and direct folder reads stay in.

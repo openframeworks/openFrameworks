@@ -1,0 +1,97 @@
+//THE PATH TO THE ROOT OF OUR OF PATH RELATIVE TO THIS PROJECT.
+//THIS NEEDS TO BE DEFINED BEFORE CoreOF.xcconfig IS INCLUDED
+OF_PATH = ../../..
+
+//THIS HAS ALL THE HEADER AND LIBS FOR OF CORE
+#include "../../../libs/openFrameworksCompiled/project/macos/CoreOF.xcconfig"
+
+CLANG_CXX_LANGUAGE_STANDARD = c++23
+CLANG_C_LANGUAGE_STANDARD = c17
+MACOSX_DEPLOYMENT_TARGET = 12.0
+
+// App Settings
+PRODUCT_NAME = $(TARGET_NAME)
+PRODUCT_NAME[config=Debug] = $(TARGET_NAME)Debug
+PRODUCT_BUNDLE_IDENTIFIER = cc.openFrameworks.${TARGET_NAME:rfc1034identifier}
+//PRODUCT_BUNDLE_IDENTIFIER[config=Debug] = cc.openFrameworks.$(TARGET_NAME)Debug
+DEVELOPMENT_LANGUAGE = English
+CODE_SIGN_IDENTITY = -
+INFOPLIST_FILE = openFrameworks-Info.plist
+GENERATE_INFOPLIST_FILE = YES
+
+// set application category to games, this is required to enable Game mode
+// note: this sets the initial value in the Xcode UI
+INFOPLIST_KEY_LSApplicationCategoryType = public.app-category.developer-tools
+
+// VERSIONING - overridden if changed in Xcode UI
+
+// this is "Version" in the Xcode target Identity UI
+// suggested to use semantic versioning format ala #.#.#
+MARKETING_VERSION = 1.0
+
+// If users upgrade project to recommended settings it enables script sandboxing which breaks our post build script 
+ENABLE_USER_SCRIPT_SANDBOXING=NO
+
+// this is "Build" in the Xcode target Identity UI, an incremental build number
+// important for the App Store as new build submissions need a diff number even
+// if MARKETING_VERSION is the same
+CURRENT_PROJECT_VERSION = 1
+
+// ICONS
+
+// default oF app icon
+ICON_NAME = of.icns
+ICON_NAME[config=Debug] = of_debug.icns
+ICON_FILE = $(OF_PATH)/libs/openFrameworksCompiled/project/macos/$(ICON_NAME)
+
+// custom app icon, placed in main project folder
+//ICON_NAME = MyApp.icns
+//ICON_FILE = $(ICON_NAME)
+
+// custom app icon with separate Release and Debug versions placed in bin/data
+//ICON_NAME = icon.icns
+//ICON_NAME[config=Debug] = icon-debug.icns
+//ICON_FILE = bin/data/$(ICON_NAME)
+
+// note: oF 0.7.2 - 0.11 used ICON_FILE_PATH which is no longer used in oF 0.12+
+// ex. change ICON_FILE_PATH = bin/data/ -> ICON_FILE = bin/data/$(ICON_NAME) &
+// in a custom openFrameworks-Info.plist, set CFBundleIconFile to ICON_NAME
+
+//FOR AV ENGINE SOUND PLAYER UNCOMMENT TWO LINES BELOW
+OF_NO_FMOD=1
+USER_PREPROCESSOR_DEFINITIONS="OF_NO_FMOD=1"
+GCC_PREPROCESSOR_DEFINITIONS=$(inherited) $(USER_PREPROCESSOR_DEFINITIONS)
+
+//APPSTORE, uncomment next lines to bundle data folder and code sign
+//OF_CODESIGN = 1
+//OF_BUNDLE_DATA_FOLDER = 1
+//OF_BUNDLE_DYLIBS = 1
+
+// Optional include to keep any permanent settings as CODE_SIGN_IDENTITY. 
+#include? "App.xcconfig"
+
+OTHER_CFLAGS = $(OF_CORE_CFLAGS)
+HEADER_SEARCH_PATHS = $(OF_CORE_HEADERS) "$(SRCROOT)/release/include"
+
+// emptyExamplemacOS links openFrameworks.a plus these archives.
+// emptyExample links openFrameworks.framework and sets its own OTHER_LDFLAGS,
+// so this line is not added again on top of the framework.
+OF_APP_OF_LIB = $(LIB_OF)
+OF_APP_OF_LIB[config=Debug] = $(LIB_OF_DEBUG)
+// the Muse session index is read with the system's SQLite (as config.make's -lsqlite3)
+// CoreOF's static libs without GLFW: on this oF branch Xcode's openFrameworks.a has GLFW compiled in already
+BACKBURN_STATIC_LIBS = "$(OF_PATH)/libs/zlib/lib/macos/zlib.xcframework/macos-arm64_x86_64/zlib.a" "$(OF_PATH)/libs/brotli/lib/macos/brotli.xcframework/macos-arm64_x86_64/brotli.a" "$(OF_PATH)/libs/libpng/lib/macos/libpng.xcframework/macos-arm64_x86_64/libpng.a" "$(OF_PATH)/libs/freetype/lib/macos/freetype.xcframework/macos-arm64_x86_64/libfreetype.a" "$(OF_PATH)/libs/pixman/lib/macos/pixman.xcframework/macos-arm64_x86_64/libpixman-1.a" "$(OF_PATH)/libs/cairo/lib/macos/cairo.xcframework/macos-arm64_x86_64/libcairo.a" "$(OF_PATH)/libs/fmt/lib/macos/fmt.xcframework/macos-arm64_x86_64/libfmt.a" "$(OF_PATH)/libs/pugixml/lib/macos/pugixml.xcframework/macos-arm64_x86_64/libpugixml.a" "$(OF_PATH)/libs/tess2/lib/macos/tess2.xcframework/macos-arm64_x86_64/libtess2.a" "$(OF_PATH)/libs/uriparser/lib/macos/uriparser.xcframework/macos-arm64_x86_64/uriparser.a" "$(OF_PATH)/libs/openssl/lib/macos/libcrypto.xcframework/macos-arm64_x86_64/libcrypto.a" "$(OF_PATH)/libs/openssl/lib/macos/libssl.xcframework/macos-arm64_x86_64/libssl.a" "$(OF_PATH)/libs/curl/lib/macos/curl.xcframework/macos-arm64_x86_64/curl.a" "$(OF_PATH)/libs/FreeImage/lib/macos/FreeImage.xcframework/macos-arm64_x86_64/FreeImage.a" "$(OF_PATH)/libs/glew/lib/macos/glew.xcframework/macos-arm64_x86_64/libGLEW.a" "$(OF_PATH)/libs/rtAudio/lib/macos/rtAudio.xcframework/macos-arm64_x86_64/librtaudio.a"
+OTHER_LDFLAGS = $(OF_CORE_LIBS) $(BACKBURN_STATIC_LIBS) $(OF_CORE_FRAMEWORKS) $(OF_APP_OF_LIB) -lsqlite3
+
+// Dawn (WebGPU / Metal). Uncomment both lines. Do not enable Dawn and ANGLE in the same build.
+// GCC_PREPROCESSOR_DEFINITIONS = $(inherited) OF_USE_DAWN=1
+// OTHER_LDFLAGS = $(OF_CORE_LIBS) $(OF_STATIC_LIBS) $(OF_CORE_FRAMEWORKS) $(OF_DAWN_LIBS) $(OF_APP_OF_LIB)
+//
+// MetalANGLE (GLES via Metal + MGLKit). Uncomment both lines. Leaves OpenGL.framework off.
+// GCC_PREPROCESSOR_DEFINITIONS = $(inherited) OF_USE_ANGLE=1
+// OTHER_LDFLAGS = $(OF_CORE_LIBS) $(OF_STATIC_LIBS) $(OF_ANGLE_APP_FRAMEWORKS) $(OF_ANGLE_LIBS) $(OF_APP_OF_LIB)
+// OF_USE_ANGLE_OFFICIAL=1 is reserved for chromium ANGLE without MGLKit.
+
+// Backburn's core/Collector.h shares its name with Poco's Prometheus/Collector.h, and Xcode's header map picks
+// Poco's. Without the map, includes follow HEADER_SEARCH_PATHS (src, core, then the addons), as make does.
+USE_HEADERMAP = NO

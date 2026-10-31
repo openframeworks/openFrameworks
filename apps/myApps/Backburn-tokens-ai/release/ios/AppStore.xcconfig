@@ -1,0 +1,13 @@
+// iOS / tvOS App Store viewer build. Merge release/ios/Info-additions.plist into the viewer's Info.plist.
+// In Xcode set this file as the Release base configuration for the iOS/tvOS target,
+// or pass it with xcodebuild -xcconfig. Rebuild openFrameworksLib for iphoneos with the same file.
+#include "../Hardened.xcconfig"
+
+IPHONEOS_DEPLOYMENT_TARGET = 15.0
+TVOS_DEPLOYMENT_TARGET = 15.0
+PRODUCT_BUNDLE_IDENTIFIER = com.danoli3.backburntokens
+DEVELOPMENT_TEAM = ZU7K3XV3B6
+CODE_SIGN_STYLE = Automatic
+// iOS has no hardened runtime / sandbox toggle here — the App Sandbox is always on.
+// ENABLE_HARDENED_RUNTIME is macOS-only and intentionally absent.
+GCC_PREPROCESSOR_DEFINITIONS = $(inherited) BACKBURN_APP_STORE=1

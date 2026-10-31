@@ -1,0 +1,60 @@
+// Hardened.xcconfig — Release-only hardening for openFrameworks App Store / Developer ID builds.
+// Include from a store xcconfig, do NOT set as the Debug base config:
+//   release/macos/AppStore.xcconfig    -> #include "../Hardened.xcconfig"
+//   release/macos/DeveloperID.xcconfig -> #include "../Hardened.xcconfig"
+//   release/ios/AppStore.xcconfig      -> #include "../Hardened.xcconfig"
+//
+// Or in Xcode: Project > Info > Configurations > Release -> select this file's
+// store wrapper (not this file alone, it has no OF_PATH / CoreOF include).
+//
+// Debug is untouched: every key below is [config=Release] or a no-op in Debug.
+// Rebuild openFrameworksLib with the SAME Release settings — hardening only the
+// app target leaves the static OF lib's symbols/strings in the final binary.
+
+// ---------- optimisation: smaller, inlined, harder to map back to source ----------
+// -Os favours size + strips obvious function boundaries vs -O0; use 3 if you prefer speed.
+GCC_OPTIMIZATION_LEVEL[config=Release] = s
+LLVM_LTO[config=Release] = YES
+// YES = full LTO ( slowest link, best cross-TU inlining/stripping). If link time hurts:
+// LLVM_LTO[config=Release] = YES_THIN
+DEAD_CODE_STRIPPING[config=Release] = YES
+GCC_UNROLL_LOOPS[config=Release] = YES
+
+// ---------- symbols: generate dSYM for your crash logs, strip the shipped binary ----------
+// Keep the .dSYM from the Archive OUTSIDE the .app, upload it to App Store Connect /
+// keep it for symbolication. The shipped binary itself gets stripped.
+DEBUG_INFORMATION_FORMAT[config=Release] = dwarf-with-dsym
+STRIP_INSTALLED_PRODUCT[config=Release] = YES
+COPY_PHASE_STRIP[config=Release] = YES
+STRIP_STYLE[config=Release] = all
+DEPLOYMENT_POSTPROCESSING[config=Release] = YES
+SEPARATE_STRIP[config=Release] = YES
+GCC_SYMBOLS_PRIVATE_EXTERN[config=Release] = YES
+PRESERVE_DEAD_CODE_INITS_AND_TERMS = NO
+MTL_ENABLE_DEBUG_INFO[config=Release] = NO
+MTL_FAST_MATH[config=Release] = YES
+
+// ---------- visibility: only exported entry points leave the binary ----------
+OTHER_CFLAGS[config=Release] = $(inherited) -fvisibility=hidden -fvisibility-inlines-hidden -ffunction-sections -fdata-sections -fno-ident -fno-record-gcc-switches -ffile-prefix-map=$(SRCROOT)=. -ffile-prefix-map=$(OF_PATH)=OF -fdebug-prefix-map=$(SRCROOT)=. -fdebug-prefix-map=$(OF_PATH)=OF
+OTHER_CPLUSPLUSFLAGS[config=Release] = $(inherited) -fvisibility=hidden -fvisibility-inlines-hidden -ffunction-sections -fdata-sections -fno-ident -fno-record-gcc-switches -ffile-prefix-map=$(SRCROOT)=. -ffile-prefix-map=$(OF_PATH)=OF -fdebug-prefix-map=$(SRCROOT)=. -fdebug-prefix-map=$(OF_PATH)=OF
+// Linker flags must go through -Wl,: a bare -x here is read by the clang driver as "-x <language>".
+OTHER_LDFLAGS[config=Release] = $(inherited) -Wl,-dead_strip -Wl,-x
+
+// ---------- code: asserts/logs off, hardened defines on ----------
+// BACKBURN_HARDENED=1 turns on OBFSTR/OBF_GUARD in release/include/Obfuscate.h.
+// Add OF_NO_FMOD etc. in Project.xcconfig as you already do — not repeated here.
+GCC_PREPROCESSOR_DEFINITIONS[config=Release] = $(inherited) NDEBUG=1 BACKBURN_HARDENED=1 OF_RELEASE_HARDENED=1
+ENABLE_NS_ASSERTIONS[config=Release] = NO
+GCC_WARN_UNUSED_VARIABLE[config=Release] = NO
+
+// ---------- validation ----------
+// Xcode validates the bundle (Info.plist, signing, architectures) before upload.
+VALIDATE_PRODUCT[config=Release] = YES
+// Do not embed bitcode — deprecated since Xcode 14, rejected tooling noise on Xcode 26+.
+// (No ENABLE_BITCODE key: its absence is the correct modern setting.)
+
+// ---------- what NOT to add (breaks App Store / notarization) ----------
+// - No OLLVM/Hikari -mllvm -fla/-bcf/-sub flags: they trip App Review static scans,
+//   crash with hardened runtime + LTO, and are trivially de-obfuscated by IDA plugins.
+// - No -s in OTHER_LDFLAGS on top of dwarf-with-dsym (kills your own dSYM).
+// - No ENABLE_BITCODE, no manual `strip` of frameworks you do not own before signing.
