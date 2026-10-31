@@ -93,6 +93,7 @@ RELEASES / CI
 - release packages named by what they're for: `linux_64_gcc10`, `linux_arm64_gcc10`, `linux_{aarch64,armv7l,armv6l}_rpi_gcc10` (new Raspberry Pi armv7l package), `vs_2022_64`, `vs_2026_64` and `vs_{2022,2026}_64_arm64_arm64ec` (the first packages with ARM64 / ARM64EC libraries); Linux packages keep `project/linux` and `scripts/linux` ([#8614](https://github.com/openframeworks/openFrameworks/pull/8614))
 - a release pins its apothecary libraries (`scripts/dev/apothecary_release`), checked when tagging ([#8604](https://github.com/openframeworks/openFrameworks/pull/8604))
 - nightly: builds again, the `nightly` tag moves to the built commit, a run fails when a package is missing ([#8613](https://github.com/openframeworks/openFrameworks/pull/8613)) ([#8616](https://github.com/openframeworks/openFrameworks/pull/8616)) ([#8618](https://github.com/openframeworks/openFrameworks/pull/8618))
+- packages bundle the projectGenerator `nightly` release, same as 0.12.1. `scripts/dev/download_pg.sh` does too; `-b` takes the `latest` release and `-t` a tag such as `v0.112.0`
 
 ### CI
 - macOS, iOS and tvOS with Xcode 27.1; GitHub Actions on current releases ([#8624](https://github.com/openframeworks/openFrameworks/pull/8624)) ([#8622](https://github.com/openframeworks/openFrameworks/pull/8622)) ([#8599](https://github.com/openframeworks/openFrameworks/pull/8599))
