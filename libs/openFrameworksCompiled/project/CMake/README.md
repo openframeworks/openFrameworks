@@ -119,6 +119,7 @@ makefiles' `config.make` options.
 | `OF_USE_CCACHE` | `ON` | prefix C and C++ with ccache when it is installed. A launcher you already set is left as it is |
 | `OF_PLATFORM` | detected | `macos ios tvos emscripten linux/64 linux/aarch64 linux/armv7l linux/armv6l vs msys2`. `linux64` and the other flat names still select the same platform |
 | `OF_USE_DAWN`, `OF_USE_ANGLE` | `OFF` | link `libs/dawn`, `libs/metalangle` |
+| `OF_NO_URL_LOADER` | `OFF` | build the core without the URL loader: `ofLoadURL` and friends return status -1 and `ofImage::load()` of a URL fails, but no curl or OpenSSL is linked. Builds the core in this build (not into `lib/<platform>`), so other apps keep URL loading. With make: `make OF_NO_URL_LOADER=1` on the core, which replaces the core every app links |
 | `PROJECT_EMSCRIPTEN_WASM` | `32` | `32`: libs from `lib/emscripten/WASM`, core in `lib/emscripten`. `64`: libs and core in `lib/emscripten/WASM64` |
 | `PROJECT_EMSCRIPTEN_TOTAL_MEMORY` | `134217728` | initial memory in bytes |
 | `PROJECT_EMSCRIPTEN_EMBIND_AOT` | `OFF` | ON needs an `EMSCRIPTEN_BINDINGS` block and breaks some addons |

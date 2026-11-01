@@ -265,6 +265,9 @@ function(of_add_core_library)
 	of_core_sources(sources)
 	add_library(openFrameworks STATIC ${sources})
 	target_link_libraries(openFrameworks PUBLIC openFrameworks::deps)
+	if(OF_NO_URL_LOADER)
+		target_compile_definitions(openFrameworks PRIVATE OF_NO_URL_LOADER)
+	endif()
 	set_target_properties(openFrameworks PROPERTIES
 		OUTPUT_NAME "${OF_CORE_LIB_NAME}"
 		OUTPUT_NAME_DEBUG "${OF_CORE_LIB_NAME_DEBUG}"

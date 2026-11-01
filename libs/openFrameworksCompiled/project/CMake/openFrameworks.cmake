@@ -30,6 +30,7 @@ set(OF_ADDONS_DIR "${OF_ROOT}/addons")
 
 option(OF_BUILD_CORE "Build the openFrameworks core in this build instead of linking a prebuilt one" OFF)
 option(OF_PRECOMPILED_HEADER "Precompile ofMain.h for each app's own C++ sources" OFF)
+option(OF_NO_URL_LOADER "Build a core without the URL loader (ofLoadURL and friends fail; no curl or OpenSSL linked)" OFF)
 
 set(CMAKE_C_STANDARD 17)
 set(CMAKE_CXX_STANDARD 23)
@@ -49,4 +50,9 @@ include("${OF_CMAKE_DIR}/OFApp.cmake")
 set(OF_CORE_LIB_DIR "${OF_LIBS_DIR}/openFrameworksCompiled/lib/${OF_PLATFORM}")
 if(OF_ARCH)
 	string(APPEND OF_CORE_LIB_DIR "/${OF_ARCH}")
+endif()
+# a core without the URL loader is built for this build only, so the shared core keeps it
+if(OF_NO_URL_LOADER)
+	set(OF_BUILD_CORE ON)
+	set(OF_CORE_LIB_DIR "${CMAKE_BINARY_DIR}/openFrameworks")
 endif()

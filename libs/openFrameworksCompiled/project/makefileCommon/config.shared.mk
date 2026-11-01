@@ -456,6 +456,12 @@ OF_CORE_INCLUDES_CFLAGS += $(addprefix -I,$(OF_CORE_HEADER_PATHS))
 # OF CORE DEFINES
 ################################################################################
 
+# make OF_NO_URL_LOADER=1: the core is built without the URL loader (ofLoadURL and
+# friends fail; no curl or OpenSSL linked). It replaces the core every app links.
+ifeq ($(OF_NO_URL_LOADER),1)
+	PLATFORM_DEFINES += OF_NO_URL_LOADER
+endif
+
 OF_CORE_DEFINES_CFLAGS=$(addprefix -D,$(PLATFORM_DEFINES))
 
 ################################################################################
