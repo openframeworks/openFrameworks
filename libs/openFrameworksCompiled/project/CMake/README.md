@@ -126,6 +126,7 @@ makefiles' `config.make` options.
 | `OF_WEBGL_VERSION` | `2` | `1` for a WebGL 1 build |
 | `APP_VERSION` | `project()` version, else `1.0` | app version (macOS / iOS / tvOS `CFBundleShortVersionString`), same as the makefiles' `config.make` |
 | `APP_BUILD` | `1` | build number (`CFBundleVersion`) |
+| `APP_BUNDLE_ID` | `cc.openFrameworks.<name>` | bundle identifier (`CFBundleIdentifier`), same as the makefiles' `config.make` |
 | `OF_APPLE_DEVELOPMENT_TEAM` | | signing team for iOS / tvOS devices |
 
 ## Addons
@@ -149,7 +150,7 @@ platform (an existing `CMakeLists.txt` is kept) and writes the addons to `addons
 projectGenerator -o"<OF root>" -p"linux64" -t"cmake" apps/myApps/myApp     # -p vs, osx, emscripten, ...
 ```
 
-It also reads `APP_VERSION` / `APP_BUILD` and `PROJECT_EMSCRIPTEN_WASM` back from the
+It also reads `APP_VERSION` / `APP_BUILD` / `APP_BUNDLE_ID` and `PROJECT_EMSCRIPTEN_WASM` back from the
 `CMakeLists.txt` (projectGenerator#664, #670). The projectGenerator in `apps/projectGenerator`
 on master (0.115.0) has it.
 

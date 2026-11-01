@@ -45,9 +45,14 @@ function(of_apple_info_plist target project_plist fallback_plist)
 	else()
 		set(build 1)
 	endif()
-	string(MAKE_C_IDENTIFIER "${name}" bundle_name)
-	string(REPLACE "_" "-" bundle_name "${bundle_name}")
-	set(identifier "cc.openFrameworks.${bundle_name}")
+	# APP_BUNDLE_ID, like the makefiles' config.make
+	if(APP_BUNDLE_ID)
+		set(identifier "${APP_BUNDLE_ID}")
+	else()
+		string(MAKE_C_IDENTIFIER "${name}" bundle_name)
+		string(REPLACE "_" "-" bundle_name "${bundle_name}")
+		set(identifier "cc.openFrameworks.${bundle_name}")
+	endif()
 	foreach(pair
 			"DEVELOPMENT_LANGUAGE=English"
 			"ICON_NAME=of.icns"

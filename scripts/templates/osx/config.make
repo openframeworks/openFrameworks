@@ -22,6 +22,15 @@
 # APP_BUILD = 1
 
 ################################################################################
+# APP BUNDLE ID
+#   The app's bundle identifier (CFBundleIdentifier), eg com.example.myApp.
+#   The projectGenerator also sets it in the Xcode project and keeps it on update.
+#
+#   (default) APP_BUNDLE_ID = cc.openFrameworks.<project folder name>
+################################################################################
+# APP_BUNDLE_ID = com.example.myApp
+
+################################################################################
 # PROJECT ROOT
 #   The location of the project - a starting place for searching for files
 #       (default) PROJECT_ROOT = . (this directory)
