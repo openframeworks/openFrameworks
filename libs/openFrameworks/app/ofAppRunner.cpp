@@ -96,8 +96,6 @@ void ofExitCallback();
 void ofTrueTypeShutdown();
 void ofCloseFreeImage();
 
-// Set by ofURLFileLoader when it's first used, so an app that never loads a URL
-// doesn't keep the loader's curl code just for this shutdown call
 void (*ofURLFileLoaderShutdownHook)() = nullptr;
 
 #if defined(TARGET_ANDROID) || defined (TARGET_LINUX_ARM)
