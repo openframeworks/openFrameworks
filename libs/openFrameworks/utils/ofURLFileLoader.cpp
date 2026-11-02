@@ -17,7 +17,7 @@ using std::map;
 using std::set;
 using std::string;
 
-#if !defined(TARGET_IMPLEMENTS_URL_LOADER)
+#if !defined(TARGET_IMPLEMENTS_URL_LOADER) && !defined(OF_NO_URL_LOADER)
 	#include <curl/curl.h>
 	#include "ofThreadChannel.h"
 	#include "ofThread.h"
@@ -75,7 +75,7 @@ ofEvent<ofHttpResponse> & ofURLResponseEvent() {
 	return *event;
 }
 
-#if !defined(TARGET_IMPLEMENTS_URL_LOADER)
+#if !defined(TARGET_IMPLEMENTS_URL_LOADER) && !defined(OF_NO_URL_LOADER)
 std::mutex responseMutex;
 class ofURLFileLoaderImpl : public ofThread, public ofBaseURLFileLoader {
 public:
@@ -588,17 +588,54 @@ ofURLFileLoader::ofURLFileLoader()
 	: impl(new ofURLFileLoaderImpl) { }
 #endif
 
-#ifdef TARGET_EMSCRIPTEN
+#if defined(TARGET_EMSCRIPTEN) && !defined(OF_NO_URL_LOADER)
 	#include "ofxEmscriptenURLFileLoader.h"
 ofURLFileLoader::ofURLFileLoader()
 	: impl(new ofxEmscriptenURLFileLoader) { }
 #endif
 
-#ifdef TARGET_OF_TVOS
-#include "ofxtvOSURLFileLoader.h"
+#if defined(OF_NO_URL_LOADER)
+// Built with OF_NO_URL_LOADER: no curl or OpenSSL in the core. Every request
+// fails with status -1; async requests send that response straight away.
+class ofURLFileLoaderDisabled : public ofBaseURLFileLoader {
+public:
+	ofHttpResponse get(const string & url) override {
+		return handleRequest(ofHttpRequest(url, url));
+	}
+	int getAsync(const string & url, const string & name) override {
+		return handleRequestAsync(ofHttpRequest(url, name));
+	}
+	ofHttpResponse saveTo(const string & url, const of::filesystem::path & path) override {
+		return handleRequest(ofHttpRequest(url, ofPathToString(path), true));
+	}
+	int saveAsync(const string & url, const of::filesystem::path & path) override {
+		return handleRequestAsync(ofHttpRequest(url, ofPathToString(path), true));
+	}
+	void remove(int id) override { }
+	void clear() override { }
+	void stop() override { }
+	ofHttpResponse handleRequest(const ofHttpRequest & request) override {
+		static bool warned = false;
+		if (!warned) {
+			ofLogWarning("ofURLFileLoader") << error;
+			warned = true;
+		}
+		return ofHttpResponse(request, -1, error);
+	}
+	int handleRequestAsync(const ofHttpRequest & request) override {
+		ofHttpResponse response = handleRequest(request);
+		ofNotifyEvent(ofURLResponseEvent(), response);
+		return request.getId();
+	}
+
+private:
+	const string error { "URL loading is disabled in this build of openFrameworks (OF_NO_URL_LOADER)" };
+};
+
 ofURLFileLoader::ofURLFileLoader()
-: impl(new ofxtvOSURLFileLoader) { }
+	: impl(new ofURLFileLoaderDisabled) { }
 #endif
+
 
 ofHttpResponse ofURLFileLoader::get(const string & url) {
 	return impl->get(url);

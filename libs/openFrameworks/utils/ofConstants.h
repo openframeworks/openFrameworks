@@ -101,12 +101,11 @@ enum ofTargetPlatform{
         #define TARGET_OF_IOS
         #define TARGET_OF_TVOS
         #define TARGET_OPENGLES
-        #define TARGET_IMPLEMENTS_URL_LOADER
     #elif TARGET_OS_WATCH
         #define TARGET_OF_IOS
         #define TARGET_OF_WATCHOS
         #define TARGET_OPENGLES
-        #define TARGET_IMPLEMENTS_URL_LOADER
+        #define OF_NO_URL_LOADER // no URL loader for watchOS yet
     #elif TARGET_OS_VISION
         #define TARGET_OF_IOS
         #define TARGET_OF_XROS
