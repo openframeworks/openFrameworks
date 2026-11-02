@@ -421,6 +421,8 @@ PLATFORM_FRAMEWORKS_SEARCH_PATHS = /System/Library/Frameworks
 # number (CFBundleVersion); set APP_VERSION / APP_BUILD in the project's config.make
 APP_VERSION ?= 1.0
 APP_BUILD ?= 1
+# bundle id (CFBundleIdentifier); set APP_BUNDLE_ID in the project's config.make
+APP_BUNDLE_ID ?= cc.openFrameworks.$(BIN_NAME)
 
 afterplatform: $(TARGET_NAME)
 	@rm -rf bin/$(BIN_NAME).app
@@ -445,7 +447,7 @@ afterplatform: $(TARGET_NAME)
 	@sed -i '' 's/\$${DEVELOPMENT_LANGUAGE}/English/g' bin/$(BIN_NAME).app/Contents/Info.plist
 	@sed -i '' 's/\$${EXECUTABLE_NAME}/$(BIN_NAME)/g' bin/$(BIN_NAME).app/Contents/Info.plist
 	@sed -i '' 's/\$${TARGET_NAME}/$(BIN_NAME)/g' bin/$(BIN_NAME).app/Contents/Info.plist
-	@sed -i '' 's/\$${PRODUCT_BUNDLE_IDENTIFIER}/cc.openFrameworks.$(BIN_NAME)/g' bin/$(BIN_NAME).app/Contents/Info.plist
+	@sed -i '' 's/\$${PRODUCT_BUNDLE_IDENTIFIER}/$(APP_BUNDLE_ID)/g' bin/$(BIN_NAME).app/Contents/Info.plist
 	@sed -i '' 's/\$${MARKETING_VERSION}/$(APP_VERSION)/g' bin/$(BIN_NAME).app/Contents/Info.plist
 	@sed -i '' 's/\$${CURRENT_PROJECT_VERSION}/$(APP_BUILD)/g' bin/$(BIN_NAME).app/Contents/Info.plist
 
