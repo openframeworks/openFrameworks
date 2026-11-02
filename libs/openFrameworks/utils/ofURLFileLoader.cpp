@@ -673,10 +673,16 @@ int ofURLFileLoader::handleRequestAsync(const ofHttpRequest & request) {
 	return impl->handleRequestAsync(request);
 }
 
+extern void (*ofURLFileLoaderShutdownHook)(); // ofAppRunner.cpp
+void ofURLFileLoaderShutdown();
+
 static bool initialized = false;
 static ofURLFileLoader & getFileLoader() {
 	static ofURLFileLoader * fileLoader = new ofURLFileLoader;
-	initialized = true;
+	if (!initialized) {
+		initialized = true;
+		ofURLFileLoaderShutdownHook = ofURLFileLoaderShutdown;
+	}
 	return *fileLoader;
 }
 

@@ -93,9 +93,10 @@ namespace{
 
 
 void ofExitCallback();
-void ofURLFileLoaderShutdown();
 void ofTrueTypeShutdown();
 void ofCloseFreeImage();
+
+void (*ofURLFileLoaderShutdownHook)() = nullptr;
 
 #if defined(TARGET_ANDROID) || defined (TARGET_LINUX_ARM)
 	inline void ofSoundShutdown(){}
@@ -251,7 +252,7 @@ void ofExitCallback(){
 
 
 	// finish every library and subsystem
-	ofURLFileLoaderShutdown();
+	if (ofURLFileLoaderShutdownHook) ofURLFileLoaderShutdownHook();
 
 	#ifndef TARGET_NO_SOUND
 		//------------------------
