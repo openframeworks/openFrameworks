@@ -46,11 +46,6 @@
 #include "ofxiOSGLKView.h"
 #include "ofxiOSEAGLView.h"
 
-//----------------------------------------------------------------------------------- scene delegate.
-// iOS / tvOS 27 require the UIScene lifecycle. The app's Info.plist names this class in
-// UIApplicationSceneManifest; it shows the window the app delegate created in
-// applicationDidFinishLaunching: in the scene, and passes the scene's lifecycle events
-// and URLs to the app delegate, which UIKit no longer sends them to.
 @interface ofxiOSSceneDelegate : UIResponder <UIWindowSceneDelegate>
 @property (strong, nonatomic) UIWindow * window;
 @end
