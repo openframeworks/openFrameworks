@@ -92,14 +92,12 @@
 		if ([appDelegate respondsToSelector:@selector(application:openURL:options:)]) {
 			[appDelegate application:[UIApplication sharedApplication] openURL:context.URL options:@{}];
 		}
-#if !TARGET_OS_TV
 		else if ([appDelegate respondsToSelector:@selector(application:handleOpenURL:)]) {
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
 			[appDelegate application:[UIApplication sharedApplication] handleOpenURL:context.URL];
 #pragma clang diagnostic pop
 		}
-#endif
 	}
 }
 
