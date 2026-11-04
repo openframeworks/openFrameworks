@@ -42,7 +42,7 @@ cd projectGenerator
 
 if [[ "$RELEASE" == "nightly" ]] || [[ "$RELEASE" == "latest" ]]; then
   echo "Downloading nightly projectGenerator from Github Latest"
-  URL="https://github.com/openframeworks/projectGenerator/releases/download/nightly/projectGenerator-vs.zip"
+  URL="https://github.com/openframeworks/projectGenerator/releases/download/latest/projectGenerator-vs.zip"
 else
   echo "Downloading projectGenerator for release $RELEASE from Github"
   URL="https://github.com/openframeworks/projectGenerator/releases/download/$RELEASE/projectGenerator-vs.zip"
