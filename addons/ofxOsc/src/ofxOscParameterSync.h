@@ -19,6 +19,11 @@ public:
 	/// process any incoming messages
 	void update();
 
+	/// Seal the sync datagrams. The other machine needs the same passphrase and the same stretch. Empty turns it off.
+	void setPassphrase(const std::string & passphrase, int iterations = 200000);
+	/// Drop sync datagrams that are not sealed with the passphrase.
+	void setRequireEncryption(bool require);
+
 private:
 	/// parameter change callaback
 	void parameterChanged(ofAbstractParameter & parameter);

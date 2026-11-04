@@ -20,6 +20,17 @@ void ofxOscParameterSync::setup(ofParameterGroup & group, int localPort, const s
 }
 
 //--------------------------------------------------------------
+void ofxOscParameterSync::setPassphrase(const std::string & passphrase, int iterations) {
+	sender.setPassphrase(passphrase, iterations);
+	receiver.setPassphrase(passphrase, iterations);
+}
+
+//--------------------------------------------------------------
+void ofxOscParameterSync::setRequireEncryption(bool require) {
+	receiver.requireEncryption.store(require);
+}
+
+//--------------------------------------------------------------
 void ofxOscParameterSync::update() {
 	if (receiver.hasWaitingMessages()) {
 		updatingParameter = true;

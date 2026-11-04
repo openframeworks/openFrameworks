@@ -19,7 +19,7 @@ meta:
 	ADDON_DESCRIPTION = Addon for loading several 3d formats through the assimp library
 	ADDON_AUTHOR = OF Team
 	ADDON_TAGS = "3D" "assimp"
-	ADDON_URL = http://github.com/openframeworks/openFrameworks
+	ADDON_URL = https://github.com/openframeworks/openFrameworks
 
 common:
 	# dependencies with other addons, a list of them separated by spaces
