@@ -5,8 +5,26 @@
 
 #include <FreeImage.h>
 
+// FreeImage 3.19.29 publishes the additive 64-bit TIFF input API
+// (FreeImageIO64, FreeImage_Load64, FreeImage_LoadFromHandle64). Older
+// headers keep the 32-bit loader. The check is the version in the header
+// that ships with the library, so the wide path turns on when 3.19.29 is
+// the FreeImage this build includes.
+#define OF_FREEIMAGE_VERSION_NUMBER \
+	(FREEIMAGE_MAJOR_VERSION * 10000 + FREEIMAGE_MINOR_VERSION * 100 + FREEIMAGE_RELEASE_SERIAL)
+#if OF_FREEIMAGE_VERSION_NUMBER >= 31929
+#	define OF_FREEIMAGE_IO64 1
+#else
+#	define OF_FREEIMAGE_IO64 0
+#endif
+
 #include "ofURLFileLoader.h"
 #include <uriparser/Uri.h>
+#include <cstdint>
+#include <cstdio>
+#include <cstring>
+#include <limits>
+#include <memory>
 
 #if defined(TARGET_ANDROID)
 #include "ofxAndroidUtils.h"
@@ -196,6 +214,175 @@ static int getJpegOptionFromImageLoadSetting(const ofImageLoadSettings &settings
 	return option;
 }
 
+namespace {
+
+// FreeImage_OpenMemory takes a DWORD, then stores file_length, data_length and
+// current_position as int. _MemorySeekProc only accepts a position in
+// [0, numeric_limits<int>::max()]. Lengths above that are not a supported
+// memory-stream size, even when they still fit in a DWORD.
+bool ofFreeImageMemoryWithinLimit(std::size_t size){
+	return size <= static_cast<std::size_t>(std::numeric_limits<int>::max());
+}
+
+#if defined(OF_FREEIMAGE_IO64) && OF_FREEIMAGE_IO64
+
+bool ofFreeImageBufferIsTiff(const char * data, std::size_t size){
+	if(data == nullptr || size < 4){
+		return false;
+	}
+	const auto * bytes = reinterpret_cast<const unsigned char *>(data);
+	const bool littleClassic = bytes[0] == 'I' && bytes[1] == 'I' && bytes[2] == 42 && bytes[3] == 0;
+	const bool bigClassic = bytes[0] == 'M' && bytes[1] == 'M' && bytes[2] == 0 && bytes[3] == 42;
+	const bool littleBigTiff = bytes[0] == 'I' && bytes[1] == 'I' && bytes[2] == 43 && bytes[3] == 0;
+	const bool bigBigTiff = bytes[0] == 'M' && bytes[1] == 'M' && bytes[2] == 0 && bytes[3] == 43;
+	return littleClassic || bigClassic || littleBigTiff || bigBigTiff;
+}
+
+struct ofFreeImageMemory64 {
+	const uint8_t * data;
+	uint64_t size;
+	uint64_t position;
+};
+
+bool ofFreeImageAddOffset(int64_t base, int64_t delta, int64_t & sum){
+	if(base < 0){
+		return false;
+	}
+	if(delta >= 0){
+		if(base > std::numeric_limits<int64_t>::max() - delta){
+			return false;
+		}
+		sum = base + delta;
+		return true;
+	}
+	// delta < 0. Positions before 0 are rejected. Negating INT64_MIN is undefined,
+	// and base >= 0 cannot produce a non-negative sum with that delta.
+	if(delta == std::numeric_limits<int64_t>::min() || base < -delta){
+		return false;
+	}
+	sum = base + delta;
+	return true;
+}
+
+uint64_t DLL_CALLCONV ofFreeImageMemoryRead64(void * buffer, uint64_t size, uint64_t count, fi_handle handle){
+	if(handle == nullptr || buffer == nullptr || size == 0 || count == 0){
+		return 0;
+	}
+	if(size > SIZE_MAX || count > SIZE_MAX / size){
+		return 0;
+	}
+	auto * stream = static_cast<ofFreeImageMemory64 *>(handle);
+	if(stream->data == nullptr || stream->position > stream->size){
+		return 0;
+	}
+	const uint64_t available = stream->size - stream->position;
+	uint64_t elements = count;
+	const uint64_t requested = size * count;
+	if(requested > available){
+		elements = available / size;
+	}
+	const uint64_t bytes = elements * size;
+	if(bytes > 0){
+		std::memcpy(buffer, stream->data + stream->position, static_cast<std::size_t>(bytes));
+		stream->position += bytes;
+	}
+	return elements;
+}
+
+int DLL_CALLCONV ofFreeImageMemorySeek64(fi_handle handle, int64_t offset, int origin){
+	if(handle == nullptr){
+		return -1;
+	}
+	auto * stream = static_cast<ofFreeImageMemory64 *>(handle);
+	int64_t base = 0;
+	if(origin == SEEK_SET){
+		base = 0;
+	}else if(origin == SEEK_CUR){
+		if(stream->position > static_cast<uint64_t>(std::numeric_limits<int64_t>::max())){
+			return -1;
+		}
+		base = static_cast<int64_t>(stream->position);
+	}else if(origin == SEEK_END){
+		if(stream->size > static_cast<uint64_t>(std::numeric_limits<int64_t>::max())){
+			return -1;
+		}
+		base = static_cast<int64_t>(stream->size);
+	}else{
+		return -1;
+	}
+	int64_t next = 0;
+	if(!ofFreeImageAddOffset(base, offset, next)){
+		return -1;
+	}
+	stream->position = static_cast<uint64_t>(next);
+	return 0;
+}
+
+int64_t DLL_CALLCONV ofFreeImageMemoryTell64(fi_handle handle){
+	if(handle == nullptr){
+		return -1;
+	}
+	auto * stream = static_cast<ofFreeImageMemory64 *>(handle);
+	if(stream->position > static_cast<uint64_t>(std::numeric_limits<int64_t>::max())){
+		return -1;
+	}
+	return static_cast<int64_t>(stream->position);
+}
+
+FIBITMAP * ofLoadTiffFromMemory64(const ofBuffer & buffer, int flags){
+	ofFreeImageMemory64 stream;
+	stream.data = reinterpret_cast<const uint8_t *>(buffer.getData());
+	stream.size = static_cast<uint64_t>(buffer.size());
+	stream.position = 0;
+	if(stream.data == nullptr && stream.size != 0){
+		return nullptr;
+	}
+	FreeImageIO64 io = {};
+	io.read_proc = ofFreeImageMemoryRead64;
+	io.write_proc = nullptr;
+	io.seek_proc = ofFreeImageMemorySeek64;
+	io.tell_proc = ofFreeImageMemoryTell64;
+	return FreeImage_LoadFromHandle64(FIF_TIFF, &io, static_cast<fi_handle>(&stream), flags);
+}
+
+#ifdef OF_OS_WINDOWS
+struct ofFreeImageStdioClose64 {
+	void operator()(FILE * file) const {
+		if(file != nullptr){
+			std::fclose(file);
+		}
+	}
+};
+
+uint64_t DLL_CALLCONV ofFreeImageFileRead64(void * buffer, uint64_t size, uint64_t count, fi_handle handle){
+	if(handle == nullptr || buffer == nullptr || size == 0 || count == 0){
+		return 0;
+	}
+	if(size > SIZE_MAX || count > SIZE_MAX / size){
+		return 0;
+	}
+	return static_cast<uint64_t>(std::fread(buffer, static_cast<std::size_t>(size), static_cast<std::size_t>(count), static_cast<FILE *>(handle)));
+}
+
+int DLL_CALLCONV ofFreeImageFileSeek64(fi_handle handle, int64_t offset, int origin){
+	if(handle == nullptr){
+		return -1;
+	}
+	return _fseeki64(static_cast<FILE *>(handle), offset, origin);
+}
+
+int64_t DLL_CALLCONV ofFreeImageFileTell64(fi_handle handle){
+	if(handle == nullptr){
+		return -1;
+	}
+	return _ftelli64(static_cast<FILE *>(handle));
+}
+#endif
+
+#endif
+
+}
+
 template<typename PixelType>
 static bool loadImage(ofPixels_<PixelType> & pix, const of::filesystem::path & _fileName, const ofImageLoadSettings & settings){
 	ofInitFreeImage();
@@ -268,13 +455,36 @@ static bool loadImage(ofPixels_<PixelType> & pix, const of::filesystem::path & _
 			std::cerr << "Error: FreeImage does not support reading this format." << std::endl;
 		}
 		auto fileName = ofToDataPathFS(_fileName);
+		const int loadFlags = option | settings.freeImageFlags;
 
-
+#if defined(OF_FREEIMAGE_IO64) && OF_FREEIMAGE_IO64
+		if(fif == FIF_TIFF){
 #ifdef OF_OS_WINDOWS
-		bmp = FreeImage_LoadU(fif, fileName.c_str(), option | settings.freeImageFlags);
+			// FreeImage_Load64 takes a narrow path and there is no LoadU64.
+			// Keep the UTF-16 path and read it through the 64-bit handle API.
+			std::unique_ptr<FILE, ofFreeImageStdioClose64> tiff(_wfopen(fileName.c_str(), L"rb"));
+			if(!tiff){
+				ofLogError("ofImage") << "loadImage(): couldn't open TIFF " << _fileName;
+			}else{
+				FreeImageIO64 io = {};
+				io.read_proc = ofFreeImageFileRead64;
+				io.write_proc = nullptr;
+				io.seek_proc = ofFreeImageFileSeek64;
+				io.tell_proc = ofFreeImageFileTell64;
+				bmp = FreeImage_LoadFromHandle64(fif, &io, static_cast<fi_handle>(tiff.get()), loadFlags);
+			}
 #else
-		bmp = FreeImage_Load(fif, fileName.c_str(), option | settings.freeImageFlags);
+			bmp = FreeImage_Load64(fif, fileName.c_str(), loadFlags);
 #endif
+		}else
+#endif
+		{
+#ifdef OF_OS_WINDOWS
+			bmp = FreeImage_LoadU(fif, fileName.c_str(), loadFlags);
+#else
+			bmp = FreeImage_Load(fif, fileName.c_str(), loadFlags);
+#endif
+		}
 
 		if (bmp != nullptr){
 			bLoaded = true;
@@ -310,28 +520,61 @@ static bool loadImage(ofPixels_<PixelType> & pix, const ofBuffer & buffer, const
 	bool bLoaded = false;
 	FIBITMAP* bmp = nullptr;
 	FIMEMORY* hmem = nullptr;
+	const int loadFlagsBase = settings.freeImageFlags;
 
-	hmem = FreeImage_OpenMemory((unsigned char*) buffer.getData(), buffer.size());
-	if (hmem == nullptr){
-		ofLogError("ofImage") << "loadImage(): couldn't load image from ofBuffer, opening FreeImage memory failed";
-		return false;
+#if defined(OF_FREEIMAGE_IO64) && OF_FREEIMAGE_IO64
+	// Buffers above the legacy memory-stream limit cannot be handed to
+	// FreeImage_OpenMemory. TIFF is identified from its signature and read
+	// through the 64-bit handle API instead.
+	if(!ofFreeImageMemoryWithinLimit(buffer.size())){
+		if(ofFreeImageBufferIsTiff(buffer.getData(), buffer.size())){
+			bmp = ofLoadTiffFromMemory64(buffer, loadFlagsBase);
+		}else{
+			ofLogError("ofImage") << "loadImage(): ofBuffer of " << buffer.size()
+				<< " bytes exceeds FreeImage's memory loader limit of "
+				<< static_cast<std::uint64_t>(std::numeric_limits<int>::max()) << " bytes";
+			return false;
+		}
+	}else
+#endif
+	{
+		if(!ofFreeImageMemoryWithinLimit(buffer.size())){
+			ofLogError("ofImage") << "loadImage(): ofBuffer of " << buffer.size()
+				<< " bytes exceeds FreeImage's memory loader limit of "
+				<< static_cast<std::uint64_t>(std::numeric_limits<int>::max()) << " bytes";
+			return false;
+		}
+
+		hmem = FreeImage_OpenMemory((unsigned char*) buffer.getData(), static_cast<DWORD>(buffer.size()));
+		if (hmem == nullptr){
+			ofLogError("ofImage") << "loadImage(): couldn't load image from ofBuffer, opening FreeImage memory failed";
+			return false;
+		}
+
+		//get the file type!
+		FREE_IMAGE_FORMAT fif = FreeImage_GetFileTypeFromMemory(hmem);
+		if( fif == -1 ){
+			ofLogError("ofImage") << "loadImage(): couldn't load image from ofBuffer, unable to guess image format from memory";
+			FreeImage_CloseMemory(hmem);
+			return false;
+		}
+
+		//make the image!!
+		int option = 0;
+		if(fif == FIF_JPEG) {
+			option = getJpegOptionFromImageLoadSetting(settings);
+		}
+#if defined(OF_FREEIMAGE_IO64) && OF_FREEIMAGE_IO64
+		if(fif == FIF_TIFF){
+			FreeImage_CloseMemory(hmem);
+			hmem = nullptr;
+			bmp = ofLoadTiffFromMemory64(buffer, option | loadFlagsBase);
+		}else
+#endif
+		{
+			bmp = FreeImage_LoadFromMemory(fif, hmem, option | loadFlagsBase);
+		}
 	}
-
-	//get the file type!
-	FREE_IMAGE_FORMAT fif = FreeImage_GetFileTypeFromMemory(hmem);
-	if( fif == -1 ){
-		ofLogError("ofImage") << "loadImage(): couldn't load image from ofBuffer, unable to guess image format from memory";
-		FreeImage_CloseMemory(hmem);
-		return false;
-	}
-
-
-	//make the image!!
-	int option = 0;
-	if(fif == FIF_JPEG) {
-		option = getJpegOptionFromImageLoadSetting(settings);
-	}
-	bmp = FreeImage_LoadFromMemory(fif, hmem, option | settings.freeImageFlags);
 
 	if( bmp != nullptr ){
 		bLoaded = true;
