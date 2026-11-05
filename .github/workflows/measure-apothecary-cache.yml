@@ -1,0 +1,133 @@
+name: Measure apothecary cache
+
+# Time Actions cache restore vs curl from GitHub releases.
+# Restore is sometimes slower than curl, especially for the small Linux
+# (~7 MB) archive. Seed then compare so the first run of a PR still has a hit.
+on:
+  pull_request:
+    paths:
+      - .github/actions/cache-apothecary/**
+      - .github/workflows/measure-apothecary-cache.yml
+      - .github/workflows/of.yml
+      - scripts/ci/apothecary_cache_key.sh
+      - scripts/ci/measure_apothecary_curl.sh
+  push:
+    branches: [master]
+    paths:
+      - .github/actions/cache-apothecary/**
+      - .github/workflows/measure-apothecary-cache.yml
+      - scripts/ci/apothecary_cache_key.sh
+      - scripts/ci/measure_apothecary_curl.sh
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: write
+
+concurrency:
+  group: measure-apothecary-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  seed:
+    name: seed (${{ matrix.name }})
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { name: linux-7mb, platform: linux, arch: "64", gcc: "10", runner: ubuntu-24.04 }
+          - { name: osx-88mb, platform: osx, arch: "", gcc: "", runner: xcode-27 }
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - name: Cache apothecary tarballs
+        uses: ./.github/actions/cache-apothecary
+        with:
+          platform: ${{ matrix.platform }}
+          arch: ${{ matrix.arch }}
+          gcc: ${{ matrix.gcc }}
+      - name: Fill libs/download on miss
+        run: |
+          mkdir -p libs/download
+          if ls libs/download/openFrameworksLibs_* >/dev/null 2>&1; then
+            echo "already populated"
+            ls -lh libs/download
+            exit 0
+          fi
+          ARGS=(--platform "${{ matrix.platform }}" --dest libs/download)
+          if [ -n "${{ matrix.arch }}" ]; then ARGS+=(--arch "${{ matrix.arch }}"); fi
+          if [ -n "${{ matrix.gcc }}" ]; then ARGS+=(--gcc "${{ matrix.gcc }}"); fi
+          bash scripts/ci/measure_apothecary_curl.sh "${ARGS[@]}"
+
+  compare:
+    name: compare (${{ matrix.name }})
+    needs: seed
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { name: linux-7mb, platform: linux, arch: "64", gcc: "10", runner: ubuntu-24.04 }
+          - { name: osx-88mb, platform: osx, arch: "", gcc: "", runner: xcode-27 }
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - name: Cache key
+        id: key
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          PY=python3; command -v python3 >/dev/null 2>&1 || PY=python
+          echo "t0=$("$PY" -c 'import time; print(time.perf_counter())')" >> "$GITHUB_OUTPUT"
+          ARGS=(--platform "${{ matrix.platform }}")
+          if [ -n "${{ matrix.arch }}" ]; then ARGS+=(--arch "${{ matrix.arch }}"); fi
+          if [ -n "${{ matrix.gcc }}" ]; then ARGS+=(--gcc "${{ matrix.gcc }}"); fi
+          KEY=$(bash scripts/ci/apothecary_cache_key.sh "${ARGS[@]}") || KEY=""
+          echo "key=${KEY}" >> "$GITHUB_OUTPUT"
+          echo "key=${KEY:-none}"
+      - name: Restore Actions cache
+        if: steps.key.outputs.key != ''
+        id: restore
+        uses: actions/cache/restore@v6.1.0
+        with:
+          path: libs/download
+          key: ${{ steps.key.outputs.key }}
+      - name: Time restore and curl
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          PY=python3; command -v python3 >/dev/null 2>&1 || PY=python
+          T1=$("$PY" -c 'import time; print(time.perf_counter())')
+          T0="${{ steps.key.outputs.t0 }}"
+          RESTORE_MS=$("$PY" -c "print(int((${T1}-${T0})*1000))")
+          HIT="${{ steps.restore.outputs.cache-hit }}"
+          HIT="${HIT:-false}"
+
+          ARGS=(--platform "${{ matrix.platform }}" --dest /tmp/curl-dl)
+          if [ -n "${{ matrix.arch }}" ]; then ARGS+=(--arch "${{ matrix.arch }}"); fi
+          if [ -n "${{ matrix.gcc }}" ]; then ARGS+=(--gcc "${{ matrix.gcc }}"); fi
+          eval "$(bash scripts/ci/measure_apothecary_curl.sh "${ARGS[@]}" | tee /tmp/curl-measure.txt | grep -E '^(elapsed_ms|size_bytes|n_files)=')"
+          CURL_MS="${elapsed_ms:-0}"
+          SIZE="${size_bytes:-0}"
+          N="${n_files:-0}"
+          SIZE_MB=$("$PY" -c "print(round(${SIZE}/1000000, 1))")
+
+          WINNER="curl"
+          if [ "$HIT" = "true" ] && [ "$RESTORE_MS" -lt "$CURL_MS" ]; then WINNER="cache"; fi
+          if [ "$HIT" != "true" ]; then WINNER="n/a (cache miss)"; fi
+
+          echo "=== ${{ matrix.name }} ==="
+          echo "cache-hit=${HIT}  restore_ms=${RESTORE_MS}  curl_ms=${CURL_MS}  size_mb=${SIZE_MB}  n=${N}  winner=${WINNER}"
+          {
+            echo "## ${{ matrix.name }}"
+            echo ""
+            echo "| | |"
+            echo "|---|---|"
+            echo "| cache-hit | \`${HIT}\` |"
+            echo "| restore | ${RESTORE_MS} ms |"
+            echo "| curl (GitHub releases) | ${CURL_MS} ms |"
+            echo "| size | ${SIZE_MB} MB (${N} files) |"
+            echo "| faster | **${WINNER}** |"
+            echo ""
+            echo "Restore includes digest lookup + \`actions/cache/restore\`. Curl is a fresh download of the same assets. Linux ~7 MB often loses to curl; osx ~88 MB is the interesting case."
+          } >> "$GITHUB_STEP_SUMMARY"

@@ -1,0 +1,67 @@
+name: Cache apothecary tarballs
+description: Restore libs/download keyed by apothecary release asset digests
+
+inputs:
+  platform:
+    required: true
+    description: osx, macos, linux, vs, msys2, emscripten, android
+  arch:
+    required: false
+    default: ""
+  gcc:
+    required: false
+    default: ""
+  tag:
+    required: false
+    default: latest
+  vs2026:
+    required: false
+    default: "false"
+
+outputs:
+  key:
+    description: Actions cache key, empty when digests are missing
+    value: ${{ steps.key.outputs.key }}
+  cache-hit:
+    description: "true if libs/download was restored"
+    value: ${{ steps.cache.outputs.cache-hit }}
+
+runs:
+  using: composite
+  steps:
+    - id: key
+      shell: bash
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
+      run: |
+        set -euo pipefail
+        PY=python3
+        command -v python3 >/dev/null 2>&1 || PY=python
+        START=$("$PY" -c 'import time; print(time.perf_counter())')
+        ARGS=(--tag "${{ inputs.tag }}" --platform "${{ inputs.platform }}")
+        if [ -n "${{ inputs.arch }}" ]; then ARGS+=(--arch "${{ inputs.arch }}"); fi
+        if [ -n "${{ inputs.gcc }}" ]; then ARGS+=(--gcc "${{ inputs.gcc }}"); fi
+        if [ "${{ inputs.vs2026 }}" = "true" ]; then ARGS+=(--vs2026); fi
+        KEY=$(bash "${{ github.workspace }}/scripts/ci/apothecary_cache_key.sh" "${ARGS[@]}") || KEY=""
+        END=$("$PY" -c 'import time; print(time.perf_counter())')
+        MS=$("$PY" -c "print(int((${END}-${START})*1000))")
+        echo "key=${KEY}" >> "$GITHUB_OUTPUT"
+        echo "digest lookup ${MS} ms  key=${KEY:-none}"
+
+    - id: cache
+      if: steps.key.outputs.key != ''
+      uses: actions/cache@v6.1.0
+      with:
+        path: libs/download
+        key: ${{ steps.key.outputs.key }}
+
+    - if: steps.key.outputs.key != ''
+      shell: bash
+      run: |
+        HIT="${{ steps.cache.outputs.cache-hit }}"
+        echo "apothecary cache-hit=${HIT:-false} key=${{ steps.key.outputs.key }}"
+        if [ -d libs/download ]; then
+          echo "libs/download:"
+          du -sh libs/download 2>/dev/null || true
+          ls -lh libs/download 2>/dev/null | head -20 || true
+        fi

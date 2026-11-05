@@ -19,6 +19,9 @@ concurrency:
 env:
   ccache: ccache
   RELEASE: latest
+  # Apothecary tarballs: .github/actions/cache-apothecary (digest key, libs/download).
+  # download_libs.sh skips curl when the local archive size matches. Measure first:
+  # .github/workflows/measure-apothecary-cache.yml (restore vs GitHub release curl).
 
 jobs:
   build-emscripten:
@@ -31,6 +34,12 @@ jobs:
       TARGET: ${{matrix.cfg.target}}
     steps:
       - uses: actions/checkout@v7.0.1
+      - name: Cache apothecary tarballs
+        uses: ./.github/actions/cache-apothecary
+        with:
+          platform: emscripten
+          arch: "32"
+          tag: ${{ env.RELEASE }}
       - name: Docker Step
         run: "docker run -di --name emscripten -v $PWD:/src emscripten/emsdk:6.0.13 bash"
       # - name: Determine Release
@@ -76,6 +85,12 @@ jobs:
         shell: bash
         run: gcc -v || true
       - uses: actions/checkout@v7.0.1
+      - name: Cache apothecary tarballs
+        uses: ./.github/actions/cache-apothecary
+        with:
+          platform: msys2
+          arch: ${{ matrix.msystem }}
+          tag: ${{ env.RELEASE }}
       - name: ccache
         uses: hendrikmuhs/ccache-action@v1.2.24
         with:
@@ -151,6 +166,43 @@ jobs:
         uses: hendrikmuhs/ccache-action@v1.2.24
         with:
           key: cmake-${{ matrix.name }}
+
+      - name: Cache apothecary (linux64)
+        if: matrix.name == 'linux64'
+        uses: ./.github/actions/cache-apothecary
+        with:
+          platform: linux
+          arch: "64"
+          gcc: "10"
+          tag: ${{ env.RELEASE }}
+      - name: Cache apothecary (linuxaarch64)
+        if: matrix.name == 'linuxaarch64'
+        uses: ./.github/actions/cache-apothecary
+        with:
+          platform: linux
+          arch: aarch64
+          gcc: "10"
+          tag: ${{ env.RELEASE }}
+      - name: Cache apothecary (emscripten)
+        if: matrix.name == 'emscripten'
+        uses: ./.github/actions/cache-apothecary
+        with:
+          platform: emscripten
+          arch: "32"
+          tag: ${{ env.RELEASE }}
+      - name: Cache apothecary (macos)
+        if: matrix.name == 'macos'
+        uses: ./.github/actions/cache-apothecary
+        with:
+          platform: osx
+          tag: ${{ env.RELEASE }}
+      - name: Cache apothecary (vs-x64)
+        if: matrix.name == 'vs-x64'
+        uses: ./.github/actions/cache-apothecary
+        with:
+          platform: vs
+          arch: x64
+          tag: ${{ env.RELEASE }}
 
       - name: Libs, dependencies and projectGenerator (linux64)
         if: matrix.name == 'linux64'
@@ -252,6 +304,13 @@ jobs:
     steps:
       - name: Clone repository
         uses: actions/checkout@v7.0.1
+      - name: Cache apothecary tarballs
+        uses: ./.github/actions/cache-apothecary
+        with:
+          platform: vs
+          arch: ${{ matrix.platform }}
+          tag: ${{ env.RELEASE }}
+          vs2026: ${{ matrix.vsYear == 2026 }}
       - uses: msys2/setup-msys2@v2.33.0
         with:
           update: true
@@ -327,6 +386,13 @@ jobs:
         uses: hendrikmuhs/ccache-action@v1.2.24
         with:
           key: ${{ matrix.cfg.libs }}
+      - name: Cache apothecary tarballs
+        uses: ./.github/actions/cache-apothecary
+        with:
+          platform: linux
+          arch: ${{ matrix.cfg.libs }}
+          gcc: "10"
+          tag: ${{ env.RELEASE }}
       # - name: Determine Release
       #   id: vars
       #   shell: bash
@@ -378,6 +444,11 @@ jobs:
         uses: hendrikmuhs/ccache-action@v1.2.24
         with:
           key: ${{ matrix.cfg.target }}-${{ matrix.cfg.libs }}
+      - name: Cache apothecary tarballs
+        uses: ./.github/actions/cache-apothecary
+        with:
+          platform: macos
+          tag: ${{ env.RELEASE }}
       # - name: Determine Release
       #   id: vars
       #   shell: bash
@@ -445,6 +516,13 @@ jobs:
         uses: hendrikmuhs/ccache-action@v1.2.24
         with:
           key: ${{ matrix.cfg.target }}
+      - name: Cache apothecary tarballs
+        uses: ./.github/actions/cache-apothecary
+        with:
+          platform: linux
+          arch: ${{ env.ARCH }}
+          gcc: "10"
+          tag: ${{ env.RELEASE }}
 
       - name: Install dependencies
         run: ./scripts/ci/$TARGET/$ARCH/install.sh;
@@ -499,6 +577,13 @@ jobs:
         uses: hendrikmuhs/ccache-action@v1.2.24
         with:
           key: ${{ matrix.cfg.target }}-2204
+      - name: Cache apothecary tarballs
+        uses: ./.github/actions/cache-apothecary
+        with:
+          platform: linux
+          arch: ${{ env.ARCH }}
+          gcc: "10"
+          tag: ${{ env.RELEASE }}
 
       - name: Install dependencies
         run: ./scripts/ci/$TARGET/$ARCH/install.sh;
@@ -572,6 +657,11 @@ jobs:
         uses: hendrikmuhs/ccache-action@v1.2.24
         with:
           key: ${{ matrix.cfg.target }}-${{ matrix.cfg.opt }}
+      - name: Cache apothecary tarballs
+        uses: ./.github/actions/cache-apothecary
+        with:
+          platform: osx
+          tag: ${{ env.RELEASE }}
 
       # - name: Determine Release
       #   id: vars
@@ -629,6 +719,11 @@ jobs:
     steps:
       - name: checkout openFrameworks
         uses: actions/checkout@v7.0.1
+      - name: Cache apothecary tarballs
+        uses: ./.github/actions/cache-apothecary
+        with:
+          platform: android
+          tag: ${{ env.RELEASE }}
 
       - name: Set Up JDK 17
         uses: actions/setup-java@v6.1.0
