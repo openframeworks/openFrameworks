@@ -46,7 +46,12 @@ fail(){
 configure_and_build(){
 	local src="$1" dir="$2" config="$3"
 	$CMAKE_WRAPPER cmake -S "$src" -B "$dir" "${CONFIGURE_ARGS[@]}" -DCMAKE_BUILD_TYPE="$config" || return 1
-	cmake --build "$dir" --config "$config" --parallel || return 1
+	if [[ -n "${CMAKE_VS_MSBUILD_ARGS:-}" ]]; then
+		# shellcheck disable=SC2086
+		cmake --build "$dir" --config "$config" --parallel -- $CMAKE_VS_MSBUILD_ARGS || return 1
+	else
+		cmake --build "$dir" --config "$config" --parallel || return 1
+	fi
 }
 
 # Exercise MSVC addon layouts on every host; no Windows binaries are linked here.
