@@ -45,7 +45,10 @@
 #endif
 #include "ofxiOSGLKView.h"
 #include "ofxiOSEAGLView.h"
+#include "ofxiOSAlerts.h"
 
+// iOS 13+ / 26+: Info.plist UIApplicationSceneManifest names this class.
+// UIKit delivers opened URLs to scene:openURLContexts:.
 @interface ofxiOSSceneDelegate : UIResponder <UIWindowSceneDelegate>
 @property (strong, nonatomic) UIWindow * window;
 @end
@@ -84,17 +87,18 @@
 - (void)scene:(UIScene *)scene openURLContexts:(NSSet<UIOpenURLContext *> *)URLContexts {
 	id<UIApplicationDelegate> appDelegate = [UIApplication sharedApplication].delegate;
 	for (UIOpenURLContext * context in URLContexts) {
+		NSURL * url = context.URL;
+		if (!url) {
+			continue;
+		}
 		if ([appDelegate respondsToSelector:@selector(application:openURL:options:)]) {
-			[appDelegate application:[UIApplication sharedApplication] openURL:context.URL options:@{}];
+			[appDelegate application:[UIApplication sharedApplication] openURL:url options:@{}];
+		} else {
+			NSString * urlData = [url absoluteString];
+			if (urlData) {
+				ofxiOSAlerts.launchedWithURL([urlData UTF8String]);
+			}
 		}
-#if !TARGET_OS_TV
-		else if ([appDelegate respondsToSelector:@selector(application:handleOpenURL:)]) {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-			[appDelegate application:[UIApplication sharedApplication] handleOpenURL:context.URL];
-#pragma clang diagnostic pop
-		}
-#endif
 	}
 }
 

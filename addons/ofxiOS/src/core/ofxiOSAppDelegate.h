@@ -50,6 +50,10 @@
 @property (nonatomic, strong) UIViewController * uiViewController;
 @property (readonly) NSInteger currentScreenIndex;
 
+- (BOOL)application:(UIApplication *)application
+            openURL:(NSURL *)url
+            options:(NSDictionary<UIApplicationOpenURLOptionsKey, id> *)options;
+
 - (BOOL)application:(UIApplication*)application
       handleOpenURL:(NSURL*)url;
 
