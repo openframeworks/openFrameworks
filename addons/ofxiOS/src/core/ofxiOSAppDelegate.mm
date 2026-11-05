@@ -221,11 +221,17 @@
 	ofxiOSAlerts.gotMemoryWarning();
 }
 
-- (BOOL)application:(UIApplication *)application handleOpenURL:(NSURL *)url {
+- (BOOL)application:(UIApplication *)application
+            openURL:(NSURL *)url
+            options:(NSDictionary<UIApplicationOpenURLOptionsKey, id> *)options {
 	NSString *urlData = [url absoluteString];
 	const char * response = [urlData UTF8String];
 	ofxiOSAlerts.launchedWithURL(response);
 	return YES;
+}
+
+- (BOOL)application:(UIApplication *)application handleOpenURL:(NSURL *)url {
+	return [self application:application openURL:url options:@{}];
 }
 
 //-------------------------------------------------------------------------------------------
