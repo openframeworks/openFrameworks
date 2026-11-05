@@ -21,8 +21,9 @@
 @property (nonatomic, strong) UIWindow * window;
 @property (nonatomic, strong) UIViewController * uiViewController;
 
-- (BOOL)application:(UIApplication*)application
-      handleOpenURL:(NSURL*)url;
+- (BOOL)application:(UIApplication *)application
+            openURL:(NSURL *)url
+            options:(NSDictionary<UIApplicationOpenURLOptionsKey, id> *)options;
 
 
 @end
