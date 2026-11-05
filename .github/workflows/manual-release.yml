@@ -43,6 +43,13 @@ jobs:
         uses: hendrikmuhs/ccache-action@v1.2.24
         with:
           key: ${{ matrix.cfg.target }}
+      - name: Cache apothecary tarballs
+        uses: ./.github/actions/cache-apothecary
+        with:
+          platform: linux
+          arch: "64"
+          gcc: "10"
+          tag: ${{ env.RELEASE }}
       - name: update submodules
         run: ./scripts/dev/init_submodules.sh
       - name: Install dependencies

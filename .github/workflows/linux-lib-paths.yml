@@ -28,6 +28,13 @@ jobs:
       RELEASE: latest
     steps:
       - uses: actions/checkout@v7.0.1
+      - name: Cache apothecary tarballs
+        uses: ./.github/actions/cache-apothecary
+        with:
+          platform: linux
+          arch: "64"
+          gcc: "10"
+          tag: ${{ env.RELEASE }}
       - name: Download linux 64 gcc10 libs
         run: ./scripts/linux/download_libs.sh -t $RELEASE -a 64 -g 10
       - name: Check deployed files and archive format

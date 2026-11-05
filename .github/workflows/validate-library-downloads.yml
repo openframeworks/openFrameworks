@@ -6,6 +6,10 @@ on:
       - scripts/dev/downloader.sh
       - scripts/dev/sha_verify.sh
       - scripts/dev/tests/test-download-validation.sh
+      - scripts/ci/apothecary_cache_key.sh
+      - scripts/ci/measure_apothecary_curl.sh
+      - scripts/ci/tests/test-apothecary-cache-key.sh
+      - .github/actions/cache-apothecary/**
       - .github/workflows/validate-library-downloads.yml
   push:
     branches: [master]
@@ -14,6 +18,10 @@ on:
       - scripts/dev/downloader.sh
       - scripts/dev/sha_verify.sh
       - scripts/dev/tests/test-download-validation.sh
+      - scripts/ci/apothecary_cache_key.sh
+      - scripts/ci/measure_apothecary_curl.sh
+      - scripts/ci/tests/test-apothecary-cache-key.sh
+      - .github/actions/cache-apothecary/**
       - .github/workflows/validate-library-downloads.yml
 permissions:
   contents: read
@@ -25,5 +33,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7.0.1
-      - run: bash -n scripts/dev/download_libs.sh scripts/dev/downloader.sh scripts/dev/sha_verify.sh
+      - run: bash -n scripts/dev/download_libs.sh scripts/dev/downloader.sh scripts/dev/sha_verify.sh scripts/ci/apothecary_cache_key.sh scripts/ci/measure_apothecary_curl.sh
       - run: bash scripts/dev/tests/test-download-validation.sh
+      - run: bash scripts/ci/tests/test-apothecary-cache-key.sh
