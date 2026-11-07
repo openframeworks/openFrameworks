@@ -968,6 +968,7 @@ printHelp(){
     menu                      Interactive menu
     status                    System checker + full library list
     setup                     Install deps/libs/PG if missing or outdated
+    vsconfig  [check|latest|minimal|no-update] [2022|2026]  VS components (scripts/vs/<year>.vsconfig)
     update    libs | pg | all Prompt source; refresh libs/PG as needed
     build     …               Build core / projects / emscripten / cmake (see of build help)
     cleanup   projects|caches|libs   Free disk (artifacts / downloads / prebuilts)
@@ -986,6 +987,7 @@ printHelp(){
     LIB_CLEAN_MODE=platform|merge|full   # default platform: only lib/<plat>
     DOWNLOAD_LIBS_ARGS="-vs --full-clean"  extra flags to download_libs.sh
     OF_VS_2026=1              VS 2026 package names (_vs_2026_)
+    OF_SETUP_VS=1|0           setup: run / skip the VS Installer (.vsconfig) without asking
     OF_LINUX_DISTRO=ubuntu    Force linux distro scripts
     OF_APO_VS_VER=18          apothecary VS toolchain (18=VS2026, 17=VS2022, 16=VS2019)
     OF_JOBS=8                 Parallel build jobs
@@ -1862,10 +1864,40 @@ menuUpgrade(){
 	esac
 }
 
+# Visual Studio components — scripts/vs/install_vs_components.sh applies
+# scripts/vs/2022.vsconfig / 2026.vsconfig through the VS Installer
+cmdVsConfig(){
+	local vsScript="${OF_CORE_SCRIPT_DIR}/vs/install_vs_components.sh"
+	local -a args=()
+	local a
+	if [[ "$OF_PLATFORM" != "vs" && "$OF_PLATFORM" != "msys2" ]]; then
+		echoError "vsconfig is Windows only (platform: ${OF_PLATFORM})"
+		return 1
+	fi
+	[[ -f "$vsScript" ]] || { echoError "missing: $vsScript"; return 1; }
+	for a in "$@"; do
+		case "$a" in
+			"") ;;
+			check|--check) args+=(--check) ;;
+			update|--update) args+=(--update) ;;
+			no-update|--no-update) args+=(--no-update) ;;
+			latest|--latest) args+=(--latest) ;;
+			minimal|--minimal) args+=(--minimal) ;;
+			2022|2026|all) args+=(--vs "$a") ;;
+			arm64|--arm64) args+=(--arm64) ;;
+			*) echoError "valid: check | latest | minimal | update | no-update | 2022 | 2026 | all | arm64"; return 1 ;;
+		esac
+	done
+	printBanner "vsconfig"
+	ensureScript "$vsScript" 2>/dev/null
+	"$vsScript" "${args[@]}"
+}
+
 cmdSetup(){
 	local platformDir="${1:-$OF_PLATFORM}"
 	local distroDir depsScript codecsScript
 	local doCodecs=0 taskN=0 needLibs=0 needPG=0
+	local doVs=0 vsOk=0 vsScript="${OF_CORE_SCRIPT_DIR}/vs/install_vs_components.sh"
 	local -a taskNames=()
 
 	# Setup always uses stock apothecary latest for libs
@@ -1902,6 +1934,15 @@ cmdSetup(){
 	elif [[ "$OF_PLATFORM" == "vs" || "$OF_PLATFORM" == "msys2" ]]; then
 		depsScript="${OF_CORE_SCRIPT_DIR}/vs/install_dependencies.sh"
 	fi
+	# Visual Studio components from scripts/vs/<year>.vsconfig — opt-in, it
+	# launches the VS Installer (UAC). OF_SETUP_VS=1|0 answers without asking.
+	if [[ "$OF_PLATFORM" == "vs" && -f "$vsScript" ]]; then
+		if bash "$vsScript" --check >/dev/null 2>&1; then vsOk=1
+		elif [[ "${OF_SETUP_VS:-}" = 1 ]]; then doVs=1
+		elif [[ "${OF_SETUP_VS:-}" = 0 ]]; then doVs=0
+		elif menuCanRun && confirmYes "Visual Studio is missing oF components — run the VS Installer (.vsconfig)?"; then doVs=1
+		fi
+	fi
 
 	if [[ "$needLibs" -eq 0 && "$needPG" -eq 0 && "$OF_PLATFORM" != "linux" && "$OF_PLATFORM" != "osx" \
 		&& "$OF_PLATFORM" != "vs" && "$OF_PLATFORM" != "msys2" ]]; then
@@ -1916,6 +1957,7 @@ cmdSetup(){
 	[[ "$doCodecs" -eq 1 ]] && taskNames+=("Install codecs (${OF_LINUX_DISTRO})")
 	[[ "$OF_PLATFORM" == "osx" ]] && taskNames+=("Xcode CLT / Homebrew (cmake, gum)")
 	[[ "$OF_PLATFORM" == "vs" || "$OF_PLATFORM" == "msys2" ]] && taskNames+=("gum via winget/scoop (optional)")
+	[[ "$OF_PLATFORM" == "vs" ]] && taskNames+=("Visual Studio components (.vsconfig)")
 	if [[ "$needLibs" -eq 1 ]]; then
 		taskNames+=("Download libraries (apothecary @ latest)")
 	else
@@ -1968,6 +2010,18 @@ cmdSetup(){
 			taskTickLine "$taskN" skip
 		fi
 		taskN=$((taskN + 1))
+		if [[ "$OF_PLATFORM" == "vs" ]]; then
+			if [[ "$vsOk" -eq 1 ]]; then
+				taskSet "$taskN" done "already installed"
+			elif [[ "$doVs" -eq 1 ]]; then
+				# best-effort: report a failed install but still fetch libs/PG
+				ensureScript "$vsScript" 2>/dev/null
+				taskLive "$taskN" -- "$vsScript" -y
+			else
+				taskTickLine "$taskN" skip "run: of vsconfig"
+			fi
+			taskN=$((taskN + 1))
+		fi
 	fi
 
 	# libraries — only if missing/outdated
@@ -2599,6 +2653,11 @@ cmdMenu(){
 		opts=(
 			"status()   — checker  (cmdStatus)|status"
 			"setup()    — install  (cmdSetup)|setup"
+		)
+		if [[ "$OF_PLATFORM" == "vs" || "$OF_PLATFORM" == "msys2" ]]; then
+			opts+=("vsconfig() — VS components  (cmdVsConfig)|vsconfig")
+		fi
+		opts+=(
 			"update()   — refresh  (menuUpdate)|update"
 			"draw()     — build  (menuBuild)|build"
 			"cleanup()  — free space  (menuCleanup)|cleanup"
@@ -2619,6 +2678,7 @@ cmdMenu(){
 		case "$choice" in
 			status)     cmdStatus; menuPause ;;
 			setup)      cmdSetup "$OF_PLATFORM"; menuPause ;;
+			vsconfig)   cmdVsConfig; menuPause ;;
 			update)     menuUpdate; [[ $? -eq 2 ]] || menuPause ;;
 			build)      menuBuild ;;
 			cleanup|clean) menuCleanup ;;
@@ -2760,6 +2820,7 @@ runCommand(){
 		menu) cmdMenu ;;
 		status|check|doctor|installed|libs-status) cmdStatus ;;
 		setup|install) cmdSetup "${subcmd:-$OF_PLATFORM}" ;;
+		vsconfig|vs-components) cmdVsConfig "$subcmd" "$subcmd2" "$subcmd3" ;;
 		update) cmdUpdate "$subcmd" "$subcmd2" "$subcmd3" ;;
 		build)
 			shift
