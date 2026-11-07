@@ -968,7 +968,7 @@ printHelp(){
     menu                      Interactive menu
     status                    System checker + full library list
     setup                     Install deps/libs/PG if missing or outdated
-    vsconfig  [check|latest|minimal] [2022|2026]  VS components (scripts/vs/<year>.vsconfig)
+    vsconfig  [check|latest|minimal|no-update] [2022|2026]  VS components (scripts/vs/<year>.vsconfig)
     update    libs | pg | all Prompt source; refresh libs/PG as needed
     build     …               Build core / projects / emscripten / cmake (see of build help)
     cleanup   projects|caches|libs   Free disk (artifacts / downloads / prebuilts)
@@ -1880,11 +1880,12 @@ cmdVsConfig(){
 			"") ;;
 			check|--check) args+=(--check) ;;
 			update|--update) args+=(--update) ;;
+			no-update|--no-update) args+=(--no-update) ;;
 			latest|--latest) args+=(--latest) ;;
 			minimal|--minimal) args+=(--minimal) ;;
 			2022|2026|all) args+=(--vs "$a") ;;
 			arm64|--arm64) args+=(--arm64) ;;
-			*) echoError "valid: check | latest | minimal | update | 2022 | 2026 | all | arm64"; return 1 ;;
+			*) echoError "valid: check | latest | minimal | update | no-update | 2022 | 2026 | all | arm64"; return 1 ;;
 		esac
 	done
 	printBanner "vsconfig"
