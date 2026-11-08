@@ -1,13 +1,14 @@
 name: OF
-# make the action not run on the local repo if the branch is also in a pull request to OF/OF
+# Pushes to master/bleeding run the full matrix.
+# PRs use dorny/paths-filter: ofxiOS → ios/tvOS, VS scripts → VS, macos
+# scripts → macos; anything else (core) → full matrix.
 on:
   push:
-    if: github.event_name == 'push' && github.event.pull_request == null
+    branches: [master, bleeding]
     paths-ignore:
       - "**/*.md"
       - "examples/**"
   pull_request:
-    if: github.event_name == 'pull_request' && github.repository == 'openframeworks/openFrameworks'
     paths-ignore:
       - "**/*.md"
       - "examples/**"
@@ -21,7 +22,100 @@ env:
   RELEASE: latest
 
 jobs:
+  changes:
+    runs-on: ubuntu-24.04
+    outputs:
+      ios: ${{ steps.gate.outputs.ios }}
+      vs: ${{ steps.gate.outputs.vs }}
+      macos: ${{ steps.gate.outputs.macos }}
+      full: ${{ steps.gate.outputs.full }}
+    steps:
+      - uses: dorny/paths-filter@v4.0.3
+        if: github.event_name == 'pull_request'
+        id: filter
+        with:
+          filters: |
+            ios:
+              - 'addons/ofxiOS/**'
+              - 'scripts/ci/ios/**'
+              - 'scripts/ci/tvos/**'
+              - 'scripts/templates/ios/**'
+              - 'scripts/templates/tvOS/**'
+              - 'libs/openFrameworksCompiled/project/ios/**'
+              - 'libs/openFrameworksCompiled/project/tvOS/**'
+            vs:
+              - 'scripts/ci/vs/**'
+              - 'scripts/vs/**'
+              - 'scripts/templates/vs/**'
+              - 'scripts/templates/vs2019/**'
+              - 'scripts/templates/vs2026/**'
+              - 'libs/openFrameworksCompiled/project/vs/**'
+              - 'libs/openFrameworksCompiled/project/vs2019/**'
+              - 'libs/openFrameworksCompiled/project/vs2026/**'
+            macos:
+              - 'scripts/ci/osx/**'
+              - 'scripts/ci/macos/**'
+              - 'scripts/templates/macos/**'
+              - 'scripts/templates/osx/**'
+              - 'libs/openFrameworksCompiled/project/osx/**'
+              - 'libs/openFrameworksCompiled/project/macos/**'
+            core:
+              - '**'
+              - '!**/*.md'
+              - '!examples/**'
+              - '!addons/ofxiOS/**'
+              - '!scripts/ci/ios/**'
+              - '!scripts/ci/tvos/**'
+              - '!scripts/templates/ios/**'
+              - '!scripts/templates/tvOS/**'
+              - '!libs/openFrameworksCompiled/project/ios/**'
+              - '!libs/openFrameworksCompiled/project/tvOS/**'
+              - '!scripts/ci/vs/**'
+              - '!scripts/vs/**'
+              - '!scripts/templates/vs/**'
+              - '!scripts/templates/vs2019/**'
+              - '!scripts/templates/vs2026/**'
+              - '!libs/openFrameworksCompiled/project/vs/**'
+              - '!libs/openFrameworksCompiled/project/vs2019/**'
+              - '!libs/openFrameworksCompiled/project/vs2026/**'
+              - '!scripts/ci/osx/**'
+              - '!scripts/ci/macos/**'
+              - '!scripts/templates/macos/**'
+              - '!scripts/templates/osx/**'
+              - '!libs/openFrameworksCompiled/project/osx/**'
+              - '!libs/openFrameworksCompiled/project/macos/**'
+      - id: gate
+        run: |
+          set -e
+          if [ "${{ github.event_name }}" != "pull_request" ]; then
+            echo "full=true" >> "$GITHUB_OUTPUT"
+            echo "ios=true" >> "$GITHUB_OUTPUT"
+            echo "vs=true" >> "$GITHUB_OUTPUT"
+            echo "macos=true" >> "$GITHUB_OUTPUT"
+            echo "push/master: full matrix"
+            exit 0
+          fi
+          core='${{ steps.filter.outputs.core }}'
+          ios='${{ steps.filter.outputs.ios }}'
+          vs='${{ steps.filter.outputs.vs }}'
+          macos='${{ steps.filter.outputs.macos }}'
+          if [ "$core" = "true" ]; then
+            echo "full=true" >> "$GITHUB_OUTPUT"
+            echo "ios=true" >> "$GITHUB_OUTPUT"
+            echo "vs=true" >> "$GITHUB_OUTPUT"
+            echo "macos=true" >> "$GITHUB_OUTPUT"
+            echo "PR core paths: full matrix"
+          else
+            echo "full=false" >> "$GITHUB_OUTPUT"
+            echo "ios=$ios" >> "$GITHUB_OUTPUT"
+            echo "vs=$vs" >> "$GITHUB_OUTPUT"
+            echo "macos=$macos" >> "$GITHUB_OUTPUT"
+            echo "PR slim: ios=$ios vs=$vs macos=$macos"
+          fi
+
   build-emscripten:
+    needs: changes
+    if: needs.changes.outputs.full == 'true'
     runs-on: ubuntu-24.04
     strategy:
       matrix:
@@ -60,6 +154,8 @@ jobs:
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   build-msys2:
+    needs: changes
+    if: needs.changes.outputs.full == 'true'
     runs-on: ${{ matrix.runner }}
     strategy:
       fail-fast: false
@@ -133,6 +229,8 @@ jobs:
   # CMake build (libs/openFrameworksCompiled/project/CMake): core + examples, with
   # each example's CMakeLists.txt generated by projectGenerator -t cmake
   build-cmake:
+    needs: changes
+    if: needs.changes.outputs.full == 'true'
     runs-on: ${{ matrix.runner }}
     strategy:
       fail-fast: false
@@ -234,6 +332,8 @@ jobs:
         run: scripts/ci/cmake/build.sh --pg "$PWD/projectGenerator/projectGenerator.exe" --platform vs -- -G "Visual Studio 17 2022" -A x64 -DOF_PRECOMPILED_HEADER=ON
 
   build-vs:
+    needs: changes
+    if: needs.changes.outputs.vs == 'true'
     runs-on: ${{ matrix.runner }}
     strategy:
       fail-fast: false
@@ -289,6 +389,8 @@ jobs:
           msbuild examples/templates/allAddonsExample/allAddonsExample.vcxproj /p:Configuration=Release /p:Platform=${{ matrix.platform }} /p:PlatformToolset=${{ matrix.toolset }}
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   rpi-build:
+    needs: changes
+    if: needs.changes.outputs.full == 'true'
     runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
@@ -364,6 +466,8 @@ jobs:
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   build-ios-tvos:
+    needs: changes
+    if: needs.changes.outputs.ios == 'true'
     runs-on: xcode-27
     strategy:
       matrix:
@@ -404,6 +508,8 @@ jobs:
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   build-linux:
+    needs: changes
+    if: needs.changes.outputs.full == 'true'
     runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
@@ -475,6 +581,8 @@ jobs:
           fi
 
   build-linux-64-22-04:
+    needs: changes
+    if: needs.changes.outputs.full == 'true'
     runs-on: ubuntu-22.04
     strategy:
       fail-fast: false
@@ -560,6 +668,8 @@ jobs:
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   build-macos:
+    needs: changes
+    if: needs.changes.outputs.macos == 'true'
     runs-on: xcode-27
     strategy:
       matrix:
@@ -609,6 +719,8 @@ jobs:
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   build-android:
+    needs: changes
+    if: needs.changes.outputs.full == 'true'
     runs-on: ubuntu-24.04
     strategy:
       matrix:
@@ -663,3 +775,36 @@ jobs:
 
       - name: Build Android examples
         run: scripts/ci/android/build_examples.sh "$ARCH"
+
+  # Merge gate: skipped jobs (path filter) are OK; any failure fails the PR.
+  # Point branch protection at this job instead of every matrix cell.
+  CI:
+    needs:
+      - changes
+      - build-emscripten
+      - build-msys2
+      - build-cmake
+      - build-vs
+      - rpi-build
+      - build-ios-tvos
+      - build-linux
+      - build-linux-64-22-04
+      - build-macos
+      - build-android
+    if: always() && !cancelled()
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Merge gate
+        env:
+          NEEDS: ${{ toJSON(needs) }}
+        run: |
+          python3 - <<'PY'
+          import json, os, sys
+          needs = json.loads(os.environ["NEEDS"])
+          failed = [name for name, job in needs.items() if job.get("result") == "failure"]
+          if failed:
+              print("failed:", ", ".join(failed))
+              sys.exit(1)
+          for name, job in sorted(needs.items()):
+              print(f"{name}: {job.get('result')}")
+          PY
