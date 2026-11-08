@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # of.sh - openFrameworks CLI  |  Dan Rosser 2025
-OF_SCRIPT_VERSION=0.4.5
+OF_SCRIPT_VERSION=0.4.6
 
 OF_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 OF_DIR="$(realpath "$OF_DIR/../")"
