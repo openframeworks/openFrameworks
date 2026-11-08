@@ -137,21 +137,28 @@ resolveApothecary
 
 # Host VS package arch: 64 | arm64 (for download_libs / status display)
 detectHostVsArch(){
-	local m pa
-	pa="${PROCESSOR_ARCHITECTURE:-}"
-	[[ -n "${PROCESSOR_ARCHITEW6432:-}" ]] && pa="${PROCESSOR_ARCHITEW6432}"
+	if hostIsArm64; then echo "arm64"; else echo "64"; fi
+}
+
+# Native Windows CPU, also from emulated x64 shells: Git Bash and MSYS2's own
+# bash are x64 on Windows on ARM and report PROCESSOR_ARCHITECTURE=AMD64 /
+# uname -m x86_64, so the registry (not emulated) is checked first
+hostIsArm64(){
+	local reg="/proc/registry/HKEY_LOCAL_MACHINE/SYSTEM/CurrentControlSet/Control/Session Manager/Environment/PROCESSOR_ARCHITECTURE"
+	local pa
+	[[ -r "$reg" && "$(tr -d '\0\r\n ' < "$reg")" == "ARM64" ]] && return 0
 	case "${MSYSTEM:-}" in
-		CLANGARM64|clangarm64) echo "arm64"; return 0 ;;
+		CLANGARM64|clangarm64) return 0 ;;
 	esac
-	case "$(echo "$pa" | tr '[:lower:]' '[:upper:]')" in
-		ARM64) echo "arm64"; return 0 ;;
-		AMD64|X86) echo "64"; return 0 ;;
+	pa="${PROCESSOR_ARCHITEW6432:-${PROCESSOR_ARCHITECTURE:-}}"
+	[[ "$(echo "$pa" | tr '[:lower:]' '[:upper:]')" == "ARM64" ]] && return 0
+	case "$(uname -s 2>/dev/null)" in
+		*ARM64*) return 0 ;;
 	esac
-	m=$(uname -m 2>/dev/null || echo "")
-	case "$m" in
-		aarch64|arm64|ARM64) echo "arm64" ;;
-		*) echo "64" ;;
+	case "$(uname -m 2>/dev/null)" in
+		aarch64|arm64|ARM64) return 0 ;;
 	esac
+	return 1
 }
 
 # MSYS2 toolchain environments that have openFrameworks lib packages
@@ -170,15 +177,6 @@ isMsys2Shell(){
 		ucrt64|clang64|clangarm64|mingw64) return 0 ;;
 	esac
 	return 1
-}
-
-# Native Windows CPU, also from emulated x64 shells (MSYS2's own bash is x64
-# on Windows on ARM and reports PROCESSOR_ARCHITECTURE=AMD64 / x86_64)
-hostIsArm64(){
-	local reg="/proc/registry/HKEY_LOCAL_MACHINE/SYSTEM/CurrentControlSet/Control/Session Manager/Environment/PROCESSOR_ARCHITECTURE"
-	[[ -r "$reg" && "$(tr -d '\0\r\n ' < "$reg")" == "ARM64" ]] && return 0
-	[[ "$(detectHostVsArch)" == "arm64" ]] && return 0
-	[[ "$(uname -s 2>/dev/null)" == *ARM64* ]]
 }
 
 # MSYS2 env for libs: the shell's own MSYSTEM when it is one of OF_MSYS2_ENVS
