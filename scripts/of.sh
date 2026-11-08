@@ -913,7 +913,7 @@ cmdStatus(){
 	if ofHasGit; then
 		echoKV "git" "$(ofGitSummary)"
 	else
-		echoKV "git" "nightly package (no .git)"
+		echoKV "git" "$(ofNoGitLabel)"
 		echoNote "of clone  — attach openFrameworks.git"
 	fi
 	local stSha stShaN
@@ -1078,7 +1078,7 @@ cmdVersion(){
 	if ofHasGit; then
 		echoKV "git" "$(ofGitSummary)"
 	else
-		echoKV "git" "nightly package (no .git)"
+		echoKV "git" "$(ofNoGitLabel)"
 	fi
 	printf '\n'
 }
@@ -1112,7 +1112,7 @@ menuVersion(){
 	if ofHasGit; then
 		echoKV "git" "$(ofGitSummary)"
 	else
-		echoKV "git" "nightly package (no .git)"
+		echoKV "git" "$(ofNoGitLabel)"
 	fi
 	printf '\n'
 	if [[ -n "$bin" ]]; then
@@ -2187,15 +2187,40 @@ pathIsGitTracked(){
 	[[ -n "$(git -C "$OF_DIR" ls-files -- "$p" 2>/dev/null | head -1)" ]]
 }
 
+# MSYS2 doesn't ship git (pacman -S git). When git isn't on PATH but Git for
+# Windows is installed, use its git.exe — MSYS2 converts the /c/… path args.
+if ! command -v git >/dev/null 2>&1; then
+	for _ofGitExe in \
+		"$(cygpath -u "$(printenv ProgramW6432 2>/dev/null || printenv ProgramFiles 2>/dev/null)" 2>/dev/null)/Git/cmd/git.exe" \
+		"/c/Program Files/Git/cmd/git.exe" \
+		"$(cygpath -u "$(printenv LOCALAPPDATA 2>/dev/null)" 2>/dev/null)/Programs/Git/cmd/git.exe"; do
+		if [[ -x "$_ofGitExe" ]]; then
+			OF_GIT_EXE="$_ofGitExe"
+			git(){ "$OF_GIT_EXE" "$@"; }
+			break
+		fi
+	done
+	unset _ofGitExe
+fi
+
 ofHasGit(){
 	command -v git >/dev/null 2>&1 || return 1
 	[[ -e "$OF_DIR/.git" ]] || return 1
 	git -C "$OF_DIR" rev-parse --verify HEAD >/dev/null 2>&1
 }
 
+# git line when ofHasGit fails: a real nightly, or a checkout without git
+ofNoGitLabel(){
+	if [[ -e "$OF_DIR/.git" ]]; then
+		printf 'git checkout (git not found — pacman -S git)'
+	else
+		printf 'nightly package (no .git)'
+	fi
+}
+
 ofGitSummary(){
 	local branch sha
-	ofHasGit || { printf 'nightly package (no .git)'; return 1; }
+	ofHasGit || { ofNoGitLabel; return 1; }
 	branch=$(git -C "$OF_DIR" rev-parse --abbrev-ref HEAD 2>/dev/null || echo "?")
 	sha=$(git -C "$OF_DIR" rev-parse --short HEAD 2>/dev/null || echo "?")
 	printf '%s @ %s' "$branch" "$sha"
@@ -2212,6 +2237,11 @@ cmdClone(){
 		echoKV "git" "$(ofGitSummary)"
 		echoKV "remote" "$(git -C "$OF_DIR" remote get-url origin 2>/dev/null || echo none)"
 		return 0
+	fi
+	if [[ -e "$OF_DIR/.git" ]]; then
+		echoWarning "already a git checkout, but git can't read it"
+		echoKV "git" "$(ofNoGitLabel)"
+		return 1
 	fi
 	if ! command -v git >/dev/null 2>&1; then
 		echoError "git not found"
@@ -2747,7 +2777,7 @@ cmdMenu(){
 		if ofHasGit; then
 			echoKV "git" "$(ofGitSummary)"
 		else
-			echoKV "git" "nightly package (no .git)"
+			echoKV "git" "$(ofNoGitLabel)"
 		fi
 		printf '\n'
 
@@ -2757,7 +2787,7 @@ cmdMenu(){
 			"status()   — checker  (cmdStatus)|status"
 			"setup()    — install  (cmdSetup)|setup"
 		)
-		if [[ "$OF_PLATFORM" == "vs" || "$OF_PLATFORM" == "msys2" ]]; then
+		if [[ "$OF_PLATFORM" == "vs" ]]; then
 			opts+=("vsconfig() — VS components  (cmdVsConfig)|vsconfig")
 		fi
 		opts+=(
@@ -2767,7 +2797,7 @@ cmdMenu(){
 			"version()  — info  (menuVersion)|version"
 			"test()     — smoke tests  (menuTest)|test"
 		)
-		if ! ofHasGit; then
+		if [[ ! -e "$OF_DIR/.git" ]]; then
 			opts+=("clone()    — nightly → git clone  (cmdClone)|clone")
 		fi
 		opts+=("exit()|exit")
