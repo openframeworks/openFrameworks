@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # of.sh - openFrameworks CLI  |  Dan Rosser 2025
-OF_SCRIPT_VERSION=0.4.5
+OF_SCRIPT_VERSION=0.4.6
 
 OF_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 OF_DIR="$(realpath "$OF_DIR/../")"
@@ -137,21 +137,63 @@ resolveApothecary
 
 # Host VS package arch: 64 | arm64 (for download_libs / status display)
 detectHostVsArch(){
-	local m pa
-	pa="${PROCESSOR_ARCHITECTURE:-}"
-	[[ -n "${PROCESSOR_ARCHITEW6432:-}" ]] && pa="${PROCESSOR_ARCHITEW6432}"
+	if hostIsArm64; then echo "arm64"; else echo "64"; fi
+}
+
+# Native Windows CPU, also from emulated x64 shells: Git Bash and MSYS2's own
+# bash are x64 on Windows on ARM and report PROCESSOR_ARCHITECTURE=AMD64 /
+# uname -m x86_64, so the registry (not emulated) is checked first
+hostIsArm64(){
+	local reg="/proc/registry/HKEY_LOCAL_MACHINE/SYSTEM/CurrentControlSet/Control/Session Manager/Environment/PROCESSOR_ARCHITECTURE"
+	local pa
+	[[ -r "$reg" && "$(tr -d '\0\r\n ' < "$reg")" == "ARM64" ]] && return 0
 	case "${MSYSTEM:-}" in
-		CLANGARM64|clangarm64) echo "arm64"; return 0 ;;
+		CLANGARM64|clangarm64) return 0 ;;
 	esac
-	case "$(echo "$pa" | tr '[:lower:]' '[:upper:]')" in
-		ARM64) echo "arm64"; return 0 ;;
-		AMD64|X86) echo "64"; return 0 ;;
+	pa="${PROCESSOR_ARCHITEW6432:-${PROCESSOR_ARCHITECTURE:-}}"
+	[[ "$(echo "$pa" | tr '[:lower:]' '[:upper:]')" == "ARM64" ]] && return 0
+	case "$(uname -s 2>/dev/null)" in
+		*ARM64*) return 0 ;;
 	esac
-	m=$(uname -m 2>/dev/null || echo "")
-	case "$m" in
-		aarch64|arm64|ARM64) echo "arm64" ;;
-		*) echo "64" ;;
+	case "$(uname -m 2>/dev/null)" in
+		aarch64|arm64|ARM64) return 0 ;;
 	esac
+	return 1
+}
+
+# MSYS2 toolchain environments that have openFrameworks lib packages
+OF_MSYS2_ENVS=(ucrt64 clang64 clangarm64 mingw64)
+
+# Git for Windows ships git-bash.exe at its root; MSYS2 doesn't (#8640).
+# Git Bash also sets MSYSTEM=MINGW64, so MSYSTEM alone can't tell them apart.
+isGitBash(){
+	[[ -f /git-bash.exe || -f /git-cmd.exe ]]
+}
+
+isMsys2Shell(){
+	isGitBash && return 1
+	[[ -x /usr/bin/pacman ]] && return 0
+	case "$(echo "${MSYSTEM:-}" | tr '[:upper:]' '[:lower:]')" in
+		ucrt64|clang64|clangarm64|mingw64) return 0 ;;
+	esac
+	return 1
+}
+
+# MSYS2 env for libs: the shell's own MSYSTEM when it is one of OF_MSYS2_ENVS
+# (and this is really MSYS2), else by CPU — clangarm64 on ARM64, ucrt64 on x64
+detectMsys2Env(){
+	local env
+	env=$(echo "${MSYSTEM:-}" | tr '[:upper:]' '[:lower:]')
+	if ! isGitBash; then
+		case "$env" in
+			ucrt64|clang64|clangarm64|mingw64) echo "$env"; return 0 ;;
+		esac
+	fi
+	if hostIsArm64; then
+		echo "clangarm64"
+	else
+		echo "ucrt64"
+	fi
 }
 
 autoDetectOS(){
@@ -162,10 +204,16 @@ autoDetectOS(){
 			darwin|dawin) OF_PLATFORM="osx"; OF_ARCH=$(uname -m) ;;
 			linux) OF_PLATFORM="linux"; OF_ARCH=$(uname -m) ;;
 			mingw*|cygwin*|msys*)
-				# Prefer VS toolchain path on Windows shells; arch is CPU not MSYSTEM name
-				OF_PLATFORM="vs"
-				OF_ARCH=$(detectHostVsArch)
 				export OF_MSYSTEM="${MSYSTEM:-}"
+				if isMsys2Shell; then
+					# MSYS2 shell (UCRT64 / CLANG64 / CLANGARM64 / MINGW64) → msys2 libs
+					OF_PLATFORM="msys2"
+					OF_ARCH=$(detectMsys2Env)
+				else
+					# Git Bash / other Windows shells → Visual Studio; arch is CPU
+					OF_PLATFORM="vs"
+					OF_ARCH=$(detectHostVsArch)
+				fi
 				;;
 			*) echoError "Unsupported platform: $OF_OS"; exit 1 ;;
 		esac
@@ -176,6 +224,8 @@ autoDetectOS(){
 		OF_ARCH=""
 		if [[ "$OF_PLATFORM" == "vs" ]]; then
 			OF_ARCH=$(detectHostVsArch)
+		elif [[ "$OF_PLATFORM" == "msys2" ]]; then
+			OF_ARCH=$(detectMsys2Env)
 		fi
 	fi
 }
@@ -863,7 +913,7 @@ cmdStatus(){
 	if ofHasGit; then
 		echoKV "git" "$(ofGitSummary)"
 	else
-		echoKV "git" "nightly package (no .git)"
+		echoKV "git" "$(ofNoGitLabel)"
 		echoNote "of clone  — attach openFrameworks.git"
 	fi
 	local stSha stShaN
@@ -983,7 +1033,8 @@ printHelp(){
     LIB_SOURCE=apothecary|oflibs|archive
     LIB_TAG=latest|v12.1.0|v0.11.2
     LIB_LIBS=core|all|"glfw glm"
-    LIB_ARCH=64|arm64|arm64ec|all   passed as -a to download_libs (vs/linux/msys2)
+    LIB_ARCH=64|arm64|arm64ec|all   passed as -a to download_libs (vs/linux)
+    LIB_ARCH=ucrt64|clang64|clangarm64|mingw64   msys2 env (default: detected MSYSTEM)
     LIB_CLEAN_MODE=platform|merge|full   # default platform: only lib/<plat>
     DOWNLOAD_LIBS_ARGS="-vs --full-clean"  extra flags to download_libs.sh
     OF_VS_2026=1              VS 2026 package names (_vs_2026_)
@@ -1027,7 +1078,7 @@ cmdVersion(){
 	if ofHasGit; then
 		echoKV "git" "$(ofGitSummary)"
 	else
-		echoKV "git" "nightly package (no .git)"
+		echoKV "git" "$(ofNoGitLabel)"
 	fi
 	printf '\n'
 }
@@ -1061,7 +1112,7 @@ menuVersion(){
 	if ofHasGit; then
 		echoKV "git" "$(ofGitSummary)"
 	else
-		echoKV "git" "nightly package (no .git)"
+		echoKV "git" "$(ofNoGitLabel)"
 	fi
 	printf '\n'
 	if [[ -n "$bin" ]]; then
@@ -1265,6 +1316,26 @@ assessPGState(){
 # Download libs using current LIB_SOURCE / LIB_TAG (no banner)
 runLibsDownload(){
 	local platformDir="${1:-$OF_PLATFORM}"
+	# msys2 package = toolchain env; pass it explicitly — from Git Bash the
+	# wrapper would otherwise read MSYSTEM=MINGW64. Function-local export so
+	# it never leaks into a later vs/linux download in the same menu session.
+	if [[ "$platformDir" == "msys2" ]]; then
+		local msysEnv="${LIB_ARCH:-}"
+		case "$msysEnv" in
+			ucrt64|clang64|clangarm64|mingw64) ;;
+			*)
+				if [[ -n "${OF_MSYS2_LIB_ENV:-}" ]]; then
+					msysEnv="$OF_MSYS2_LIB_ENV"
+				elif [[ "$OF_PLATFORM" == "msys2" && -n "$OF_ARCH" ]]; then
+					msysEnv="$OF_ARCH"
+				else
+					msysEnv=$(detectMsys2Env)
+				fi
+				;;
+		esac
+		unset OF_MSYS2_LIB_ENV
+		local -x LIB_ARCH="$msysEnv"
+	fi
 	local source="${LIB_SOURCE:-apothecary}"
 	local tag="${LIB_TAG:-latest}"
 	local libsSel="${LIB_LIBS:-core}"
@@ -1493,6 +1564,38 @@ menuPickLibPlatform(){
 	menuPick "Libraries for which platform?" "${opts[@]}" || return 1
 	LIB_PLATFORM="$UI_MENU_RESULT"
 	export LIB_PLATFORM
+	if [[ "$LIB_PLATFORM" == "msys2" ]]; then
+		menuPickMsys2Env || return 1
+	fi
+}
+
+# MSYS2 environment → LIB_ARCH; the detected env is listed first (default)
+menuPickMsys2Env(){
+	local detected env label tag="(detected)"
+	local -a opts=()
+	if [[ "$OF_PLATFORM" == "msys2" && -n "$OF_ARCH" ]]; then
+		detected="$OF_ARCH"
+	else
+		# not in an MSYS2 shell (e.g. Git Bash) — CPU default, not detected
+		detected=$(detectMsys2Env)
+		tag="(default)"
+	fi
+	for env in "$detected" clangarm64 ucrt64 clang64; do
+		[[ " ${opts[*]} " == *"|${env} "* ]] && continue
+		case "$env" in
+			ucrt64)     label="ucrt64      — GCC, UCRT (x64)" ;;
+			clang64)    label="clang64     — Clang, UCRT (x64)" ;;
+			clangarm64) label="clangarm64  — Clang, UCRT (ARM64)" ;;
+			mingw64)    label="mingw64     — GCC, MSVCRT (x64)" ;;
+			*) continue ;;
+		esac
+		[[ "$env" == "$detected" ]] && label+="  ${tag}"
+		opts+=("${label}|${env}")
+	done
+	menuPick "MSYS2 environment?" "${opts[@]}" || return 1
+	# consumed (and cleared) by runLibsDownload
+	OF_MSYS2_LIB_ENV="$UI_MENU_RESULT"
+	echoSuccess "msys2 env → $OF_MSYS2_LIB_ENV"
 }
 
 menuPickLibTag(){
@@ -2084,15 +2187,40 @@ pathIsGitTracked(){
 	[[ -n "$(git -C "$OF_DIR" ls-files -- "$p" 2>/dev/null | head -1)" ]]
 }
 
+# MSYS2 doesn't ship git (pacman -S git). When git isn't on PATH but Git for
+# Windows is installed, use its git.exe — MSYS2 converts the /c/… path args.
+if ! command -v git >/dev/null 2>&1; then
+	for _ofGitExe in \
+		"$(cygpath -u "$(printenv ProgramW6432 2>/dev/null || printenv ProgramFiles 2>/dev/null)" 2>/dev/null)/Git/cmd/git.exe" \
+		"/c/Program Files/Git/cmd/git.exe" \
+		"$(cygpath -u "$(printenv LOCALAPPDATA 2>/dev/null)" 2>/dev/null)/Programs/Git/cmd/git.exe"; do
+		if [[ -x "$_ofGitExe" ]]; then
+			OF_GIT_EXE="$_ofGitExe"
+			git(){ "$OF_GIT_EXE" "$@"; }
+			break
+		fi
+	done
+	unset _ofGitExe
+fi
+
 ofHasGit(){
 	command -v git >/dev/null 2>&1 || return 1
 	[[ -e "$OF_DIR/.git" ]] || return 1
 	git -C "$OF_DIR" rev-parse --verify HEAD >/dev/null 2>&1
 }
 
+# git line when ofHasGit fails: a real nightly, or a checkout without git
+ofNoGitLabel(){
+	if [[ -e "$OF_DIR/.git" ]]; then
+		printf 'git checkout (git not found — pacman -S git)'
+	else
+		printf 'nightly package (no .git)'
+	fi
+}
+
 ofGitSummary(){
 	local branch sha
-	ofHasGit || { printf 'nightly package (no .git)'; return 1; }
+	ofHasGit || { ofNoGitLabel; return 1; }
 	branch=$(git -C "$OF_DIR" rev-parse --abbrev-ref HEAD 2>/dev/null || echo "?")
 	sha=$(git -C "$OF_DIR" rev-parse --short HEAD 2>/dev/null || echo "?")
 	printf '%s @ %s' "$branch" "$sha"
@@ -2109,6 +2237,11 @@ cmdClone(){
 		echoKV "git" "$(ofGitSummary)"
 		echoKV "remote" "$(git -C "$OF_DIR" remote get-url origin 2>/dev/null || echo none)"
 		return 0
+	fi
+	if [[ -e "$OF_DIR/.git" ]]; then
+		echoWarning "already a git checkout, but git can't read it"
+		echoKV "git" "$(ofNoGitLabel)"
+		return 1
 	fi
 	if ! command -v git >/dev/null 2>&1; then
 		echoError "git not found"
@@ -2644,7 +2777,7 @@ cmdMenu(){
 		if ofHasGit; then
 			echoKV "git" "$(ofGitSummary)"
 		else
-			echoKV "git" "nightly package (no .git)"
+			echoKV "git" "$(ofNoGitLabel)"
 		fi
 		printf '\n'
 
@@ -2654,7 +2787,7 @@ cmdMenu(){
 			"status()   — checker  (cmdStatus)|status"
 			"setup()    — install  (cmdSetup)|setup"
 		)
-		if [[ "$OF_PLATFORM" == "vs" || "$OF_PLATFORM" == "msys2" ]]; then
+		if [[ "$OF_PLATFORM" == "vs" ]]; then
 			opts+=("vsconfig() — VS components  (cmdVsConfig)|vsconfig")
 		fi
 		opts+=(
@@ -2664,7 +2797,7 @@ cmdMenu(){
 			"version()  — info  (menuVersion)|version"
 			"test()     — smoke tests  (menuTest)|test"
 		)
-		if ! ofHasGit; then
+		if [[ ! -e "$OF_DIR/.git" ]]; then
 			opts+=("clone()    — nightly → git clone  (cmdClone)|clone")
 		fi
 		opts+=("exit()|exit")
