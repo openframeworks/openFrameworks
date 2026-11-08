@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# FreeImage is supplied by Apothecary via scripts/linux/download_libs.sh.
 
 SCRIPT_DIR="${BASH_SOURCE%/*}"
 if [[ ! -d "$SCRIPT_DIR" ]]; then SCRIPT_DIR="$PWD"; fi
@@ -212,7 +213,7 @@ PACKAGES="make nlohmann-json3-dev libssl3 libcurl4 brotli libcurl4-openssl-dev \
 libjack-jackd2-0 libjack-jackd2-dev freeglut3-dev libasound2-dev libxmu-dev \
 libxxf86vm-dev g++${CXX_VER} libgl1-mesa-dev${XTAG} libglu1-mesa-dev \
 libraw1394-dev libudev-dev libdrm-dev libglew-dev libopenal-dev libsndfile1-dev \
-libfreeimage-dev libcairo2-dev libfreetype6-dev libssl-dev libpulse-dev \
+libcairo2-dev libfreetype6-dev libssl-dev libpulse-dev \
 libusb-1.0-0-dev ${LIB_GTK_DEV} libopencv-dev liblapack-dev libblas-dev libassimp-dev librtaudio-dev \
 libgstreamer${GSTREAMER_VERSION}-dev libgstreamer-plugins-base${GSTREAMER_VERSION}-dev \
 ${GSTREAMER_FFMPEG} gstreamer${GSTREAMER_VERSION}-pulseaudio \
@@ -253,11 +254,6 @@ fi
 apt-get -y -qq install ${PACKAGES}
 installPackages ${PACKAGES}
 
-# Install libgconf-2-4 only if its availble
-if apt-cache show libgconf-2-4 &>/dev/null; then
-    echo "Package libgconf-2-4 is available. Installing..."
-    installPackages libgconf-2-4
-fi
 
 # Optional: gum (nicer of.sh interactive menu) — only if already in apt's repos.
 # Not in default Ubuntu/Debian repos as of writing; we don't add third-party

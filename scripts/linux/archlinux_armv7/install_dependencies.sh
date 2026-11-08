@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# FreeImage is supplied by Apothecary via scripts/linux/download_libs.sh.
 
 SCRIPT_DIR="${BASH_SOURCE%/*}"
 if [[ ! -d "$SCRIPT_DIR" ]]; then SCRIPT_DIR="$PWD"; fi
@@ -15,14 +16,14 @@ fi
 
 ROOT=$(cd $(dirname $0); pwd -P)
 
-pacman -S --needed make pkg-config gcc openal glew freeglut freeimage freetype2 cairo poco gstreamer gst-plugins-base gst-plugins-good gst-plugins-bad gst-libav raspberrypi-firmware gst-omx-rpi assimp libxcursor opencv assimp glfw-x11 uriparser curl pugixml brotli ccache
+pacman -S --needed make pkg-config gcc openal glew freeglut freetype2 cairo poco gstreamer gst-plugins-base gst-plugins-good gst-plugins-bad gst-libav raspberrypi-firmware gst-omx-rpi assimp libxcursor opencv assimp glfw-x11 uriparser curl pugixml brotli ccache
 
 downloader http://ci.openframeworks.cc/rtaudio-armv7hf.tar.bz2
 tar xjf rtaudio-armv7hf.tar.bz2 -C /
 
 exit_code=$?
 if [ $exit_code != 0 ]; then
-	echo "error installing packages, there could be an error with your internet connection, or you system might be too out of date (run pacman -Syu before running this script)""
+	echo "error installing packages, there could be an error with your internet connection, or you system might be too out of date (run pacman -Syu before running this script)"
 	exit $exit_code
 fi
 
