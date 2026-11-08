@@ -1,0 +1,30 @@
+name: OF ccache
+description: ccache with restore-keys from master. Save only on master/bleeding.
+
+# hendrikmuhs/ccache-action save keys are ccache-<key>-<timestamp>.
+# Without restore-keys the exact key ccache-<key>- never hits, so every job
+# is cold. restore-keys: <key> becomes prefix ccache-<key>- and restores the
+# newest master copy. Do not put github.sha in the prefix.
+#
+# PRs restore and do not save: extra copies (libs + apt + ccache × jobs)
+# evict the compile cache (repo cap ~10 GB).
+
+inputs:
+  key:
+    required: true
+    description: Slice id, e.g. ios-macos. No SHA.
+  max-size:
+    required: false
+    default: 200M
+    description: ccache max_size. Default 500MB × jobs evicts the compile cache.
+
+runs:
+  using: composite
+  steps:
+    - uses: hendrikmuhs/ccache-action@v1.2.24
+      with:
+        key: ${{ inputs.key }}
+        restore-keys: ${{ inputs.key }}
+        append-timestamp: true
+        max-size: ${{ inputs.max-size }}
+        save: ${{ github.ref == 'refs/heads/master' || github.ref == 'refs/heads/bleeding' }}
