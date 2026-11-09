@@ -29,7 +29,8 @@ z.close()' "$out" "$@"
 }
 PKG1="$TEMP/pkg1.zip"; PKG2="$TEMP/pkg2.zip"
 mkzip "$PKG1" FreeImage/include/FreeImage.h=new FreeImage/lib/vs/x64/FreeImage.lib=new pugixml/lib/vs/x64/pugixml.lib=new
-mkzip "$PKG2" curl/include/curl.h=new curl/bin/libcurl.dll=new curl/lib/vs/x64/libcurl.lib=new
+mkzip "$PKG2" curl/include/curl.h=new curl/bin/libcurl.dll=new curl/lib/vs/x64/libcurl.lib=new \
+    poco/include/Poco/Poco.h=new poco/lib/vs/x64/PocoFoundation.lib=new
 
 # fresh tree holding "old VS" libs; MODE picks the stub downloader's behaviour
 fresh(){
@@ -112,6 +113,8 @@ for f in FreeImage/lib/vs/x64 FreeImage/include curl/bin curl/include pugixml/li
     openFrameworksCompiled/project/vs2019/obj openFrameworksCompiled/project/vs2026/obj; do
     check "stale gone: $f" '[ ! -e "$(L $f/stale)" ]'
 done
+check 'Poco deployed to ofxPoco' '[ -f "$OF/addons/ofxPoco/libs/poco/lib/vs/x64/PocoFoundation.lib" ]'
+check 'Poco not deployed to ofxSvg' '[ ! -e "$OF/addons/ofxSvg/libs/poco" ]'
 check 'tracked .gitkeep kept' '[ -f "$(L openFrameworksCompiled/lib/vs/.gitkeep)" ]'
 check 'lib missing from the packages keeps headers' '[ -f "$(L kiss/include/stale)" ]'
 check 'other platform untouched' '[ -f "$(L FreeImage/lib/msys2/stale)" ] && [ -f "$(L openFrameworksCompiled/lib/msys2/stale)" ]'

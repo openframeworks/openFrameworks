@@ -237,16 +237,16 @@ done
 
 if [ "$PLATFORM" == "osx" ]; then
     addonslibs=("opencv" "ippicv" "libusb" "assimp" "poco" "openssl")
-    addons=("ofxOpenCv" "ofxOpenCv" "ofxKinect" "ofxAssimpModelLoader" "ofxSvg" "ofxSvg" "ofxPoco" "ofxPoco")
+    addons=("ofxOpenCv" "ofxOpenCv" "ofxKinect" "ofxAssimpModelLoader" "ofxPoco" "ofxPoco")
 elif [ "$PLATFORM" == "vs" ]; then
     addonslibs=("opencv" "ippicv" "libusb" "assimp" "poco")
-    addons=("ofxOpenCv" "ofxOpenCv" "ofxKinect" "ofxAssimpModelLoader" "ofxSvg" "ofxSvg" "ofxPoco")
+    addons=("ofxOpenCv" "ofxOpenCv" "ofxKinect" "ofxAssimpModelLoader" "ofxPoco")
 elif [ "$PLATFORM" == "ios" ] || [ "$PLATFORM" == "tvos" ]; then
     addonslibs=("opencv" "ippicv" "assimp" "poco" "openssl")
-    addons=("ofxOpenCv" "ofxOpenCv" "ofxAssimpModelLoader" "ofxSvg" "ofxSvg" "ofxPoco" "ofxPoco")
+    addons=("ofxOpenCv" "ofxOpenCv" "ofxAssimpModelLoader" "ofxPoco" "ofxPoco")
 else
     addonslibs=("opencv" "ippicv" "assimp" "poco")
-    addons=("ofxOpenCv" "ofxOpenCv" "ofxAssimpModelLoader" "ofxSvg" "ofxSvg" "ofxPoco")
+    addons=("ofxOpenCv" "ofxOpenCv" "ofxAssimpModelLoader" "ofxPoco")
 fi
 
 for ((i=0;i<${#addonslibs[@]};++i)); do
