@@ -5,6 +5,7 @@ PLATFORM=""
 ARCH=""
 OVERWRITE=1
 FULL_CLEAN=0
+VS_SWITCH=0
 # SHA: VERIFY_SHA=1 (default) check GitHub release asset digests when present
 #      VERIFY_SHA=0 (--skip-sha) never verify
 #      REQUIRE_SHA=1 (--require-sha) fail if digest missing or tools unavailable
@@ -43,7 +44,11 @@ cat << EOF
     --full-clean                Also remove shared include/ (and bin/ for vs|msys2) for libs being
                                 installed. Use for a hard reset of one platform install; not needed
                                 for multi-platform side-by-side installs.
-    --skip-sha                  Do not verify package SHA-256 against GitHub release digests
+    --vs-switch                 vs only: the installed libs are for another Visual Studio. After the
+                                download verifies, also remove what these packages replace (lib/vs,
+                                include/, bin/) and the openFrameworks core lib/vs + obj/ built with
+                                the old toolset. Libs not in these packages are left alone.
+    --skip-sha                 Do not verify package SHA-256 against GitHub release digests
     --require-sha               Fail if a package has no digest or local hash tools are missing
     -s, --silent                Silent download progress
     -h, --help                  Shows this message
@@ -365,7 +370,16 @@ reindexMsys2StaticLibs(){
 
 # trap any script errors and exit
 trap 'trapError ${LINENO}' ERR
-trap "trapError" SIGINT SIGTERM
+trap 'trapSignal INT 130' INT
+trap 'trapSignal TERM 143' TERM
+
+# Packages in libs/download are a cache: an incomplete one fails the downloader's
+# size check and a corrupt one fails verification, so neither is reused. Keep them
+# — another arch's packages sit next to these, and each is hundreds of MB.
+trapSignal() {
+    echo " Interrupted (SIG$1); exiting with status $2. Downloaded packages kept in libs/download."
+    exit "$2"
+}
 
 trapError() {
     local parent_lineno="$1"
@@ -378,10 +392,6 @@ trapError() {
         echo "Error on or near line ${parent_lineno}; exiting with status ${code}"
     fi
 
-    if [ -e openFrameworksLibs* ]; then
-        echo "removing packages"
-    	rm openFrameworksLibs*
-    fi
     exit "${code}"
 }
 
@@ -407,6 +417,9 @@ while [[ $# -gt 0 ]]; do
         --full-clean)
         FULL_CLEAN=1
         OVERWRITE=1
+        ;;
+        --vs-switch)
+        VS_SWITCH=1
         ;;
         --skip-sha)
         VERIFY_SHA=0
@@ -858,6 +871,41 @@ if [ $OVERWRITE -eq 1 ]; then
             fi
         fi
     done
+    echo "   ------ "
+fi
+
+# Switching Visual Studio: all flavours install to lib/vs, and libs built with one
+# toolset fail to link with an older one. Runs only after the new packages verified,
+# so a failed download never leaves the tree without libraries.
+if [ "$VS_SWITCH" -eq 1 ] && [ "$OVERWRITE" -eq 1 ] && [ "$PLATFORM" == "vs" ]; then
+    echo " VS switch - removing files built for another Visual Studio"
+    for PKG in $PKGS; do
+        # <lib>/<dir> pairs this package restores; names checked so a path can't escape libs/
+        while read -r PKG_DIR; do
+            case "$PKG_DIR" in
+                */include|*/bin) ;;
+                *) PKG_DIR="${PKG_DIR%%/*}/lib/vs" ;;
+            esac
+            if [ -e "$PKG_DIR" ]; then
+                echo "   Remove: [$PKG_DIR]"
+                rm -rf "$PKG_DIR"
+            fi
+        done < <(unzip -Z1 "download/$PKG" | cut -d/ -f1,2 | sed 's|/$||' | sort -u \
+            | grep -E '^[A-Za-z0-9_+-][A-Za-z0-9_.+-]*/(include|bin|lib)$' || true)
+    done
+    # lib/vs holds a tracked .gitkeep, so clear what's inside rather than the folder
+    if [ -d openFrameworksCompiled/lib/vs ]; then
+        echo "   Remove: [openFrameworksCompiled/lib/vs/*]"
+        find openFrameworksCompiled/lib/vs -mindepth 1 -maxdepth 1 ! -name .gitkeep -exec rm -rf {} +
+    fi
+    for PKG_DIR in openFrameworksCompiled/project/vs/obj \
+        openFrameworksCompiled/project/vs2019/obj openFrameworksCompiled/project/vs2026/obj; do
+        if [ -e "$PKG_DIR" ]; then
+            echo "   Remove: [$PKG_DIR]"
+            rm -rf "$PKG_DIR"
+        fi
+    done
+    echo "   openFrameworks core will rebuild on the next build; projects: Rebuild Solution"
     echo "   ------ "
 fi
 

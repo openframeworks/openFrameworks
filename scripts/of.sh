@@ -1018,7 +1018,7 @@ printHelp(){
     menu                      Interactive menu
     status                    System checker + full library list
     setup                     Install deps/libs/PG if missing or outdated
-    vsconfig  [check|latest|minimal|no-update] [2022|2026]  VS components (scripts/vs/<year>.vsconfig)
+    vsconfig  [check|latest|minimal|no-update] [2019|2022|2026]  VS components (scripts/vs/<year>.vsconfig)
     update    libs | pg | all Prompt source; refresh libs/PG as needed
     build     …               Build core / projects / emscripten / cmake (see of build help)
     cleanup   projects|caches|libs   Free disk (artifacts / downloads / prebuilts)
@@ -1037,6 +1037,7 @@ printHelp(){
     LIB_ARCH=ucrt64|clang64|clangarm64|mingw64   msys2 env (default: detected MSYSTEM)
     LIB_CLEAN_MODE=platform|merge|full   # default platform: only lib/<plat>
     DOWNLOAD_LIBS_ARGS="-vs --full-clean"  extra flags to download_libs.sh
+    OF_VS_LIBS=2026|2022|2019 Visual Studio to download libs for (remembered; replaces another VS's libs)
     OF_VS_2026=1              VS 2026 package names (_vs_2026_)
     OF_SETUP_VS=1|0           setup: run / skip the VS Installer (.vsconfig) without asking
     OF_LINUX_DISTRO=ubuntu    Force linux distro scripts
@@ -1209,6 +1210,8 @@ writeLibState(){
 	shaStatus=$(readVerifyField status) || shaStatus=""
 	shaVerified=$(readVerifyField verified) || shaVerified=""
 	shaUpdated=$(readVerifyField updated) || shaUpdated=""
+	# set by runLibsDownload for vs; other platforms must not forget what lib/vs holds
+	local vsLibs="${OF_VS_LIBS_INSTALLED-$(readLibStateField vs_libs)}"
 	mkdir -p "${OF_DIR}/libs"
 	cat > "$OF_LIB_STATE_FILE" << EOF
 source=${source}
@@ -1220,6 +1223,7 @@ of_cli=${OF_SCRIPT_VERSION}
 sha_status=${shaStatus}
 sha_verified=${shaVerified}
 sha_updated=${shaUpdated}
+vs_libs=${vsLibs}
 EOF
 }
 
@@ -1277,6 +1281,9 @@ assessLibsState(){
 	else
 		LIBS_STATE_DETAIL="detected · assume latest"
 	fi
+	local stVs
+	stVs=$(readLibStateField vs_libs) || stVs=""
+	[[ -n "$stVs" ]] && LIBS_STATE_DETAIL+=" · VS ${stVs}"
 	case "$stSha" in
 		verified)
 			if [[ -n "$stShaN" && "$stShaN" != "0" ]]; then
@@ -1313,6 +1320,30 @@ assessPGState(){
 	PG_STATE_DETAIL="$ver"
 }
 
+# Which Visual Studio to download libs for → VS_LIBS_RESOLVED=2026|2022|2019, and
+# VS_LIBS_SWITCH=1 when that replaces libs for another VS. The choice is remembered,
+# so `of setup` / `of update` don't put another VS's libs back. An unrecorded install
+# only counts as a switch when a VS was asked for; plain updates keep old behaviour.
+resolveVsLibs(){
+	local prior wanted="${OF_VS_LIBS:-}"
+	prior=$(readLibStateField vs_libs) || prior=""
+	[[ -z "$wanted" && "${OF_VS_2026:-}" == "1" ]] && wanted=2026
+	case "$wanted" in
+		""|2019|2022|2026) ;;
+		*) echoError "OF_VS_LIBS must be 2019, 2022 or 2026 (got: ${wanted})"; return 1 ;;
+	esac
+	VS_LIBS_RESOLVED="${wanted:-${prior:-2022}}"
+	VS_LIBS_SWITCH=0
+	if [[ "$VS_LIBS_RESOLVED" != "$prior" && ( -n "$prior" || -n "$wanted" ) ]] \
+		&& [[ -e "${OF_DIR}/libs/FreeImage/lib/vs" || -e "${OF_DIR}/libs/openFrameworksCompiled/lib/vs" ]]; then
+		VS_LIBS_SWITCH=1
+		echoNote "installed libs: VS ${prior:-unrecorded} → replacing with VS ${VS_LIBS_RESOLVED}"
+	fi
+	if [[ "$VS_LIBS_RESOLVED" == "2019" ]] && hostIsArm64; then
+		echoNote "VS 2019 libs are x64 only"
+	fi
+}
+
 # Download libs using current LIB_SOURCE / LIB_TAG (no banner)
 runLibsDownload(){
 	local platformDir="${1:-$OF_PLATFORM}"
@@ -1340,6 +1371,9 @@ runLibsDownload(){
 	local tag="${LIB_TAG:-latest}"
 	local libsSel="${LIB_LIBS:-core}"
 	local -a oflibsArgs=()
+	# read by writeLibState; stays unset for other platforms so lib/vs is remembered
+	local OF_VS_LIBS_INSTALLED
+	[[ "$platformDir" == "vs" ]] && OF_VS_LIBS_INSTALLED=""
 
 	case "$source" in
 		apothecary|"")
@@ -1348,6 +1382,12 @@ runLibsDownload(){
 				echoError "missing scripts/dev/lib_sources.sh"
 				echoNote "run: of clone   (or re-download a nightly that ships of Menu scripts)"
 				return 1
+			fi
+			if [[ "$platformDir" == "vs" ]]; then
+				resolveVsLibs || return 1
+				local -x OF_VS_LIBS="$VS_LIBS_RESOLVED"
+				local -x OF_VS_SWITCH="$VS_LIBS_SWITCH"
+				OF_VS_LIBS_INSTALLED="$VS_LIBS_RESOLVED"
 			fi
 			downloadApothecaryLibs "$platformDir" || return 1
 			;;
@@ -1633,6 +1673,56 @@ menuPickLibTag(){
 	export LIB_TAG
 }
 
+# 0 when this VS line has an instance installed
+vsIsInstalled(){
+	local range pf86 vswhere
+	case "$1" in
+		2019) range="[16.0,17.0)" ;;
+		2022) range="[17.0,18.0)" ;;
+		2026) range="[18.0,19.0)" ;;
+		*) return 1 ;;
+	esac
+	pf86="$(printenv 'ProgramFiles(x86)' 2>/dev/null)"
+	vswhere="$(cygpath -u "${pf86:-C:\\Program Files (x86)}" 2>/dev/null)/Microsoft Visual Studio/Installer/vswhere.exe"
+	[[ -x "$vswhere" ]] || return 1
+	[[ -n "$("$vswhere" -all -prerelease -products '*' -version "$range" -property installationPath 2>/dev/null)" ]]
+}
+
+# 0 when the release has this VS flavour; older tags only have the plain vs package
+vsLibsOnRelease(){
+	local year="$1" tag="$2" flavour="vs" repo="$2" ver="$2"
+	[[ "$tag" == "nightly" ]] && { repo=latest; ver=latest; }
+	[[ "$year" == "2022" ]] || flavour="vs_${year}"
+	curl -fsIL --max-time 15 -o /dev/null \
+		"https://github.com/openframeworks/apothecary/releases/download/${repo}/openFrameworksLibs_${ver}_${flavour}_64_1.zip" 2>/dev/null
+}
+
+# Which Visual Studio the libraries are for → OF_VS_LIBS
+menuPickVsLibs(){
+	local tag="${1:-$LIB_TAG}" year label current
+	local -a opts=()
+	current=$(readLibStateField vs_libs) || current=""
+	echoNote "checking VS packages on ${tag}…"
+	for year in 2026 2022 2019; do
+		vsLibsOnRelease "$year" "$tag" || continue
+		label="VS ${year}"
+		vsIsInstalled "$year" && label+="  installed"
+		[[ "$year" == "$current" ]] && label+="  current libs"
+		opts+=("${label}|${year}")
+	done
+	if [[ ${#opts[@]} -eq 0 ]]; then
+		# offline or rate limited — let the download report what's wrong
+		opts=("VS 2026|2026" "VS 2022|2022" "VS 2019|2019")
+	fi
+	menuPick "Libraries for which Visual Studio?" "${opts[@]}" || return 1
+	OF_VS_LIBS="$UI_MENU_RESULT"
+	export OF_VS_LIBS
+	echoSuccess "visual studio → $OF_VS_LIBS"
+	if [[ "$OF_VS_LIBS" == "2019" ]]; then
+		echoNote "VS 2019 stops at MSVC 14.29, so it can't use the 2022/2026 libs"
+	fi
+}
+
 menuPickOfLibs(){
 	local tag="${1:-$LIB_TAG}"
 	local platformDir="${2:-$OF_PLATFORM}"
@@ -1673,6 +1763,9 @@ menuDownloadLibs(){
 	echoSuccess "platform → $platformDir"
 	menuPickLibTag "$LIB_SOURCE" || return 2
 	echoSuccess "tag → $LIB_TAG"
+	if [[ "$LIB_SOURCE" == "apothecary" && "$platformDir" == "vs" ]]; then
+		menuPickVsLibs "$LIB_TAG" || return 2
+	fi
 
 	# source + tag is enough to start — no extra gates after this. Cross-
 	# platform downloads and non-default clean modes are still available via
@@ -1968,7 +2061,7 @@ menuUpgrade(){
 }
 
 # Visual Studio components — scripts/vs/install_vs_components.sh applies
-# scripts/vs/2022.vsconfig / 2026.vsconfig through the VS Installer
+# scripts/vs/2019.vsconfig / 2022.vsconfig / 2026.vsconfig through the VS Installer
 cmdVsConfig(){
 	local vsScript="${OF_CORE_SCRIPT_DIR}/vs/install_vs_components.sh"
 	local -a args=()
@@ -1986,14 +2079,34 @@ cmdVsConfig(){
 			no-update|--no-update) args+=(--no-update) ;;
 			latest|--latest) args+=(--latest) ;;
 			minimal|--minimal) args+=(--minimal) ;;
-			2022|2026|all) args+=(--vs "$a") ;;
+			2019|2022|2026|all) args+=(--vs "$a") ;;
 			arm64|--arm64) args+=(--arm64) ;;
-			*) echoError "valid: check | latest | minimal | update | no-update | 2022 | 2026 | all | arm64"; return 1 ;;
+			*) echoError "valid: check | latest | minimal | update | no-update | 2019 | 2022 | 2026 | all | arm64"; return 1 ;;
 		esac
 	done
 	printBanner "vsconfig"
 	ensureScript "$vsScript" 2>/dev/null
 	"$vsScript" "${args[@]}"
+}
+
+# Menu entry for vsconfig — Auto covers normal machines; VS 2019 is only ever
+# picked automatically when it is the only VS installed, so offer it by name.
+menuVsConfig(){
+	local choice
+	menuPick "Visual Studio components (.vsconfig)" \
+		"Auto — installed VS|auto" \
+		"Check only|check" \
+		"VS 2026|2026" \
+		"VS 2022|2022" \
+		"VS 2019 — final 16.11 (v142)|2019" \
+		"Back|back" \
+		|| return 2
+	choice="$UI_MENU_RESULT"
+	case "$choice" in
+		auto) cmdVsConfig ;;
+		back) return 2 ;;
+		*)    cmdVsConfig "$choice" ;;
+	esac
 }
 
 cmdSetup(){
@@ -2811,7 +2924,7 @@ cmdMenu(){
 		case "$choice" in
 			status)     cmdStatus; menuPause ;;
 			setup)      cmdSetup "$OF_PLATFORM"; menuPause ;;
-			vsconfig)   cmdVsConfig; menuPause ;;
+			vsconfig)   menuVsConfig; [[ $? -eq 2 ]] || menuPause ;;
 			update)     menuUpdate; [[ $? -eq 2 ]] || menuPause ;;
 			build)      menuBuild ;;
 			cleanup|clean) menuCleanup ;;
