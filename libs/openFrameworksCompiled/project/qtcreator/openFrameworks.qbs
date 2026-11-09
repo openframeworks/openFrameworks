@@ -56,7 +56,6 @@ Product{
         var excludes = [];
         if(qbs.targetOS.indexOf("linux")>-1){
             excludes = [
-                "app/ofAppGlutWindow\\..*",
                 "video/ofDirectShowPlayer\\..*",
                 "video/ofDirectShowGrabber\\..*",
                 "video/ofAVFoundationVideoPlayer\\..*",
@@ -69,7 +68,6 @@ Product{
             ];
         }else if(qbs.targetOS.indexOf("windows")>-1){
             excludes = [
-                "app/ofAppGlutWindow\\..*",
                 "video/ofGstVideoPlayer\\..*",
                 "video/ofGstVideoGrabber\\..*",
                 "video/ofGstUtils\\..*",
@@ -83,7 +81,6 @@ Product{
             ];
         }else if(qbs.targetOS.indexOf("osx")>-1){
             excludes = [
-                "app/ofAppGlutWindow.*",
                 "video/ofGstVideoPlayer\\..*",
                 "video/ofGstVideoGrabber\\..*",
                 "video/ofGstUtils\\..*",

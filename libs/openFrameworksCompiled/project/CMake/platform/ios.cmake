@@ -56,7 +56,6 @@ of_dir_and_subdirs(OF_PLATFORM_INCLUDE_DIRS "${OF_ADDONS_DIR}/ofxiOS/src")
 set(OF_PLATFORM_CORE_EXCLUDES
 	"/libs/openFrameworks/app/ofAppGLFWWindow\\.cpp$"
 	"/libs/openFrameworks/app/ofAppEGLWindow\\.cpp$"
-	"/libs/openFrameworks/app/ofAppGlutWindow\\.cpp$"
 	"/libs/openFrameworks/app/ofAppNoWindow\\.cpp$"
 	"/libs/openFrameworks/communication/"
 	"/libs/openFrameworks/graphics/ofCairoRenderer\\.cpp$"
