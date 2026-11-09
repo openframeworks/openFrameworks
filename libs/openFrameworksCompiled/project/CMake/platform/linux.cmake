@@ -93,13 +93,13 @@ endif()
 if(NOT OF_PLATFORM STREQUAL "linux/armv6l")
 	list(APPEND OF_PLATFORM_LINK_LIBRARIES X11 Xrandr Xxf86vm Xi Xcursor dl pthread)
 endif()
-list(APPEND OF_PLATFORM_LINK_LIBRARIES freeimage pugixml uriparser)
+list(APPEND OF_PLATFORM_LINK_LIBRARIES pugixml uriparser)
 
 # These come from the system on Linux, not libs/.
 # glfw stays in libs/. Ubuntu's libglfw3-dev is 3.3, and ofAppGLFWWindow
 # calls glfwGetPlatform, which the bundled GLFW 3.4 headers declare.
 set(OF_PLATFORM_THIRDPARTY_EXCLUDE
-	glew cairo videoInput freetype FreeImage assimp rtAudio openssl curl uriparser fmod
+	glew cairo videoInput freetype assimp rtAudio openssl curl uriparser fmod
 	pixman dawn metalangle)
 
 set(OF_PLATFORM_LIB_EXTENSIONS a)
