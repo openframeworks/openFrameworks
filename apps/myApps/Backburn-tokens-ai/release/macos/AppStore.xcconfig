@@ -1,0 +1,12 @@
+// The Mac App Store build: sandboxed, hardened, and without the Donate page (App Store Review Guideline 3.1.1).
+//   xcodebuild -project Backburn-tokens-ai.xcodeproj -target Backburn-tokens-aimacOS -configuration Release \
+//     -xcconfig release/macos/AppStore.xcconfig
+#include "../Hardened.xcconfig"
+
+CODE_SIGN_ENTITLEMENTS = release/macos/AppStore.entitlements
+PRODUCT_BUNDLE_IDENTIFIER = com.danoli3.backburntokens
+DEVELOPMENT_TEAM = ZU7K3XV3B6
+CODE_SIGN_STYLE = Automatic
+ENABLE_HARDENED_RUNTIME = YES
+GCC_PREPROCESSOR_DEFINITIONS = $(inherited) BACKBURN_APP_STORE=1
+// bin/data/donate isn't copied into this build's bundle — keep it out in Xcode's Copy Resources phase.

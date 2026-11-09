@@ -60,7 +60,7 @@ ICON_FILE = $(OF_PATH)/libs/openFrameworksCompiled/project/macos/$(ICON_NAME)
 //FOR AV ENGINE SOUND PLAYER UNCOMMENT TWO LINES BELOW
 OF_NO_FMOD=1
 USER_PREPROCESSOR_DEFINITIONS="OF_NO_FMOD=1"
-GCC_PREPROCESSOR_DEFINITIONS=$(inherited)$(USER_PREPROCESSOR_DEFINITIONS)
+GCC_PREPROCESSOR_DEFINITIONS=$(inherited) $(USER_PREPROCESSOR_DEFINITIONS)
 
 //APPSTORE, uncomment next lines to bundle data folder and code sign
 //OF_CODESIGN = 1
@@ -71,5 +71,20 @@ GCC_PREPROCESSOR_DEFINITIONS=$(inherited)$(USER_PREPROCESSOR_DEFINITIONS)
 #include? "App.xcconfig"
 
 OTHER_CFLAGS = $(OF_CORE_CFLAGS)
-OTHER_LDFLAGS = $(OF_CORE_LIBS) $(OF_CORE_FRAMEWORKS)
 HEADER_SEARCH_PATHS = $(OF_CORE_HEADERS)
+
+// emptyExamplemacOS links openFrameworks.a plus these archives.
+// emptyExample links openFrameworks.framework and sets its own OTHER_LDFLAGS,
+// so this line is not added again on top of the framework.
+OF_APP_OF_LIB = $(LIB_OF)
+OF_APP_OF_LIB[config=Debug] = $(LIB_OF_DEBUG)
+OTHER_LDFLAGS = $(OF_CORE_LIBS) $(OF_STATIC_LIBS) $(OF_CORE_FRAMEWORKS) $(OF_APP_OF_LIB)
+
+// Dawn (WebGPU / Metal). Uncomment both lines. Do not enable Dawn and ANGLE in the same build.
+// GCC_PREPROCESSOR_DEFINITIONS = $(inherited) OF_USE_DAWN=1
+// OTHER_LDFLAGS = $(OF_CORE_LIBS) $(OF_STATIC_LIBS) $(OF_CORE_FRAMEWORKS) $(OF_DAWN_LIBS) $(OF_APP_OF_LIB)
+//
+// MetalANGLE (GLES via Metal + MGLKit). Uncomment both lines. Leaves OpenGL.framework off.
+// GCC_PREPROCESSOR_DEFINITIONS = $(inherited) OF_USE_ANGLE=1
+// OTHER_LDFLAGS = $(OF_CORE_LIBS) $(OF_STATIC_LIBS) $(OF_ANGLE_APP_FRAMEWORKS) $(OF_ANGLE_LIBS) $(OF_APP_OF_LIB)
+// OF_USE_ANGLE_OFFICIAL=1 is reserved for chromium ANGLE without MGLKit.

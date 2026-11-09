@@ -7,7 +7,7 @@
 
 #include "ofMainLoop.h"
 #include "ofBaseApp.h"
-// #include "ofConstants.h"
+#include "ofConstants.h"
 
 //========================================================================
 // default windowing
@@ -26,7 +26,13 @@
 #elif defined(TARGET_EMSCRIPTEN)
 	#include "ofxAppEmscriptenWindow.h"
 #else
+	#if OF_USE_DAWN
+	#include "ofAppDawnWindow.h"
+	#elif OF_USE_ANGLE
+	#include "ofAppMGLWindow.h"
+	#else
 	#include "ofAppGLFWWindow.h"
+	#endif
 #endif
 
 ofMainLoop::ofMainLoop()
@@ -55,6 +61,10 @@ std::shared_ptr<ofAppBaseWindow> ofMainLoop::createWindow(const ofWindowSettings
 	std::shared_ptr<ofAppEGLWindow> window = std::make_shared<ofAppEGLWindow>();
 	#elif defined(TARGET_EMSCRIPTEN)
 	std::shared_ptr<ofxAppEmscriptenWindow> window = std::make_shared<ofxAppEmscriptenWindow>();
+	#elif OF_USE_DAWN
+	std::shared_ptr<ofAppDawnWindow> window = std::make_shared<ofAppDawnWindow>();
+	#elif OF_USE_ANGLE
+	std::shared_ptr<ofAppMGLWindow> window = std::make_shared<ofAppMGLWindow>();
 	#elif defined(TARGET_OPENGLES)
 	std::shared_ptr<ofAppGLFWWindow> window = std::make_shared<ofAppGLFWWindow>();
 	#else

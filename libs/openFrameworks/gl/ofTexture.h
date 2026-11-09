@@ -776,6 +776,8 @@ class ofTexture : public ofBaseDraws {
 	/// \param x Horizontal texture position in pixels.
 	/// \param y Vertical texture position in pixels.
 	void setAnchorPoint(float x, float y);
+	glm::vec2 getAnchor() const;
+	bool isAnchorPercent() const;
 
 	/// \brief Reset the anchor point to (0, 0).
 	void resetAnchor();
