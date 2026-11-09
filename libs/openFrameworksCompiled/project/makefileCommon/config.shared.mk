@@ -212,7 +212,7 @@ ifeq ($(PLATFORM_OS),Linux)
 	else ifeq ($(PLATFORM_LIB_SUBPATH),linux/aarch64)
 		PLATFORM_LEGACY_LIB_SUBPATHS ?= linuxaarch64
 	else ifeq ($(PLATFORM_LIB_SUBPATH),linux/arm64)
-		PLATFORM_LEGACY_LIB_SUBPATHS ?= linuxarm64 linuxaarch64
+		PLATFORM_LEGACY_LIB_SUBPATHS ?= linuxarm64 linuxaarch64 linux/aarch64
 	endif
 endif
 
