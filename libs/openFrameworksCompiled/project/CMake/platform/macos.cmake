@@ -11,7 +11,6 @@ endif()
 set(OF_PLATFORM_SOURCE_EXTENSIONS cpp cc cxx c mm m)
 
 set(OF_PLATFORM_CORE_EXCLUDES
-	"/app/ofAppGlutWindow\\.cpp$"
 	"/app/ofAppEGLWindow\\.cpp$"
 	"/video/ofDirectShow"
 	"/video/ofMediaFoundation"

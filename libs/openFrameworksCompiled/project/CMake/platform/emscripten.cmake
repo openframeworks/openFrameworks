@@ -53,7 +53,6 @@ set(OF_PLATFORM_CORE_EXCLUDES
 	"/sound/ofFmodSoundPlayer\\.cpp$"
 	"/sound/ofOpenALSoundPlayer\\.cpp$"
 	"/sound/ofRtAudioSoundStream\\.cpp$"
-	"/app/ofAppGlutWindow\\.cpp$"
 	"/app/ofAppGLFWWindow\\.cpp$"
 	"/app/ofAppEGLWindow\\.cpp$")
 
