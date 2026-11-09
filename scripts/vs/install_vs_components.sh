@@ -21,9 +21,15 @@
 # with unresolved __std_* STL helpers (LNK2019 __std_search_1 …), so an
 # outdated VS 2022 needs an update, not just the right components.
 #
-# Usage: install_vs_components.sh [--vs 2022|2026|all] [--arm64] [--latest|--minimal] [--update] [--check] [-y|--noconfirm]
-#   --vs       which Visual Studio to configure (default: every installed 2022/2026;
-#              when none is installed: the latest, 2026 — 2022 with OF_VS_2026=0)
+# VS 2019 is the exception: it ends at 16.11 / MSVC 14.29, so no update gives it
+# the STL helpers of the standard libs. 2019.vsconfig brings it to that final
+# toolset; it must then use v142 libs (download_libs_2019_x64.sh) and a v142
+# rebuild of openframeworksLib. It is x64 only and keeps the SDK v142 CI uses.
+#
+# Usage: install_vs_components.sh [--vs 2019|2022|2026|all] [--arm64] [--latest|--minimal] [--update] [--check] [-y|--noconfirm]
+#   --vs       which Visual Studio to configure (default: every installed 2022/2026,
+#              or 2019 when it is the only one installed; when none is installed:
+#              the latest, 2026 — 2022 with OF_VS_2026=0). all includes 2019.
 #   --arm64    also add the ARM64 / ARM64EC build tools (auto on ARM64 hosts
 #              and when LIB_ARCH is arm64|arm64ec|all)
 #   --latest   run the installer even when the oF minimum is met (update + newest SDK)
@@ -33,7 +39,8 @@
 #   --check    report only; exit 0 when the oF minimum is in place, 1 otherwise
 #   -y         don't prompt
 #
-# Env: OF_VS_MIN_MSVC_2022 (default 14.44), OF_VS_MIN_MSVC_2026 (default 14.50)
+# Env: OF_VS_MIN_MSVC_2019 (default 14.29.30133), OF_VS_MIN_MSVC_2022 (default 14.44),
+#      OF_VS_MIN_MSVC_2026 (default 14.50)
 
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
@@ -56,8 +63,8 @@ while [[ $# -gt 0 ]]; do
 		--no-update) NO_UPDATE=1 ;;
 		--arm64) WANT_ARM64=1 ;;
 		--vs) VS_SELECT="$2"; shift ;;
-		2022|2026|all) VS_SELECT="$1" ;;
-		-h|--help) sed -n '2,35p' "${BASH_SOURCE[0]}" | sed 's/^# \{0,1\}//'; exit 0 ;;
+		2019|2022|2026|all) VS_SELECT="$1" ;;
+		-h|--help) sed -n '2,43p' "${BASH_SOURCE[0]}" | sed 's/^# \{0,1\}//'; exit 0 ;;
 		*) echo "unknown argument: $1"; exit 2 ;;
 	esac
 	shift
@@ -81,6 +88,7 @@ echo
 
 vsRange(){
 	case "$1" in
+		2019) echo "[16.0,17.0)" ;;
 		2022) echo "[17.0,18.0)" ;;
 		2026) echo "[18.0,19.0)" ;;
 	esac
@@ -88,6 +96,7 @@ vsRange(){
 
 minMsvcFor(){
 	case "$1" in
+		2019) echo "${OF_VS_MIN_MSVC_2019:-14.29.30133}" ;;
 		2022) echo "${OF_VS_MIN_MSVC_2022:-14.44}" ;;
 		2026) echo "${OF_VS_MIN_MSVC_2026:-14.50}" ;;
 	esac
@@ -107,6 +116,8 @@ componentsFor(){
 }
 
 extraComponentsFor(){
+	# oF's VS 2019 packages are x64 only
+	[[ "$1" == "2019" ]] && return 0
 	echo "Microsoft.VisualStudio.Component.VC.Tools.ARM64"
 	echo "Microsoft.VisualStudio.Component.VC.Tools.ARM64EC"
 	# oF projects use PlatformToolset v143, which VS 2026 only has side-by-side
@@ -194,9 +205,17 @@ fi
 
 years=()
 case "$VS_SELECT" in
-	2022|2026) years=("$VS_SELECT") ;;
-	all|"") years=(2022 2026) ;;
-	*) echo "--vs must be 2022, 2026 or all"; exit 2 ;;
+	2019|2022|2026) years=("$VS_SELECT") ;;
+	all) years=(2019 2022 2026) ;;
+	"")
+		years=(2022 2026)
+		# only VS 2019 here → configure it, rather than offering a new VS 2026.
+		# A leftover 2019 next to a newer VS is left alone (ask with --vs 2019).
+		if [[ "$VS_INSTANCES_FOUND" -eq 1 && -z "$(instancesFor 2022)$(instancesFor 2026)" && -n "$(instancesFor 2019)" ]]; then
+			years=(2019)
+		fi
+		;;
+	*) echo "--vs must be 2019, 2022, 2026 or all"; exit 2 ;;
 esac
 
 allOk=1
@@ -223,6 +242,10 @@ for year in "${years[@]}"; do
 
 		echo "VS ${year}  ${version}  ${path}"
 		echo "    MSVC ${msvc:-not installed} (oF libs need >= ${minMsvc})"
+		if [[ "$year" == "2019" ]]; then
+			echo "    VS 2019 cannot link the standard oF libs (no update adds their STL helpers). Use v142 builds:"
+			echo "      scripts/vs/download_libs_2019_x64.sh, then rebuild openframeworksLib with v142"
+		fi
 		if [[ ${#missing[@]} -eq 0 && "$outdated" -eq 0 ]]; then
 			echo "OK  all oF components present"
 			if [[ "$FORCE_RUN" -eq 0 || "$CHECK_ONLY" -eq 1 ]]; then
@@ -257,7 +280,8 @@ for year in "${years[@]}"; do
 		if [[ "$WANT_ARM64" -eq 1 ]]; then
 			while read -r id; do addArgs+=(--add "$id"); done < <(extraComponentsFor "$year")
 		fi
-		if [[ "$LATEST" -eq 1 ]]; then
+		# 2019 stays on the SDK its v142 libs are built against
+		if [[ "$LATEST" -eq 1 && "$year" != "2019" ]]; then
 			sdk="$(latestSdkFor "$instanceId")"
 			if [[ -n "$sdk" ]] && ! grep -qF "\"${sdk}\"" "${SCRIPT_DIR}/${year}.vsconfig"; then
 				echo "    + ${sdk} (newest SDK available)"
@@ -282,9 +306,15 @@ if [[ "$anyInstance" -eq 0 ]]; then
 	allOk=0
 	year="${VS_SELECT}"
 	# nothing installed → the latest Visual Studio, unless told otherwise
-	[[ "$year" == "2022" || "$year" == "2026" ]] || { [[ "${OF_VS_2026:-1}" == 0 ]] && year=2022 || year=2026; }
+	[[ "$year" == "2019" || "$year" == "2022" || "$year" == "2026" ]] || { [[ "${OF_VS_2026:-1}" == 0 ]] && year=2022 || year=2026; }
 	echo "No Visual Studio ${VS_SELECT:-2022/2026} found."
 	[[ "$CHECK_ONLY" -eq 1 ]] && exit 1
+	# not on winget, and new installs should prefer a supported VS
+	if [[ "$year" == "2019" ]]; then
+		echo "Install VS 2019 from https://visualstudio.microsoft.com/vs/older-downloads/ and pick"
+		echo "More → Import configuration → $(cygpath -w "${SCRIPT_DIR}/2019.vsconfig")"
+		exit 1
+	fi
 	if command -v winget.exe >/dev/null 2>&1 && confirmRun "Install Visual Studio Community ${year} with the oF components via winget?"; then
 		cfg="$(cygpath -w "${SCRIPT_DIR}/${year}.vsconfig")"
 		override="--passive --wait --norestart --config \"${cfg}\""

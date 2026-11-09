@@ -150,11 +150,19 @@ downloadApothecaryLibs(){
 	if [[ -z "$arch" && -n "${OF_ARCH:-}" && "$platformDir" == "vs" ]]; then
 		arch="$OF_ARCH"
 	fi
+	# Visual Studio flavour: OF_VS_LIBS=2026|2022|2019 (OF_VS_2026=1 = 2026).
+	# The 2019 packages are x64 only.
+	if [[ "$platformDir" == "vs" ]]; then
+		local vsLibs="${OF_VS_LIBS:-}"
+		[[ -z "$vsLibs" && "${OF_VS_2026:-}" == "1" ]] && vsLibs=2026
+		case "$vsLibs" in
+			2026) args+=( -vs ) ;;
+			2019) args+=( -l ); arch=64 ;;
+		esac
+		[[ "${OF_VS_SWITCH:-}" == "1" ]] && args+=( --vs-switch )
+	fi
 	if [[ -n "$arch" ]]; then
 		args+=( -a "$arch" )
-	fi
-	if [[ "$platformDir" == "vs" && "${OF_VS_2026:-}" == "1" ]]; then
-		args+=( -vs )
 	fi
 	if [[ -n "${DOWNLOAD_LIBS_ARGS:-}" ]]; then
 		# shellcheck disable=SC2206
