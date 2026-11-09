@@ -8,9 +8,9 @@ include_guard(GLOBAL)
 
 find_package(PkgConfig REQUIRED)
 
-set(_of_linux_arm OFF)
+set(OF_LINUX_ARM OFF)
 if(OF_PLATFORM MATCHES "^linux/armv[67]l$")
-	set(_of_linux_arm ON)
+	set(OF_LINUX_ARM ON)
 endif()
 
 set(OF_PLATFORM_SOURCE_EXTENSIONS cpp cc cxx c)
@@ -20,13 +20,24 @@ set(OF_PLATFORM_CORE_EXCLUDES
 	"/video/ofMediaFoundation"
 	"/sound/ofMediaFoundation"
 	"/sound/ofFmodSoundPlayer\\.cpp$")
-if(_of_linux_arm)
-	list(APPEND OF_PLATFORM_CORE_EXCLUDES "/app/ofAppGlutWindow\\.cpp$")
-else()
+if(NOT OF_LINUX_ARM)
 	list(APPEND OF_PLATFORM_CORE_EXCLUDES "/app/ofAppEGLWindow\\.cpp$")
 endif()
 
+# OpenGL API: gl (desktop, GLEW; default), gles2 or gles3 (EGL). Select with
+# -DOF_GL_API=gles3. Mirrors OF_GL_API in makefileCommon/config.linux.common.mk.
+set(OF_GL_API "gl" CACHE STRING "OpenGL API for Linux: gl, gles2 or gles3")
+set_property(CACHE OF_GL_API PROPERTY STRINGS gl gles2 gles3)
+if(NOT OF_GL_API MATCHES "^(gl|gles2|gles3)$")
+	message(FATAL_ERROR "OF_GL_API must be gl, gles2 or gles3 (got \"${OF_GL_API}\")")
+endif()
+
 set(OF_PLATFORM_DEFINES)
+if(OF_GL_API STREQUAL "gles2")
+	list(APPEND OF_PLATFORM_DEFINES TARGET_OPENGLES TARGET_FORCE_GLES_2)
+elseif(OF_GL_API STREQUAL "gles3")
+	list(APPEND OF_PLATFORM_DEFINES TARGET_OPENGLES TARGET_OPENGLES_3)
+endif()
 set(OF_PLATFORM_COMPILE_OPTIONS -Wall -Werror=return-type)
 set(OF_PLATFORM_LINK_OPTIONS "-Wl,-rpath=./libs:./bin/libs:./" -Wl,--as-needed -Wl,--gc-sections)
 
@@ -42,15 +53,22 @@ endif()
 set(OF_PLATFORM_LINK_LIBRARIES)
 
 # required pkg-config packages
-set(_of_pkgs cairo zlib gstreamer-app-1.0 gstreamer-1.0 gstreamer-video-1.0 gstreamer-base-1.0
+set(OF_PKGS cairo zlib gstreamer-app-1.0 gstreamer-1.0 gstreamer-video-1.0 gstreamer-base-1.0
 	libudev freetype2 fontconfig sndfile openal)
-if(NOT _of_linux_arm)
-	list(APPEND _of_pkgs libpulse-simple alsa gl glu glew)
+if(NOT OF_LINUX_ARM)
+	list(APPEND OF_PKGS libpulse-simple alsa)
+endif()
+if(OF_GL_API STREQUAL "gl")
+	if(NOT OF_PLATFORM STREQUAL "linux/armv6l")
+		list(APPEND OF_PKGS gl glu glew)
+	endif()
+else()
+	list(APPEND OF_PKGS glesv2 egl)
 endif()
 if(OF_PLATFORM MATCHES "^linux/(aarch64|armv7l|armv6l)$")
-	list(APPEND _of_pkgs glesv1_cm glesv2 egl)
+	list(APPEND OF_PKGS glesv1_cm glesv2 egl)
 endif()
-foreach(pkg IN LISTS _of_pkgs)
+foreach(pkg IN LISTS OF_PKGS)
 	string(MAKE_C_IDENTIFIER "OF_PC_${pkg}" id)
 	pkg_check_modules(${id} REQUIRED IMPORTED_TARGET GLOBAL ${pkg})
 	list(APPEND OF_PLATFORM_LINK_LIBRARIES PkgConfig::${id})
@@ -87,8 +105,9 @@ if(OF_PC_mpg123_FOUND)
 endif()
 
 # plain system libraries
-if(NOT _of_linux_arm)
-	list(APPEND OF_PLATFORM_LINK_LIBRARIES glut)
+if(OF_LINUX_ARM)
+	# 32-bit ARM: std::atomic of 64-bit types needs libatomic
+	list(APPEND OF_PLATFORM_LINK_LIBRARIES atomic)
 endif()
 if(NOT OF_PLATFORM STREQUAL "linux/armv6l")
 	list(APPEND OF_PLATFORM_LINK_LIBRARIES X11 Xrandr Xxf86vm Xi Xcursor dl pthread)
