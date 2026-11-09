@@ -6,9 +6,9 @@
 # For each installed VS 2022 / VS 2026 the .vsconfig components are checked
 # with vswhere; the installer only runs (elevated, --passive) when something
 # is missing, the MSVC toolset is older than the one the prebuilt oF libs are
-# built with, or --latest / --update is passed. With no Visual Studio installed
-# it offers a winget install of Visual Studio Community preloaded with the
-# same .vsconfig.
+# built with, or --latest / --update is passed. When the requested Visual Studio
+# isn't installed it offers to install Community from Microsoft's signed
+# bootstrapper, preloaded with the same .vsconfig.
 #
 # The .vsconfig files are the minimum oF needs. When the installer runs it
 # goes to the latest available by default: Visual Studio is updated first (the
@@ -102,11 +102,46 @@ minMsvcFor(){
 	esac
 }
 
-wingetIdFor(){
+# Microsoft's Community bootstrapper for each VS line; winget has no VS 2019
+bootstrapperUrlFor(){
 	case "$1" in
-		2022) echo "Microsoft.VisualStudio.2022.Community" ;;
-		2026) echo "Microsoft.VisualStudio.Community" ;;
+		2019) echo "https://aka.ms/vs/16/release/vs_community.exe" ;;
+		2022) echo "https://aka.ms/vs/17/release/vs_community.exe" ;;
+		2026) echo "https://aka.ms/vs/18/stable/vs_community.exe" ;;
 	esac
+}
+
+# 0 when the file carries a valid Microsoft Authenticode signature
+isSignedByMicrosoft(){
+	local path
+	path="$(cygpath -w "$1")"
+	MSYS2_ARG_CONV_EXCL='*' powershell.exe -NoProfile -NonInteractive -Command \
+		"\$s = Get-AuthenticodeSignature -LiteralPath '${path//\'/\'\'}'; if (\$s.Status -eq 'Valid' -and \$s.SignerCertificate.Subject -like 'CN=Microsoft Corporation,*') { 'signed' }" 2>/dev/null \
+		| grep -q signed
+}
+
+# installWithBootstrapper <year> <installer args…> → the installer's exit code
+installWithBootstrapper(){
+	local year="$1" dir exe code
+	shift
+	dir="$(mktemp -d)" || return 1
+	exe="${dir}/vs_community.exe"
+	echo "Downloading the Visual Studio ${year} installer …"
+	if ! curl -fsSL --retry 3 --max-time 300 -o "$exe" "$(bootstrapperUrlFor "$year")"; then
+		echo "    download failed"
+		rm -rf "$dir"
+		return 1
+	fi
+	if ! isSignedByMicrosoft "$exe"; then
+		echo "    installer is not signed by Microsoft — not running it"
+		rm -rf "$dir"
+		return 1
+	fi
+	echo "Installing Visual Studio ${year} (several GB; the installer shows progress) …"
+	runElevated "$exe" "$@"
+	code=$?
+	rm -rf "$dir"
+	return "$code"
 }
 
 # components listed in <year>.vsconfig, plus ARM64 tools when wanted
@@ -181,10 +216,11 @@ runElevated(){
 		"try { \$p = Start-Process -FilePath '${exe//\'/\'\'}' -ArgumentList '${argStr//\'/\'\'}' -Verb RunAs -Wait -PassThru; exit \$p.ExitCode } catch { Write-Host \$_.Exception.Message; exit 1 }"
 }
 
+# Git Bash keeps only the low 8 bits of a Windows exit code, so 3010 arrives as 194
 installerOk(){
 	case "$1" in
 		0) return 0 ;;
-		3010) echo "    (restart Windows to finish)"; return 0 ;;
+		3010|194) echo "    (restart Windows to finish)"; return 0 ;;
 		*) return 1 ;;
 	esac
 }
@@ -309,35 +345,27 @@ if [[ "$anyInstance" -eq 0 ]]; then
 	[[ "$year" == "2019" || "$year" == "2022" || "$year" == "2026" ]] || { [[ "${OF_VS_2026:-1}" == 0 ]] && year=2022 || year=2026; }
 	echo "No Visual Studio ${VS_SELECT:-2022/2026} found."
 	[[ "$CHECK_ONLY" -eq 1 ]] && exit 1
-	# not on winget, and new installs should prefer a supported VS
-	if [[ "$year" == "2019" ]]; then
-		echo "Install VS 2019 from https://visualstudio.microsoft.com/vs/older-downloads/ and pick"
-		echo "More → Import configuration → $(cygpath -w "${SCRIPT_DIR}/2019.vsconfig")"
-		exit 1
-	fi
-	if command -v winget.exe >/dev/null 2>&1 && confirmRun "Install Visual Studio Community ${year} with the oF components via winget?"; then
-		cfg="$(cygpath -w "${SCRIPT_DIR}/${year}.vsconfig")"
-		override="--passive --wait --norestart --config \"${cfg}\""
+	if confirmRun "Download and install Visual Studio Community ${year} with the oF components (UAC prompt)?"; then
+		installArgs=(--passive --wait --norestart --config "$(cygpath -w "${SCRIPT_DIR}/${year}.vsconfig")")
 		if [[ "$WANT_ARM64" -eq 1 ]]; then
-			while read -r id; do override+=" --add ${id}"; done < <(extraComponentsFor "$year")
+			while read -r id; do installArgs+=(--add "$id"); done < <(extraComponentsFor "$year")
 		fi
-		MSYS2_ARG_CONV_EXCL='*' winget.exe install --id "$(wingetIdFor "$year")" -e --source winget \
-			--accept-package-agreements --accept-source-agreements --override "$override"
+		installWithBootstrapper "$year" "${installArgs[@]}"
 		code=$?
 		if installerOk "$code"; then
 			echo "OK  Visual Studio ${year} installed"
 			# the fresh install's catalog is only readable now — add the newest
-			# SDK it offers (no update needed, winget just installed the latest)
-			if [[ "$LATEST" -eq 1 ]]; then
+			# SDK it offers (no update needed, this just installed the latest)
+			if [[ "$LATEST" -eq 1 && "$year" != "2019" ]]; then
 				echo
 				"${BASH_SOURCE[0]}" --vs "$year" --latest --no-update -y
 			fi
 			exit 0
 		fi
-		echo "FAIL  winget exited ${code}"
+		echo "FAIL  Visual Studio installer exited ${code}"
 		exit 1
 	fi
-	echo "Install Visual Studio from https://visualstudio.microsoft.com/downloads/ and pick"
+	echo "Install Visual Studio ${year} from $(bootstrapperUrlFor "$year") and pick"
 	echo "More → Import configuration → $(cygpath -w "${SCRIPT_DIR}/${year}.vsconfig")"
 	exit 1
 fi
