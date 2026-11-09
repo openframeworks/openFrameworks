@@ -21,6 +21,8 @@ public:
 	const std::string & getType(){ return TYPE; }
 
     void setup();
+	
+	int getMaxTextureSize();
 
 	void startRender();
 	void finishRender();

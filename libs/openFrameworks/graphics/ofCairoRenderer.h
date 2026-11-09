@@ -30,6 +30,8 @@ public:
 	void setupMemoryOnly(Type _type, bool multiPage=true, bool b3D=false, ofRectangle viewport = ofRectangle(0,0,0,0));
 	void close();
 	void flush();
+	
+	int getMaxTextureSize();
 
 	void startRender();
 	void finishRender();

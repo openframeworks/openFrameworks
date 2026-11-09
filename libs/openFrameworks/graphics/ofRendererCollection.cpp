@@ -26,6 +26,17 @@ std::shared_ptr<ofBaseGLRenderer> ofRendererCollection::getGLRenderer(){
 
 bool ofRendererCollection::rendersPathPrimitives(){return true;}
 
+
+int ofRendererCollection::getMaxTextureSize() {
+	// pull the value from the first renderer.
+	if (!renderers.empty()) {
+		return renderers.front()->getMaxTextureSize();
+	} else {
+		ofLogWarning() << "No renderer in renderer collection, max texture size requested. Returning 0.";
+		return 0;
+	}
+}
+
 void ofRendererCollection::startRender(){
 	for(auto renderer: renderers){
 		renderer->startRender();
