@@ -79,6 +79,17 @@ endif
 
 PLATFORM_DEFINES =
 
+# OpenGL API: gl (desktop, GLEW; default), gles2 or gles3 (EGL), e.g. make Debug OF_GL_API=gles3
+OF_GL_API ?= gl
+ifeq ($(OF_GL_API),gl)
+else ifeq ($(OF_GL_API),gles2)
+	PLATFORM_DEFINES += TARGET_OPENGLES TARGET_FORCE_GLES_2
+else ifeq ($(OF_GL_API),gles3)
+	PLATFORM_DEFINES += TARGET_OPENGLES TARGET_OPENGLES_3
+else
+$(error OF_GL_API must be gl, gles2 or gles3 (got "$(OF_GL_API)"))
+endif
+
 # add OF_USING_GTK define IF we have it defined as a system library
 ifeq ($(HAS_SYSTEM_GTK2),0)
 	PLATFORM_DEFINES += OF_USING_GTK
@@ -255,9 +266,7 @@ PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofDirectShowPla
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofMediaFoundationPlayer.cpp
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/sound/ofMediaFoundationSoundPlayer.cpp
 
-ifeq ($(LINUX_ARM),1)
-	PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/app/ofAppGlutWindow.cpp
-else
+ifneq ($(LINUX_ARM),1)
 	PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/app/ofAppEGLWindow.cpp
 endif
 
@@ -314,13 +323,10 @@ PLATFORM_HEADER_SEARCH_PATHS =
 
 PLATFORM_LIBRARIES =
 
-ifneq ($(LINUX_ARM),1)
-	PLATFORM_LIBRARIES += glut
-
-	#PLATFORM_LIBRARIES += gstgl-1.0
-	#PLATFORM_LIBRARIES += SM
-	#PLATFORM_LIBRARIES += ICE
+ifeq ($(LINUX_ARM),1)
+	PLATFORM_LIBRARIES += atomic
 endif
+
 ifneq ($(PLATFORM_ARCH),armv6l)
 	PLATFORM_LIBRARIES += X11
 	PLATFORM_LIBRARIES += Xrandr
@@ -403,9 +409,17 @@ endif
 ifneq ($(LINUX_ARM),1)
 	PLATFORM_PKG_CONFIG_LIBRARIES += libpulse-simple
 	PLATFORM_PKG_CONFIG_LIBRARIES += alsa
-	PLATFORM_PKG_CONFIG_LIBRARIES += gl
-	PLATFORM_PKG_CONFIG_LIBRARIES += glu
-	PLATFORM_PKG_CONFIG_LIBRARIES += glew
+endif
+
+ifeq ($(OF_GL_API),gl)
+	ifneq ($(PLATFORM_ARCH),armv6l)
+		PLATFORM_PKG_CONFIG_LIBRARIES += gl
+		PLATFORM_PKG_CONFIG_LIBRARIES += glu
+		PLATFORM_PKG_CONFIG_LIBRARIES += glew
+	endif
+else
+	PLATFORM_PKG_CONFIG_LIBRARIES += glesv2
+	PLATFORM_PKG_CONFIG_LIBRARIES += egl
 endif
 
 
