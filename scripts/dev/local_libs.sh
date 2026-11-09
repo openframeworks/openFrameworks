@@ -216,7 +216,7 @@ cd libs
 
 if [ $OVERWRITE -eq 1 ]; then
     echo "Removing old libraries"
-    libs=("cairo" "curl" "FreeImage" "freetype" "glew" "glfw" "json" "libpng" "openssl" "pixman" "poco" "rtAudio" "tess2" "uriparser" "utf8" "videoInput" "zlib" "opencv" "ippicv" "assimp" "libxml2" "svgtiny" "README.md")
+    libs=("cairo" "curl" "FreeImage" "freetype" "glew" "glfw" "json" "libpng" "openssl" "pixman" "poco" "rtAudio" "tess2" "uriparser" "utf8" "videoInput" "zlib" "opencv" "ippicv" "assimp" "README.md")
     for lib in $libs; do
         if [ -e $lib ]; then
             rm -rf $lib
@@ -236,16 +236,16 @@ for PKG in $PKGS; do
 done
 
 if [ "$PLATFORM" == "osx" ]; then
-    addonslibs=("opencv" "ippicv" "libusb" "assimp" "libxml2" "svgtiny" "poco" "openssl")
+    addonslibs=("opencv" "ippicv" "libusb" "assimp" "poco" "openssl")
     addons=("ofxOpenCv" "ofxOpenCv" "ofxKinect" "ofxAssimpModelLoader" "ofxSvg" "ofxSvg" "ofxPoco" "ofxPoco")
 elif [ "$PLATFORM" == "vs" ]; then
-    addonslibs=("opencv" "ippicv" "libusb" "assimp" "libxml2" "svgtiny" "poco")
+    addonslibs=("opencv" "ippicv" "libusb" "assimp" "poco")
     addons=("ofxOpenCv" "ofxOpenCv" "ofxKinect" "ofxAssimpModelLoader" "ofxSvg" "ofxSvg" "ofxPoco")
 elif [ "$PLATFORM" == "ios" ] || [ "$PLATFORM" == "tvos" ]; then
-    addonslibs=("opencv" "ippicv" "assimp" "libxml2" "svgtiny" "poco" "openssl")
+    addonslibs=("opencv" "ippicv" "assimp" "poco" "openssl")
     addons=("ofxOpenCv" "ofxOpenCv" "ofxAssimpModelLoader" "ofxSvg" "ofxSvg" "ofxPoco" "ofxPoco")
 else
-    addonslibs=("opencv" "ippicv" "assimp" "libxml2" "svgtiny" "poco")
+    addonslibs=("opencv" "ippicv" "assimp" "poco")
     addons=("ofxOpenCv" "ofxOpenCv" "ofxAssimpModelLoader" "ofxSvg" "ofxSvg" "ofxPoco")
 fi
 

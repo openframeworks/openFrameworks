@@ -52,8 +52,6 @@ OF_CORE_ADDON_MAP=(
 	ippicv:ofxOpenCv
 	libusb:ofxKinect
 	libfreenect:ofxKinect
-	libxml2:ofxSvg
-	svgtiny:ofxSvg
 	poco:ofxPoco
 	oscpack:ofxOsc
 )
