@@ -245,10 +245,12 @@ jobs:
     steps:
       - uses: actions/checkout@v7.0.1
       - name: ccache
-        if: matrix.name != 'vs-x64' && matrix.name != 'emscripten'
+        if: matrix.name != 'emscripten'
         uses: hendrikmuhs/ccache-action@v1.2.24
         with:
           key: cmake-${{ matrix.name }}
+          variant: ${{ matrix.name == 'vs-x64' && 'sccache' || 'ccache' }}
+          max-size: 1G
 
       - name: Libs, dependencies and projectGenerator (linux64)
         if: matrix.name == 'linux64'
@@ -326,6 +328,15 @@ jobs:
         if: matrix.name == 'vs-x64'
         shell: msys2 {0}
         run: ./scripts/ci/vs/install.sh -a x64
+      - uses: ilammy/msvc-dev-cmd@v1.13.0
+        if: matrix.name == 'vs-x64'
+        with:
+          arch: x64
+          vsversion: "2022"
+      - name: sccache cl wrapper (vs-x64)
+        if: matrix.name == 'vs-x64'
+        shell: pwsh
+        run: ./scripts/ci/vs/setup_sccache_cl.ps1
       - name: Build (vs-x64)
         if: matrix.name == 'vs-x64'
         shell: bash
@@ -352,6 +363,12 @@ jobs:
     steps:
       - name: Clone repository
         uses: actions/checkout@v7.0.1
+      - name: sccache
+        uses: hendrikmuhs/ccache-action@v1.2.24
+        with:
+          variant: sccache
+          key: vs-${{ matrix.vsYear }}-${{ matrix.platform }}-${{ matrix.toolset }}
+          max-size: 1G
       - uses: msys2/setup-msys2@v2.33.0
         with:
           update: true
@@ -376,17 +393,28 @@ jobs:
         run: ./scripts/ci/vs/install.sh ${{ matrix.installFlag }} -a ${{ matrix.platform }}
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v3
+      - uses: ilammy/msvc-dev-cmd@v1.13.0
+        with:
+          arch: ${{ matrix.platform == 'x64' && 'x64' || matrix.platform == 'ARM64' && 'amd64_arm64' || 'amd64_arm64ec' }}
+          vsversion: "${{ matrix.vsYear }}"
+      - name: sccache cl wrapper
+        shell: pwsh
+        run: ./scripts/ci/vs/setup_sccache_cl.ps1
 
       - name: Build DEBUG and RELEASE emptyExample
         working-directory: ${{env.GITHUB_WORKSPACE}}
+        shell: pwsh
         run: |
-          msbuild examples/templates/emptyExample/emptyExample.vcxproj /p:Configuration=Debug /p:Platform=${{ matrix.platform }} /p:PlatformToolset=${{ matrix.toolset }}
-          msbuild examples/templates/emptyExample/emptyExample.vcxproj /p:Configuration=Release /p:Platform=${{ matrix.platform }} /p:PlatformToolset=${{ matrix.toolset }}
+          $extra = $env:MSBUILD_SCCACHE_PROPS.Split(' ', [System.StringSplitOptions]::RemoveEmptyEntries)
+          msbuild examples/templates/emptyExample/emptyExample.vcxproj /p:Configuration=Debug /p:Platform=${{ matrix.platform }} /p:PlatformToolset=${{ matrix.toolset }} @extra
+          msbuild examples/templates/emptyExample/emptyExample.vcxproj /p:Configuration=Release /p:Platform=${{ matrix.platform }} /p:PlatformToolset=${{ matrix.toolset }} @extra
       - name: Build DEBUG and RELEASE allAddonsExample
         working-directory: ${{env.GITHUB_WORKSPACE}}
+        shell: pwsh
         run: |
-          msbuild examples/templates/allAddonsExample/allAddonsExample.vcxproj /p:Configuration=Debug /p:Platform=${{ matrix.platform }} /p:PlatformToolset=${{ matrix.toolset }}
-          msbuild examples/templates/allAddonsExample/allAddonsExample.vcxproj /p:Configuration=Release /p:Platform=${{ matrix.platform }} /p:PlatformToolset=${{ matrix.toolset }}
+          $extra = $env:MSBUILD_SCCACHE_PROPS.Split(' ', [System.StringSplitOptions]::RemoveEmptyEntries)
+          msbuild examples/templates/allAddonsExample/allAddonsExample.vcxproj /p:Configuration=Debug /p:Platform=${{ matrix.platform }} /p:PlatformToolset=${{ matrix.toolset }} @extra
+          msbuild examples/templates/allAddonsExample/allAddonsExample.vcxproj /p:Configuration=Release /p:Platform=${{ matrix.platform }} /p:PlatformToolset=${{ matrix.toolset }} @extra
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   rpi-build:
     needs: changes
