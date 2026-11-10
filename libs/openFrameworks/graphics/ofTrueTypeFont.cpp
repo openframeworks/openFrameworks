@@ -876,20 +876,23 @@ bool ofTrueTypeFont::load(const ofTrueTypeFontSettings & _settings){
 		x+= glyph.tW + border*2.0;
 	}
 
-	int maxSize = ofGetMaxTextureSize();
-	
-	if(w > maxSize || h > maxSize){
-		ofLogError("ofTruetypeFont") << "Trying to allocate texture of " << w << "x" << h << " which is bigger than supported in current platform: " << maxSize;
-		return false;
-	}else{
-		atlasPixels = std::move(atlasPixelsLuminanceAlpha);
-		
-		bLoadedOk = true;
-		
-		setUseTexture(isUsingTexture());
-		
-		return true;
+	if (isUsingTexture()) {
+		const int maxSize = ofGetMaxTextureSize();
+		if (maxSize <= 0 || w > maxSize || h > maxSize) {
+			ofLogError("ofTrueTypeFont") << "Font atlas exceeds the current renderer's texture limit of " << maxSize;
+			return false;
+		}
 	}
+	
+	atlasPixels = std::move(atlasPixelsLuminanceAlpha);
+	
+	bLoadedOk = true;
+	
+	texAtlas.clear(); 
+	setUseTexture(isUsingTexture());
+	
+	return true;
+	
 }
 
 //-----------------------------------------------------------
