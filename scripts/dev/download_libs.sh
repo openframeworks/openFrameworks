@@ -806,7 +806,7 @@ done
 if [ $VALID -eq 0 ]; then
     exit 71
 fi
-libs=("cairo" "curl" "FreeImage" "brotli" "fmod" "freetype" "glew" "glfw" "glm" "json" "kiss" "libpng" "openssl" "pixman" "poco" "rtAudio" "tess2" "uriparser" "utf8" "videoInput" "zlib" "opencv" "ippicv" "assimp" "libxml2" "svgtiny" "fmt")
+libs=("cairo" "curl" "FreeImage" "brotli" "fmod" "freetype" "glew" "glfw" "glm" "json" "kiss" "libpng" "openssl" "pixman" "poco" "rtAudio" "tess2" "uriparser" "utf8" "videoInput" "zlib" "opencv" "ippicv" "assimp" "fmt")
 
 # Resolve which lib/<name> folder this package uses.
 # Apple multi-target packages (macos, and ios/tvos/… wrappers that pass -p macos)
@@ -996,31 +996,31 @@ fi
 
 if [[ $BLEEDING_EDGE = 1 ]] ; then
     if [ "$PLATFORM" == "osx" ]; then
-        addonslibs=("opencv" "ippicv" "libusb" "assimp" "libxml2" "svgtiny" "poco")
-        addons=("ofxOpenCv" "ofxOpenCv" "ofxKinect" "ofxAssimpModelLoader" "ofxSvg" "ofxSvg" "ofxPoco" )
+        addonslibs=("opencv" "ippicv" "libusb" "assimp" "poco")
+        addons=("ofxOpenCv" "ofxOpenCv" "ofxKinect" "ofxAssimpModelLoader" "ofxPoco" )
     elif [ "$PLATFORM" == "vs" ]; then
-        addonslibs=("opencv" "ippicv" "libusb" "assimp" "libxml2" "svgtiny" "poco")
-        addons=("ofxOpenCv" "ofxOpenCv" "ofxKinect" "ofxAssimpModelLoader" "ofxSvg" "ofxSvg" "ofxPoco")
+        addonslibs=("opencv" "ippicv" "libusb" "assimp" "poco")
+        addons=("ofxOpenCv" "ofxOpenCv" "ofxKinect" "ofxAssimpModelLoader" "ofxPoco")
     elif [ "$PLATFORM" == "ios" ] || [ "$PLATFORM" == "tvos" ]; then
-        addonslibs=("opencv" "ippicv" "assimp" "libxml2" "svgtiny" "poco" )
-        addons=("ofxOpenCv" "ofxOpenCv" "ofxAssimpModelLoader" "ofxSvg" "ofxSvg" "ofxPoco")
+        addonslibs=("opencv" "ippicv" "assimp" "poco" )
+        addons=("ofxOpenCv" "ofxOpenCv" "ofxAssimpModelLoader" "ofxPoco")
     else
-        addonslibs=("opencv" "ippicv" "assimp" "libxml2" "svgtiny" "poco")
-        addons=("ofxOpenCv" "ofxOpenCv" "ofxAssimpModelLoader" "ofxSvg" "ofxSvg" "ofxPoco")
+        addonslibs=("opencv" "ippicv" "assimp" "poco")
+        addons=("ofxOpenCv" "ofxOpenCv" "ofxAssimpModelLoader" "ofxPoco")
     fi
 else
     if [ "$PLATFORM" == "osx" ]; then
-        addonslibs=("opencv" "ippicv" "libusb" "assimp" "libxml2" "svgtiny" "poco" "openssl")
-        addons=("ofxOpenCv" "ofxOpenCv" "ofxKinect" "ofxAssimpModelLoader" "ofxSvg" "ofxSvg" "ofxPoco" "ofxPoco")
+        addonslibs=("opencv" "ippicv" "libusb" "assimp" "poco" "openssl")
+        addons=("ofxOpenCv" "ofxOpenCv" "ofxKinect" "ofxAssimpModelLoader" "ofxPoco" "ofxPoco")
     elif [ "$PLATFORM" == "vs" ]; then
-        addonslibs=("opencv" "ippicv" "libusb" "assimp" "libxml2" "svgtiny" "poco")
-        addons=("ofxOpenCv" "ofxOpenCv" "ofxKinect" "ofxAssimpModelLoader" "ofxSvg" "ofxSvg" "ofxPoco")
+        addonslibs=("opencv" "ippicv" "libusb" "assimp" "poco")
+        addons=("ofxOpenCv" "ofxOpenCv" "ofxKinect" "ofxAssimpModelLoader" "ofxPoco")
     elif [ "$PLATFORM" == "ios" ] || [ "$PLATFORM" == "tvos" ]; then
-        addonslibs=("opencv" "ippicv" "assimp" "libxml2" "svgtiny" "poco" )
-        addons=("ofxOpenCv" "ofxOpenCv" "ofxAssimpModelLoader" "ofxSvg" "ofxSvg" "ofxPoco")
+        addonslibs=("opencv" "ippicv" "assimp" "poco" )
+        addons=("ofxOpenCv" "ofxOpenCv" "ofxAssimpModelLoader" "ofxPoco")
     else
-        addonslibs=("opencv" "ippicv" "assimp" "libxml2" "svgtiny" "poco")
-        addons=("ofxOpenCv" "ofxOpenCv" "ofxAssimpModelLoader" "ofxSvg" "ofxSvg" "ofxPoco")
+        addonslibs=("opencv" "ippicv" "assimp" "poco")
+        addons=("ofxOpenCv" "ofxOpenCv" "ofxAssimpModelLoader" "ofxPoco")
     fi
 fi
 

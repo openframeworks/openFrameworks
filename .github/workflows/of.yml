@@ -206,7 +206,7 @@ jobs:
         timeout-minutes: 30
         run: |
           for attempt in 1 2 3; do
-            pacboy -S --needed --noconfirm openssl:p python:p gcc:p assimp:p cairo:p curl:p freeglut:p freeimage:p glew:p glfw:p glm:p libsndfile:p libusb:p libxml2:p mpg123:p nlohmann-json:p openal:p pugixml:p rtaudio:p uriparser:p utf8cpp:p && exit 0
+            pacboy -S --needed --noconfirm openssl:p python:p gcc:p assimp:p cairo:p curl:p freeglut:p freeimage:p glew:p glfw:p glm:p libsndfile:p libusb:p mpg123:p nlohmann-json:p openal:p pugixml:p rtaudio:p uriparser:p utf8cpp:p && exit 0
             echo "pacman install failed (attempt $attempt), retrying..."
             sleep $((attempt * 15))
           done

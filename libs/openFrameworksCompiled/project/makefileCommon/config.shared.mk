@@ -361,7 +361,7 @@ else
 	PLATFORM_ADDON_KEYS=$(strip $(ABI_LIB_SUBPATHS))
 endif
 
-# $1 = library root (libs/tess2 or addons/ofxSvg/libs/svgtiny).
+# $1 = library root (e.g. libs/tess2).
 # First existing lib/<subpath> wins so old flat folders still link.
 define find_platform_lib_path
 $(firstword $(foreach subpath,$(ABI_LIB_SUBPATHS),$(wildcard $1/lib/$(subpath))))
