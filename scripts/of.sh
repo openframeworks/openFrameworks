@@ -1018,7 +1018,7 @@ printHelp(){
     menu                      Interactive menu
     status                    System checker + full library list
     setup                     Install deps/libs/PG if missing or outdated
-    vsconfig  [check|latest|minimal|no-update] [2019|2022|2026]  VS components (scripts/vs/<year>.vsconfig)
+    vsconfig  [check|latest|minimal|no-update] [2019|2022|2026]  VS components (scripts/vs/<year>.vsconfig); installs a missing VS
     update    libs | pg | all Prompt source; refresh libs/PG as needed
     build     …               Build core / projects / emscripten / cmake (see of build help)
     cleanup   projects|caches|libs   Free disk (artifacts / downloads / prebuilts)
@@ -2092,15 +2092,17 @@ cmdVsConfig(){
 # Menu entry for vsconfig — Auto covers normal machines; VS 2019 is only ever
 # picked automatically when it is the only VS installed, so offer it by name.
 menuVsConfig(){
-	local choice
-	menuPick "Visual Studio components (.vsconfig)" \
-		"Auto — installed VS|auto" \
-		"Check only|check" \
-		"VS 2026|2026" \
-		"VS 2022|2022" \
-		"VS 2019 — final 16.11 (v142)|2019" \
-		"Back|back" \
-		|| return 2
+	local choice year label
+	local -a opts=("Auto — installed VS|auto" "Check only|check")
+	# a VS that isn't installed is offered as an install (signed MS bootstrapper)
+	for year in 2026 2022 2019; do
+		label="VS ${year}"
+		[[ "$year" == 2019 ]] && label+=" — final 16.11 (v142)"
+		if vsIsInstalled "$year"; then label+="  installed"; else label+="  — install"; fi
+		opts+=("${label}|${year}")
+	done
+	opts+=("Back|back")
+	menuPick "Visual Studio components (.vsconfig)" "${opts[@]}" || return 2
 	choice="$UI_MENU_RESULT"
 	case "$choice" in
 		auto) cmdVsConfig ;;
