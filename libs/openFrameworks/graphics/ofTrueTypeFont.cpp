@@ -503,6 +503,7 @@ ofTrueTypeFont::ofTrueTypeFont(const ofTrueTypeFont& mom)
 	texAtlas = mom.texAtlas;
 	atlasPixels = mom.atlasPixels;
 	face = mom.face;
+	bUseTexture = mom.bUseTexture;
 }
 
 //------------------------------------------------------------------
@@ -536,6 +537,7 @@ ofTrueTypeFont & ofTrueTypeFont::operator=(const ofTrueTypeFont& mom){
 	texAtlas = mom.texAtlas;
 	atlasPixels = mom.atlasPixels;
 	face = mom.face;
+	bUseTexture = mom.bUseTexture;
 
 	return *this;
 }
@@ -570,6 +572,7 @@ ofTrueTypeFont::ofTrueTypeFont(ofTrueTypeFont&& mom)
 	texAtlas = mom.texAtlas;
 	atlasPixels = std::move(mom.atlasPixels);
 	face = mom.face;
+	bUseTexture = mom.bUseTexture;
 }
 
 //------------------------------------------------------------------
@@ -602,6 +605,7 @@ ofTrueTypeFont & ofTrueTypeFont::operator=(ofTrueTypeFont&& mom){
 	texAtlas = mom.texAtlas;
 	atlasPixels = std::move(mom.atlasPixels);
 	face = mom.face;
+	bUseTexture = mom.bUseTexture;
 	return *this;
 }
 
