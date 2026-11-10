@@ -23,6 +23,8 @@ public:
 
     static const std::string TYPE;
 	const std::string & getType(){ return TYPE; }
+	
+	int getMaxTextureSize();
     
     void startRender();
     void finishRender();

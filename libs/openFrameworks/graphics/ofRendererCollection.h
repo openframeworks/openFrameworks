@@ -15,6 +15,8 @@ public:
 	 std::shared_ptr<ofBaseGLRenderer> getGLRenderer();
 
 	 bool rendersPathPrimitives();
+	
+	 int getMaxTextureSize();
 
 	 void startRender();
 

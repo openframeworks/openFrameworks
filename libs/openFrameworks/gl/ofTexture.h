@@ -167,6 +167,9 @@ enum ofTexCompression {
 	OF_COMPRESS_ARB		///< ARB compression.
 };
 
+/// \brief Get the maximum size texture for the current renderer.
+int ofGetMaxTextureSize();
+
 
 /// \class ofTextureData
 /// \advanced

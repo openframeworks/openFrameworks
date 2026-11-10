@@ -135,6 +135,15 @@ void ofCairoRenderer::close() {
 	}
 }
 
+int ofCairoRenderer::getMaxTextureSize() {
+	// From the cairo source: https://github.com/ImageMagick/cairo/blob/main/src/cairo-image-surface.c#L62
+	/* Limit on the width / height of an image surface in pixels.  This is
+	 * mainly determined by coordinates of things sent to pixman at the
+	 * moment being in 16.16 format. */
+//	#define MAX_IMAGE_SIZE 32767
+	return 32767;
+}
+
 void ofCairoRenderer::startRender() {
 	setStyle(currentStyle);
 	if (page == 0 || !multiPage) {
