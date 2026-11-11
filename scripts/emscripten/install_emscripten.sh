@@ -1,30 +1,28 @@
 #!/usr/bin/env bash
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-cd $SCRIPT_DIR
+cd "$SCRIPT_DIR" || exit 1
 
-VERSION=6.0.13
+VERSION=7.0.0
 
 CHECKOUT=$1
 
 install_emscripten_source() {
-	if [ -z "${EMSDK+x}" ]; then
+	if [ -z "${EMSDK:-}" ]; then
 		echo "Unix Emscripten SDK not yet found"
 		echo "Emscripten Download SRC"
-		cd ../../
-		git clone https://github.com/emscripten-core/emsdk.git
-		cd emsdk
-		git pull
-
-		echo "if any issues with python - make sure to add python paths to bash environment Variables:"
-	  python -m pip install --upgrade pip setuptools virtualenv
-	  ./emsdk install "${VERSION}"
-	  ./emsdk activate "${VERSION}" --permanent
-	  source ./emsdk_env.sh
-
+		cd "$SCRIPT_DIR/../.." || return
+		git clone https://github.com/emscripten-core/emsdk.git || return
+		cd emsdk || return
 	else
-	  echo "Emscripten SDK found at $EMSDK"
-	  source "$EMSDK/emsdk_env.sh"
+		echo "Emscripten SDK found at $EMSDK"
+		cd "$EMSDK" || return
+		git pull --ff-only || return
 	fi
+
+	# Select the pinned SDK even when an older installation already exists.
+	./emsdk install "$VERSION" || return
+	./emsdk activate "$VERSION" --permanent || return
+	source ./emsdk_env.sh
 }
 
 install_emscripten_package() {
