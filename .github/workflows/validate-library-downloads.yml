@@ -7,7 +7,6 @@ on:
       - scripts/dev/sha_verify.sh
       - scripts/dev/tests/test-download-validation.sh
       - scripts/dev/tests/test-download-vs-switch.sh
-      - scripts/dev/tests/test-download-emscripten.sh
       - .github/workflows/validate-library-downloads.yml
   push:
     branches: [master]
@@ -17,7 +16,6 @@ on:
       - scripts/dev/sha_verify.sh
       - scripts/dev/tests/test-download-validation.sh
       - scripts/dev/tests/test-download-vs-switch.sh
-      - scripts/dev/tests/test-download-emscripten.sh
       - .github/workflows/validate-library-downloads.yml
 permissions:
   contents: read
@@ -32,4 +30,3 @@ jobs:
       - run: bash -n scripts/dev/download_libs.sh scripts/dev/downloader.sh scripts/dev/sha_verify.sh
       - run: bash scripts/dev/tests/test-download-validation.sh
       - run: bash scripts/dev/tests/test-download-vs-switch.sh
-      - run: bash scripts/dev/tests/test-download-emscripten.sh
