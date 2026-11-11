@@ -1,0 +1,83 @@
+name: VS 2019
+# Builds emptyExample with the v142 toolset (Visual Studio 2019), x64, Debug and Release.
+# GitHub retired the windows-2019 runner, so this runs on windows-2022 and adds the
+# MSVC v142 x64 toolset to the installed Visual Studio 2022.
+# Separate from the OF workflow, so it is not part of the CI merge gate.
+on:
+  workflow_dispatch:
+  push:
+    branches: [master, bleeding]
+    paths:
+      - ".github/workflows/vs2019.yml"
+      - "libs/openFrameworksCompiled/project/vs2019/**"
+      - "scripts/templates/vs2019/**"
+      - "scripts/vs/download_libs_2019_x64.sh"
+  pull_request:
+    paths:
+      - ".github/workflows/vs2019.yml"
+      - "libs/openFrameworksCompiled/project/vs2019/**"
+      - "scripts/templates/vs2019/**"
+      - "scripts/vs/download_libs_2019_x64.sh"
+
+concurrency:
+  group: vs2019-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-vs2019:
+    runs-on: windows-2022
+    timeout-minutes: 60
+    steps:
+      - name: Clone repository
+        uses: actions/checkout@v7.0.1
+
+      - name: Add MSVC v142 x64 toolset to Visual Studio 2022
+        shell: pwsh
+        run: |
+          $vs = & "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe" -latest -products * -property installationPath
+          Write-Host "Visual Studio: $vs"
+          $setup = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\setup.exe"
+          $p = Start-Process $setup -Wait -NoNewWindow -PassThru -ArgumentList @(
+            "modify", "--installPath", "`"$vs`"",
+            "--add", "Microsoft.VisualStudio.Component.VC.14.29.16.11.x86.x64",
+            "--quiet", "--norestart", "--nocache")
+          Write-Host "installer exit code: $($p.ExitCode)"
+          if ($p.ExitCode -ne 0 -and $p.ExitCode -ne 3010) { exit $p.ExitCode }
+          Get-ChildItem "$vs\VC\Tools\MSVC" | ForEach-Object { Write-Host "MSVC toolset: $($_.Name)" }
+          # the v142 platform toolset definition lives under VCTargets, find it instead of assuming the path
+          $v142 = Get-ChildItem $vs -Recurse -Directory -Filter v142 -Depth 9 -ErrorAction SilentlyContinue |
+            Where-Object { $_.FullName -like "*PlatformToolsets*" }
+          $v142 | ForEach-Object { Write-Host "v142 platform toolset: $($_.FullName)" }
+          if (-not $v142) { Write-Error "v142 platform toolset not found under $vs"; exit 1 }
+
+      - uses: msys2/setup-msys2@v2.33.0
+        with:
+          update: true
+          install: >-
+            git
+            unzip
+            curl
+
+      - name: Download VS 2019 libs and projectGenerator
+        shell: msys2 {0}
+        run: |
+          set -e
+          ./scripts/vs/download_libs_2019_x64.sh -s -t latest
+          mkdir -p projectGenerator && cd projectGenerator
+          curl -fsSL -o pg.zip https://github.com/openframeworks/projectGenerator/releases/download/nightly/projectGenerator-vs.zip
+          unzip -q pg.zip && rm pg.zip
+
+      - name: Generate emptyExample for vs2019
+        shell: msys2 {0}
+        run: |
+          set -e
+          ./projectGenerator/projectGenerator.exe -o"$PWD" -v -p"vs2019" "$PWD/examples/templates/emptyExample"
+          grep -n "PlatformToolset" examples/templates/emptyExample/emptyExample.vcxproj | head -4
+
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v3
+
+      - name: Build DEBUG and RELEASE emptyExample (v142, x64)
+        run: |
+          msbuild examples/templates/emptyExample/emptyExample.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:PlatformToolset=v142
+          msbuild examples/templates/emptyExample/emptyExample.vcxproj /p:Configuration=Release /p:Platform=x64 /p:PlatformToolset=v142
