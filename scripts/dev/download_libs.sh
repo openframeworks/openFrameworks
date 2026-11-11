@@ -659,9 +659,6 @@ if [ "$PLATFORM" == "emscripten" ]; then
         if [[ $ARCH = "" ]] ; then
             ARCH="32"
         fi
-        if [[ $ARCH = "64" ]] ; then
-            ARCH="_64"
-        fi
     fi
 fi
 
