@@ -126,7 +126,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7.0.1
       - name: Docker Step
-        run: "docker run -di --name emscripten -v $PWD:/src emscripten/emsdk:6.0.13 bash"
+        run: "docker run -di --name emscripten -v $PWD:/src emscripten/emsdk:7.0.0 bash"
       # - name: Determine Release
       #   id: vars
       #   shell: bash
@@ -285,7 +285,7 @@ jobs:
         if: matrix.name == 'emscripten'
         run: |
           ./scripts/emscripten/download_libs.sh -t $RELEASE
-          docker run -di --name emscripten -v $PWD:/src emscripten/emsdk:6.0.13 bash
+          docker run -di --name emscripten -v $PWD:/src emscripten/emsdk:7.0.0 bash
       - name: Build (emscripten)
         if: matrix.name == 'emscripten'
         run: >-

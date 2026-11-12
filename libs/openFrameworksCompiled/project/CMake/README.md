@@ -13,7 +13,7 @@ the core in `libs/openFrameworksCompiled/lib/<platform>`.
 - CMake 3.22 or newer (3.28 for iOS / tvOS, which link the libraries' xcframeworks directly)
 - the libraries for the platform (`scripts/<platform>/download_libs.sh`), as for the other builds
 - any generator: Ninja or Makefiles, Xcode (macOS / iOS / tvOS), Visual Studio 2022 / 2026 (x64, ARM64, ARM64EC)
-- Emscripten: `emcmake` from the Emscripten SDK (openFrameworks CI uses 6.0.13)
+- Emscripten: `emcmake` from the Emscripten SDK (openFrameworks CI uses 7.0.0)
 
 ## App
 
