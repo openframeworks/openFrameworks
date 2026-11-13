@@ -84,10 +84,11 @@ echoSuccess(){ printf '%s✓%s %s\n' "$C_OK"     "$C_RESET" "$*"; }
 # --- translations ------------------------------------------------------------
 # Every user-facing string is  $(t some.key "English text with %s placeholders" arg…).
 # The English text lives in the code (so nothing breaks if a catalogue is
-# missing); scripts/i18n/en.tsv is generated from it (scripts/dev/i18n_extract.py).
-# A language is a file scripts/i18n/<lang>.tsv of  key<TAB>translated text  lines
-# (same %s placeholders, in any order of words). Select it with  --lang xx  or
-# OF_LANG=xx; a missing language or key falls back to the English default.
+# missing); the en column of strings.tsv is generated from it (scripts/dev/i18n_extract.py).
+# All languages live in one file, scripts/i18n/strings.tsv: a header
+# (key<TAB>en<TAB>de<TAB>…) and one row per string, one column per language,
+# same %s placeholders in every column. Select a language with  --lang xx  or
+# OF_LANG=xx; a missing language, or an empty cell, falls back to the English default.
 OF_LANG="${OF_LANG:-}"
 OF_I18N_DIR="${OF_I18N_DIR:-}"
 
@@ -110,18 +111,49 @@ t(){
 # i18nVarName <key> — the shell variable that holds a key's translation
 i18nVarName(){ printf 'OF_T_%s' "${1//[^A-Za-z0-9_]/_}"; }
 
-# i18nLoad <lang> — read scripts/i18n/<lang>.tsv into OF_T_* variables.
-# Returns 1 (and leaves English) when the language has no file.
+# i18nCell <line> <index> — print the tab-separated cell at <index> (0 = key).
+# Plain expansions, so empty cells are kept (read would collapse them).
+i18nCell(){
+	local rest="$1" i="$2"
+	while [[ $i -gt 0 ]]; do
+		[[ "$rest" == *$'\t'* ]] || return 1
+		rest="${rest#*$'\t'}"
+		i=$((i - 1))
+	done
+	printf '%s' "${rest%%$'\t'*}"
+}
+
+# i18nColumn <header> <lang> — print the column index of <lang> (1 = en), or fail
+i18nColumn(){
+	local rest="$1" lang="$2" i=0 cell
+	while :; do
+		cell="${rest%%$'\t'*}"
+		[[ $i -ge 1 && "$cell" == "$lang" ]] && { printf '%s' "$i"; return 0; }
+		[[ "$rest" == *$'\t'* ]] || return 1
+		rest="${rest#*$'\t'}"
+		i=$((i + 1))
+	done
+}
+
+# i18nLoad <lang> — read that language's column of scripts/i18n/strings.tsv
+# (one file, one column per language) into OF_T_* variables. Empty cells stay
+# English. Returns 1 (and leaves English) when the language has no column.
 i18nLoad(){
-	local lang="$1" file k v
+	local lang="$1" file hdr col line k cell first=1
 	[[ -n "$lang" && "$lang" != "en" ]] || return 0
 	[[ "$lang" =~ ^[A-Za-z][A-Za-z0-9_-]*$ ]] || return 1
-	file="${OF_I18N_DIR}/${lang}.tsv"
+	file="${OF_I18N_DIR}/strings.tsv"
 	[[ -f "$file" ]] || return 1
-	while IFS=$'\t' read -r k v || [[ -n "$k" ]]; do
-		v="${v%$'\r'}"
+	IFS= read -r hdr < "$file"
+	hdr="${hdr%$'\r'}"
+	col="$(i18nColumn "$hdr" "$lang")" || return 1
+	while IFS= read -r line || [[ -n "$line" ]]; do
+		if [[ $first -eq 1 ]]; then first=0; continue; fi
+		line="${line%$'\r'}"
+		k="${line%%$'\t'*}"
 		[[ -z "$k" || "$k" == \#* ]] && continue
-		printf -v "$(i18nVarName "$k")" '%s' "$v"
+		cell="$(i18nCell "$line" "$col")" || continue
+		[[ -n "$cell" ]] && printf -v "$(i18nVarName "$k")" '%s' "$cell"
 	done < "$file"
 	return 0
 }

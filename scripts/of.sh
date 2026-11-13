@@ -1052,8 +1052,8 @@ printHelp(){
     update    libs | pg | all Prompt source; refresh libs/PG as needed
     build     …               Build core / projects / emscripten / cmake (see of build help)
     cleanup   projects|caches|libs|core   Free disk (artifacts / downloads / prebuilts)  [--dry-run] [--yes]
-    i18n      list|export|check|import   The string dictionary (translations): scripts/i18n
-    --lang xx (or OF_LANG=xx) Use scripts/i18n/xx.tsv for menu text and messages
+    i18n      list|export|check|import   The string dictionary (translations): scripts/i18n/strings.tsv
+    --lang xx (or OF_LANG=xx) Use language xx (a column of strings.tsv) for menu text and messages
     --json  (or --api)        Machine-readable output: one JSON document on stdout, human text on
                               stderr, never prompts. For: status, version, menu, cleanup …
     version   of  | pg        Version info
@@ -3990,13 +3990,14 @@ cmdBuild(){
 }
 
 # ---------------------------------------------------------------------------
-# of i18n — the string dictionary (see scripts/i18n and scripts/dev/i18n_extract.py)
-#   of i18n list                      languages, with how much of the catalogue each covers
+# of i18n — the string dictionary: one file, scripts/i18n/strings.tsv, with a
+# column per language (see scripts/i18n/README.md, scripts/dev/i18n_extract.py)
+#   of i18n list                      languages and how much of the catalogue each covers
 #   of i18n export [<lang>]           key<TAB>English[<TAB>translation] on stdout (--json: structured)
-#   of i18n check <lang>              keys that are missing or invalid in <lang>
-#   of i18n import <lang> <file|->    install a translation (key<TAB>text lines), validated
+#   of i18n check <lang>              strings that are missing or invalid in <lang>
+#   of i18n import <lang> <file|->    add or replace a language column from key<TAB>text lines
 # ---------------------------------------------------------------------------
-i18nCatalog(){ printf '%s/en.tsv' "$OF_I18N_DIR"; }
+i18nCatalog(){ printf '%s/strings.tsv' "$OF_I18N_DIR"; }
 
 # number of %s placeholders in a text; prints -1 when it holds any other % spec
 i18nPlaceholders(){
@@ -4006,135 +4007,196 @@ i18nPlaceholders(){
 	printf '%s' "$(( (${#t} - ${#rest}) / 2 ))"
 }
 
-# i18nReadTsv <file> — fills I18N_KEYS / I18N_TEXTS (parallel arrays)
-i18nReadTsv(){
-	local file="$1" k v
-	I18N_KEYS=(); I18N_TEXTS=()
+# i18nReadCatalog [lang] — I18N_KEYS, I18N_EN and (for a language) I18N_TR, parallel arrays
+i18nReadCatalog(){
+	local lang="${1:-}" file hdr col=0 line first=1
+	I18N_KEYS=(); I18N_EN=(); I18N_TR=()
+	file="$(i18nCatalog)"
 	[[ -f "$file" ]] || return 1
-	while IFS=$'\t' read -r k v || [[ -n "$k" ]]; do
-		v="${v%$'\r'}"
-		[[ -z "$k" || "$k" == \#* ]] && continue
-		I18N_KEYS+=("$k"); I18N_TEXTS+=("$v")
+	IFS= read -r hdr < "$file"; hdr="${hdr%$'\r'}"
+	if [[ -n "$lang" && "$lang" != "en" ]]; then col="$(i18nColumn "$hdr" "$lang")" || col=0; fi
+	while IFS= read -r line || [[ -n "$line" ]]; do
+		if [[ $first -eq 1 ]]; then first=0; continue; fi
+		line="${line%$'\r'}"
+		[[ -z "$line" || "$line" == \#* ]] && continue
+		I18N_KEYS+=("${line%%$'\t'*}")
+		I18N_EN+=("$(i18nCell "$line" 1)")
+		if [[ "$col" -gt 0 ]]; then I18N_TR+=("$(i18nCell "$line" "$col" || true)"); else I18N_TR+=(""); fi
 	done < "$file"
+	[[ "$lang" == "" || "$lang" == "en" || "$col" -gt 0 ]]
 }
 
-# Validate a translation file against the catalogue.
-# Sets I18N_OK (valid pairs, as lines "key<TAB>text"), I18N_BAD (problems), I18N_MISSING (count)
-i18nValidate(){
-	local file="$1" i key text want got var total
-	local -a trKeys=() trTexts=()
-	I18N_OK=(); I18N_BAD=(); I18N_MISSING=0
-	i18nReadTsv "$(i18nCatalog)" || return 2
-	total=${#I18N_KEYS[@]}
-	for ((i = 0; i < total; i++)); do
-		printf -v "OF_E_$(printf '%s' "${I18N_KEYS[$i]}" | LC_ALL=C tr -c 'A-Za-z0-9_
-' '_')" '%s' "${I18N_TEXTS[$i]}"
+# The languages in the catalogue (one per line, English first)
+i18nLanguages(){
+	local file hdr rest cell i=0
+	file="$(i18nCatalog)"
+	[[ -f "$file" ]] || return 1
+	IFS= read -r hdr < "$file"; hdr="${hdr%$'\r'}"
+	rest="$hdr"
+	while :; do
+		cell="${rest%%$'\t'*}"
+		[[ $i -ge 1 ]] && printf '%s\n' "$cell"
+		[[ "$rest" == *$'\t'* ]] || break
+		rest="${rest#*$'\t'}"
+		i=$((i + 1))
 	done
-	i18nReadTsv "$file" || return 3
-	trKeys=("${I18N_KEYS[@]}"); trTexts=("${I18N_TEXTS[@]}")
-	for ((i = 0; i < ${#trKeys[@]}; i++)); do
-		key="${trKeys[$i]}"; text="${trTexts[$i]}"
-		var="OF_E_${key//[^A-Za-z0-9_]/_}"
-		if [[ -z "${!var:-}" ]]; then I18N_BAD+=("${key}: unknown key"); continue; fi
-		if [[ -z "$text" ]]; then I18N_BAD+=("${key}: empty text"); continue; fi
-		want="$(i18nPlaceholders "${!var}")"
-		got="$(i18nPlaceholders "$text")"
-		if [[ "$got" != "$want" ]]; then
-			I18N_BAD+=("${key}: needs ${want} %s placeholder(s), has ${got}")
-			continue
-		fi
-		I18N_OK+=("${key}"$'\t'"${text}")
-	done
-	I18N_MISSING=$(( total - ${#I18N_OK[@]} ))
-	[[ $I18N_MISSING -ge 0 ]] || I18N_MISSING=0
-	return 0
 }
 
-i18nLangFiles(){
-	local f
-	for f in "$OF_I18N_DIR"/*.tsv; do
-		[[ -f "$f" ]] || continue
-		[[ "$(basename "$f" .tsv)" == "en" ]] && continue
-		printf '%s\n' "$f"
-	done
+# awk shared by check and import: placeholder count of a text (-1 = a stray % spec)
+I18N_AWK_FUNCS='function ph(s,   t, r) { t = s; gsub(/%%/, "", t); r = t; gsub(/%s/, "", r); if (r ~ /%/) return -1; return (length(t) - length(r)) / 2 }'
+
+# i18nCheckColumn <lang> — report problems of an existing column.
+# Prints "BAD<TAB>key<TAB>reason" lines, then "SUMMARY<TAB>valid<TAB>bad<TAB>missing".
+i18nCheckColumn(){
+	awk -F'\t' -v lang="$1" "$I18N_AWK_FUNCS"'
+		NR == 1 { gsub(/\r$/, ""); col = 0; for (i = 2; i <= NF; i++) if ($i == lang) col = i; next }
+		{ sub(/\r$/, "", $NF) }
+		$1 == "" || $1 ~ /^#/ { next }
+		{
+			total++
+			if (col == 0 || $col == "") { missing++; next }
+			if (ph($col) != ph($2)) { printf "BAD\t%s\tneeds %d %%s placeholder(s), has %d\n", $1, ph($2), ph($col); bad++; next }
+			valid++
+		}
+		END { printf "SUMMARY\t%d\t%d\t%d\n", valid, bad, missing }
+	' "$(i18nCatalog)"
+}
+
+# i18nMerge <lang> <import-file> <out-file> — validate the import against the
+# catalogue and write the catalogue with <lang>'s column added or replaced.
+# Prints "BAD<TAB>key<TAB>reason" lines, then "SUMMARY<TAB>accepted<TAB>rejected<TAB>missing".
+i18nMerge(){
+	awk -F'\t' -v OFS='\t' -v lang="$1" -v imp="$2" -v out="$3" "$I18N_AWK_FUNCS"'
+		BEGIN {
+			while ((getline line < imp) > 0) {
+				sub(/\r$/, "", line)
+				if (line == "" || line ~ /^#/) continue
+				i = index(line, "\t"); if (i == 0) continue
+				tr[substr(line, 1, i - 1)] = substr(line, i + 1); seen[substr(line, 1, i - 1)] = 1
+			}
+		}
+		NR == 1 {
+			sub(/\r$/, ""); n = split($0, h, "\t"); col = 0
+			for (i = 2; i <= n; i++) if (h[i] == lang) col = i
+			if (col == 0) { col = n + 1; n = col; h[col] = lang }
+			line = h[1]; for (i = 2; i <= n; i++) line = line "\t" h[i]
+			print line > out
+			next
+		}
+		{
+			sub(/\r$/, "")
+			if ($1 == "") next
+			if ($1 ~ /^#/) { print $0 > out; next }
+			known[$1] = 1
+			m = split($0, c, "\t")
+			for (i = m + 1; i <= n; i++) c[i] = ""
+			if (($1 in tr)) {
+				v = tr[$1]
+				if (v == "") { printf "BAD\t%s\tempty text\n", $1; bad++ }
+				else if (ph(v) != ph(c[2])) { printf "BAD\t%s\tneeds %d %%s placeholder(s), has %d\n", $1, ph(c[2]), ph(v); bad++ }
+				else { c[col] = v; ok++ }
+			}
+			line = c[1]; for (i = 2; i <= n; i++) line = line "\t" c[i]
+			print line > out
+			total++
+		}
+		END {
+			for (k in seen) if (!(k in known)) { printf "BAD\t%s\tunknown key\n", k; bad++ }
+			printf "SUMMARY\t%d\t%d\t%d\n", ok, bad, total - ok
+		}
+	' "$(i18nCatalog)"
 }
 
 cmdI18n(){
-	local sub="${1:-list}" lang="${2:-}" file="${3:-}" f i total=0 n tmpIn=""
+	local sub="${1:-list}" lang="${2:-}" file="${3:-}" i total=0 line kind a b c tmpIn="" tmpOut=""
 	[[ "$sub" == "export" ]] || printBanner "i18n"     # export prints data only
 	case "$sub" in
 		list)
-			i18nReadTsv "$(i18nCatalog)" && total=${#I18N_KEYS[@]}
+			i18nReadCatalog || { echoErrorCode failed "$(t msg.catalogue_missing "catalogue not found: %s (run python3 scripts/dev/i18n_extract.py)" "$(i18nCatalog)")"; return 1; }
+			total=${#I18N_KEYS[@]}
 			echoKV "$(t msg.catalogue "catalogue")" "$(t msg.strings_english "%s strings (English) in %s" "$total" "$(i18nCatalog)")"
 			echoKV "$(t msg.current "current")" "${OF_LANG:-en}"
-			local any=0
-			while IFS= read -r f; do
-				[[ -n "$f" ]] || continue
+			local any=0 l
+			while IFS= read -r l; do
+				[[ -n "$l" && "$l" != "en" ]] || continue
 				any=1
-				i18nValidate "$f" && n=${#I18N_OK[@]}
-				echoKV "$(basename "$f" .tsv)" "$(t msg.strings_covered "%s of %s strings · %s problem(s)" "${n:-0}" "$total" "${#I18N_BAD[@]}")"
-			done < <(i18nLangFiles)
+				while IFS=$'\t' read -r kind a b c; do
+					[[ "$kind" == SUMMARY ]] && echoKV "$l" "$(t msg.strings_covered "%s of %s strings · %s problem(s)" "$a" "$total" "$b")"
+				done < <(i18nCheckColumn "$l")
+			done < <(i18nLanguages)
 			[[ $any -eq 1 ]] || echoNote "$(t msg.no_translations_yet "no translations yet — of i18n export > en.tsv, translate it, then: of i18n import <lang> <file>")"
 			;;
 		export)
-			i18nReadTsv "$(i18nCatalog)" || { echoErrorCode failed "$(t msg.catalogue_missing "catalogue not found: %s (run python3 scripts/dev/i18n_extract.py)" "$(i18nCatalog)")"; return 1; }
-			local -a enKeys=("${I18N_KEYS[@]}") enTexts=("${I18N_TEXTS[@]}")
-			local hasTr=0
-			if [[ -n "$lang" && "$lang" != "en" ]]; then
-				[[ "$lang" =~ ^[A-Za-z][A-Za-z0-9_-]*$ ]] || { echoErrorCode invalid_argument "$(t msg.invalid_language_name "invalid language name: %s" "$lang")"; return 2; }
-				OF_LANG="$lang"
-				i18nLoad "$lang" && hasTr=1
+			if [[ -n "$lang" && "$lang" != "en" ]] && ! [[ "$lang" =~ ^[A-Za-z][A-Za-z0-9_-]*$ ]]; then
+				echoErrorCode invalid_argument "$(t msg.invalid_language_name "invalid language name: %s" "$lang")"; return 2
 			fi
-			local k tr var
+			i18nReadCatalog "$lang" || { echoErrorCode failed "$(t msg.catalogue_missing "catalogue not found: %s (run python3 scripts/dev/i18n_extract.py)" "$(i18nCatalog)")"; return 1; }
+			local withTr=0
+			[[ -n "$lang" && "$lang" != "en" ]] && withTr=1
 			if [[ "$OF_JSON" == "1" ]]; then
 				local items="" first=1
-				for ((i = 0; i < ${#enKeys[@]}; i++)); do
-					k="${enKeys[$i]}"; tr=""
-					if [[ $hasTr -eq 1 ]]; then var="$(i18nVarName "$k")"; tr="${!var:-}"; fi
+				for ((i = 0; i < ${#I18N_KEYS[@]}; i++)); do
 					[[ $first -eq 1 ]] || items+=","
 					first=0
-					items+=$'\n    '"{\"key\": \"$(jsonEscape "$k")\", \"text\": \"$(jsonEscape "${enTexts[$i]}")\", \"placeholders\": $(i18nPlaceholders "${enTexts[$i]}"), \"translation\": $(jsonStrOrNull "$tr")}"
+					items+=$'\n    '"{\"key\": \"$(jsonEscape "${I18N_KEYS[$i]}")\", \"text\": \"$(jsonEscape "${I18N_EN[$i]}")\", \"placeholders\": $(i18nPlaceholders "${I18N_EN[$i]}"), \"translation\": $(jsonStrOrNull "${I18N_TR[$i]}")}"
 				done
-				OF_JSON_DATA="$(printf '{"lang": "%s", "source_lang": "en", "count": %s, "strings": [%s\n  ]}' "$(jsonEscape "${lang:-en}")" "${#enKeys[@]}" "$items")"
+				OF_JSON_DATA="$(printf '{"lang": "%s", "source_lang": "en", "count": %s, "strings": [%s\n  ]}' "$(jsonEscape "${lang:-en}")" "${#I18N_KEYS[@]}" "$items")"
 			else
-				for ((i = 0; i < ${#enKeys[@]}; i++)); do
-					k="${enKeys[$i]}"; tr=""
-					if [[ $hasTr -eq 1 ]]; then var="$(i18nVarName "$k")"; tr="${!var:-}"; fi
-					if [[ -n "$lang" && "$lang" != "en" ]]; then printf '%s\t%s\t%s\n' "$k" "${enTexts[$i]}" "$tr"
-					else printf '%s\t%s\n' "$k" "${enTexts[$i]}"; fi
+				for ((i = 0; i < ${#I18N_KEYS[@]}; i++)); do
+					if [[ $withTr -eq 1 ]]; then printf '%s\t%s\t%s\n' "${I18N_KEYS[$i]}" "${I18N_EN[$i]}" "${I18N_TR[$i]}"
+					else printf '%s\t%s\n' "${I18N_KEYS[$i]}" "${I18N_EN[$i]}"; fi
 				done
 			fi
 			;;
 		check|import)
-			[[ "$lang" =~ ^[A-Za-z][A-Za-z0-9_-]*$ && "$lang" != "en" ]] || { echoErrorCode invalid_argument "$(t msg.usage_i18n "usage: of i18n check <lang>  |  of i18n import <lang> <file|->")"; return 2; }
-			if [[ "$sub" == "check" ]]; then file="$OF_I18N_DIR/${lang}.tsv"
-			elif [[ -z "$file" ]]; then echoErrorCode invalid_argument "$(t msg.usage_i18n "usage: of i18n check <lang>  |  of i18n import <lang> <file|->")"; return 2
-			elif [[ "$file" == "-" ]]; then
-				file="$(mktemp)"; cat > "$file"; tmpIn="$file"
+			if ! [[ "$lang" =~ ^[A-Za-z][A-Za-z0-9_-]*$ && "$lang" != "en" ]]; then
+				echoErrorCode invalid_argument "$(t msg.usage_i18n "usage: of i18n check <lang>  |  of i18n import <lang> <file|->")"; return 2
 			fi
-			i18nValidate "$file"; local vrc=$?
-			[[ -n "$tmpIn" ]] && rm -f "$tmpIn"
-			case $vrc in
-				2) echoErrorCode failed "$(t msg.catalogue_missing "catalogue not found: %s (run python3 scripts/dev/i18n_extract.py)" "$(i18nCatalog)")"; return 1 ;;
-				3) echoErrorCode invalid_argument "$(t msg.file_not_found "file not found: %s" "$file")"; return 2 ;;
-			esac
-			for f in ${I18N_BAD[@]+"${I18N_BAD[@]}"}; do echoWarning "$f"; done
+			[[ -f "$(i18nCatalog)" ]] || { echoErrorCode failed "$(t msg.catalogue_missing "catalogue not found: %s (run python3 scripts/dev/i18n_extract.py)" "$(i18nCatalog)")"; return 1; }
+			local valid=0 bad=0 missing=0 report
+			local -a problems=()
 			if [[ "$sub" == "import" ]]; then
-				if [[ ${#I18N_OK[@]} -eq 0 ]]; then
+				if [[ -z "$file" ]]; then
+					echoErrorCode invalid_argument "$(t msg.usage_i18n "usage: of i18n check <lang>  |  of i18n import <lang> <file|->")"; return 2
+				elif [[ "$file" == "-" ]]; then
+					tmpIn="$(mktemp)"; cat > "$tmpIn"; file="$tmpIn"
+				fi
+				if [[ ! -f "$file" ]]; then
+					echoErrorCode invalid_argument "$(t msg.file_not_found "file not found: %s" "$file")"; return 2
+				fi
+				tmpOut="$(mktemp)"
+				report="$(i18nMerge "$lang" "$file" "$tmpOut")"
+			else
+				report="$(i18nCheckColumn "$lang")"
+			fi
+			[[ -n "$tmpIn" ]] && rm -f "$tmpIn"
+			while IFS=$'\t' read -r kind a b c; do
+				case "$kind" in
+					BAD) problems+=("${a}: ${b}") ;;
+					SUMMARY) valid="$a"; bad="$b"; missing="$c" ;;
+				esac
+			done <<<"$report"
+			for line in ${problems[@]+"${problems[@]}"}; do echoWarning "$line"; done
+			if [[ "$sub" == "import" ]]; then
+				if [[ "$valid" -eq 0 ]]; then
+					rm -f "$tmpOut"
 					echoErrorCode invalid_argument "$(t msg.nothing_valid_to_import "nothing valid to import")"
 					return 2
 				fi
-				mkdir -p "$OF_I18N_DIR" && printf '%s\n' "${I18N_OK[@]}" | LC_ALL=C sort -t $'\t' -k1,1 > "$OF_I18N_DIR/${lang}.tsv" || { echoErrorCode failed "$(t msg.could_not_write "could not write %s" "$OF_I18N_DIR/${lang}.tsv")"; return 1; }
-				echoSuccess "$(t msg.imported "imported %s string(s) for %s · %s rejected · %s missing" "${#I18N_OK[@]}" "$lang" "${#I18N_BAD[@]}" "$I18N_MISSING")"
+				if ! mv "$tmpOut" "$(i18nCatalog)"; then
+					rm -f "$tmpOut"
+					echoErrorCode failed "$(t msg.could_not_write "could not write %s" "$(i18nCatalog)")"; return 1
+				fi
+				echoSuccess "$(t msg.imported "imported %s string(s) for %s · %s rejected · %s missing" "$valid" "$lang" "$bad" "$missing")"
 			else
-				echoSuccess "$(t msg.check_summary "%s valid · %s problem(s) · %s missing" "${#I18N_OK[@]}" "${#I18N_BAD[@]}" "$I18N_MISSING")"
+				echoSuccess "$(t msg.check_summary "%s valid · %s problem(s) · %s missing" "$valid" "$bad" "$missing")"
 			fi
 			if [[ "$OF_JSON" == "1" ]]; then
-				local bad="" b first=1
-				for b in ${I18N_BAD[@]+"${I18N_BAD[@]}"}; do [[ $first -eq 1 ]] || bad+=", "; first=0; bad+="\"$(jsonEscape "$b")\""; done
-				OF_JSON_DATA="$(printf '{"lang": "%s", "valid": %s, "problems": [%s], "missing": %s}' "$(jsonEscape "$lang")" "${#I18N_OK[@]}" "$bad" "$I18N_MISSING")"
+				local badJson="" b2 first=1
+				for b2 in ${problems[@]+"${problems[@]}"}; do [[ $first -eq 1 ]] || badJson+=", "; first=0; badJson+="\"$(jsonEscape "$b2")\""; done
+				OF_JSON_DATA="$(printf '{"lang": "%s", "valid": %s, "problems": [%s], "missing": %s}' "$(jsonEscape "$lang")" "$valid" "$badJson" "$missing")"
 			fi
-			[[ "$sub" == "import" || ${#I18N_BAD[@]} -eq 0 ]] || return 1
+			[[ "$sub" == "import" || "$bad" -eq 0 ]] || return 1
 			;;
 		*)
 			echoErrorCode invalid_argument "$(t msg.usage_i18n_all "usage: of i18n [list|export [lang]|check <lang>|import <lang> <file|->]")"
