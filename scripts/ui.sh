@@ -44,7 +44,8 @@ else
 fi
 
 isInteractive(){ [[ "$UI_INTERACTIVE" -eq 1 ]]; }
-menuCanRun(){ [[ -t 0 && -t 1 ]]; }
+# OF_NONINTERACTIVE=1 (set by --json) means nothing may prompt or draw a menu
+menuCanRun(){ [[ "${OF_NONINTERACTIVE:-0}" != "1" && -t 0 && -t 1 ]]; }
 
 echoVerbose(){
 	[[ "$VERBOSE" = 1 ]] && printf '%s·%s %s\n' "$C_MUTED" "$C_RESET" "$*"
@@ -80,8 +81,56 @@ trap cleanupUI EXIT INT TERM
 
 echoInfo(){    printf '%s›%s %s\n' "$C_ACCENT" "$C_RESET" "$*"; }
 echoSuccess(){ printf '%s✓%s %s\n' "$C_OK"     "$C_RESET" "$*"; }
-echoWarning(){ printf '%s!%s %s\n' "$C_WARN"   "$C_RESET" "$*"; }
-echoError(){   printf '%s✗%s %s\n' "$C_ERR"    "$C_RESET" "$*" >&2; }
+# --- translations ------------------------------------------------------------
+# Every user-facing string is  $(t some.key "English text with %s placeholders" arg…).
+# The English text lives in the code (so nothing breaks if a catalogue is
+# missing); scripts/i18n/en.tsv is generated from it (scripts/dev/i18n_extract.py).
+# A language is a file scripts/i18n/<lang>.tsv of  key<TAB>translated text  lines
+# (same %s placeholders, in any order of words). Select it with  --lang xx  or
+# OF_LANG=xx; a missing language or key falls back to the English default.
+OF_LANG="${OF_LANG:-}"
+OF_I18N_DIR="${OF_I18N_DIR:-}"
+
+# t <key> <default> [printf args…]
+t(){
+	local key="$1" txt="$2" var tr
+	shift 2
+	if [[ -n "$OF_LANG" ]]; then
+		var="OF_T_${key//[^A-Za-z0-9_]/_}"
+		tr="${!var:-}"
+		[[ -n "$tr" ]] && txt="$tr"
+	fi
+	if [[ $# -gt 0 ]]; then
+		printf -- "$txt" "$@"
+	else
+		printf -- "$txt"
+	fi
+}
+
+# i18nVarName <key> — the shell variable that holds a key's translation
+i18nVarName(){ printf 'OF_T_%s' "${1//[^A-Za-z0-9_]/_}"; }
+
+# i18nLoad <lang> — read scripts/i18n/<lang>.tsv into OF_T_* variables.
+# Returns 1 (and leaves English) when the language has no file.
+i18nLoad(){
+	local lang="$1" file k v
+	[[ -n "$lang" && "$lang" != "en" ]] || return 0
+	[[ "$lang" =~ ^[A-Za-z][A-Za-z0-9_-]*$ ]] || return 1
+	file="${OF_I18N_DIR}/${lang}.tsv"
+	[[ -f "$file" ]] || return 1
+	while IFS=$'\t' read -r k v || [[ -n "$k" ]]; do
+		v="${v%$'\r'}"
+		[[ -z "$k" || "$k" == \#* ]] && continue
+		printf -v "$(i18nVarName "$k")" '%s' "$v"
+	done < "$file"
+	return 0
+}
+
+# --json mode collects warnings and the last error for the JSON envelope
+OF_WARNINGS=()
+OF_LAST_ERROR=""
+echoWarning(){ OF_WARNINGS+=("$*"); printf '%s!%s %s\n' "$C_WARN"   "$C_RESET" "$*"; }
+echoError(){   OF_LAST_ERROR="$*"; printf '%s✗%s %s\n' "$C_ERR"    "$C_RESET" "$*" >&2; }
 echoNote(){    printf '%s│%s %s%s%s\n' "$C_ACCENT" "$C_RESET" "$C_MUTED" "$*" "$C_RESET"; }
 echoKV(){      printf '  %s%-14s%s %s\n' "$C_MUTED" "$1" "$C_RESET" "$2"; }
 

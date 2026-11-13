@@ -1,0 +1,58 @@
+name: of cleanup safety
+
+on:
+  pull_request:
+    paths:
+      - "scripts/of.sh"
+      - "scripts/ui.sh"
+      - "scripts/dev/tests/test-cleanup-safety.sh"
+      - "scripts/dev/tests/test-of-json.sh"
+      - "scripts/dev/tests/test-i18n.sh"
+      - "scripts/dev/i18n_extract.py"
+      - "scripts/i18n/**"
+      - ".github/workflows/cleanup-safety.yml"
+  push:
+    branches: [master]
+    paths:
+      - "scripts/of.sh"
+      - "scripts/ui.sh"
+      - "scripts/dev/tests/test-cleanup-safety.sh"
+      - "scripts/dev/tests/test-of-json.sh"
+      - "scripts/dev/tests/test-i18n.sh"
+      - "scripts/dev/i18n_extract.py"
+      - "scripts/i18n/**"
+  workflow_dispatch:
+
+concurrency:
+  group: cleanup-safety-${{ github.event.pull_request.number || github.sha }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: ${{ matrix.name }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { name: Linux,                   os: ubuntu-24.04 }
+          - { name: macOS,                   os: macos-latest }
+          - { name: Windows (Git Bash),      os: windows-latest }
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - name: Cleanup safety tests
+        shell: bash
+        run: bash scripts/dev/tests/test-cleanup-safety.sh
+      - name: of --json contract tests
+        shell: bash
+        run: bash scripts/dev/tests/test-of-json.sh
+      - name: Translation dictionary tests
+        shell: bash
+        run: bash scripts/dev/tests/test-i18n.sh
+      - name: Cleanup safety tests (macOS system bash 3.2)
+        if: runner.os == 'macOS'
+        shell: bash
+        run: |
+          /bin/bash scripts/dev/tests/test-cleanup-safety.sh
+          /bin/bash scripts/dev/tests/test-of-json.sh
+          /bin/bash scripts/dev/tests/test-i18n.sh
