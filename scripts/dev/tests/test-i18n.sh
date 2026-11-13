@@ -20,7 +20,7 @@ EN="$TREE/scripts/i18n/en.tsv"
 [[ -f "$EN" ]] || { echo "FAIL: scripts/i18n/en.tsv is missing" >&2; exit 1; }
 
 run(){ OUT="$("$BASH" "$TREE/scripts/of.sh" "$@" </dev/null 2>&1)"; RC=$?; OUT="$(printf '%s' "$OUT" | sed $'s/\x1b\\[[0-9;?]*[a-zA-Z]//g')"; }
-key_for(){ awk -F'\t' -v t="$1" '$2==t{print $1; exit}' "$EN"; }
+key_for(){ awk -F'\t' -v t="$1" '{ sub(/\r$/, "", $2) } $2==t { print $1; exit }' "$EN"; }
 
 # --- catalogue ------------------------------------------------------------------
 if command -v python3 >/dev/null 2>&1; then
@@ -81,7 +81,8 @@ expect "--json and --lang together: still one envelope" bash -c 'echo "$1" | hea
 run i18n list
 expect "i18n list shows the catalogue size and the languages" bash -c 'grep -q "strings" <<<"$1" && grep -q "xx" <<<"$1" && grep -q "zh" <<<"$1"' _ "$OUT"
 "$BASH" "$TREE/scripts/of.sh" i18n export </dev/null 2>/dev/null > "$TEMP/export.tsv"
-expect "i18n export (English): identical to en.tsv" cmp -s "$TEMP/export.tsv" "$EN"
+# (a Windows checkout may give en.tsv CRLF line endings; the content is what counts)
+expect "i18n export (English): identical to en.tsv" cmp -s "$TEMP/export.tsv" <(tr -d '\r' < "$EN")
 "$BASH" "$TREE/scripts/of.sh" i18n export xx </dev/null 2>/dev/null > "$TEMP/export-xx.tsv"
 expect "i18n export xx has three columns and the translation" test -n "$(awk -F'\t' -v k="$K_NONE" '$1==k && NF==3 && $3=="XX: nothing else to remove"' "$TEMP/export-xx.tsv")"
 
