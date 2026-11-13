@@ -1,0 +1,333 @@
+key	en
+menu.addons_only	Addons only
+menu.all_apps_examples	All apps + examples
+menu.all_packages_for_platform	All packages for platform
+menu.all_tests_smoke_tests_build_run	All tests/ smoke tests (build + run)
+menu.apothecary_builds	Apothecary builds
+menu.apothecary_openframeworks_apothecary_recommended	Apothecary  — openframeworks/apothecary (recommended)
+menu.apps_only	apps/ only
+menu.archive_libs_danoli3_com_historical	Archive     — libs.danoli3.com historical
+menu.auto_installed_vs	Auto — installed VS
+menu.back	Back
+menu.both	Both
+menu.build_all_core_for_platform	Build all core for platform…
+menu.build_all_core_for_this_machine	Build all core for this machine (%s/%s)
+menu.build_platform	Build platform
+menu.build_single_library	Build single library…
+menu.cache_cleanup	Cache cleanup
+menu.caches_libs_download_packages	Caches — libs/download packages
+menu.check_only	Check only
+menu.cleanup	Cleanup
+menu.cleanup_free_space_menucleanup	cleanup()  — free space  (menuCleanup)
+menu.clone_nightly_git_clone_cmdclone	clone()    — nightly → git clone  (cmdClone)
+menu.compiled_core_libs_openframeworkscompiled_lib	Compiled core (libs/openFrameworksCompiled/lib)
+menu.core_build_compiled_openframeworks_core	Core build — compiled openFrameworks core
+menu.core_set	Core set
+menu.custom	Custom…
+menu.disk_usage_how_much_each_path	Disk usage — how much each path holds
+menu.draw_build_menubuild	draw()     — build  (menuBuild)
+menu.every_platform	Every platform
+menu.examples_only	examples/ only
+menu.exit	exit()
+menu.formula	Formula · %s/%s
+menu.ios_iphone_ipad	ios         — iPhone / iPad
+menu.latest_bleeding_edge	latest (bleeding edge)
+menu.libraries_choose_source	Libraries (choose source)…
+menu.libraries_for_which_platform	Libraries for which platform?
+menu.libraries_for_which_visual_studio	Libraries for which Visual Studio?
+menu.libraries_project_generator	Libraries + Project Generator
+menu.libraries_remove_minimise_prebuilts	Libraries — remove / minimise prebuilts
+menu.library_cleanup	Library cleanup
+menu.library_source	Library source
+menu.linux64_older_layout	linux64 (older layout)
+menu.linux64gcc6_older_layout	linux64gcc6 (older layout)
+menu.linux_aarch64	linux aarch64
+menu.linux_all_architectures	linux (all architectures)
+menu.linuxaarch64_older_layout	linuxaarch64 (older layout)
+menu.linuxarm64_older_layout	linuxarm64 (older layout)
+menu.linuxarmv6l_older_layout	linuxarmv6l (older layout)
+menu.linuxarmv7l_older_layout	linuxarmv7l (older layout)
+menu.list_installed_lib_platform_folders	List installed lib/<platform> folders
+menu.macos_apple_multi_target_xcframeworks	macos  — Apple multi-target xcframeworks
+menu.macos_multi_target_xcframeworks_ios_macos	macos       — multi-target XCFrameworks (iOS, macOS, tvOS)
+menu.macos_osx	macos (+ osx)
+menu.msys2_all_environments	msys2 (all environments)
+menu.msys2_environment	MSYS2 environment?
+menu.oflibs_ofworks_oflibs_experimental	ofLibs      — ofWorks/ofLibs (experimental)
+menu.oflibs_selection	ofLibs selection · %s / %s
+menu.open_apothecary_interactive_menu	Open Apothecary interactive menu
+menu.osx_desktop_host	osx  — desktop host
+menu.osx_desktop_host_libraries	osx         — desktop host libraries
+menu.osx_macos	osx / macos
+menu.package_downloads_only_recommended	Package downloads only (Recommended)
+menu.pick_libraries	Pick libraries…
+menu.platform	Platform
+menu.project_cleanup_scope	Project cleanup scope
+menu.projects_apps	Projects (apps/)
+menu.projects_obj_build_vs_artifacts_bin	Projects — obj/build/.vs artifacts (bin/ untouched)
+menu.release_version	Release / version · %s
+menu.remove_all_prebuilt_libs_nuclear	Remove ALL prebuilt libs (nuclear)
+menu.remove_one_platform	Remove one platform…
+menu.remove_other_platforms_keep_one_you	Remove other platforms — keep the one you choose
+menu.run_which_tests	Run which tests?
+menu.select_linux_distro_install_scripts	Select Linux distro install scripts
+menu.select_oflibs	Select ofLibs
+menu.setup_install_cmdsetup	setup()    — install  (cmdSetup)
+menu.single_path	Single path…
+menu.status	Status
+menu.status_checker_cmdstatus	status()   — checker  (cmdStatus)
+menu.target_architecture	Target architecture · %s
+menu.test_smoke_tests_menutest	test()     — smoke tests  (menuTest)
+menu.this_host_only_rebuilt_by_next	This host only — rebuilt by the next build
+menu.update_refresh_menuupdate	update()   — refresh  (menuUpdate)
+menu.upgrade_7_0_11_0_latest	Upgrade  — oF 7.0–11.0 → %s(Latest SDK)
+menu.version_info_menuversion	version()  — info  (menuVersion)
+menu.visual_studio	Visual Studio
+menu.visual_studio_2019_16	Visual Studio 2019 (16)
+menu.visual_studio_2022_17	Visual Studio 2022 (17)
+menu.visual_studio_2026_18	Visual Studio 2026 (18)
+menu.visual_studio_components_vsconfig	Visual Studio components (.vsconfig)
+menu.visual_studio_version_for_apothecary_build	Visual Studio version for apothecary build
+menu.vs_2019	VS 2019
+menu.vs_2022	VS 2022
+menu.vs_2026	VS 2026
+menu.vs_visual_studio	vs          — Visual Studio
+menu.vsconfig_vs_components_cmdvsconfig	vsconfig() — VS components  (cmdVsConfig)
+menu.what_do_you_want_do	What do you want to do?
+menu.what_update	What to update?
+menu.wipe_entire_libs_download_compiled_intermediates	Wipe entire libs/download + compiled intermediates
+msg.add_dry_run_preview_yes_skip	  add --dry-run to preview, --yes to skip the confirmation prompt,
+msg.already_git_checkout	already a git checkout
+msg.already_git_checkout_but_git_can	already a git checkout, but git can't read it
+msg.already_set_up_libs_pg_look	already set up — libs + PG look current
+msg.also_cleared_openframeworkscompiled_obj_intermediates	also cleared openFrameworksCompiled obj/intermediates · %s
+msg.also_keeps_anything_git_tracked_vendored	Also keeps anything git-tracked (vendored addon source, e.g. ofxKinect/libs/libfreenect).
+msg.another_cleanup_already_running_pid_try	another cleanup is already running (pid %s) — try again when it finishes
+msg.apo_cli_not_found_scripts_apothecary	apo CLI not found in scripts/apothecary
+msg.apo_menu	apo menu
+msg.apothecary_engine_missing_git_submodule_update	apothecary engine missing — git submodule update --init scripts/apothecary
+msg.apothecary_menu_output_libs	apothecary menu · output → %s/libs
+msg.archive_needs_lib_tag_v0_x	archive needs LIB_TAG=v0.x.y
+msg.attach_this_folder	attach %s (%s) to this folder
+msg.bin_incl_bin_data_never_touched	bin/ (incl. bin/data) is never touched — only obj/build/.vs/etc.
+msg.branch	branch
+msg.build_all_core	build all core · %s/%s
+msg.build_details_build_help	build details: %s build help
+msg.build_for	Build %s for %s/%s?
+msg.build_looks_active_this_tree	a build looks active in this tree:
+msg.bye	bye
+msg.cancelled	cancelled
+msg.cancelled_nothing_deleted	cancelled — nothing deleted
+msg.catalogue	catalogue
+msg.catalogue_missing	catalogue not found: %s (run python3 scripts/dev/i18n_extract.py)
+msg.check_network_git_remote	check network / OF_GIT_REMOTE
+msg.check_summary	%s valid · %s problem(s) · %s missing
+msg.checking_vs_packages_on	checking VS packages on %s…
+msg.clean	clean
+msg.clean_anyway_deleting_objects_libs_under	Clean anyway? Deleting objects or libs under a running build can break it.
+msg.clean_caches	clean caches · %s
+msg.cleaned_project_s_skipped_nothing_clean	cleaned %s project(s) · skipped %s (nothing to clean) · moved %s to the Trash (disk space returns when it is emptied)
+msg.cleaned_project_s_skipped_nothing_clean_2	cleaned %s project(s) · skipped %s (nothing to clean) · freed %s
+msg.cleanup_caches_packages_all	  of cleanup caches [packages|all]
+msg.cleanup_core_host_all_compiled_core	  of cleanup core [host|all]        compiled core in libs/openFrameworksCompiled/lib
+msg.cleanup_libs_other_keep_list_all	  of cleanup libs [other [<keep>]|list|all|<platform>]   e.g. vs  macos  linux64  linux/arm64  msys2/ucrt64
+msg.cleanup_libs_other_keep_removes_every	  of cleanup libs other <keep>    removes every other platform and keeps <keep>; without it, keeps this host
+msg.cleanup_projects	cleanup projects · %s%s
+msg.cleanup_projects_all_apps_examples_path	  of cleanup projects [all|apps|examples|<path>]
+msg.cleanup_projects_caches_libraries	cleanup projects · caches · libraries
+msg.cleanup_usage_projects_caches_libs_core	  of cleanup usage [projects|caches|libs|core|all] [--json|--tsv]
+msg.cli	cli
+msg.clone_attach_openframeworks_git	of clone  — attach openFrameworks.git
+msg.continue_upgrade	Continue upgrade %s?
+msg.core_build	core build · %s
+msg.core_build_folder_s_skipped_git	%s %s core build folder(s) · skipped %s (git-tracked) · %s failed · %s %s
+msg.core_built_libs	core built → %s/libs
+msg.could_not_clear_libs_download	could not clear libs/download
+msg.could_not_remove	could not remove %s
+msg.could_not_take_cleanup_lock	could not take the cleanup lock (%s)
+msg.could_not_write	could not write %s
+msg.current	current
+msg.delete_all_prebuilt_libraries_libs_addons	Delete ALL prebuilt libraries (libs/* and addons/*/libs)? You will need to re-download them.
+msg.delete_compiled_core_for_every_platform	Delete the compiled core for EVERY platform under %s?
+msg.delete_compiled_core_for_this_host	Delete the compiled core for this host (%s%s)? It is rebuilt by the next build.
+msg.delete_every_lib_folder_under_libs	Delete every lib/%s folder under libs/ and addons/?
+msg.delete_every_prebuilt_lib_platform_folder	Delete every prebuilt lib/<platform> folder except: %s ?
+msg.delete_everything_libs_download_openframeworkscompiled_obj	Delete everything in libs/download and the openFrameworksCompiled obj/intermediates?
+msg.detected_platform	detected platform: %s%s
+msg.dir	dir
+msg.dir_2	of dir
+msg.dir_not_openframeworks_tree_refusing	OF_DIR is not an openFrameworks tree (%s) — refusing
+msg.dir_not_openframeworks_tree_refusing_clean	OF_DIR is not an openFrameworks tree (%s) — refusing to clean
+msg.disk_usage	disk usage · %s
+msg.distro	distro
+msg.download_libraries	download libraries · %s
+msg.download_libraries_choose_source	download libraries · choose source
+msg.downloading_libraries_apothecary_latest	downloading libraries · apothecary @ latest
+msg.dry_run_nothing_will_be_deleted	dry run — nothing will be deleted
+msg.dry_run_would_clean_project_s	dry run: would clean %s project(s) · skipped %s (nothing to clean) · would free %s
+msg.dry_run_would_clear_libs_download	dry run: would clear libs/download · would free %s
+msg.dry_run_would_remove_cached_package	dry run: would remove %s cached package file(s) under libs/download · would free %s
+msg.engine	engine
+msg.export_apothecary_home_path_apothecary_with	export APOTHECARY_HOME=/path/to/apothecary with scripts/apo.sh
+msg.fetching_apothecary_tags	fetching apothecary tags…
+msg.fetching_archive_versions	fetching archive versions…
+msg.fetching_oflibs_tags	fetching ofLibs tags…
+msg.file_not_found	file not found: %s
+msg.folders_with_no_library_binaries_only	folders with no library binaries (only .gitkeep, headers or source) are left alone
+msg.force_clean_while_build_looks_active	  --force to clean while a build looks active
+msg.force_given_continuing	--force given — continuing
+msg.git	git
+msg.git_not_found	git not found
+msg.git_tracked_folder_s_kept	%s git-tracked folder(s) are kept
+msg.has_no_json_output_yet_supported	'%s' has no --json output yet (supported: status, version, menu, cleanup)
+msg.home	home
+msg.host	host
+msg.imported	imported %s string(s) for %s · %s rejected · %s missing
+msg.include_real_network_build_checks_real	Include the real network/build checks (--real)?
+msg.init_scripts_apothecary_submodule	init scripts/apothecary submodule
+msg.install_git_then_re_run_clone	install git, then re-run: of clone
+msg.install_media_codecs_too	Install media codecs too?
+msg.installed_lib_platform_folders	installed lib/<platform> folders:
+msg.installed_libs_vs_replacing_with_vs	installed libs: VS %s → replacing with VS %s
+msg.integrity	integrity
+msg.invalid_language_name	invalid language name: %s
+msg.keep	keep
+msg.keep_linux	keep linux/
+msg.keep_msys2	keep msys2/
+msg.keeps_downloaded_libs_projectgenerator_apps_myapps	keeps downloaded libs, projectGenerator, and apps/myApps
+msg.keeps_libs_openframeworks_libs_openframeworkscompiled_source	Keeps: libs/openFrameworks, libs/openFrameworksCompiled (source/project).
+msg.language_not_found_using_english	language '%s' not found in %s — using English
+msg.last_update	last update
+msg.later_git_pull_deepen_history_git	later: git pull   ·   deepen history: git fetch --unshallow
+msg.lib_name_folder_e_g_linux	lib/<name> folder (e.g. linux/arm64, msys2/ucrt64)
+msg.libraries	libraries · %s%s
+msg.libraries_look_current_redownload_anyway	Libraries look current. Redownload anyway?
+msg.libraries_ready	libraries ready · %s@%s
+msg.libs	libs → %s
+msg.libs_2	libs
+msg.libs_download_cleared_freed	libs/download cleared · freed %s
+msg.libs_ok_skip_redownload_set_force	libs ok — skip redownload (set force or use menu)
+msg.libs_out	libs out
+msg.libs_source	libs source
+msg.libs_state	libs state
+msg.listing_packages	listing packages…
+msg.macos_covers_osx_ios_tvos_xros	macos covers osx · ios · tvos · xros · watchos · catos
+msg.macos_multi_target_xcframeworks_osx_desktop	macos = multi-target xcframeworks; osx = desktop host
+msg.macos_packages_lib_macos_xcframework_osx	macos packages → lib/macos/*.xcframework (osx · ios · tvos · …)
+msg.missing	missing %s
+msg.missing_2	missing: %s
+msg.missing_scripts_dev_lib_sources_sh	missing scripts/dev/lib_sources.sh — of update libs needs it (of clone restores a full checkout)
+msg.missing_scripts_dev_lib_sources_sh_2	missing scripts/dev/lib_sources.sh
+msg.mode_list_other_platforms_platform_all	mode: list|other-platforms|platform|all-prebuilt
+msg.mode_packages_all	mode: packages|all
+msg.modifies_backup_first	modifies %s/ — backup first
+msg.msys2_env	msys2 env → %s
+msg.next_scripts_linux_compileof_sh	next: scripts/linux/compileOF.sh
+msg.no_compiled_core_remove	no compiled core to remove
+msg.no_lib_folders_remove	no lib/%s folders to remove
+msg.no_libs_download_cache	no libs/download cache
+msg.no_linux_distro_install_scripts	no linux distro install scripts
+msg.no_other_platforms_remove	no other platforms to remove
+msg.no_packages	no packages
+msg.no_prebuilt_libraries_remove	no prebuilt libraries to remove
+msg.no_translations_yet	no translations yet — of i18n export > en.tsv, translate it, then: of i18n import <lang> <file>
+msg.no_tty_running_all_tests_smoke	no TTY — running all tests/ smoke tests non-interactively
+msg.no_tty_showing_status	no TTY — showing status
+msg.non_host_platform_lib_folder_s	%s %s non-host platform lib folder(s) · skipped %s (git-tracked) · %s failed · %s %s
+msg.not_executable	Not executable: %s
+msg.not_folder	not a folder: %s
+msg.not_found	Not found: %s
+msg.not_found_2	not found: %s
+msg.nothing_valid_to_import	nothing valid to import
+msg.ok_run_setup_when_ready	ok — run of setup when ready
+msg.openframeworks	openFrameworks
+msg.osx_package_desktop_host_libs	osx package = desktop host libs
+msg.out	out
+msg.output	output
+msg.path	path
+msg.path_must_be_folder_inside_not	path must be a folder inside %s (not the root, .git, libs or scripts): %s
+msg.path_required_folder_inside	path required (a folder inside %s)
+msg.path_s_could_not_be_removed	%s path(s) could not be removed (permissions, or in use) — see the lines marked ✗
+msg.path_s_for_platform_skipped_git	%s %s path(s) for platform %s · skipped %s (git-tracked) · %s failed · %s %s
+msg.pg	pg
+msg.pg_installed_download_latest_anyway	PG installed (%s). Download latest anyway?
+msg.pg_ok_skip_already	PG ok — skip (already %s)
+msg.pg_path	pg path
+msg.pg_ready	PG ready · %s
+msg.pg_state	pg state
+msg.platform	platform
+msg.platform_2	platform → %s
+msg.platform_arch_next_build_recompiles_core	%s/<platform>[/<arch>] — the next build recompiles the core
+msg.prebuilt_tree_s_skipped_git_tracked	%s %s prebuilt tree(s) · skipped %s (git-tracked) · %s failed · %s %s — run Update libs to restore
+msg.project_folder_path	Project or folder path
+msg.project_gen	project gen
+msg.project_generator	Project Generator
+msg.projectgenerator	projectGenerator
+msg.ready	ready
+msg.refresh_libraries_project_generator	refresh libraries / Project Generator
+msg.refusing_clean_while_build_running_wait	refusing to clean while a build is running — wait for it, or re-run with --force
+msg.refusing_delete_outside_openframeworks_tree	refusing to delete outside the openFrameworks tree: %s
+msg.refusing_delete_without_confirmation_no_tty	refusing to delete without confirmation (no TTY) — re-run with --yes
+msg.remote	remote
+msg.removed_cached_package_file_s_under	removed %s cached package file(s) under libs/download · freed %s%s
+msg.removing_entire_libs_download_compiled_intermediates	removing entire libs/download/ and compiled intermediates
+msg.restores_files_nightly_package_stripped	restores files the nightly package stripped
+msg.root_sudo_required	root or sudo required
+msg.run_apothecary_update_core_for	Run apothecary update core for %s/%s?
+msg.run_clone_re_download_nightly_that	run: of clone   (or re-download a nightly that ships of Menu scripts)
+msg.run_setup	run: of setup
+msg.scope_apps_examples_all_path	scope: apps|examples|all|path
+msg.set_linux_distro_ubuntu_debian_fedora	set OF_LINUX_DISTRO=ubuntu|debian|fedora|archlinux
+msg.setup_complete	setup complete
+msg.setup_libs_source_apothecary_latest	setup · %s  (libs source: apothecary @ latest)
+msg.setup_needed	setup needed
+msg.sizes_disk_usage_nested_entries_not	sizes are disk usage; nested entries are not double counted
+msg.skipped_libs_already	skipped — libs already %s
+msg.skipped_pg	skipped PG — %s
+msg.source	source
+msg.source_2	source → %s
+msg.strings_covered	%s of %s strings · %s problem(s)
+msg.strings_english	%s strings (English) in %s
+msg.submodule	submodule
+msg.sudo	sudo %s
+msg.tag	tag
+msg.tag_2	tag → %s
+msg.this_deletes_downloaded_prebuilts_under_libs	This deletes downloaded prebuilts under libs/* and addon libs binaries.
+msg.this_folder_clone	this folder is a clone of %s (%s @ %s)
+msg.tip_choose_macos_for_apple_multi	tip: choose macos for Apple multi-target xcframeworks
+msg.try_update_pg	try: of update pg
+msg.turn_this_nightly_into_git_clone	Turn this nightly into a git clone of openFrameworks.git?
+msg.unknown	unknown: %s
+msg.unknown_build_subcommand	unknown build subcommand: %s
+msg.unknown_command	Unknown command: %s
+msg.unknown_lib_source	unknown LIB_SOURCE: %s
+msg.unknown_platform	unknown platform '%s'
+msg.unsupported_platform	Unsupported platform: %s
+msg.usage_build_clean_path	usage: of build clean <path>
+msg.usage_build_emscripten_path_debug_release	usage: of build emscripten <path> [Debug|Release]
+msg.usage_build_example_path_system_cfg	usage: of build example <path> [system] [cfg]
+msg.usage_build_generate_path_platforms	usage: of build generate <path> [platforms]
+msg.usage_build_open_em_path	usage: of build open-em <path>
+msg.usage_build_project_path_system_debug	usage: of build project <path> [system] [Debug|Release]
+msg.usage_cleanup_core_host_all	usage: of cleanup core [host|all]
+msg.usage_cleanup_projects_caches_libs_core	usage: of cleanup [projects|caches|libs|core|usage] …
+msg.usage_cleanup_usage_projects_caches_libs	usage: of cleanup usage [projects|caches|libs|core|all] [--json|--tsv]
+msg.usage_i18n	usage: of i18n check <lang>  |  of i18n import <lang> <file|->
+msg.usage_i18n_all	usage: of i18n [list|export [lang]|check <lang>|import <lang> <file|->]
+msg.use_update_redownload_from_chosen_source	use Update to redownload from a chosen source
+msg.valid	valid: %s
+msg.valid_addons_apps	valid: addons | apps
+msg.valid_check_latest_minimal_update_no	valid: check | latest | minimal | update | no-update | 2019 | 2022 | 2026 | all | arm64
+msg.valid_libs_pg_all	valid: libs | pg | all
+msg.valid_menu_status_setup_update_build	valid: menu status setup update build cleanup version upgrade clone apothecary help
+msg.valid_pg	valid: of | pg
+msg.visual_studio	visual studio → %s
+msg.visual_studio_libraries	Visual Studio libraries · %s
+msg.visual_studio_missing_components_run_vs	Visual Studio is missing oF components — run the VS Installer (.vsconfig)?
+msg.vs_2019_libs_x64_only	VS 2019 libs are x64 only
+msg.vs_2019_stops_at_msvc_14	VS 2019 stops at MSVC 14.29, so it can't use the 2022/2026 libs
+msg.vs_libs_must_be_2019_2022	OF_VS_LIBS must be 2019, 2022 or 2026 (got: %s)
+msg.vs_ver	VS_VER
+msg.vsconfig_windows_only_platform	vsconfig is Windows only (platform: %s)
+msg.would_you_like_run_setup	Would you like to run setup?
+some.key	English text with %s placeholders

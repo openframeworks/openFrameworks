@@ -16,6 +16,7 @@
 
 # Files with LF line endings for Unix-like systems
 *.sh text eol=lf
+*.tsv text eol=lf
 
 # Binary files (no EOL normalization)
 *.png binary
