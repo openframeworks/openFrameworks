@@ -297,6 +297,7 @@ static NSString *kShouldEnginePauseNotification = @"kShouldEnginePauseNotificati
         
         
         if (@available(iOS 14.5, *)) {
+            NSError *error = nil;
             if(![[AVAudioSession sharedInstance] setPrefersNoInterruptionsFromSystemAlerts:YES error:&error]) {
                 NSLog(@"Unable to setPrefersNoInterruptionsFromSystemAlerts: error %@, %@", error, [error userInfo]);
                 error = nil;
