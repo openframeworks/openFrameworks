@@ -22,6 +22,7 @@ ofxOscSender & ofxOscSender::operator=(const ofxOscSender & mom) {
 ofxOscSender & ofxOscSender::copy(const ofxOscSender & other) {
 	if (this == &other) return *this;
 	settings = other.settings;
+	cipher = other.cipher;
 	if (other.sendSocket) {
 		setup(settings);
 	}
@@ -91,6 +92,37 @@ bool ofxOscSender::isReady() const {
 }
 
 //--------------------------------------------------------------
+void ofxOscSender::setPassphrase(const std::string & passphrase, int iterations) {
+	cipher.setPassphrase(passphrase, iterations);
+}
+
+//--------------------------------------------------------------
+bool ofxOscSender::isEncrypting() const {
+	return cipher.isEnabled();
+}
+
+//--------------------------------------------------------------
+std::string ofxOscSender::getFingerprint() const {
+	return cipher.getFingerprint();
+}
+
+//--------------------------------------------------------------
+bool ofxOscSender::transmit(const char * data, std::size_t size) {
+	if (!isReady() || data == nullptr) {
+		return false;
+	}
+	const auto sealed = cipher.seal(std::string(data, size));
+	if (!sealed) {
+		if (!settings.silent) {
+			ofLogError("ofxOscSender") << "could not seal datagram";
+		}
+		return false;
+	}
+	sendSocket->Send(sealed->data(), sealed->size());
+	return true;
+}
+
+//--------------------------------------------------------------
 bool ofxOscSender::sendBundle(const ofxOscBundle & bundle) {
 	if (!isReady()) {
 		if (!settings.silent) {
@@ -107,8 +139,7 @@ bool ofxOscSender::sendBundle(const ofxOscBundle & bundle) {
 
 	// serialise the bundle and send
 	appendBundle(bundle, p);
-	sendSocket->Send(p.Data(), p.Size());
-	return true;
+	return transmit(p.Data(), p.Size());
 }
 
 //--------------------------------------------------------------
@@ -134,8 +165,7 @@ bool ofxOscSender::sendMessage(const ofxOscMessage & message, bool wrapInBundle)
 	if (wrapInBundle) {
 		p << osc::EndBundle;
 	}
-	sendSocket->Send(p.Data(), p.Size());
-	return true;
+	return transmit(p.Data(), p.Size());
 }
 
 //--------------------------------------------------------------

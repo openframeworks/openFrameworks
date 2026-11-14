@@ -19,7 +19,7 @@ meta:
 	ADDON_DESCRIPTION = Addon for computer vision using the open source library openCv
 	ADDON_AUTHOR = OF Team
 	ADDON_TAGS = "computer vision" "opencv" "image processing"
-	ADDON_URL = http://github.com/openframeworks/openFrameworks
+	ADDON_URL = https://github.com/openframeworks/openFrameworks
 
 common:
 	# dependencies with other addons, a list of them separated by spaces
