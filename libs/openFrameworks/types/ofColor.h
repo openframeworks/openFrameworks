@@ -722,7 +722,7 @@ ofColor_<PixelType> operator*(float val, const ofColor_<PixelType> &color) {
 
 template<typename PixelType>
 inline float ofColor_<PixelType>::limit() {
-	return std::numeric_limits<PixelType>::max();
+	return static_cast<float>(std::numeric_limits<PixelType>::max());
 }
 
 template<>

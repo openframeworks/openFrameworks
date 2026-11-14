@@ -343,7 +343,10 @@ ofFileDialogResult ofSystemLoadDialog(std::string windowTitle, bool bFolderSelec
 	//----------------------------------------------------------------------------------------
 #if defined(TARGET_OS_MAC) && !TARGET_OS_IPHONE && !TARGET_OS_WATCH && !TARGET_OS_TV && defined(__OBJC__)
 	@autoreleasepool {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
 		NSOpenGLContext *context = [NSOpenGLContext currentContext];
+#pragma clang diagnostic pop
 
 		NSOpenPanel * loadDialog = [NSOpenPanel openPanel];
 		[loadDialog setAllowsMultipleSelection:NO];
@@ -511,7 +514,10 @@ ofFileDialogResult ofSystemSaveDialog(std::string defaultName, std::string messa
 #if defined(TARGET_OS_MAC) && !TARGET_OS_IPHONE && !TARGET_OS_WATCH && !TARGET_OS_TV && defined(__OBJC__)
 	@autoreleasepool {
 		NSSavePanel * saveDialog = [NSSavePanel savePanel];
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
 		NSOpenGLContext *context = [NSOpenGLContext currentContext];
+#pragma clang diagnostic pop
 		[saveDialog setMessage:[NSString stringWithUTF8String:messageName.c_str()]];
 		[saveDialog setNameFieldStringValue:[NSString stringWithUTF8String:defaultName.c_str()]];
 
