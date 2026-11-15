@@ -14,6 +14,11 @@
 #define TARGET_OF_SIMULATOR
 #endif
 
+// Location support is enabled by default; set OFXIOS_ENABLE_LOCATION=0 in CoreOF.xcconfig to disable it.
+#ifndef OFXIOS_ENABLE_LOCATION
+    #define OFXIOS_ENABLE_LOCATION 1
+#endif
+
 #if (TARGET_OS_IPHONE || TARGET_OS_IOS || TARGET_OS_SIMULATOR || TARGET_IPHONE_SIMULATOR) && !TARGET_OS_TV && !TARGET_OS_WATCH
     #define TARGET_OF_IOS
     #define CORE_MOTION
@@ -21,8 +26,10 @@
     #define OF_GL_KIT
     #define OF_OPEN_AL
     #define OF_CORE_MOTION
-    #define OF_CORE_LOCATION
-    #define OF_MAP_KIT
+    #if OFXIOS_ENABLE_LOCATION
+        #define OF_CORE_LOCATION
+        #define OF_MAP_KIT
+    #endif
     #define OF_HAPTICS
     #define OF_IOS_AVSOUNDPLAYER
 #elif TARGET_OS_TV
@@ -42,7 +49,9 @@
     #define OF_UI_KIT
     #define OF_GL_KIT
     #define OF_CORE_MOTION
-    #define OF_CORE_LOCATION
+    #if OFXIOS_ENABLE_LOCATION
+        #define OF_CORE_LOCATION
+    #endif
 #else
     #define TARGET_OSX
     #define TARGET_MACOS
