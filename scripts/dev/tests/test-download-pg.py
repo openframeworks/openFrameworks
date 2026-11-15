@@ -22,8 +22,13 @@ def main():
         wrapper.chmod(0o755)
         requests = temp / "requests"
         gui_marker = temp / "gui-ran"
+        probe = temp / "host-root"
+        (probe / "etc").mkdir(parents=True)
+        os_release = probe / "etc/os-release"
+        os_release.write_text('ID=ubuntu\nVERSION_ID="24.04"\nVERSION_CODENAME=noble\n')
         env = dict(os.environ, PLATFORM="linux", BITS="64", OF_ANIM="0",
                    OF_NONINTERACTIVE="1", REQUESTS=str(requests),
+                   OF_PG_PROBE_ROOT=str(probe),
                    GUI_EXEC_MARKER=str(gui_marker))
         env.pop("OF_LANG", None)
         env.pop("OF_I18N_DIR", None)
@@ -93,6 +98,28 @@ def main():
                 assert os.access(installed / binary, os.X_OK), binary
             assert version()["version"] == "fixture-cli"
         print("PASS x64/ARM64 GUI packages, architecture aliases, executables and CLI version")
+
+        for release, ubuntu22 in [
+            ('ID=ubuntu\nVERSION_ID="22.04"\nVERSION_CODENAME=jammy\n', True),
+            ('ID=ubuntu\nVERSION_ID="22.04"\n', True),
+            ('ID=linuxmint\nVERSION_ID="21.3"\nUBUNTU_CODENAME=jammy\nVERSION_CODENAME=virginia\n', True),
+            ('ID=pop\nVERSION_ID="22.04"\nVERSION_CODENAME=jammy\n', True),
+            ('ID=ubuntu\nVERSION_ID="24.04"\nVERSION_CODENAME=noble\n', False),
+            ('ID=debian\nVERSION_ID="12"\nVERSION_CODENAME=bookworm\n', False),
+        ]:
+            os_release.write_text(release)
+            run(["bash", str(wrapper)])
+            package = "projectGenerator-linux-ubuntu22-gui.gz" if ubuntu22 else "projectGenerator-linux-gui.gz"
+            assert requests.read_text().splitlines()[-1].endswith("/" + package)
+            assert version()["version"] == "fixture-cli"
+        os_release.write_text('ID=ubuntu\nVERSION_ID="22.04"\nVERSION_CODENAME=jammy\n')
+        run(["bash", str(tree / "scripts/dev/download_pg.sh"), "-p", "linux", "-a", "arm64"])
+        assert requests.read_text().splitlines()[-1].endswith("/projectGenerator-linux-arm64-gui.gz")
+        os_release.unlink()
+        run(["bash", str(wrapper)])
+        assert requests.read_text().splitlines()[-1].endswith("/projectGenerator-linux-gui.gz")
+        os_release.write_text('ID=ubuntu\nVERSION_ID="24.04"\nVERSION_CODENAME=noble\n')
+        print("PASS Ubuntu 22.04/Jammy derivatives select Ubuntu22 GUI; other x64 hosts and ARM64 retain their packages")
 
         (installed / "projectGeneratorCmd").unlink()
         assert version()["path"].endswith("resources/app.asar.unpacked/app/projectGenerator")

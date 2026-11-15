@@ -44,6 +44,16 @@ download(){
 
 }
 
+linuxPGVariant() (
+    local ID="" VERSION_ID="" VERSION_CODENAME="" UBUNTU_CODENAME=""
+    local root="${OF_PG_PROBE_ROOT:-}"
+    [[ -r "$root/etc/os-release" ]] || return 0
+    . "$root/etc/os-release"
+    if [[ "$UBUNTU_CODENAME" == "jammy" || "$VERSION_CODENAME" == "jammy" || ( "$ID" == "ubuntu" && "$VERSION_ID" == 22.04* ) ]]; then
+        printf '%s' '-ubuntu22'
+    fi
+)
+
 trap 'trapError "$LINENO" "$?"' ERR
 trap 'trapError "$LINENO" 130' SIGINT
 trap 'trapError "$LINENO" 143' SIGTERM
@@ -155,7 +165,7 @@ OUTPUT=projectGenerator
 case "$PLATFORM" in
     linux)
         case "$ARCH" in
-            x86_64|amd64|64) PKG="projectGenerator-linux-gui.gz" ;;
+            x86_64|amd64|64) PKG="projectGenerator-linux$(linuxPGVariant)-gui.gz" ;;
             aarch64|arm64) PKG="projectGenerator-linux-arm64-gui.gz" ;;
             *) echo "No Linux projectGenerator GUI release for architecture: $ARCH" >&2; exit 1 ;;
         esac
