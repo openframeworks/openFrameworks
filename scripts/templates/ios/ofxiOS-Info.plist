@@ -26,10 +26,21 @@
 	<true/>
 	<key>NSCameraUsageDescription</key>
 	<string>This app needs to access the camera</string>
+	<!-- Purpose strings for the ofxiOS features that need one. The App Store rejects an upload (error
+	     90683) when the binary references a protected API but the key is missing, even if the app never
+	     calls it. Location (ofxiOSCoreLocation / ofxiOSMapKit) is compiled in by default; apps that do not
+	     use it can set OFXIOS_ENABLE_LOCATION=0 (see CoreOF.xcconfig) and delete the location key.
+	     Edit the text to say why YOUR app needs each one, and delete the keys you do not use. -->
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>This app makes use of your Location</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>This app needs to access the microphone</string>
+	<key>NSMotionUsageDescription</key>
+	<string>This app makes use of the motion sensors</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>This app needs to access your photo library</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>This app needs to save photos to your photo library</string>
 	<key>UIApplicationExitsOnSuspend</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>

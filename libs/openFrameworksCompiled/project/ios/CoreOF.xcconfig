@@ -46,7 +46,14 @@ OF_CORE_HEADERS = $(HEADER_OF) $(HEADER_OFXIOS) $(HEADER_UTF8) $(HEADER_FREETYPE
 OF_CORE_FRAMEWORKS = -framework AudioToolbox -framework Accelerate -framework AVFoundation -framework CoreAudio -framework CoreGraphics -framework CoreLocation -framework CoreMotion -framework CoreMedia -framework CoreVideo -framework Foundation -framework GameController -framework GLKit -framework MapKit -framework OpenAL -framework OpenGLES -framework UIKit -framework Security -framework CFNetwork -framework QuartzCore -framework CoreHaptics -framework Metal
 
 
-GCC_PREPROCESSOR_DEFINITIONS = $(inherited) GLES_SILENCE_DEPRECATION=1 GLM_FORCE_CTOR_INIT GLM_ENABLE_EXPERIMENTAL
+// Location (CoreLocation / MapKit: ofxiOSCoreLocation, ofxiOSMapKit) is compiled in by default and the
+// iOS templates ship NSLocationWhenInUseUsageDescription. Set to 0 to compile it out, so an app that
+// does not use location needs no location purpose string (App Store error 90683). The static library
+// is built with this too, so pass it on the xcodebuild command line (or edit it here):
+//   xcodebuild ... OFXIOS_ENABLE_LOCATION=0
+OFXIOS_ENABLE_LOCATION = 1
+
+GCC_PREPROCESSOR_DEFINITIONS = $(inherited) GLES_SILENCE_DEPRECATION=1 GLM_FORCE_CTOR_INIT GLM_ENABLE_EXPERIMENTAL OFXIOS_ENABLE_LOCATION=$(OFXIOS_ENABLE_LOCATION)
 
 //COMPILER SETTINGS WHICH CAN BE OVERRIDDEN BY XCODE BUILD SETTINGS
 CLANG_ENABLE_OBJC_WEAK = YES
