@@ -16,7 +16,7 @@ cat << EOF
     Options:
 
     -v, --version VERSION       OF version to download the libraries for. Defaults to master
-    -p, --platform PLATFORM     Platform among: android, emscripten, ios, linux, linux64, linuxarmv6l, linuxarmv7l, msys2, osx, tvos, vs
+    -p, --platform PLATFORM     Platform among: linux, msys2, osx, macos, vs
                                 If not specified tries to autodetect the platform
     -s, --silent                Silent download progress
     -h, --help                  Shows this message
@@ -44,26 +44,16 @@ download(){
 
 }
 
-# trap any script errors and exit
-trap 'trapError ${LINENO}' ERR
-trap "trapError" SIGINT SIGTERM
+trap 'trapError "$LINENO" "$?"' ERR
+trap 'trapError "$LINENO" 130' SIGINT
+trap 'trapError "$LINENO" 143' SIGTERM
 
 trapError() {
-    local parent_lineno="$1"
-    if [[ "$#" = "3" ]] ; then
-        local message="$2"
-        local code="${3:-1}"
-        echo "Error on or near line ${parent_lineno}: ${message}; exiting with status ${code}"
-    else
-        local code="${2:-1}"
-        echo "Error on or near line ${parent_lineno}; exiting with status ${code}"
-    fi
-
-    if [ -e openFrameworksLibs* ]; then
-        echo "removing packages"
-        rm openFrameworksLibs*
-    fi
-    exit "${code}"
+    local parent_lineno="${1:-unknown}"
+    local code="${2:-1}"
+    trap - ERR SIGINT SIGTERM
+    echo "Error on or near line ${parent_lineno}; exiting with status ${code}" >&2
+    exit "$code"
 }
 
 
@@ -161,113 +151,70 @@ cd "$SCRIPT_DIR"
 
 OUTDIR=../../
 
-ZIP="zip"
-if [[ $BLEEDING_EDGE = 1 ]] ; then
-    VER=latest
-fi
-
-if [[ $TAG != "" ]] ; then
-    VER="$TAG"
-fi
-
-if [ "$PLATFORM" == "linux" ]; then
-    ZIP="tar.bz2"
-fi
-if [ "$PLATFORM" == "vs" ]; then
-    EXT=".exe"
-else
-    EXT=".app"
-fi
-
 OUTPUT=projectGenerator
-if [ "$PLATFORM" == "msys2" ] || [ "$PLATFORM" == "vs" ]; then
-    GUI="-gui"
-else
-    GUI=""
-fi
-PKG="projectGenerator-${PLATFORM}${GUI}.${ZIP}"
-if [ "$PLATFORM" == "linux" ]; then
-    case "$ARCH" in
-        x86_64|amd64|64) PKG="projectGenerator-linux-gui.gz" ;;
-        aarch64|arm64) PKG="projectGenerator-linux-arm64-gui.gz" ;;
-        *) echo "No Linux projectGenerator GUI release for architecture: $ARCH" >&2; exit 1 ;;
-    esac
-fi
+case "$PLATFORM" in
+    linux)
+        case "$ARCH" in
+            x86_64|amd64|64) PKG="projectGenerator-linux-gui.gz" ;;
+            aarch64|arm64) PKG="projectGenerator-linux-arm64-gui.gz" ;;
+            *) echo "No Linux projectGenerator GUI release for architecture: $ARCH" >&2; exit 1 ;;
+        esac
+        ;;
+    vs|msys2) PKG="projectGenerator-vs-gui.zip" ;;
+    osx|macos) PKG="projectGenerator-osx.zip" ;;
+    *) echo "Unsupported projectGenerator platform: $PLATFORM" >&2; exit 1 ;;
+esac
+
 echo " openFrameworks download_pg.sh"
-
 cd ../../
-mkdir -p libs
-cd libs
+mkdir -p libs/download
+cd libs/download
 
-mkdir -p download
-cd download
+download "$PKG"
 
-download $PKG
+PG_STAGE=$(mktemp -d "${OUTDIR}/${OUTPUT}.XXXXXX")
+trap 'rm -rf "$PG_STAGE"' EXIT
+echo " Uncompressing Project Generator for [$PLATFORM] from [$PKG]"
+case "$PLATFORM" in
+    linux)
+        tar -xzf "$PKG" --strip-components=1 -C "$PG_STAGE"
+        RESOURCES="$PG_STAGE/resources"
+        GUI_BIN="$PG_STAGE/projectGenerator"
+        CLI_NAME=projectGenerator
+        CLI_DEST="$PG_STAGE/projectGeneratorCmd"
+        ;;
+    vs|msys2)
+        unzip -q "$PKG" -d "$PG_STAGE"
+        RESOURCES="$PG_STAGE/resources"
+        GUI_BIN="$PG_STAGE/projectGenerator.exe"
+        CLI_NAME=projectGenerator.exe
+        CLI_DEST="$PG_STAGE/projectGeneratorCmd.exe"
+        ;;
+    osx|macos)
+        unzip -q "$PKG" -d "$PG_STAGE"
+        if [ -d "$PG_STAGE/projectGenerator-osx/projectGenerator.app" ]; then
+            mv "$PG_STAGE/projectGenerator-osx/projectGenerator.app" "$PG_STAGE/projectGenerator.app"
+            rm -rf "$PG_STAGE/projectGenerator-osx"
+        fi
+        RESOURCES="$PG_STAGE/projectGenerator.app/Contents/Resources"
+        GUI_BIN="$PG_STAGE/projectGenerator.app/Contents/MacOS/projectGenerator"
+        CLI_NAME=projectGenerator
+        CLI_DEST="$PG_STAGE/projectGenerator"
+        ;;
+esac
 
-if [ "$PLATFORM" == "linux" ]; then
-    PG_STAGE=$(mktemp -d "${OUTDIR}/${OUTPUT}.XXXXXX")
-    trap 'rm -rf "$PG_STAGE"' EXIT
-    tar -xzf "$PKG" --strip-components=1 -C "$PG_STAGE"
-    CLI=""
-    for candidate in \
-        "$PG_STAGE/resources/app.asar.unpacked/app/projectGenerator" \
-        "$PG_STAGE/resources/app/app/projectGenerator"; do
-        if [ -f "$candidate" ]; then CLI="$candidate"; break; fi
-    done
-    if [[ ! -f "$PG_STAGE/projectGenerator" || -z "$CLI" ]]; then
-        echo "Linux projectGenerator package is missing the GUI or bundled CLI" >&2
-        exit 1
-    fi
-    cp "$CLI" "$PG_STAGE/projectGeneratorCmd"
-    chmod +x "$PG_STAGE/projectGenerator" "$PG_STAGE/projectGeneratorCmd" "$CLI"
-    rm -rf "${OUTDIR}/${OUTPUT}"
-    mv "$PG_STAGE" "${OUTDIR}/${OUTPUT}"
-    echo " openFrameworks download projectGenerator and install complete!"
-    exit 0
+CLI=""
+for candidate in \
+    "$RESOURCES/app.asar.unpacked/app/$CLI_NAME" \
+    "$RESOURCES/app/app/$CLI_NAME"; do
+    if [ -f "$candidate" ]; then CLI="$candidate"; break; fi
+done
+if [[ ! -f "$GUI_BIN" || -z "$CLI" ]]; then
+    echo "ProjectGenerator package for $PLATFORM is missing the GUI or bundled CLI" >&2
+    exit 1
 fi
-
-if [ -d "${OUTDIR}/${OUTPUT}" ] || [ -f "${OUTDIR}/${OUTPUT}" ]; then
-    rm -rf "${OUTDIR}/${OUTPUT}"
-fi
-
-echo " Uncompressing Project Generator for [$PLATFORM] from [$PKG] to [${OUTDIR}/${OUTPUT}]"
-if [ "$PLATFORM" == "msys2" ] || [ "$PLATFORM" == "vs" ]; then
-    unzip -q "$PKG" -d "${OUTDIR}/${OUTPUT}"
-    #rm $PKG
-else
-    mkdir -p "${OUTDIR}${OUTPUT}"
-    tar xjf "$PKG" -C "${OUTDIR}${OUTPUT}"
-    if [ "$PLATFORM" == "osx" ]; then
-        mv "${OUTDIR}/${OUTPUT}/projectGenerator-osx/projectGenerator$EXT" "${OUTDIR}/${OUTPUT}/projectGenerator$EXT"
-        rm -rf "${OUTDIR}/${OUTPUT}/projectGenerator-osx/"
-    fi
-fi
-
-if [ "$PLATFORM" == "msys2" ] || [ "$PLATFORM" == "vs" ]; then
-    if ! command -v rsync &> /dev/null; then      
-        cp -ar "${OUTDIR}/${OUTPUT}/resources/app/app/projectGenerator.exe" "${OUTDIR}/${OUTPUT}/projectGeneratorCmd.exe"
-    else
-        rsync -avzp "${OUTDIR}/${OUTPUT}/resources/app/app/projectGenerator.exe" "${OUTDIR}/${OUTPUT}/projectGeneratorCmd.exe"
-    fi
-    # if command -v chmod &> /dev/null; then
-        chmod +x "${OUTDIR}/${OUTPUT}/projectGeneratorCmd.exe"
-        chmod +x "${OUTDIR}/${OUTPUT}/resources/app/app/projectGenerator.exe"
-    # else
-    #     echo "Warning: chmod command not found, skipping permission adjustment."
-    # fi
-else
-    if ! command -v rsync &> /dev/null; then      
-        cp -arX "${OUTDIR}/${OUTPUT}/projectGenerator$EXT/Contents/Resources/app/app/projectGenerator" "${OUTDIR}/${OUTPUT}/projectGenerator"
-    else
-        rsync -avzp "${OUTDIR}/${OUTPUT}/projectGenerator$EXT/Contents/Resources/app/app/projectGenerator" "${OUTDIR}/${OUTPUT}/projectGenerator"
-    fi
-    # if command -v chmod &> /dev/null; then
-        chmod +x "${OUTDIR}/${OUTPUT}/projectGenerator"
-        chmod +x "${OUTDIR}/${OUTPUT}/projectGenerator$EXT/Contents/MacOS/projectGenerator"
-    # else
-    #     echo "Warning: chmod command not found, skipping permission adjustment."
-    # fi
-fi
-
-echo " ------ "
+cp "$CLI" "$CLI_DEST"
+chmod +x "$GUI_BIN" "$CLI_DEST" "$CLI"
+rm -rf "${OUTDIR}/${OUTPUT}"
+mv "$PG_STAGE" "${OUTDIR}/${OUTPUT}"
 echo " openFrameworks download projectGenerator and install complete!"

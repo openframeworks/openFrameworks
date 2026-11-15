@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Exercise Linux GUI installation and menu discovery without network downloads."""
+"""Exercise desktop GUI installation and menu discovery without network downloads."""
 import json
 import os
 from pathlib import Path
@@ -7,6 +7,7 @@ import shutil
 import subprocess
 import tarfile
 import tempfile
+import zipfile
 
 
 ROOT = Path(__file__).resolve().parents[3]
@@ -28,6 +29,8 @@ def main():
         env.pop("OF_I18N_DIR", None)
         (tree / "scripts/dev/downloader.sh").write_text(
             'downloader() { printf "%s\\n" "$1" >> "$REQUESTS"; '
+            'if [ -n "${PG_DOWNLOAD_SIGNAL:-}" ]; then kill -TERM $$; fi; '
+            'if [ -n "${PG_DOWNLOAD_FAIL:-}" ]; then return "$PG_DOWNLOAD_FAIL"; fi; '
             'cp "$PG_FIXTURE" "${1##*/}"; }\n')
         installed = tree / "projectGenerator"
         cli_source = '#!/usr/bin/env bash\necho \'{"openFrameworks projectGenerator":"fixture-cli"}\'\n'
@@ -38,24 +41,38 @@ def main():
             assert (result.returncode == 0) == success, result.stdout + result.stderr
             return result
 
-        def fixture(layout="asar", with_cli=True):
+        def fixture(layout="asar", with_cli=True, platform="linux", flat_mac=False):
             source = temp / "bundle"
             shutil.rmtree(source, ignore_errors=True)
             source.mkdir()
-            (source / "projectGenerator").write_text(
-                '#!/usr/bin/env bash\necho ran > "$GUI_EXEC_MARKER"\nexit 99\n')
-            if layout == "asar":
-                (source / "resources").mkdir()
-                (source / "resources/app.asar").write_text("archive")
-                cli = source / "resources/app.asar.unpacked/app/projectGenerator"
+            if platform in ("osx", "macos"):
+                resources = source / "projectGenerator.app/Contents/Resources"
+                gui = source / "projectGenerator.app/Contents/MacOS/projectGenerator"
             else:
-                cli = source / "resources/app/app/projectGenerator"
+                resources = source / "resources"
+                gui = source / ("projectGenerator" if platform == "linux" else "projectGenerator.exe")
+            gui.parent.mkdir(parents=True, exist_ok=True)
+            gui.write_text(
+                '#!/usr/bin/env bash\necho ran > "$GUI_EXEC_MARKER"\nexit 99\n')
+            cli_name = "projectGenerator.exe" if platform in ("vs", "msys2") else "projectGenerator"
+            if layout == "asar":
+                resources.mkdir(parents=True, exist_ok=True)
+                (resources / "app.asar").write_text("archive")
+                cli = resources / "app.asar.unpacked/app" / cli_name
+            else:
+                cli = resources / "app/app" / cli_name
             cli.parent.mkdir(parents=True, exist_ok=True)
             if with_cli:
                 cli.write_text(cli_source)
-            archive = temp / "fixture.gz"
-            with tarfile.open(archive, "w:gz") as bundle:
-                bundle.add(source, arcname="projectGenerator-0.122.0-linux")
+            archive = temp / ("fixture.gz" if platform == "linux" else "fixture.zip")
+            if platform == "linux":
+                with tarfile.open(archive, "w:gz") as bundle:
+                    bundle.add(source, arcname="projectGenerator-0.122.0-linux")
+            else:
+                prefix = Path("projectGenerator-osx") if platform in ("osx", "macos") and not flat_mac else Path()
+                with zipfile.ZipFile(archive, "w", zipfile.ZIP_DEFLATED) as bundle:
+                    for entry in source.rglob("*"):
+                        bundle.write(entry, str(prefix / entry.relative_to(source)))
             env["PG_FIXTURE"] = str(archive)
 
         def version():
@@ -122,6 +139,58 @@ def main():
         result = run(["bash", str(tree / "scripts/of.sh"), "version", "--json"])
         assert json.loads(result.stdout)["data"]["cli"] == "0.7.1"
         print("PASS of update pg upgrades CLI-only installs, skips complete installs, reports 0.7.1")
+
+        for platform in ("osx", "vs", "msys2", "macos"):
+            env["PLATFORM"] = "osx" if platform == "macos" else platform
+            args = ["bash", str(tree / "scripts/dev/download_pg.sh"), "-p", platform, "-a", "64"]
+            for layout in ("asar", "legacy"):
+                fixture(layout, platform=platform)
+                if platform in ("osx", "vs"):
+                    run(["bash", str(tree / "scripts" / platform / "download_projectGenerator.sh")])
+                else:
+                    run(args)
+                is_mac = platform in ("osx", "macos")
+                package = "projectGenerator-osx.zip" if is_mac else "projectGenerator-vs-gui.zip"
+                assert requests.read_text().splitlines()[-1].endswith("/" + package)
+                copy = installed / ("projectGenerator" if is_mac else "projectGeneratorCmd.exe")
+                assert os.access(copy, os.X_OK)
+                assert version()["version"] == "fixture-cli"
+                copy.unlink()
+                nested = "Contents/Resources/" if is_mac else "resources/"
+                assert nested in version()["path"]
+                assert version()["version"] == "fixture-cli"
+            sentinel = installed / "preserve"
+            sentinel.write_text("keep")
+            fixture(with_cli=False, platform=platform)
+            run(args, success=False)
+            assert sentinel.read_text() == "keep"
+            Path(env["PG_FIXTURE"]).write_text("corrupt ZIP")
+            run(args, success=False)
+            assert sentinel.exists()
+            assert not list(tree.glob("projectGenerator.*"))
+        print("PASS macOS/Windows/MSYS2 ASAR and legacy ZIPs, CLI discovery and failed-install preservation")
+
+        fixture(platform="osx", flat_mac=True)
+        run(["bash", str(tree / "scripts/dev/download_pg.sh"), "-p", "osx"])
+        env["PLATFORM"] = "osx"
+        assert version()["version"] == "fixture-cli"
+        print("PASS macOS ZIP with app bundle at archive root")
+
+        cache = tree / "libs/download"
+        libraries = [cache / "openFrameworksLibs_first.tar.bz2", cache / "openFrameworksLibs_second.tar.bz2"]
+        for library in libraries:
+            library.write_text("cached library")
+        env["PG_DOWNLOAD_FAIL"] = "22"
+        result = run(["bash", str(tree / "scripts/dev/download_pg.sh"), "-p", "osx"], success=False)
+        assert result.returncode == 22
+        assert "too many arguments" not in result.stdout + result.stderr
+        env.pop("PG_DOWNLOAD_FAIL")
+        env["PG_DOWNLOAD_SIGNAL"] = "TERM"
+        result = run(["bash", str(tree / "scripts/dev/download_pg.sh"), "-p", "osx"], success=False)
+        assert result.returncode == 143
+        assert all(library.read_text() == "cached library" for library in libraries)
+        assert version()["version"] == "fixture-cli"
+        print("PASS download errors and interrupts preserve exit codes, cached libraries and installed generator")
 
 
 if __name__ == "__main__":

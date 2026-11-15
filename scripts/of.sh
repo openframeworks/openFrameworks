@@ -467,6 +467,7 @@ findPGBinary(){
 			"${root}/resources/app.asar.unpacked/app/projectGenerator" \
 			"${root}/resources/app/app/projectGenerator.exe" \
 			"${root}/resources/app/app/projectGenerator" \
+			"${root}/projectGenerator.app/Contents/Resources/app.asar.unpacked/app/projectGenerator" \
 			"${root}/projectGenerator.app/Contents/Resources/app/app/projectGenerator" \
 			"${root}/projectGenerator"
 		do
