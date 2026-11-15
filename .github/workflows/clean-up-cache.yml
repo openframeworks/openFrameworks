@@ -1,4 +1,6 @@
 name: Cleanup Caches by Branch
+# PR-close only. Deletes that PR's caches (including ccache). Master compile
+# cache is kept by clean-up-cache-cron.yml so restore-keys can hit it.
 on:
   pull_request:
     types:

@@ -1,13 +1,18 @@
 name: Cleanup Caches by Cron
 
+# GitHub LRU-evicts at ~10 GB. This job used to delete every master cache
+# daily, including ccache/sccache, so PRs could not restore-keys into a warm
+# compile cache. Keep compile caches; drop other master entries (apt, msys2,
+# leftover tarball caches) that compete for the cap.
+
 on:
   schedule:
-    - cron: '0 3 * * *' # Runs daily at 03:00 UTC
-  workflow_dispatch: # Allows manual triggering if needed
+    - cron: "0 3 * * *" # 03:00 UTC
+  workflow_dispatch:
 
 permissions:
   contents: write
-
+  actions: write
 
 jobs:
   cleanup:
@@ -18,39 +23,36 @@ jobs:
           sudo apt-get update && sudo apt-get install -y gh
           gh extension install actions/gh-actions-cache || echo "Extension already installed"
 
-      - name: Cleanup Caches
+      - name: Cleanup non-compile caches on master
         env:
           GH_TOKEN: ${{ secrets.PAT_TOKEN || secrets.GITHUB_TOKEN }}
         run: |
+          set -euo pipefail
           REPO=${{ github.repository }}
-          BRANCH="master" # Only focus on the master branch
+          BRANCH="master"
 
-          echo "Fetching list of cache keys for branch: $BRANCH"
-          cacheKeysForMaster=$(gh actions-cache list -R $REPO -B $BRANCH --json key | jq -r '.[].key')
+          echo "Listing caches for branch: $BRANCH"
+          cacheKeys=$(gh actions-cache list -R "$REPO" -B "$BRANCH" --json key | jq -r '.[].key')
 
-          if [ -z "$cacheKeysForMaster" ]; then
+          if [ -z "$cacheKeys" ]; then
             echo "No caches found for branch: $BRANCH"
             exit 0
           fi
 
-          echo "Deleting caches..."
-          for cacheKey in $cacheKeysForMaster; do
-            echo "Deleting cache: $cacheKey"
-            gh actions-cache delete $cacheKey -R $REPO -B $BRANCH --confirm
-          done
-          echo "Cleanup completed."
-
-      - name: Verify Remaining Caches
-        run: |
-          echo "Checking for remaining caches in branch: $BRANCH"
-          remainingCaches=$(gh actions-cache list -R ${{ github.repository }} -B $BRANCH --json key | jq -r '.[].key')
-
-          if [ -z "$remainingCaches" ]; then
-            echo "All caches successfully cleared."
-          else
-            echo "Remaining caches detected:"
-            echo "$remainingCaches"
-            exit 1
-          fi
-        env:
-          GH_TOKEN: ${{ secrets.PAT_TOKEN || secrets.GITHUB_TOKEN }}
+          kept=0
+          deleted=0
+          while IFS= read -r cacheKey; do
+            [ -z "$cacheKey" ] && continue
+            case "$cacheKey" in
+              ccache-*|sccache-*)
+                echo "Keeping compile cache: $cacheKey"
+                kept=$((kept + 1))
+                ;;
+              *)
+                echo "Deleting cache: $cacheKey"
+                gh actions-cache delete "$cacheKey" -R "$REPO" -B "$BRANCH" --confirm || echo "delete failed: $cacheKey"
+                deleted=$((deleted + 1))
+                ;;
+            esac
+          done <<< "$cacheKeys"
+          echo "Kept $kept compile cache(s), deleted $deleted other cache(s)."

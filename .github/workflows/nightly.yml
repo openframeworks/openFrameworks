@@ -55,7 +55,7 @@ jobs:
 
     - uses: actions/checkout@v7.0.1
     - name: ccache
-      uses: hendrikmuhs/ccache-action@v1.2.24
+      uses: ./.github/actions/ccache
       with:
         key: ${{ matrix.cfg.target }}
     - name: Install dependencies
