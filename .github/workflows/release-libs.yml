@@ -145,9 +145,9 @@ jobs:
         shell: bash
         run: |
           set -o pipefail
-          # no -t: this tests the pin a user's checkout of the tag gets
+          # no -t: this tests the apothecary release a user's checkout of the tag gets
           scripts/${{ matrix.platform }}/download_libs.sh 2>&1 | tee download.log
-          grep -q "pinned by scripts/dev/apothecary_release: ${{ needs.apothecary-release.outputs.apothecary_tag }}" download.log
+          grep -q "Resolved apothecary release: ${{ needs.apothecary-release.outputs.apothecary_tag }}" download.log
           grep -qE "secure \(SHA-256 verified" download.log || echo "::warning::download_libs.sh didn't report SHA-256 verified packages"
 
   verdict:
