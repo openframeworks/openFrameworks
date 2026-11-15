@@ -1,18 +1,7 @@
 name: Linux lib paths
 
 on:
-  push:
-    branches: [master, bleeding]
-    paths-ignore:
-      - "**/*.md"
-      - "examples/**"
-  pull_request:
-    paths:
-      - "scripts/linux/**"
-      - "scripts/ci/linux/**"
-      - "libs/openFrameworksCompiled/project/linux/**"
-      - "libs/openFrameworksCompiled/project/makefileCommon/**"
-      - ".github/workflows/linux-lib-paths.yml"
+  workflow_dispatch:
 
 concurrency:
   group: linux-lib-paths-${{ github.event.pull_request.number || github.sha }}

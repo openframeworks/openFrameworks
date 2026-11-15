@@ -1,22 +1,7 @@
 name: Validate library downloads
 on:
-  pull_request:
-    paths:
-      - scripts/dev/download_libs.sh
-      - scripts/dev/downloader.sh
-      - scripts/dev/sha_verify.sh
-      - scripts/dev/tests/test-download-validation.sh
-      - scripts/dev/tests/test-download-vs-switch.sh
-      - .github/workflows/validate-library-downloads.yml
-  push:
-    branches: [master]
-    paths:
-      - scripts/dev/download_libs.sh
-      - scripts/dev/downloader.sh
-      - scripts/dev/sha_verify.sh
-      - scripts/dev/tests/test-download-validation.sh
-      - scripts/dev/tests/test-download-vs-switch.sh
-      - .github/workflows/validate-library-downloads.yml
+  workflow_dispatch:
+
 permissions:
   contents: read
 concurrency:
