@@ -654,6 +654,10 @@ if [[ $USE_PIN == 1 ]]; then
 elif [[ $USE_GIT_TAG == 1 ]]; then
     echo " Using the apothecary release derived from HEAD's tag $GIT_TAG: $TAG"
 fi
+# Stable one-liner for release-libs.yml's grep, independent of which path resolved it.
+if [[ $USE_PIN == 1 ]] || [[ $USE_GIT_TAG == 1 ]]; then
+    echo " Resolved apothecary release: $TAG"
+fi
 
 if [[ $BLEEDING_EDGE = 1 ]] ; then
     VER=latest
