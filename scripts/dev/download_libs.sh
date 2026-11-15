@@ -623,13 +623,15 @@ fi
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd "$SCRIPT_DIR"
 
-# apothecary_release names the apothecary release this openFrameworks version
-# uses: "latest" on master; a release commit pins its own (e.g. v12.2.0), so a
-# checkout of that tag keeps getting the same libraries. -t overrides it
-# (-t latest for the newest libraries). The platform scripts always pass -b.
-# 0.12.2-RC1 and v12.2.0-RC1 are the 0.12.2 libraries, apothecary v12.2.0.
+# Pick the apothecary release that supplies this openFrameworks version's
+# libraries. -t wins (-t latest for the newest libraries). Otherwise: an
+# override in scripts/dev/apothecary_release pins a non-formula release (e.g.
+# v12.2.0-hotfix1); failing that, if HEAD sits on a release tag, derive from
+# the tag (0.12.2 and 0.12.2-RC1 -> apothecary v12.2.0); failing that, the
+# default (master libraries). The platform scripts always pass -b.
 source "$SCRIPT_DIR/apothecary_release_tag.sh"
 USE_PIN=0
+USE_GIT_TAG=0
 if [[ $TAG == "" ]] && [[ -f "$SCRIPT_DIR/apothecary_release" ]]; then
     PINNED_RELEASE=$(tr -d '[:space:]' < "$SCRIPT_DIR/apothecary_release")
     if [[ -n $PINNED_RELEASE ]] && [[ $PINNED_RELEASE != latest ]]; then
@@ -637,11 +639,20 @@ if [[ $TAG == "" ]] && [[ -f "$SCRIPT_DIR/apothecary_release" ]]; then
         USE_PIN=1
     fi
 fi
+if [[ $TAG == "" ]]; then
+    GIT_TAG=$(git -C "$SCRIPT_DIR/../.." describe --tags --exact-match HEAD 2>/dev/null || true)
+    if [[ -n $GIT_TAG ]] && [[ $GIT_TAG =~ ^v?[0-9]+\.[0-9]+\.[0-9]+ ]]; then
+        TAG="$GIT_TAG"
+        USE_GIT_TAG=1
+    fi
+fi
 if [[ -n $TAG ]]; then
     TAG=$(apothecary_release_tag "$TAG")
 fi
 if [[ $USE_PIN == 1 ]]; then
-    echo " Using the apothecary release pinned by scripts/dev/apothecary_release: $TAG"
+    echo " Using the apothecary release override from scripts/dev/apothecary_release: $TAG"
+elif [[ $USE_GIT_TAG == 1 ]]; then
+    echo " Using the apothecary release derived from HEAD's tag $GIT_TAG: $TAG"
 fi
 
 if [[ $BLEEDING_EDGE = 1 ]] ; then

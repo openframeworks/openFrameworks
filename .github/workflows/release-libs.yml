@@ -47,23 +47,30 @@ jobs:
         with:
           ref: ${{ env.OF_TAG }}
 
-      - name: Read the pinned apothecary release
+      - name: Resolve the apothecary release
         id: pin
         shell: bash
         run: |
           set -euo pipefail
-          pinned=$(tr -d '[:space:]' < scripts/dev/apothecary_release 2>/dev/null || true)
-          # 0.12.2 and 0.12.2-RC1 both use apothecary v12.2.0. A suffix on the
-          # pin (v12.2.0-RC1) is that same release. download_libs.sh agrees.
           source scripts/dev/apothecary_release_tag.sh
-          suggested=$(apothecary_release_tag "$OF_TAG")
-          if [[ -z "$pinned" || "$pinned" == latest ]]; then
-            echo "::error title=Libraries not pinned::$OF_TAG pins '${pinned:-nothing}' in scripts/dev/apothecary_release, so download_libs.sh would follow apothecary's moving 'latest'. Commit the release's apothecary tag (e.g. $suggested) before tagging."
-            exit 1
+          # scripts/dev/apothecary_release is an optional override for an
+          # off-formula release (e.g. v12.2.0-hotfix1); on master it is "latest"
+          # and ignored. For a normal release tag the apothecary release is
+          # derived from the tag itself: 0.12.2 and 0.12.2-RC1 both map to
+          # apothecary v12.2.0. download_libs.sh uses the same rule.
+          pinned=$(tr -d '[:space:]' < scripts/dev/apothecary_release 2>/dev/null || true)
+          if [[ -n "$pinned" && "$pinned" != latest ]]; then
+            resolved=$(apothecary_release_tag "$pinned")
+            echo "$OF_TAG -> apothecary $resolved (override '$pinned' in scripts/dev/apothecary_release)"
+          else
+            resolved=$(apothecary_release_tag "$OF_TAG")
+            if ! [[ "$resolved" =~ ^v[0-9]+\.[0-9]+\.[0-9]+ ]]; then
+              echo "::error title=Not a release tag::'$OF_TAG' does not look like a release tag and scripts/dev/apothecary_release has no override, so there is no apothecary release to check. Dispatch this workflow with a version tag, or commit an override."
+              exit 1
+            fi
+            echo "$OF_TAG -> apothecary $resolved (derived from $OF_TAG)"
           fi
-          resolved=$(apothecary_release_tag "$pinned")
           echo "tag=$resolved" >> "$GITHUB_OUTPUT"
-          echo "$OF_TAG -> apothecary $resolved (pinned '$pinned'; version suggests $suggested)"
 
       - name: Check the apothecary release and its packages
         id: assets
