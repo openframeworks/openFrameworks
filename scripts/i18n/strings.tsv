@@ -250,6 +250,7 @@ msg.path_required_folder_inside	path required (a folder inside %s)
 msg.path_s_could_not_be_removed	%s path(s) could not be removed (permissions, or in use) — see the lines marked ✗
 msg.path_s_for_platform_skipped_git	%s %s path(s) for platform %s · skipped %s (git-tracked) · %s failed · %s %s
 msg.pg	pg
+msg.pg_gui_missing	CLI found, GUI missing — re-run: of update pg
 msg.pg_installed_download_latest_anyway	PG installed (%s). Download latest anyway?
 msg.pg_ok_skip_already	PG ok — skip (already %s)
 msg.pg_path	pg path

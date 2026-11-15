@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # of.sh - openFrameworks CLI  |  Dan Rosser 2025
-OF_SCRIPT_VERSION=0.7.0
+OF_SCRIPT_VERSION=0.7.1
 
 # --json / --api: machine-readable mode. Exactly one JSON document goes to the
 # original stdout (fd 8); the usual human text goes to stderr; colours, spinners
@@ -463,6 +463,8 @@ findPGBinary(){
 		for p in \
 			"${root}/projectGeneratorCmd.exe" \
 			"${root}/projectGeneratorCmd" \
+			"${root}/resources/app.asar.unpacked/app/projectGenerator.exe" \
+			"${root}/resources/app.asar.unpacked/app/projectGenerator" \
 			"${root}/resources/app/app/projectGenerator.exe" \
 			"${root}/resources/app/app/projectGenerator" \
 			"${root}/projectGenerator.app/Contents/Resources/app/app/projectGenerator" \
@@ -475,8 +477,11 @@ findPGBinary(){
 				case "$p" in
 					*/Contents/MacOS/projectGenerator) continue ;;
 					*/projectGenerator.exe)
-						# root-level .exe is the GUI; only accept under resources/app/app/
-						[[ "$p" == */resources/app/app/projectGenerator.exe ]] || continue
+						# Root-level .exe is the GUI; accept only a bundled CLI.
+						[[ "$p" == */resources/app/app/projectGenerator.exe || "$p" == */resources/app.asar.unpacked/app/projectGenerator.exe ]] || continue
+						;;
+					"${root}/projectGenerator")
+						[[ -f "${root}/resources/app.asar" || -d "${root}/resources/app" ]] && continue
 						;;
 				esac
 				printf '%s' "$p"
@@ -499,6 +504,10 @@ findPGGui(){
 		do
 			[[ -e "$p" ]] && { printf '%s' "$p"; return 0; }
 		done
+		if [[ -f "${root}/projectGenerator" && ( -f "${root}/resources/app.asar" || -d "${root}/resources/app" ) ]]; then
+			printf '%s' "${root}/projectGenerator"
+			return 0
+		fi
 	done
 	return 1
 }
@@ -1347,6 +1356,11 @@ assessPGState(){
 		else
 			PG_STATE_DETAIL="Project Generator not installed"
 		fi
+		return 0
+	fi
+	if [[ "$OF_PLATFORM" == "linux" ]] && ! findPGGui >/dev/null; then
+		PG_STATE="missing"
+		PG_STATE_DETAIL="$(t msg.pg_gui_missing "CLI found, GUI missing — re-run: of update pg")"
 		return 0
 	fi
 	ver=$(readPGVersion) || ver="installed"

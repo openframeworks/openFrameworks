@@ -186,6 +186,13 @@ else
     GUI=""
 fi
 PKG="projectGenerator-${PLATFORM}${GUI}.${ZIP}"
+if [ "$PLATFORM" == "linux" ]; then
+    case "$ARCH" in
+        x86_64|amd64|64) PKG="projectGenerator-linux-gui.gz" ;;
+        aarch64|arm64) PKG="projectGenerator-linux-arm64-gui.gz" ;;
+        *) echo "No Linux projectGenerator GUI release for architecture: $ARCH" >&2; exit 1 ;;
+    esac
+fi
 echo " openFrameworks download_pg.sh"
 
 cd ../../
@@ -196,6 +203,28 @@ mkdir -p download
 cd download
 
 download $PKG
+
+if [ "$PLATFORM" == "linux" ]; then
+    PG_STAGE=$(mktemp -d "${OUTDIR}/${OUTPUT}.XXXXXX")
+    trap 'rm -rf "$PG_STAGE"' EXIT
+    tar -xzf "$PKG" --strip-components=1 -C "$PG_STAGE"
+    CLI=""
+    for candidate in \
+        "$PG_STAGE/resources/app.asar.unpacked/app/projectGenerator" \
+        "$PG_STAGE/resources/app/app/projectGenerator"; do
+        if [ -f "$candidate" ]; then CLI="$candidate"; break; fi
+    done
+    if [[ ! -f "$PG_STAGE/projectGenerator" || -z "$CLI" ]]; then
+        echo "Linux projectGenerator package is missing the GUI or bundled CLI" >&2
+        exit 1
+    fi
+    cp "$CLI" "$PG_STAGE/projectGeneratorCmd"
+    chmod +x "$PG_STAGE/projectGenerator" "$PG_STAGE/projectGeneratorCmd" "$CLI"
+    rm -rf "${OUTDIR}/${OUTPUT}"
+    mv "$PG_STAGE" "${OUTDIR}/${OUTPUT}"
+    echo " openFrameworks download projectGenerator and install complete!"
+    exit 0
+fi
 
 if [ -d "${OUTDIR}/${OUTPUT}" ] || [ -f "${OUTDIR}/${OUTPUT}" ]; then
     rm -rf "${OUTDIR}/${OUTPUT}"
@@ -226,8 +255,6 @@ if [ "$PLATFORM" == "msys2" ] || [ "$PLATFORM" == "vs" ]; then
     # else
     #     echo "Warning: chmod command not found, skipping permission adjustment."
     # fi
-elif [ "$PLATFORM" == "linux" ]; then
-    chmod +x "${OUTDIR}/${OUTPUT}/projectGenerator"
 else
     if ! command -v rsync &> /dev/null; then      
         cp -arX "${OUTDIR}/${OUTPUT}/projectGenerator$EXT/Contents/Resources/app/app/projectGenerator" "${OUTDIR}/${OUTPUT}/projectGenerator"
