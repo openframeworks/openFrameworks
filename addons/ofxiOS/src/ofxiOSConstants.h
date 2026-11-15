@@ -14,11 +14,7 @@
 #define TARGET_OF_SIMULATOR
 #endif
 
-// Location (ofxiOSCoreLocation, ofxiOSMapKit) is compiled in by default.
-// An app that links it gets App Store validation error 90683 unless its Info.plist has
-// NSLocationWhenInUseUsageDescription, even when it never calls the location API (the static
-// library is linked with -ObjC). Apps that do not use location can compile it out with
-// OFXIOS_ENABLE_LOCATION=0, see OFXIOS_ENABLE_LOCATION in CoreOF.xcconfig.
+// Location support is enabled by default; set OFXIOS_ENABLE_LOCATION=0 in CoreOF.xcconfig to disable it.
 #ifndef OFXIOS_ENABLE_LOCATION
     #define OFXIOS_ENABLE_LOCATION 1
 #endif
