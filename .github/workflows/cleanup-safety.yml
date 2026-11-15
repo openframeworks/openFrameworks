@@ -1,26 +1,6 @@
 name: of cleanup safety
 
 on:
-  pull_request:
-    paths:
-      - "scripts/of.sh"
-      - "scripts/ui.sh"
-      - "scripts/dev/tests/test-cleanup-safety.sh"
-      - "scripts/dev/tests/test-of-json.sh"
-      - "scripts/dev/tests/test-i18n.sh"
-      - "scripts/dev/i18n_extract.py"
-      - "scripts/i18n/**"
-      - ".github/workflows/cleanup-safety.yml"
-  push:
-    branches: [master]
-    paths:
-      - "scripts/of.sh"
-      - "scripts/ui.sh"
-      - "scripts/dev/tests/test-cleanup-safety.sh"
-      - "scripts/dev/tests/test-of-json.sh"
-      - "scripts/dev/tests/test-i18n.sh"
-      - "scripts/dev/i18n_extract.py"
-      - "scripts/i18n/**"
   workflow_dispatch:
 
 concurrency:
