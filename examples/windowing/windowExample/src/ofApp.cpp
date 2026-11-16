@@ -5,7 +5,9 @@ void ofApp::setup(){
 	
 	int screenW = ofGetScreenWidth();
 	int screenH = ofGetScreenHeight();
-	ofSetWindowPosition(screenW/2-300/2, screenH/2-300/2);
+	posx=screenW/2-300/2;
+	posy=screenH/2-300/2;
+	ofSetWindowPosition(posx, posy);
 	
 	// load our typeface
 	vagRounded.load("vag.ttf", 16);
@@ -24,6 +26,7 @@ void ofApp::setup(){
 	ballPositionY = 150;
 	ballVelocityX = ofRandom(-5,5);
 	ballVelocityY = ofRandom(-5,5);
+
 }
 
 //--------------------------------------------------------------
@@ -39,24 +42,20 @@ void ofApp::update(){
 		ofShowCursor();
 	}
 	
-	
 	ballPositionX += ballVelocityX;
 	ballPositionY += ballVelocityY;
-	
-	int posx = ofGetWindowPositionX();
-	int posy = ofGetWindowPositionY();
 	
 	if (ballPositionX < 0){
 		ballPositionX = 0;
 		ballVelocityX *= -1;
 		if (!bFullscreen){
-			ofSetWindowPosition(posx-10, posy);
+			posx-=10;
 		}
 	} else if (ballPositionX > ofGetWidth()){
 		ballPositionX = ofGetWidth();
 		ballVelocityX *= -1;
 		if (!bFullscreen){
-			ofSetWindowPosition(posx+10, posy);
+			posx+=10;
 		}
 	}
 	
@@ -64,16 +63,18 @@ void ofApp::update(){
 		ballPositionY = 0;
 		ballVelocityY *= -1;
 		if (!bFullscreen){
-			ofSetWindowPosition(posx, posy-10);
+			posy-=10;
 		}
 	} else if (ballPositionY > ofGetHeight()){
 		ballPositionY = ofGetHeight();
 		ballVelocityY *= -1;
 		if (!bFullscreen){
-			ofSetWindowPosition(posx, posy+10);
+			posy+=10;
 		}
 	}
-	
+
+	ofSetWindowPosition(posx, posy);
+
 }
 
 //--------------------------------------------------------------
@@ -85,6 +86,7 @@ void ofApp::draw(){
 	// lets show our window pos in pixels
 	// macs actually start the Y pos from 40
 	vagRounded.drawString("window pos ("+ofToString(ofGetWindowPositionX())+", "+ofToString( ofGetWindowPositionY())+")", 10, 25);
+	// vagRounded.drawString("window pos ("+ofToString(ballPositionX)+", "+ofToString(ballPositionY)+")", 10, 25);
 
 	if(!bFullscreen){
 		vagRounded.drawString("press f to enter fullscreen", -140 + ofGetWidth()/2, ofGetHeight()/2);	
