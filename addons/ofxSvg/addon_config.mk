@@ -19,7 +19,7 @@ meta:
 	ADDON_DESCRIPTION = Addon for parsing, manipulating and saving svg files.
 	ADDON_AUTHOR = Nick Hardeman, original by Joshua Noble, maintained by OF Team
 	ADDON_TAGS = "svg"
-	ADDON_URL = http://github.com/openframeworks/openFrameworks
+	ADDON_URL = https://github.com/openframeworks/openFrameworks
 
 common:
 	# dependencies with other addons, a list of them separated by spaces
