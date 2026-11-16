@@ -5,20 +5,23 @@ ofParameterGroup::ofParameterGroup()
 	: obj(new Value) {
 }
 
-void ofParameterGroup::add(ofAbstractParameter & parameter) {
-	auto param = parameter.newReference();
-	auto escaped_name = param->getEscapedName();
+void ofParameterGroup::add(std::shared_ptr<ofAbstractParameter> parameter) {
+	auto escaped_name = parameter->getEscapedName();
 	if (contains(escaped_name)) {
-		ofLogWarning() << "Adding another parameter with same name '" << param->getName() << "' to group '" << getName() << "'";
+		ofLogWarning() << "Adding another parameter with same name '" << parameter->getName() << "' to group '" << getName() << "'";
 	}
-	obj->parameters.push_back(param);
+	obj->parameters.push_back(parameter);
 	obj->parametersIndex[escaped_name] = obj->parameters.size() - 1;
-	param->setParent(*this);
+	parameter->setParent(*this);
 }
 
-void ofParameterGroup::remove(ofAbstractParameter & param) {
-	for (auto & p : obj->parameters) {
-		if (p->isReferenceTo(param)) {
+void ofParameterGroup::add(ofAbstractParameter & parameter){
+	add(parameter.newReference());
+}
+
+void ofParameterGroup::remove(ofAbstractParameter &param){
+	for(auto & p: obj->parameters){
+		if(p->isReferenceTo(param)){
 			remove(param.getName());
 			return;
 		}
