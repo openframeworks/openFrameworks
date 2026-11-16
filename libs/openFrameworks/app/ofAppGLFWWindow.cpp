@@ -34,6 +34,7 @@
 	#define GLFW_EXPOSE_NATIVE_WIN32
 	#define GLFW_EXPOSE_NATIVE_WGL
 	#include <GLFW/glfw3native.h>
+	#include <cstdlib>
 #endif
 
 using std::numeric_limits;
@@ -50,6 +51,20 @@ namespace of{
 			glfwInitHint(GLFW_PLATFORM, GLFW_PLATFORM_X11);
 			#endif
 			return glfwInit();
+		}
+
+		// GLon12 WARP: Mesa reads these when the first GL context is created
+		void SelectGLon12Warp(bool firstWindow){
+			#ifdef TARGET_WIN32
+			if (!firstWindow) {
+				ofLogWarning("ofAppGLFWWindow") << "glon12Warp only applies to the first window, the adapter is already chosen";
+				return;
+			}
+			if (!std::getenv("LIBGL_ALWAYS_SOFTWARE")) _putenv("LIBGL_ALWAYS_SOFTWARE=true");
+			if (!std::getenv("GALLIUM_DRIVER")) _putenv("GALLIUM_DRIVER=d3d12");
+			#else
+			ofLogWarning("ofAppGLFWWindow") << "glon12Warp is Windows only (GLon12), ignored";
+			#endif
 		}
 	}
 }
@@ -177,7 +192,13 @@ void ofAppGLFWWindow::setup(const ofGLESWindowSettings & settings) {
             return;
         }
         settings = _settings;
-		
+
+        static bool firstWindow = true;
+        if (settings.glon12Warp) {
+            of::priv::SelectGLon12Warp(firstWindow);
+        }
+        firstWindow = false;
+
         if (!of::priv::InitGLFW()) {
             ofLogError("ofAppGLFWWindow") << "couldn't init GLFW";
             return;

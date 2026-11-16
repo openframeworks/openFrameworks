@@ -21,6 +21,20 @@ template <typename T>
 class ofPixels_;
 typedef ofPixels_<unsigned char> ofPixels;
 
+#if defined(TARGET_WIN32) && defined(OF_USE_GLON12) && defined(OF_USE_GLON12_WARP)
+#include <cstdlib>
+namespace of {
+namespace priv {
+	// in the header so the app's OF_USE_GLON12_WARP reaches it; GALLIUM_DRIVER keeps Mesa on d3d12
+	inline const bool glon12Warp = [] {
+		if (!std::getenv("LIBGL_ALWAYS_SOFTWARE")) _putenv("LIBGL_ALWAYS_SOFTWARE=true");
+		if (!std::getenv("GALLIUM_DRIVER")) _putenv("GALLIUM_DRIVER=d3d12");
+		return true;
+	}();
+}
+}
+#endif
+
 #ifdef TARGET_OPENGLES
 class ofGLFWWindowSettings : public ofGLESWindowSettings {
 #else
@@ -62,6 +76,7 @@ public:
 	int monitor = 0;
 	bool multiMonitorFullScreen = false;
 	std::shared_ptr<ofAppBaseWindow> shareContextWith;
+	bool glon12Warp = false; // GLon12 (Windows): WARP instead of the GPU, first window only
 };
 
 #ifdef TARGET_OPENGLES
