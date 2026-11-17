@@ -69,7 +69,7 @@ downloader --wget --no-compression https://example.invalid/missing.tar.bz2 > "$T
 # Exercise the actual installer with unavailable remote digests and an invalid
 # third bundle. It must reject the download before deleting installed libraries.
 mkdir -p "$TEMP/of/scripts/dev" "$TEMP/of/libs/zlib/lib/osx"
-cp "$ROOT/scripts/dev/download_libs.sh" "$ROOT/scripts/dev/sha_verify.sh" "$TEMP/of/scripts/dev/"
+cp "$ROOT/scripts/dev/download_libs.sh" "$ROOT/scripts/dev/sha_verify.sh" "$ROOT/scripts/dev/apothecary_release_tag.sh" "$TEMP/of/scripts/dev/"
 printf installed > "$TEMP/of/libs/zlib/lib/osx/sentinel"
 cat > "$TEMP/of/scripts/dev/downloader.sh" <<'DOWNLOAD'
 downloader() {

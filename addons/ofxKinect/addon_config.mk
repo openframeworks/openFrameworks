@@ -158,7 +158,7 @@ linux/armv7l:
 	ADDON_INCLUDES_EXCLUDE = libs/libfreenect/platform/%
 	ADDON_INCLUDES_EXCLUDE += libs/libusb-1.0/%
 
-linuxa/arch64:
+linux/aarch64:
 	# linux only, any library that should be included in the project using
 	# pkg-config
 	ADDON_PKG_CONFIG_LIBRARIES = libusb-1.0

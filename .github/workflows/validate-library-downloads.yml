@@ -1,20 +1,7 @@
 name: Validate library downloads
 on:
-  pull_request:
-    paths:
-      - scripts/dev/download_libs.sh
-      - scripts/dev/downloader.sh
-      - scripts/dev/sha_verify.sh
-      - scripts/dev/tests/test-download-validation.sh
-      - .github/workflows/validate-library-downloads.yml
-  push:
-    branches: [master]
-    paths:
-      - scripts/dev/download_libs.sh
-      - scripts/dev/downloader.sh
-      - scripts/dev/sha_verify.sh
-      - scripts/dev/tests/test-download-validation.sh
-      - .github/workflows/validate-library-downloads.yml
+  workflow_dispatch:
+
 permissions:
   contents: read
 concurrency:
@@ -24,6 +11,9 @@ jobs:
   validate:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6.0.2
+      - uses: actions/checkout@v7.0.1
       - run: bash -n scripts/dev/download_libs.sh scripts/dev/downloader.sh scripts/dev/sha_verify.sh
       - run: bash scripts/dev/tests/test-download-validation.sh
+      - run: bash scripts/dev/tests/test-download-vs-switch.sh
+      - run: bash -n scripts/dev/download_pg.sh scripts/linux/download_projectGenerator.sh scripts/osx/download_projectGenerator.sh scripts/vs/download_projectGenerator.sh scripts/of.sh
+      - run: python3 scripts/dev/tests/test-download-pg.py

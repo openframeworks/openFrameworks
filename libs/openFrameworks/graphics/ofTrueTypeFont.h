@@ -212,6 +212,17 @@ public:
 	/// \brief Has the font been loaded successfully?
 	/// \returns true if the font was loaded.
 	bool isLoaded() const;
+	
+	/// \brief Turns on or off the allocation and use of a texture.
+	///
+	/// \param bUse Allocate and use a texture or not.
+	void setUseTexture(bool bUse);
+	
+	/// \brief Returns whether the ofTrueTypeFont has a texture or not.
+	///
+	/// If the ofTrueTypeFont doesn't have a texture, nothing will be drawn to the screen.
+	/// \returns true if the ofTrueTypeFont is using a texture.
+	bool isUsingTexture() const;
 
 	/// \}
 	/// \name Font Settings
@@ -393,6 +404,7 @@ protected:
 	/// \cond INTERNAL
 
 	bool bLoadedOk;
+	bool bUseTexture;
 
 	std::vector<ofPath> charOutlines;
 	std::vector<ofPath> charOutlinesNonVFlipped;

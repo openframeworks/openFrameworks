@@ -94,6 +94,13 @@ ofGLProgrammableRenderer::ofGLProgrammableRenderer(const ofAppBaseWindow * _wind
 }
 
 //----------------------------------------------------------
+int ofGLProgrammableRenderer::getMaxTextureSize() {
+	int maxSize;
+	glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxSize);
+	return maxSize;
+}
+
+//----------------------------------------------------------
 void ofGLProgrammableRenderer::startRender() {
 	currentFramebufferId = defaultFramebufferId;
 	framebufferIdStack.push_back(defaultFramebufferId);
@@ -2215,10 +2222,14 @@ void ofGLProgrammableRenderer::drawString(const ofTrueTypeFont & font, string te
 	ofBlendMode blendMode = currentStyle.blendingMode;
 
 	mutThis->setBlendMode(OF_BLENDMODE_ALPHA);
-
-	mutThis->bind(font.getFontTexture(), 0);
-	draw(font.getStringMesh(text, x, y, isVFlipped()), OF_MESH_FILL);
-	mutThis->unbind(font.getFontTexture(), 0);
+	
+	if( font.getFontTexture().isAllocated() ) {
+		mutThis->bind(font.getFontTexture(), 0);
+		draw(font.getStringMesh(text, x, y, isVFlipped()), OF_MESH_FILL);
+		mutThis->unbind(font.getFontTexture(), 0);
+	} else {
+		ofLogWarning("ofGLProgrammableRenderer") << "drawString: font texture is not allocated. Make sure to call setUseTexture(true) before load().";
+	}
 
 	mutThis->setBlendMode(blendMode);
 }

@@ -1,7 +1,7 @@
 #include "ofMain.h"
 #include "ofAppNoWindow.h"
 #include "ofxUnitTests.h"
-#include "json.hpp"
+#include <nlohmann/json.hpp>
 
 class ofApp: public ofxUnitTestsApp{
 	void run(){

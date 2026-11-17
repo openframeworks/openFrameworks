@@ -41,6 +41,5 @@ private:
 	of::filesystem::path texturePath;
 	aiTextureType textureType = aiTextureType_NONE;
 	std::string mTexTypeStr;
-	ofMaterialTextureType mOfTexType = OF_MATERIAL_TEXTURE_DIFFUSE;
 };
 }

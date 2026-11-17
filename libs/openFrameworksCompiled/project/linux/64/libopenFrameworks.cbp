@@ -73,12 +73,6 @@
 		<Unit filename="../../../openFrameworks/app/ofAppGLFWWindow.h">
 			<Option virtualFolder="openFrameworks/app/" />
 		</Unit>
-		<Unit filename="../../../openFrameworks/app/ofAppGlutWindow.cpp">
-			<Option virtualFolder="openFrameworks/app/" />
-		</Unit>
-		<Unit filename="../../../openFrameworks/app/ofAppGlutWindow.h">
-			<Option virtualFolder="openFrameworks/app/" />
-		</Unit>
 		<Unit filename="../../../openFrameworks/app/ofAppNoWindow.cpp">
 			<Option virtualFolder="openFrameworks/app/" />
 		</Unit>

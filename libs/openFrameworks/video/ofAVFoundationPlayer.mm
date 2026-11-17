@@ -126,12 +126,15 @@ bool ofAVFoundationPlayer::loadPlayer(const of::filesystem::path & fileName, boo
 #endif
 
 #ifdef TARGET_OSX
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
 		err = CVOpenGLTextureCacheCreate(kCFAllocatorDefault,
 										 nullptr,
 										 CGLGetCurrentContext(),
 										 CGLGetPixelFormat(CGLGetCurrentContext()),
 										 nullptr,
 										 &_videoTextureCache);
+#pragma clang diagnostic pop
 #endif
 
 		if(err) {
@@ -475,13 +478,19 @@ void ofAVFoundationPlayer::initTextureCache() {
 
 #ifdef TARGET_OSX
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     err = CVOpenGLTextureCacheCreateTextureFromImage(nullptr,
                                                      _videoTextureCache,
                                                      imageBuffer,
                                                      nullptr,
                                                      &_videoTextureRef);
+#pragma clang diagnostic pop
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     textureCacheID = CVOpenGLTextureGetName(_videoTextureRef);
+#pragma clang diagnostic pop
 
 #endif
 
@@ -503,7 +512,10 @@ void ofAVFoundationPlayer::initTextureCache() {
 #endif
 
 #ifdef TARGET_OSX
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     CVOpenGLTextureCacheFlush(_videoTextureCache, 0);
+#pragma clang diagnostic pop
 #endif
 	killTexture();
 }
@@ -516,7 +528,10 @@ void ofAVFoundationPlayer::killTexture() {
     }
 #elif defined TARGET_OSX
     if (_videoTextureRef != nullptr) {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
         CVOpenGLTextureRelease(_videoTextureRef);
+#pragma clang diagnostic pop
         _videoTextureRef = nullptr;
     }
 #endif
@@ -535,7 +550,10 @@ void ofAVFoundationPlayer::killTextureCache() {
 
 #ifdef TARGET_OSX
     if(_videoTextureCache != nullptr) {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
         CVOpenGLTextureCacheRelease(_videoTextureCache);
+#pragma clang diagnostic pop
         _videoTextureCache = nullptr;
     }
 
@@ -558,6 +576,24 @@ float ofAVFoundationPlayer::getHeight() const {
     }
 
     return [videoPlayer getHeight];
+}
+
+//--------------------------------------------------------------
+float ofAVFoundationPlayer::getDisplayWidth() const {
+    if(videoPlayer == nullptr) {
+        return 0;
+    }
+    
+    return [videoPlayer getDisplayWidth];
+}
+
+//--------------------------------------------------------------
+float ofAVFoundationPlayer::getDisplayHeight() const {
+    if(videoPlayer == nullptr) {
+        return 0;
+    }
+    
+    return [videoPlayer getDisplayHeight];
 }
 
 //--------------------------------------------------------------
@@ -594,6 +630,15 @@ bool ofAVFoundationPlayer::isPlaying() const {
     }
 
     return [videoPlayer isPlaying];
+}
+
+//--------------------------------------------------------------
+bool ofAVFoundationPlayer::isAnamorphic() const {
+    if(videoPlayer == nullptr) {
+        return false;
+    }
+    
+    return [videoPlayer isAnamorphic];
 }
 
 //--------------------------------------------------------------

@@ -455,6 +455,7 @@ bool ofTrueTypeFont::initLibraries(){
 ofTrueTypeFont::ofTrueTypeFont()
 :settings("",0){
 	bLoadedOk = false;
+	bUseTexture = true;
 	letterSpacing = 1;
 	spaceSize = 1;
 	fontUnitScale = 1;
@@ -502,6 +503,7 @@ ofTrueTypeFont::ofTrueTypeFont(const ofTrueTypeFont& mom)
 	texAtlas = mom.texAtlas;
 	atlasPixels = mom.atlasPixels;
 	face = mom.face;
+	bUseTexture = mom.bUseTexture;
 }
 
 //------------------------------------------------------------------
@@ -535,6 +537,7 @@ ofTrueTypeFont & ofTrueTypeFont::operator=(const ofTrueTypeFont& mom){
 	texAtlas = mom.texAtlas;
 	atlasPixels = mom.atlasPixels;
 	face = mom.face;
+	bUseTexture = mom.bUseTexture;
 
 	return *this;
 }
@@ -569,6 +572,7 @@ ofTrueTypeFont::ofTrueTypeFont(ofTrueTypeFont&& mom)
 	texAtlas = mom.texAtlas;
 	atlasPixels = std::move(mom.atlasPixels);
 	face = mom.face;
+	bUseTexture = mom.bUseTexture;
 }
 
 //------------------------------------------------------------------
@@ -601,6 +605,7 @@ ofTrueTypeFont & ofTrueTypeFont::operator=(ofTrueTypeFont&& mom){
 	texAtlas = mom.texAtlas;
 	atlasPixels = std::move(mom.atlasPixels);
 	face = mom.face;
+	bUseTexture = mom.bUseTexture;
 	return *this;
 }
 
@@ -871,30 +876,55 @@ bool ofTrueTypeFont::load(const ofTrueTypeFontSettings & _settings){
 		x+= glyph.tW + border*2.0;
 	}
 
-	int maxSize;
-	glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxSize);
-	if(w > maxSize || h > maxSize){
-		ofLogError("ofTruetypeFont") << "Trying to allocate texture of " << w << "x" << h << " which is bigger than supported in current platform: " << maxSize;
-		return false;
-	}else{
-		texAtlas.allocate(atlasPixelsLuminanceAlpha,false);
-		texAtlas.setRGToRGBASwizzles(true);
-
-		if(settings.antialiased && settings.fontSize>20){
-			texAtlas.setTextureMinMagFilter(GL_LINEAR,GL_LINEAR);
-		}else{
-			texAtlas.setTextureMinMagFilter(GL_NEAREST,GL_NEAREST);
+	if (isUsingTexture()) {
+		const int maxSize = ofGetMaxTextureSize();
+		if (maxSize <= 0 || w > maxSize || h > maxSize) {
+			ofLogError("ofTrueTypeFont") << "Font atlas exceeds the current renderer's texture limit of " << maxSize;
+			return false;
 		}
-		texAtlas.loadData(atlasPixelsLuminanceAlpha);
-		atlasPixels = std::move(atlasPixelsLuminanceAlpha);
-		bLoadedOk = true;
-		return true;
 	}
+	
+	atlasPixels = std::move(atlasPixelsLuminanceAlpha);
+	
+	bLoadedOk = true;
+	
+	texAtlas.clear(); 
+	setUseTexture(isUsingTexture());
+	
+	return true;
+	
 }
 
 //-----------------------------------------------------------
 bool ofTrueTypeFont::isLoaded() const{
 	return bLoadedOk;
+}
+
+//-----------------------------------------------------------
+void ofTrueTypeFont::setUseTexture(bool bUse) {
+	if(!bUse) {
+		if(texAtlas.isAllocated()) {
+			texAtlas.clear();
+		}
+	} else {
+		if(isLoaded() && !texAtlas.isAllocated() && atlasPixels.isAllocated() ) {
+			texAtlas.allocate(atlasPixels,false);
+			texAtlas.setRGToRGBASwizzles(true);
+			
+			if(settings.antialiased && settings.fontSize>20){
+				texAtlas.setTextureMinMagFilter(GL_LINEAR,GL_LINEAR);
+			}else{
+				texAtlas.setTextureMinMagFilter(GL_NEAREST,GL_NEAREST);
+			}
+			texAtlas.loadData(atlasPixels);
+		}
+	}
+	bUseTexture = bUse;
+}
+
+//-----------------------------------------------------------
+bool ofTrueTypeFont::isUsingTexture() const {
+	return bUseTexture;
 }
 
 //-----------------------------------------------------------
@@ -1255,6 +1285,9 @@ const ofMesh & ofTrueTypeFont::getStringMesh(const string& c, float x, float y, 
 
 //-----------------------------------------------------------
 const ofTexture & ofTrueTypeFont::getFontTexture() const{
+	if( !isUsingTexture() ) {
+		ofLogWarning("ofTrueTypeFont") << "getFontTexture(): make sure to call setUseTexture(true) and then load().";
+	}
 	return texAtlas;
 }
 

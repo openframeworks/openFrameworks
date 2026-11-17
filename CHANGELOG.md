@@ -1,3 +1,217 @@
+### 0.12.2 (in progress): main changes since 0.12.1 ###
+
+```
+ ________    _____    _______       _______
+|\   __  \  / __  \  /  ___  \     /  ___  \
+\ \  \|\  \|\/_|\  \/__/|_/  /|   /__/|_/  /|
+ \ \  \\\  \|/ \ \  \__|//  / /   |__|//  / /
+  \ \  \\\  \ __\ \  \  /  /_/__  ___ /  /_/__
+   \ \_______\\__\ \__\|\________\\__\\________\
+    \|_______\|__|\|__| \|_______\|__|\|_______|
+```
+
+CORE
+----
+### core
+- C++23 / C17 is the project dialect ([#8548](https://github.com/openframeworks/openFrameworks/pull/8548))
+- GL decoupled from ofGraphics; `ofSetDepthWrite(bool)` replaces direct `glDepthMask` calls ([#8554](https://github.com/openframeworks/openFrameworks/pull/8554)) ([#8598](https://github.com/openframeworks/openFrameworks/pull/8598))
+- `ofTrueTypeFont::getFontAtlasPixels()` and `ofBitmapFont::getAtlasPixels()` expose the font atlases ([#8600](https://github.com/openframeworks/openFrameworks/pull/8600))
+- `ofColor` from a vector; `ofQuaternion::lengthSquared()` (`length2()` deprecated) ([#7696](https://github.com/openframeworks/openFrameworks/pull/7696)) ([#7680](https://github.com/openframeworks/openFrameworks/pull/7680))
+- `ofRectangle`: `operator!=` agrees with `operator==`; `inside()` includes points on the edge ([#8567](https://github.com/openframeworks/openFrameworks/pull/8567)) ([#8584](https://github.com/openframeworks/openFrameworks/pull/8584))
+- `ofToLower` / `ofToUpper` use a UTF-8 locale when the environment has none ([#8593](https://github.com/openframeworks/openFrameworks/pull/8593))
+- `ofFilePath::getAppName()` ([#8181](https://github.com/openframeworks/openFrameworks/pull/8181))
+- tools that only use ofUtils no longer link the renderer, ofImage and the app (Linux) ([#8605](https://github.com/openframeworks/openFrameworks/pull/8605))
+- `ofAppGLFWWindow` tracks window focus ([#8530](https://github.com/openframeworks/openFrameworks/pull/8530))
+
+### gl
+- OpenGL ES 3.1 / 3.2 (Android, iOS / tvOS), GLSL ES 3.00 material shaders (PBR on WebGL2 / Android / iOS), ofCubeMap and ofPolyline fixes on GLES ([#8533](https://github.com/openframeworks/openFrameworks/pull/8533)) ([#8578](https://github.com/openframeworks/openFrameworks/pull/8578)) ([#8581](https://github.com/openframeworks/openFrameworks/pull/8581)) ([#8582](https://github.com/openframeworks/openFrameworks/pull/8582)) ([#8585](https://github.com/openframeworks/openFrameworks/pull/8585))
+- desktop OpenGL 4.6, falling back to the newest available version (Windows / Linux) ([#8580](https://github.com/openframeworks/openFrameworks/pull/8580))
+- GL version defines for the main templates and the project generator ([#8573](https://github.com/openframeworks/openFrameworks/pull/8573))
+- indexed draws take the GL index type from `sizeof(ofIndexType)` ([#8526](https://github.com/openframeworks/openFrameworks/pull/8526))
+
+### graphics
+- Cairo renderer, `ofBeginSaveScreenAsPDF` / `SVG` work on Linux again ([#8610](https://github.com/openframeworks/openFrameworks/pull/8610))
+- ofTrueTypeFont inserts a string's mesh at once ([#8432](https://github.com/openframeworks/openFrameworks/pull/8432))
+
+### utils / communication
+- ofURLFileLoader: progress events and example; OpenSSL 3 / 4 certificate checks; listener removed in `stop()` ([#8507](https://github.com/openframeworks/openFrameworks/pull/8507)) ([#8537](https://github.com/openframeworks/openFrameworks/pull/8537)) ([#8535](https://github.com/openframeworks/openFrameworks/pull/8535)) ([#8491](https://github.com/openframeworks/openFrameworks/pull/8491)) ([#8501](https://github.com/openframeworks/openFrameworks/pull/8501))
+
+### addons
+- ofxSvg rewritten without libtinysvg and libxml2 ([#8266](https://github.com/openframeworks/openFrameworks/pull/8266)) ([#8500](https://github.com/openframeworks/openFrameworks/pull/8500)) ([#8538](https://github.com/openframeworks/openFrameworks/pull/8538)) ([#8539](https://github.com/openframeworks/openFrameworks/pull/8539))
+- ofxOpenCv supports OpenCV 5 (OpenCV 4 still works) ([#8563](https://github.com/openframeworks/openFrameworks/pull/8563))
+- ofxAssimp: FBX pivots for Mixamo models, option to apply mesh transforms ([#8449](https://github.com/openframeworks/openFrameworks/pull/8449)) ([#8461](https://github.com/openframeworks/openFrameworks/pull/8461))
+- ofxGui toggle / button size fix ([#8503](https://github.com/openframeworks/openFrameworks/pull/8503))
+
+### libraries
+- OpenSSL 4 (and 3), assimp 6.0.5, FreeImage 3.19.28, updated apothecary and project generator ([#8535](https://github.com/openframeworks/openFrameworks/pull/8535)) ([#8594](https://github.com/openframeworks/openFrameworks/pull/8594)) ([#8612](https://github.com/openframeworks/openFrameworks/pull/8612)) ([#8628](https://github.com/openframeworks/openFrameworks/pull/8628))
+- library downloads are verified before installed libraries are removed ([#8591](https://github.com/openframeworks/openFrameworks/pull/8591))
+
+
+PLATFORM/IDE SPECIFIC
+-----------------
+### linux
+- Wayland support (GLFW with X11 and Wayland) ([#8508](https://github.com/openframeworks/openFrameworks/pull/8508)) ([#8476](https://github.com/openframeworks/openFrameworks/pull/8476))
+- 64-bit ARM: `lib/linux/<arch>` library folders for x86_64, arm64 and the Raspberry Pi (aarch64, armv7l, armv6l), GCC 10 libraries ([#8540](https://github.com/openframeworks/openFrameworks/pull/8540))
+- Ubuntu `install_dependencies.sh` detects the version from `/etc/os-release` (no `lsb_release` needed); BLAS / LAPACK for ofxOpenCv ([#8606](https://github.com/openframeworks/openFrameworks/pull/8606)) ([#8603](https://github.com/openframeworks/openFrameworks/pull/8603))
+- docs: linking non-PIC prebuilt libraries ("recompile with -fPIE") ([#8602](https://github.com/openframeworks/openFrameworks/pull/8602))
+- GStreamer MJPG v4l2 capture pipeline fix; Arch install script fixes ([#8572](https://github.com/openframeworks/openFrameworks/pull/8572)) ([#8497](https://github.com/openframeworks/openFrameworks/pull/8497))
+- Debian `install_dependencies.sh` installs `x11proto-dev`. `xorgproto` is the source package name and apt on Debian 13 cannot install it ([#8630](https://github.com/openframeworks/openFrameworks/pull/8630)) ([#8481](https://github.com/openframeworks/openFrameworks/issues/8481))
+- linesExample builds with GCC (`std::sin` / `std::cos`) ([#8609](https://github.com/openframeworks/openFrameworks/pull/8609))
+
+### windows
+- Visual Studio 2026; Windows on ARM hosts download x64 libraries too ([#8511](https://github.com/openframeworks/openFrameworks/pull/8511)) ([#8544](https://github.com/openframeworks/openFrameworks/pull/8544))
+- MSYS2: UCRT64 (recommended), CLANG64 and CLANGARM64 with the clang toolchain; MINGW64 dropped ([#8589](https://github.com/openframeworks/openFrameworks/pull/8589)) ([#8588](https://github.com/openframeworks/openFrameworks/pull/8588)) ([#8556](https://github.com/openframeworks/openFrameworks/pull/8556)) ([#8531](https://github.com/openframeworks/openFrameworks/pull/8531)) ([#8566](https://github.com/openframeworks/openFrameworks/pull/8566))
+- MSVC warnings fixed across core, addons and examples ([#8579](https://github.com/openframeworks/openFrameworks/pull/8579))
+
+### macos / ios / tvos
+- minimum macOS 12, iOS 15, tvOS 18 (was macOS 10.15) ([#8565](https://github.com/openframeworks/openFrameworks/pull/8565)) ([#8571](https://github.com/openframeworks/openFrameworks/pull/8571))
+- ofxiOS / ofxtvOS GLKit: depth, stencil, MSAA and scale settings apply to the view; native view controller startup fix ([#8583](https://github.com/openframeworks/openFrameworks/pull/8583)) ([#8524](https://github.com/openframeworks/openFrameworks/pull/8524))
+- ofAVFoundationPlayer `close()` is synchronous; split OpenSSL XCFrameworks; make builds set `APP_VERSION` / `APP_BUILD` ([#8527](https://github.com/openframeworks/openFrameworks/pull/8527)) ([#8562](https://github.com/openframeworks/openFrameworks/pull/8562)) ([#8592](https://github.com/openframeworks/openFrameworks/pull/8592))
+
+### android
+- NDK r30 (`30.0.16248370`), minimum API 25, build-tools 37. The Android examples are built in CI for arm64-v8a, x86_64 and armeabi-v7a. ZIP path traversal fix (CWE-22) ([#8575](https://github.com/openframeworks/openFrameworks/pull/8575)) ([#8629](https://github.com/openframeworks/openFrameworks/pull/8629)) ([#8418](https://github.com/openframeworks/openFrameworks/pull/8418)) ([#8541](https://github.com/openframeworks/openFrameworks/pull/8541))
+
+### emscripten
+- Emscripten 6.0.13, filesystem support, template fixes ([#8510](https://github.com/openframeworks/openFrameworks/pull/8510)) ([#8555](https://github.com/openframeworks/openFrameworks/pull/8555)) ([#8569](https://github.com/openframeworks/openFrameworks/pull/8569)) ([#8619](https://github.com/openframeworks/openFrameworks/pull/8619)) ([#8483](https://github.com/openframeworks/openFrameworks/pull/8483)) ([#8558](https://github.com/openframeworks/openFrameworks/pull/8558))
+
+### makefiles / project generator
+- addon `-std=*` in `ADDON_CFLAGS` is forwarded to `CXXFLAGS` ([#8515](https://github.com/openframeworks/openFrameworks/pull/8515))
+- project generator: `ADDON_DATA` folders, Xcode paths with spaces, missing addons kept; `-t vscode` adds VS Code alongside the other platforms ([#8612](https://github.com/openframeworks/openFrameworks/pull/8612)) ([#8628](https://github.com/openframeworks/openFrameworks/pull/8628))
+- ccache by default for Linux builds when it is installed, and in the Linux, Android and iOS / tvOS CMake toolchains ([#8620](https://github.com/openframeworks/openFrameworks/pull/8620)) ([#8625](https://github.com/openframeworks/openFrameworks/pull/8625)) ([#8627](https://github.com/openframeworks/openFrameworks/pull/8627))
+- `#<tab>` in `addon_config.mk` is a comment again ([#8617](https://github.com/openframeworks/openFrameworks/pull/8617))
+
+### cmake
+- CMake build for the core and apps on macOS, iOS, tvOS, Emscripten, Linux and Windows (Visual Studio and MSYS2). `projectGenerator -t cmake`, or copy `scripts/templates/cmake/CMakeLists.txt`. CMake 3.22 or newer, 3.28 for iOS / tvOS. Android keeps the build in `project/android` ([#8586](https://github.com/openframeworks/openFrameworks/pull/8586))
+
+
+RELEASES / CI
+-----------------
+### releases
+- release packages named by what they're for: `linux_64_gcc10`, `linux_arm64_gcc10`, `linux_{aarch64,armv7l,armv6l}_rpi_gcc10` (new Raspberry Pi armv7l package), `vs_2022_64`, `vs_2026_64` and `vs_{2022,2026}_64_arm64_arm64ec` (the first packages with ARM64 / ARM64EC libraries); Linux packages keep `project/linux` and `scripts/linux` ([#8614](https://github.com/openframeworks/openFrameworks/pull/8614))
+- a release pins its apothecary libraries (`scripts/dev/apothecary_release`), checked when tagging ([#8604](https://github.com/openframeworks/openFrameworks/pull/8604))
+- nightly: builds again, the `nightly` tag moves to the built commit, a run fails when a package is missing ([#8613](https://github.com/openframeworks/openFrameworks/pull/8613)) ([#8616](https://github.com/openframeworks/openFrameworks/pull/8616)) ([#8618](https://github.com/openframeworks/openFrameworks/pull/8618))
+- packages bundle the projectGenerator `nightly` release, same as 0.12.1. `scripts/dev/download_pg.sh` does too; `-b` takes the `latest` release and `-t` a tag such as `v0.112.0`
+
+### CI
+- macOS, iOS and tvOS with Xcode 27.1; GitHub Actions on current releases ([#8624](https://github.com/openframeworks/openFrameworks/pull/8624)) ([#8622](https://github.com/openframeworks/openFrameworks/pull/8622)) ([#8599](https://github.com/openframeworks/openFrameworks/pull/8599))
+- an example or test build failure fails the macOS, Linux and MSYS2 jobs ([#8590](https://github.com/openframeworks/openFrameworks/pull/8590))
+
+
+### All 0.12.2 changes newest to oldest ### 
+One entry per pull request merged into master since 0.12.1, newest first (`git log --first-parent 1019e6a..`, with commits of rebase-merged pull requests under their pull request). Pull requests that updated the same thing, such as Emscripten or the submodules, are one entry.
+
+- nightly: Visual Studio 2019 x64 package - `vs_2019_64` built next to the 2022 and 2026 packages (#8634) [commit](https://github.com/openframeworks/openFrameworks/commit/761df7c63a632ad87d880bdc73245e302f78f06a)
+- nightly: release notes link the package summary - the Actions run has the table, instead of pasting it (#8633) [commit](https://github.com/openframeworks/openFrameworks/commit/efd6074db97e1f57884fdf8a69c9d13162c54ccf)
+- config.make PROJECT_SYSTEM_LIBS / PROJECT_FRAMEWORKS - project system libraries (`-l`) and Apple frameworks in `config.make`, used by make, CMake and the projectGenerator (#8632) [commit](https://github.com/openframeworks/openFrameworks/commit/c3ce1ada7f9e9dd700a4099584a35e49881c4191)
+- Debian: install x11proto-dev instead of xorgproto - `xorgproto` is a source package, which stopped the install on Debian 13 (Trixie) (#8630) [commit](https://github.com/openframeworks/openFrameworks/commit/b1f54c081778ef77436cbbfb0198592837116682)
+- CMake build system for the core and apps - macOS, iOS, tvOS, Emscripten, Linux, Visual Studio and MSYS2, mirroring the makefiles and IDE projects; app template, addons from `addons.make`, CTest tests and every example in one project (#8586) [commit](https://github.com/openframeworks/openFrameworks/commit/0ed9987916e29ea142df41df653bf993c61f6b53)
+- Android NDK r29 → r30 - NDK, minimum API 25 and build-tools 37 in sync with apothecary across the core, templates and CI; the Android examples build in CI (#8575, #8629) [commit](https://github.com/openframeworks/openFrameworks/commit/e27a8386bdc5ee9523ae9c5e3b1bbaf38381ad93)
+- ccache - used by default for Linux builds when installed (up to 10x faster rebuilds of large projects), and in the Linux, Android and iOS CMake toolchains (#8620, #8625, #8627) [commit](https://github.com/openframeworks/openFrameworks/commit/daed2cd1436a7335fd222672aa426322c51faac4)
+- projectGenerator and apothecary submodules updated - projectGenerator 0.116.0 (GUI 0.109.0, CMake template, ADDON_DATA folders, Xcode paths with spaces); apothecary with assimp 6.0.5, OpenSSL 4, curl, FreeType, FreeImage and Emscripten 6.0.13 libraries (#8576, #8594, #8612, #8628) [commit](https://github.com/openframeworks/openFrameworks/commit/791a0d747e98b5a725e13663375c3820a44947a7)
+- Apothecary release pinned per openFrameworks release - `scripts/dev/apothecary_release` (`latest` on master), so a release tag installs the libraries it shipped with; checked when tagging (#8604) [commit](https://github.com/openframeworks/openFrameworks/commit/ce2606ae66d7d18c18b7eb4079ac560599d5eef8)
+- Nightly builds again - apt index refreshed before installing, the moved Linux CI scripts, `-a 64` libraries; the `nightly` tag now moves to the built commit and a run fails when a package is missing (#8613, #8616, #8618) [commit](https://github.com/openframeworks/openFrameworks/commit/d5861da84bbc8c15f7200943ca268397a7035db9)
+- Xcode 27.1 for macOS, iOS and tvOS CI - matching the apothecary libraries rebuilt with it (#8624) [commit](https://github.com/openframeworks/openFrameworks/commit/7ac73d0eedeb0563a6b37af469fcb403581ff176)
+- Emscripten 4.0.4 → 6.0.13 - emsdk updated in CI, `install_emscripten.sh` and the templates; Embind AOT and initial memory as makefile options, template version macros fixed for new and old emsdk (#8476, #8510, #8516, #8555, #8569, #8619) [commit](https://github.com/openframeworks/openFrameworks/commit/cc1fa72c11257eacb0679e3edd3d9a2b20d265ff)
+- GitHub Actions - every action on a Node 24 release, then current stable releases; VS 2022 runner image fixes (#8520, #8599, #8622) [commit](https://github.com/openframeworks/openFrameworks/commit/ae5de2fbf5fd2d6ef4018ac4310aba0864500dd5)
+- Makefiles: `#<tab>` in addon_config.mk is a comment again - tabs no longer split lines, so commented-out entries are ignored (projectGenerator#620) (#8617) [commit](https://github.com/openframeworks/openFrameworks/commit/a14d9190ede87fa81adf670ae058c946c78621da)
+- Release package names - `linux_64_gcc10`, `linux_arm64_gcc10`, `linux_{aarch64,armv7l,armv6l}_rpi_gcc10` (new armv7l package), `vs_{2022,2026}_64` and `vs_{2022,2026}_64_arm64_arm64ec` (first packages with ARM64 / ARM64EC libraries); Linux packages keep `project/linux` and `scripts/linux` (#8614) [commit](https://github.com/openframeworks/openFrameworks/commit/e988b38341e9fb05e5216fb969e9329683c28779)
+- Linux: Cairo renderer again - `OF_CAIRO` was only defined for Windows and macOS since #7889, so `ofBeginSaveScreenAsPDF` / `SVG` and pdfExample were missing on Linux (#8610) [commit](https://github.com/openframeworks/openFrameworks/commit/c147d750a1c58a30c6e718ec8257e5cb45e060b2)
+- linesExample builds with GCC - `std::sin` / `std::cos` instead of `std::sinf` / `std::cosf` (#8609) [commit](https://github.com/openframeworks/openFrameworks/commit/cb742f949952200a62bba54b774937bb9e70e97c)
+- ofUtils links on its own - tools that only use ofUtils no longer pull in the renderer, ofImage, the app and their system libraries (#8605) [commit](https://github.com/openframeworks/openFrameworks/commit/58f6773d1adeeff21af17385056ca52ea26d60b6)
+- Ubuntu install_dependencies without lsb_release - version from `/etc/os-release`, so minimal installs (Docker, cloud images) work; elementary OS and Mint mapped to their Ubuntu base (#8606) [commit](https://github.com/openframeworks/openFrameworks/commit/64f4b871bd5a828a64d3a66f68a1717c82728f4e)
+- Linux 2026: arm64 and Raspberry Pi - libraries in `lib/linux/<arch>` (64, arm64, aarch64, armv7l, armv6l) matching apothecary's GCC 10 builds, Raspberry Pi detection, old flat folders still work for addons (#8540) [commit](https://github.com/openframeworks/openFrameworks/commit/a7ede0a5d3b661fdebfa2e6ba7e0292d2e9299da)
+- Ubuntu: liblapack-dev and libblas-dev - ofxOpenCv links on arm64 (#8603) [commit](https://github.com/openframeworks/openFrameworks/commit/6f06f73586fae639802e7ec3476a478a31e580d0)
+- docs/linux.md: linking non-PIC libraries - what "recompile with -fPIE" means and how to rebuild a library with `-fPIC` (#8602) [commit](https://github.com/openframeworks/openFrameworks/commit/1dae36656426211c37b5861911a1e40590978b25)
+- Failed library downloads are rejected before installed libraries are cleared - an HTTP error page or truncated archive no longer wipes working libraries (#8591) [commit](https://github.com/openframeworks/openFrameworks/commit/3304b2b56558d05e5c5745729d779d1a2d8b6284)
+- Font atlas pixels - `ofTrueTypeFont::getFontAtlasPixels()` and `ofBitmapFont::getAtlasPixels()` expose the glyph atlases on the CPU (#8600) [commit](https://github.com/openframeworks/openFrameworks/commit/b2012af395e3c58cf227f776d7b3dc95aa9828ab)
+- ofSetDepthWrite(bool) - depth writes through the renderer instead of `glDepthMask` in ofGraphics (#8598) [commit](https://github.com/openframeworks/openFrameworks/commit/c7331d34904860b11f81b8657dc92b387a644af4)
+- addons.make for svgParseExample, svgSaveExample and yunetFaceDetection - they didn't build without it (#8596) [commit](https://github.com/openframeworks/openFrameworks/commit/7db07a86cf08de882abbc5c6c1285a170bf58c78)
+- ofxAccelerometer: memset instead of bzero - builds with MSVC (#8595) [commit](https://github.com/openframeworks/openFrameworks/commit/f566a4061e24cb0669d605d661dbd03f357183c8)
+- ofToLower / ofToUpper with a UTF-8 locale - when the environment has none (Docker, services), non-ASCII case mapping works (#8593) [commit](https://github.com/openframeworks/openFrameworks/commit/5e38da53171d3a1f963e0da4519c5f49d201b1a0)
+- macOS make: APP_VERSION / APP_BUILD - app version and build number for the Info.plist from `config.make` (from #3394) (#8592) [commit](https://github.com/openframeworks/openFrameworks/commit/e01e8fff5ab792ca78080820768641bc76135531)
+- CI fails when an example or test build fails - macOS, Linux and MSYS2 jobs no longer stay green on a failed example (#8590) [commit](https://github.com/openframeworks/openFrameworks/commit/7008a108b14273618e9079c8d123a1a7090253b4)
+- MSYS2 CLANG64 / CLANGARM64 with the clang toolchain - they ship no gcc, so make failed straight away (#8588) [commit](https://github.com/openframeworks/openFrameworks/commit/68e7e7351593b0de5e2b50f4c67dbb6261568ff1)
+- Emscripten updates from Jonathan Frank - glInfoExample, audioDeviceSelect and other Emscripten fixes cherry-picked with their author (#8558) [commit](https://github.com/openframeworks/openFrameworks/commit/4b9b43b3bf90fb331000e044afa4621b3fcd740a)
+- MSYS2: UCRT64, CLANG64 and CLANGARM64 - MINGW64 dropped, MSYS2 no longer builds rtaudio for it (#8589) [commit](https://github.com/openframeworks/openFrameworks/commit/f0047fcdaf4d0f76e77c4855376a4b81b03e233b)
+- Nightly packages include the oF Menu scripts - `./of`, `scripts/of.sh` and the download scripts work in a package (#8549) [commit](https://github.com/openframeworks/openFrameworks/commit/f9e8d959fc80acc07e991be379553b9d769c08c3)
+- Desktop OpenGL 4.6 - falls back to the newest version the driver has (Windows / Linux) (#8580) [commit](https://github.com/openframeworks/openFrameworks/commit/666b7300b1b597383a9668ea26c0352efa99097e)
+- GLES outlines - ofPolyline and `ofNoFill()` shapes draw on iOS and WebGL, and use the line width on Android (#8585) [commit](https://github.com/openframeworks/openFrameworks/commit/6fe7474ea1c333d05fb44f7c4627a6354a8048d0)
+- ofRectangle::inside() includes the edges - points on an edge or corner are inside (#4871) (#8584) [commit](https://github.com/openframeworks/openFrameworks/commit/80fa60d53bd2af8a6bf8eecf839a3f9277582f2e)
+- ofxiOS / ofxtvOS GLKit - depth, stencil, MSAA and scale settings apply to the displayed view (#8583) [commit](https://github.com/openframeworks/openFrameworks/commit/4333aa25d80fc58628d3c79ec66fc816a17ec98e)
+- ofCubeMap restores the previous framebuffer - fixes a black screen on iOS (#8582) [commit](https://github.com/openframeworks/openFrameworks/commit/2da3ec80e154f45b5abef1899fc7e24588c5733e)
+- GLSL ES 3.00 header for ofMaterial shaders - PBR works on WebGL2, Android and iOS (#8581) [commit](https://github.com/openframeworks/openFrameworks/commit/b9c84322369230ee78475d06bfa00447e945555d)
+- GLES 3.x - OpenGL ES 3.1 / 3.2 on Android, ES 3 material and cube-map shader fixes, iOS / tvOS GLKit fixes (#8578) [commit](https://github.com/openframeworks/openFrameworks/commit/7b56aa05c210922b36eafc8fe55fbba1dbcb3076)
+- MSVC warnings fixed - across the core, addons and examples (#8579) [commit](https://github.com/openframeworks/openFrameworks/commit/6a7d88a11a6a6b65f6de738d4c3936e9331e5ec7)
+- OpenGL ES 3.0 / 3.1 - support for OpenGL ES 3.0 and 3.1, up from ES 1.0 / 1.1 / 2.0, keeping ES 2.0 and desktop GL working (builds on #8512) (#8533) [commit](https://github.com/openframeworks/openFrameworks/commit/04d2e088f0fab84cca1c494a8c24d84b2da852af)
+- GL / WebGL version defines for the templates - choose the graphics version per project without editing main or the core; the projectGenerator adds the define (#8573) [commit](https://github.com/openframeworks/openFrameworks/commit/b08f95aac0b1c909bddcc45503ea65e88d4663b5)
+- GStreamer MJPG v4l2 capture - the pipeline string was broken, so MJPG cameras failed on Linux (#8572) [commit](https://github.com/openframeworks/openFrameworks/commit/5052e08a015a324df7adceb2a3c4278fafb3c5a2)
+- Apple deployment targets: iOS 15.0, tvOS 18.0 - consistent across the core, templates and CMake, matching apothecary (#8571) [commit](https://github.com/openframeworks/openFrameworks/commit/c1e25c0bcc629f9bf3baa59378127c021e9a891d)
+- ofRectangle tests for == / != - extended coverage (#8570) [commit](https://github.com/openframeworks/openFrameworks/commit/8088c223d293af7b4b38881291eadb94d0fef778)
+- macOS deployment target 12.0 - Xcode 27 no longer supports 10.15 (#8565) [commit](https://github.com/openframeworks/openFrameworks/commit/d52a58d9a9e23263b8eba023e0857117a32f8748)
+- ofRectangle::operator!= agrees with operator== - both use the float epsilon (#8567) [commit](https://github.com/openframeworks/openFrameworks/commit/86a27dfbbd37308b77d5fb149b0728f4054e9797)
+- CI: MSYS2 package install retried - re-running setup-msys2 could never succeed (#8568) [commit](https://github.com/openframeworks/openFrameworks/commit/d0d30f803d0b264126424780e1129d9e60219cdc)
+- MSYS2: ofxOpenCv links apothecary's OpenCV 4 - instead of the pacman package (#8566) [commit](https://github.com/openframeworks/openFrameworks/commit/c5469c0d74e5855d3336260d5a55d733df39c140)
+- ofxOpenCv with OpenCV 5 - wraps OpenCV 5, which removed the legacy C API, and keeps OpenCV 4 working (#8563) [commit](https://github.com/openframeworks/openFrameworks/commit/74d2770153dc65fda03a483cc61f69230ce43e79)
+- Apple: split OpenSSL XCFrameworks - links `libssl` / `libcrypto` instead of the combined framework (#8562) [commit](https://github.com/openframeworks/openFrameworks/commit/860df8cd8e330a498a2795944be8e2c6a9c62638)
+- GL smoke tests - indexed VBOs, instancing, tessellated paths and FBO readback checked in CI, desktop, Emscripten and iOS (#8557) [commit](https://github.com/openframeworks/openFrameworks/commit/f3774c5a3bb54c6125b91d99acbe04abe4c12bf9)
+- GLFW window focus - `ofAppGLFWWindow` tracks whether the window has focus (#8530) [commit](https://github.com/openframeworks/openFrameworks/commit/ce8bdca3c88e50c9183ec7a33c75421b4bf5cf10)
+- Emscripten template: `ofGLWindowSettings` typo fixed - new Emscripten projects compile again (#8559) [commit](https://github.com/openframeworks/openFrameworks/commit/e52ad329d00515d6ed8f3e7f12afe6382b86106e)
+- MSYS2 CLANG64: C++ standard only for C++ - C files no longer get `-std=gnu++17` (#8556) [commit](https://github.com/openframeworks/openFrameworks/commit/be4ba561cc4b8b695ce8243cb357ceda4deb242f)
+- MSYS2 install_dependencies outside MSYS2 - explains instead of failing on missing pacman (#8551) [commit](https://github.com/openframeworks/openFrameworks/commit/b125be495ff1e3b99f6a8a64f7ff3e80b4fe1586)
+- GL decoupled from ofGraphics - GL-specific code moved into the renderers (#8554) [commit](https://github.com/openframeworks/openFrameworks/commit/fc619e6f06a4f0e7248a261cc889c11e149d2f1b)
+- ofxSvg updates - transforms set to 0 fixed, bounding boxes update on request, image export format and quality, better font file search with simple language detection (Chinese, Korean, Japanese) for text (#8539) [commit](https://github.com/openframeworks/openFrameworks/commit/18565f66997d40c704e10c8400fcbba4c80e480c)
+- C++23 / C17 for every project - Visual Studio, Xcode and the makefiles use the same language standards (#8548) [commit](https://github.com/openframeworks/openFrameworks/commit/19ad60936ba827b1fa4c5142dd33e3cb0532adfd)
+- Windows on ARM downloads x64 libraries too - with ARM64 and ARM64EC (#8544) [commit](https://github.com/openframeworks/openFrameworks/commit/9e1dc4a51158248107368529772ea96c6b27223f)
+- More core tests - and running them locally from oF Menu (#8542) [commit](https://github.com/openframeworks/openFrameworks/commit/2d53bcdaf9d94957d7d27673cb306af26564aee7)
+- ofxSvgGroup clone - the clone becomes the parent of its copied children (#8538) [commit](https://github.com/openframeworks/openFrameworks/commit/6fa454cf855c36b01fe4589de52e3849a6673ee9)
+- Android ZIP extraction path traversal fixed (CWE-22, Zip Slip) (#8541) [commit](https://github.com/openframeworks/openFrameworks/commit/23ec9a549b133ecc680fc74de28f33da3c89635b)
+- ofURLFileLoader progress event - download progress and an example (from #2043) (#8537) [commit](https://github.com/openframeworks/openFrameworks/commit/a57429499ffff54dbff5b3a17f88629a070edd23)
+- oF Menu 0.3.0 → 0.4.3 - command-line menu to install / update / check libraries, the projectGenerator and apothecary builds, SHA-256 verified downloads, clean; `download_libs` 2.7.2 keeps other platforms' libraries (#8528, #8529, #8534) [commit](https://github.com/openframeworks/openFrameworks/commit/f4650dd5d4c0f6de12c573ac465ce0a26cd92271)
+- OpenSSL 4 and 3 - x509 certificate checks for both, curl verifies the peer on redirects, CFNetwork on macOS, bcrypt on Visual Studio (#8535) [commit](https://github.com/openframeworks/openFrameworks/commit/356300892a4682d2b6c6231312f6db1a0a07087f)
+- Warning fixes - GLM redefinition, `ofMatrix4x4::lengthSquared()`, ofURLFileLoader and ofMediaFoundationPlayer (#8532) [commit](https://github.com/openframeworks/openFrameworks/commit/5fe9b359529f44230556e8b201c09f7ab1d0116a)
+- MSYS2: OpenCV 4 from the package manager - until ofxOpenCv supported OpenCV 5 (#8531) [commit](https://github.com/openframeworks/openFrameworks/commit/2dcb7c735b4c8ad8d84fb6db8a148edc1457bd5c)
+- Addon `-std=*` reaches C++ - `ADDON_CFLAGS` C++ standards are forwarded to `CXXFLAGS` (#8515) [commit](https://github.com/openframeworks/openFrameworks/commit/2f3fa5d44243aa4219e01cb329f8edb610c0c27c)
+- GL index type from sizeof(ofIndexType) - indexed VBO draws read the index buffer with the right type (#8526) [commit](https://github.com/openframeworks/openFrameworks/commit/763bcc6c6c1aa091410dbbe9c015dd84c7a40c4d)
+- macOS: ofAVFoundationPlayer::close() synchronous - fixes a crash when quitting with a video loaded (#8527) [commit](https://github.com/openframeworks/openFrameworks/commit/57a16eb6cb278ce8df45eba3e0b23f83c3dc76f7)
+- iOS: native view controller startup - apps embedded in a UIKit hierarchy start correctly (#8524) [commit](https://github.com/openframeworks/openFrameworks/commit/3c90ed22cf3e82e10691362f0ff4ee57365b4e4a)
+- Linux: GLFW uses its X11 backend - on Wayland sessions through XWayland, no setup needed [commit](https://github.com/openframeworks/openFrameworks/commit/21c0bb702f94e97621be57e608be811d1ef87115)
+- ofFilePath::getAppName() - the running app's name, optionally without `Debug` (#8181) [commit](https://github.com/openframeworks/openFrameworks/commit/266cee068fea45d862cabc13d929b1b0076e6c37)
+- Visual Studio 2026 - v145 toolset, x64 / ARM64 / ARM64EC, core and template projects (#8511) [commit](https://github.com/openframeworks/openFrameworks/commit/04a7c4dde285cc43e088bc9224157d04aab28a3b)
+- ofQuaternion::lengthSquared() - `length2()` deprecated (#7680) [commit](https://github.com/openframeworks/openFrameworks/commit/5fe424dbe6f354643289b97f9ef767296d719e08)
+- ofColor from a vector - `ofColor(std::vector<float>)` and friends (#7696) [commit](https://github.com/openframeworks/openFrameworks/commit/4a261433c1a909f9915671f4bcf6840c0a11f633)
+- ofURLFileLoader progressCallback - progress for a request (#8507) [commit](https://github.com/openframeworks/openFrameworks/commit/cc5b398d5ed46190083032f22ab7998d2d259291)
+- ofAVEngineSoundPlayer position in milliseconds fixed (#8506) [commit](https://github.com/openframeworks/openFrameworks/commit/e2282e436ab611bd25824c0b1ee110c2c75bf3a8)
+- Wayland support for Linux - GLFW windows on Wayland as well as X11 (#8508) [commit](https://github.com/openframeworks/openFrameworks/commit/da0a3eb4f35af04f54e42ab43b871f1ec88034c5)
+- ofxToggle / ofxButton resize - the checkbox follows the new size (#8503) [commit](https://github.com/openframeworks/openFrameworks/commit/aaf8228a894767df880bc0ff2956045dd16bdd1e)
+- ofURLFileLoader without OpenSSL - `checkValidCertificate()` compiles (#8491) [commit](https://github.com/openframeworks/openFrameworks/commit/aed1697505d913415a7d4d36c37504ec95419278)
+- ofxSvg fixes - group bounding box, image loading, path outlines from `setPathWidth()` (#8500) [commit](https://github.com/openframeworks/openFrameworks/commit/c4eefd0c9f2d426ce54c3e5c0d4c41650bc6937b)
+- ofURLFileLoader stop() removes its update listener - fixes a crash (#8501) [commit](https://github.com/openframeworks/openFrameworks/commit/c93980bbeb193a675baaa78c93be314375a8a290)
+- Makefile text fix - macOS / osx template Makefiles (#8498) [commit](https://github.com/openframeworks/openFrameworks/commit/fd32957c9e570cbd9dd08d62cca945104634d36c)
+- Arch Linux install scripts - FreeImage from the AUR (yay / paru) after Arch dropped it (#8497) [commit](https://github.com/openframeworks/openFrameworks/commit/5eb5f94caafd819dd48773f39426bf2901a76f82)
+- Visual Studio 2022: IPv6 - the system libraries curl needs with v143 (#8494) [commit](https://github.com/openframeworks/openFrameworks/commit/7e2d57df2346740643f0f7a6c872c6936f3174bd)
+- ofTrueTypeFont builds a string's mesh at once - fewer reallocations (#8432) [commit](https://github.com/openframeworks/openFrameworks/commit/8743f7f4e9a32b4822171aa7c5cc813935d2c450)
+- Examples: `std::min` instead of the MIN macro (#8490) [commit](https://github.com/openframeworks/openFrameworks/commit/9d272adec5b1e0969d39063e44cc4d848b0f85ec)
+- ofLogError without the WCHAR buffer (#8464) (#8465) [commit](https://github.com/openframeworks/openFrameworks/commit/d55ecf78b49fbcf632c7309fb40ff0e2ee0dbe8b)
+- Log and docs cleanup - consistent log messages and module names (#8417) [commit](https://github.com/openframeworks/openFrameworks/commit/99da645eef52bb4b001bd98be086b4aa8368c9e8)
+- Yunet face detection example - neural-network face detection with ofxOpenCv (#8484) [commit](https://github.com/openframeworks/openFrameworks/commit/3cd9f0f2970c407b1b0f24f8828b10dcadbf7f51)
+- Fewer includes in ofConstants.h - included where they're used (#8187) [commit](https://github.com/openframeworks/openFrameworks/commit/3f457231d4efbdc056bc179147ff8a11dcd90224)
+- Emscripten filesystem support (#8483) [commit](https://github.com/openframeworks/openFrameworks/commit/bbd5fcfd5b3b652f33c2b76be91c618c1f695495)
+- Linux scripts - dependency scripts formatted, projectGenerator download for Linux (#8477) [commit](https://github.com/openframeworks/openFrameworks/commit/662b7d4677455e1c8dcafb78dce773d948636c16)
+- macOS: AGL framework removed - deprecated and no longer used (#8474) [commit](https://github.com/openframeworks/openFrameworks/commit/5d07b958e6d396f14fe288809135e4e6d6d18f14)
+- Emscripten: LOAD_SOURCE_MAP removed - emsdk 4.0.14+ rejects it (#8470) [commit](https://github.com/openframeworks/openFrameworks/commit/996f7880bc250254480561a2f2dab3554a830084)
+- Linux: no gold linker - it's being removed from distributions (#8468) [commit](https://github.com/openframeworks/openFrameworks/commit/ea38d7ba64cbcc10fa8815669c3c2829b4f63a2b)
+- ofxSvg rewritten - no more libtinysvg and libxml2 dependencies; based on ofxSvgParser, adds groups, CSS, text and saving (#8266) [commit](https://github.com/openframeworks/openFrameworks/commit/2cc4b712f73bd9453a6fbbbb9a3bf962282cfd2b)
+- ofArduino: EI2CDataReceived spelling - old name kept as a deprecated alias (#8463) [commit](https://github.com/openframeworks/openFrameworks/commit/aa344f6feebee1a8eb4e35b9c8f19f17fb6ca03f)
+- ofxAssimp: option to apply mesh transforms on import (#8460) (#8461) [commit](https://github.com/openframeworks/openFrameworks/commit/410641eff7c77886d5958526c97b469ecd1d7b61)
+- Android examples updated - Gradle 8.9.1 template, assets in the app, image, video, audio, camera, polygon and Assimp examples, x86_64 emulator fixes (#8418) [commit](https://github.com/openframeworks/openFrameworks/commit/f5018525cda2181d9da5263d02fb42fb86773b29)
+- Visual Studio projects link the Windows system libraries curl uses - IPv6, certificate store, entropy, registry, Unicode (#8458) [commit](https://github.com/openframeworks/openFrameworks/commit/18d10fc646c2d4771da16132d73f0d85e9567fff)
+- ofDrawArrow cone head offset fixed (#8452) (#8453) [commit](https://github.com/openframeworks/openFrameworks/commit/2f3c6369ba52ffaed59f64d19bd9f687df04e2bd)
+- ofxAssimp: FBX pivots imported - Mixamo models load correctly (#8449) [commit](https://github.com/openframeworks/openFrameworks/commit/6e19ef27818b3292a2dfed02472138bafcab1fd4)
+- JSON settings: no load error when saving a new file (#8450) [commit](https://github.com/openframeworks/openFrameworks/commit/d5119c02d45dcffeb9ec6c0639d054c3a335f2e1)
+- regexExample compiles - `std::` fix (#8167) [commit](https://github.com/openframeworks/openFrameworks/commit/b691e6b9f641b821391f11ddf8e64d99ac295430)
+- Random distributions: exponential lambda is a real number (#8444) [commit](https://github.com/openframeworks/openFrameworks/commit/0e4d63d2e39724514fafa6d32b3c2de2432661c2)
+
+
 ```
  ________    _____    _______    _____     
 |\   __  \  / __  \  /  ___  \  / __  \    

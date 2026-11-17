@@ -44,6 +44,13 @@ cd OF/scripts/linux
 
 which will compile the command line version of the project generator and install it in your system so you can create projects from anywhere, it'll also make it possible to use the gui tool which is present in the root of the OF folder.
 
+Prebuilt projectGenerator
+------------------------
+
+`of update pg` downloads the GUI and its bundled CLI. On x64, Ubuntu 22.04 and Jammy-based derivatives use `projectGenerator-linux-ubuntu22-gui.gz`; other x64 hosts use `projectGenerator-linux-gui.gz`. ARM64 hosts, including 64-bit Raspberry Pi systems, use `projectGenerator-linux-arm64-gui.gz`.
+
+The GUI is installed at `projectGenerator/projectGenerator` and the CLI at `projectGenerator/projectGeneratorCmd`. The release's `.tar.bz2` archives contain only the standalone CLI and are not needed for this installation. For 32-bit Raspberry Pi targets without prebuilt GUI packages, use `compilePG.sh` to build the CLI.
+
 Linking prebuilt libraries: "recompile with -fPIE"
 ---------------------------------------------------
 

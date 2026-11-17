@@ -150,6 +150,9 @@
 
 cmake_minimum_required(VERSION 3.8.0)
 
+# Before the early return. CMake reads this file twice, and the second pass returns immediately.
+include("${CMAKE_CURRENT_LIST_DIR}/../ccache.cmake")
+
 # CMake invokes the toolchain file twice during the first build, but only once during subsequent rebuilds.
 if(DEFINED ENV{_IOS_TOOLCHAIN_HAS_RUN})
   return()

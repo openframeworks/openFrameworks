@@ -115,7 +115,9 @@ class ofApp: public ofxUnitTestsApp{
 			switch(pick(rng)){
 			case 0: break;
 			case 1:{
-				float * f = &q.x + field(rng);
+				// x and y are references into position, so &q.x + n is not the n-th field
+				float * fields[4] = { &q.x, &q.y, &q.width, &q.height };
+				float * f = fields[field(rng)];
 				for(int k = ulps(rng); k > 0; k--) *f = std::nextafter(*f, INFINITY);
 				break;
 			}

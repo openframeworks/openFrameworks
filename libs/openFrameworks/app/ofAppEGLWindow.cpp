@@ -146,7 +146,7 @@ static const struct {
 };
 
 // from http://cantuna.googlecode.com/svn-history/r16/trunk/src/screen.cpp
-#define CASE_STR(x,y) case x: str = y; break
+#define CASE_STR(x,y) case x: return y
 
 static std::string eglErrorString(EGLint err) {
 	switch (err) {
@@ -441,8 +441,8 @@ void ofAppEGLWindow::setup(const ofAppEGLWindowSettings & _settings) {
 
 	initNative();
 
-	glesVersionMajor = settings.glesVersionMajor();
-        glesVersionMinor = settings.glesVersionMinor();
+	glesVersionMajor = settings.getGLESVersionMajor();
+        glesVersionMinor = settings.getGLESVersionMinor();
 	// we set this here, and if we need to make a fullscreen
 	// app, we do it during the first loop.
 	windowMode = settings.windowMode;
@@ -480,7 +480,7 @@ void ofAppEGLWindow::setup(const ofAppEGLWindowSettings & _settings) {
 
 	makeCurrent();
 	if(currentRenderer->getType()==ofGLProgrammableRenderer::TYPE){
-            static_cast<ofGLProgrammableRenderer*>(currentRenderer.get())->setup(settings.glesVersionMajor(),settings.glesVersionMinor());
+            static_cast<ofGLProgrammableRenderer*>(currentRenderer.get())->setup(settings.getGLESVersionMajor(),settings.getGLESVersionMinor());
 	}else{
 		static_cast<ofGLRenderer*>(currentRenderer.get())->setup();
 	}

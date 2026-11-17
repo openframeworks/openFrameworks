@@ -64,6 +64,14 @@ void ofGLRenderer::setup() {
 			<< "ES 1.1 FBOs work on real devices (GL_OES_framebuffer_object); use ES 2.0+ to test FBOs on the emulator.";
 	}
 }
+
+//----------------------------------------------------------
+int ofGLRenderer::getMaxTextureSize() {
+	int maxSize;
+	glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxSize);
+	return maxSize;
+}
+
 void ofGLRenderer::startRender() {
 	currentFramebufferId = defaultFramebufferId;
 	framebufferIdStack.push_back(defaultFramebufferId);
@@ -1781,10 +1789,14 @@ void ofGLRenderer::drawString(const ofTrueTypeFont & font, std::string text, flo
 
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-	mutThis->bind(font.getFontTexture(), 0);
-	draw(font.getStringMesh(text, x, y, isVFlipped()), OF_MESH_FILL);
-	mutThis->unbind(font.getFontTexture(), 0);
+	
+	if( font.getFontTexture().isAllocated() ) {
+		mutThis->bind(font.getFontTexture(), 0);
+		draw(font.getStringMesh(text, x, y, isVFlipped()), OF_MESH_FILL);
+		mutThis->unbind(font.getFontTexture(), 0);
+	} else {
+		ofLogWarning("ofGLRenderer") << "drawString: font texture is not allocated. Make sure to call setUseTexture(true) before font.load().";
+	}
 
 	if (!blendEnabled) {
 		glDisable(GL_BLEND);

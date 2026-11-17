@@ -1,31 +1,49 @@
-# This one was created to make it work whil
+# Build the full set of openFrameworks packages for a release tag and upload
+# them to its GitHub release. Fires automatically on a version tag push, or by
+# hand via workflow_dispatch (optionally against an override apothecary tag).
+#
+# Same build engine as nightly.yml: one linux64 runner runs
+# scripts/ci/package_builds.sh, which cross-packages every platform from
+# apothecary libs it downloads. For a numeric tag, download_libs.sh is fed
+# -t <apothecary release> derived from the OF tag via apothecary_release_tag.sh
+# (0.12.2 and 0.12.2-RC1 -> v12.2.0); workflow_dispatch may override that
+# apothecary tag.
 
 name: manual-release
 
 on:
+  push:
+    tags: ['[0-9]*.[0-9]*.[0-9]*']
   workflow_dispatch:
     inputs:
       release:
-        description: "release"
-        required: true
-        default: "latest"
+        description: "openFrameworks release name (empty on a tag push -> the pushed tag)"
+        required: false
+        default: ""
+      apothecary_tag:
+        description: "Apothecary release to pull libs from (e.g. v12.2.0). Empty = derive from the release."
+        required: false
+        default: ""
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+permissions:
+  contents: write
+
 env:
   ccache: ccache
-  RELEASE: ${{ github.event.inputs.release }}
+  RELEASE: ${{ github.event.inputs.release || github.ref_name }}
 
 jobs:
   manual-nightly:
     runs-on: ubuntu-24.04
-    if: github.repository == 'openframeworks/openFrameworks' && github.ref == 'refs/heads/master'
+    if: github.repository == 'openframeworks/openFrameworks' && (github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/'))
     strategy:
       matrix:
         cfg:
-          - { target: linux64, libs: 64gcc6 }
+          - { target: linux64, libs: 64 }
     steps:
       - name: Install libunwind
         run: |
@@ -38,7 +56,7 @@ jobs:
           # libunwind-dev wget2
           version: 1.0
 
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7.0.1
       - name: ccache
         uses: hendrikmuhs/ccache-action@v1.2.24
         with:
@@ -47,30 +65,59 @@ jobs:
         run: ./scripts/dev/init_submodules.sh
       - name: Install dependencies
         run: ./scripts/ci/linux/64/install.sh;
+      - name: Resolve apothecary tag
+        id: apo
+        shell: bash
+        env:
+          APO_OVERRIDE: ${{ github.event.inputs.apothecary_tag }}
+        run: |
+          set -euo pipefail
+          source scripts/dev/apothecary_release_tag.sh
+          if [[ -n "${APO_OVERRIDE:-}" ]]; then
+            # literal: an override is used as-is so hotfix / RC apothecary
+            # tags (e.g. v12.2.0-hotfix1) are not folded back to v12.2.0 by
+            # the formula.
+            resolved="$APO_OVERRIDE"
+            echo "$RELEASE -> apothecary $resolved (workflow_dispatch override, used literally)"
+          else
+            resolved=$(apothecary_release_tag "$RELEASE")
+            if ! [[ "$resolved" =~ ^v[0-9]+\.[0-9]+\.[0-9]+ ]]; then
+              echo "::error title=No apothecary release to use::Can't derive one from RELEASE='$RELEASE' and no apothecary_tag override was given. Dispatch with apothecary_tag set."
+              exit 1
+            fi
+            echo "$RELEASE -> apothecary $resolved (derived from $RELEASE)"
+          fi
+          echo "tag=$resolved" >> "$GITHUB_OUTPUT"
       - name: Download libs
-        run: ./scripts/linux/download_libs.sh -a ${{matrix.cfg.libs}};
+        run: ./scripts/linux/download_libs.sh -a ${{ matrix.cfg.libs }} -t ${{ steps.apo.outputs.tag }};
       - name: Create Package
-        run: scripts/ci/package_builds.sh ${{ github.event.inputs.release }};
+        run: scripts/ci/package_builds.sh "$RELEASE";
         id: createpackage
       - name: List output directory
         run: ls -lah out/
-      # - name: Test Artefact zip
-      #   run: |
-      #     tar -cjf out/manual-mega_artefact.tar.bz2 -C out $(echo ${{ steps.createpackage.outputs.FILES_OUT }} | tr ' ' '\n' | sed 's|^out/||')
-      # - name: Upload binaries as Artefact
-      #   uses: actions/upload-artifact@v6
-      #   with:
-      #     name: openFrameworks-all-artefact-${{ env.TARGET }}-${{ matrix.bundle }}
-      #     path: out/manual-mega_artefact.tar.bz2
-      #     retention-days: 1
       - name: Update Release
-        if: github.repository == 'openframeworks/openFrameworks' && github.ref == 'refs/heads/master'
+        if: github.repository == 'openframeworks/openFrameworks'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GH_REPO: ${{ github.repository }}
-          RELEASE: ${{ github.event.inputs.release }}
           FILES_OUT: ${{ steps.createpackage.outputs.FILES_OUT }}
+          APO_TAG: ${{ steps.apo.outputs.tag }}
         run: |
-          gh release view "$RELEASE" > /dev/null 2>&1 || gh release create "$RELEASE" --title "$RELEASE" --target "$GITHUB_SHA" --notes ""
-          gh release edit "$RELEASE" --title "$RELEASE" --prerelease=false
+          set -euo pipefail
+          PRERELEASE=false
+          if [[ "$RELEASE" =~ -([Rr][Cc]|beta|alpha) ]]; then PRERELEASE=true; fi
+          NOTES="openFrameworks $RELEASE built against apothecary $APO_TAG."
+          NOTES="$NOTES"$'\n\n'"[Package build summary](${GITHUB_SERVER_URL}/${GH_REPO}/actions/runs/${GITHUB_RUN_ID})"
+          gh release view "$RELEASE" > /dev/null 2>&1 \
+            || gh release create "$RELEASE" --title "$RELEASE" --target "$GITHUB_SHA" --notes "$NOTES" ${PRERELEASE:+--prerelease}
+          gh release edit "$RELEASE" --title "$RELEASE" --prerelease=$PRERELEASE
           gh release upload "$RELEASE" $FILES_OUT --clobber
+      # package_builds.sh keeps going when a package fails, so the release has every package
+      # that built; fail the run afterwards so a missing package doesn't go unnoticed.
+      - name: Check every package built
+        shell: bash
+        run: |
+          if [[ -f out/package_summary.md ]] && grep -q "| FAILED |" out/package_summary.md; then
+            grep "| FAILED |" out/package_summary.md | sed 's/^/::error::Package failed: /'
+            exit 1
+          fi

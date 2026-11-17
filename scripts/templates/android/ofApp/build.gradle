@@ -31,12 +31,12 @@ println "addonFile = ${addonFile.absolutePath}"
 
 // Get all addon paths from addons.make
 
-def ofRoot = "/../../../"
+def ofRoot = "../../../"
 
 def addonPaths = []
 if (addonFile.exists()) {
 	addonFile.eachLine { line ->
-		def addonRelPath = ofRoot + "/addons/" + line.trim()
+		def addonRelPath = ofRoot + "addons/" + line.trim()
 		def addonPath = new File(projectRoot, addonRelPath).canonicalFile
 		println "Resolved addon path: ${addonPath}"
 		if (addonPath.exists()) {
@@ -159,8 +159,8 @@ addonPaths.each { addon ->
 println "Addon Libraries found: [${addonLibs}]"
 
 // Convert lists to CMake arguments
-def cmakeIncludeArgs = "-DADDON_INCLUDE_DIRS=\"" + addonIncludeDirs.join(";") + "\""
-def cmakeLibArgs = "-DADDON_LIBS=\"" + addonLibs.join(";") + "\""
+def cmakeIncludeArgs = "-DADDON_INCLUDE_DIRS=" + addonIncludeDirs.join(";")
+def cmakeLibArgs = "-DADDON_LIBS=" + addonLibs.join(";")
 def cmakeSrcArgs = "-DADDON_SOURCES=" + addonSourceFiles.join(";")
 
 println "Found addons: " + addonPaths
@@ -172,7 +172,7 @@ android {
     compileSdkVersion 34
     buildToolsVersion '37.0.0'
     //ndkPath "/Users/x/android-ndk-r21e"  // Point to your own NDK if needed
-    ndkVersion '29.0.14206865' // keep in sync with apothecary build-android.yml
+    ndkVersion '30.0.16248370' // NDK r30 LTS, same pin as cmake.sh and the Android CI job
     buildFeatures {
         prefab true
     }

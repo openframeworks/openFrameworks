@@ -104,6 +104,14 @@ void ofRestoreMinMagFilters(){
 	bUseCustomMinMagFilters = false;
 }
 
+//----------------------------------------------------------
+int ofGetMaxTextureSize() {
+	if( ofGetCurrentRenderer() ) {
+		return ofGetCurrentRenderer()->getMaxTextureSize();
+	}
+	return 0;
+}
+
 //***** global functions to override texture settings
 
 

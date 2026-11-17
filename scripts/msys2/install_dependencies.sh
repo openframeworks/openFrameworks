@@ -159,7 +159,7 @@ MSYS_PACKAGES="unzip make"
 # bundled under addons/ofxOpenCv/libs/opencv (see below)
 MINGW_PACKAGES="assimp cairo curl freeimage \
 	glew glfw glm fmt zlib brotli libpng \
-	harfbuzz libsndfile libusb libxml2 mpg123 \
+	harfbuzz libsndfile libusb mpg123 \
 	nlohmann-json openal \
 	pkgconf pugixml rtaudio \
 	uriparser utf8cpp "

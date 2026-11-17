@@ -12,6 +12,10 @@
 /// \param args A variable argument list.
 /// \returns A string representation of the argument list.
 ///
+#if defined(__clang__) || defined(__GNUC__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wformat-security"
+#endif
 template <typename... Args>
 //__attribute__((__format__ (__printf__, 2, 0)))
 std::string ofVAArgsToString(const char * format, Args &&... args) {
@@ -32,6 +36,9 @@ std::string ofVAArgsToString(const char * format, Args &&... args) {
 
 	return s;
 }
+#if defined(__clang__) || defined(__GNUC__)
+#pragma GCC diagnostic pop
+#endif
 
 /// \file
 /// ofLog provides an interface for writing text output from your app.

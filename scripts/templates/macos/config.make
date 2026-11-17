@@ -22,6 +22,15 @@
 # APP_BUILD = 1
 
 ################################################################################
+# APP BUNDLE ID
+#   The app's bundle identifier (CFBundleIdentifier), eg com.example.myApp.
+#   The projectGenerator also sets it in the Xcode project and keeps it on update.
+#
+#   (default) APP_BUNDLE_ID = cc.openFrameworks.<project folder name>
+################################################################################
+# APP_BUNDLE_ID = com.example.myApp
+
+################################################################################
 # PROJECT ROOT
 #   The location of the project - a starting place for searching for files
 #       (default) PROJECT_ROOT = . (this directory)
@@ -89,6 +98,18 @@
 # incorporated directly into the final executable application binary.
 # TODO: should this be a default setting?
 # PROJECT_LDFLAGS=-Wl,-rpath=./libs
+
+################################################################################
+# PROJECT FRAMEWORKS / SYSTEM LIBRARIES
+#   Space-delimited system frameworks (macOS / iOS / tvOS: -framework) and
+#   libraries (-l, sqlite3 = libsqlite3.tbd / libsqlite3.so). The
+#   projectGenerator adds them to Xcode projects and keeps them on update.
+#
+#		(default) PROJECT_FRAMEWORKS = (blank)
+#		(default) PROJECT_SYSTEM_LIBS = (blank)
+################################################################################
+# PROJECT_FRAMEWORKS = Security
+# PROJECT_SYSTEM_LIBS = sqlite3
 
 ################################################################################
 # PROJECT DEFINES

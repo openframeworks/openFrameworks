@@ -30,6 +30,12 @@
 	<string>This app makes use of your Location</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>This app needs to access the microphone</string>
+	<key>NSMotionUsageDescription</key>
+	<string>This app makes use of the motion sensors</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>This app needs to access your photo library</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>This app needs to save photos to your photo library</string>
 	<key>UIApplicationExitsOnSuspend</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>
@@ -45,5 +51,22 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+	<key>UIApplicationSceneManifest</key>
+	<dict>
+		<key>UIApplicationSupportsMultipleScenes</key>
+		<false/>
+		<key>UISceneConfigurations</key>
+		<dict>
+			<key>UIWindowSceneSessionRoleApplication</key>
+			<array>
+				<dict>
+					<key>UISceneConfigurationName</key>
+					<string>Default</string>
+					<key>UISceneDelegateClassName</key>
+					<string>ofxiOSSceneDelegate</string>
+				</dict>
+			</array>
+		</dict>
+	</dict>
 </dict>
 </plist>

@@ -212,7 +212,7 @@ ifeq ($(PLATFORM_OS),Linux)
 	else ifeq ($(PLATFORM_LIB_SUBPATH),linux/aarch64)
 		PLATFORM_LEGACY_LIB_SUBPATHS ?= linuxaarch64
 	else ifeq ($(PLATFORM_LIB_SUBPATH),linux/arm64)
-		PLATFORM_LEGACY_LIB_SUBPATHS ?= linuxarm64 linuxaarch64
+		PLATFORM_LEGACY_LIB_SUBPATHS ?= linuxarm64 linuxaarch64 linux/aarch64
 	endif
 endif
 
@@ -361,7 +361,7 @@ else
 	PLATFORM_ADDON_KEYS=$(strip $(ABI_LIB_SUBPATHS))
 endif
 
-# $1 = library root (libs/tess2 or addons/ofxSvg/libs/svgtiny).
+# $1 = library root (e.g. libs/tess2).
 # First existing lib/<subpath> wins so old flat folders still link.
 define find_platform_lib_path
 $(firstword $(foreach subpath,$(ABI_LIB_SUBPATHS),$(wildcard $1/lib/$(subpath))))
@@ -455,6 +455,12 @@ OF_CORE_INCLUDES_CFLAGS += $(addprefix -I,$(OF_CORE_HEADER_PATHS))
 ################################################################################
 # OF CORE DEFINES
 ################################################################################
+
+# make OF_NO_URL_LOADER=1: the core is built without the URL loader (ofLoadURL and
+# friends fail; no curl or OpenSSL linked). It replaces the core every app links.
+ifeq ($(OF_NO_URL_LOADER),1)
+	PLATFORM_DEFINES += OF_NO_URL_LOADER
+endif
 
 OF_CORE_DEFINES_CFLAGS=$(addprefix -D,$(PLATFORM_DEFINES))
 

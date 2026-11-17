@@ -13,8 +13,9 @@ APOTHECARY_LEVEL="$(cd "$SCRIPT_DIR/../.." && pwd)"
 export MAKE_TARGET="${MAKE_TARGET:-cmake}"
 export CPP_STANDARD="${CPP_STANDARD:-23}"
 export C_STANDARD="${C_STANDARD:-17}"
-# Keep in sync with apothecary (.github/workflows/build-android.yml, configure/android_configure.sh)
-export NDK="${NDK:-29.0.14206865}" # pinned NDK (major.minor.build) under $ANDROID_SDK_PATH/ndk
+# NDK r30 LTS. ubuntu-24.04 runners install this side-by-side package.
+# Prebuilt libs stay the apothecary latest archives.
+export NDK="${NDK:-30.0.16248370}" # pinned NDK (major.minor.build) under $ANDROID_SDK_PATH/ndk
 export NDK_VERSION_MAJOR="${NDK_VERSION_MAJOR:-${NDK%%.*}}"
 export ANDROID_API="${ANDROID_API:-25}" # min compile API (Android 7.1). Not the SDK version.
 ANDROID_PLATFORM="android-${ANDROID_API}"
@@ -96,11 +97,14 @@ else
     exit 1
 fi
 
+if [ -n "${1:-}" ] && [ -z "${ARCH:-}" ]; then
+  ARCH="$1"
+fi
 if [ -z "$ARCH" ] || [ "$ARCH" == "all" ]; then
   ARCH="$DEFAULT_ARCHS"
 fi
 
-echo "build for architecture(s): $ARCHES"
+echo "build for architecture(s): $ARCH"
 for ARCHE in $ARCH; do
   echo "-------------------------------------"
   echo "Building for $ARCHE..."
@@ -129,7 +133,7 @@ for ARCHE in $ARCH; do
     -DCONFIGURATION_BUILD_DIR="$OUTPUT_DIR" \
     "$CMAKELISTS_DIR"
 
-  ninja -j "$NUM_CORES"
+  ninja -j "${NUM_CORES:-$PARALLEL_MAKE}"
 
   cd "$SCRIPT_DIR"
 done

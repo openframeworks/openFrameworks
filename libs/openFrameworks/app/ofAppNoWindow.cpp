@@ -72,7 +72,9 @@ public:
 private:
 	static const std::string TYPE;
 	const std::string & getType(){return TYPE;}
-
+	
+	int getMaxTextureSize() {return 0;}
+	
 	void startRender(){}
 	void finishRender(){}
 	void update(){}

@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7.0.1
       - name: Setup GitHub CLI
         run: |
           # Ensure the latest version of GitHub CLI is installed

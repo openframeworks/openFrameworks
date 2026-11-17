@@ -319,6 +319,10 @@ public:
 	///
 	/// \returns The string representation of the renderer type.
 	virtual const std::string & getType() = 0;
+	
+	/// \brief Get the max texture size supported by the renderer.
+	/// \returns The int value of the maximum texture size.
+	virtual int getMaxTextureSize() = 0;
 
 	/// \brief Starts using this renderer as the rendering surface.
 	virtual void startRender() = 0;
