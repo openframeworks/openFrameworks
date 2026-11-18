@@ -36,6 +36,9 @@ def main():
             'downloader() { printf "%s\\n" "$1" >> "$REQUESTS"; '
             'if [ -n "${PG_DOWNLOAD_SIGNAL:-}" ]; then kill -TERM $$; fi; '
             'if [ -n "${PG_DOWNLOAD_FAIL:-}" ]; then return "$PG_DOWNLOAD_FAIL"; fi; '
+            'case "$1" in *.tar.bz2) '
+            'if [ -n "${PG_CLI_DOWNLOAD_FAIL:-}" ]; then return "$PG_CLI_DOWNLOAD_FAIL"; fi; '
+            'cp "$PG_CLI_FIXTURE" "${1##*/}"; return $? ;; esac; '
             'cp "$PG_FIXTURE" "${1##*/}"; }\n')
         installed = tree / "projectGenerator"
         cli_source = '#!/usr/bin/env bash\necho \'{"openFrameworks projectGenerator":"fixture-cli"}\'\n'
@@ -133,12 +136,47 @@ def main():
         assert version()["path"].endswith("resources/app/app/projectGenerator")
         print("PASS older unpacked GUI layout and wrapper arguments with spaces in checkout path")
 
+        cli_archive = temp / "standalone-cli.tar.bz2"
+        standalone = temp / "projectGenerator"
+        standalone.write_text(cli_source)
+        with tarfile.open(cli_archive, "w:bz2") as bundle:
+            bundle.add(standalone, arcname="projectGenerator")
+        env["PG_CLI_FIXTURE"] = str(cli_archive)
+        for layout, arch, release, package in [
+            ("asar", "64", "24.04", "projectGenerator-linux"),
+            ("legacy", "x86_64", "24.04", "projectGenerator-linux"),
+            ("asar", "64", "22.04", "projectGenerator-linux-ubuntu22"),
+            ("asar", "arm64", "22.04", "projectGenerator-linux-arm64"),
+        ]:
+            fixture(layout, with_cli=False)
+            os_release.write_text('ID=ubuntu\nVERSION_ID="' + release + '"\n')
+            run(["bash", str(tree / "scripts/dev/download_pg.sh"),
+                 "-p", "linux", "-a", arch, "-t", "same-release"])
+            assert [url.rsplit("/", 2)[-2:] for url in requests.read_text().splitlines()[-2:]] == [
+                ["same-release", package + "-gui.gz"],
+                ["same-release", package + ".tar.bz2"],
+            ]
+            assert version()["version"] == "fixture-cli"
+            nested = "app.asar.unpacked" if layout == "asar" else "app"
+            assert os.access(installed / ("resources/" + nested + "/app/projectGenerator"), os.X_OK)
+            assert not list(installed.glob("cli.*")), "CLI staging directory leaked"
+        os_release.write_text('ID=ubuntu\nVERSION_ID="24.04"\n')
+        print("PASS missing bundled CLI falls back to matching x64/Ubuntu22/ARM64 release and restores native CLI paths")
+
         sentinel = installed / "preserve"
         sentinel.write_text("existing install")
         fixture(with_cli=False)
         args = ["bash", str(tree / "scripts/dev/download_pg.sh"), "-p", "linux", "-a", "64"]
+        env["PG_CLI_DOWNLOAD_FAIL"] = "22"
+        assert run(args, success=False).returncode == 22
+        env.pop("PG_CLI_DOWNLOAD_FAIL")
+        cli_archive.write_text("invalid CLI archive")
         run(args, success=False)
         assert sentinel.read_text() == "existing install"
+        with tarfile.open(cli_archive, "w:bz2"):
+            pass
+        run(args, success=False)
+        assert sentinel.exists()
         (temp / "fixture.gz").write_text("invalid archive")
         run(args, success=False)
         assert sentinel.exists()

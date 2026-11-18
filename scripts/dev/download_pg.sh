@@ -219,7 +219,30 @@ for candidate in \
     "$RESOURCES/app/app/$CLI_NAME"; do
     if [ -f "$candidate" ]; then CLI="$candidate"; break; fi
 done
-if [[ ! -f "$GUI_BIN" || -z "$CLI" ]]; then
+if [[ ! -f "$GUI_BIN" ]]; then
+    echo "ProjectGenerator package for $PLATFORM is missing the GUI" >&2
+    exit 1
+fi
+if [[ -z "$CLI" && "$PLATFORM" == "linux" ]]; then
+    CLI_PKG="${PKG%-gui.gz}.tar.bz2"
+    echo "Bundled CLI is missing; downloading $CLI_PKG from the same release"
+    download "$CLI_PKG"
+    CLI_STAGE=$(mktemp -d "$PG_STAGE/cli.XXXXXX")
+    tar -xjf "$CLI_PKG" -C "$CLI_STAGE"
+    if [[ ! -f "$CLI_STAGE/$CLI_NAME" ]]; then
+        echo "ProjectGenerator CLI package is missing $CLI_NAME" >&2
+        exit 1
+    fi
+    if [[ -f "$RESOURCES/app.asar" ]]; then
+        CLI="$RESOURCES/app.asar.unpacked/app/$CLI_NAME"
+    else
+        CLI="$RESOURCES/app/app/$CLI_NAME"
+    fi
+    mkdir -p "$(dirname "$CLI")"
+    cp "$CLI_STAGE/$CLI_NAME" "$CLI"
+    rm -rf "$CLI_STAGE"
+fi
+if [[ -z "$CLI" ]]; then
     echo "ProjectGenerator package for $PLATFORM is missing the GUI or bundled CLI" >&2
     exit 1
 fi

@@ -803,6 +803,9 @@ jobs:
       - name: checkout openFrameworks
         uses: actions/checkout@v7.0.1
 
+      - name: Test projectGenerator installer
+        run: python3 scripts/dev/tests/test-download-pg.py
+
       - name: Set Up JDK 17
         uses: actions/setup-java@v6.1.0
         with:
