@@ -2,7 +2,11 @@
 
 #include "ofNode.h"
 
-class ofRectangle;
+#include "ofRectangle.h"
+
+#include <array>
+#include <cstdint>
+#include <limits>
 
 // \todo Use the public API of ofNode for all transformations
 // \todo add set projection matrix
@@ -223,6 +227,45 @@ public:
 	}
 
 	/// \}
+	/// \name Frustum
+	/// \{
+
+	/// \brief Get the six frustum planes in world space.
+	///
+	/// Each plane is stored as a glm::vec4 (nx, ny, nz, d), with the normal
+	/// pointing inward: a point P is inside the frustum when
+	/// nx*P.x + ny*P.y + nz*P.z + d >= 0 holds for every plane. Normals are
+	/// unit length.
+	///
+	/// The planes are cached and only recomputed when the projection parameters,
+	/// the camera's global transform, or the viewport change. See
+	/// getFrustumVersion() for a cheap change probe without triggering a
+	/// recompute.
+	///
+	/// \param viewport The viewport used to build the projection matrix.
+	/// \returns A reference to an array of 6 planes in the order:
+	///          left, right, bottom, top, near, far.
+	const std::array<glm::vec4, 6> & getFrustumPlanes(const ofRectangle & viewport) const;
+
+	/// \brief Convenience overload using this camera's current viewport.
+	/// \sa getFrustumPlanes(const ofRectangle &) const
+	const std::array<glm::vec4, 6> & getFrustumPlanes() const {
+		return getFrustumPlanes(getViewport());
+	}
+
+	/// \brief Monotonic counter that changes whenever any input to the frustum
+	/// planes changes: this camera's projection parameters, or its global
+	/// transform (its own transform or any ancestor's).
+	///
+	/// Cheap to query -- callers can compare this against a stored value to
+	/// decide if any cached culling / LOD / shadow data needs rebuilding. The
+	/// viewport is not covered; callers using a non-default viewport should
+	/// track that themselves.
+	///
+	/// \returns A monotonic uint64_t version number.
+	uint64_t getFrustumVersion() const;
+
+	/// \}
 	/// \name Renderer
 	/// \{
 
@@ -253,4 +296,10 @@ private:
 	float aspectRatio; // only used when forceAspect=true, = w / h
 	bool vFlip;
 	std::shared_ptr<ofBaseRenderer> renderer;
+
+	uint64_t paramsVersion = 0;
+	mutable std::array<glm::vec4, 6> cachedFrustumPlanes {};
+	mutable uint64_t cachedFrustumParamsVersion = std::numeric_limits<uint64_t>::max();
+	mutable uint64_t cachedFrustumTransformVersion = std::numeric_limits<uint64_t>::max();
+	mutable ofRectangle cachedFrustumViewport;
 };

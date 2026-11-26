@@ -32,21 +32,25 @@ ofCamera::~ofCamera() {}
 //----------------------------------------
 void ofCamera::setFov(float f) {
 	fov = f;
+	++paramsVersion;
 }
 
 //----------------------------------------
 void ofCamera::setNearClip(float f) {
 	nearClip = f;
+	++paramsVersion;
 }
 
 //----------------------------------------
 void ofCamera::setFarClip(float f) {
 	farClip = f;
+	++paramsVersion;
 }
 
 //----------------------------------------
 void ofCamera::setLensOffset(const glm::vec2 & lensOffset){
 	this->lensOffset = lensOffset;
+	++paramsVersion;
 }
 
 //----------------------------------------
@@ -58,6 +62,7 @@ void ofCamera::setAspectRatio(float aspectRatio){
 //----------------------------------------
 void ofCamera::setForceAspectRatio(bool forceAspectRatio){
 	this->forceAspectRatio = forceAspectRatio;
+	++paramsVersion;
 }
 
 //----------------------------------------
@@ -81,6 +86,7 @@ void ofCamera::setupPerspective(bool _vFlip, float fov, float nearDist, float fa
 	setPosition(eyeX,eyeY,dist);
 	lookAt({eyeX,eyeY,0.f}, {0.f,1.f,0.f});
 	vFlip = _vFlip;
+	++paramsVersion;
 }
 
 //----------------------------------------
@@ -110,6 +116,7 @@ void ofCamera::setupOffAxisViewPortal(const glm::vec3 & topLeft, const glm::vec3
 //----------------------------------------
 void ofCamera::setVFlip(bool vflip){
 	vFlip = vflip;
+	++paramsVersion;
 }
 
 //----------------------------------------
@@ -120,11 +127,13 @@ bool ofCamera::isVFlipped() const{
 //----------------------------------------
 void ofCamera::enableOrtho() {
 	isOrtho = true;
+	++paramsVersion;
 }
 
 //----------------------------------------
 void ofCamera::disableOrtho() {
 	isOrtho = false;
+	++paramsVersion;
 }
 
 //----------------------------------------
@@ -231,6 +240,7 @@ void ofCamera::calcClipPlanes(const ofRectangle & viewport) {
 		float dist = getImagePlaneDistance(viewport);
 		nearClip = (nearClip == 0) ? dist / 100.0f : nearClip;
 		farClip = (farClip == 0) ? dist * 10.0f : farClip;
+		++paramsVersion;
 	}
 }
 
@@ -250,6 +260,46 @@ void ofCamera::setRenderer(shared_ptr<ofBaseRenderer> _renderer){
 	renderer = _renderer;
 }
 
+//----------------------------------------
+const std::array<glm::vec4, 6> & ofCamera::getFrustumPlanes(const ofRectangle & viewport) const {
+	const uint64_t tv = getGlobalTransformVersion();
+	if (cachedFrustumParamsVersion != paramsVersion
+		|| cachedFrustumTransformVersion != tv
+		|| cachedFrustumViewport != viewport) {
+		// Gribb-Hartmann: planes extracted from the combined view-projection
+		// matrix. glm matrices are column-major -- m[c] is column c -- so the
+		// i-th row is {m[0][i], m[1][i], m[2][i], m[3][i]}.
+		const glm::mat4 m = getProjectionMatrix(viewport) * getModelViewMatrix();
+		const glm::vec4 row0(m[0][0], m[1][0], m[2][0], m[3][0]);
+		const glm::vec4 row1(m[0][1], m[1][1], m[2][1], m[3][1]);
+		const glm::vec4 row2(m[0][2], m[1][2], m[2][2], m[3][2]);
+		const glm::vec4 row3(m[0][3], m[1][3], m[2][3], m[3][3]);
+
+		cachedFrustumPlanes[0] = row3 + row0; // left
+		cachedFrustumPlanes[1] = row3 - row0; // right
+		cachedFrustumPlanes[2] = row3 + row1; // bottom
+		cachedFrustumPlanes[3] = row3 - row1; // top
+		cachedFrustumPlanes[4] = row3 + row2; // near
+		cachedFrustumPlanes[5] = row3 - row2; // far
+
+		for (auto & p : cachedFrustumPlanes) {
+			const float len = glm::length(glm::vec3(p));
+			if (len > 0.0f) p /= len;
+		}
+
+		cachedFrustumParamsVersion = paramsVersion;
+		cachedFrustumTransformVersion = tv;
+		cachedFrustumViewport = viewport;
+	}
+	return cachedFrustumPlanes;
+}
+
+//----------------------------------------
+uint64_t ofCamera::getFrustumVersion() const {
+	return paramsVersion + getGlobalTransformVersion();
+}
+
+//----------------------------------------
 void ofCamera::drawFrustum(const ofRectangle & viewport) const {
 	ofPushMatrix();
 

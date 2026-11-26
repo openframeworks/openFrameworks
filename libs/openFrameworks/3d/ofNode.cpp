@@ -54,6 +54,7 @@ ofNode::ofNode(const ofNode & node)
 	position.disableEvents();
 	scale.disableEvents();
 	orientation.disableEvents();
+	++transformVersion;
 }
 
 //----------------------------------------
@@ -65,7 +66,8 @@ ofNode::ofNode(ofNode && node)
 ,axis(std::move(node.axis))
 ,localTransformMatrix(std::move(node.localTransformMatrix))
 ,legacyCustomDrawOverrided(std::move(node.legacyCustomDrawOverrided))
-,children(std::move(node.children)){
+,children(std::move(node.children))
+,transformVersion(node.transformVersion){
 	if(parent){
 		parent->addListener(*this);
 	}
@@ -87,6 +89,7 @@ ofNode & ofNode::operator=(const ofNode & node){
 	if(parent){
 		parent->addListener(*this);
 	}
+	++transformVersion;
 	return *this;
 }
 
@@ -101,6 +104,7 @@ ofNode & ofNode::operator=(ofNode && node){
 	localTransformMatrix = std::move(node.localTransformMatrix);
 	legacyCustomDrawOverrided = std::move(node.legacyCustomDrawOverrided);
 	children = std::move(node.children);
+	transformVersion = node.transformVersion + 1;
 	if(parent){
 		parent->addListener(*this);
 	}
@@ -151,6 +155,7 @@ void ofNode::setParent(ofNode& parent, bool bMaintainGlobalTransform) {
 		parent.addListener(*this);
 	}
 	this->parent = &parent;
+	++transformVersion;
 }
 
 //----------------------------------------
@@ -169,7 +174,7 @@ void ofNode::clearParent(bool bMaintainGlobalTransform) {
 	}else{
 		this->parent = nullptr;
 	}
-
+	++transformVersion;
 }
 
 //----------------------------------------
@@ -718,6 +723,19 @@ void ofNode::createMatrix() {
 	localTransformMatrix = glm::scale(localTransformMatrix, toGlm(scale));
 
 	updateAxis();
+	++transformVersion;
+}
+
+//----------------------------------------
+uint64_t ofNode::getTransformVersion() const {
+	return transformVersion;
+}
+
+//----------------------------------------
+uint64_t ofNode::getGlobalTransformVersion() const {
+	uint64_t v = transformVersion;
+	if (parent) v += parent->getGlobalTransformVersion();
+	return v;
 }
 
 
