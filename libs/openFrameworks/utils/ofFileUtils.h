@@ -450,17 +450,17 @@ public:
 	/// Get the App name of the running binary
 	///
 	/// \param strip_debug removes a trailing "Debug" if present
-	/// \returns the App name as native string
-	static const auto getAppName(bool strip_debug = true) {
-		auto name = ofFilePath::getCurrentExePathFS().filename().native();
+	/// \returns the App name
+	static std::string getAppName(bool strip_debug = true) {
+		auto name = ofFilePath::getCurrentExePathFS().filename().string();
 #if defined(TARGET_OSX)
-		auto debug_suffix = std::filesystem::path("Debug").native();
+		const std::string debug_suffix = "Debug";
 #else
-		auto debug_suffix = std::filesystem::path("_debug").native();
+		const std::string debug_suffix = "_debug";
 #endif
 		auto dbsize = debug_suffix.size();
 		if (strip_debug) {
-			if (name.size() > dbsize && name.compare(name.size() -dbsize , dbsize, debug_suffix) == 0) {
+			if (name.size() > dbsize && name.compare(name.size() - dbsize, dbsize, debug_suffix) == 0) {
 				name.erase(name.size() - dbsize);
 			}
 		}
