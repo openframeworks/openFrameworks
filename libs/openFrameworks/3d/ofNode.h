@@ -5,6 +5,7 @@
 #include <glm/gtc/quaternion.hpp>
 
 #include <array>
+#include <cstdint>
 
 class ofBaseRenderer;
 
@@ -179,6 +180,9 @@ public:
 	///
 	/// \returns The global scale in the xyz axes where 1 = 100% of size.
 	glm::vec3 getGlobalScale() const;
+
+	uint64_t getTransformVersion() const;
+	uint64_t getGlobalTransformVersion() const;
 
 	/// \}
 	/// \name Setters
@@ -530,9 +534,9 @@ protected:
 	ofNode * parent = nullptr;
 
 private:
-	void onParentPositionChanged(glm::vec3 & position) {onPositionChanged();}
-	void onParentOrientationChanged(glm::quat & orientation) {onOrientationChanged();}
-	void onParentScaleChanged(glm::vec3 & scale) {onScaleChanged();}
+	void onParentPositionChanged(glm::vec3 & position) {++transformVersion; onPositionChanged();}
+	void onParentOrientationChanged(glm::quat & orientation) {++transformVersion; onOrientationChanged();}
+	void onParentScaleChanged(glm::vec3 & scale) {++transformVersion; onScaleChanged();}
 
 	ofParameter<glm::vec3> position;
 	ofParameter<glm::quat> orientation;
@@ -543,6 +547,7 @@ private:
 	glm::mat4 localTransformMatrix;
 	bool legacyCustomDrawOverrided;
 	std::set<ofNode*> children;
+	uint64_t transformVersion = 0;
 
 	void addListener(ofNode & node);
 	void removeListener(ofNode & node);

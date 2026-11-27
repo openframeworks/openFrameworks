@@ -2,7 +2,11 @@
 
 #include "ofNode.h"
 
-class ofRectangle;
+#include "ofRectangle.h"
+
+#include <array>
+#include <cstdint>
+#include <limits>
 
 // \todo Use the public API of ofNode for all transformations
 // \todo add set projection matrix
@@ -223,6 +227,16 @@ public:
 	}
 
 	/// \}
+	/// \name Frustum
+	/// \{
+
+	const std::array<glm::vec4, 6> & getFrustumPlanes(const ofRectangle & viewport) const;
+	const std::array<glm::vec4, 6> & getFrustumPlanes() const {
+		return getFrustumPlanes(getViewport());
+	}
+	uint64_t getFrustumVersion() const;
+
+	/// \}
 	/// \name Renderer
 	/// \{
 
@@ -253,4 +267,10 @@ private:
 	float aspectRatio; // only used when forceAspect=true, = w / h
 	bool vFlip;
 	std::shared_ptr<ofBaseRenderer> renderer;
+
+	uint64_t paramsVersion = 0;
+	mutable std::array<glm::vec4, 6> cachedFrustumPlanes {};
+	mutable uint64_t cachedFrustumParamsVersion = std::numeric_limits<uint64_t>::max();
+	mutable uint64_t cachedFrustumTransformVersion = std::numeric_limits<uint64_t>::max();
+	mutable ofRectangle cachedFrustumViewport;
 };
