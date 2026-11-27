@@ -784,6 +784,8 @@ jobs:
     if: needs.changes.outputs.full == 'true'
     runs-on: ubuntu-24.04
     strategy:
+      # Share the dependency cache before the next ABI starts downloading.
+      max-parallel: 1
       matrix:
         cfg:
           - { target: android, opt: arm64-v8a }
@@ -793,7 +795,6 @@ jobs:
     env:
       TARGET: ${{ matrix.cfg.target }}
       ARCH: ${{ matrix.cfg.opt }}
-      ANDROID_SDK_ROOT: $ANDROID_HOME
       # NDK r30 LTS is installed on ubuntu-24.04 at $ANDROID_HOME/ndk/$NDK.
       # cmake.sh uses that path. Gradle ndkVersion matches. Min API stays 25.
       NDK: "30.0.16248370"
@@ -812,15 +813,23 @@ jobs:
           distribution: "temurin"
           java-version: "17"
 
+      - name: Set Up Gradle
+        uses: gradle/actions/setup-gradle@v6.4.1
+        with:
+          gradle-version: "8.14.3"
+          cache-provider: basic
+          # Fork PR caches are scoped to the PR merge ref, including matrix jobs.
+          cache-read-only: false
+
       - name: Download Libraries
         run: ./of update libs android
 
       - name: Build openFrameworks Core - Debug
         run: |
           cd libs/openFrameworksCompiled/project/android/
-          gradle wrapper
+          gradle wrapper --gradle-version 8.14.3
           chmod +x gradlew
-          ./gradlew assembleDebug
+          ./gradlew assembleDebug -Pandroid.injected.build.abi="$ARCH"
 
       - name: Build openFrameworks Core - CMake
         run: |

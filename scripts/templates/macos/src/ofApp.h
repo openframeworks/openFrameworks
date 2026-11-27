@@ -2,7 +2,13 @@
 
 #include "ofMain.h"
 
+#if defined(TARGET_OF_IOS)
+#include "ofxiOSApp.h"
+
+class ofApp : public ofxiOSApp{
+#else
 class ofApp : public ofBaseApp{
+#endif
 
 	public:
 		void setup() override;

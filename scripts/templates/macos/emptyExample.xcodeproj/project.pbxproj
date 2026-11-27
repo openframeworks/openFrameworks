@@ -145,14 +145,15 @@
 			"buildSettings": {
 				"HEADER_SEARCH_PATHS": [
 					"$(OF_CORE_HEADERS)",
-					"src"
+					"src",
+					"$(OF_PATH)/addons/ofxiOS/**"
 				],
-				"OTHER_CPLUSPLUSFLAGS": "-D__MACOSX_CORE__",
-				"CODE_SIGN_ENTITLEMENTS": "of.entitlements",
 				"GCC_UNROLL_LOOPS": "YES",
 				"GCC_OPTIMIZATION_LEVEL": "3",
 				"COPY_PHASE_STRIP": "YES",
-				"ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS": "YES"
+				"ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS": "YES",
+				"OTHER_CPLUSPLUSFLAGS[sdk=macosx*]": "-D__MACOSX_CORE__",
+				"CODE_SIGN_ENTITLEMENTS[sdk=macosx*]": "of.entitlements"
 			},
 			"name": "Release"
 		},
@@ -325,11 +326,10 @@
 				"CURRENT_PROJECT_VERSION": "1",
 				"CLANG_WARN_RANGE_LOOP_ANALYSIS": "YES",
 				"ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS": "YES",
-				"DEVELOPMENT_ASSET_PATHS": "\"emptymacOSExample/Preview Content\"",
 				"SUPPORTS_MACCATALYST": "YES",
 				"SWIFT_OPTIMIZATION_LEVEL": "-Onone",
 				"CLANG_WARN_INFINITE_RECURSION": "YES",
-				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]": "YES",
+				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]": "NO",
 				"ONLY_ACTIVE_ARCH": "YES",
 				"INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone": "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight",
 				"GCC_WARN_UNUSED_VARIABLE": "YES",
@@ -373,7 +373,6 @@
 				"CLANG_WARN_CONSTANT_CONVERSION": "YES",
 				"GCC_NO_COMMON_BLOCKS": "YES",
 				"MARKETING_VERSION": "1.0",
-				"CODE_SIGN_ENTITLEMENTS": "emptymacOSExample/emptymacOSExample.entitlements",
 				"CLANG_WARN_OBJC_ROOT_CLASS": "YES_ERROR",
 				"PRODUCT_NAME": "$(TARGET_NAME)",
 				"SUPPORTED_PLATFORMS": "appletvos appletvsimulator iphoneos iphonesimulator macosx xros xrsimulator",
@@ -392,10 +391,10 @@
 				"CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER": "YES",
 				"CLANG_ENABLE_OBJC_WEAK": "YES",
 				"CLANG_WARN_STRICT_PROTOTYPES": "YES",
-				"ENABLE_USER_SCRIPT_SANDBOXING": "YES",
+				"ENABLE_USER_SCRIPT_SANDBOXING": "NO",
 				"GCC_WARN_ABOUT_RETURN_TYPE": "YES_ERROR",
 				"GCC_WARN_UNUSED_FUNCTION": "YES",
-				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]": "YES",
+				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]": "NO",
 				"CLANG_WARN_UNREACHABLE_CODE": "YES",
 				"SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD": "YES",
 				"ASSETCATALOG_COMPILER_APPICON_NAME": "AppIcon",
@@ -407,7 +406,9 @@
 					"$(inherited)"
 				],
 				"CLANG_WARN_OBJC_LITERAL_CONVERSION": "YES",
-				"PRODUCT_BUNDLE_IDENTIFIER": "com.openFrameworks.emptyExample"
+				"PRODUCT_BUNDLE_IDENTIFIER": "com.openFrameworks.emptyExample",
+				"CODE_SIGN_ENTITLEMENTS[sdk=macosx*]": "of.entitlements",
+				"OTHER_LDFLAGS": "-ObjC"
 			},
 			"name": "Debug"
 		},
@@ -440,7 +441,8 @@
 				"INFOPLIST_KEY_NSCameraUsageDescription": "This app needs to access the camera",
 				"HEADER_SEARCH_PATHS": [
 					"$(OF_CORE_HEADERS)",
-					"src"
+					"src",
+					"$(OF_PATH)/addons/ofxiOS/**"
 				],
 				"GCC_DYNAMIC_NO_PIC": "NO",
 				"FRAMEWORK_SEARCH_PATHS": "$(inherited)",
@@ -893,11 +895,10 @@
 				"CURRENT_PROJECT_VERSION": "1",
 				"CLANG_WARN_RANGE_LOOP_ANALYSIS": "YES",
 				"ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS": "YES",
-				"DEVELOPMENT_ASSET_PATHS": "\"emptymacOSExample/Preview Content\"",
 				"SUPPORTS_MACCATALYST": "YES",
 				"CLANG_WARN_INFINITE_RECURSION": "YES",
 				"SWIFT_COMPILATION_MODE": "wholemodule",
-				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]": "YES",
+				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]": "NO",
 				"INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone": "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight",
 				"GCC_WARN_UNUSED_VARIABLE": "YES",
 				"CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING": "YES",
@@ -940,7 +941,6 @@
 				"CLANG_WARN_CONSTANT_CONVERSION": "YES",
 				"GCC_NO_COMMON_BLOCKS": "YES",
 				"MARKETING_VERSION": "1.0",
-				"CODE_SIGN_ENTITLEMENTS": "emptymacOSExample/emptymacOSExample.entitlements",
 				"CLANG_WARN_OBJC_ROOT_CLASS": "YES_ERROR",
 				"PRODUCT_NAME": "$(TARGET_NAME)",
 				"SUPPORTED_PLATFORMS": "appletvos appletvsimulator iphoneos iphonesimulator macosx xros xrsimulator",
@@ -958,10 +958,10 @@
 				"CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER": "YES",
 				"CLANG_ENABLE_OBJC_WEAK": "YES",
 				"CLANG_WARN_STRICT_PROTOTYPES": "YES",
-				"ENABLE_USER_SCRIPT_SANDBOXING": "YES",
+				"ENABLE_USER_SCRIPT_SANDBOXING": "NO",
 				"GCC_WARN_ABOUT_RETURN_TYPE": "YES_ERROR",
 				"GCC_WARN_UNUSED_FUNCTION": "YES",
-				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]": "YES",
+				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]": "NO",
 				"CLANG_WARN_UNREACHABLE_CODE": "YES",
 				"SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD": "YES",
 				"ASSETCATALOG_COMPILER_APPICON_NAME": "AppIcon",
@@ -970,7 +970,9 @@
 				"SWIFT_EMIT_LOC_STRINGS": "YES",
 				"CLANG_WARN_NON_LITERAL_NULL_CONVERSION": "YES",
 				"CLANG_WARN_OBJC_LITERAL_CONVERSION": "YES",
-				"PRODUCT_BUNDLE_IDENTIFIER": "com.openFrameworks.emptyExample"
+				"PRODUCT_BUNDLE_IDENTIFIER": "com.openFrameworks.emptyExample",
+				"CODE_SIGN_ENTITLEMENTS[sdk=macosx*]": "of.entitlements",
+				"OTHER_LDFLAGS": "-ObjC"
 			},
 			"name": "Release"
 		},
@@ -1005,7 +1007,8 @@
 				"INFOPLIST_KEY_NSCameraUsageDescription": "This app needs to access the camera",
 				"HEADER_SEARCH_PATHS": [
 					"$(OF_CORE_HEADERS)",
-					"src"
+					"src",
+					"$(OF_PATH)/addons/ofxiOS/**"
 				],
 				"FRAMEWORK_SEARCH_PATHS": "$(inherited)",
 				"COPY_PHASE_STRIP": "YES",
@@ -1451,14 +1454,15 @@
 				"GCC_WARN_UNUSED_VARIABLE": "NO",
 				"HEADER_SEARCH_PATHS": [
 					"$(OF_CORE_HEADERS)",
-					"src"
+					"src",
+					"$(OF_PATH)/addons/ofxiOS/**"
 				],
-				"OTHER_CPLUSPLUSFLAGS": "-D__MACOSX_CORE__",
-				"CODE_SIGN_ENTITLEMENTS": "of.entitlements",
 				"COPY_PHASE_STRIP": "NO",
 				"GCC_OPTIMIZATION_LEVEL": "0",
 				"ENABLE_TESTABILITY": "YES",
-				"ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS": "YES"
+				"ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS": "YES",
+				"OTHER_CPLUSPLUSFLAGS[sdk=macosx*]": "-D__MACOSX_CORE__",
+				"CODE_SIGN_ENTITLEMENTS[sdk=macosx*]": "of.entitlements"
 			},
 			"name": "Debug"
 		},
@@ -1660,7 +1664,7 @@
 				"$OF_PATH/libs/openFrameworksCompiled/lib/macos/openFrameworks.framework"
 			],
 			"runOnlyForDeploymentPostprocessing": "0",
-			"shellScript": "echo \"💾 Compiling OpenFrameworks\"\nxcodebuild -workspace \"$OF_PATH/libs/openFrameworksCompiled/project/macos/openFrameworksLib.xcworkspace\" -scheme openFrameworks -configuration \"${CONFIGURATION}\" CLANG_CXX_LANGUAGE_STANDARD=$CLANG_CXX_LANGUAGE_STANDARD MACOSX_DEPLOYMENT_TARGET=$MACOSX_DEPLOYMENT_TARGET GCC_PREPROCESSOR_DEFINITIONS=$USER_PREPROCESSOR_DEFINITIONS\n",
+			"shellScript": "echo \"💾 Compiling OpenFrameworks\"\nset -- -project \"$OF_PATH/libs/openFrameworksCompiled/project/macos/openFrameworksLib.xcodeproj\" -scheme openFrameworks -configuration \"${CONFIGURATION}\" -sdk \"${SDK_NAME}\"\nset -- \"$@\" \"CLANG_CXX_LANGUAGE_STANDARD=${CLANG_CXX_LANGUAGE_STANDARD}\" \"MACOSX_DEPLOYMENT_TARGET=${MACOSX_DEPLOYMENT_TARGET}\" \"IPHONEOS_DEPLOYMENT_TARGET=${IPHONEOS_DEPLOYMENT_TARGET}\" \"TVOS_DEPLOYMENT_TARGET=${TVOS_DEPLOYMENT_TARGET}\" \"XROS_DEPLOYMENT_TARGET=${XROS_DEPLOYMENT_TARGET}\" \"GCC_PREPROCESSOR_DEFINITIONS=\\$(inherited) ${GCC_PREPROCESSOR_DEFINITIONS}\"\nif [ -n \"${CODE_SIGNING_ALLOWED}\" ]; then set -- \"$@\" \"CODE_SIGNING_ALLOWED=${CODE_SIGNING_ALLOWED}\"; fi\nxcodebuild \"$@\"\n",
 			"outputFileListPaths": [],
 			"inputFileListPaths": [
 				""
