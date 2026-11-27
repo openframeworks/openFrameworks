@@ -3,6 +3,27 @@
 #include "ofParameter.h"
 #include <pugixml.hpp>
 
+enum ofXmlParsingOption: const unsigned int {
+	OF_PARSE_MINIMAL = pugi::parse_minimal,
+	OF_PARSE_DEFAULT = pugi::parse_default,
+	OF_PARSE_FULL = pugi::parse_full,
+
+	OF_PARSE_DECLARATION = pugi::parse_declaration,
+	OF_PARSE_DOCTYPE = pugi::parse_doctype,
+	OF_PARSE_PI = pugi::parse_pi,
+	OF_PARSE_COMMENTS = pugi::parse_comments,
+	OF_PARSE_CDATA = pugi::parse_cdata,
+	OF_PARSE_TRIM_PCDATA = pugi::parse_trim_pcdata,
+	OF_PARSE_WS_PCDATA = pugi::parse_ws_pcdata,
+	OF_PARSE_WS_PCDATA_SINGLE = pugi::parse_ws_pcdata_single,
+	OF_PARSE_EMBED_PCDATA = pugi::parse_embed_pcdata,
+	OF_PARSE_FRAGMENT = pugi::parse_fragment,
+	OF_PARSE_ESCAPES = pugi::parse_escapes,
+	OF_PARSE_EOL = pugi::parse_eol,
+	OF_PARSE_WCONV_ATTRIBUTE = pugi::parse_wconv_attribute,
+	OF_PARSE_WNORM_ATTRIBUTE = pugi::parse_wnorm_attribute
+};
+
 template<typename It>
 class ofXmlIterator;
 class ofXmlAttributeIterator;
@@ -101,6 +122,7 @@ public:
 
 	bool load(const of::filesystem::path & file);
 	bool load(const ofBuffer & buffer);
+    void setParsingOptions(unsigned int l_parsing_options);	
 	bool parse(const std::string & xmlStr);
 	bool save(const of::filesystem::path & file) const;
 	void clear();
@@ -113,6 +135,8 @@ public:
 	ofXml appendChild(const ofXml & xml);
 	ofXml prependChild(const ofXml & xml);
 	bool removeChild(const ofXml & node);
+
+	unsigned int parsing_options;
 
 #if PUGIXML_VERSION>=170
 	ofXml appendChild(ofXml && xml);
